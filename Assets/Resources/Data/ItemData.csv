@@ -1,0 +1,121 @@
+﻿ID,Name,Category,Price,Desc,IconName
+1001,보드카,Alcohol,3000,러시아산 독한 술,Icon_Vodka
+1002,쉐이커,Tool,15000,칵테일 흔드는 도구,Icon_Shaker
+1003,블루 큐라소,Liqueur,4500,파란색 리큐르,Icon_Blue
+1004,데킬라,Alcohol,3500,멕시코의 정열,Icon_Tequila
+1005,브랜디,Alcohol,4000,포도로 만든 증류주,Icon_Brandy
+1006,진,Alcohol,3200,향긋한 솔향,Icon_Gin
+1007,크랜베리,Non Alcohol,1500,새콤달콤한 주스,Icon_Cranberry
+1008,바카디 럼,Alcohol,3500,부드러운 화이트 럼,Icon_Rum
+1009,튤립 잔,Glass,3000,우아한 곡선 잔,Icon_TulipGlass
+1010,시나몬 가루,Powder,1000,향긋한 계피 가루,Icon_Cinnamon
+1011,깔루아,Liqueur,4000,달콤한 커피 리큐르,Icon_Kahlua
+1012,피치 트리,Liqueur,4200,상큼한 복숭아 향,Icon_PeachTree
+1013,토닉 워터,Non Alcohol,1000,쌉싸름한 탄산수,Icon_Tonic
+1014,레몬 주스,Non Alcohol,1200,신선한 레몬 즙,Icon_Lemon
+1015,지거,Tool,8000,용량 측정 도구,Icon_Jigger
+1016,바 스푼,Tool,5000,젓기 위한 긴 스푼,Icon_BarSpoon
+1017,마티니 잔,Glass,3500,칵테일의 여왕,Icon_MartiniGlass
+1018,온더락 잔,Glass,2500,얼음을 담는 잔,Icon_RockGlass
+1019,설탕,Powder,500,달콤한 백설탕,Icon_Sugar
+1020,소금,Powder,500,짭짤한 소금,Icon_Salt
+1021,위스키,Alcohol,5000,중후한 오크통의 향,Icon_Whiskey
+1022,다크 럼,Alcohol,3800,깊고 진한 사탕수수 향,Icon_DarkRum
+1023,드라이 진,Alcohol,3500,깔끔한 영국식 진,Icon_DryGin
+1024,실버 데킬라,Alcohol,4000,숙성하지 않은 투명함,Icon_SilverTequila
+1025,골드 데킬라,Alcohol,4500,오크통 숙성의 부드러움,Icon_GoldTequila
+1026,버번 위스키,Alcohol,5500,미국 옥수수의 단맛,Icon_Bourbon
+1027,스카치 위스키,Alcohol,6000,스코틀랜드의 스모키함,Icon_Scotch
+1028,꼬냑,Alcohol,8000,프랑스 고급 브랜디,Icon_Cognac
+1029,압생트,Alcohol,7000,녹색 요정이라 불리는 술,Icon_Absinthe
+1030,소주,Alcohol,2000,한국의 국민 술,Icon_Soju
+1031,사케,Alcohol,3000,쌀로 빚은 맑은 술,Icon_Sake
+1032,메즈칼,Alcohol,5000,스모키한 아가베의 향,Icon_Mezcal
+1033,피스코,Alcohol,4500,페루의 포도 증류주,Icon_Pisco
+1034,카샤사,Alcohol,4000,브라질의 국민 럼,Icon_Cachaca
+1035,애플 잭,Alcohol,4500,사과로 만든 브랜디,Icon_AppleJack
+1036,아쿠아비트,Alcohol,4000,북유럽의 생명의 물,Icon_Aquavit
+1037,키르슈바서,Alcohol,5000,체리 증류주,Icon_Kirsch
+1038,그라파,Alcohol,5500,이탈리아 포도 찌꺼기 술,Icon_Grappa
+1039,고량주,Alcohol,3000,수수의 강렬한 향,Icon_Kaoliang
+1040,151 럼,Alcohol,4000,불이 붙는 강력한 럼,Icon_151Rum
+1041,트리플 섹,Liqueur,3000,오렌지 껍질 리큐르,Icon_TripleSec
+1042,아마레또,Liqueur,3500,달콤한 살구씨 향,Icon_Amaretto
+1043,베일리스,Liqueur,4000,부드러운 아이리쉬 크림,Icon_Baileys
+1044,미도리,Liqueur,4500,영롱한 멜론 맛,Icon_Midori
+1045,캄파리,Liqueur,3800,쌉싸름한 붉은 허브,Icon_Campari
+1046,아페롤,Liqueur,3500,달콤쌉쌀한 식전주,Icon_Aperol
+1047,예거마이스터,Liqueur,4000,56가지 허브의 조화,Icon_Jagermeister
+1048,말리부,Liqueur,3200,달콤한 코코넛 럼,Icon_Malibu
+1049,그랑 마니에르,Liqueur,5000,꼬냑 베이스 오렌지 술,Icon_GrandMarnier
+1050,드람뷔,Liqueur,4800,위스키와 꿀의 조화,Icon_Drambuie
+1051,베네딕틴,Liqueur,5500,수도원에서 만든 비법 술,Icon_Benedictine
+1052,샤르트뢰즈,Liqueur,6000,약초 향이 강한 리큐르,Icon_Chartreuse
+1053,샴보드,Liqueur,5000,블랙 라즈베리 리큐르,Icon_Chambord
+1054,크렘 드 카시스,Liqueur,3500,진한 블랙커런트 맛,Icon_Cassis
+1055,크렘 드 민트,Liqueur,3000,상쾌한 민트 리큐르,Icon_MintLiqueur
+1056,크렘 드 카카오,Liqueur,3000,달콤한 초콜릿 리큐르,Icon_CacaoLiqueur
+1057,마라스키노,Liqueur,4000,체리 씨앗의 독특한 향,Icon_Maraschino
+1058,삼부카,Liqueur,3800,아니스 향의 리큐르,Icon_Sambuca
+1059,갈리아노,Liqueur,4200,바닐라와 허브의 조화,Icon_Galliano
+1060,스위트 베르무트,Liqueur,2500,달콤한 강화 와인,Icon_SweetVermouth
+1061,드라이 베르무트,Liqueur,2500,쌉쌀한 강화 와인,Icon_DryVermouth
+1062,라임 주스,Non Alcohol,1200,상큼한 라임 즙,Icon_LimeJuice
+1063,오렌지 주스,Non Alcohol,1500,신선한 착즙 오렌지,Icon_OrangeJuice
+1064,파인애플 주스,Non Alcohol,1800,트로피컬한 달콤함,Icon_PineappleJuice
+1065,자몽 주스,Non Alcohol,1800,쌉쌀한 자몽의 맛,Icon_GrapefruitJuice
+1066,토마토 주스,Non Alcohol,1500,해장에 좋은 주스,Icon_TomatoJuice
+1067,진저 에일,Non Alcohol,1200,생강 향 탄산음료,Icon_GingerAle
+1068,진저 비어,Non Alcohol,1500,강한 생강 맛 발효음료,Icon_GingerBeer
+1069,콜라,Non Alcohol,1000,톡 쏘는 검은 탄산,Icon_Cola
+1070,사이다,Non Alcohol,1000,맑고 깨끗한 탄산,Icon_Soda
+1071,탄산수,Non Alcohol,800,깔끔한 플레인 소다,Icon_SodaWater
+1072,우유,Non Alcohol,1000,부드러운 칵테일용,Icon_Milk
+1073,생크림,Non Alcohol,1500,진하고 고소한 크림,Icon_Cream
+1074,코코넛 크림,Non Alcohol,2000,피나콜라다의 핵심,Icon_CoconutCream
+1075,그레나딘 시럽,Non Alcohol,1500,석류 맛 붉은 시럽,Icon_Grenadine
+1076,심플 시럽,Non Alcohol,1000,기본적인 단맛 시럽,Icon_SimpleSyrup
+1077,계란 흰자,Non Alcohol,500,거품을 내는 재료,Icon_EggWhite
+1078,올리브,Non Alcohol,800,마티니의 단짝,Icon_Olive
+1079,체리,Non Alcohol,800,칵테일의 붉은 보석,Icon_Cherry
+1080,민트 잎,Non Alcohol,1000,모히또의 핵심 허브,Icon_MintLeaf
+1081,스트레이너,Tool,7000,얼음을 걸러주는 도구,Icon_Strainer
+1082,머들러,Tool,6000,과일을 으깨는 방망이,Icon_Muddler
+1083,믹싱 글라스,Tool,12000,젓기 전용 유리잔,Icon_MixingGlass
+1084,바 나이프,Tool,9000,과일 손질용 칼,Icon_BarKnife
+1085,필러,Tool,5000,껍질을 얇게 깎는 도구,Icon_Peeler
+1086,스퀴저,Tool,8000,과즙 짜는 도구,Icon_Squeezer
+1087,아이스 픽,Tool,15000,얼음을 깨는 송곳,Icon_IcePick
+1088,아이스 텅,Tool,4000,얼음 집게,Icon_IceTongs
+1089,얼음 스쿱,Tool,5000,얼음을 퍼담는 삽,Icon_IceScoop
+1090,푸어러,Tool,3000,술병 입구에 꽂는 캡,Icon_Pourer
+1091,코르크 따개,Tool,6000,와인 오프너,Icon_Corkscrew
+1092,병따개,Tool,2000,기본적인 오프너,Icon_Opener
+1093,블렌더,Tool,30000,프로즌 칵테일용 믹서,Icon_Blender
+1094,칵테일 픽,Tool,2000,가니쉬를 꽂는 핀,Icon_CocktailPick
+1095,코스터,Tool,1000,잔 받침대,Icon_Coaster
+1096,빨대,Tool,500,음료용 스트로우,Icon_Straw
+1097,믹싱 스틱,Tool,1000,음료를 젓는 막대,Icon_Stirrer
+1098,토치,Tool,12000,훈연 및 가니쉬용,Icon_Torch
+1099,스모킹 건,Tool,25000,연기를 주입하는 기계,Icon_SmokingGun
+1100,바 매트,Tool,8000,미끄럼 방지 고무판,Icon_BarMat
+1101,쿠페 잔,Glass,4000,클래식한 샴페인 잔,Icon_CoupeGlass
+1102,마가리타 잔,Glass,4500,소금을 묻히기 좋은 잔,Icon_MargaritaGlass
+1103,하이볼 잔,Glass,2000,길쭉한 기본 잔,Icon_HighballGlass
+1104,콜린스 잔,Glass,2200,하이볼보다 좁고 긴 잔,Icon_CollinsGlass
+1105,샷 잔,Glass,1000,한 입 털어넣는 잔,Icon_ShotGlass
+1106,허리케인 잔,Glass,5000,곡선이 아름다운 잔,Icon_HurricaneGlass
+1107,스니프터,Glass,6000,향을 모아주는 꼬냑 잔,Icon_Snifter
+1108,샴페인 플루트,Glass,4000,기포가 오래가는 잔,Icon_ChampagneFlute
+1109,와인 글라스,Glass,4500,기본적인 와인 잔,Icon_WineGlass
+1110,티키 머그,Glass,7000,이국적인 도자기 잔,Icon_TikiMug
+1111,구리 머그,Glass,8000,차가움이 오래가는 잔,Icon_CopperMug
+1112,흑설탕,Powder,600,풍미 있는 갈색 설탕,Icon_BrownSugar
+1113,슈가 파우더,Powder,800,눈처럼 고운 설탕,Icon_PowderedSugar
+1114,핑크 솔트,Powder,1500,히말라야 핑크 소금,Icon_PinkSalt
+1115,후추,Powder,1000,매콤한 통후추,Icon_Pepper
+1116,넛맥 가루,Powder,2000,향긋한 육두구,Icon_Nutmeg
+1117,코코아 파우더,Powder,1200,쌉쌀한 초콜릿 가루,Icon_CocoaPowder
+1118,식용 금가루,Powder,15000,럭셔리한 금박,Icon_GoldDust
+1119,커피 원두,Powder,1500,고소한 로스팅 원두,Icon_CoffeeBean
+1120,말린 꽃잎,Powder,3000,식용 장미 꽃잎,Icon_DriedFlower
