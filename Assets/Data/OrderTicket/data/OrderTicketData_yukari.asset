@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b074092a6424ed548be557aa3efb3794, type: 3}
+  m_Name: OrderTicketData_yukari
+  m_EditorClassIdentifier: Assembly-CSharp::OrderTicketData
+  key: yukari
+  customerName: "\uC720\uCE74\uB9AC"
+  memo: "\uC624\uB298\uC740 <color=#F7B500>\uAC13\uD30C\uB354</color>\uAC00 \uC88B\uACA0\uC5B4.\n<color=#F7B500>\uC624\uB80C\uC9C0
+    \uAC00\uB2C8\uC26C</color>\uB85C \uBD80\uD0C1\uD574~\nd\nd\nd\nd\nd\nd"
+  items:
+  - name: "\uAC13\uD30C\uB354"
+    qty: 1
+    price: 50
+  - name: "\uAC13\uB9C8\uB354"
+    qty: 2
+    price: 5000
