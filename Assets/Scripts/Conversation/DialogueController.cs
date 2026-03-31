@@ -1,9 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
 using System;
 
 public class DialogueController : MonoBehaviour
@@ -32,6 +30,9 @@ public class DialogueController : MonoBehaviour
     private Coroutine _blinkRoutine;
     private bool _isTyping;
     private string _fullLine;
+
+    public bool IsTyping => _isTyping;
+    public bool IsOpen => canvasGroup != null && canvasGroup.alpha > 0.001f;
 
     public event Action DialogueClosed;
 
@@ -71,26 +72,45 @@ public class DialogueController : MonoBehaviour
         canvasGroup.interactable = true;
         canvasGroup.blocksRaycasts = true;
 
-        ShowNextLine();
+        ShowNextLineFromQueue();
+    }
+
+    // episode 씬용: 한 줄만 직접 표시
+    public void ShowSingleLine(DialogueLine line)
+    {
+        if (line == null)
+        {
+            HideImmediate();
+            return;
+        }
+
+        _queue.Clear();
+        canvasGroup.alpha = 1f;
+        canvasGroup.interactable = true;
+        canvasGroup.blocksRaycasts = true;
+        ShowLine(line);
+    }
+
+    public void ShowSingleLine(string speakerName, string text)
+    {
+        ShowSingleLine(new DialogueLine
+        {
+            speakerName = speakerName,
+            text = text
+        });
     }
 
     // ✅ 클릭/스페이스로 호출
     public void Advance()
     {
         // 1) 타이핑 중이면 스킵
-        if (_isTyping)
-        {
-            if (_typingRoutine != null) StopCoroutine(_typingRoutine);
-            bodyText.text = _fullLine;
-            _isTyping = false;
-            SetNextIndicator(true);
+        if (SkipTypingIfNeeded())
             return;
-        }
 
         // 2) 다음 줄 있으면 다음 줄
         if (_queue.Count > 0)
         {
-            ShowNextLine();
+            ShowNextLineFromQueue();
             return;
         }
 
@@ -99,10 +119,25 @@ public class DialogueController : MonoBehaviour
         HideImmediate();
     }
 
-    private void ShowNextLine()
+    // episode runner가 직접 호출할 수 있도록 분리
+    public bool SkipTypingIfNeeded()
     {
-        if (_typingRoutine != null) StopCoroutine(_typingRoutine);
+        if (!_isTyping) return false;
 
+        if (_typingRoutine != null)
+        {
+            StopCoroutine(_typingRoutine);
+            _typingRoutine = null;
+        }
+
+        bodyText.text = _fullLine;
+        _isTyping = false;
+        SetNextIndicator(true);
+        return true;
+    }
+
+    private void ShowNextLineFromQueue()
+    {
         if (_queue.Count == 0)
         {
             DialogueClosed?.Invoke();
@@ -110,9 +145,20 @@ public class DialogueController : MonoBehaviour
             return;
         }
 
+        var line = _queue.Dequeue();
+        ShowLine(line);
+    }
+
+    private void ShowLine(DialogueLine line)
+    {
+        if (_typingRoutine != null)
+        {
+            StopCoroutine(_typingRoutine);
+            _typingRoutine = null;
+        }
+
         SetNextIndicator(false);
 
-        var line = _queue.Dequeue();
         nameText.text = line.speakerName;
         _typingRoutine = StartCoroutine(TypeLine(line.text));
     }
@@ -171,7 +217,13 @@ public class DialogueController : MonoBehaviour
         }
 
         _isTyping = false;
+        _typingRoutine = null;
         SetNextIndicator(true);
+    }
+
+    public void SetNextHintVisible(bool visible)
+    {
+        SetNextIndicator(visible);
     }
 
     private void SetNextIndicator(bool on)
@@ -192,6 +244,7 @@ public class DialogueController : MonoBehaviour
 
     private IEnumerator BlinkIndicator()
     {
+        nextIndicator.enabled = true;
         while (true)
         {
             nextIndicator.enabled = !nextIndicator.enabled;
