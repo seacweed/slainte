@@ -1,24 +1,26 @@
 using UnityEngine;
 
-public class FrontCameraRig : MonoBehaviour
+public class FrontCameraRig : MonoBehaviour, ICameraInputHandler
 {
     [Header("Move this (FrontWorld RectTransform)")]
     [SerializeField] RectTransform frontWorld;
 
     [Header("How much to shift to reveal")]
     [SerializeField] float drawerShiftY = 800f;
-    [SerializeField] float shelfShiftX = 2560f;
+    [SerializeField] float shelfShiftX  = 2560f;
 
     [Header("Motion")]
     [SerializeField] float moveTime = 0.35f;
     [SerializeField] AnimationCurve ease = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
-    bool drawerOpen = false;
-    bool shelfOpen = false;
+    public bool IsAnimating => _animating;
 
-    Vector2 fromPos, toPos;
-    float t;
-    bool animating;
+    bool _drawerOpen = false;
+    bool _shelfOpen  = false;
+
+    Vector2 _fromPos, _toPos;
+    float   _t;
+    bool    _animating;
 
     void Awake()
     {
@@ -28,42 +30,55 @@ public class FrontCameraRig : MonoBehaviour
 
     void Update()
     {
-        if (!animating)
-        {
-            if (Input.GetKeyDown(KeyCode.S) && !drawerOpen && !shelfOpen) SetDrawer(true);
-            if (Input.GetKeyDown(KeyCode.W) && drawerOpen) SetDrawer(false);
-            if (Input.GetKeyDown(KeyCode.D) && !shelfOpen && !drawerOpen) SetShelf(true);
-            if (Input.GetKeyDown(KeyCode.A) && shelfOpen) SetShelf(false);
-        }
+        if (!_animating) return;
 
-        if (animating)
+        _t += Time.unscaledDeltaTime / Mathf.Max(0.0001f, moveTime);
+        float k = ease.Evaluate(Mathf.Clamp01(_t));
+        frontWorld.anchoredPosition = Vector2.LerpUnclamped(_fromPos, _toPos, k);
+
+        if (_t >= 1f)
         {
-            t += Time.unscaledDeltaTime / Mathf.Max(0.0001f, moveTime);
-            float k = ease.Evaluate(Mathf.Clamp01(t));
-            frontWorld.anchoredPosition = Vector2.LerpUnclamped(fromPos, toPos, k);
-            if (t >= 1f)
-            {
-                frontWorld.anchoredPosition = toPos;
-                animating = false;
-            }
+            frontWorld.anchoredPosition = _toPos;
+            _animating = false;
+        }
+    }
+
+    public void OnCameraInput(CameraDirection direction)
+    {
+        switch (direction)
+        {
+            case CameraDirection.DrawerOpen:
+                if (!_drawerOpen && !_shelfOpen) SetDrawer(true);
+                break;
+            case CameraDirection.DrawerClose:
+                if (_drawerOpen) SetDrawer(false);
+                break;
+            case CameraDirection.ShelfOpen:
+                if (!_shelfOpen && !_drawerOpen) SetShelf(true);
+                break;
+            case CameraDirection.ShelfClose:
+                if (_shelfOpen) SetShelf(false);
+                break;
         }
     }
 
     public void SetDrawer(bool open)
     {
-        drawerOpen = open;
-        fromPos = frontWorld.anchoredPosition;
-        toPos = open ? new Vector2(0, drawerShiftY) : Vector2.zero;
-        t = 0f;
-        animating = true;
+        _drawerOpen = open;
+        BeginMove(open ? new Vector2(0f, drawerShiftY) : Vector2.zero);
     }
 
     public void SetShelf(bool open)
     {
-        shelfOpen = open;
-        fromPos = frontWorld.anchoredPosition;
-        toPos = open ? new Vector2(-shelfShiftX, 0) : Vector2.zero;
-        t = 0f;
-        animating = true;
+        _shelfOpen = open;
+        BeginMove(open ? new Vector2(-shelfShiftX, 0f) : Vector2.zero);
+    }
+
+    private void BeginMove(Vector2 target)
+    {
+        _fromPos   = frontWorld.anchoredPosition;
+        _toPos     = target;
+        _t         = 0f;
+        _animating = true;
     }
 }

@@ -10,10 +10,10 @@ public class UIDropSlot : MonoBehaviour, IDropHandler
 
     public void OnDrop(PointerEventData eventData)
     {
-        if (!DragManager.I.IsHolding) return;
+        if (!DragManager.Instance.IsHolding) return;
         if (PlacedUI != null) return;
 
-        var heldUI = DragManager.I.EndDragTakeUI();
+        var heldUI = DragManager.Instance.EndDragTakeUI();
         var def = heldUI.Def;
         if (def == null) { heldUI.RestoreToOriginalParent(); return; }
 

@@ -22,4 +22,8 @@ public class EpisodeNode
 
     [Header("Presentation (optional)")]
     public List<string> visibleCharacterKeys = new();
+
+    [Header("Crafting (optional)")]
+    public bool   requiresCrafting   = false;
+    public string craftingTicketKey;
 }

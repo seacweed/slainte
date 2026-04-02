@@ -21,54 +21,130 @@
 - 렌더 파이프라인: **Universal Render Pipeline (URP)**
 - 목표 해상도: **2560×1440**
 
+## 씬 구조
+
+씬은 `BusinessScene` 하나로 통합되어 있습니다. (`EpisodeScene`은 제거됨)
+
+```
+[Scene: BusinessScene]
+├── GameSystems
+│   ├── GameProgress          (DontDestroyOnLoad 싱글톤)
+│   ├── DragManager           (싱글톤)
+│   ├── GameModeManager       (패널 show/hide 오케스트레이터)
+│   ├── InputRouter           (단일 입력 처리)
+│   └── EpisodeTriggerManager
+│
+└── Canvas [ScreenSpace-Overlay]
+    ├── FrontWorldPanel        (BusinessMode / OrderMode / CraftingMode에서 표시)
+    │   └── FrontCameraRig     (이 RectTransform 전체가 이동하는 단위)
+    │       ├── BarCounter     (UIDropSlot들, 기본 뷰)
+    │       ├── CustomerStage  (CharacterStage, 기본 뷰)
+    │       ├── ShelfArea      (ShelfUI, 오른쪽 오프스크린 — D키로 이동해서 노출)
+    │       └── DrawerArea     (DrawerUI, 아래쪽 오프스크린 — S키로 이동해서 노출)
+    ├── EncounterPanel         (EncounterMode / CraftingMode에서 표시)
+    │   ├── EpisodeCharacterStage  (CharacterStage)
+    │   ├── EpisodeDialogueRunner
+    │   └── EncounterRunner
+    ├── DialoguePanel          (OrderMode / EncounterMode / CraftingMode에서 표시)
+    │   ├── DialogueController (공용 대화 렌더러)
+    │   └── ChoiceContainer    (선택지 버튼 동적 생성)
+    ├── OrderTicketPanel       (OrderTicketUI, OrderMode에서만 표시)
+    └── HUD
+        └── DragGhostImage
+```
+
 ## 아키텍처 개요
-
-게임은 2개의 씬과 4개의 상호 연결된 시스템으로 구성됩니다.
-
-### 씬 구조
-
-| 씬 | 역할 |
-|---|---|
-| `SellScene.unity` | 바텐딩 메인 플레이 (드래그-드롭, 손님 주문 대응) |
-| `EpisodeScene.unity` | 분기 선택지가 있는 스토리 대화 진행 |
 
 ### 핵심 시스템
 
-**1. 게임 진행 관리 (`Assets/Scripts/GameProgress.cs`)**
-`DontDestroyOnLoad`로 씬 전환 시에도 유지되는 중앙 싱글톤. 다음을 추적합니다:
-- 스토리 플래그 (`HasFlag` / `SetFlag` / `ClearFlag`) — 내러티브 분기에 사용
-- 에피소드 완료 여부 (`IsEpisodeCompleted` / `MarkEpisodeCompleted`) — 재실행 방지
-- 현재 게임 내 일/시간 진행
+**1. 게임 모드 관리 (`Assets/Scripts/Core/`)**
 
-**2. 에피소드 / 대화 시스템 (`Assets/Scripts/Conversation/`)**
-- `EpisodeData` (ScriptableObject): 에피소드 구조를 노드 그래프로 정의. 각 `EpisodeNode`는 화자, 대사, 선택지, 표시 캐릭터, 설정/해제할 플래그를 가짐
-- `EpisodeTriggerManager`: `EpisodeTriggerCondition`(minDay, requiredFlags, blockedFlags, prerequisiteEpisodes)을 확인해 에피소드 실행 여부를 결정
-- 에피소드가 트리거되면 `EpisodeRuntimeContext`를 통해 에피소드 데이터가 전달되고, `EpisodeScene`이 로드되며, `EpisodeDialogueRunner`가 노드 그래프를 순회
-- `CharacterPresenter`: `CharacterDatabase`를 사용해 5개 슬롯(Center, Left, Right, Left2, Right2)에 캐릭터 스프라이트를 배치
-- `DialogueController`: TMPro로 타이핑 효과 텍스트를 렌더링. 대사 시퀀스가 끝나면 `DialogueClosed` 이벤트를 발생시킴
-- `DialogueSkip`: 전역 입력 핸들러(스페이스/클릭)로, 활성 대화 시스템으로 입력을 라우팅
+`GameMode` 열거형으로 씬 상태를 구분합니다:
 
-**3. 드래그-드롭 바텐딩 (`Assets/Scripts/DragandDrop/`)**
-- `ItemDef` (ScriptableObject): `ItemType`(Bottle, Glass, Tool)과 `dragMovesObject` 플래그로 아이템을 정의
-- `DragManager` 싱글톤: 현재 드래그 상태와 고스트 이미지를 관리
-- `UIItemDraggable`: 두 가지 드래그 모드 구현 — **Move**(술병 — 원본이 이동), **Copy**(잔/도구 — 원본은 유지, 복사본이 테이블에 배치)
-- `UIDropSlot`: 유효한 드롭 대상. 아이템 타입 규칙을 적용
-- `ShelfUI`(술병, Move 모드)와 `DrawerUI`(잔/도구, Copy 모드): `ItemDef` 배열로 아이템을 배치
-- `StateManager`: 전면/선반 뷰 전환(A/D 키). `FrontCameraRig`이 카메라 이동을 애니메이션 처리
+| 모드 | 설명 | 활성 패널 |
+|---|---|---|
+| `BusinessMode` | 기본 영업 상태 | FrontWorldPanel |
+| `OrderMode` | 손님 대화 중 | FrontWorldPanel + DialoguePanel + OrderTicketPanel |
+| `EncounterMode` | 인카운터 에피소드 실행 중 | EncounterPanel + DialoguePanel |
+| `CraftingMode` | 에피소드 중 칵테일 제조 | FrontWorldPanel + EncounterPanel + DialoguePanel |
 
-**4. 손님 주문 & 티켓 시스템 (`Assets/Scripts/Conversation/Sell/`, `Assets/Scripts/OrderTicket/`)**
-- `CustomerOrderData` (ScriptableObject): 손님 정의 — 스프라이트, 고유 키, 주문 대사 리스트
-- `CustomerSpawner`: 손님 스프라이트를 등장 애니메이션과 함께 표시한 후 대화를 시작
-- `DialogueController.DialogueClosed` 이벤트가 발생하면 `OrderTicketManager`가 `OrderTicketUI`를 표시 (하단에서 슬라이드 업. E 키로 토글)
-- `OrderTicketData` (ScriptableObject): 손님 이름, 메모, 수량/가격이 포함된 주문 아이템 목록
+`GameModeManager`가 `RequestModeChange(GameMode)`를 통해 패널 show/hide를 처리하고 `OnModeChanged` 이벤트를 발행합니다. **씬 전환은 없습니다.**
+
+**2. 입력 처리 (`Assets/Scripts/Input/`)**
+
+`InputRouter` 단 하나가 모든 `Update()` 입력을 수신해 현재 `GameMode`에 따라 라우팅합니다:
+
+| 키 | BusinessMode | OrderMode | EncounterMode | CraftingMode |
+|---|---|---|---|---|
+| Space / LMB | — | `DialogueController.Advance()` | `EncounterRunner.OnAdvanceInput()` | `EncounterRunner.OnAdvanceInput()` |
+| S / W / D / A | `FrontCameraRig` 이동 | — | — | `FrontCameraRig` 이동 |
+| E | `OrderTicketUI.Toggle()` | `OrderTicketUI.Toggle()` | — | — |
+
+수신자 인터페이스:
+- `IDialogueAdvanceHandler` — `CanReceiveAdvanceInput`, `OnAdvanceInput()`
+- `ICameraInputHandler` — `IsAnimating`, `OnCameraInput(CameraDirection)`
+
+**3. 캐릭터 표시 (`Assets/Scripts/Presentation/`)**
+
+- `CharacterView` — 프리팹 루트에 부착. `Setup(Sprite)` + `PlayAppearAnimation()` / `PlayDisappearAnimation()` 제공. fade+rise+pop 애니메이션 처리.
+- `CharacterStage` — 슬롯 배열을 관리하고 `CharacterView`를 생성. `ShowCharacters(keys, onAllShown)` / `Clear()`.
+  - `CustomerSpawner`(영업 씬 손님)와 `EncounterRunner`(인카운터 에피소드) 모두 `CharacterStage`를 사용합니다.
+
+**4. 인카운터 에피소드 (`Assets/Scripts/Encounter/`)**
+
+`EncounterRunner`가 `EpisodeData` 기반 인카운터를 오케스트레이션합니다:
+1. `EpisodeTriggerManager.CheckAndLaunchEpisode()` → 조건 검사 후 `GameModeManager.RequestModeChange(EncounterMode)` + `EncounterRunner.Begin(episode)` 호출
+2. `EncounterRunner`가 `CharacterStage`, `DialogueController`, 선택지 UI를 구동
+3. 에피소드 종료 시 `GameModeManager.RequestModeChange(BusinessMode)` 자동 복귀
+
+`EpisodeNode`에 `requiresCrafting: bool` + `craftingTicketKey: string` 필드가 있어 노드 진입 시 `CraftingMode`로 전환하고 `EncounterRunner.NotifyCraftingCompleted()` 호출 시 복귀합니다.
+
+**5. 영업 씬 손님 & 주문 (`Assets/Scripts/Conversation/Sell/`, `Assets/Scripts/OrderTicket/`)**
+
+- `CustomerSpawner` — `CharacterStage`에 캐릭터 표시를 위임하고, 등장 완료 후 `DialogueController.StartDialogue()` 호출
+- `OrderTicketManager` — `DialogueClosed` 이벤트 수신. 단, `GameMode.OrderMode`일 때만 티켓을 표시 (EncounterMode에서는 미표시). `BusinessMode` 전환 시 티켓 초기화.
+- `OrderTicketUI` — `Show(data)` / `HideImmediate()` / `Toggle()`. E키 처리는 `InputRouter`가 담당.
+
+**6. 게임 진행 관리 (`Assets/Scripts/GameProgress.cs`)**
+
+`DontDestroyOnLoad` 싱글톤. 씬 전환과 무관하게 유지됩니다:
+- 스토리 플래그: `SetFlag` / `HasFlag` / `ClearFlag`
+- 에피소드 완료 기록: `MarkEpisodeCompleted` / `IsEpisodeCompleted`
+- 현재 게임 내 일 진행: `SetCurrentDay` / `CurrentDay`
+
+**7. 드래그-드롭 바텐딩 (`Assets/Scripts/DragandDrop/`)**
+
+- `ItemDef` (ScriptableObject): `ItemType`(Bottle, Glass, Tool), `dragMovesObject` 플래그
+- `DragManager.Instance` 싱글톤: 드래그 상태와 고스트 이미지 관리
+- `UIItemDraggable`: **Move** 모드(술병 — 원본 이동) / **Copy** 모드(잔/도구 — 원본 유지, 복사본 배치)
+- `UIDropSlot`: 유효 드롭 타겟. Tool은 `toolPlaceableOnTable=true`인 경우만 허용
+- `ShelfUI` / `DrawerUI`: `ItemDef` 배열에서 아이템 UI 생성
+- `FrontCameraRig`: `ICameraInputHandler` 구현. `InputRouter`로부터 `CameraDirection` 명령 수신
+
+**8. 대화 렌더링 (`Assets/Scripts/Conversation/DialogueController.cs`)**
+
+TMPro 타이핑 애니메이션. 모든 모드에서 공유하는 단일 컴포넌트입니다:
+- `StartDialogue(List<DialogueLine>)` — 손님 대화용 배치 큐 방식
+- `ShowSingleLine(speakerName, text)` — 에피소드 노드별 단일 출력
+- `SkipTypingIfNeeded()` — 타이핑 스킵 (InputRouter → EncounterRunner → DialogueController 경로)
+- `DialogueClosed` 이벤트 — 대화 종료 시 발행
 
 ### 데이터 패턴
 
-모든 컨텐츠는 `Assets/Data/`에 ScriptableObject 데이터베이스로 저장됩니다. 각 데이터베이스는 리스트를 가지며, 런타임에 문자열 키로 항목을 검색합니다. 새 컨텐츠(손님, 에피소드, 캐릭터)를 추가하려면 새 ScriptableObject 에셋을 만들고 해당 데이터베이스 에셋에 등록하세요.
+모든 컨텐츠는 `Assets/Data/`에 ScriptableObject 데이터베이스로 저장됩니다. 런타임에 string key로 조회합니다. 새 컨텐츠를 추가하려면 ScriptableObject 에셋을 만들고 해당 Database 에셋의 리스트에 등록하세요.
+
+| 데이터 | 파일 | Database |
+|---|---|---|
+| 캐릭터 | `CharacterData` | `CharacterDatabase` |
+| 에피소드 | `EpisodeData` | `EpisodeTriggerManager.episodes` 리스트 |
+| 손님 주문 | `CustomerOrderData` | `CustomerOrderDatabase` |
+| 주문표 | `OrderTicketData` | `OrderTicketDatabase` |
+| 아이템 | `ItemDef` | `ShelfUI.items` / `DrawerUI.items` 배열 |
 
 ### 주요 설계 패턴
 
-- **DontDestroyOnLoad 싱글톤:** `GameProgress`, `StateManager`, `DragManager`
-- **이벤트 기반 대화 흐름:** `DialogueController.DialogueClosed`를 통해 시스템이 연쇄적으로 동작
-- **ScriptableObject 데이터베이스:** 모든 게임 컨텐츠를 에디터에서 구성, 하드코딩 없음
-- **노드 그래프 에피소드:** `EpisodeData`가 ID로 노드를 저장. `EpisodeChoice.nextNodeId`로 분기 처리
+- **단일 씬 + GameMode 상태머신**: 씬 전환 없이 `GameModeManager`가 패널 활성/비활성으로 상태 전환
+- **DontDestroyOnLoad 싱글톤**: `GameProgress`, `DragManager`
+- **이벤트 기반 연결**: `DialogueController.DialogueClosed`, `EncounterRunner.OnEncounterCompleted`, `EpisodeDialogueRunner.OnEpisodeCompleted`, `GameModeManager.OnModeChanged`
+- **ScriptableObject 데이터베이스**: 모든 게임 컨텐츠를 에디터에서 구성, 하드코딩 없음
+- **인터페이스 기반 입력**: `IDialogueAdvanceHandler`, `ICameraInputHandler` — 수신자가 InputRouter에 의존하지 않음

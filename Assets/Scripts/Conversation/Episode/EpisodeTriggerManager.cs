@@ -1,20 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class EpisodeTriggerManager : MonoBehaviour
 {
-    [SerializeField] private GameProgress progress;
+    [SerializeField] private GameProgress    progress;
+    [SerializeField] private GameModeManager modeManager;
+    [SerializeField] private EncounterRunner encounterRunner;
     [SerializeField] private List<EpisodeData> episodes = new();
-    [SerializeField] private string episodeSceneName = "EpisodeScene";
 
     public void CheckAndLaunchEpisode()
     {
-        var episode = FindFirstAvailableEpisode();
+        EpisodeData episode = FindFirstAvailableEpisode();
         if (episode == null) return;
 
-        EpisodeRuntimeContext.PendingEpisode = episode;
-        SceneManager.LoadScene(episodeSceneName);
+        modeManager?.RequestModeChange(GameMode.EncounterMode);
+        encounterRunner?.Begin(episode);
     }
 
     public EpisodeData FindFirstAvailableEpisode()
@@ -24,13 +24,13 @@ public class EpisodeTriggerManager : MonoBehaviour
 
         if (progress == null)
         {
-            Debug.LogWarning("GameProgress is missing.");
+            Debug.LogWarning("[EpisodeTriggerManager] GameProgress is missing.");
             return null;
         }
 
         for (int i = 0; i < episodes.Count; i++)
         {
-            var ep = episodes[i];
+            EpisodeData ep = episodes[i];
             if (ep == null) continue;
             if (progress.IsEpisodeCompleted(ep.episodeId)) continue;
             if (CanStart(ep, progress)) return ep;
@@ -43,29 +43,20 @@ public class EpisodeTriggerManager : MonoBehaviour
     {
         if (episode == null || gp == null) return false;
 
-        var cond = episode.triggerCondition;
+        EpisodeTriggerCondition cond = episode.triggerCondition;
         if (cond == null) return true;
 
         if (gp.CurrentDay < cond.minDay)
             return false;
 
         for (int i = 0; i < cond.requiredFlags.Count; i++)
-        {
-            if (!gp.HasFlag(cond.requiredFlags[i]))
-                return false;
-        }
+            if (!gp.HasFlag(cond.requiredFlags[i])) return false;
 
         for (int i = 0; i < cond.blockedFlags.Count; i++)
-        {
-            if (gp.HasFlag(cond.blockedFlags[i]))
-                return false;
-        }
+            if (gp.HasFlag(cond.blockedFlags[i])) return false;
 
         for (int i = 0; i < cond.prerequisiteEpisodeIds.Count; i++)
-        {
-            if (!gp.IsEpisodeCompleted(cond.prerequisiteEpisodeIds[i]))
-                return false;
-        }
+            if (!gp.IsEpisodeCompleted(cond.prerequisiteEpisodeIds[i])) return false;
 
         return true;
     }

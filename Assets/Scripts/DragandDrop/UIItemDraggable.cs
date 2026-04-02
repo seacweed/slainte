@@ -51,7 +51,7 @@ public class UIItemDraggable : MonoBehaviour,
             hiddenWhileDragging = true;
         }
 
-        DragManager.I.BeginDrag(this, fallbackSprite, startPos: eventData.position);
+        DragManager.Instance.BeginDrag(this, fallbackSprite, startPos: eventData.position);
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -64,9 +64,9 @@ public class UIItemDraggable : MonoBehaviour,
         // 드롭 성공/실패 여부는 드롭 타겟이 처리
         // 여기서는 '아무데도 안 놓였으면' 취소 처리만 해주면 됨
         // (드롭 타겟이 EndDragTake()하면 이미 손에서 빠짐)
-        if (DragManager.I.IsHolding)
+        if (DragManager.Instance.IsHolding)
         {
-            DragManager.I.CancelDrag();
+            DragManager.Instance.CancelDrag();
         }
     }
 

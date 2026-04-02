@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &884424960899700165
+--- !u!1 &901958417571853933
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,24 +8,25 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3731026770667518546}
-  - component: {fileID: 4411321166372149029}
-  - component: {fileID: 1053856797280856064}
-  - component: {fileID: 1334170508103237448}
+  - component: {fileID: 3602880143234750232}
+  - component: {fileID: 7982680998087247352}
+  - component: {fileID: 7850175911073554423}
+  - component: {fileID: 308808976856446676}
+  - component: {fileID: 4577674760359357264}
   m_Layer: 5
-  m_Name: ShelfItem
+  m_Name: ItemDraggable
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &3731026770667518546
+--- !u!224 &3602880143234750232
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 884424960899700165}
+  m_GameObject: {fileID: 901958417571853933}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -35,24 +36,24 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 150, y: 250}
+  m_AnchoredPosition: {x: -152.96997, y: -33.720154}
+  m_SizeDelta: {x: 120, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &4411321166372149029
+--- !u!222 &7982680998087247352
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 884424960899700165}
+  m_GameObject: {fileID: 901958417571853933}
   m_CullTransparentMesh: 1
---- !u!114 &1053856797280856064
+--- !u!114 &7850175911073554423
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 884424960899700165}
+  m_GameObject: {fileID: 901958417571853933}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
@@ -76,17 +77,31 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &1334170508103237448
+--- !u!114 &308808976856446676
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 884424960899700165}
+  m_GameObject: {fileID: 901958417571853933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1e79e6e01b691f4ebd8cae0236ca037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ItemInstance
+  def: {fileID: 0}
+--- !u!114 &4577674760359357264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 901958417571853933}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 96ba161abdec7264dab153fe3db76ef0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIItemDraggable
-  iconImage: {fileID: 1053856797280856064}
+  iconImage: {fileID: 7850175911073554423}
   fallbackSprite: {fileID: 0}
+  spawnMode: 1

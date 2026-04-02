@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class DragManager : MonoBehaviour
 {
-    public static DragManager I { get; private set; }
+    public static DragManager Instance { get; private set; }
 
     [SerializeField] Image ghostImage;
 
@@ -12,7 +12,7 @@ public class DragManager : MonoBehaviour
 
     void Awake()
     {
-        I = this;
+        Instance = this;
         Clear();
     }
 

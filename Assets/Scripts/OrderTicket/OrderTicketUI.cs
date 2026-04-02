@@ -41,15 +41,6 @@ public class OrderTicketUI : MonoBehaviour
         HideImmediate();
     }
 
-    void Update()
-    {
-        // ✅ E키로 토글
-        if (gameObject.activeInHierarchy && Input.GetKeyDown(KeyCode.E))
-        {
-            Toggle();
-        }
-    }
-
     public void Show(OrderTicketData data)
     {
         // 텍스트 세팅

@@ -3,11 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EpisodeDialogueRunner : MonoBehaviour, IDialogueAdvanceHandler
+public class EncounterRunner : MonoBehaviour, IDialogueAdvanceHandler
 {
     [Header("References")]
+    [SerializeField] private GameModeManager   modeManager;
+    [SerializeField] private CharacterStage    characterStage;
     [SerializeField] private DialogueController dialogue;
-    [SerializeField] private CharacterStage     stage;
     [SerializeField] private CharacterDatabase  characterDB;
     [SerializeField] private GameProgress       progress;
 
@@ -15,8 +16,8 @@ public class EpisodeDialogueRunner : MonoBehaviour, IDialogueAdvanceHandler
     [SerializeField] private Transform            choiceRoot;
     [SerializeField] private EpisodeChoiceButtonUI choiceButtonPrefab;
 
-    [Header("Debug")]
-    [SerializeField] private EpisodeData debugEpisode;
+    [Header("Order Ticket")]
+    [SerializeField] private OrderTicketManager ticketManager;
 
     [Header("Timing")]
     [SerializeField] private float startDelay = 0.15f;
@@ -24,42 +25,43 @@ public class EpisodeDialogueRunner : MonoBehaviour, IDialogueAdvanceHandler
     private EpisodeData _episode;
     private EpisodeNode _currentNode;
     private Coroutine   _runRoutine;
-    private bool _waitingForChoice;
+
     private bool _isRunning;
+    private bool _waitingForChoice;
+    private bool _waitingForCrafting;
 
     public bool IsRunning => _isRunning;
 
-    public bool CanReceiveAdvanceInput => _isRunning && !_waitingForChoice;
+    public bool CanReceiveAdvanceInput =>
+        _isRunning && !_waitingForChoice && !_waitingForCrafting;
 
-    public event Action OnEpisodeCompleted;
+    public event Action OnEncounterCompleted;
 
-    void Start()
+    void Awake()
     {
         if (progress == null)
             progress = GameProgress.Instance;
-
-        if (debugEpisode != null)
-            Begin(debugEpisode);
     }
 
     public void Begin(EpisodeData episode)
     {
         if (episode == null)
         {
-            Debug.LogWarning("[EpisodeDialogueRunner] Begin called with null episode.");
+            Debug.LogWarning("[EncounterRunner] Begin called with null episode.");
             return;
         }
 
         _episode = episode;
         _isRunning        = false;
         _waitingForChoice = false;
+        _waitingForCrafting = false;
 
         ClearChoices();
         dialogue?.HideImmediate();
-        StartCoroutine(BeginEpisode());
+        StartCoroutine(BeginRoutine());
     }
 
-    private IEnumerator BeginEpisode()
+    private IEnumerator BeginRoutine()
     {
         _isRunning = true;
 
@@ -67,8 +69,8 @@ public class EpisodeDialogueRunner : MonoBehaviour, IDialogueAdvanceHandler
             yield return new WaitForSeconds(startDelay);
 
         bool done = false;
-        stage?.ShowCharacters(_episode.openingCharacterKeys, () => done = true);
-        if (stage == null) done = true;
+        characterStage?.ShowCharacters(_episode.openingCharacterKeys, () => done = true);
+        if (characterStage == null) done = true;
 
         while (!done)
             yield return null;
@@ -86,7 +88,7 @@ public class EpisodeDialogueRunner : MonoBehaviour, IDialogueAdvanceHandler
             return;
         }
 
-        GoToNextFromCurrentNode();
+        GoToNext();
     }
 
     private void EnterNode(string nodeId)
@@ -100,24 +102,31 @@ public class EpisodeDialogueRunner : MonoBehaviour, IDialogueAdvanceHandler
     private IEnumerator RunNode(string nodeId)
     {
         ClearChoices();
-        _waitingForChoice = false;
+        _waitingForChoice   = false;
+        _waitingForCrafting = false;
 
         _currentNode = _episode.FindNode(nodeId);
         if (_currentNode == null)
         {
-            Debug.LogWarning($"[EpisodeDialogueRunner] Node not found: {nodeId}");
-            EndEpisode();
+            Debug.LogWarning($"[EncounterRunner] Node not found: {nodeId}");
+            EndEncounter();
             yield break;
         }
 
         if (_currentNode.visibleCharacterKeys != null && _currentNode.visibleCharacterKeys.Count > 0)
         {
             bool shown = false;
-            stage?.ShowCharacters(_currentNode.visibleCharacterKeys, () => shown = true);
-            if (stage == null) shown = true;
+            characterStage?.ShowCharacters(_currentNode.visibleCharacterKeys, () => shown = true);
+            if (characterStage == null) shown = true;
 
             while (!shown)
                 yield return null;
+        }
+
+        if (_currentNode.requiresCrafting)
+        {
+            yield return StartCoroutine(HandleCraftingNode(_currentNode));
+            yield break;
         }
 
         string speakerName = ResolveSpeakerName(_currentNode);
@@ -134,16 +143,35 @@ public class EpisodeDialogueRunner : MonoBehaviour, IDialogueAdvanceHandler
         }
         else
         {
-            _waitingForChoice = false;
             dialogue?.SetNextHintVisible(true);
         }
     }
 
-    private void GoToNextFromCurrentNode()
+    private IEnumerator HandleCraftingNode(EpisodeNode node)
+    {
+        _waitingForCrafting = true;
+
+        if (!string.IsNullOrWhiteSpace(node.craftingTicketKey))
+            ticketManager?.Prepare(node.craftingTicketKey);
+
+        modeManager?.RequestModeChange(GameMode.CraftingMode);
+
+        while (_waitingForCrafting)
+            yield return null;
+    }
+
+    public void NotifyCraftingCompleted()
+    {
+        _waitingForCrafting = false;
+        modeManager?.RequestModeChange(GameMode.EncounterMode);
+        GoToNext();
+    }
+
+    private void GoToNext()
     {
         if (_currentNode == null || string.IsNullOrWhiteSpace(_currentNode.nextNodeId))
         {
-            EndEpisode();
+            EndEncounter();
             return;
         }
 
@@ -174,7 +202,7 @@ public class EpisodeDialogueRunner : MonoBehaviour, IDialogueAdvanceHandler
 
         if (string.IsNullOrWhiteSpace(choice.nextNodeId))
         {
-            EndEpisode();
+            EndEncounter();
             return;
         }
 
@@ -215,15 +243,17 @@ public class EpisodeDialogueRunner : MonoBehaviour, IDialogueAdvanceHandler
             Destroy(choiceRoot.GetChild(i).gameObject);
     }
 
-    private void EndEpisode()
+    private void EndEncounter()
     {
         _isRunning = false;
         ClearChoices();
         dialogue?.HideImmediate();
+        characterStage?.Clear();
 
         if (progress != null && _episode != null)
             progress.MarkEpisodeCompleted(_episode.episodeId);
 
-        OnEpisodeCompleted?.Invoke();
+        modeManager?.RequestModeChange(GameMode.BusinessMode);
+        OnEncounterCompleted?.Invoke();
     }
 }
