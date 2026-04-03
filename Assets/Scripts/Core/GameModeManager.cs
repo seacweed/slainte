@@ -14,7 +14,7 @@ public class GameModeManager : MonoBehaviour
     [SerializeField] private CanvasGroup choiceContainer;
 
     [Header("Initial Mode")]
-    [SerializeField] private GameMode initialMode = GameMode.BusinessMode;
+    [SerializeField] private GameMode initialMode = GameMode.OrderMode;
 
     public GameMode CurrentMode { get; private set; }
 
@@ -54,8 +54,8 @@ public class GameModeManager : MonoBehaviour
 
     private void RefreshPanels(GameMode mode)
     {
-        bool showFrontWorld   = mode == GameMode.BusinessMode
-                             || mode == GameMode.OrderMode
+        bool showFrontWorld   = mode == GameMode.OrderMode
+                             || mode == GameMode.EncounterMode
                              || mode == GameMode.CraftingMode;
         bool showEncounter    = mode == GameMode.EncounterMode
                              || mode == GameMode.CraftingMode;

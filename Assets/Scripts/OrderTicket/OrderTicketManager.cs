@@ -40,7 +40,7 @@ public class OrderTicketManager : MonoBehaviour
 
     private void HandleModeChanged(GameMode oldMode, GameMode newMode)
     {
-        if (newMode == GameMode.BusinessMode)
+        if (newMode == GameMode.EncounterMode)
         {
             _pendingTicketKey = null;
             ticketUI?.HideImmediate();

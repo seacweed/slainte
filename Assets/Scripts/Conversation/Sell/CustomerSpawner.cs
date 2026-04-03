@@ -8,11 +8,21 @@ public class CustomerSpawner : MonoBehaviour
     [SerializeField] private DialogueController    dialogue;
     [SerializeField] private OrderTicketManager    ticketManager;
 
-    public void ShowCustomers(IReadOnlyList<string> keys)
+    public void ShowCustomers(IReadOnlyList<string> orderKeys)
     {
-        if (keys == null || keys.Count == 0) return;
+        if (orderKeys == null || orderKeys.Count == 0) return;
 
-        characterStage?.ShowCharacters(keys, () => OnCharactersShown(keys));
+        CustomerOrderData data = customerDB != null ? customerDB.FindByKey(orderKeys[0]) : null;
+        if (data == null) return;
+
+        string characterKey = string.IsNullOrWhiteSpace(data.characterKeyMid)
+            ? null
+            : data.characterKeyMid;
+
+        if (characterKey != null)
+            characterStage?.ShowCharacters(new[] { characterKey }, () => OnCharactersShown(orderKeys));
+        else
+            OnCharactersShown(orderKeys);
     }
 
     public void Clear()
@@ -36,5 +46,11 @@ public class CustomerSpawner : MonoBehaviour
         {
             dialogue?.HideImmediate();
         }
+    }
+
+    private void ShowCharacterByKey(string characterKey)
+    {
+        if (string.IsNullOrWhiteSpace(characterKey)) return;
+        characterStage?.ShowCharacters(new[] { characterKey });
     }
 }

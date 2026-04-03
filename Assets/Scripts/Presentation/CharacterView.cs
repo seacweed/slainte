@@ -52,9 +52,9 @@ public class CharacterView : MonoBehaviour
     public void ApplySlotLayout(RectTransform slot)
     {
         var rootRT = GetComponent<RectTransform>();
-        rootRT.anchorMin        = new Vector2(0f, 0.5f);
-        rootRT.anchorMax        = new Vector2(1f, 0.5f);
-        rootRT.pivot            = new Vector2(0.5f, 0.5f);
+        rootRT.anchorMin        = new Vector2(0f, 0f);
+        rootRT.anchorMax        = new Vector2(1f, 0f);
+        rootRT.pivot            = new Vector2(0.5f, 0f);
         rootRT.offsetMin        = new Vector2(0f, rootRT.offsetMin.y);
         rootRT.offsetMax        = new Vector2(0f, rootRT.offsetMax.y);
         rootRT.anchoredPosition = Vector2.zero;

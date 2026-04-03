@@ -253,7 +253,7 @@ public class EncounterRunner : MonoBehaviour, IDialogueAdvanceHandler
         if (progress != null && _episode != null)
             progress.MarkEpisodeCompleted(_episode.episodeId);
 
-        modeManager?.RequestModeChange(GameMode.BusinessMode);
+        modeManager?.RequestModeChange(GameMode.OrderMode);
         OnEncounterCompleted?.Invoke();
     }
 }

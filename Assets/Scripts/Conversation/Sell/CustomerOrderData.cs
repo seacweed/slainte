@@ -5,9 +5,17 @@ using UnityEngine;
 public class CustomerOrderData : ScriptableObject
 {
     [Header("Identity")]
-    public string key;                 // "yukari" 같은 호출 키(고유)
-    public Sprite sprite;              // 손님 스프라이트
+    public string key;
 
-    [Header("Dialogue Script")]
+    [Header("Character")]
+    public string characterKeyMid;
+    public string characterKeyGood;
+    public string characterKeyBad;
+
+    [Header("Order Dialogue")]
     public List<DialogueLine> lines = new();
+
+    [Header("Feedback")]
+    public List<DialogueLine> feedbackLinesGood = new();
+    public List<DialogueLine> feedbackLinesBad  = new();
 }

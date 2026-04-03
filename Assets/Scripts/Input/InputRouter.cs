@@ -11,23 +11,24 @@ public class InputRouter : MonoBehaviour
     [Header("Dialogue Handlers")]
     [SerializeField] private EncounterRunner encounterRunner;
 
+    [Header("Test")]
+    [SerializeField] private CustomerSpawner customerSpawner;
+
     void Update()
     {
         bool advancePressed = Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space);
         bool ticketPressed  = Input.GetKeyDown(KeyCode.E);
 
-        GameMode mode = modeManager != null ? modeManager.CurrentMode : GameMode.BusinessMode;
+        GameMode mode = modeManager != null ? modeManager.CurrentMode : GameMode.OrderMode;
 
         switch (mode)
         {
-            case GameMode.BusinessMode:
-                HandleCameraInput();
-                if (ticketPressed) ticketUI?.Toggle();
-                break;
-
             case GameMode.OrderMode:
+                HandleCameraInput();
                 if (advancePressed) dialogue?.Advance();
                 if (ticketPressed)  ticketUI?.Toggle();
+                if (Input.GetKeyDown(KeyCode.Alpha1))
+                    customerSpawner?.ShowCustomers(new[] { "yukari" });
                 break;
 
             case GameMode.EncounterMode:
