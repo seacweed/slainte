@@ -14,3 +14,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterDatabase
   characters:
   - {fileID: 11400000, guid: 61e298a21eb83834abd42aa2f5d06e3f, type: 2}
+  - {fileID: 11400000, guid: dd34d5fc0d5deac4297d625226b8f028, type: 2}
+  - {fileID: 11400000, guid: bf6a08630a9594e468119ca85e707160, type: 2}
+  - {fileID: 11400000, guid: 6d91ff8f229b84b40bee3a1d8fbaec45, type: 2}
+  - {fileID: 11400000, guid: ac5cb3efb7a3ff247b10b3be7ea32ce3, type: 2}
+  - {fileID: 11400000, guid: c4476488345682049a0c230351259184, type: 2}
+  - {fileID: 11400000, guid: 6293cb5fc68d45246868a998d5a06d45, type: 2}
+  - {fileID: 11400000, guid: 741d24960e2a42e4ea8fda983e3cd40a, type: 2}
+  - {fileID: 11400000, guid: 1db639bb422d4dc468a2fbd362b05065, type: 2}
+  - {fileID: 11400000, guid: c4ef1b930c71a40478f34b4f53848326, type: 2}
+  - {fileID: 11400000, guid: 45314ee1b5149ac41959dcf212e5bad2, type: 2}
+  - {fileID: 11400000, guid: c9d2ff83070bf3a4795754dccccac618, type: 2}
+  - {fileID: 11400000, guid: 71e563ff92009a94c910211552b257f0, type: 2}
+  - {fileID: 11400000, guid: d7036e1a2adac034da050d12279b3e30, type: 2}
+  - {fileID: 11400000, guid: 55939a1ba7daa8a41a366eba6a1b15da, type: 2}
+  - {fileID: 11400000, guid: e5b570ee5d718fa47b025f9dfa2a8465, type: 2}
+  - {fileID: 11400000, guid: 2ef6889c78ad336448eae6909d608b49, type: 2}
+  - {fileID: 11400000, guid: 2aa04891f115c1b4dbb525a280524fc2, type: 2}
+  - {fileID: 11400000, guid: aa359f4022a27c1459068c0a698bca12, type: 2}
+  - {fileID: 11400000, guid: df598f431b468a14fb47662871ca4492, type: 2}
+  - {fileID: 11400000, guid: ec7e32fca7da6ed45b948a4e7b9aac94, type: 2}
+  - {fileID: 11400000, guid: bf8d1c9e77b48f54183d9c1786ccba30, type: 2}

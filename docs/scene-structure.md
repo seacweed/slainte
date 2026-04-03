@@ -12,17 +12,14 @@
 │   └── EpisodeTriggerManager
 │
 └── Canvas [ScreenSpace-Overlay]
-    ├── FrontWorldPanel        (OrderMode / EncounterMode / CraftingMode에서 표시)
-    │   └── FrontCameraRig     (이 RectTransform 전체가 이동하는 단위)
-    │       ├── BarCounter     (UIDropSlot들, 기본 뷰)
-    │       ├── CustomerStage  (CharacterStage, 기본 뷰)
-    │       ├── ShelfArea      (ShelfUI, 오른쪽 오프스크린 — D키로 이동해서 노출)
-    │       └── DrawerArea     (DrawerUI, 아래쪽 오프스크린 — S키로 이동해서 노출)
-    ├── EncounterPanel         (EncounterMode / CraftingMode에서 표시)
-    │   ├── EpisodeCharacterStage  (CharacterStage)
-    │   ├── EpisodeDialogueRunner
-    │   └── EncounterRunner
-    ├── DialoguePanel          (OrderMode / EncounterMode / CraftingMode에서 표시)
+    ├── FrontWorldPanel        (모든 모드에서 표시)
+    │   ├── FrontCameraRig     (이 RectTransform 전체가 이동하는 단위)
+    │   │   ├── BarCounter     (UIDropSlot들, 기본 뷰)
+    │   │   ├── CustomerStage  (CharacterStage — 영업/에피소드 공용)
+    │   │   ├── ShelfArea      (ShelfUI, 오른쪽 오프스크린 — D키로 이동해서 노출)
+    │   │   └── DrawerArea     (DrawerUI, 아래쪽 오프스크린 — S키로 이동해서 노출)
+    │   └── EpisodeRunner      (FrontCameraRig 밖 — 카메라 이동 영향 없음)
+    ├── DialoguePanel          (모든 모드에서 표시)
     │   ├── DialogueController (공용 대화 렌더러)
     │   └── ChoiceContainer    (선택지 버튼 동적 생성)
     ├── OrderTicketPanel       (OrderTicketUI, OrderMode에서만 표시)

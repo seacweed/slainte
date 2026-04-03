@@ -1,6 +1,6 @@
 public enum GameMode
 {
     OrderMode,
-    EncounterMode,
+    EpisodeMode,
     CraftingMode
 }

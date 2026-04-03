@@ -9,8 +9,8 @@
 | 모드 | 설명 | 활성 패널 |
 |---|---|---|
 | `OrderMode` | 기본 영업 상태 (초기 모드) | FrontWorldPanel + DialoguePanel + OrderTicketPanel |
-| `EncounterMode` | 인카운터 에피소드 실행 중 | FrontWorldPanel + EncounterPanel + DialoguePanel |
-| `CraftingMode` | 에피소드 중 칵테일 제조 | FrontWorldPanel + EncounterPanel + DialoguePanel |
+| `EpisodeMode` | 에피소드 실행 중 | FrontWorldPanel + DialoguePanel |
+| `CraftingMode` | 에피소드 중 칵테일 제조 | FrontWorldPanel + DialoguePanel |
 
 `GameModeManager`가 `RequestModeChange(GameMode)`를 통해 패널 show/hide를 처리하고 `OnModeChanged` 이벤트를 발행합니다. **씬 전환은 없습니다.**
 
@@ -18,10 +18,10 @@
 
 `InputRouter` 단 하나가 모든 `Update()` 입력을 수신해 현재 `GameMode`에 따라 라우팅합니다:
 
-| 키 | OrderMode | EncounterMode | CraftingMode |
+| 키 | OrderMode | EpisodeMode | CraftingMode |
 |---|---|---|---|
-| Space / LMB | `DialogueController.Advance()` | `EncounterRunner.OnAdvanceInput()` | `EncounterRunner.OnAdvanceInput()` |
-| S / W / D / A | `FrontCameraRig` 이동 | — | `FrontCameraRig` 이동 |
+| Space / LMB | `DialogueController.Advance()` | `EpisodeRunner.OnAdvanceInput()` | `EpisodeRunner.OnAdvanceInput()` |
+| S / W / D / A | `FrontCameraRig` 이동 (대화 중 불가) | — | `FrontCameraRig` 이동 |
 | E | `OrderTicketUI.Toggle()` | — | — |
 
 수신자 인터페이스:
@@ -32,17 +32,17 @@
 
 - `CharacterView` — 프리팹 루트에 부착. `Setup(Sprite)` + `PlayAppearAnimation()` / `PlayDisappearAnimation()` 제공. fade+rise+pop 애니메이션 처리. 슬롯 하단 기준으로 배치.
 - `CharacterStage` — 슬롯 배열을 관리하고 `CharacterView`를 생성. `ShowCharacters(keys, onAllShown)` / `Clear()`.
-  - `CustomerSpawner`(영업 씬 손님, FrontWorldPanel 내 CustomerStage 사용)와 `EncounterRunner`(인카운터 에피소드, EncounterPanel 내 EpisodeCharacterStage 사용) 모두 `CharacterStage`를 사용합니다.
+  - `CustomerSpawner`(영업 씬 손님)와 `EpisodeRunner`(에피소드) 모두 FrontCameraRig 내 `CustomerStage` 하나를 공유합니다. 슬롯 5개.
 - `CharacterData` — 표정 1개 = 파일 1개. 같은 캐릭터의 여러 표정은 별도 파일로 관리 (key 예: `"yukari_mid"`, `"yukari_good"`). 영업 시스템은 `CustomerOrderData.characterKeyMid/Good/Bad`로 참조. 대화 시스템은 임의 key 사용.
 
-**4. 인카운터 에피소드 (`Assets/Scripts/Encounter/`)**
+**4. 에피소드 (`Assets/Scripts/Conversation/Episode/`)**
 
-`EncounterRunner`가 `EpisodeData` 기반 인카운터를 오케스트레이션합니다:
-1. `EpisodeTriggerManager.CheckAndLaunchEpisode()` → 조건 검사 후 `GameModeManager.RequestModeChange(EncounterMode)` + `EncounterRunner.Begin(episode)` 호출
-2. `EncounterRunner`가 `CharacterStage`, `DialogueController`, 선택지 UI를 구동
+`EpisodeRunner`가 `EpisodeData` 기반 에피소드를 오케스트레이션합니다:
+1. `EpisodeTriggerManager.CheckAndLaunchEpisode()` → 조건 검사 후 `GameModeManager.RequestModeChange(EpisodeMode)` + `EpisodeRunner.Begin(episode)` 호출
+2. `EpisodeRunner`가 `CustomerStage`, `DialogueController`, 선택지 UI를 구동
 3. 에피소드 종료 시 `GameModeManager.RequestModeChange(OrderMode)` 자동 복귀
 
-`EpisodeNode`에 `requiresCrafting: bool` + `craftingTicketKey: string` 필드가 있어 노드 진입 시 `CraftingMode`로 전환하고 `EncounterRunner.NotifyCraftingCompleted()` 호출 시 복귀합니다.
+`EpisodeNode`에 `requiresCrafting: bool` + `craftingTicketKey: string` 필드가 있어 노드 진입 시 `CraftingMode`로 전환하고 `EpisodeRunner.NotifyCraftingCompleted()` 호출 시 복귀합니다.
 
 **5. 영업 씬 손님 & 주문 (`Assets/Scripts/Conversation/Sell/`, `Assets/Scripts/OrderTicket/`)**
 

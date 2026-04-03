@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a71cdafabaa4d9e44a88c2c34f0fa33d, type: 3}
-  m_Name: CharacterData_yukari_mid
+  m_Name: CharacterData_sally_mid
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
-  key: yukari_mid
-  displayName: yukari_mid
-  sprite: {fileID: 5082371335676432960, guid: 2686585a5ab0191499b990cf09f6781c, type: 3}
+  key: sally_mid
+  displayName: sally_mid
+  sprite: {fileID: 0}

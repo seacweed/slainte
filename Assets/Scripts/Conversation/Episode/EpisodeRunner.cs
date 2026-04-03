@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EncounterRunner : MonoBehaviour, IDialogueAdvanceHandler
+public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 {
     [Header("References")]
     [SerializeField] private GameModeManager   modeManager;
@@ -47,7 +47,7 @@ public class EncounterRunner : MonoBehaviour, IDialogueAdvanceHandler
     {
         if (episode == null)
         {
-            Debug.LogWarning("[EncounterRunner] Begin called with null episode.");
+            Debug.LogWarning("[EpisodeRunner] Begin called with null episode.");
             return;
         }
 
@@ -108,7 +108,7 @@ public class EncounterRunner : MonoBehaviour, IDialogueAdvanceHandler
         _currentNode = _episode.FindNode(nodeId);
         if (_currentNode == null)
         {
-            Debug.LogWarning($"[EncounterRunner] Node not found: {nodeId}");
+            Debug.LogWarning($"[EpisodeRunner] Node not found: {nodeId}");
             EndEncounter();
             yield break;
         }
@@ -163,7 +163,7 @@ public class EncounterRunner : MonoBehaviour, IDialogueAdvanceHandler
     public void NotifyCraftingCompleted()
     {
         _waitingForCrafting = false;
-        modeManager?.RequestModeChange(GameMode.EncounterMode);
+        modeManager?.RequestModeChange(GameMode.EpisodeMode);
         GoToNext();
     }
 

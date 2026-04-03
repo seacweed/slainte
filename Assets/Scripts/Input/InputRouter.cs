@@ -9,7 +9,7 @@ public class InputRouter : MonoBehaviour
     [SerializeField] private DialogueController dialogue;
 
     [Header("Dialogue Handlers")]
-    [SerializeField] private EncounterRunner encounterRunner;
+    [SerializeField] private EpisodeRunner episodeRunner;
 
     [Header("Test")]
     [SerializeField] private CustomerSpawner customerSpawner;
@@ -24,14 +24,14 @@ public class InputRouter : MonoBehaviour
         switch (mode)
         {
             case GameMode.OrderMode:
-                HandleCameraInput();
+                if (dialogue == null || !dialogue.IsOpen) HandleCameraInput();
                 if (advancePressed) dialogue?.Advance();
                 if (ticketPressed)  ticketUI?.Toggle();
                 if (Input.GetKeyDown(KeyCode.Alpha1))
                     customerSpawner?.ShowCustomers(new[] { "yukari" });
                 break;
 
-            case GameMode.EncounterMode:
+            case GameMode.EpisodeMode:
                 if (advancePressed) RouteAdvanceToEncounter();
                 break;
 
@@ -54,9 +54,9 @@ public class InputRouter : MonoBehaviour
 
     private void RouteAdvanceToEncounter()
     {
-        if (encounterRunner != null && encounterRunner.CanReceiveAdvanceInput)
+        if (episodeRunner != null && episodeRunner.CanReceiveAdvanceInput)
         {
-            encounterRunner.OnAdvanceInput();
+            episodeRunner.OnAdvanceInput();
             return;
         }
 

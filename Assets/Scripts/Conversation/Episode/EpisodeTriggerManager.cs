@@ -5,7 +5,7 @@ public class EpisodeTriggerManager : MonoBehaviour
 {
     [SerializeField] private GameProgress    progress;
     [SerializeField] private GameModeManager modeManager;
-    [SerializeField] private EncounterRunner encounterRunner;
+    [SerializeField] private EpisodeRunner episodeRunner;
     [SerializeField] private List<EpisodeData> episodes = new();
 
     public void CheckAndLaunchEpisode()
@@ -13,8 +13,8 @@ public class EpisodeTriggerManager : MonoBehaviour
         EpisodeData episode = FindFirstAvailableEpisode();
         if (episode == null) return;
 
-        modeManager?.RequestModeChange(GameMode.EncounterMode);
-        encounterRunner?.Begin(episode);
+        modeManager?.RequestModeChange(GameMode.EpisodeMode);
+        episodeRunner?.Begin(episode);
     }
 
     public EpisodeData FindFirstAvailableEpisode()

@@ -8,7 +8,6 @@ public class GameModeManager : MonoBehaviour
 
     [Header("Panels")]
     [SerializeField] private CanvasGroup frontWorldPanel;
-    [SerializeField] private CanvasGroup encounterPanel;
     [SerializeField] private CanvasGroup dialoguePanel;
     [SerializeField] private CanvasGroup orderTicketPanel;
     [SerializeField] private CanvasGroup choiceContainer;
@@ -55,18 +54,15 @@ public class GameModeManager : MonoBehaviour
     private void RefreshPanels(GameMode mode)
     {
         bool showFrontWorld   = mode == GameMode.OrderMode
-                             || mode == GameMode.EncounterMode
-                             || mode == GameMode.CraftingMode;
-        bool showEncounter    = mode == GameMode.EncounterMode
+                             || mode == GameMode.EpisodeMode
                              || mode == GameMode.CraftingMode;
         bool showDialogue     = mode == GameMode.OrderMode
-                             || mode == GameMode.EncounterMode
+                             || mode == GameMode.EpisodeMode
                              || mode == GameMode.CraftingMode;
         bool showOrderTicket  = mode == GameMode.OrderMode;
-        bool showChoices      = mode == GameMode.EncounterMode;
+        bool showChoices      = mode == GameMode.EpisodeMode;
 
         SetGroup(frontWorldPanel,  showFrontWorld);
-        SetGroup(encounterPanel,   showEncounter);
         SetGroup(dialoguePanel,    showDialogue);
         SetGroup(orderTicketPanel, showOrderTicket);
         SetGroup(choiceContainer,  showChoices);
