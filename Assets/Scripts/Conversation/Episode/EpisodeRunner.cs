@@ -69,7 +69,7 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
             yield return new WaitForSeconds(startDelay);
 
         bool done = false;
-        characterStage?.ShowCharacters(_episode.openingCharacterKeys, () => done = true);
+        characterStage?.ShowCharacters(_episode.openingCharacters, () => done = true);
         if (characterStage == null) done = true;
 
         while (!done)
@@ -113,10 +113,10 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
             yield break;
         }
 
-        if (_currentNode.visibleCharacterKeys != null && _currentNode.visibleCharacterKeys.Count > 0)
+        if (_currentNode.characters != null && _currentNode.characters.Count > 0)
         {
             bool shown = false;
-            characterStage?.ShowCharacters(_currentNode.visibleCharacterKeys, () => shown = true);
+            characterStage?.ShowCharacters(_currentNode.characters, () => shown = true);
             if (characterStage == null) shown = true;
 
             while (!shown)
@@ -160,11 +160,22 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
             yield return null;
     }
 
-    public void NotifyCraftingCompleted()
+    public void NotifyCraftingCompleted(bool isGood)
     {
         _waitingForCrafting = false;
         modeManager?.RequestModeChange(GameMode.EpisodeMode);
-        GoToNext();
+        GoToNextFromCrafting(isGood);
+    }
+
+    private void GoToNextFromCrafting(bool isGood)
+    {
+        if (_currentNode == null) { EndEncounter(); return; }
+
+        string preferred = isGood ? _currentNode.nextNodeIdGood : _currentNode.nextNodeIdBad;
+        string nextId = string.IsNullOrWhiteSpace(preferred) ? _currentNode.nextNodeId : preferred;
+
+        if (string.IsNullOrWhiteSpace(nextId)) { EndEncounter(); return; }
+        EnterNode(nextId);
     }
 
     private void GoToNext()

@@ -21,9 +21,11 @@ public class EpisodeNode
     public List<EpisodeChoice> choices = new();
 
     [Header("Presentation (optional)")]
-    public List<string> visibleCharacterKeys = new();
+    public List<CharacterSlotEntry> characters = new();
 
     [Header("Crafting (optional)")]
-    public bool   requiresCrafting   = false;
+    public bool   requiresCrafting = false;
     public string craftingTicketKey;
+    public string nextNodeIdGood;
+    public string nextNodeIdBad;
 }

@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a71cdafabaa4d9e44a88c2c34f0fa33d, type: 3}
+  m_Name: CharacterData_f72
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  key: f72
+  displayName: F72
+  defaultSprite: {fileID: -7130053410562097824, guid: a9558d9c8d7805642adee03bde1e06b9, type: 3}
+  expressions:
+  - key: mid
+    sprite: {fileID: -7130053410562097824, guid: a9558d9c8d7805642adee03bde1e06b9, type: 3}
+  - key: annoy
+    sprite: {fileID: -8472883313635580889, guid: c6253cd4414551149a8038e3cb38dae5, type: 3}
+  - key: devas
+    sprite: {fileID: -73859881828583716, guid: 75e7bccfe3fce574e8b87ffbf3185956, type: 3}
+  - key: frust
+    sprite: {fileID: 4208519153259599805, guid: 11bc4c3c687791b488716532d7e567ba, type: 3}
+  - key: laugh
+    sprite: {fileID: 2722928017901990486, guid: 9475dbb82b61d314d9168543902c6a58, type: 3}
+  - key: smile
+    sprite: {fileID: 5617960672725492534, guid: 4d5e34918d8bb6647bbb02f66157071c, type: 3}

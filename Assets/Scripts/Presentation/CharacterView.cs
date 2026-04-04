@@ -70,6 +70,15 @@ public class CharacterView : MonoBehaviour
         _visualRT.localScale       = Vector3.one;
     }
 
+    public void SwapSprite(Sprite sprite)
+    {
+        if (_image != null)
+            _image.sprite = sprite;
+
+        if (_arf != null && sprite != null)
+            _arf.aspectRatio = sprite.rect.width / sprite.rect.height;
+    }
+
     public void PlayAppearAnimation(Action onComplete = null)
     {
         if (_animRoutine != null) StopCoroutine(_animRoutine);

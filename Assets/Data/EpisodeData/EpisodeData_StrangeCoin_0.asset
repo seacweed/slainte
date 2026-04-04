@@ -1,0 +1,200 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ada6baddb75540a4ba25d31b476b855a, type: 3}
+  m_Name: EpisodeData_StrangeCoin_0
+  m_EditorClassIdentifier: Assembly-CSharp::EpisodeData
+  episodeId: StrangeCoin_0
+  episodeTitle: "\uC774\uC0C1\uD55C \uB3D9\uC804 - 0"
+  triggerCondition:
+    minDay: 0
+    requiredFlags: []
+    blockedFlags: []
+    prerequisiteEpisodeIds: []
+  openingCharacters:
+  - characterKey: f72
+    expressionKey: mid
+  firstNodeId: 0
+  nodes:
+  - nodeId: 0
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uD760..\uD06C\uD760\u2026"
+    nextNodeId: 1
+    choices: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+  - nodeId: 1
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "(\uC740\uBC00\uD788 \uC218\uC0C1\uD55C \uD654\uD3D0\uB97C \uAC74\uB124\uBA70)
+      \uC5EC\uAE30 <b>\uAC13\uD30C\uB354</b> \uD558\uB098."
+    nextNodeId: 2
+    choices: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+  - nodeId: 2
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC8C4\uC1A1\uD569\uB2C8\uB2E4 \uC190\uB2D8. \uC800\uD76C\uB294 \uACF5\uC2DD
+      \uD654\uD3D0\uB9CC \uBC1B\uC2B5\uB2C8\uB2E4\uB9CC\u2026"
+    nextNodeId: 3
+    choices: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+  - nodeId: 3
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC21C\uC9C4\uD55C \uBC14\uD150\uB354 \uC528\uB294 \uACBD\uCC30 \uBB34\uC11C\uC6B4
+      \uC904 \uBAA8\uB974\uB294\uAD70!"
+    nextNodeId: 4
+    choices: []
+    characters:
+    - characterKey: f72
+      expressionKey: annoy
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+  - nodeId: 4
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC601\uC5C5 \uC815\uC9C0\uB418\uACE0 \uC2F6\uC9C0 \uC54A\uC73C\uBA74
+      <u>\uB2F9\uC7A5 \uC220 \uB0B4\uC624\uB294 \uAC8C \uC88B\uC744\uAC70\uC57C!</u>"
+    nextNodeId: 
+    choices: []
+    characters:
+    - characterKey: f72
+      expressionKey: annoy
+    requiresCrafting: 1
+    craftingTicketKey: sc0_f72
+    nextNodeIdGood: 5-1-1
+    nextNodeIdBad: 5-2-1
+  - nodeId: 5-1-1
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC18C\uBB38\uB300\uB85C \uAF64 \uAD1C\uCC2E\uAD70."
+    nextNodeId: 5-1-2
+    choices: []
+    characters:
+    - characterKey: f72
+      expressionKey: smile
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+  - nodeId: 5-1-2
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "<b>5\uBC88\uAC00</b>\uC758 \uC2F8\uAD6C\uB824 <b>\uBC00\uC8FC</b>\uB791\uC740
+      \uCC28\uC6D0\uC774 \uB2EC\uB77C."
+    nextNodeId: 5-1-3
+    choices: []
+    characters:
+    - characterKey: f72
+      expressionKey: smile
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+  - nodeId: 5-1-3
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC544."
+    nextNodeId: 5-1-4
+    choices: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+  - nodeId: 5-1-4
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uBC00\uC8FC \uC598\uAE30\uB294 \uBE44\uBC00\uC774\uC57C. \uC54C\uACA0\uC9C0?"
+    nextNodeId: 
+    choices: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+  - nodeId: 5-1-1
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC774\uBD10, \uC774\uAC70 \uB0B4\uAC00 \uC8FC\uBB38\uD55C\uAC70 \uB9DE\uC544?"
+    nextNodeId: 5-1-2
+    choices: []
+    characters:
+    - characterKey: f72
+      expressionKey: annoy
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+  - nodeId: 5-1-1
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uBC00\uC8FC \uC598\uAE30\uB294 \uBE44\uBC00\uC774\uC57C. \uC54C\uACA0\uC9C0?"
+    nextNodeId: 5-1-2
+    choices: []
+    characters:
+    - characterKey: f72
+      expressionKey: annoy
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+  - nodeId: 5-1-1
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uBC00\uC8FC \uC598\uAE30\uB294 \uBE44\uBC00\uC774\uC57C. \uC54C\uACA0\uC9C0?"
+    nextNodeId: 5-1-2
+    choices: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+  - nodeId: 5-1-1
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uBC29\uAE08 \uC774\uC57C\uAE30\uB294 \uC78A\uC5B4!"
+    nextNodeId: 5-1-2
+    choices: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 

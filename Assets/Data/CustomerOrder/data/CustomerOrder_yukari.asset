@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: CustomerOrder_yukari
   m_EditorClassIdentifier: Assembly-CSharp::CustomerData
   key: yukari
-  characterKeyMid: yukari_mid
-  characterKeyGood: yukari_good
-  characterKeyBad: yukari_bad
+  characterKey: yukari
+  expressionKeyMid: mid
+  expressionKeyGood: 
+  expressionKeyBad: 
   lines:
   - speakerName: "\uC720\uCE74\uB9AC"
     text: "\uC88B\uC740 \uC800\uB141\uC774\uC57C \uBC14\uD150\uB354."

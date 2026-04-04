@@ -10,7 +10,7 @@
 |---|---|---|
 | `OrderMode` | 기본 영업 상태 (초기 모드) | FrontWorldPanel + DialoguePanel + OrderTicketPanel |
 | `EpisodeMode` | 에피소드 실행 중 | FrontWorldPanel + DialoguePanel |
-| `CraftingMode` | 에피소드 중 칵테일 제조 | FrontWorldPanel + DialoguePanel |
+| `CraftingMode` | 에피소드 중 칵테일 제조 | FrontWorldPanel + DialoguePanel + CraftingJudgePanel |
 
 `GameModeManager`가 `RequestModeChange(GameMode)`를 통해 패널 show/hide를 처리하고 `OnModeChanged` 이벤트를 발행합니다. **씬 전환은 없습니다.**
 
@@ -23,6 +23,8 @@
 | Space / LMB | `DialogueController.Advance()` | `EpisodeRunner.OnAdvanceInput()` | `EpisodeRunner.OnAdvanceInput()` |
 | S / W / D / A | `FrontCameraRig` 이동 (대화 중 불가) | — | `FrontCameraRig` 이동 |
 | E | `OrderTicketUI.Toggle()` | — | — |
+| 1 (테스트) | `CustomerSpawner.ShowCustomers("yukari")` | — | — |
+| 2 (테스트) | `testEpisode` 조건 없이 즉시 실행 | — | — |
 
 수신자 인터페이스:
 - `IDialogueAdvanceHandler` — `CanReceiveAdvanceInput`, `OnAdvanceInput()`
@@ -30,10 +32,14 @@
 
 **3. 캐릭터 표시 (`Assets/Scripts/Presentation/`)**
 
-- `CharacterView` — 프리팹 루트에 부착. `Setup(Sprite)` + `PlayAppearAnimation()` / `PlayDisappearAnimation()` 제공. fade+rise+pop 애니메이션 처리. 슬롯 하단 기준으로 배치.
-- `CharacterStage` — 슬롯 배열을 관리하고 `CharacterView`를 생성. `ShowCharacters(keys, onAllShown)` / `Clear()`.
-  - `CustomerSpawner`(영업 씬 손님)와 `EpisodeRunner`(에피소드) 모두 FrontCameraRig 내 `CustomerStage` 하나를 공유합니다. 슬롯 5개.
-- `CharacterData` — 표정 1개 = 파일 1개. 같은 캐릭터의 여러 표정은 별도 파일로 관리 (key 예: `"yukari_mid"`, `"yukari_good"`). 영업 시스템은 `CustomerOrderData.characterKeyMid/Good/Bad`로 참조. 대화 시스템은 임의 key 사용.
+- `CharacterView` — 프리팹 루트에 부착. `Setup(Sprite)` + `SwapSprite(Sprite)` + `PlayAppearAnimation()` / `PlayDisappearAnimation()` 제공. fade+rise+pop 애니메이션 처리. 슬롯 하단 기준으로 배치.
+- `CharacterStage` — 슬롯 배열을 관리하고 `CharacterView`를 생성. `_activeViews`(key→view)와 `_activeSlotIndices`(key→슬롯 인덱스)로 현재 스테이지 상태를 추적합니다.
+  - `ShowCharacters(IReadOnlyList<CharacterSlotEntry>, onAllShown)` — 신규 캐릭터는 입장 애니메이션, 기존 캐릭터는 스프라이트 교체만 수행. 점유된 슬롯을 추적해 신규 캐릭터는 빈 슬롯에만 배정합니다.
+  - `SwapExpression(characterKey, expressionKey)` — 이미 스테이지에 있는 캐릭터의 표정만 교체.
+  - `CustomerSpawner`(영업 씬 손님)와 `EpisodeRunner`(에피소드) 모두 `CustomerStage` 하나를 공유합니다. 슬롯 5개.
+- `CharacterSlotEntry` — `{ characterKey, expressionKey }` 쌍. `CharacterStage.ShowCharacters()`의 입력 타입.
+- `CharacterData` — 캐릭터 1명 = 파일 1개. `defaultSprite` + `List<ExpressionEntry>` (`{ key, sprite }`)로 모든 표정을 하나의 에셋에 보관. `GetSprite(expressionKey)` 메서드로 조회(없으면 defaultSprite 반환).
+  - **주인공은 1인칭 시점이므로 스프라이트 없음.** `CharacterData`는 화자 이름 표시용으로만 사용하고, `EpisodeNode.characters`에는 포함하지 않습니다.
 
 **4. 에피소드 (`Assets/Scripts/Conversation/Episode/`)**
 
@@ -42,11 +48,17 @@
 2. `EpisodeRunner`가 `CustomerStage`, `DialogueController`, 선택지 UI를 구동
 3. 에피소드 종료 시 `GameModeManager.RequestModeChange(OrderMode)` 자동 복귀
 
-`EpisodeNode`에 `requiresCrafting: bool` + `craftingTicketKey: string` 필드가 있어 노드 진입 시 `CraftingMode`로 전환하고 `EpisodeRunner.NotifyCraftingCompleted()` 호출 시 복귀합니다.
+`EpisodeData.openingCharacters: List<CharacterSlotEntry>` — 에피소드 시작 시 표시할 캐릭터+표정.
+`EpisodeNode.characters: List<CharacterSlotEntry>` — 해당 노드에서 표시할 캐릭터+표정. 비어 있으면 스테이지 변경 없음.
+`EpisodeNode` 제조 관련 필드:
+- `requiresCrafting: bool` + `craftingTicketKey: string` — 노드 진입 시 `CraftingMode`로 전환
+- `nextNodeIdGood: string` / `nextNodeIdBad: string` — 제조 결과에 따른 분기 노드 (비어 있으면 `nextNodeId` 사용)
+
+제조 완료는 `EpisodeRunner.NotifyCraftingCompleted(bool isGood)` 호출로 처리합니다. 현재는 `CraftingJudgeUI`의 GoodJob/BadJob 버튼으로 수동 판정합니다 (실제 제조 판정 미구현 상태의 임시 구현).
 
 **5. 영업 씬 손님 & 주문 (`Assets/Scripts/Conversation/Sell/`, `Assets/Scripts/OrderTicket/`)**
 
-- `CustomerSpawner` — `CustomerOrderData.characterKeyMid`로 `CharacterStage`에 캐릭터 표시를 위임하고, 등장 완료 후 `DialogueController.StartDialogue()` 호출
+- `CustomerSpawner` — `CustomerOrderData.characterKey` + `expressionKeyMid`로 `CharacterStage`에 캐릭터 표시를 위임하고, 등장 완료 후 `DialogueController.StartDialogue()` 호출. `ShowFeedbackExpression(bool isGood)`으로 결과에 따라 표정 교체.
 - `OrderTicketManager` — `DialogueClosed` 이벤트 수신. 단, `GameMode.OrderMode`일 때만 티켓을 표시 (EncounterMode에서는 미표시). `EncounterMode` 진입 시 티켓 초기화.
 - `OrderTicketUI` — `Show(data)` / `HideImmediate()` / `Toggle()`. E키 처리는 `InputRouter`가 담당.
 
@@ -54,9 +66,10 @@
 ```
 CustomerOrderData
  ├── key                  (주문 고유 식별자)
- ├── characterKeyMid      (CharacterDatabase key — 기본 표정)
- ├── characterKeyGood     (CharacterDatabase key — 제조 성공 표정)
- ├── characterKeyBad      (CharacterDatabase key — 제조 실패 표정)
+ ├── characterKey         (CharacterDatabase key)
+ ├── expressionKeyMid     (기본 표정 key)
+ ├── expressionKeyGood    (제조 성공 표정 key)
+ ├── expressionKeyBad     (제조 실패 표정 key)
  ├── lines                (주문 대사)
  ├── feedbackLinesGood    (제조 성공 피드백 대사)
  └── feedbackLinesBad     (제조 실패 피드백 대사)

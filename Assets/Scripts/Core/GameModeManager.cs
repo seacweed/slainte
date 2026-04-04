@@ -11,6 +11,7 @@ public class GameModeManager : MonoBehaviour
     [SerializeField] private CanvasGroup dialoguePanel;
     [SerializeField] private CanvasGroup orderTicketPanel;
     [SerializeField] private CanvasGroup choiceContainer;
+    [SerializeField] private CanvasGroup craftingJudgePanel;
 
     [Header("Initial Mode")]
     [SerializeField] private GameMode initialMode = GameMode.OrderMode;
@@ -60,12 +61,14 @@ public class GameModeManager : MonoBehaviour
                              || mode == GameMode.EpisodeMode
                              || mode == GameMode.CraftingMode;
         bool showOrderTicket  = mode == GameMode.OrderMode;
-        bool showChoices      = mode == GameMode.EpisodeMode;
+        bool showChoices       = mode == GameMode.EpisodeMode;
+        bool showCraftingJudge = mode == GameMode.CraftingMode;
 
-        SetGroup(frontWorldPanel,  showFrontWorld);
-        SetGroup(dialoguePanel,    showDialogue);
-        SetGroup(orderTicketPanel, showOrderTicket);
-        SetGroup(choiceContainer,  showChoices);
+        SetGroup(frontWorldPanel,   showFrontWorld);
+        SetGroup(dialoguePanel,     showDialogue);
+        SetGroup(orderTicketPanel,  showOrderTicket);
+        SetGroup(choiceContainer,   showChoices);
+        SetGroup(craftingJudgePanel, showCraftingJudge);
     }
 
     private static void SetGroup(CanvasGroup cg, bool on)

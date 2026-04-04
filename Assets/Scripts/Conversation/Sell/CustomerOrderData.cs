@@ -8,9 +8,10 @@ public class CustomerOrderData : ScriptableObject
     public string key;
 
     [Header("Character")]
-    public string characterKeyMid;
-    public string characterKeyGood;
-    public string characterKeyBad;
+    public string characterKey;
+    public string expressionKeyMid;
+    public string expressionKeyGood;
+    public string expressionKeyBad;
 
     [Header("Order Dialogue")]
     public List<DialogueLine> lines = new();

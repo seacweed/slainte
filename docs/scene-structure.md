@@ -23,6 +23,9 @@
     │   ├── DialogueController (공용 대화 렌더러)
     │   └── ChoiceContainer    (선택지 버튼 동적 생성)
     ├── OrderTicketPanel       (OrderTicketUI, OrderMode에서만 표시)
+    ├── CraftingJudgePanel     (CraftingJudgeUI, CraftingMode에서만 표시 — 임시 판정 버튼)
+    │   ├── GoodJobButton      (화면 왼쪽)
+    │   └── BadJobButton       (화면 오른쪽)
     └── HUD
         └── DragGhostImage
 ```

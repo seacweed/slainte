@@ -13,6 +13,7 @@ public class InputRouter : MonoBehaviour
 
     [Header("Test")]
     [SerializeField] private CustomerSpawner customerSpawner;
+    [SerializeField] private EpisodeData     testEpisode;
 
     void Update()
     {
@@ -29,6 +30,11 @@ public class InputRouter : MonoBehaviour
                 if (ticketPressed)  ticketUI?.Toggle();
                 if (Input.GetKeyDown(KeyCode.Alpha1))
                     customerSpawner?.ShowCustomers(new[] { "yukari" });
+                if (Input.GetKeyDown(KeyCode.Alpha2) && testEpisode != null)
+                {
+                    modeManager?.RequestModeChange(GameMode.EpisodeMode);
+                    episodeRunner?.Begin(testEpisode);
+                }
                 break;
 
             case GameMode.EpisodeMode:

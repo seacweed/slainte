@@ -13,7 +13,7 @@ public class EpisodeData : ScriptableObject
     public EpisodeTriggerCondition triggerCondition;
 
     [Header("Opening")]
-    public List<string> openingCharacterKeys = new();
+    public List<CharacterSlotEntry> openingCharacters = new();
     public string firstNodeId;
 
     [Header("Nodes")]

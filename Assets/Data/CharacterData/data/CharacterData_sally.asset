@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a71cdafabaa4d9e44a88c2c34f0fa33d, type: 3}
+  m_Name: CharacterData_sally
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  key: sally
+  displayName: "\uC140\uB9AC"
+  defaultSprite: {fileID: 4784050376637317797, guid: c24194f8e39730e45a0739d3a3562ba4, type: 3}
+  expressions:
+  - key: mid
+    sprite: {fileID: 4784050376637317797, guid: c24194f8e39730e45a0739d3a3562ba4, type: 3}
+  - key: aim
+    sprite: {fileID: -2174666509651120633, guid: 43d38cc0c2a3d354d8358771fe8bfa55, type: 3}
+  - key: angry
+    sprite: {fileID: 3145912355117297475, guid: ae99572c20e047a42bf4f61f61d67395, type: 3}
+  - key: smile
+    sprite: {fileID: -8847821066434499957, guid: 4740474c6c48f974dbe4f6a6df7d3f12, type: 3}
+  - key: blood_angry
+    sprite: {fileID: -6795192134317491185, guid: 7cf3402f9310c20468576734a4aa386d, type: 3}
+  - key: blood_mid
+    sprite: {fileID: 7918521115296145216, guid: f9a51752153069a40b4591dd67ac7dd3, type: 3}
+  - key: blood_tired
+    sprite: {fileID: 2811643952173041755, guid: 684b28dcea665c7419085653c523d969, type: 3}
+  - key: blood_smile
+    sprite: {fileID: -1220385877937856334, guid: b9db1e04360b1c54f8a9ff1102a489b3, type: 3}
