@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class OrderTicketManager : MonoBehaviour
 {
-    [SerializeField] private DialogueController dialogue;
-    [SerializeField] private GameModeManager    modeManager;
+    [SerializeField] private DialogueController  dialogue;
+    [SerializeField] private GameModeManager     modeManager;
     [SerializeField] private OrderTicketDatabase ticketDb;
     [SerializeField] private OrderTicketUI       ticketUI;
 
@@ -26,24 +26,35 @@ public class OrderTicketManager : MonoBehaviour
         _pendingTicketKey = ticketKey;
     }
 
+    // OrderMode: dialogue closes -> show ticket
     private void HandleDialogueClosed()
     {
-        if (string.IsNullOrWhiteSpace(_pendingTicketKey)) return;
-
-        GameMode mode = modeManager != null ? modeManager.CurrentMode : GameMode.OrderMode;
-        if (mode != GameMode.OrderMode) return;
-
-        OrderTicketData data = ticketDb != null ? ticketDb.FindByKey(_pendingTicketKey) : null;
-        if (data != null && ticketUI != null)
-            ticketUI.Show(data);
+        if (modeManager == null || modeManager.CurrentMode != GameMode.OrderMode) return;
+        ShowPendingTicket();
     }
 
+    // CraftingMode: mode change itself is the trigger (no dialogue close involved)
     private void HandleModeChanged(GameMode oldMode, GameMode newMode)
     {
-        if (newMode == GameMode.EpisodeMode)
+        if (newMode == GameMode.CraftingMode)
+        {
+            ShowPendingTicket();
+        }
+        else if (newMode == GameMode.EpisodeMode)
         {
             _pendingTicketKey = null;
             ticketUI?.HideImmediate();
         }
+    }
+
+    private void ShowPendingTicket()
+    {
+        if (string.IsNullOrWhiteSpace(_pendingTicketKey)) return;
+
+        dialogue?.HideImmediate();
+
+        OrderTicketData data = ticketDb != null ? ticketDb.FindByKey(_pendingTicketKey) : null;
+        if (data != null && ticketUI != null)
+            ticketUI.Show(data);
     }
 }

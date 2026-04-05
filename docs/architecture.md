@@ -10,7 +10,7 @@
 |---|---|---|
 | `OrderMode` | 기본 영업 상태 (초기 모드) | FrontWorldPanel + DialoguePanel + OrderTicketPanel |
 | `EpisodeMode` | 에피소드 실행 중 | FrontWorldPanel + DialoguePanel |
-| `CraftingMode` | 에피소드 중 칵테일 제조 | FrontWorldPanel + DialoguePanel + CraftingJudgePanel |
+| `CraftingMode` | 에피소드 중 칵테일 제조 | FrontWorldPanel + DialoguePanel + OrderTicketPanel + CraftingJudgePanel |
 
 `GameModeManager`가 `RequestModeChange(GameMode)`를 통해 패널 show/hide를 처리하고 `OnModeChanged` 이벤트를 발행합니다. **씬 전환은 없습니다.**
 
@@ -34,10 +34,10 @@
 
 - `CharacterView` — 프리팹 루트에 부착. `Setup(Sprite)` + `SwapSprite(Sprite)` + `PlayAppearAnimation()` / `PlayDisappearAnimation()` 제공. fade+rise+pop 애니메이션 처리. 슬롯 하단 기준으로 배치.
 - `CharacterStage` — 슬롯 배열을 관리하고 `CharacterView`를 생성. `_activeViews`(key→view)와 `_activeSlotIndices`(key→슬롯 인덱스)로 현재 스테이지 상태를 추적합니다.
-  - `ShowCharacters(IReadOnlyList<CharacterSlotEntry>, onAllShown)` — 신규 캐릭터는 입장 애니메이션, 기존 캐릭터는 스프라이트 교체만 수행. 점유된 슬롯을 추적해 신규 캐릭터는 빈 슬롯에만 배정합니다.
+  - `ShowCharacters(IReadOnlyList<CharacterSlotEntry>, onAllShown)` — 신규 캐릭터는 입장 애니메이션, 기존 캐릭터는 스프라이트 교체만 수행. 점유된 슬롯을 추적해 신규 캐릭터는 지정 슬롯 또는 빈 슬롯에 배정합니다.
   - `SwapExpression(characterKey, expressionKey)` — 이미 스테이지에 있는 캐릭터의 표정만 교체.
   - `CustomerSpawner`(영업 씬 손님)와 `EpisodeRunner`(에피소드) 모두 `CustomerStage` 하나를 공유합니다. 슬롯 5개.
-- `CharacterSlotEntry` — `{ characterKey, expressionKey }` 쌍. `CharacterStage.ShowCharacters()`의 입력 타입.
+- `CharacterSlotEntry` — `{ characterKey, expressionKey, slotIndex }` 세 필드. `slotIndex`가 0 이상이면 해당 인덱스 슬롯에 직접 배치, `-1`(기본값)이면 빈 슬롯에 자동 배정. 슬롯 인덱스: 0=Center, 1=Left, 2=Right, 3=Left2, 4=Right2, 5~8=Interaction0~3(통합 스프라이트 전용).
 - `CharacterData` — 캐릭터 1명 = 파일 1개. `defaultSprite` + `List<ExpressionEntry>` (`{ key, sprite }`)로 모든 표정을 하나의 에셋에 보관. `GetSprite(expressionKey)` 메서드로 조회(없으면 defaultSprite 반환).
   - **주인공은 1인칭 시점이므로 스프라이트 없음.** `CharacterData`는 화자 이름 표시용으로만 사용하고, `EpisodeNode.characters`에는 포함하지 않습니다.
 
@@ -59,7 +59,7 @@
 **5. 영업 씬 손님 & 주문 (`Assets/Scripts/Conversation/Sell/`, `Assets/Scripts/OrderTicket/`)**
 
 - `CustomerSpawner` — `CustomerOrderData.characterKey` + `expressionKeyMid`로 `CharacterStage`에 캐릭터 표시를 위임하고, 등장 완료 후 `DialogueController.StartDialogue()` 호출. `ShowFeedbackExpression(bool isGood)`으로 결과에 따라 표정 교체.
-- `OrderTicketManager` — `DialogueClosed` 이벤트 수신. 단, `GameMode.OrderMode`일 때만 티켓을 표시 (EncounterMode에서는 미표시). `EncounterMode` 진입 시 티켓 초기화.
+- `OrderTicketManager` — 두 가지 경로로 티켓을 표시. ① `OrderMode`: `DialogueClosed` 이벤트 수신 후 표시. ② `CraftingMode`: `OnModeChanged` 이벤트로 모드 전환 시점에 즉시 표시. 두 경우 모두 `dialogue.HideImmediate()`를 먼저 호출해 대화창을 닫습니다. `EpisodeMode` 진입 시 티켓 초기화.
 - `OrderTicketUI` — `Show(data)` / `HideImmediate()` / `Toggle()`. E키 처리는 `InputRouter`가 담당.
 
 `CustomerOrderData` 구조:

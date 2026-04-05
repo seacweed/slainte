@@ -22,3 +22,5 @@
 | [docs/unity-build.md](docs/unity-build.md) | Unity 버전, 빌드 방법, 개발 환경 |
 | [docs/scene-structure.md](docs/scene-structure.md) | 씬 계층 구조 (Canvas, Panel, GameObject) |
 | [docs/architecture.md](docs/architecture.md) | 핵심 시스템, 데이터 패턴, 설계 패턴 |
+| [docs/episode-csv-guide.md](docs/episode-csv-guide.md) | 에피소드 CSV 작성법 (섹션 구조, 열 설명, 예시) |
+| [docs/editor-tools.md](docs/editor-tools.md) | 에디터 툴 목록 및 사용법 |

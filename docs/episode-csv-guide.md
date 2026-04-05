@@ -1,0 +1,293 @@
+# 에피소드 CSV 작성 가이드
+
+에피소드 대화 데이터를 CSV 파일로 작성하면 Unity 에디터 툴을 통해 자동으로 게임 데이터로 변환됩니다.
+
+## 목차
+
+- [파일 규칙](#파일-규칙)
+- [전체 구조](#전체-구조)
+- [섹션별 작성법](#섹션별-작성법)
+  - [META](#meta)
+  - [TRIGGER](#trigger)
+  - [OPENING_CHARS](#opening_chars)
+  - [NODES](#nodes)
+  - [NODE_CHARS](#node_chars)
+  - [CHOICES](#choices)
+- [특수 표기법](#특수-표기법)
+- [작성 예시](#작성-예시)
+- [임포트 방법](#임포트-방법)
+- [자주 하는 실수](#자주-하는-실수)
+
+---
+
+## 파일 규칙
+
+- **파일명**: 자유롭게 지정 가능 (임포트 후 에셋명은 `episodeId` 기준으로 자동 결정)
+- **인코딩**: UTF-8
+- **권장 편집 도구**: Google Sheets, Excel, 메모장 등 CSV를 저장할 수 있는 모든 도구
+
+---
+
+## 전체 구조
+
+파일은 `#섹션명` 으로 구분된 6개 섹션으로 이루어집니다.  
+각 섹션은 **헤더 행(열 이름)** → **데이터 행** 순서로 작성합니다.
+
+```
+#META
+(헤더 행)
+(데이터 행)
+
+#TRIGGER
+...
+
+#OPENING_CHARS
+...
+
+#NODES
+...
+
+#NODE_CHARS
+...
+
+#CHOICES
+...
+```
+
+> 빈 행은 무시됩니다. 가독성을 위해 섹션 사이에 빈 행을 추가해도 됩니다.
+
+---
+
+## 섹션별 작성법
+
+### META
+
+에피소드의 기본 정보입니다. **데이터 행은 반드시 1개** 작성합니다.
+
+| 열 | 설명 | 예시 |
+|---|---|---|
+| `episodeId` | 에피소드 고유 ID (에셋 파일명에 사용됨) | `StrangeCoin_0` |
+| `episodeTitle` | 게임에 표시될 에피소드 제목 | `이상한 동전 - 0` |
+| `firstNodeId` | 대화가 시작될 첫 번째 노드 ID | `0` |
+
+```csv
+#META
+episodeId,episodeTitle,firstNodeId
+StrangeCoin_0,이상한 동전 - 0,0
+```
+
+---
+
+### TRIGGER
+
+이 에피소드가 발동되는 조건입니다. **데이터 행은 반드시 1개** 작성합니다.
+
+| 열 | 설명 | 예시 |
+|---|---|---|
+| `minDay` | 발동 가능한 최소 일수 | `3` |
+| `requiredFlags` | 이 플래그가 **모두 켜져있어야** 발동 | `flag_a\|flag_b` |
+| `blockedFlags` | 이 플래그 중 **하나라도 켜져있으면** 발동 안 함 | `flag_ended` |
+| `prerequisiteEpisodeIds` | 이 에피소드들이 **모두 완료되어야** 발동 | `Intro_0\|Intro_1` |
+
+- 조건이 없는 열은 **비워두면** 됩니다.
+- 여러 값은 `|` 로 구분합니다.
+
+```csv
+#TRIGGER
+minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds
+3,flag_met_customer,,Intro_0
+```
+
+---
+
+### OPENING_CHARS
+
+에피소드 시작 시 무대에 배치되는 캐릭터 목록입니다.  
+캐릭터가 여러 명이면 **행을 여러 개** 작성합니다.
+
+| 열 | 설명 | 예시 |
+|---|---|---|
+| `characterKey` | 캐릭터 ID | `f72` |
+| `expressionKey` | 시작 표정 | `neutral` |
+| `slotIndex` | 배치 슬롯 (`-1` = 자동, `0` = Center, `1` = Left, `2` = Right, `3` = Left2, `4` = Right2, `5~8` = Interaction0~3 통합 스프라이트 전용) | `-1` |
+
+```csv
+#OPENING_CHARS
+characterKey,expressionKey,slotIndex
+f72,frust,-1
+```
+
+---
+
+### NODES
+
+대화 노드 목록입니다. 노드 하나 = 화면에 표시되는 대사 한 줄입니다.
+
+| 열 | 설명 | 예시 |
+|---|---|---|
+| `nodeId` | 노드 고유 ID | `0`, `5-1-1` |
+| `speakerKey` | 말하는 캐릭터 ID (`shaun` = 주인공) | `f72` |
+| `overrideSpeakerName` | 이름창에 표시할 임시 이름 (비우면 캐릭터 기본 이름 사용) | `???` |
+| `text` | 대사 내용 | `안녕하세요.` |
+| `nextNodeId` | 다음에 이동할 노드 ID (비우면 에피소드 종료) | `1` |
+| `requiresCrafting` | 제조 판정 여부 (`true` / `false`) | `false` |
+| `craftingTicketKey` | 사용할 제조 티켓 ID (`requiresCrafting=true` 일 때만 작성) | `sc0_f72` |
+| `nextNodeIdGood` | 제조 성공 시 이동할 노드 ID | `5-1-1` |
+| `nextNodeIdBad` | 제조 실패 시 이동할 노드 ID | `5-2-1` |
+
+**제조 판정 노드** 작성 시: `text`와 `nextNodeId`는 비우고, `requiresCrafting=true` + 성공/실패 노드 ID를 작성합니다.
+
+**선택지 노드** 작성 시: `nextNodeId`는 비우고 `#CHOICES` 섹션에 선택지를 작성합니다.
+
+```csv
+#NODES
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad
+0,f72,???,흘..크흘…,1,false,,,
+5,f72,???,,,true,sc0_f72,5-1-1,5-2-1
+```
+
+> **주의**: 대사에 쉼표(`,`)가 포함된 경우 반드시 큰따옴표로 감싸야 합니다.  
+> 예: `"여기, 이거 드세요."`
+
+---
+
+### NODE_CHARS
+
+각 노드에서 표시되는 캐릭터의 표정을 지정합니다.  
+한 노드에 캐릭터가 여러 명이면 **같은 `nodeId`로 행을 여러 개** 작성합니다.
+
+| 열 | 설명 | 예시 |
+|---|---|---|
+| `nodeId` | 대상 노드 ID | `0` |
+| `characterKey` | 캐릭터 ID | `f72` |
+| `expressionKey` | 해당 노드에서의 표정 | `smile` |
+| `slotIndex` | 슬롯 위치 (`-1` = 자동, `0~4` = 일반 슬롯, `5~8` = Interaction0~3 통합 스프라이트 전용) | `-1` |
+
+```csv
+#NODE_CHARS
+nodeId,characterKey,expressionKey,slotIndex
+0,f72,frust,-1
+30,f54,mid,-1
+30,f72,laugh,-1
+30,sally,mid,-1
+```
+
+---
+
+### CHOICES
+
+플레이어 선택지가 있는 노드의 선택지 목록입니다.  
+선택지가 없으면 이 섹션은 **헤더만 남기고 비워도** 됩니다.
+
+| 열 | 설명 | 예시 |
+|---|---|---|
+| `nodeId` | 선택지가 속한 노드 ID | `10` |
+| `choiceIndex` | 선택지 순서 (0부터 시작) | `0` |
+| `buttonText` | 버튼에 표시될 텍스트 | `그래 말해봐` |
+| `nextNodeId` | 선택 시 이동할 노드 ID | `11a` |
+| `setFlags` | 선택 시 **켤** 플래그 (`\|` 구분) | `flag_agreed` |
+| `clearFlags` | 선택 시 **끌** 플래그 (`\|` 구분) | `flag_open` |
+
+```csv
+#CHOICES
+nodeId,choiceIndex,buttonText,nextNodeId,setFlags,clearFlags
+10,0,그래 말해봐,11a,flag_listened,
+10,1,관심없어,11b,,flag_open
+```
+
+---
+
+## 특수 표기법
+
+### 텍스트 서식
+
+대사(`text`)와 버튼 텍스트에 Rich Text 태그를 사용할 수 있습니다.
+
+| 태그 | 결과 | 예시 |
+|---|---|---|
+| `<b>텍스트</b>` | **굵게** | `<b>5번가</b>에서` |
+| `<u>텍스트</u>` | 밑줄 | `<u>당장 나가!</u>` |
+| `<i>텍스트</i>` | 기울임 | `<i>(혼잣말)</i>` |
+
+### 리스트 구분자
+
+플래그나 ID 목록은 파이프(`|`)로 구분합니다.
+
+```
+flag_a|flag_b|flag_c
+```
+
+### 쉼표가 포함된 텍스트
+
+대사에 쉼표가 있으면 **큰따옴표로 감쌉니다**. Google Sheets나 Excel에서 저장하면 자동 처리됩니다.
+
+```csv
+0,f72,???,흘..크흘…,1,false,,,
+1,f72,???,"여기, 이거 드세요.",2,false,,,
+```
+
+---
+
+## 작성 예시
+
+아래는 분기가 있는 짧은 에피소드의 전체 예시입니다.
+
+```csv
+#META
+episodeId,episodeTitle,firstNodeId
+Example_0,예시 에피소드,0
+
+#TRIGGER
+minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds
+0,,,
+
+#OPENING_CHARS
+characterKey,expressionKey,slotIndex
+f72,neutral,-1
+
+#NODES
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad
+0,f72,???,뭘 마시겠어?,1,false,,,
+1,shaun,,추천해줘.,2,false,,,
+2,f72,,그럼 선택해.,,,false,,,
+3a,f72,,좋은 선택이야.,4,false,,,
+3b,f72,,그것도 나쁘지 않아.,4,false,,,
+4,f72,,,，false,,,
+
+#NODE_CHARS
+nodeId,characterKey,expressionKey,slotIndex
+0,f72,neutral,-1
+1,f72,neutral,-1
+2,f72,smile,-1
+3a,f72,smile,-1
+3b,f72,neutral,-1
+4,f72,neutral,-1
+
+#CHOICES
+nodeId,choiceIndex,buttonText,nextNodeId,setFlags,clearFlags
+2,0,맥주,3a,flag_chose_beer,
+2,1,위스키,3b,flag_chose_whiskey,
+```
+
+---
+
+## 임포트 방법
+
+1. Unity 메뉴 → **Tools > Slainte > Import Episode CSV**
+2. **Browse** 버튼으로 작성한 CSV 파일 선택
+3. **Import** 클릭
+4. `Assets/Data/EpisodeData/EpisodeData_{episodeId}.asset` 으로 저장됨
+
+같은 `episodeId`의 에셋이 이미 존재하면 **덮어씁니다**.
+
+---
+
+## 자주 하는 실수
+
+| 증상 | 원인 | 해결 |
+|---|---|---|
+| 임포트 후 대사가 안 보임 | `firstNodeId`가 실제 노드 ID와 다름 | `#META`의 `firstNodeId`와 `#NODES`의 첫 `nodeId`를 맞춤 |
+| 선택지 후 대화가 안 이어짐 | 선택지 노드의 `nextNodeId`를 채워둠 | 선택지 노드는 `nextNodeId` 비워두기 |
+| 에피소드가 갑자기 종료됨 | 노드의 `nextNodeId`가 비어있거나 존재하지 않는 ID | `nextNodeId` 확인 |
+| 표정이 바뀌지 않음 | `#NODE_CHARS`에 해당 노드 행이 없음 | 표정이 바뀌는 노드마다 `#NODE_CHARS` 행 추가 |
+| 쉼표 이후 텍스트가 잘림 | 대사에 쉼표가 있는데 따옴표로 안 감쌈 | 해당 셀을 `"큰따옴표"` 로 감싸기 |

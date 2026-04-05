@@ -21,7 +21,7 @@ MonoBehaviour:
     prerequisiteEpisodeIds: []
   openingCharacters:
   - characterKey: f72
-    expressionKey: mid
+    expressionKey: frust
   firstNodeId: 0
   nodes:
   - nodeId: 0
@@ -84,6 +84,19 @@ MonoBehaviour:
     overrideSpeakerName: ???
     text: "\uC601\uC5C5 \uC815\uC9C0\uB418\uACE0 \uC2F6\uC9C0 \uC54A\uC73C\uBA74
       <u>\uB2F9\uC7A5 \uC220 \uB0B4\uC624\uB294 \uAC8C \uC88B\uC744\uAC70\uC57C!</u>"
+    nextNodeId: 5
+    choices: []
+    characters:
+    - characterKey: f72
+      expressionKey: annoy
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+  - nodeId: 5
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: 
     nextNodeId: 
     choices: []
     characters:
@@ -146,11 +159,11 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 5-1-1
+  - nodeId: 5-2-1
     speakerKey: f72
     overrideSpeakerName: ???
     text: "\uC774\uBD10, \uC774\uAC70 \uB0B4\uAC00 \uC8FC\uBB38\uD55C\uAC70 \uB9DE\uC544?"
-    nextNodeId: 5-1-2
+    nextNodeId: 5-2-2
     choices: []
     characters:
     - characterKey: f72
@@ -159,11 +172,12 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 5-1-1
+  - nodeId: 5-2-2
     speakerKey: f72
     overrideSpeakerName: ???
-    text: "\uBC00\uC8FC \uC598\uAE30\uB294 \uBE44\uBC00\uC774\uC57C. \uC54C\uACA0\uC9C0?"
-    nextNodeId: 5-1-2
+    text: "\uC5EC\uAE30\uB77C\uACE0 <b>5\uBC88\uAC00</b>\uB791 \uB2E4\uB97C\uAC8C
+      \uC5C6\uAD70."
+    nextNodeId: 5-2-3
     choices: []
     characters:
     - characterKey: f72
@@ -172,11 +186,11 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 5-1-1
+  - nodeId: 5-2-3
     speakerKey: f72
     overrideSpeakerName: ???
-    text: "\uBC00\uC8FC \uC598\uAE30\uB294 \uBE44\uBC00\uC774\uC57C. \uC54C\uACA0\uC9C0?"
-    nextNodeId: 5-1-2
+    text: "\uC544."
+    nextNodeId: 5-2-4
     choices: []
     characters:
     - characterKey: f72
@@ -185,11 +199,11 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 5-1-1
+  - nodeId: 5-2-4
     speakerKey: f72
     overrideSpeakerName: ???
     text: "\uBC29\uAE08 \uC774\uC57C\uAE30\uB294 \uC78A\uC5B4!"
-    nextNodeId: 5-1-2
+    nextNodeId: 
     choices: []
     characters:
     - characterKey: f72

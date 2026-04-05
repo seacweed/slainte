@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b074092a6424ed548be557aa3efb3794, type: 3}
+  m_Name: OrderTicketData_sc1_f54
+  m_EditorClassIdentifier: Assembly-CSharp::OrderTicketData
+  key: sc1_f54
+  customerName: F54
+  memo: "\uC190\uB2D8 \uBD88\uB800\uC73C\uBA74 \uC220 \uD55C\uC794\uC740 \uB0B4\uC918\uC57C\uC9C0.
+    \uC704\uC2A4\uD0A4 \uD55C\uC794!"
+  items:
+  - name: "\uC704\uC2A4\uD0A4"
+    qty: 1
+    price: 30

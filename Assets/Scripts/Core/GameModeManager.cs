@@ -60,7 +60,8 @@ public class GameModeManager : MonoBehaviour
         bool showDialogue     = mode == GameMode.OrderMode
                              || mode == GameMode.EpisodeMode
                              || mode == GameMode.CraftingMode;
-        bool showOrderTicket  = mode == GameMode.OrderMode;
+        bool showOrderTicket  = mode == GameMode.OrderMode
+                             || mode == GameMode.CraftingMode;
         bool showChoices       = mode == GameMode.EpisodeMode;
         bool showCraftingJudge = mode == GameMode.CraftingMode;
 

@@ -91,14 +91,23 @@ public class CharacterStage : MonoBehaviour
             }
             else
             {
-                // New character: assign first available free slot
-                if (freeSlots.Count == 0)
+                // New character: use explicit slot if specified, otherwise auto-assign
+                int slotIndex;
+                if (entry.slotIndex >= 0 && entry.slotIndex < slots.Count)
                 {
-                    Debug.LogWarning($"[CharacterStage] No free slot for: {entry.characterKey}");
-                    continue;
+                    slotIndex = entry.slotIndex;
+                    freeSlots = RemoveFromQueue(freeSlots, slotIndex);
+                }
+                else
+                {
+                    if (freeSlots.Count == 0)
+                    {
+                        Debug.LogWarning($"[CharacterStage] No free slot for: {entry.characterKey}");
+                        continue;
+                    }
+                    slotIndex = freeSlots.Dequeue();
                 }
 
-                int slotIndex = freeSlots.Dequeue();
                 CharacterView view = Instantiate(characterPrefab, slots[slotIndex]);
                 _activeViews[entry.characterKey]       = view;
                 _activeSlotIndices[entry.characterKey] = slotIndex;
@@ -128,6 +137,14 @@ public class CharacterStage : MonoBehaviour
         if (data == null) return;
 
         view.SwapSprite(data.GetSprite(expressionKey));
+    }
+
+    private static Queue<int> RemoveFromQueue(Queue<int> queue, int value)
+    {
+        var result = new Queue<int>(queue.Count);
+        foreach (int item in queue)
+            if (item != value) result.Enqueue(item);
+        return result;
     }
 
     private void ClearWithAnimation(Action onComplete)
