@@ -27,27 +27,35 @@ public class EpisodeInfoWindow : MonoBehaviour
     {
         gameObject.SetActive(true);
 
+        // [핵심 변경] 코어 씬 매니저에게 플레이어의 현재 진행 상태를 물어봅니다.
+        EpisodeProgressData progress = EpisodeManager.Instance.GetProgress(data);
+
         // 1. 텍스트 세팅
         episodeNameText.text = data.episodeName;
         descriptionText.text = data.episodeDescription;
 
-        // 2. 조건 세팅
+        // 2. 조건 세팅 (진행 상태의 배열 인덱스 활용)
         StringBuilder sb = new StringBuilder();
-        foreach (var condition in data.conditions)
+        for (int i = 0; i < data.conditions.Count; i++)
         {
-            string colorHex = condition.isUnlocked ? "#FFFF00" : "#808080"; 
-            sb.AppendLine($"<color={colorHex}>- {condition.conditionText}</color>");
+            // progress.conditionUnlocks 배열에서 해당 조건의 달성 여부를 확인
+            bool isUnlocked = (progress.conditionUnlocks != null && i < progress.conditionUnlocks.Length) ? progress.conditionUnlocks[i] : false;
+            string colorHex = isUnlocked ? "#FFFF00" : "#808080"; 
+            sb.AppendLine($"<color={colorHex}>- {data.conditions[i].conditionText}</color>");
         }
         conditionsText.text = sb.ToString();
 
-        // 3. 초상화 세팅
+        // 3. 초상화 세팅 (진행 상태의 배열 인덱스 활용)
         foreach (Transform child in portraitContainer) Destroy(child.gameObject);
         
-        foreach (var character in data.characters)
+        for (int i = 0; i < data.characters.Count; i++)
         {
             GameObject portraitObj = Instantiate(portraitPrefab, portraitContainer);
             Image img = portraitObj.GetComponent<Image>();
-            img.sprite = character.hasMet ? character.portraitSprite : unknownPortrait;
+            
+            // progress.characterMeets 배열에서 해당 인물과의 조우 여부를 확인
+            bool hasMet = (progress.characterMeets != null && i < progress.characterMeets.Length) ? progress.characterMeets[i] : false;
+            img.sprite = hasMet ? data.characters[i].portraitSprite : unknownPortrait;
         }
 
         // 4. 레이아웃 갱신 및 위치 잡기

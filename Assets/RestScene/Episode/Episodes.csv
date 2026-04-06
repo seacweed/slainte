@@ -1,0 +1,8 @@
+ID,Name,Name_eng,Category,Characters,IconName_board,IconName_archive,Desc,Required_Episodes
+1001,오늘,Today,encounter_episode,,None,Icon_1001_arch,정식으로 아버지의 펍을 물려받아 운영하는 첫날. 아버지의 빈자리를 내가 채울 수 있을까?,
+1002,수상한 손님,Suspicious customer,encounter_episode,,None,Icon_1002_arch,영업 이틀만에 수상한 손님이 찾아왔다.,1001
+1003,이상한 동전,The Strange Coin,encounter_episode,???(F72),None,Icon_1003_arch,한 경찰 손님이 수상한 동전을 건네며 술을 주문한다.,1002
+1004,이상한 동전: 1부,The Strange Coin: Part 1,episode,"F54, ???(F72), ???(셀리)",Icon_1004_arch,Icon_1004_arch,이 수상한 동전에 대해 물어볼 사람은 단 한 명. 경찰 친구인 F54. 게다가 동전을 건넨 손님도 경찰이었으니까.,1003
+1005,이상한 동전: 2부,The Strange Coin: Part 2,episode,"F72, 셀리, ???(E12)",Icon_1005_arch,Icon_1005_arch,이 매혹적인 동전을 쓰는 이상 5번가 사람들과 엮이지 않을 수 없다. 저번과 같은 소란이 일어나질 않길 바라며 둘을 펍에 들인다.,1004
+1006,이상한 동전: 3부,The Strange Coin: Part 3,encounter_episode,"셀리, E12",None,Icon_1006_arch,셀리가 급히 찾아온다. 피범벅인 체로.,1005
+1007,이상한 동전: 4부,The Strange Coin: Part 4,episode,"셀리, F72, E12",Icon_1007_arch,Icon_1007_arch,,1006

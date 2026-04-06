@@ -30,12 +30,40 @@ public class EpisodeBoardManager : BaseUIManager
         base.Awake(); // BaseUIManager의 필수 초기화 실행
         // UI의 원래 위치(정중앙) 저장
         originalPos = GetComponent<RectTransform>().anchoredPosition;
+
+        if (startButton != null)
+        {
+            startButton.onClick.AddListener(OnStartButtonClicked);
+        }
     }
 
     // 창이 열릴 때 자동으로 실행되는 함수
     protected override void OnOpen()
     {
-        ResetBoard(); // 창을 열 때마다 선택된 내용 깔끔하게 초기화
+        RefreshBoard(); // 조건에 따라 에피소드 표출 여부 갱신
+        ResetBoard();   // 열릴 때마다 선택 내역 깔끔하게 초기화
+    }
+
+    // 모든 사진(자식 오브젝트)들을 스캔하여 선행 조건에 부합하는지 판별합니다.
+    public void RefreshBoard()
+    {
+        // true: 비활성화되어 있는 사진들도 모두 긁어모음
+        EpisodePhotoTrigger[] allPhotos = GetComponentsInChildren<EpisodePhotoTrigger>(true);
+        
+        foreach (var photo in allPhotos)
+        {
+            if (photo.episodeData == null) continue;
+
+            if (EpisodeManager.Instance != null && EpisodeManager.Instance.IsAvailableToStart(photo.episodeData))
+            {
+                photo.gameObject.SetActive(true);
+            }
+            else
+            {
+                // 조건 미달성이거나, 이미 클리어/수락된 상태면 화면에서 완전히 숨깁니다.
+                photo.gameObject.SetActive(false);
+            }
+        }
     }
 
     // ▼▼▼ [애니메이션] 아래에서 위로 슬라이드 ▼▼▼
@@ -86,6 +114,18 @@ public class EpisodeBoardManager : BaseUIManager
     }
 
     // ▼▼▼ [에피소드 보드 핵심 로직] ▼▼▼
+
+    private void OnStartButtonClicked()
+    {
+        if (PinnedPhoto != null && EpisodeManager.Instance != null)
+        {
+            // 1. 코어 씬 매니저에 에피소드 시작 기록
+            EpisodeManager.Instance.StartEpisode(PinnedPhoto.episodeData.episodeID);
+            
+            // 2. 창 닫기
+            CloseUI();
+        }
+    }
 
     // 사진이 클릭되었을 때 호출됨 (EpisodePhotoTrigger에서 호출)
     public void PinEpisode(EpisodePhotoTrigger photo)
