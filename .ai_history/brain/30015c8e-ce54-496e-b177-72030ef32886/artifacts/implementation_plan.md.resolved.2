@@ -1,0 +1,37 @@
+# 에피소드 데이터 자동화 (CSV Importer) 구현 계획
+
+제공해주신 에피소드 테이블 리스트를 하나하나 수작업으로 입력하는 것은 비효율적이며 유지보수가 어렵습니다. 따라서 CSV 파일로부터 자동으로 `.asset` 데이터들을 한 번에 찍어내는 유니티 에디터 플러그인 방식을 제안합니다.
+
+## User Review Required
+
+> [!IMPORTANT]
+> **해금 조건(Conditions) 및 캐릭터 초상화에 대한 정리:**
+> 1. 말씀하신 대로 **캐릭터 목록(Characters)**은 해당 에피소드의 '주요 등장인물'을 팝업창에 알려주는 역할(만난 적이 있으면 얼굴이 뜨고 안 만났으면 물음표가 뜨는 기존 연출)로만 유지하겠습니다.
+> 2. **해금 조건(Conditions) 처리 방안 제안:** 현재 CSV 데이터에는 해금 조건 관련 열이 없습니다. 임포트 도구에서는 **일단 조건 목록을 '빈칸(0개)'으로 생성**하도록 만들겠습니다. 나중에 유니티 엔진 창 (Inspector)에서 직접 마우스를 눌러 *"~사건 해결하기"* 같은 텍스트 조건을 손수 추가하시는 형태가 가장 무난하고 직관적입니다. 혹은 나중에 엑셀(CSV)에 'Condition' 이라는 열을 새로 파고 문장들을 적어주시면, 자동으로 파싱되게 만들 수도 있습니다. 지금은 전자인 **수동 추가** 방식을 기준으로 가겠습니다.
+
+## Proposed Changes
+
+---
+
+### 1. Data Schema Update
+
+#### [MODIFY] [EpisodeData.cs](file:///c:/unity_proj/slainte/slainte/Assets/RestScene/Scripts/EpisodeData.cs)
+- `Category` (안전한 관리를 위해 `enum EpisodeCategory { encounter_episode, episode }` 형태로 추가)
+- `episodeNameEng` (string)
+- `iconNameBoard` (string)
+- `iconNameArchive` (string)
+- `EpisodeCharacter` 구조체 내부에 `characterName` (string) 추가 (`F54`, `샐리` 등의 텍스트 이름을 보관)
+
+### 2. Editor Script & CSV
+
+#### [NEW] [EpisodeCSVImporter.cs](file:///c:/unity_proj/slainte/slainte/Assets/Editor/EpisodeCSVImporter.cs)
+- 상단 메뉴바에 `[Episode/Import CSV (자동화)]` 메뉴를 추가하는 스크립트입니다.
+- 버튼을 누르면 프로젝트 내의 `Episodes.csv`를 읽어들여 7개의 `EpisodeData` 에셋 리스트를 `Assets/RestScene/Episode/` 폴더에 즉시 생성(혹은 덮어쓰기)합니다.
+
+#### [NEW] [Episodes.csv](file:///c:/unity_proj/slainte/slainte/Assets/CoreScene/Data/Episodes.csv)
+- 채팅창에 남겨주신 원본 데이터를 그대로 포함하는 쉼표 분리 파일입니다.
+
+## Open Questions
+
+> [!TIP]  
+> "캐릭터는 해금 조건과 무관하다"는 의견과 "조건은 일단 스킵하고 수동 처리하겠다"는 현재 방향성이 마음에 드시면 승인(진행) 사인을 내려주세요! 승인 즉시 자동 생성 툴과 데이터 수정을 시작하겠습니다.

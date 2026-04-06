@@ -1,0 +1,4 @@
+- [x] Add `prerequisiteEpisodeIDs` to `EpisodeData.cs`.
+- [x] Add CSV column logic for `Required_Episodes` in `EpisodeCSVImporter.cs`.
+- [x] Add `IsAvailableToStart()` method in `EpisodeManager.cs`.
+- [x] Add `RefreshBoard()` in `EpisodeBoardManager.cs` to show/hide photos based on availability and progress.

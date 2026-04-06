@@ -75,3 +75,11 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 # End of https://www.toptal.com/developers/gitignore/api/unity
+
+# --- Antigravity AI History ---
+.ai_history/*.tmp
+.ai_history/cache/
+.ai_history/logs/
+
+# 만약 대화 내역 파일이 너무 크다면(바이너리), Git LFS 사용을 고려하세요.
+# .ai_history/*.pb filter=lfs diff=lfs merge=lfs -text

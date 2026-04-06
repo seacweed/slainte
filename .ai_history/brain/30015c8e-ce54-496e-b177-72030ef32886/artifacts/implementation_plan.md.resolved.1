@@ -1,0 +1,46 @@
+# 에피소드 데이터 자동화 (CSV Importer) 구현 계획
+
+제공해주신 에피소드 테이블 리스트를 하나하나 수작업으로 입력하는 것은 비효율적이며 유지보수가 어렵습니다. 따라서 CSV 파일로부터 자동으로 `.asset` 데이터들을 한 번에 찍어내는 유니티 에디터 플러그인 방식을 제안합니다.
+
+## User Review Required
+
+> [!IMPORTANT]
+> 제공해주신 표에서 새롭게 등장한 컬럼들을 수용하기 위해 `EpisodeData.cs` 원본 클래스에 필드를 추가해야 합니다.
+> - **Category:** (예: encounter_episode, episode)
+> - **Name_eng:** (예: Today, Suspicious customer)
+> - **IconName_board, IconName_archive:** (예: Icon_1001_arch)
+> - **Character Name:** (스프라이트 이미지뿐만 아니라 텍스트 닉네임 `샐리`, `F54` 등을 보관할 공간)
+>
+> 위 스키마 변경을 `EpisodeData`에 적용해도 괜찮을까요?
+
+## Proposed Changes
+
+---
+
+### 1. Data Schema Update
+
+#### [MODIFY] [EpisodeData.cs](file:///c:/unity_proj/slainte/slainte/Assets/RestScene/Scripts/EpisodeData.cs)
+- `category` (string 혹은 enum 형태)
+- `episodeNameEng` (string)
+- `iconNameBoard` (string)
+- `iconNameArchive` (string)
+- `EpisodeCharacter` 구조체 내부에 `characterName` 문자열 변수 추가
+
+### 2. Editor Script & CSV
+
+#### [NEW] [EpisodeCSVImporter.cs](file:///c:/unity_proj/slainte/slainte/Assets/Editor/EpisodeCSVImporter.cs)
+- 상단 메뉴바에 `[Episode/Import CSV (자동화)]` 메뉴를 추가하는 스크립트입니다.
+- 버튼을 누르면 프로젝트 내의 `Episodes.csv`를 읽어들여 7개의 `EpisodeData` 에셋 리스트를 `Assets/RestScene/Episode/` 폴더에 즉시 생성(혹은 덮어쓰기)합니다.
+
+#### [NEW] [Episodes.csv](file:///c:/unity_proj/slainte/slainte/Assets/RestScene/Episode/Episodes.csv)
+- 채팅창에 남겨주신 원본 데이터를 그대로 포함하는 쉼표 분리 파일입니다.
+
+## Open Questions
+
+> [!TIP]  
+> 1. 제공된 데이터엔 Condition(조건) 리스트가 비어있습니다. 임포트 단계에서는 빈 리스트로 두고, 나중에 언리얼/유니티 인스펙터 창에서 수동으로 조건을 더하시겠습니까?
+> 2. `category` 필드 값인 "encounter_episode"와 "episode"는 단순한 문자열(String)로 두는 것이 좋을까요, 아니면 엄격한 C# Enum으로 치환하는 것이 나을까요? 
+
+## Verification Plan
+1. 에디터 툴을 실행하여 파일 생성을 시뮬레이션
+2. 사용자님께서 유니티 창 상단의 `Episode -> Import CSV` 버튼을 누르고 폴더 내에 7개의 SO 에셋 파일이 멀쩡히 등록되는 것을 확인

@@ -1,0 +1,48 @@
+# 상황판 (에피소드 보드) UI 구현 계획
+
+기획서에 명시된 "상황판 (에피소드 보드) UI"의 요구사항을 반영하여, 현재 프로젝트에 존재하는 스크립트들을 리팩토링하고 연결하는 작업 계획입니다. 이전 과정에서 발생한 코드 꼬임 현상들을 해결하고 기획 의도에 맞게 완성합니다.
+
+## User Review Required
+
+> [!IMPORTANT]
+> ScriptableObject인 `EpisodeData`에서 런타임 진행 데이터(`isUnlocked`, `hasMet`)를 분리하고, 이를 `EpisodeProgressData`에서 전담하도록 수정합니다. 기존 `EpisodeUIManager.cs`와 새로 작성된 `EpisodeBoardManager.cs`의 역할이 겹치는데, 보드판 제어는 `EpisodeBoardManager`가 전담하도록 정리하겠습니다. 동의하시나요?
+
+## Proposed Changes
+
+---
+
+### Data Models & Manager
+
+#### [MODIFY] [EpisodeData.cs](file:///c:/unity_proj/slainte/slainte/Assets/RestScene/Scripts/EpisodeData.cs)
+- `EpisodeCondition` 구조체에서 `isUnlocked` 필드 제거 (ScriptableObject는 정적 데이터만 보관)
+- `EpisodeCharacter` 구조체에서 `hasMet` 필드 제거
+
+*(참고: `EpisodeManager.cs` 및 `EpisodeProgressData` 클래스는 이미 분리 및 구현되어 있으므로 그대로 사용합니다.)*
+
+---
+
+### UI Components
+
+#### [MODIFY] [EpisodeInfoUI.cs](file:///c:/unity_proj/slainte/slainte/Assets/RestScene/Scripts/EpisodeInfoUI.cs)
+- `Show(EpisodeData data, RectTransform targetPhoto)` 메서드 수정.
+- `EpisodeManager.Instance.GetProgress(data)`를 호출하여 **런타임 달성 상태**(`progress.conditionUnlocks`, `progress.characterMeets`)를 가져옵니다.
+- 기획서 내용에 따라 문자열 색상 반전 (노란색/회색) 및 초상화 숨김(물음표 아이콘) 기능을 `EpisodeProgressData` 기반으로 동작하도록 연결합니다.
+
+#### [MODIFY] [EpisodeBoardManager.cs](file:///c:/unity_proj/slainte/slainte/Assets/RestScene/Scripts/EpisodeBoardManager.cs)
+- 이미 기획서 요구사항(하단 UI, Pinning 시스템, 슬라이드 애니메이션)의 대부분이 작성되어 있습니다. 필요시 오타 및 누락된 연결 구문만 점검합니다.
+
+## Open Questions
+
+> [!WARNING]  
+> 현재 프로젝트 내에 구버전의 `EpisodeUIManager.cs`와 최신 기획이 반영된 `EpisodeBoardManager.cs`가 공존하고 있을 가능성이 있습니다. 완전한 대체를 위해 구버전인 `EpisodeUIManager.cs`를 삭제(혹은 사용 중지)해도 될까요?
+
+## Verification Plan
+
+### Automated Tests
+- 유니티 컴파일 에러 발생 여부를 확인합니다.
+
+### Manual Verification
+- 플레이어가 각 에피소드 사진 위에 마우스를 Hover 했을 때 노란색 아웃라인이 뜨는지 확인.
+- 사진 Click 시 고정 기능(조준점/오버레이 표시, 타 사진 반응 무시)이 정상 동작하는지 확인.
+- 빈 공간 클릭 시 초기화(ResetBoard)가 정상 동작하는지 확인.
+- 에피소드 수락(Start) 시 정보창이 내려가는지 확인.
