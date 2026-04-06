@@ -195,13 +195,38 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 
     private void GoToNext()
     {
-        if (_currentNode == null || string.IsNullOrWhiteSpace(_currentNode.nextNodeId))
+        if (_currentNode == null) { EndEncounter(); return; }
+
+        string nextId = ResolveNextNodeId(_currentNode);
+        if (string.IsNullOrWhiteSpace(nextId)) { EndEncounter(); return; }
+
+        EnterNode(nextId);
+    }
+
+    private string ResolveNextNodeId(EpisodeNode node)
+    {
+        if (progress != null)
         {
-            EndEncounter();
-            return;
+            for (int i = 0; i < node.flagBranches.Count; i++)
+            {
+                NodeFlagBranch branch = node.flagBranches[i];
+                if (!string.IsNullOrWhiteSpace(branch.requiredFlag)
+                    && progress.HasFlag(branch.requiredFlag)
+                    && !string.IsNullOrWhiteSpace(branch.nextNodeId))
+                    return branch.nextNodeId;
+            }
+
+            for (int i = 0; i < node.varBranches.Count; i++)
+            {
+                NodeVarBranch branch = node.varBranches[i];
+                if (branch.condition != null
+                    && branch.condition.Evaluate(progress.GetVar(branch.condition.varName))
+                    && !string.IsNullOrWhiteSpace(branch.nextNodeId))
+                    return branch.nextNodeId;
+            }
         }
 
-        EnterNode(_currentNode.nextNodeId);
+        return node.nextNodeId;
     }
 
     private void ShowChoices(List<EpisodeChoice> choices)
@@ -275,6 +300,9 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 
         for (int i = 0; i < choice.clearFlags.Count; i++)
             progress.ClearFlag(choice.clearFlags[i]);
+
+        for (int i = 0; i < choice.varChanges.Count; i++)
+            progress.AddVar(choice.varChanges[i].varName, choice.varChanges[i].delta);
     }
 
     private string ResolveSpeakerName(EpisodeNode node)

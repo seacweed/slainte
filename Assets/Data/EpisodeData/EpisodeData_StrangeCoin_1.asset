@@ -19,6 +19,7 @@ MonoBehaviour:
     requiredFlags: []
     blockedFlags: []
     prerequisiteEpisodeIds: []
+    requiredVars: []
   openingCharacters:
   - characterKey: f54
     expressionKey: mid
@@ -31,6 +32,8 @@ MonoBehaviour:
     text: "\uC88B\uC740 \uC800\uB141! \uD38D\uC740 \uC880 \uC5B4\uB54C?"
     nextNodeId: 1
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -45,6 +48,8 @@ MonoBehaviour:
     text: "\uC5B4\uC11C \uC640. \uD55C\uACB0\uAC19\uC9C0. \uB2E4\uD589\uD788\uB3C4."
     nextNodeId: 2
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -59,6 +64,8 @@ MonoBehaviour:
     text: "\uD5E4\uD5E4. \uADF8\uAC70 \uB2E4\uD589\uC774\uB124."
     nextNodeId: 3
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -74,6 +81,8 @@ MonoBehaviour:
       \uC624\uB290\uB77C \uB2A6\uC5C8\uC5B4."
     nextNodeId: 4
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -88,6 +97,8 @@ MonoBehaviour:
     text: "<b>5\uBC88\uAC00</b>?"
     nextNodeId: 5
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -103,6 +114,8 @@ MonoBehaviour:
       \uC6EC\uB9CC\uD558\uBA74 \uAC70\uAE34 \uAC00\uC9C0 \uB9C8."
     nextNodeId: 6
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -119,6 +132,8 @@ MonoBehaviour:
       \uC54A\uB294 \uAC8C \uB354 \uC774\uC0C1\uD560 \uC815\uB3C4\uC57C."
     nextNodeId: 7
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -134,6 +149,8 @@ MonoBehaviour:
       \uB0B4\uC918\uC57C\uC9C0. \uC704\uC2A4\uD0A4 \uD55C\uC794!"
     nextNodeId: 8
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -148,6 +165,8 @@ MonoBehaviour:
     text: "\uB108 \uC544\uC9C1 \uADFC\uBB34 \uC911\uC778 \uAC70 \uC544\uB2C8\uC57C?"
     nextNodeId: 9
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -163,6 +182,8 @@ MonoBehaviour:
       \uADF8\uC0AC\uC774\uC5D0 \uC77C\uC774\uB77C\uB3C4 \uD130\uC9C0\uACA0\uC5B4?"
     nextNodeId: 10
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -177,6 +198,8 @@ MonoBehaviour:
     text: 
     nextNodeId: 
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -191,6 +214,8 @@ MonoBehaviour:
     text: "\uC74C. \uB298 \uCD5C\uACE0\uB77C\uB2C8\uAE4C."
     nextNodeId: 11
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -205,6 +230,8 @@ MonoBehaviour:
     text: "\uD760.. \uC624\uB298\uC740 \uC0B4\uC9DD \uC544\uC27D\uB124?"
     nextNodeId: 11
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -220,6 +247,8 @@ MonoBehaviour:
       \uAC70\uC57C? \uC2EC\uAC01\uD55C \uC77C\uC740 \uC544\uB2C8\uC9C0?"
     nextNodeId: 12
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -235,6 +264,8 @@ MonoBehaviour:
       \uB300\uD574\uC11C \uC880 \uC54C\uC544?"
     nextNodeId: 13
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -249,6 +280,8 @@ MonoBehaviour:
     text: ...
     nextNodeId: 14
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -263,6 +296,8 @@ MonoBehaviour:
     text: "\uC774\uAC70 \uC5B4\uB514\uC11C \uB09C \uAC70\uC57C?"
     nextNodeId: 15
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -279,6 +314,8 @@ MonoBehaviour:
       \uC774\uC0C1\uD574\uC11C."
     nextNodeId: 16
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -294,6 +331,8 @@ MonoBehaviour:
       \uAC70\uC57C?"
     nextNodeId: 17
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -309,6 +348,8 @@ MonoBehaviour:
       \uB530\uC9C8 \uACA8\uB97C\uC774 \uC5C6\uC5C8\uC5B4. \uAC8C\uB2E4\uAC00 \uACBD\uCC30\uC774\uC5C8\uB2E4\uACE0."
     nextNodeId: 18
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -324,6 +365,8 @@ MonoBehaviour:
       \uBED4\uD558\uB2C8\uAE4C\u2026"
     nextNodeId: 19
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -338,6 +381,8 @@ MonoBehaviour:
     text: "\uD760\u2026"
     nextNodeId: 20
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -353,6 +398,8 @@ MonoBehaviour:
       \uC4F0\uB294 \uB3D9\uC804\uC774\uC57C."
     nextNodeId: 21
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -368,6 +415,8 @@ MonoBehaviour:
       \uD654\uD3D0\uB77C\uACE0."
     nextNodeId: 22
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -384,6 +433,8 @@ MonoBehaviour:
       \uB420 \uC218 \uC788\uC5B4."
     nextNodeId: 23
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -398,6 +449,8 @@ MonoBehaviour:
     text: "\uC7A0\uAE50, \uBB50\uB77C\uACE0?"
     nextNodeId: 24
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -412,6 +465,8 @@ MonoBehaviour:
     text: "\uC9C4\uC815\uD574. \uB09C \uB124 \uD3B8\uC774\uB2C8\uAE4C."
     nextNodeId: 25
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -427,6 +482,8 @@ MonoBehaviour:
       \uCC98\uB9AC\uD560 \uC218 \uC788\uB294\uB370 \uBB38\uC81C\uB294\u2026"
     nextNodeId: 26
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -441,6 +498,8 @@ MonoBehaviour:
     text: "\uBB38\uC81C\uB294\u2026?"
     nextNodeId: 27
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -456,6 +515,8 @@ MonoBehaviour:
       \uC158, \uADF8 \uC778\uAC04 \uC5BC\uAD74 \uAE30\uC5B5\uD574?"
     nextNodeId: 28
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -471,6 +532,8 @@ MonoBehaviour:
       \uC778\uC0C1\uC774\uC5C8\uB294\uB370... \uC774\uB984\uC740 \uBAA8\uB974\uACA0\uACE0."
     nextNodeId: 29
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -488,6 +551,8 @@ MonoBehaviour:
       \uC18C\uB9AC\uC57C. \uB0B4\uAC00 \uB2F9\uC7A5..."
     nextNodeId: 30
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -502,6 +567,8 @@ MonoBehaviour:
     text: "\uC5B4\uC11C\uC624\uC138\u2026 \uC544."
     nextNodeId: 31
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -522,6 +589,8 @@ MonoBehaviour:
     text: ...
     nextNodeId: 32
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -542,6 +611,8 @@ MonoBehaviour:
     text: "\uC5EC\uC5B4, \uBC14\uD150\uB354! \uC544\uC9C1 \uC601\uC5C5 \uC548 \uB05D\uB0AC\uC9C0?"
     nextNodeId: 33
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -562,6 +633,8 @@ MonoBehaviour:
     text: "...\uBAA9\uC18C\uB9AC \uB0AE\uCDB0. \uC0AC\uB78C \uC5C6\uB294 \uACF3\uC774\uB77C\uBA70."
     nextNodeId: 34
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -584,6 +657,8 @@ MonoBehaviour:
       \uB0B4\uBC00\uBA70)"
     nextNodeId: 35
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -604,6 +679,8 @@ MonoBehaviour:
     text: "...\uC5B4, \uC5B4\uB77C?"
     nextNodeId: 36
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -624,6 +701,8 @@ MonoBehaviour:
     text: "...F72? \uB108 \uC9C0\uAE08 \uC190\uC5D0 \uB4E0 \uAC70 \uBB50\uC57C?"
     nextNodeId: 37
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -644,6 +723,8 @@ MonoBehaviour:
     text: "\uC774 \uC0AC\uB78C\uC740 \uB610 \uB204\uAD6C\uC57C?"
     nextNodeId: 38
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -666,6 +747,8 @@ MonoBehaviour:
       \uD558\uB824\uB294 \uAC70\uC57C?"
     nextNodeId: 39
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -686,6 +769,8 @@ MonoBehaviour:
     text: "\uC544, \uC544\uB2C8\uC57C! \uC624\uD574\uB77C\uACE0!"
     nextNodeId: 40
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -708,6 +793,8 @@ MonoBehaviour:
       \uBD99\uC5B4\uBA39\uC740 \uAC70\uC57C?"
     nextNodeId: 41
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -725,6 +812,8 @@ MonoBehaviour:
     text: "\uC190 \uB5BC."
     nextNodeId: 42
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -742,6 +831,8 @@ MonoBehaviour:
     text: "\u3148..\uC7A0\uAE50 \uBB50\uAC00 \uC5B4\uB5BB\uAC8C\u2026"
     nextNodeId: 43
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -759,6 +850,8 @@ MonoBehaviour:
     text: "\uC7A0\uC2DC\uB9CC \uB458 \uB2E4 \uC9C4\uC815\uD558\uC2DC\uACE0\u2026"
     nextNodeId: 44
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -777,6 +870,8 @@ MonoBehaviour:
       \uC704\uBC18\uC774\uC57C!"
     nextNodeId: 45
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -795,6 +890,8 @@ MonoBehaviour:
       \uB9C8\uC2DC\uC796\uC544!"
     nextNodeId: 46
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -812,6 +909,8 @@ MonoBehaviour:
     text: "\u3131..\uADF8\uAC74!"
     nextNodeId: 47
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -830,6 +929,8 @@ MonoBehaviour:
       \uADF8\uB9AC\uACE0 \uC774 \uC815\uB3C4\uB294 \uAD1C\uCC2E\uB2E4\uACE0\u2026"
     nextNodeId: 48
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -848,6 +949,8 @@ MonoBehaviour:
       \uADF8\uB300\uB85C <b>\uCC98\uBD84</b>\uAC10\uC774\uC57C!"
     nextNodeId: 49
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -865,6 +968,8 @@ MonoBehaviour:
     text: "72. \uB9D0\uB9CC\uD574. \uC3F4\uBC84\uB9B4 \uD14C\uB2C8\uAE4C."
     nextNodeId: 50
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -883,6 +988,8 @@ MonoBehaviour:
       5\uBC88\uAC00\uAC00 \uC544\uB2C8\uB2C8\uAE4C."
     nextNodeId: 51
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -900,6 +1007,8 @@ MonoBehaviour:
     text: "<b>\uBAA8\uB450 \uADF8\uB9CC\uD558\uC138\uC694!</b>"
     nextNodeId: 52
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -917,6 +1026,8 @@ MonoBehaviour:
     text: ...
     nextNodeId: 53
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -934,6 +1045,8 @@ MonoBehaviour:
     text: ...
     nextNodeId: 54
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -952,6 +1065,8 @@ MonoBehaviour:
       \uC5EC\uB7EC\uBAA8\uB85C \uACE4\uB780\uD574\uC838."
     nextNodeId: 55
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -971,6 +1086,8 @@ MonoBehaviour:
       \uACC4\uC138\uC694!"
     nextNodeId: 56
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -988,6 +1105,8 @@ MonoBehaviour:
     text: "\uB09C \uC544\uBB34\uAC83\uB3C4\u2026"
     nextNodeId: 57
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -1010,11 +1129,15 @@ MonoBehaviour:
       nextNodeId: 58-1-1
       setFlags: []
       clearFlags: []
+      varChanges: []
     - buttonText: "\uC624\uB298\uC740 \uBABB \uBCF8 \uCC99\uD574\uB4DC\uB9B4\uD14C\uB2C8
         \uC774\uCBE4 \uD558\uC138\uC694."
       nextNodeId: 58-2-1
       setFlags: []
       clearFlags: []
+      varChanges: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -1033,6 +1156,8 @@ MonoBehaviour:
       \uC9C4\uC9DC \uACBD\uCC30 \uBD80\uB97C \uAC70\uC608\uC694!"
     nextNodeId: 58-1-2
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -1050,6 +1175,8 @@ MonoBehaviour:
     text: "\uB098\uB3C4 \uC9C4\uC9DC \uACBD\uCC30\uC778\uB370\u2026"
     nextNodeId: 58-1-3
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -1067,6 +1194,8 @@ MonoBehaviour:
     text: "\uC798 \uC0DD\uAC01\uD558\uC138\uC694! \uC5EC\uAE34 9\uBC88\uAC00\uC785\uB2C8\uB2E4!"
     nextNodeId: 58-1-4
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -1084,6 +1213,8 @@ MonoBehaviour:
     text: ...
     nextNodeId: 58-1-5
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -1101,6 +1232,8 @@ MonoBehaviour:
     text: "...\uB2E4 \uB2F9\uC2E0 \uB54C\uBB38\uC774\uC57C 72."
     nextNodeId: 58-1-6
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -1119,6 +1252,8 @@ MonoBehaviour:
       \uAD74\uC9C0 \uB9D0\uC790\uACE0."
     nextNodeId: 58-1-7
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -1138,6 +1273,8 @@ MonoBehaviour:
       \uBCF4\uACE0\uD574 \uBC84\uB9B4 \uD14C\uB2C8\uAE4C."
     nextNodeId: 58-1-8
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1159,6 +1296,8 @@ MonoBehaviour:
       \uD558\uBA74 \uC548 \uB420\uAE4C?"
     nextNodeId: 58-1-9
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1180,6 +1319,8 @@ MonoBehaviour:
       \uB9D0\uB790\uC744 \uBFD0\uC774\uC57C. \uC548 \uADF8\uB798, <b>\uC140\uB9AC</b>?"
     nextNodeId: 58-1-10
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1201,6 +1342,8 @@ MonoBehaviour:
       \uB9D0\uB77C\uACE0 \uBA87 \uBC88\uC744 \uB9D0\uD574."
     nextNodeId: 58-1-11
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1222,6 +1365,8 @@ MonoBehaviour:
       \uC6A9\uAC74\uB9CC \uB05D\uB0B4\uACE0 \uB098\uAC00\uC9C0."
     nextNodeId: 59
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1243,6 +1388,8 @@ MonoBehaviour:
       \uC774\uCBE4 \uD558\uC138\uC694."
     nextNodeId: 58-2-2
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -1261,6 +1408,8 @@ MonoBehaviour:
       \uB2E4\uB4E4 \uC549\uC544\uBCF4\uC2DC\uC8E0."
     nextNodeId: 58-2-3
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -1279,6 +1428,8 @@ MonoBehaviour:
       \uC6B0\uB9B0 \uADF8\uC800 \uC220\uB9CC \uB9C8\uC2DC\uB7EC \uC628 \uAC70\uC57C."
     nextNodeId: 58-2-4
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -1297,6 +1448,8 @@ MonoBehaviour:
       \uCE5C\uAD6C\uAC70\uB4E0!"
     nextNodeId: 58-2-5
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -1315,6 +1468,8 @@ MonoBehaviour:
       \uB9D0\uB77C\uACE0 \uBA87 \uBC88\uC744 \uB9D0\uD574."
     nextNodeId: 58-2-6
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54_f72
       expressionKey: fight
@@ -1333,6 +1488,8 @@ MonoBehaviour:
       \uBCF4\uC774\uC796\uC544!"
     nextNodeId: 58-2-7
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1355,6 +1512,8 @@ MonoBehaviour:
       \uC218\uC0C1\uD558\uB2E4\uB294 \uC0DD\uAC01 \uC548 \uB4E4\uC5B4?"
     nextNodeId: 58-2-8
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1375,6 +1534,8 @@ MonoBehaviour:
     text: "\uC800..\uC815\uB9D0\uC774\uC57C! \uADF8\uB807\uC9C0? \uC140\uB9AC?"
     nextNodeId: 58-2-9
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1395,6 +1556,8 @@ MonoBehaviour:
     text: ...
     nextNodeId: 58-2-10
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1415,6 +1578,8 @@ MonoBehaviour:
     text: "\uADF8\uB9CC\uD574 72. \uC6A9\uAC74\uB9CC \uB05D\uB0B4\uACE0 \uB098\uAC00\uC9C0."
     nextNodeId: 58-2-11
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1435,6 +1600,8 @@ MonoBehaviour:
     text: "\uD558! \uC140\uB9AC! \uC774\uB7EC\uAE30\uC57C?"
     nextNodeId: 58-2-12
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1456,6 +1623,8 @@ MonoBehaviour:
       \uD56D\uC0C1 \uBB38\uC81C\uAC00 \uC0DD\uACA8."
     nextNodeId: 58-2-13
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1476,6 +1645,8 @@ MonoBehaviour:
     text: "\uD2C0\uB9B0 \uB9D0\uC740 \uC544\uB2C8\uAD70."
     nextNodeId: 58-2-14
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1497,6 +1668,8 @@ MonoBehaviour:
       \uB9D0\uB77C\uACE0\u2026"
     nextNodeId: 58-2-15
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1519,6 +1692,8 @@ MonoBehaviour:
       \uBCF4\uACE0\uD574 \uBC84\uB9B4 \uD14C\uB2C8\uAE4C."
     nextNodeId: 59
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1540,6 +1715,8 @@ MonoBehaviour:
       \uD588\uB098\uC694?"
     nextNodeId: 60
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1560,6 +1737,8 @@ MonoBehaviour:
     text: "\uB9DE\uC544, \uB2E4\uB4E4 \uADF8\uB807\uAC8C \uBD80\uB974\uC9C0."
     nextNodeId: 61
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1581,6 +1760,8 @@ MonoBehaviour:
       \uB4DC\uB9AC\uACA0\uC2B5\uB2C8\uB2E4."
     nextNodeId: 62
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1607,11 +1788,15 @@ MonoBehaviour:
       nextNodeId: 63-1-1
       setFlags: []
       clearFlags: []
+      varChanges: []
     - buttonText: "<b>(\uB3D9\uC804\uC73C\uB85C \uBC1B\uAE30)</b> \uB124. \uB300\uC2E0
         \uB450 \uBC30\uB85C \uC8FC\uC2DC\uC8E0."
       nextNodeId: 63-2-1
       setFlags: []
       clearFlags: []
+      varChanges: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1633,6 +1818,8 @@ MonoBehaviour:
       \uBC30\uB85C \uBC1B\uACA0\uC2B5\uB2C8\uB2E4."
     nextNodeId: 63-1-2
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1654,6 +1841,8 @@ MonoBehaviour:
       \uB3C8\uC774\uB77C\uACE0!"
     nextNodeId: 63-1-3
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1674,6 +1863,8 @@ MonoBehaviour:
     text: "\uD38D\uC5D0\uC11C \uC18C\uB780 \uD53C\uC6B4 \uAC12\uC785\uB2C8\uB2E4."
     nextNodeId: 64
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1694,6 +1885,8 @@ MonoBehaviour:
     text: "\uB124. \uB300\uC2E0 \uB450 \uBC30\uB85C \uC8FC\uC2DC\uC8E0."
     nextNodeId: 63-2-2
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1714,6 +1907,8 @@ MonoBehaviour:
     text: "\uBB50? \uADF8\uAC74 \uB108\uBB34\uD558\uC796\uC544!"
     nextNodeId: 63-2-3
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1734,6 +1929,8 @@ MonoBehaviour:
     text: "\uD38D\uC5D0\uC11C \uC18C\uB780 \uD53C\uC6B4 \uAC12\uC785\uB2C8\uB2E4."
     nextNodeId: 63-2-4
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1754,6 +1951,8 @@ MonoBehaviour:
     text: "\uB09C \uBAA8\uB978\uB2E4. \uB4B7\uAC10\uB2F9\uC740 \uB124\uAC00 \uD574\uB77C."
     nextNodeId: 64
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1774,6 +1973,8 @@ MonoBehaviour:
     text: 
     nextNodeId: 
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1795,6 +1996,8 @@ MonoBehaviour:
       \uB9D0\uC774\uC9C0."
     nextNodeId: 65
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1816,6 +2019,8 @@ MonoBehaviour:
       \uAC70\uC57C?"
     nextNodeId: 64-2-2
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1836,6 +2041,8 @@ MonoBehaviour:
     text: "\uAF34 \uC88B\uB124"
     nextNodeId: 65
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1856,6 +2063,8 @@ MonoBehaviour:
     text: "\uADF8\uB798\uC11C, \uC5EC\uAE34 \uC9C4\uC9DC\uB85C \uC65C \uC628 \uAC70\uC57C?"
     nextNodeId: 66
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1877,6 +2086,8 @@ MonoBehaviour:
       \uC57D\uC18D\uD558\uBA74 \uB9D0\uD574\uC904\uAC8C."
     nextNodeId: 67
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1899,6 +2110,8 @@ MonoBehaviour:
       \uC8FC\uC81C\uC5D0!"
     nextNodeId: 68
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1919,6 +2132,8 @@ MonoBehaviour:
     text: "<b>\uC544\uC544-</b> \uAC70\uAE30\uAE4C\uC9C0!"
     nextNodeId: 69
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1940,6 +2155,8 @@ MonoBehaviour:
       \uACF5\uAC04\uC774 \uD544\uC694\uD588\uC744 \uBFD0\uC774\uC57C."
     nextNodeId: 70
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1961,6 +2178,8 @@ MonoBehaviour:
       \uB208\uB3C5\uC744 \uB4E4\uC774\uC9C0 \uB9D0\uB77C\uACE0."
     nextNodeId: 71
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -1982,6 +2201,8 @@ MonoBehaviour:
       \uD558\uC9C0 \uADF8\uB798? \uAC70\uAE30\uC57C\uB9D0\uB85C UPD \uC0AC\uAC01\uC9C0\uB300\uC796\uC544?"
     nextNodeId: 72
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2003,6 +2224,8 @@ MonoBehaviour:
       \uADF8\uB7EC\uC9C0."
     nextNodeId: 73
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2024,6 +2247,8 @@ MonoBehaviour:
       \uAC8C \uC88B\uC544."
     nextNodeId: 74
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2044,6 +2269,8 @@ MonoBehaviour:
     text: "\uCC98\uB9AC?"
     nextNodeId: 75
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2065,6 +2292,8 @@ MonoBehaviour:
       \uB09C \uAC70\uAE30\uAE4C\uC9C0\uB9CC \uAD00\uC5EC\uD574."
     nextNodeId: 76
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2088,6 +2317,8 @@ MonoBehaviour:
       \uADF8\uB798."
     nextNodeId: 77
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2110,6 +2341,8 @@ MonoBehaviour:
       \uCE74\uBA54\uB77C \uB044\uACE0, \uC21C\uCC30 \uC778\uC6D0 \uBE7C\uB294 \uAC70\uC9C0."
     nextNodeId: 78
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2131,6 +2364,8 @@ MonoBehaviour:
       \uB2F9\uB2F9\uD558\uAE30\uB294."
     nextNodeId: 79
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2154,6 +2389,8 @@ MonoBehaviour:
       \uC11C\uB85C \uC708\uC708 \uC544\uB2C8\uACA0\uC5B4?"
     nextNodeId: 80
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2176,6 +2413,8 @@ MonoBehaviour:
       \uC5C6\uC796\uC544."
     nextNodeId: 81
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2197,6 +2436,8 @@ MonoBehaviour:
       \uB108 \uADF8\uACF3\uC774 \uC5B4\uB5A4\uC9C0\uB3C4 \uBAA8\uB974\uC796\uC544."
     nextNodeId: 82
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2217,6 +2458,8 @@ MonoBehaviour:
     text: "<b>\uC18C\uAC01\uC7A5</b>? \uB108\uD76C\uB4E4 \uC124\uB9C8\u2026"
     nextNodeId: 83
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2239,6 +2482,8 @@ MonoBehaviour:
       \uC544\uB2CC \uAC70\uC57C?"
     nextNodeId: 84
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2260,6 +2505,8 @@ MonoBehaviour:
       \uC4F0\uB808\uAE30\uC7A5 \uB4A4\uC9C0\uB294 \uAC8C \uAD1C\uCC2E\uC9C0 \uC54A\uC544?"
     nextNodeId: 85
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2282,6 +2529,8 @@ MonoBehaviour:
       \uC598\uAE30\uAC00 \uC788\uC5B4."
     nextNodeId: 86
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2302,6 +2551,8 @@ MonoBehaviour:
     text: ...
     nextNodeId: 87
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2322,6 +2573,8 @@ MonoBehaviour:
     text: ..?
     nextNodeId: 88
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2344,6 +2597,8 @@ MonoBehaviour:
       \uADF8\uB300\uB85C \uC18C\uAC01\uC7A5\uC5D0 \uBC84\uB824\uC838."
     nextNodeId: 89
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2367,6 +2622,8 @@ MonoBehaviour:
       \uAC8C \uC544\uB2C8\uB0D0\uB294 \uB9D0\uC774 \uC788\uC5C8\uC5B4."
     nextNodeId: 90
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2389,6 +2646,8 @@ MonoBehaviour:
       \uADF8\uB7F0 \uC9D3\uC744 \uD574?"
     nextNodeId: 91
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2409,6 +2668,8 @@ MonoBehaviour:
     text: "\uC7A0\uAE50, \uC815\uB9D0\uC774\uC57C? \uC140\uB9AC?"
     nextNodeId: 92
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2431,6 +2692,8 @@ MonoBehaviour:
       \uB9C8\uC74C\uC740 \uC5C6\uC5B4."
     nextNodeId: 93
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2456,13 +2719,20 @@ MonoBehaviour:
     - buttonText: "\uC0B4\uAE30 \uC704\uD55C \uC120\uD0DD\uC744 \uBE44\uB09C\uD560
         \uC21C \uC5C6\uC8E0."
       nextNodeId: 94-1-1
-      setFlags: []
+      setFlags:
+      - sc1_true
       clearFlags: []
+      varChanges:
+      - varName: sally
+        delta: 5
     - buttonText: "\uC5B4\uB5A4 \uC774\uC720\uB4E0, \uBC94\uC8C4\uB294 \uD574\uB2F5\uC774
         \uB420 \uC218 \uC5C6\uC5B4\uC694."
       nextNodeId: 94-2-1
       setFlags: []
       clearFlags: []
+      varChanges: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2484,6 +2754,8 @@ MonoBehaviour:
       \uC5C6\uC8E0."
     nextNodeId: 94-1-2
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2505,6 +2777,8 @@ MonoBehaviour:
       \uD574\uB97C \uB07C\uCE58\uB294 \uAC83\uB3C4 \uC544\uB2C8\uC796\uC544\uC694."
     nextNodeId: 94-1-3
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2525,6 +2799,8 @@ MonoBehaviour:
     text: ...
     nextNodeId: 94-1-4
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2546,6 +2822,8 @@ MonoBehaviour:
       \uB118\uC9C0 \uB9D0\uC544\uC57C \uD560 \uC120\uC774\uB77C\uB294 \uAC8C \uC788\uC796\uC544!"
     nextNodeId: 94-1-5
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2567,6 +2845,8 @@ MonoBehaviour:
       \uC5B4\uB5BB\uAC8C \uC0B4\uC544\uAC00\uB294\uC9C0 \uBAA8\uB974\uC796\uC544."
     nextNodeId: 94-1-6
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2588,6 +2868,8 @@ MonoBehaviour:
       \uC4F4\uB9DB\uC744 \uC544\uB294\uAD70."
     nextNodeId: 94-1-7
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2608,6 +2890,8 @@ MonoBehaviour:
     text: "\uBC14\uD150\uB354\uB294 \uB9CE\uC740 \uB9DB\uC5D0 \uC775\uC219\uD558\uB2F5\uB2C8\uB2E4."
     nextNodeId: 94-1-8
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2628,6 +2912,8 @@ MonoBehaviour:
     text: "\uC820\uC7A5, \uC81C\uBC95\uC774\uAD70."
     nextNodeId: 94-1-9
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2650,6 +2936,8 @@ MonoBehaviour:
       \uC140\uB9AC, \uB098\uB3C4 \uADF8 \uC815\uB3C4\uC77C \uC904\uC740 \uBAB0\uB790\uC5B4."
     nextNodeId: 94-1-10
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2670,6 +2958,8 @@ MonoBehaviour:
     text: "\uAC10 \uC7A1\uC558\uC73C\uBA74 \uB410\uC5B4."
     nextNodeId: 94-1-11
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2692,6 +2982,8 @@ MonoBehaviour:
       \uD3B8\uD788 \uC7A0\uB4E4 \uC218 \uC788\uACA0\uC9C0."
     nextNodeId: 94-1-12
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2713,6 +3005,8 @@ MonoBehaviour:
       \uAC00\uBD10\uC57C\uACA0\uC5B4."
     nextNodeId: 94-1-13
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2734,6 +3028,8 @@ MonoBehaviour:
       \uAC00\uC9C0?"
     nextNodeId: 94-1-14
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2754,6 +3050,8 @@ MonoBehaviour:
     text: "\uB2E4\uC74C\uC5D0 \uB610 \uBCF4\uC790 \uBC14\uD150\uB354."
     nextNodeId: 94-1-15
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2774,6 +3072,8 @@ MonoBehaviour:
     text: "\uC7A0\uAE50, \uAC19\uC774 \uAC00!"
     nextNodeId: 94-1-16
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2791,6 +3091,8 @@ MonoBehaviour:
     text: "\uD5C8."
     nextNodeId: 94-1-17
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2806,6 +3108,8 @@ MonoBehaviour:
       \uC548 \uD560\uAC8C."
     nextNodeId: 94-1-18
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2821,6 +3125,8 @@ MonoBehaviour:
       \uC5EE\uC774\uB294 \uAC74 \uBD88\uC548\uD574."
     nextNodeId: 94-1-19
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2836,6 +3142,8 @@ MonoBehaviour:
       \uB188\uB4E4\uC774\uC57C."
     nextNodeId: 94-1-20
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2852,6 +3160,8 @@ MonoBehaviour:
       \uACF3\uC774 \uB418\uC9C0 \uC54A\uAE38 \uBC14\uB784 \uBFD0\uC774\uC57C. \uADF8\uB7EC\uB2C8\uAE4C\u2026"
     nextNodeId: 94-1-21
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2866,6 +3176,8 @@ MonoBehaviour:
     text: 54.
     nextNodeId: 94-1-22
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2880,6 +3192,8 @@ MonoBehaviour:
     text: "\uBB34\uC2A8 \uB9D0\uC778\uC9C0 \uC54C\uC544. \uAC71\uC815\uD558\uC9C0\uB9C8."
     nextNodeId: 94-1-23
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2895,6 +3209,8 @@ MonoBehaviour:
       \uB2A6\uC5C8\uB294\uB370 \uC774\uB9CC \uB4E4\uC5B4\uAC00\uBCFC\uAC8C."
     nextNodeId: 94-1-24
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2909,6 +3225,8 @@ MonoBehaviour:
     text: "\uC158\u2026 \uADF8\u2026 \uC788\uC796\uC544\u2026"
     nextNodeId: 94-1-25
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2923,6 +3241,8 @@ MonoBehaviour:
     text: "\uBB34\uC2A8 \uC77C \uC788\uC73C\uBA74 \uAF2D \uC5F0\uB77D\uD574."
     nextNodeId: 
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2938,6 +3258,8 @@ MonoBehaviour:
       \uB420 \uC218 \uC5C6\uC5B4\uC694."
     nextNodeId: 94-2-2
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2959,6 +3281,8 @@ MonoBehaviour:
       \uAC83\uBCF4\uB2E4 \uB354 \uB098\uC740 \uBC29\uC2DD\uC774 \uC788\uC744 \uAC70\uC608\uC694."
     nextNodeId: 94-2-3
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -2980,6 +3304,8 @@ MonoBehaviour:
       \uADF8\uB7F0 \uC18C\uB9B4 \uD558\uB294 \uAC70\uC57C."
     nextNodeId: 94-2-4
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -3003,6 +3329,8 @@ MonoBehaviour:
       \uBCF8 \uC801 \uC788\uC5B4?"
     nextNodeId: 94-2-5
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -3025,6 +3353,8 @@ MonoBehaviour:
       \uC54A\uC544."
     nextNodeId: 94-2-6
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -3045,6 +3375,8 @@ MonoBehaviour:
     text: "<b>\uB2E5\uCCD0!</b> \uACE0\uC0C1\uD55C \uCC99\uD558\uC9C0 \uB9C8!"
     nextNodeId: 94-2-7
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -3066,6 +3398,8 @@ MonoBehaviour:
       \uC544\uB2C8\uC5C8\uC5B4! \uC5F0\uD569 \uB188\uB4E4\uC774\uB791 \uD55C\uD1B5\uC18D\uC774\uAD70."
     nextNodeId: 94-2-8
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -3088,6 +3422,8 @@ MonoBehaviour:
       \uC704\uD574 \uC77C\uD558\uB294 \uAC70\uC9C0."
     nextNodeId: 94-2-9
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -3109,6 +3445,8 @@ MonoBehaviour:
       \uD558\uB294 \uAC74 \uB108\uB3C4 \uB9C8\uCC2C\uAC00\uC9C0\uC796\uC544."
     nextNodeId: 94-2-10
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -3130,6 +3468,8 @@ MonoBehaviour:
       \uC548 \uAC19\uC544."
     nextNodeId: 94-2-11
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -3151,6 +3491,8 @@ MonoBehaviour:
       \uC870\uAE08\uB3C4 \uB354 \uC788\uACE0 \uC2F6\uC9C0 \uC54A\uC73C\uB2C8\uAE4C."
     nextNodeId: 94-2-12
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -3171,6 +3513,8 @@ MonoBehaviour:
     text: "\uC138..\uC140\uB9AC! \uC5B4\uB514\uAC00! \uC7A0\uAE50\uB9CC \uAE30\uB2E4\uB824!"
     nextNodeId: 94-2-13
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -3188,6 +3532,8 @@ MonoBehaviour:
     text: "\uD5C8."
     nextNodeId: 94-2-14
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -3203,6 +3549,8 @@ MonoBehaviour:
       \uC904\uC740 \uBAB0\uB790\uB294\uB370."
     nextNodeId: 94-2-15
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -3218,6 +3566,8 @@ MonoBehaviour:
       \uB354\uB7EC\uC6B4 \uC77C\uC744 \uD55C\uB2E4\uB294 \uB9D0."
     nextNodeId: 94-2-16
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -3232,6 +3582,8 @@ MonoBehaviour:
     text: "\u2026\uBB50, \uAC70\uC9D3\uB9D0\uC740 \uC544\uB2C8\uC57C."
     nextNodeId: 94-2-17
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -3246,6 +3598,8 @@ MonoBehaviour:
     text: "\uC9C4\uC2EC\uC774\uC5C8\uB0D0\uB2C8\uAE4C."
     nextNodeId: 94-2-18
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -3261,6 +3615,8 @@ MonoBehaviour:
       \uB2A6\uC5C8\uB294\uB370 \uC774\uB9CC \uB4E4\uC5B4\uAC00 \uBCFC\uAC8C."
     nextNodeId: 94-2-19
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -3275,6 +3631,8 @@ MonoBehaviour:
     text: "\u202654. \uADF8\u2026 \uC788\uC796\uC544\u2026"
     nextNodeId: 94-2-20
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -3289,6 +3647,8 @@ MonoBehaviour:
     text: "\uBB34\uC2A8 \uC77C \uC788\uC73C\uBA74 \uAF2D \uC5F0\uB77D\uD574."
     nextNodeId: 94-2-21
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid
@@ -3303,6 +3663,8 @@ MonoBehaviour:
     text: "\uC54C\uC558\uB2E4\uACE0."
     nextNodeId: 
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f54
       expressionKey: mid

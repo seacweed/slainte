@@ -9,8 +9,13 @@ public class GameProgress : MonoBehaviour
     [SerializeField] private List<string> flags = new();
     [SerializeField] private List<string> completedEpisodeIds = new();
 
-    private HashSet<string> _flagSet;
-    private HashSet<string> _completedSet;
+    [Header("Numeric Variables")]
+    [SerializeField] private List<string> varKeys   = new();
+    [SerializeField] private List<int>    varValues = new();
+
+    private HashSet<string>      _flagSet;
+    private HashSet<string>      _completedSet;
+    private Dictionary<string, int> _vars;
 
     public int CurrentDay => currentDay;
 
@@ -30,8 +35,13 @@ public class GameProgress : MonoBehaviour
 
     private void RebuildRuntimeSets()
     {
-        _flagSet = new HashSet<string>(flags);
+        _flagSet      = new HashSet<string>(flags);
         _completedSet = new HashSet<string>(completedEpisodeIds);
+
+        _vars = new Dictionary<string, int>();
+        int count = Mathf.Min(varKeys.Count, varValues.Count);
+        for (int i = 0; i < count; i++)
+            _vars[varKeys[i]] = varValues[i];
     }
 
     public bool HasFlag(string flag)
@@ -73,5 +83,44 @@ public class GameProgress : MonoBehaviour
     public void SetCurrentDay(int day)
     {
         currentDay = Mathf.Max(0, day);
+    }
+
+    public int GetVar(string varName)
+    {
+        if (string.IsNullOrWhiteSpace(varName)) return 0;
+        _vars.TryGetValue(varName, out int value);
+        return value;
+    }
+
+    public void SetVar(string varName, int value)
+    {
+        if (string.IsNullOrWhiteSpace(varName)) return;
+
+        _vars[varName] = value;
+        SyncVarToLists(varName, value);
+    }
+
+    public void AddVar(string varName, int delta)
+    {
+        if (string.IsNullOrWhiteSpace(varName)) return;
+
+        _vars.TryGetValue(varName, out int current);
+        int next = current + delta;
+        _vars[varName] = next;
+        SyncVarToLists(varName, next);
+    }
+
+    private void SyncVarToLists(string varName, int value)
+    {
+        int idx = varKeys.IndexOf(varName);
+        if (idx >= 0)
+        {
+            varValues[idx] = value;
+        }
+        else
+        {
+            varKeys.Add(varName);
+            varValues.Add(value);
+        }
     }
 }

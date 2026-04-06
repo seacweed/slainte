@@ -58,6 +58,12 @@ public class EpisodeTriggerManager : MonoBehaviour
         for (int i = 0; i < cond.prerequisiteEpisodeIds.Count; i++)
             if (!gp.IsEpisodeCompleted(cond.prerequisiteEpisodeIds[i])) return false;
 
+        for (int i = 0; i < cond.requiredVars.Count; i++)
+        {
+            VarCondition vc = cond.requiredVars[i];
+            if (!vc.Evaluate(gp.GetVar(vc.varName))) return false;
+        }
+
         return true;
     }
 }

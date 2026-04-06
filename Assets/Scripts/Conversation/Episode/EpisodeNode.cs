@@ -20,6 +20,12 @@ public class EpisodeNode
     [Header("Choices")]
     public List<EpisodeChoice> choices = new();
 
+    [Header("Flag Branches")]
+    public List<NodeFlagBranch> flagBranches = new();
+
+    [Header("Var Branches")]
+    public List<NodeVarBranch> varBranches = new();
+
     [Header("Presentation (optional)")]
     public List<CharacterSlotEntry> characters = new();
 

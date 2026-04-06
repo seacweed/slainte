@@ -13,6 +13,8 @@
   - [NODES](#nodes)
   - [NODE_CHARS](#node_chars)
   - [CHOICES](#choices)
+  - [NODE_BRANCHES](#node_branches)
+  - [NODE_VAR_BRANCHES](#node_var_branches)
 - [특수 표기법](#특수-표기법)
 - [작성 예시](#작성-예시)
 - [임포트 방법](#임포트-방법)
@@ -30,7 +32,7 @@
 
 ## 전체 구조
 
-파일은 `#섹션명` 으로 구분된 6개 섹션으로 이루어집니다.  
+파일은 `#섹션명` 으로 구분된 최대 8개 섹션으로 이루어집니다.  
 각 섹션은 **헤더 행(열 이름)** → **데이터 행** 순서로 작성합니다.
 
 ```
@@ -51,6 +53,12 @@
 ...
 
 #CHOICES
+...
+
+#NODE_BRANCHES
+...
+
+#NODE_VAR_BRANCHES
 ...
 ```
 
@@ -88,14 +96,16 @@ StrangeCoin_0,이상한 동전 - 0,0
 | `requiredFlags` | 이 플래그가 **모두 켜져있어야** 발동 | `flag_a\|flag_b` |
 | `blockedFlags` | 이 플래그 중 **하나라도 켜져있으면** 발동 안 함 | `flag_ended` |
 | `prerequisiteEpisodeIds` | 이 에피소드들이 **모두 완료되어야** 발동 | `Intro_0\|Intro_1` |
+| `requiredVars` | 수치 변수 조건이 **모두 충족되어야** 발동 | `sally_affinity>=10` |
 
 - 조건이 없는 열은 **비워두면** 됩니다.
 - 여러 값은 `|` 로 구분합니다.
+- `requiredVars` 지원 연산자: `>=` `>` `==` `<` `<=`
 
 ```csv
 #TRIGGER
-minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds
-3,flag_met_customer,,Intro_0
+minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars
+3,flag_met_customer,,Intro_0,sally_affinity>=5
 ```
 
 ---
@@ -138,6 +148,8 @@ f72,frust,-1
 **제조 판정 노드** 작성 시: `text`와 `nextNodeId`는 비우고, `requiresCrafting=true` + 성공/실패 노드 ID를 작성합니다.
 
 **선택지 노드** 작성 시: `nextNodeId`는 비우고 `#CHOICES` 섹션에 선택지를 작성합니다.
+
+**분기 노드** 작성 시: `nextNodeId`는 조건이 모두 맞지 않을 때의 기본 이동 노드입니다. 조건 분기는 `#NODE_BRANCHES` / `#NODE_VAR_BRANCHES`에 작성합니다.
 
 ```csv
 #NODES
@@ -187,13 +199,64 @@ nodeId,characterKey,expressionKey,slotIndex
 | `nextNodeId` | 선택 시 이동할 노드 ID | `11a` |
 | `setFlags` | 선택 시 **켤** 플래그 (`\|` 구분) | `flag_agreed` |
 | `clearFlags` | 선택 시 **끌** 플래그 (`\|` 구분) | `flag_open` |
+| `varChanges` | 선택 시 **수치 변수 변경** (`\|` 구분, `+`/`-`로 증감) | `sally_affinity+5` |
 
 ```csv
 #CHOICES
-nodeId,choiceIndex,buttonText,nextNodeId,setFlags,clearFlags
-10,0,그래 말해봐,11a,flag_listened,
-10,1,관심없어,11b,,flag_open
+nodeId,choiceIndex,buttonText,nextNodeId,setFlags,clearFlags,varChanges
+10,0,잘 지내?,11a,flag_talked,,sally_affinity+5
+10,1,볼 일 없어,11b,,,sally_affinity-2
 ```
+
+---
+
+### NODE_BRANCHES
+
+플래그 상태에 따라 다음 노드를 분기합니다.  
+분기가 없으면 이 섹션은 **헤더만 남기고 비워도** 됩니다.
+
+| 열 | 설명 | 예시 |
+|---|---|---|
+| `nodeId` | 분기가 적용될 노드 ID | `5` |
+| `requiredFlag` | 이 플래그가 켜져 있으면 분기 | `flag_took_coin` |
+| `nextNodeId` | 분기 시 이동할 노드 ID | `5_alt` |
+
+- 한 노드에 여러 조건을 쓰려면 **행을 여러 개** 작성합니다. 위에서 아래 순서로 확인하고, 처음으로 맞는 조건으로 이동합니다.
+- 어떤 조건도 맞지 않으면 `#NODES`의 `nextNodeId`로 이동합니다.
+- `NODE_BRANCHES`가 먼저 확인되고, 이후 `NODE_VAR_BRANCHES`가 확인됩니다.
+
+```csv
+#NODE_BRANCHES
+nodeId,requiredFlag,nextNodeId
+5,flag_took_coin,5_alt
+```
+
+---
+
+### NODE_VAR_BRANCHES
+
+수치 변수 값에 따라 다음 노드를 분기합니다. 호감도·평판 등 점수 기반 분기에 사용합니다.  
+분기가 없으면 이 섹션은 **헤더만 남기고 비워도** 됩니다.
+
+| 열 | 설명 | 예시 |
+|---|---|---|
+| `nodeId` | 분기가 적용될 노드 ID | `5` |
+| `varName` | 확인할 수치 변수 이름 | `sally_affinity` |
+| `op` | 비교 연산자 (`>=` `>` `==` `<` `<=`) | `>=` |
+| `threshold` | 비교 기준값 | `10` |
+| `nextNodeId` | 조건 충족 시 이동할 노드 ID | `5_high` |
+
+- 한 노드에 여러 조건을 쓰려면 **행을 여러 개** 작성합니다. 위에서 아래 순서로 확인하고, 처음으로 맞는 조건으로 이동합니다.
+- 어떤 조건도 맞지 않으면 `#NODES`의 `nextNodeId`로 이동합니다.
+
+```csv
+#NODE_VAR_BRANCHES
+nodeId,varName,op,threshold,nextNodeId
+5,sally_affinity,>=,10,5_high
+5,sally_affinity,>=,5,5_mid
+```
+
+> 위 예시는 `sally_affinity`가 10 이상이면 `5_high`, 5 이상이면 `5_mid`, 그 미만이면 `#NODES`의 기본 `nextNodeId`로 이동합니다.
 
 ---
 
@@ -238,8 +301,8 @@ episodeId,episodeTitle,firstNodeId
 Example_0,예시 에피소드,0
 
 #TRIGGER
-minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds
-0,,,
+minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars
+0,,,,
 
 #OPENING_CHARS
 characterKey,expressionKey,slotIndex
@@ -252,7 +315,7 @@ nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingT
 2,f72,,그럼 선택해.,,,false,,,
 3a,f72,,좋은 선택이야.,4,false,,,
 3b,f72,,그것도 나쁘지 않아.,4,false,,,
-4,f72,,,，false,,,
+4,f72,,또 오게.,,,false,,,
 
 #NODE_CHARS
 nodeId,characterKey,expressionKey,slotIndex
@@ -264,9 +327,15 @@ nodeId,characterKey,expressionKey,slotIndex
 4,f72,neutral,-1
 
 #CHOICES
-nodeId,choiceIndex,buttonText,nextNodeId,setFlags,clearFlags
-2,0,맥주,3a,flag_chose_beer,
-2,1,위스키,3b,flag_chose_whiskey,
+nodeId,choiceIndex,buttonText,nextNodeId,setFlags,clearFlags,varChanges
+2,0,맥주,3a,flag_chose_beer,,sally_affinity+5
+2,1,위스키,3b,flag_chose_whiskey,,
+
+#NODE_BRANCHES
+nodeId,requiredFlag,nextNodeId
+
+#NODE_VAR_BRANCHES
+nodeId,varName,op,threshold,nextNodeId
 ```
 
 ---
@@ -291,3 +360,4 @@ nodeId,choiceIndex,buttonText,nextNodeId,setFlags,clearFlags
 | 에피소드가 갑자기 종료됨 | 노드의 `nextNodeId`가 비어있거나 존재하지 않는 ID | `nextNodeId` 확인 |
 | 표정이 바뀌지 않음 | `#NODE_CHARS`에 해당 노드 행이 없음 | 표정이 바뀌는 노드마다 `#NODE_CHARS` 행 추가 |
 | 쉼표 이후 텍스트가 잘림 | 대사에 쉼표가 있는데 따옴표로 안 감쌈 | 해당 셀을 `"큰따옴표"` 로 감싸기 |
+| 분기가 동작하지 않음 | `varChanges` 형식 오류 | `varName+숫자` 또는 `varName-숫자` 형식 확인 |

@@ -62,6 +62,18 @@
 - `requiresCrafting: bool` + `craftingTicketKey: string` — 노드 진입 시 `CraftingMode`로 전환
 - `nextNodeIdGood: string` / `nextNodeIdBad: string` — 제조 결과에 따른 분기 노드 (비어 있으면 `nextNodeId` 사용)
 
+`EpisodeNode` 분기 필드:
+- `flagBranches: List<NodeFlagBranch>` — 플래그 조건 분기. `{ requiredFlag, nextNodeId }` 목록을 순서대로 확인해 처음 맞는 노드로 이동
+- `varBranches: List<NodeVarBranch>` — 수치 변수 조건 분기. `{ VarCondition(varName, op, threshold), nextNodeId }` 목록을 순서대로 확인. `flagBranches` 이후에 평가됨
+- 두 조건 모두 맞지 않으면 `nextNodeId`(기본 흐름) 사용
+
+`EpisodeChoice` 필드:
+- `setFlags` / `clearFlags` — 선택 시 플래그 변경
+- `varChanges: List<VarChange>` — 선택 시 수치 변수 증감. `{ varName, delta }`
+
+`EpisodeTriggerCondition` 필드:
+- `requiredVars: List<VarCondition>` — 수치 변수 조건이 모두 충족되어야 에피소드 발동. `VarCondition`은 `varName`, `op`(`CompareOp` 열거형), `threshold` 보유
+
 제조 완료는 `EpisodeRunner.NotifyCraftingCompleted(bool isGood)` 호출로 처리합니다. 현재는 `CraftingJudgeUI`의 GoodJob/BadJob 버튼으로 수동 판정합니다 (실제 제조 판정 미구현 상태의 임시 구현).
 
 **5. 영업 씬 손님 & 주문 (`Assets/Scripts/Conversation/Sell/`, `Assets/Scripts/OrderTicket/`)**
@@ -88,6 +100,7 @@ CustomerOrderData
 
 `DontDestroyOnLoad` 싱글톤. 씬 전환과 무관하게 유지됩니다:
 - 스토리 플래그: `SetFlag` / `HasFlag` / `ClearFlag`
+- 수치 변수: `GetVar` / `SetVar` / `AddVar` — 호감도 등 정수형 전역 변수 관리
 - 에피소드 완료 기록: `MarkEpisodeCompleted` / `IsEpisodeCompleted`
 - 현재 게임 내 일 진행: `SetCurrentDay` / `CurrentDay`
 

@@ -93,9 +93,11 @@ public class EpisodeCsvImporter : EditorWindow
         ParseTrigger(sections, data);
         ParseOpeningChars(sections, data);
 
-        Dictionary<string, List<CharacterSlotEntry>> nodeChars = BuildNodeCharsLookup(sections);
-        Dictionary<string, List<EpisodeChoice>> nodeChoices = BuildNodeChoicesLookup(sections);
-        ParseNodes(sections, data, nodeChars, nodeChoices);
+        Dictionary<string, List<CharacterSlotEntry>> nodeChars       = BuildNodeCharsLookup(sections);
+        Dictionary<string, List<EpisodeChoice>>      nodeChoices     = BuildNodeChoicesLookup(sections);
+        Dictionary<string, List<NodeFlagBranch>>     nodeBranches    = BuildNodeBranchesLookup(sections);
+        Dictionary<string, List<NodeVarBranch>>      nodeVarBranches = BuildNodeVarBranchesLookup(sections);
+        ParseNodes(sections, data, nodeChars, nodeChoices, nodeBranches, nodeVarBranches);
 
         return data;
     }
@@ -165,6 +167,7 @@ public class EpisodeCsvImporter : EditorWindow
         data.triggerCondition.requiredFlags            = SplitList(Field(row, 1));
         data.triggerCondition.blockedFlags             = SplitList(Field(row, 2));
         data.triggerCondition.prerequisiteEpisodeIds   = SplitList(Field(row, 3));
+        data.triggerCondition.requiredVars             = ParseVarConditionList(Field(row, 4));
     }
 
     private static void ParseOpeningChars(Dictionary<string, List<string[]>> sections, EpisodeData data)
@@ -213,7 +216,59 @@ public class EpisodeCsvImporter : EditorWindow
                 buttonText  = Field(row, 2),
                 nextNodeId  = Field(row, 3),
                 setFlags    = SplitList(Field(row, 4)),
-                clearFlags  = SplitList(Field(row, 5))
+                clearFlags  = SplitList(Field(row, 5)),
+                varChanges  = ParseVarChangeList(Field(row, 6))
+            });
+        }
+
+        return lookup;
+    }
+
+    private static Dictionary<string, List<NodeFlagBranch>> BuildNodeBranchesLookup(
+        Dictionary<string, List<string[]>> sections)
+    {
+        var lookup = new Dictionary<string, List<NodeFlagBranch>>();
+
+        if (!sections.TryGetValue("NODE_BRANCHES", out var rows)) return lookup;
+
+        foreach (string[] row in rows)
+        {
+            string nid = Field(row, 0);
+            if (!lookup.ContainsKey(nid))
+                lookup[nid] = new List<NodeFlagBranch>();
+
+            lookup[nid].Add(new NodeFlagBranch
+            {
+                requiredFlag = Field(row, 1),
+                nextNodeId   = Field(row, 2)
+            });
+        }
+
+        return lookup;
+    }
+
+    private static Dictionary<string, List<NodeVarBranch>> BuildNodeVarBranchesLookup(
+        Dictionary<string, List<string[]>> sections)
+    {
+        var lookup = new Dictionary<string, List<NodeVarBranch>>();
+
+        if (!sections.TryGetValue("NODE_VAR_BRANCHES", out var rows)) return lookup;
+
+        foreach (string[] row in rows)
+        {
+            string nid = Field(row, 0);
+            if (!lookup.ContainsKey(nid))
+                lookup[nid] = new List<NodeVarBranch>();
+
+            lookup[nid].Add(new NodeVarBranch
+            {
+                condition = new VarCondition
+                {
+                    varName   = Field(row, 1),
+                    op        = ParseCompareOp(Field(row, 2)),
+                    threshold = int.TryParse(Field(row, 3), out int t) ? t : 0
+                },
+                nextNodeId = Field(row, 4)
             });
         }
 
@@ -224,7 +279,9 @@ public class EpisodeCsvImporter : EditorWindow
         Dictionary<string, List<string[]>> sections,
         EpisodeData data,
         Dictionary<string, List<CharacterSlotEntry>> nodeChars,
-        Dictionary<string, List<EpisodeChoice>> nodeChoices)
+        Dictionary<string, List<EpisodeChoice>> nodeChoices,
+        Dictionary<string, List<NodeFlagBranch>> nodeBranches,
+        Dictionary<string, List<NodeVarBranch>> nodeVarBranches)
     {
         data.nodes = new List<EpisodeNode>();
 
@@ -250,7 +307,11 @@ public class EpisodeCsvImporter : EditorWindow
                 characters = nodeChars.TryGetValue(nid, out var chars)
                     ? chars : new List<CharacterSlotEntry>(),
                 choices = nodeChoices.TryGetValue(nid, out var choices)
-                    ? choices : new List<EpisodeChoice>()
+                    ? choices : new List<EpisodeChoice>(),
+                flagBranches = nodeBranches.TryGetValue(nid, out var branches)
+                    ? branches : new List<NodeFlagBranch>(),
+                varBranches = nodeVarBranches.TryGetValue(nid, out var varBr)
+                    ? varBr : new List<NodeVarBranch>()
             });
         }
     }
@@ -272,6 +333,92 @@ public class EpisodeCsvImporter : EditorWindow
     private static string Field(string[] row, int index)
     {
         return index < row.Length ? row[index].Trim() : string.Empty;
+    }
+
+    private static List<VarChange> ParseVarChangeList(string value)
+    {
+        var result = new List<VarChange>();
+        if (string.IsNullOrWhiteSpace(value)) return result;
+
+        foreach (string item in value.Split('|'))
+        {
+            string t = item.Trim();
+            if (string.IsNullOrEmpty(t)) continue;
+
+            // Format: varName+5  or  varName-3
+            int plusIdx  = t.LastIndexOf('+');
+            int minusIdx = t.LastIndexOf('-');
+            int splitAt  = -1;
+            int sign     = 1;
+
+            if (plusIdx > 0 && plusIdx > minusIdx)  { splitAt = plusIdx;  sign =  1; }
+            else if (minusIdx > 0)                   { splitAt = minusIdx; sign = -1; }
+
+            if (splitAt < 0) continue;
+
+            string name  = t.Substring(0, splitAt).Trim();
+            string numStr = t.Substring(splitAt + 1).Trim();
+            if (!int.TryParse(numStr, out int num)) continue;
+
+            result.Add(new VarChange { varName = name, delta = sign * num });
+        }
+
+        return result;
+    }
+
+    private static List<VarCondition> ParseVarConditionList(string value)
+    {
+        var result = new List<VarCondition>();
+        if (string.IsNullOrWhiteSpace(value)) return result;
+
+        foreach (string item in value.Split('|'))
+        {
+            string t = item.Trim();
+            if (string.IsNullOrEmpty(t)) continue;
+
+            VarCondition vc = TryParseVarCondition(t);
+            if (vc != null) result.Add(vc);
+        }
+
+        return result;
+    }
+
+    private static VarCondition TryParseVarCondition(string token)
+    {
+        // Supported operators (longest first to avoid partial matches)
+        string[] ops = { ">=", "<=", "==", ">", "<" };
+
+        foreach (string op in ops)
+        {
+            int idx = token.IndexOf(op, System.StringComparison.Ordinal);
+            if (idx <= 0) continue;
+
+            string name   = token.Substring(0, idx).Trim();
+            string numStr = token.Substring(idx + op.Length).Trim();
+            if (!int.TryParse(numStr, out int num)) continue;
+
+            return new VarCondition
+            {
+                varName   = name,
+                op        = ParseCompareOp(op),
+                threshold = num
+            };
+        }
+
+        return null;
+    }
+
+    private static CompareOp ParseCompareOp(string op)
+    {
+        return op.Trim() switch
+        {
+            ">=" => CompareOp.GreaterOrEqual,
+            ">"  => CompareOp.Greater,
+            "==" => CompareOp.Equal,
+            "<"  => CompareOp.Less,
+            "<=" => CompareOp.LessOrEqual,
+            _    => CompareOp.GreaterOrEqual
+        };
     }
 
     private static List<string> SplitList(string value)

@@ -19,9 +19,11 @@ MonoBehaviour:
     requiredFlags: []
     blockedFlags: []
     prerequisiteEpisodeIds: []
+    requiredVars: []
   openingCharacters:
   - characterKey: f72
     expressionKey: frust
+    slotIndex: -1
   firstNodeId: 0
   nodes:
   - nodeId: 0
@@ -30,9 +32,12 @@ MonoBehaviour:
     text: "\uD760..\uD06C\uD760\u2026"
     nextNodeId: 1
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f72
-      expressionKey: frust
+      expressionKey: annoy
+      slotIndex: -1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
@@ -44,9 +49,12 @@ MonoBehaviour:
       \uC5EC\uAE30 <b>\uAC13\uD30C\uB354</b> \uD558\uB098."
     nextNodeId: 2
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f72
-      expressionKey: frust
+      expressionKey: mid
+      slotIndex: -1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
@@ -58,9 +66,12 @@ MonoBehaviour:
       \uD654\uD3D0\uB9CC \uBC1B\uC2B5\uB2C8\uB2E4\uB9CC\u2026"
     nextNodeId: 3
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f72
-      expressionKey: frust
+      expressionKey: mid
+      slotIndex: -1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
@@ -72,9 +83,12 @@ MonoBehaviour:
       \uC904 \uBAA8\uB974\uB294\uAD70!"
     nextNodeId: 4
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f72
       expressionKey: annoy
+      slotIndex: -1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
@@ -86,22 +100,28 @@ MonoBehaviour:
       <u>\uB2F9\uC7A5 \uC220 \uB0B4\uC624\uB294 \uAC8C \uC88B\uC744\uAC70\uC57C!</u>"
     nextNodeId: 5
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f72
       expressionKey: annoy
+      slotIndex: -1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
   - nodeId: 5
-    speakerKey: f72
-    overrideSpeakerName: ???
+    speakerKey: 
+    overrideSpeakerName: 
     text: 
     nextNodeId: 
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f72
       expressionKey: annoy
+      slotIndex: -1
     requiresCrafting: 1
     craftingTicketKey: sc0_f72
     nextNodeIdGood: 5-1-1
@@ -112,9 +132,12 @@ MonoBehaviour:
     text: "\uC18C\uBB38\uB300\uB85C \uAF64 \uAD1C\uCC2E\uAD70."
     nextNodeId: 5-1-2
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f72
       expressionKey: smile
+      slotIndex: -1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
@@ -126,9 +149,12 @@ MonoBehaviour:
       \uCC28\uC6D0\uC774 \uB2EC\uB77C."
     nextNodeId: 5-1-3
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f72
       expressionKey: smile
+      slotIndex: -1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
@@ -139,9 +165,12 @@ MonoBehaviour:
     text: "\uC544."
     nextNodeId: 5-1-4
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f72
       expressionKey: frust
+      slotIndex: -1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
@@ -152,9 +181,12 @@ MonoBehaviour:
     text: "\uBC00\uC8FC \uC598\uAE30\uB294 \uBE44\uBC00\uC774\uC57C. \uC54C\uACA0\uC9C0?"
     nextNodeId: 
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f72
-      expressionKey: frust
+      expressionKey: mid
+      slotIndex: -1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
@@ -162,12 +194,15 @@ MonoBehaviour:
   - nodeId: 5-2-1
     speakerKey: f72
     overrideSpeakerName: ???
-    text: "\uC774\uBD10, \uC774\uAC70 \uB0B4\uAC00 \uC8FC\uBB38\uD55C\uAC70 \uB9DE\uC544?"
+    text: "\uC774\uBD10. \uC774\uAC70 \uB0B4\uAC00 \uC8FC\uBB38\uD55C\uAC70 \uB9DE\uC544?"
     nextNodeId: 5-2-2
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f72
-      expressionKey: annoy
+      expressionKey: devas
+      slotIndex: -1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
@@ -179,9 +214,12 @@ MonoBehaviour:
       \uC5C6\uAD70."
     nextNodeId: 5-2-3
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f72
-      expressionKey: annoy
+      expressionKey: devas
+      slotIndex: -1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
@@ -192,9 +230,12 @@ MonoBehaviour:
     text: "\uC544."
     nextNodeId: 5-2-4
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f72
       expressionKey: frust
+      slotIndex: -1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
@@ -205,9 +246,12 @@ MonoBehaviour:
     text: "\uBC29\uAE08 \uC774\uC57C\uAE30\uB294 \uC78A\uC5B4!"
     nextNodeId: 
     choices: []
+    flagBranches: []
+    varBranches: []
     characters:
     - characterKey: f72
-      expressionKey: frust
+      expressionKey: annoy
+      slotIndex: -1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
