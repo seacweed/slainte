@@ -66,6 +66,9 @@ public class InputRouter : MonoBehaviour
             return;
         }
 
+        if (episodeRunner != null && episodeRunner.IsWaitingForChoice)
+            return;
+
         dialogue?.Advance();
     }
 }

@@ -22,6 +22,10 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
     [Header("Timing")]
     [SerializeField] private float startDelay = 0.15f;
 
+    private const float ChoiceButtonHeight  = 80f;
+    private const float ChoiceButtonSpacing = 20f;
+    private const float ChoiceFadeDuration  = 0.5f;
+
     private EpisodeData _episode;
     private EpisodeNode _currentNode;
     private Coroutine   _runRoutine;
@@ -29,11 +33,17 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
     private bool _isRunning;
     private bool _waitingForChoice;
     private bool _waitingForCrafting;
+    private bool _waitingForCharacterAnim;
+    private bool _isTransitioning;
+
+    private readonly List<EpisodeChoiceButtonUI> _choiceButtons = new();
 
     public bool IsRunning => _isRunning;
 
     public bool CanReceiveAdvanceInput =>
-        _isRunning && !_waitingForChoice && !_waitingForCrafting;
+        _isRunning && !_waitingForChoice && !_waitingForCrafting && !_waitingForCharacterAnim && !_isTransitioning;
+
+    public bool IsWaitingForChoice => _waitingForChoice || _isTransitioning;
 
     public event Action OnEncounterCompleted;
 
@@ -68,6 +78,7 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         if (startDelay > 0f)
             yield return new WaitForSeconds(startDelay);
 
+        _waitingForCharacterAnim = true;
         bool done = false;
         characterStage?.ShowCharacters(_episode.openingCharacters, () => done = true);
         if (characterStage == null) done = true;
@@ -75,6 +86,7 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         while (!done)
             yield return null;
 
+        _waitingForCharacterAnim = false;
         EnterNode(_episode.firstNodeId);
     }
 
@@ -115,12 +127,15 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 
         if (_currentNode.characters != null && _currentNode.characters.Count > 0)
         {
+            _waitingForCharacterAnim = true;
             bool shown = false;
             characterStage?.ShowCharacters(_currentNode.characters, () => shown = true);
             if (characterStage == null) shown = true;
 
             while (!shown)
                 yield return null;
+
+            _waitingForCharacterAnim = false;
         }
 
         if (_currentNode.requiresCrafting)
@@ -193,31 +208,62 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
     {
         ClearChoices();
 
-        for (int i = 0; i < choices.Count; i++)
-        {
-            EpisodeChoice choice = choices[i];
-            if (choice == null) continue;
+        int count = choices.Count;
+        float slideAmount = count * ChoiceButtonHeight + (count - 1) * ChoiceButtonSpacing;
 
-            EpisodeChoiceButtonUI btn = Instantiate(choiceButtonPrefab, choiceRoot);
-            btn.Setup(choice.buttonText, () => OnChoiceSelected(choice));
-        }
+        _isTransitioning = true;
+        dialogue?.SlideUpForChoices(slideAmount, () =>
+        {
+            _isTransitioning = false;
+            for (int i = 0; i < choices.Count; i++)
+            {
+                EpisodeChoice choice = choices[i];
+                if (choice == null) continue;
+
+                EpisodeChoiceButtonUI btn = Instantiate(choiceButtonPrefab, choiceRoot);
+                _choiceButtons.Add(btn);
+                btn.Setup(choice.buttonText, () => OnChoiceSelected(btn, choice));
+            }
+        });
     }
 
-    private void OnChoiceSelected(EpisodeChoice choice)
+    private void OnChoiceSelected(EpisodeChoiceButtonUI selectedBtn, EpisodeChoice choice)
     {
         if (choice == null) return;
 
         ApplyChoiceEffects(choice);
         _waitingForChoice = false;
-        ClearChoices();
 
-        if (string.IsNullOrWhiteSpace(choice.nextNodeId))
+        for (int i = 0; i < _choiceButtons.Count; i++)
+        {
+            EpisodeChoiceButtonUI btn = _choiceButtons[i];
+            if (btn == null || btn == selectedBtn) continue;
+            btn.HideImmediate();
+        }
+        _choiceButtons.Clear();
+
+        string nextId = choice.nextNodeId;
+
+        _isTransitioning = true;
+        selectedBtn.FadeOutAndDestroy(ChoiceFadeDuration, () =>
+        {
+            dialogue?.SlideBackToOrigin(() =>
+            {
+                _isTransitioning = false;
+                ProceedAfterChoice(nextId);
+            });
+        });
+    }
+
+    private void ProceedAfterChoice(string nextId)
+    {
+        if (string.IsNullOrWhiteSpace(nextId))
         {
             EndEncounter();
             return;
         }
 
-        EnterNode(choice.nextNodeId);
+        EnterNode(nextId);
     }
 
     private void ApplyChoiceEffects(EpisodeChoice choice)
@@ -248,6 +294,8 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 
     private void ClearChoices()
     {
+        _choiceButtons.Clear();
+
         if (choiceRoot == null) return;
 
         for (int i = choiceRoot.childCount - 1; i >= 0; i--)

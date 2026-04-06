@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7836749177797177181}
   - component: {fileID: 281626155849241870}
   - component: {fileID: 4842565797213812051}
+  - component: {fileID: 3596005791661258462}
   m_Layer: 5
   m_Name: ChoiceButton
   m_TagString: Untagged
@@ -38,7 +39,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1400, y: 80}
+  m_SizeDelta: {x: 1500, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2401348732116911955
 CanvasRenderer:
@@ -136,6 +137,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EpisodeChoiceButtonUI
   button: {fileID: 281626155849241870}
   label: {fileID: 1940265777541655472}
+  canvasGroup: {fileID: 3596005791661258462}
+--- !u!225 &3596005791661258462
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1826859176394306097}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &5117909219408095386
 GameObject:
   m_ObjectHideFlags: 0
@@ -203,8 +217,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Button
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 02ac221e0dadb2049b479c49b5f840b4, type: 2}
+  m_sharedMaterial: {fileID: 9070335024037093932, guid: 02ac221e0dadb2049b479c49b5f840b4, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -228,8 +242,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

@@ -8,8 +8,12 @@ public class DialogueController : MonoBehaviour
 {
     [Header("UI")]
     [SerializeField] private CanvasGroup canvasGroup;
+    [SerializeField] private RectTransform bubbleRect;
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private TMP_Text bodyText;
+
+    [Header("Choice Slide")]
+    [SerializeField] private float slideDuration = 0.25f;
 
     [Header("Typing")]
     [SerializeField] private float charDelay = 0.03f;
@@ -28,8 +32,10 @@ public class DialogueController : MonoBehaviour
     private readonly Queue<DialogueLine> _queue = new();
     private Coroutine _typingRoutine;
     private Coroutine _blinkRoutine;
+    private Coroutine _slideRoutine;
     private bool _isTyping;
     private string _fullLine;
+    private Vector2 _originalBubblePos;
 
     public bool IsTyping => _isTyping;
     public bool IsOpen => canvasGroup != null && canvasGroup.alpha > 0.001f;
@@ -38,6 +44,8 @@ public class DialogueController : MonoBehaviour
 
     void Awake()
     {
+        if (bubbleRect != null)
+            _originalBubblePos = bubbleRect.anchoredPosition;
         HideImmediate();
     }
 
@@ -45,6 +53,8 @@ public class DialogueController : MonoBehaviour
     {
         if (_typingRoutine != null) { StopCoroutine(_typingRoutine); _typingRoutine = null; }
         if (_blinkRoutine != null) { StopCoroutine(_blinkRoutine); _blinkRoutine = null; }
+        if (_slideRoutine != null) { StopCoroutine(_slideRoutine); _slideRoutine = null; }
+        if (bubbleRect != null) bubbleRect.anchoredPosition = _originalBubblePos;
         canvasGroup.alpha = 0f;
         canvasGroup.interactable = false;
         canvasGroup.blocksRaycasts = false;
@@ -219,6 +229,39 @@ public class DialogueController : MonoBehaviour
         _isTyping = false;
         _typingRoutine = null;
         SetNextIndicator(true);
+    }
+
+    public void SlideUpForChoices(float amount, Action onComplete = null)
+    {
+        if (bubbleRect == null) { onComplete?.Invoke(); return; }
+
+        if (_slideRoutine != null) StopCoroutine(_slideRoutine);
+        Vector2 target = _originalBubblePos + new Vector2(0f, amount);
+        _slideRoutine = StartCoroutine(SlideRoutine(bubbleRect.anchoredPosition, target, onComplete));
+    }
+
+    public void SlideBackToOrigin(Action onComplete = null)
+    {
+        if (bubbleRect == null) { onComplete?.Invoke(); return; }
+
+        if (_slideRoutine != null) StopCoroutine(_slideRoutine);
+        _slideRoutine = StartCoroutine(SlideRoutine(bubbleRect.anchoredPosition, _originalBubblePos, onComplete));
+    }
+
+    private IEnumerator SlideRoutine(Vector2 from, Vector2 to, Action onComplete)
+    {
+        float elapsed = 0f;
+        while (elapsed < slideDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / slideDuration);
+            t = t * t * (3f - 2f * t); // smoothstep
+            bubbleRect.anchoredPosition = Vector2.Lerp(from, to, t);
+            yield return null;
+        }
+        bubbleRect.anchoredPosition = to;
+        _slideRoutine = null;
+        onComplete?.Invoke();
     }
 
     public void SetNextHintVisible(bool visible)

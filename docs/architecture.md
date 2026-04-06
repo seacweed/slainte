@@ -48,6 +48,14 @@
 2. `EpisodeRunner`가 `CustomerStage`, `DialogueController`, 선택지 UI를 구동
 3. 에피소드 종료 시 `GameModeManager.RequestModeChange(OrderMode)` 자동 복귀
 
+`EpisodeRunner` 입력 차단 플래그 (모두 `CanReceiveAdvanceInput`에 포함):
+- `_waitingForCharacterAnim` — 캐릭터 등장 애니메이션 중 (오프닝 및 노드별)
+- `_waitingForChoice` — 선택지 대기 중
+- `_isTransitioning` — 선택지 슬라이드 업/다운 및 버튼 페이드 아웃 중
+- `IsWaitingForChoice` (public) — `_waitingForChoice || _isTransitioning`. `InputRouter`가 이 값으로 `dialogue.Advance()` 폴스루를 차단함
+
+선택지 표시 흐름: 말풍선 슬라이드 업 완료 후 버튼 생성. 버튼 크기 1500×80, 간격 20px. 선택 시 나머지 버튼은 즉시 투명 처리 후, 선택 버튼만 페이드 아웃(0.35s) → 슬라이드 백 → 다음 노드 진행.
+
 `EpisodeData.openingCharacters: List<CharacterSlotEntry>` — 에피소드 시작 시 표시할 캐릭터+표정.
 `EpisodeNode.characters: List<CharacterSlotEntry>` — 해당 노드에서 표시할 캐릭터+표정. 비어 있으면 스테이지 변경 없음.
 `EpisodeNode` 제조 관련 필드:
@@ -98,7 +106,10 @@ TMPro 타이핑 애니메이션. 모든 모드에서 공유하는 단일 컴포�
 - `StartDialogue(List<DialogueLine>)` — 손님 대화용 배치 큐 방식
 - `ShowSingleLine(speakerName, text)` — 에피소드 노드별 단일 출력
 - `SkipTypingIfNeeded()` — 타이핑 스킵 (InputRouter → EncounterRunner → DialogueController 경로)
+- `SlideUpForChoices(float amount, Action onComplete)` — 선택지 표시 시 말풍선을 위로 이동 (smoothstep)
+- `SlideBackToOrigin(Action onComplete)` — 선택지 해제 후 말풍선 원위치 복귀
 - `DialogueClosed` 이벤트 — 대화 종료 시 발행
+- Inspector: `bubbleRect` — 슬라이드 애니메이션 대상 RectTransform. `ChoiceContainer`는 `bubbleRect`의 자식으로 배치해야 함 (bubble 이동 시 함께 이동)
 
 ## 데이터 패턴
 
