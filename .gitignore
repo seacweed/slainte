@@ -76,10 +76,18 @@ crashlytics-build.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/unity
 
-# --- Antigravity AI History ---
-.ai_history/*.tmp
-.ai_history/cache/
+# --- Antigravity AI History Sync Rules ---
+# ❌ 기기별로 다르고 용량만 차지하는 임시/로컬 데이터 (동기화 금지)
 .ai_history/logs/
+.ai_history/cache/
+.ai_history/implicit/
+.ai_history/*.tmp
+.ai_history/installation_id
 
-# 만약 대화 내역 파일이 너무 크다면(바이너리), Git LFS 사용을 고려하세요.
-# .ai_history/*.pb filter=lfs diff=lfs merge=lfs -text
+# ✅ AI의 진짜 기억과 핵심 도구 (반드시 동기화)
+!.ai_history/conversations/
+!.ai_history/context_state/
+!.ai_history/brain/
+!.ai_history/knowledge/
+!.ai_history/mcp_config.json
+!.ai_history/settings.json
