@@ -27,7 +27,7 @@ public class EpisodeManager : MonoBehaviour
     }
 
     private Dictionary<string, EpisodeProgressData> progressDict = new Dictionary<string, EpisodeProgressData>();
-    private List<EpisodeData> allEpisodes = new List<EpisodeData>();
+    private List<EpisodeBoardData> allEpisodes = new List<EpisodeBoardData>();
 
     private bool isInitialized = false;
 
@@ -54,14 +54,14 @@ public class EpisodeManager : MonoBehaviour
     private void LoadAllEpisodes()
     {
         allEpisodes.Clear();
-        allEpisodes.AddRange(Resources.LoadAll<EpisodeData>("EpisodeData"));
+        allEpisodes.AddRange(Resources.LoadAll<EpisodeBoardData>("EpisodeData"));
         Debug.Log($"[EpisodeManager] 총 {allEpisodes.Count}개의 에피소드 데이터 로드 완료.");
     }
 
     // 선행조건을 통과하여 상황판에 현재 노출 가능한 모든 에피소드를 반환합니다.
-    public List<EpisodeData> GetAvailableEpisodes()
+    public List<EpisodeBoardData> GetAvailableEpisodes()
     {
-        List<EpisodeData> available = new List<EpisodeData>();
+        List<EpisodeBoardData> available = new List<EpisodeBoardData>();
         foreach(var ep in allEpisodes)
         {
             if (IsAvailableToStart(ep))
@@ -90,7 +90,7 @@ public class EpisodeManager : MonoBehaviour
     }
 
     // 데이터 조회 (없으면 초기화해서 반환)
-    public EpisodeProgressData GetProgress(EpisodeData data)
+    public EpisodeProgressData GetProgress(EpisodeBoardData data)
     {
         if (!progressDict.ContainsKey(data.episodeID))
         {
@@ -107,7 +107,7 @@ public class EpisodeManager : MonoBehaviour
     }
 
     // 선행 조건 및 현재 진행 상태를 고려하여 상황판에 띄울지 결정합니다.
-    public bool IsAvailableToStart(EpisodeData data)
+    public bool IsAvailableToStart(EpisodeBoardData data)
     {
         // 1. 이미 완료된 에피소드인지 검사 (수락 후 도중에 껐다면 다시 할 수 있도록 isCleared만 체크)
         EpisodeProgressData currentProgress = GetProgress(data);
