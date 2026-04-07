@@ -44,24 +44,28 @@ public class EpisodeBoardManager : BaseUIManager
         ResetBoard();   // 열릴 때마다 선택 내역 깔끔하게 초기화
     }
 
-    // 모든 사진(자식 오브젝트)들을 스캔하여 선행 조건에 부합하는지 판별합니다.
+    // 모든 사진(자식 오브젝트)들을 슬롯으로 간주하고, 가능한 에피소드들을 순서대로 채워넣습니다.
     public void RefreshBoard()
     {
-        // true: 비활성화되어 있는 사진들도 모두 긁어모음
         EpisodePhotoTrigger[] allPhotos = GetComponentsInChildren<EpisodePhotoTrigger>(true);
         
-        foreach (var photo in allPhotos)
+        if (EpisodeManager.Instance == null) return;
+        
+        var availableEpisodes = EpisodeManager.Instance.GetAvailableEpisodes();
+        
+        for (int i = 0; i < allPhotos.Length; i++)
         {
-            if (photo.episodeData == null) continue;
-
-            if (EpisodeManager.Instance != null && EpisodeManager.Instance.IsAvailableToStart(photo.episodeData))
+            if (i < availableEpisodes.Count)
             {
-                photo.gameObject.SetActive(true);
+                // 슬롯에 유효한 에피소드 덮어씌우고 활성화
+                allPhotos[i].SetEpisodeData(availableEpisodes[i]);
+                allPhotos[i].gameObject.SetActive(true);
             }
             else
             {
-                // 조건 미달성이거나, 이미 클리어/수락된 상태면 화면에서 완전히 숨깁니다.
-                photo.gameObject.SetActive(false);
+                // 빈 슬롯은 숨기고 데이터 초기화
+                allPhotos[i].SetEpisodeData(null);
+                allPhotos[i].gameObject.SetActive(false);
             }
         }
     }

@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 public class EpisodeCSVImporter : EditorWindow
 {
     private const string csvPath = "Assets/RestScene/Episode/Episodes.csv";
-    private const string savePath = "Assets/RestScene/Episode/";
+    private const string savePath = "Assets/Resources/EpisodeData/";
 
     [MenuItem("Episode/Import CSV")]
     public static void ImportCSV()
@@ -16,6 +16,16 @@ public class EpisodeCSVImporter : EditorWindow
         {
             Debug.LogError($"[Episode Importer] CSV를 찾을 수 없습니다: {csvPath}");
             return;
+        }
+
+        // 저장할 폴더가 없으면 생성
+        if (!AssetDatabase.IsValidFolder("Assets/Resources"))
+        {
+            AssetDatabase.CreateFolder("Assets", "Resources");
+        }
+        if (!AssetDatabase.IsValidFolder("Assets/Resources/EpisodeData"))
+        {
+            AssetDatabase.CreateFolder("Assets/Resources", "EpisodeData");
         }
 
         string[] lines = File.ReadAllLines(csvPath);

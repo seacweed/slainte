@@ -49,11 +49,15 @@ public class GameManager : MonoSingleton<GameManager>
         {
             case GameState.Episode:
                 sceneName = "Sample_Episode";
-                // 💡 에피소드 씬 로딩이 끝나면 DialogueManager의 StartEpisode 실행하도록 주머니에 담음
-                onTransitionComplete = () => DialogueManager.Instance.StartEpisode("Start");
+                // 💡 에피소드 씬 로딩이 끝나면 방금 선택한 에피소드의 ID를 기반으로 대화를 재생합니다.
+                onTransitionComplete = () => 
+                {
+                    string epId = EpisodeManager.Instance != null ? EpisodeManager.Instance.CurrentPlayingEpisodeID : "Start";
+                    DialogueManager.Instance.StartEpisode(epId);
+                };
                 break;
             case GameState.Rest:
-                sceneName = "Sample_Rest";
+                sceneName = "RestScene";
                 break;
             // case GameState.Business:
             //     sceneName = "Scene_Business";

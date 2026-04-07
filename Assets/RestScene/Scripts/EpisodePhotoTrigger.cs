@@ -16,6 +16,30 @@ public class EpisodePhotoTrigger : MonoBehaviour, IPointerEnterHandler, IPointer
     private LineRenderer line;
     private bool isPinned = false; 
 
+    public void SetEpisodeData(EpisodeData data)
+    {
+        episodeData = data;
+        if (data == null) return;
+        
+        if (!string.IsNullOrEmpty(data.iconNameBoard))
+        {
+            // Resources 기반 이미지 경로에서 Sprite 로드 시도
+            Sprite newSprite = Resources.Load<Sprite>($"Sprites/{data.iconNameBoard}");
+            if (newSprite == null) newSprite = Resources.Load<Sprite>(data.iconNameBoard);
+            
+            if (newSprite != null)
+            {
+                UnityEngine.UI.Image img = GetComponent<UnityEngine.UI.Image>();
+                if (img != null) img.sprite = newSprite;
+                else
+                {
+                    SpriteRenderer sr = GetComponent<SpriteRenderer>();
+                    if (sr != null) sr.sprite = newSprite;
+                }
+            }
+        }
+    }
+
     private void Awake()
     {
         boardManager = GetComponentInParent<EpisodeBoardManager>();

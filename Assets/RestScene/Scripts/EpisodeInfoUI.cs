@@ -25,14 +25,26 @@ public class EpisodeInfoWindow : MonoBehaviour
 
     public void Show(EpisodeData data, RectTransform targetPhoto)
     {
+        if (data == null)
+        {
+            Debug.LogError("[EpisodeInfoUI] EpisodeData가 비어있습니다! (RefreshBoard() 실행 시점에 CoreScene이 없었을 확률이 높습니다)");
+            return;
+        }
+
+        if (EpisodeManager.Instance == null)
+        {
+            Debug.LogError("[EpisodeInfoUI] EpisodeManager가 없습니다! 코어 씬이 완전히 켜지기 전에 팝업이 호출되었습니다.");
+            return;
+        }
+
         gameObject.SetActive(true);
 
         // [핵심 변경] 코어 씬 매니저에게 플레이어의 현재 진행 상태를 물어봅니다.
         EpisodeProgressData progress = EpisodeManager.Instance.GetProgress(data);
 
         // 1. 텍스트 세팅
-        episodeNameText.text = data.episodeName;
-        descriptionText.text = data.episodeDescription;
+        if (episodeNameText) episodeNameText.text = data.episodeName;
+        if (descriptionText) descriptionText.text = data.episodeDescription;
 
         // 2. 조건 세팅 (진행 상태의 배열 인덱스 활용)
         StringBuilder sb = new StringBuilder();

@@ -21,6 +21,19 @@ public class SceneTransitionManager : MonoSingleton<SceneTransitionManager>
             fadeCanvasGroup.alpha = 1f;
             fadeCanvasGroup.blocksRaycasts = true;
         }
+
+        // 💡 [버그 픽스] 게임을 처음 켰을 때(예: RestScene에서 시작),
+        // 비어있는 상태("")가 아니라 현재 활성화된 씬을 기억하도록 만듭니다.
+        // 그래야 다음 씬으로 넘어갈 때 원래 있던 씬을 끄고 넘어갑니다.
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            string sceneName = SceneManager.GetSceneAt(i).name;
+            if (sceneName != "CoreScene")
+            {
+                currentActiveScene = sceneName;
+                break;
+            }
+        }
     }
 
     private void Start()
