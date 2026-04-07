@@ -23,11 +23,11 @@ public class EpisodeInfoWindow : MonoBehaviour
         gameObject.SetActive(false); 
     }
 
-    public void Show(EpisodeData data, RectTransform targetPhoto)
+    public void Show(EpisodeBoardData data, RectTransform targetPhoto)
     {
         if (data == null)
         {
-            Debug.LogError("[EpisodeInfoUI] EpisodeData가 비어있습니다! (RefreshBoard() 실행 시점에 CoreScene이 없었을 확률이 높습니다)");
+            Debug.LogError("[EpisodeInfoUI] EpisodeBoardData가 비어있습니다! (RefreshBoard() 실행 시점에 CoreScene이 없었을 확률이 높습니다)");
             return;
         }
 

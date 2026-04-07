@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 public class EpisodePhotoTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     [Header("Data & Manager")]
-    public EpisodeData episodeData; 
+    public EpisodeBoardData episodeData; 
     private EpisodeBoardManager boardManager; 
 
     [Header("Visual Effects")]
@@ -16,7 +16,7 @@ public class EpisodePhotoTrigger : MonoBehaviour, IPointerEnterHandler, IPointer
     private LineRenderer line;
     private bool isPinned = false; 
 
-    public void SetEpisodeData(EpisodeData data)
+    public void SetEpisodeData(EpisodeBoardData data)
     {
         episodeData = data;
         if (data == null) return;

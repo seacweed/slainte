@@ -20,8 +20,8 @@ public struct EpisodeCharacter
     public Sprite portraitSprite; // 초상화 이미지 (아직 지정 안되면 null)
 }
 
-[CreateAssetMenu(fileName = "NewEpisode", menuName = "Episode/EpisodeData")]
-public class EpisodeData : ScriptableObject
+[CreateAssetMenu(fileName = "NewEpisode", menuName = "Episode/EpisodeBoardData")]
+public class EpisodeBoardData : ScriptableObject
 {
     [Header("System")]
     public string episodeID; // [핵심] 식별용 고유 ID (예: "EP_01_MissingDrink")

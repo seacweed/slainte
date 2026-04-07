@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aa09492c558f51e4e998a64ed5c321ef, type: 3}
   m_Name: Episode_1004
-  m_EditorClassIdentifier: Assembly-CSharp::EpisodeData
+  m_EditorClassIdentifier: Assembly-CSharp::EpisodeBoardData
   episodeID: 1004
   category: 1
   prerequisiteEpisodeIDs:

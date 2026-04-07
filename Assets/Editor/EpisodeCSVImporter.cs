@@ -60,12 +60,12 @@ public class EpisodeCSVImporter : EditorWindow
             // 파일명에 특수문자 없게 처리 (ID 기반 생성)
             string assetPath = $"{savePath}Episode_{id}.asset";
 
-            EpisodeData asset = AssetDatabase.LoadAssetAtPath<EpisodeData>(assetPath);
+            EpisodeBoardData asset = AssetDatabase.LoadAssetAtPath<EpisodeBoardData>(assetPath);
             bool isNew = false;
             
             if (asset == null)
             {
-                asset = ScriptableObject.CreateInstance<EpisodeData>();
+                asset = ScriptableObject.CreateInstance<EpisodeBoardData>();
                 isNew = true;
             }
 
