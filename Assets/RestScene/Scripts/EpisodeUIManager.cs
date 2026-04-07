@@ -3,9 +3,9 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class SituationUIManager : BaseUIManager
+public class EpisodeUIManager : BaseUIManager
 {
-    [Header("Situation Animation")]
+    [Header("Episode Animation")]
     public float animDuration = 0.3f;
     public float slideDistance = 150f; // 아래에서 얼마나 올라올지
 
