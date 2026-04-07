@@ -1,4 +1,0 @@
-- [x] `TestEpisode.yarn` 업데이트: 1001, 1002, 1003 대화 노드 작성
-- [x] `SaveData.cs` 업데이트: `List<EpisodeProgressData> episodeProgressList` 필드 추가
-- [x] `EpisodeManager.cs` 업데이트: `LoadProgress`, `SaveProgress` 메서드 추가
-- [x] `DataManager.cs` 업데이트: 세이브/로드 시점 연동 코드 추가

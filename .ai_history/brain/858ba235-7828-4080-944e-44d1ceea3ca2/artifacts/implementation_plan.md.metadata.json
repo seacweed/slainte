@@ -1,7 +1,0 @@
-{
-  "artifactType":  "ARTIFACT_TYPE_IMPLEMENTATION_PLAN",
-  "summary":  "전체 사이클 시연을 위한 Yarn 대본 뼈대 작성 및 자동 세이브/로드 기능 연동 기획안입니다.",
-  "updatedAt":  "2026-04-07T05:33:26.906081800Z",
-  "version":  "3",
-  "requestFeedback":  true
-}

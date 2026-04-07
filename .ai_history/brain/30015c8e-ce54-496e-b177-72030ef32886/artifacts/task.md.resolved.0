@@ -1,4 +1,0 @@
-- [/] Delete `EpisodeUIManager.cs` to prevent conflicts with `EpisodeBoardManager`.
-- [ ] Refactor `EpisodeData.cs` to remove runtime progress fields (`isUnlocked`, `hasMet`).
-- [ ] Update `EpisodeInfoUI.cs` to fetch and use `EpisodeProgressData` from `EpisodeManager`.
-- [ ] Run `dotnet build` to verify no compilation errors.
