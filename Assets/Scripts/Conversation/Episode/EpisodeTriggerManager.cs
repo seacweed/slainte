@@ -17,6 +17,43 @@ public class EpisodeTriggerManager : MonoBehaviour
         episodeRunner?.Begin(episode);
     }
 
+    // RestScene의 상황판에서 선택된 에피소드 ID로 직접 에피소드를 시작합니다.
+    // episodeId가 비어있거나 매칭되는 앱소드가 없으면 FindFirstAvailableEpisode로 폴백합니다.
+    public void LaunchEpisodeById(string episodeId)
+    {
+        EpisodeData episode = null;
+
+        if (!string.IsNullOrEmpty(episodeId))
+        {
+            for (int i = 0; i < episodes.Count; i++)
+            {
+                if (episodes[i] != null && episodes[i].episodeId == episodeId)
+                {
+                    episode = episodes[i];
+                    break;
+                }
+            }
+
+            if (episode == null)
+            {
+                Debug.LogWarning($"[EpisodeTriggerManager] ID '{episodeId}'에 해당하는 EpisodeData가 없습니다. 첫 번째 가능한 에피소드로 폴백합니다.");
+            }
+        }
+
+        // 폴백: 조건에 맞는 첫 번째 에피소드 선택
+        if (episode == null)
+            episode = FindFirstAvailableEpisode();
+
+        if (episode == null)
+        {
+            Debug.LogWarning("[EpisodeTriggerManager] 실행 가능한 에피소드가 없습니다.");
+            return;
+        }
+
+        modeManager?.RequestModeChange(GameMode.EpisodeMode);
+        episodeRunner?.Begin(episode);
+    }
+
     public EpisodeData FindFirstAvailableEpisode()
     {
         if (progress == null)

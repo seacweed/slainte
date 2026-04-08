@@ -337,10 +337,27 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         dialogue?.HideImmediate();
         characterStage?.Clear();
 
-        if (progress != null && _episode != null)
-            progress.MarkEpisodeCompleted(_episode.episodeId);
+        string epId = _episode != null ? _episode.episodeId : null;
+
+        // 1. BusinessScene 내부 진행도 (GameProgress) 기록
+        if (progress != null && epId != null)
+            progress.MarkEpisodeCompleted(epId);
+
+        // 2. CoreScene 전역 진행도 (EpisodeManager) 기록 + 자동 저장 트리거
+        if (!string.IsNullOrEmpty(epId))
+            EpisodeManager.Instance?.ClearEpisode(epId);
 
         modeManager?.RequestModeChange(GameMode.OrderMode);
         OnEncounterCompleted?.Invoke();
+
+        // 3. RestScene으로 전환 (EpisodeManager.ClearEpisode 내부의 Save 완료 후 전환)
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ChangeState(GameState.Rest);
+        }
+        else
+        {
+            Debug.LogWarning("[EpisodeRunner] GameManager가 없어 RestScene으로 전환할 수 없습니다.");
+        }
     }
 }

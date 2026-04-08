@@ -48,20 +48,28 @@ public class GameManager : MonoSingleton<GameManager>
         switch (state)
         {
             case GameState.Episode:
-                sceneName = "Sample_Episode";
-                // 💡 에피소드 씬 로딩이 끝나면 방금 선택한 에피소드의 ID를 기반으로 대화를 재생합니다.
+                sceneName = "BusinessScene";
+                // BusinessScene 로드 완료 후 선택된 에피소드 ID를 EpisodeTriggerManager에 넘겨 에피소드를 시작시킵니다.
                 onTransitionComplete = () => 
                 {
-                    string epId = EpisodeManager.Instance != null ? EpisodeManager.Instance.CurrentPlayingEpisodeID : "Start";
-                    DialogueManager.Instance.StartEpisode(epId);
+                    string epId = EpisodeManager.Instance != null ? EpisodeManager.Instance.CurrentPlayingEpisodeID : null;
+                    var triggerMgr = UnityEngine.Object.FindFirstObjectByType<EpisodeTriggerManager>();
+                    if (triggerMgr != null)
+                    {
+                        triggerMgr.LaunchEpisodeById(epId);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("[GameManager] BusinessScene에 EpisodeTriggerManager가 없습니다!");
+                    }
                 };
                 break;
             case GameState.Rest:
                 sceneName = "RestScene";
                 break;
-            // case GameState.Business:
-            //     sceneName = "Scene_Business";
-            //     break;
+            case GameState.Business:
+                sceneName = "BusinessScene";
+                break;
         }
 
         if (!string.IsNullOrEmpty(sceneName))
