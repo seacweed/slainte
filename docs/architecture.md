@@ -44,9 +44,13 @@
 **4. 에피소드 (`Assets/Scripts/Conversation/Episode/`)**
 
 `EpisodeRunner`가 `EpisodeData` 기반 에피소드를 오케스트레이션합니다:
-1. `EpisodeTriggerManager.CheckAndLaunchEpisode()` → 조건 검사 후 `GameModeManager.RequestModeChange(EpisodeMode)` + `EpisodeRunner.Begin(episode)` 호출
-2. `EpisodeRunner`가 `CustomerStage`, `DialogueController`, 선택지 UI를 구동
-3. 에피소드 종료 시 `GameModeManager.RequestModeChange(OrderMode)` 자동 복귀
+1. `EpisodeBoardManager`에서 에피소드 선택 → `EpisodeManager.StartEpisode(id)` 호출
+2. `GameManager.ChangeState(GameState.Episode)` → `SceneTransitionManager`가 BusinessScene 로드
+3. 씬 로드 완료 콜백에서 `EpisodeRunner.Begin(EpisodeData)` 호출
+4. `EpisodeRunner`가 `CustomerStage`, `DialogueController`, 선택지 UI를 구동
+5. 에피소드 종료 시 `EpisodeManager.ClearEpisode(id)` → `GameManager.ChangeState(GameState.Rest)`
+
+에피소드 조건 체크는 `EpisodeManager.CanStart(EpisodeData, GameProgress)` 에서 처리합니다 (`EpisodeTriggerCondition` 기반).
 
 `EpisodeRunner` 입력 차단 플래그 (모두 `CanReceiveAdvanceInput`에 포함):
 - `_waitingForCharacterAnim` — 캐릭터 등장 애니메이션 중 (오프닝 및 노드별)
@@ -98,7 +102,7 @@ CustomerOrderData
 
 **6. 게임 진행 관리 (`Assets/Scripts/GameProgress.cs`)**
 
-`DontDestroyOnLoad` 싱글톤. 씬 전환과 무관하게 유지됩니다:
+`MonoSingleton<GameProgress>`. 씬 전환과 무관하게 유지됩니다:
 - 스토리 플래그: `SetFlag` / `HasFlag` / `ClearFlag`
 - 수치 변수: `GetVar` / `SetVar` / `AddVar` — 호감도 등 정수형 전역 변수 관리
 - 에피소드 완료 기록: `MarkEpisodeCompleted` / `IsEpisodeCompleted`
@@ -128,18 +132,19 @@ TMPro 타이핑 애니메이션. 모든 모드에서 공유하는 단일 컴포�
 
 모든 컨텐츠는 `Assets/Data/`에 ScriptableObject 데이터베이스로 저장됩니다. 런타임에 string key로 조회합니다. 새 컨텐츠를 추가하려면 ScriptableObject 에셋을 만들고 해당 Database 에셋의 리스트에 등록하세요.
 
-| 데이터 | 파일 | Database |
+| 데이터 | 파일 | 로드 방식 |
 |---|---|---|
-| 캐릭터 | `CharacterData` | `CharacterDatabase` |
-| 에피소드 | `EpisodeData` | `EpisodeTriggerManager.episodes` 리스트 |
+| 캐릭터 | `CharacterData` | `CharacterDatabase` (string key 조회) |
+| 에피소드 | `EpisodeData` | `Resources.LoadAll<EpisodeData>("EpisodeData")` — `EpisodeManager`가 시작 시 일괄 로드 |
 | 손님 주문 | `CustomerOrderData` | `CustomerOrderDatabase` |
 | 주문표 | `OrderTicketData` | `OrderTicketDatabase` |
 | 아이템 | `ItemDef` | `ShelfUI.items` / `DrawerUI.items` 배열 |
 
 ## 주요 설계 패턴
 
-- **단일 씬 + GameMode 상태머신**: 씬 전환 없이 `GameModeManager`가 패널 활성/비활성으로 상태 전환
-- **DontDestroyOnLoad 싱글톤**: `GameProgress`, `DragManager`
-- **이벤트 기반 연결**: `DialogueController.DialogueClosed`, `EncounterRunner.OnEncounterCompleted`, `EpisodeDialogueRunner.OnEpisodeCompleted`, `GameModeManager.OnModeChanged`
+- **씬 분리 + GameState 상태머신**: `GameManager.ChangeState()`가 `SceneTransitionManager`를 통해 씬 전환 처리. BusinessScene(에피소드) ↔ RestScene 전환
+- **씬 내 GameMode 상태머신**: `GameModeManager`가 패널 활성/비활성으로 씬 내 모드 전환 (씬 전환 없음)
+- **MonoSingleton<T>**: `GameProgress`, `GameModeManager`, `EpisodeManager`, `DataManager`, `GameManager` 모두 통일
+- **이벤트 기반 연결**: `DialogueController.DialogueClosed`, `GameModeManager.OnModeChanged`
 - **ScriptableObject 데이터베이스**: 모든 게임 컨텐츠를 에디터에서 구성, 하드코딩 없음
 - **인터페이스 기반 입력**: `IDialogueAdvanceHandler`, `ICameraInputHandler` — 수신자가 InputRouter에 의존하지 않음

@@ -124,7 +124,7 @@ public class EpisodeBoardManager : BaseUIManager
         if (PinnedPhoto != null && EpisodeManager.Instance != null)
         {
             // 1. 코어 씬 매니저에 에피소드 시작 기록
-            EpisodeManager.Instance.StartEpisode(PinnedPhoto.episodeData.episodeID);
+            EpisodeManager.Instance.StartEpisode(PinnedPhoto.episodeData.episodeId);
             
             // 2. 창 닫기
             CloseUI();
@@ -137,7 +137,7 @@ public class EpisodeBoardManager : BaseUIManager
         PinnedPhoto = photo;
 
         // 하단 UI 활성화
-        if (bottomEpisodeNameText) bottomEpisodeNameText.text = photo.episodeData.episodeName;
+        if (bottomEpisodeNameText) bottomEpisodeNameText.text = photo.episodeData.episodeTitle;
         if (startButton) startButton.interactable = true; 
         if (startButtonImage) startButtonImage.color = buttonActiveColor; 
     }

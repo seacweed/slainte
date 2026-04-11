@@ -2,6 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
+public struct EpisodeCharacter
+{
+    public string characterName;
+}
+
 [CreateAssetMenu(menuName = "Slainte/Episode Data", fileName = "EpisodeData_")]
 public class EpisodeData : ScriptableObject
 {
@@ -18,6 +24,12 @@ public class EpisodeData : ScriptableObject
 
     [Header("Nodes")]
     public List<EpisodeNode> nodes = new();
+
+    [Header("Board Display")]
+    [TextArea(3, 5)] public string episodeDescription;
+    public string iconNameBoard;
+    public string iconNameArchive;
+    public List<EpisodeCharacter> characters = new();
 
     public EpisodeNode FindNode(string nodeId)
     {

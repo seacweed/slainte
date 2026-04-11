@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameModeManager : MonoBehaviour
+public class GameModeManager : MonoSingleton<GameModeManager>
 {
-    public static GameModeManager Instance { get; private set; }
-
     [Header("Panels")]
     [SerializeField] private CanvasGroup frontWorldPanel;
     [SerializeField] private CanvasGroup dialoguePanel;
@@ -20,14 +18,9 @@ public class GameModeManager : MonoBehaviour
 
     public event Action<GameMode, GameMode> OnModeChanged;
 
-    void Awake()
+    protected override void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
+        base.Awake();
     }
 
     void Start()
