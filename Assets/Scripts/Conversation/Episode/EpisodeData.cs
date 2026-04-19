@@ -30,6 +30,7 @@ public class EpisodeData : ScriptableObject
     public string iconNameBoard;
     public string iconNameArchive;
     public List<EpisodeCharacter> characters = new();
+    public List<string> customConditionTexts = new(); // UI에서 표시할 예시: "A에게 돈 10000원 지급"
 
     public EpisodeNode FindNode(string nodeId)
     {

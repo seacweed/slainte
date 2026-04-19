@@ -31,6 +31,33 @@ public class EpisodeManager : MonoSingleton<EpisodeManager>
         return available;
     }
 
+    public List<EpisodeData> GetBoardEpisodes()
+    {
+        GameProgress gp = GameProgress.Instance;
+        var visible = new List<EpisodeData>();
+        foreach (var ep in allEpisodes)
+        {
+            if (gp != null && gp.IsEpisodeCompleted(ep.episodeId)) continue;
+            if (IsVisible(ep, gp)) visible.Add(ep);
+        }
+        return visible;
+    }
+
+    public bool IsVisible(EpisodeData ep, GameProgress gp)
+    {
+        if (ep == null) return false;
+        
+        // 시작 조건이 참이라면 무조건 보입니다.
+        if (CanStart(ep, gp)) return true;
+
+        if (gp == null) return false;
+
+        // 시작 조건은 못 채웠지만, 플레이 중 에피소드 정보를 얻은 경우(플래그 존재 시) 보드에 표시됩니다.
+        if (gp.HasFlag($"{ep.episodeId}_Discovered")) return true;
+
+        return false;
+    }
+
     public bool CanStart(EpisodeData ep, GameProgress gp)
     {
         if (ep == null || gp == null) return false;

@@ -8,7 +8,7 @@ using UnityEngine;
 public class EpisodeCsvImporter : EditorWindow
 {
     private string _csvPath = "";
-    private string _outputFolder = "Assets/Data/EpisodeData";
+    private string _outputFolder = "Assets/Resources/EpisodeData";
 
     [MenuItem("Tools/Slainte/Import Episode CSV")]
     public static void Open()
@@ -64,6 +64,13 @@ public class EpisodeCsvImporter : EditorWindow
 
         if (existing != null)
         {
+            // 인스펙터에서 수동으로 입력한 데이터(CSV에 없는 데이터)를 유지합니다.
+            data.episodeDescription = existing.episodeDescription;
+            data.iconNameBoard = existing.iconNameBoard;
+            data.iconNameArchive = existing.iconNameArchive;
+            data.characters = existing.characters;
+            data.customConditionTexts = existing.customConditionTexts;
+
             EditorUtility.CopySerialized(data, existing);
             EditorUtility.SetDirty(existing);
         }
