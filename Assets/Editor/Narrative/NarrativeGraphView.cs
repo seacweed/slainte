@@ -49,17 +49,11 @@ namespace NarrativeFlow.Editor
         public void PopulateView(NarrativeGraphSO graph)
         {
             currentGraph = graph;
-            
-            var elements = graphElements.ToList();
-            foreach (var elem in elements)
-            {
-                RemoveElement(elem);
-            }
+            graphElements.ToList().ForEach(RemoveElement);
 
             if (currentGraph != null)
             {
                 var nodeDictionary = new Dictionary<string, NarrativeNodeView>();
-
                 foreach (var node in currentGraph.Nodes)
                 {
                     if (node != null)
@@ -77,41 +71,30 @@ namespace NarrativeFlow.Editor
                     {
                         var outputPorts = baseNode.outputContainer.Query<Port>().ToList();
                         if (edgeData.OutputPortIndex < outputPorts.Count)
-                        {
-                            var outputPort = outputPorts[edgeData.OutputPortIndex];
-                            var inputPort = targetNode.inputContainer.Q<Port>();
-
-                            var edge = outputPort.ConnectTo(inputPort);
-                            AddElement(edge);
-                        }
+                            AddElement(outputPorts[edgeData.OutputPortIndex].ConnectTo(targetNode.inputContainer.Q<Port>()));
                     }
                 }
+                
+                ValidateAllNodes(); // Validation after load
             }
         }
 
         public void CreateNode(Type type, Vector2 position)
         {
-            if (currentGraph == null)
-            {
-                EditorUtility.DisplayDialog("Error", "Please select or create a Narrative Graph Asset first.", "OK");
-                return;
-            }
-
+            if (currentGraph == null) return;
             var nodeData = ScriptableObject.CreateInstance(type) as NodeDataSO;
             nodeData.Guid = Guid.NewGuid().ToString();
             nodeData.name = nodeData.Guid;
             nodeData.Position = new Rect(position, new Vector2(150, 200));
 
-            Undo.RegisterCreatedObjectUndo(nodeData, "Create Narrative Node");
+            Undo.RegisterCreatedObjectUndo(nodeData, "Create Node");
             AssetDatabase.AddObjectToAsset(nodeData, currentGraph);
-            
-            Undo.RecordObject(currentGraph, "Add Node To Graph");
+            Undo.RecordObject(currentGraph, "Add To Graph");
             currentGraph.Nodes.Add(nodeData);
-
             AssetDatabase.SaveAssets();
 
-            var nodeView = new NarrativeNodeView(nodeData);
-            AddElement(nodeView);
+            AddElement(new NarrativeNodeView(nodeData));
+            ValidateAllNodes(); // Validation after creation
         }
 
         public void CreateNodeFromTemplate(NodeDataSO template, Vector2 position)
@@ -137,51 +120,123 @@ namespace NarrativeFlow.Editor
 
             var nodeView = new NarrativeNodeView(nodeData);
             AddElement(nodeView);
+            
+            ValidateAllNodes(); // Initial check
+        }
+
+        public void ValidateAllNodes()
+        {
+            var nodeViews = graphElements.OfType<NarrativeNodeView>().ToList();
+            var titleCounts = nodeViews.GroupBy(v => v.title).ToDictionary(g => g.Key, g => g.Count());
+
+            foreach (var v in nodeViews)
+            {
+                var errors = new List<string>();
+                var fieldErrors = new Dictionary<string, string>();
+
+                // 1. Global Title check
+                if (!string.IsNullOrEmpty(v.title) && titleCounts[v.title] > 1) 
+                {
+                    errors.Add("Duplicate Node Title");
+                    fieldErrors["title"] = "Title is already used by another node.";
+                }
+
+                // 2. Local Field check
+                if (v.nodeData.CustomFields != null)
+                {
+                    var names = v.nodeData.CustomFields.Select(f => f.FieldName.ToLower()).ToList();
+                    for (int i = 0; i < v.nodeData.CustomFields.Count; i++)
+                    {
+                        var name = v.nodeData.CustomFields[i].FieldName.ToLower();
+                        if (names.Count(n => n == name) > 1)
+                        {
+                            fieldErrors[$"field_{i}"] = "Duplicate Field Name";
+                            if (!errors.Contains("Duplicate Field Names")) errors.Add("Duplicate Field Names");
+                        }
+                    }
+                }
+
+                // 3. Local Branch check
+                if (v.nodeData is EpisodeNodeSO ep && ep.OutgoingBranches != null)
+                {
+                    var branches = ep.OutgoingBranches.Select(b => b.ToLower()).ToList();
+                    for (int i = 0; i < ep.OutgoingBranches.Count; i++)
+                    {
+                        var b = ep.OutgoingBranches[i].ToLower();
+                        if (branches.Count(n => n == b) > 1)
+                        {
+                            fieldErrors[$"branch_{i}"] = "Duplicate Branch Name";
+                            if (!errors.Contains("Duplicate Branch Names")) errors.Add("Duplicate Branch Names");
+                        }
+                    }
+                }
+
+                // 4. Trigger Condition check
+                if (v.nodeData is TriggerNodeSO tr && tr.Conditions != null)
+                {
+                    for (int i = 0; i < tr.Conditions.Count; i++)
+                    {
+                        var c = tr.Conditions[i];
+                        if (string.IsNullOrEmpty(c.Key)) { fieldErrors[$"cond_key_{i}"] = "Required"; errors.Add($"Condition {i} Key missing"); }
+                        if (string.IsNullOrEmpty(c.Value)) { fieldErrors[$"cond_val_{i}"] = "Required"; errors.Add($"Condition {i} Value missing"); }
+                    }
+                }
+
+                v.SetWarning(errors.Count > 0, string.Join("\n• ", errors), fieldErrors);
+            }
         }
 
         public void NotifyNodeStructureChanged(NarrativeNodeView nodeView)
         {
             if (currentGraph == null) return;
 
-            var edgesToRemove = new List<EdgeData>();
-            var visualEdgesToRemove = new List<Edge>();
+            // 1. Identify and remove visual edges connected to this node
+            var outputPorts = nodeView.outputContainer.Query<Port>().ToList();
+            var inputPorts = nodeView.inputContainer.Query<Port>().ToList();
+            var visualEdgesToRemove = outputPorts.SelectMany(p => p.connections)
+                .Concat(inputPorts.SelectMany(p => p.connections))
+                .Distinct().ToList();
 
-            // Find all ports in the output container (including nested ones in choice rows)
-            var ports = nodeView.outputContainer.Query<Port>().ToList();
-            
-            foreach (var port in ports)
+            foreach (var edge in visualEdgesToRemove) RemoveElement(edge);
+
+            // 2. Rebuild the visual ports
+            nodeView.RebuildPorts();
+
+            // 3. Re-link visual edges using persistent data
+            var allNodeViews = graphElements.OfType<NarrativeNodeView>().ToDictionary(v => v.nodeData.Guid);
+            var edgesToRemoveData = new List<EdgeData>();
+
+            foreach (var edgeData in currentGraph.Edges)
             {
-                var connections = port.connections.ToList();
-                foreach (var edge in connections)
+                // Only process edges related to this node for visual recovery
+                if (edgeData.BaseNodeGuid == nodeView.nodeData.Guid || edgeData.TargetNodeGuid == nodeView.nodeData.Guid)
                 {
-                    visualEdgesToRemove.Add(edge);
-                    
-                    // The index should be the position in the Query list
-                    int portIndex = ports.IndexOf(port);
-                    var edgeData = currentGraph.Edges.Find(e => 
-                        e.BaseNodeGuid == nodeView.nodeData.Guid && 
-                        e.OutputPortIndex == portIndex);
-                    
-                    if (!string.IsNullOrEmpty(edgeData.BaseNodeGuid)) edgesToRemove.Add(edgeData);
+                    if (allNodeViews.TryGetValue(edgeData.BaseNodeGuid, out var srcView) &&
+                        allNodeViews.TryGetValue(edgeData.TargetNodeGuid, out var destView))
+                    {
+                        var srcPorts = srcView.outputContainer.Query<Port>().ToList();
+                        var destPorts = destView.inputContainer.Query<Port>().ToList();
+
+                        if (edgeData.OutputPortIndex < srcPorts.Count && destPorts.Count > 0)
+                        {
+                            AddElement(srcPorts[edgeData.OutputPortIndex].ConnectTo(destPorts[0]));
+                        }
+                        else
+                        {
+                            // Port index no longer exists (e.g. branch was deleted)
+                            edgesToRemoveData.Add(edgeData);
+                        }
+                    }
                 }
             }
 
-            // Remove visual elements
-            foreach (var edge in visualEdgesToRemove)
+            // 4. Cleanup data for truly invalid edges
+            if (edgesToRemoveData.Count > 0)
             {
-                RemoveElement(edge);
-            }
-
-            // Remove from data
-            if (edgesToRemove.Count > 0)
-            {
-                Undo.RecordObject(currentGraph, "Remove Invalid Edges on Structure Change");
-                foreach (var ed in edgesToRemove) currentGraph.Edges.Remove(ed);
+                Undo.RecordObject(currentGraph, "Cleanup Invalid Edges");
+                foreach (var ed in edgesToRemoveData) currentGraph.Edges.Remove(ed);
                 EditorUtility.SetDirty(currentGraph);
             }
-
-            // Now the node can safely rebuild
-            nodeView.RebuildPorts();
         }
 
         private GraphViewChange OnGraphViewChanged(GraphViewChange change)

@@ -1,0 +1,54 @@
+/* Narrative Editor Global Styles */
+
+.inspector-container {
+    padding: 10px;
+    background-color: #262626;
+}
+
+.node-body {
+    padding: 8px;
+    background-color: rgba(46, 46, 46, 0.95);
+}
+
+.field-row {
+    flex-direction: row;
+    margin-bottom: 2px;
+}
+
+.field-label {
+    -unity-font-style: bold;
+    font-size: 11px;
+    color: #cccccc;
+    width: 80px;
+}
+
+.field-value {
+    flex-grow: 1;
+    font-size: 11px;
+}
+
+.section-header {
+    -unity-font-style: bold;
+    font-size: 14px;
+    margin-bottom: 10px;
+    border-bottom-width: 1px;
+    border-bottom-color: #444;
+}
+
+.choice-row {
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 2px;
+    padding-left: 5px;
+}
+
+.exit-label {
+    color: #ff8080;
+    -unity-font-style: bold;
+}
+
+.info-label {
+    font-size: 11px;
+    color: #888;
+    -unity-font-style: italic;
+}

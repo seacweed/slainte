@@ -9,226 +9,164 @@ namespace NarrativeFlow.Editor
     public class NarrativeNodeView : Node
     {
         public NodeDataSO nodeData;
-        private VisualElement _customDataContainer;
+        private VisualElement _body;
+        private Label _warningIcon;
+        private Dictionary<string, string> _fieldErrors = new();
+        public event System.Action OnValidationChanged;
 
         public NarrativeNodeView(NodeDataSO data)
         {
             nodeData = data;
             title = data.name;
             viewDataKey = data.Guid;
+            SetPosition(data.Position);
+            this.styleSheets.Add(NarrativeUIHelper.LoadStyle());
 
-            style.left = data.Position.x;
-            style.top = data.Position.y;
-
-            // 1. Enable collapsing
             capabilities |= Capabilities.Collapsible;
 
-            // 2. Build ports (These are in the 'top' container, so they stay visible)
+            SetupTitleBar();
             CreateInputPorts();
             CreateOutputPorts();
+            
+            _body = new VisualElement().AddClass("node-body");
+            extensionContainer.Add(_body);
 
-            // 3. Setup information container
-            SetupVisuals();
-
-            // 4. Initial content refresh
             RefreshVisuals();
+            RegisterEvents();
 
-            // 5. Double-click to open internal editor
-            this.RegisterCallback<MouseDownEvent>(evt => {
-                if (evt.clickCount == 2 && nodeData is EpisodeNodeSO epNode)
-                {
-                    evt.StopImmediatePropagation();
-                    var graphView = GetFirstAncestorOfType<NarrativeGraphView>();
-                    if (graphView != null)
-                    {
-                        graphView.ClearSelection();
-                        EpisodeSequenceEditor.Open(epNode, graphView);
-                    }
-                    else
-                    {
-                        EpisodeSequenceEditor.Open(epNode, null);
-                    }
-                }
-            });
-
-            // 6. Force initial state
             expanded = true;
             RefreshExpandedState();
         }
 
-        private void SetupVisuals()
+        private void SetupTitleBar()
         {
-            // The extensionContainer is the standard GraphView area that hides when collapsed.
-            _customDataContainer = new VisualElement();
-            _customDataContainer.style.paddingLeft = 8;
-            _customDataContainer.style.paddingRight = 8;
-            _customDataContainer.style.paddingTop = 8;
-            _customDataContainer.style.paddingBottom = 8;
-            _customDataContainer.style.backgroundColor = new Color(0.18f, 0.18f, 0.18f, 0.95f);
+            // Create a fixed spacer for the icon so it doesn't overlap text
+            _warningIcon = new Label("⚠️") { 
+                style = { 
+                    color = new Color(1f, 0.3f, 0.3f),
+                    fontSize = 14, 
+                    marginRight = 4,
+                    marginLeft = 4,
+                    display = DisplayStyle.None // Hidden by default
+                } 
+            };
+            titleContainer.Insert(0, _warningIcon);
+        }
+
+        public void ClearValidationEvents() => OnValidationChanged = null;
+
+        public void SetWarning(bool show, string message = "", Dictionary<string, string> fieldErrors = null)
+        {
+            if (_warningIcon == null) return;
             
-            // Add our data container to the extension container
-            extensionContainer.Add(_customDataContainer);
+            _warningIcon.style.display = show ? DisplayStyle.Flex : DisplayStyle.None;
+            if (show && !string.IsNullOrEmpty(message)) _warningIcon.tooltip = message;
+            
+            _fieldErrors = fieldErrors ?? new Dictionary<string, string>();
+            
+            // Re-draw visuals with latest error data
+            RefreshVisuals();
+            OnValidationChanged?.Invoke();
+        }
+
+        public string GetWarningMessage() => _warningIcon != null && _warningIcon.style.display == DisplayStyle.Flex ? _warningIcon.tooltip : "";
+        public string GetFieldError(string key) => _fieldErrors.TryGetValue(key, out var msg) ? msg : null;
+
+        private void RegisterEvents()
+        {
+            this.RegisterCallback<MouseDownEvent>(evt => {
+                if (evt.clickCount == 2 && nodeData is EpisodeNodeSO epNode)
+                {
+                    evt.StopImmediatePropagation();
+                    EpisodeSequenceEditor.Open(epNode, GetFirstAncestorOfType<NarrativeGraphView>());
+                }
+            });
+            var cb = titleButtonContainer.Q<VisualElement>("collapse-button");
+            if (cb != null) cb.style.display = DisplayStyle.Flex;
         }
 
         public void RefreshVisuals()
         {
-            _customDataContainer.Clear();
-            
-            string nodeTitle = "Node";
-            if (nodeData is EpisodeNodeSO) nodeTitle = "Episode Block";
-            else if (nodeData is TriggerNodeSO) nodeTitle = "Trigger Branch";
-            else if (nodeData is EmptyNodeSO) nodeTitle = "Empty Node";
+            _body.Clear();
+            string nodeTitle = nodeData is EpisodeNodeSO ? "Episode" : nodeData is TriggerNodeSO ? "Trigger" : "Node";
 
             if (nodeData.CustomFields != null)
             {
-                var titleField = nodeData.CustomFields.Find(f => f.FieldName != null && f.FieldName.ToLower() == "title");
-                if (titleField != null && !string.IsNullOrEmpty(titleField.FieldValue))
+                for (int i = 0; i < nodeData.CustomFields.Count; i++)
                 {
-                    nodeTitle = titleField.FieldValue;
-                }
-
-                // Show General Fields
-                foreach (var field in nodeData.CustomFields)
-                {
-                    if (field.FieldName.ToLower() == "title") continue;
-
-                    var fieldRow = new VisualElement { style = { flexDirection = FlexDirection.Row, marginBottom = 4 } };
-                    fieldRow.Add(new Label($"{field.FieldName}: ") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 11, color = new Color(0.85f, 0.85f, 0.85f) } });
-                    fieldRow.Add(new Label(field.FieldValue) { style = { fontSize = 11, color = Color.white, flexGrow = 1, whiteSpace = WhiteSpace.Normal } });
-                    _customDataContainer.Add(fieldRow);
+                    var field = nodeData.CustomFields[i];
+                    if (field.FieldName.ToLower() == "title") { if (!string.IsNullOrEmpty(field.FieldValue)) nodeTitle = field.FieldValue; continue; }
+                    
+                    var row = NarrativeUIHelper.CreateRow();
+                    row.Add(NarrativeUIHelper.CreateLabel($"{field.FieldName}: ", "field-label"));
+                    row.Add(NarrativeUIHelper.CreateLabel(field.FieldValue, "field-value"));
+                    
+                    // Apply error border only if validation actually failed for this field
+                    var err = GetFieldError($"field_{i}");
+                    row.MarkError(err, !string.IsNullOrEmpty(err));
+                    
+                    _body.Add(row);
                 }
             }
 
             title = nodeTitle;
+            if (_body.childCount > 0) _body.Insert(0, NarrativeUIHelper.CreateDivider());
 
-            // Divider
-            if (_customDataContainer.childCount > 0)
-            {
-                var divider = new VisualElement { style = { height = 1, backgroundColor = new Color(0.4f, 0.4f, 0.4f), marginTop = 5, marginBottom = 8 } };
-                _customDataContainer.Insert(0, divider);
-            }
-
-            // Episode Specific Info
-            if (nodeData is EpisodeNodeSO epNode)
-            {
-                var eventCount = epNode.Events?.Count ?? 0;
-                var countLabel = new Label($"{eventCount} Events");
-                countLabel.style.color = new Color(0.4f, 0.7f, 1f);
-                countLabel.style.fontSize = 11;
-                countLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
-                countLabel.style.marginBottom = 4;
-                _customDataContainer.Add(countLabel);
-                
-                if (eventCount > 0)
-                {
-                    var firstEvent = epNode.Events[0];
-                    if (firstEvent.Type == EpisodeEventType.Dialogue)
-                    {
-                        string previewText = firstEvent.Text ?? "";
-                        if (previewText.Length > 40) previewText = previewText.Substring(0, 37) + "...";
-                        var previewLabel = new Label(previewText);
-                        previewLabel.style.whiteSpace = WhiteSpace.Normal;
-                        previewLabel.style.fontSize = 11;
-                        previewLabel.style.color = new Color(0.8f, 0.8f, 0.8f);
-                        previewLabel.style.unityFontStyleAndWeight = FontStyle.Italic;
-                        _customDataContainer.Add(previewLabel);
-                    }
-                }
-            }
-
-            // Trigger Specific Info
-            if (nodeData is TriggerNodeSO triggerNode)
-            {
-                foreach (var cond in triggerNode.Conditions)
-                {
-                    var condLabel = new Label($"IF {cond.Key} {cond.Operator} {cond.Value}");
-                    condLabel.style.fontSize = 11;
-                    condLabel.style.color = new Color(1f, 0.85f, 0.5f);
-                    _customDataContainer.Add(condLabel);
-                }
-            }
+            if (nodeData is EpisodeNodeSO ep) DrawEpisode(ep);
+            else if (nodeData is TriggerNodeSO tr) DrawTrigger(tr);
             
-            // Re-apply state in case child count changed
             RefreshExpandedState();
         }
 
-        private void CreateInputPorts()
+        private void DrawEpisode(EpisodeNodeSO ep)
         {
-            var inputPort = InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(bool));
-            inputPort.portName = "Input";
-            inputContainer.Add(inputPort);
+            _body.Add(NarrativeUIHelper.CreateLabel($"{ep.Events.Count} Events", "field-label").With(l => l.style.color = new Color(0.4f, 0.7f, 1f)));
+            if (ep.Events.Count > 0 && ep.Events[0].Type == EpisodeEventType.Dialogue)
+            {
+                string txt = ep.Events[0].Text ?? "";
+                _body.Add(NarrativeUIHelper.CreateLabel(txt.Length > 40 ? txt.Substring(0, 37) + "..." : txt, "info-label"));
+            }
         }
+
+        private void DrawTrigger(TriggerNodeSO tr)
+        {
+            foreach (var c in tr.Conditions)
+                _body.Add(NarrativeUIHelper.CreateLabel($"IF {c.Key} {c.Operator} {c.Value}").With(l => l.style.color = new Color(1f, 0.85f, 0.5f)));
+        }
+
+        private void CreateInputPorts() => inputContainer.Add(InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(bool)).With(p => p.portName = "In"));
 
         private void CreateOutputPorts()
         {
             outputContainer.Clear();
-
-            if (nodeData is EpisodeNodeSO epNode)
+            if (nodeData is EpisodeNodeSO ep)
             {
-                if (epNode.OutgoingBranches != null)
+                for (int i = 0; i < ep.OutgoingBranches.Count; i++)
                 {
-                    for (int i = 0; i < epNode.OutgoingBranches.Count; i++)
-                    {
-                        var row = new VisualElement { style = { flexDirection = FlexDirection.Row, justifyContent = Justify.SpaceBetween, marginBottom = 2, marginLeft = 5 } };
-                        row.Add(new Label(epNode.OutgoingBranches[i]) { style = { flexGrow = 1, unityTextAlign = TextAnchor.MiddleLeft, fontSize = 11, marginRight = 5 } });
-                        
-                        var p = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
-                        p.portName = ""; 
-                        p.style.width = 20;
-                        row.Add(p);
-                        
-                        outputContainer.Add(row);
-                    }
-                }
-            }
-            else if (nodeData is TriggerNodeSO triggerNode)
-            {
-                for (int i = 0; i < triggerNode.Conditions.Count; i++)
-                {
-                    var row = new VisualElement { style = { flexDirection = FlexDirection.Row, justifyContent = Justify.SpaceBetween, marginBottom = 2, marginLeft = 5 } };
-                    row.Add(new Label($"Case {i}") { style = { flexGrow = 1, fontSize = 11 } });
+                    var row = NarrativeUIHelper.CreateRow("choice-row");
+                    row.Add(NarrativeUIHelper.CreateLabel(ep.OutgoingBranches[i], "field-value"));
+                    row.Add(InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool)).With(p => { p.portName = ""; p.style.width = 20; }));
                     
-                    var p = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
-                    p.portName = "";
-                    row.Add(p);
+                    var err = GetFieldError($"branch_{i}");
+                    row.MarkError(err, !string.IsNullOrEmpty(err));
+                    
                     outputContainer.Add(row);
                 }
-                
-                var rowElse = new VisualElement { style = { flexDirection = FlexDirection.Row, justifyContent = Justify.SpaceBetween, marginBottom = 2, marginLeft = 5 } };
-                rowElse.Add(new Label("Else") { style = { flexGrow = 1, fontSize = 11, color = Color.gray } });
-                var pElse = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
-                pElse.portName = "";
-                rowElse.Add(pElse);
-                outputContainer.Add(rowElse);
             }
-            else
+            else if (nodeData is TriggerNodeSO tr)
             {
-                var outputPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(bool));
-                outputPort.portName = "Output";
-                outputContainer.Add(outputPort);
+                for (int i = 0; i <= tr.Conditions.Count; i++)
+                {
+                    var row = NarrativeUIHelper.CreateRow("choice-row");
+                    row.Add(NarrativeUIHelper.CreateLabel(i < tr.Conditions.Count ? $"Case {i}" : "Else", "field-value").With(l => { if (i >= tr.Conditions.Count) l.style.color = Color.gray; }));
+                    row.Add(InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool)).With(p => { p.portName = ""; p.style.width = 20; }));
+                    outputContainer.Add(row);
+                }
             }
         }
 
-        public override void SetPosition(Rect newPos)
-        {
-            base.SetPosition(newPos);
-            Undo.RecordObject(nodeData, "Move Node Position");
-            nodeData.Position = newPos;
-            EditorUtility.SetDirty(nodeData);
-        }
-
-        public override void OnSelected()
-        {
-            base.OnSelected();
-            if (GetFirstAncestorOfType<NarrativeGraphView>() is NarrativeGraphView view)
-            {
-                view.window.OnNodeSelectionChanged(this);
-            }
-        }
-
-        public void RebuildPorts()
-        {
-            CreateOutputPorts();
-        }
+        public override void SetPosition(Rect newPos) { base.SetPosition(newPos); Undo.RecordObject(nodeData, "Move"); nodeData.Position = newPos; EditorUtility.SetDirty(nodeData); }
+        public override void OnSelected() { base.OnSelected(); GetFirstAncestorOfType<NarrativeGraphView>()?.window.OnNodeSelectionChanged(this); }
+        public void RebuildPorts() => CreateOutputPorts();
     }
 }

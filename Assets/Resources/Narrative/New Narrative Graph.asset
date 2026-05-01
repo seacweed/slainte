@@ -15,27 +15,31 @@ MonoBehaviour:
   Guid: eace957f-426b-495b-9a6e-5cf929d7faf0
   Position:
     serializedVersion: 2
-    x: 424.80005
-    y: 265.6
-    width: 124.79999
-    height: 128
+    x: 343.2
+    y: -41.887985
+    width: 135.19995
+    height: 266.4
   CustomFields:
   - FieldName: Title
     FieldValue: "\uC774\uC0C1\uD55C \uB3D9\uC804"
   - FieldName: Description
-    FieldValue: 
+    FieldValue: s
   - FieldName: DiscoveryCondition
-    FieldValue: 
+    FieldValue: s
   - FieldName: ActivationCondition
-    FieldValue: 
+    FieldValue: s
   - FieldName: IsCleared
     FieldValue: False
+  - FieldName: New
+    FieldValue: 
   StartEventGuid: 
   Events:
   - Guid: 5a5211d4-1977-40e8-9a73-e9c7d0b1a8e9
-    Position: {x: 138.656, y: 64.288}
+    Position: {x: 94.399994, y: 122.16}
     NextEventGuids:
     - 346165cf-6ebd-4078-b2db-e878f48ab996
+    - 8318d346-7af4-4686-9568-754bb33f1d64
+    - a7dfbedd-8215-44b8-9321-ee595e581665
     Type: 0
     SpeakerKey: asd
     OverrideSpeakerName: 
@@ -43,8 +47,9 @@ MonoBehaviour:
     CharacterAppearances: []
     Choices: []
     CraftingTicketKey: 
-  - Guid: 346165cf-6ebd-4078-b2db-e878f48ab996
-    Position: {x: 274.4, y: 27.19999}
+    ExitBranchName: 
+  - Guid: a7dfbedd-8215-44b8-9321-ee595e581665
+    Position: {x: 230.40002, y: 157.6}
     NextEventGuids: []
     Type: 1
     SpeakerKey: 
@@ -53,11 +58,43 @@ MonoBehaviour:
     CharacterAppearances: []
     Choices:
     - ButtonText: New Choice
-      TargetNodeId: 
+      TargetNodeId: eec8a9db-f2c1-42fe-9527-5773736f5ce0
+      SetFlags: []
+      ClearFlags: []
+      VarChanges: []
+    - ButtonText: New
+      TargetNodeId: fdb6d580-848b-4172-8c6d-416f72210d1b
       SetFlags: []
       ClearFlags: []
       VarChanges: []
     CraftingTicketKey: 
+    ExitBranchName: 
+  - Guid: fdb6d580-848b-4172-8c6d-416f72210d1b
+    Position: {x: 454.40002, y: 236.00002}
+    NextEventGuids: []
+    Type: 0
+    SpeakerKey: 
+    OverrideSpeakerName: 
+    Text: 
+    CharacterAppearances: []
+    Choices: []
+    CraftingTicketKey: 
+    ExitBranchName: 
+  - Guid: eec8a9db-f2c1-42fe-9527-5773736f5ce0
+    Position: {x: 454.40002, y: 97.59999}
+    NextEventGuids: []
+    Type: 0
+    SpeakerKey: 
+    OverrideSpeakerName: 
+    Text: 
+    CharacterAppearances: []
+    Choices: []
+    CraftingTicketKey: 
+    ExitBranchName: 
+  OutgoingBranches:
+  - money<10
+  - a==1
+  - New
 --- !u!114 &-6074970108715304164
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,8 +119,13 @@ MonoBehaviour:
     FieldValue: 
   - FieldName: NewField
     FieldValue: 
+  - FieldName: Title
+    FieldValue: aas
   StartEventGuid: 
   Events: []
+  OutgoingBranches:
+  - Next
+  - New
 --- !u!114 &-3690519989684819998
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -104,38 +146,6 @@ MonoBehaviour:
     width: 136
     height: 86.400024
   CustomFields: []
---- !u!114 &-2663580863094007377
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
-  m_Name: 673436c0-15c7-4a82-a493-7fd2c149b56b
-  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
-  Guid: 673436c0-15c7-4a82-a493-7fd2c149b56b
-  Position:
-    serializedVersion: 2
-    x: 770.3999
-    y: 380.00003
-    width: 135.99994
-    height: 178.4
-  CustomFields:
-  - FieldName: Title
-    FieldValue: New Episode
-  - FieldName: Description
-    FieldValue: 
-  - FieldName: DiscoveryCondition
-    FieldValue: 
-  - FieldName: ActivationCondition
-    FieldValue: 
-  - FieldName: IsCleared
-    FieldValue: False
-  StartEventGuid: 
-  Events: []
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -151,29 +161,19 @@ MonoBehaviour:
   Nodes:
   - {fileID: -7127120222914740406}
   - {fileID: 4866711699634503307}
-  - {fileID: -2663580863094007377}
   - {fileID: -6074970108715304164}
   - {fileID: 2548980039588542765}
   - {fileID: -3690519989684819998}
   Edges:
-  - BaseNodeGuid: eace957f-426b-495b-9a6e-5cf929d7faf0
-    TargetNodeGuid: 9f0d5276-8e7c-46fa-a68f-a138d2b620be
-    OutputPortIndex: 0
-  - BaseNodeGuid: 9f0d5276-8e7c-46fa-a68f-a138d2b620be
-    TargetNodeGuid: 673436c0-15c7-4a82-a493-7fd2c149b56b
-    OutputPortIndex: 0
-  - BaseNodeGuid: eace957f-426b-495b-9a6e-5cf929d7faf0
-    TargetNodeGuid: 673436c0-15c7-4a82-a493-7fd2c149b56b
+  - BaseNodeGuid: f3174ce8-850f-4d3d-858e-89bd51af4484
+    TargetNodeGuid: 88be1ef7-38c6-4bb7-b892-669afec15e2d
     OutputPortIndex: 0
   - BaseNodeGuid: 4b1c8b14-d725-4a88-9e7f-3e29344adcff
     TargetNodeGuid: eace957f-426b-495b-9a6e-5cf929d7faf0
     OutputPortIndex: 0
-  - BaseNodeGuid: f3174ce8-850f-4d3d-858e-89bd51af4484
-    TargetNodeGuid: eace957f-426b-495b-9a6e-5cf929d7faf0
-    OutputPortIndex: 0
-  - BaseNodeGuid: f3174ce8-850f-4d3d-858e-89bd51af4484
-    TargetNodeGuid: 88be1ef7-38c6-4bb7-b892-669afec15e2d
-    OutputPortIndex: 0
+  - BaseNodeGuid: 4b1c8b14-d725-4a88-9e7f-3e29344adcff
+    TargetNodeGuid: 9f0d5276-8e7c-46fa-a68f-a138d2b620be
+    OutputPortIndex: 1
 --- !u!114 &2548980039588542765
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -200,6 +200,8 @@ MonoBehaviour:
     FieldValue: 
   StartEventGuid: 
   Events: []
+  OutgoingBranches:
+  - Next
 --- !u!114 &4866711699634503307
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -230,5 +232,10 @@ MonoBehaviour:
     FieldValue: 
   - FieldName: IsCleared
     FieldValue: False
+  - FieldName: New
+    FieldValue: 
   StartEventGuid: 
   Events: []
+  OutgoingBranches:
+  - Next
+  - New

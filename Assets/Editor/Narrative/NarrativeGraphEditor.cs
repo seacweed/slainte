@@ -112,7 +112,7 @@ namespace NarrativeFlow.Editor
 
         public void OnNodeSelectionChanged(NarrativeNodeView nodeView)
         {
-            NarrativeInspectorUI.DrawInspector(_inspectorView, nodeView, this);
+            NarrativeInspectorUI.DrawInspector(_inspectorView, nodeView, _graphView, this);
         }
     }
 }

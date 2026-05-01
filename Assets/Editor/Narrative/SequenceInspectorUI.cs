@@ -2,134 +2,89 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEditor.UIElements;
-using System.Collections.Generic;
 
 namespace NarrativeFlow.Editor
 {
     public static class SequenceInspectorUI
     {
-        public static void Draw(VisualElement container, SequenceNodeView nodeView, EpisodeNodeSO containerSO, SequenceGraphView graphView)
+        public static void Draw(VisualElement container, SequenceNodeView nodeView, EpisodeNodeSO epNode, SequenceGraphView graph)
         {
             container.Clear();
-            if (nodeView == null)
-            {
-                container.Add(new Label("Select an event node to edit its properties.") { style = { unityFontStyleAndWeight = FontStyle.Italic, color = Color.gray, marginTop = 20 } });
-                return;
-            }
+            container.styleSheets.Add(NarrativeUIHelper.LoadStyle());
+            if (nodeView == null) { container.Add(NarrativeUIHelper.CreateLabel("Select an event node.", "info-label").SetMargin(20, 0)); return; }
 
+            nodeView.ClearValidationEvents();
             var ev = nodeView.eventData;
 
-            // Header
-            var header = new Label($"{ev.Type} Properties") { style = { unityFontStyleAndWeight = FontStyle.Bold, fontSize = 16, marginBottom = 15 } };
-            container.Add(header);
+            // Warning Header
+            var warningBox = new HelpBox("", HelpBoxMessageType.Error).With(x => { x.style.display = DisplayStyle.None; x.style.marginBottom = 10; });
+            container.Add(warningBox);
+            System.Action updateHeader = () => { var msg = nodeView.GetWarningMessage(); warningBox.text = msg; warningBox.style.display = string.IsNullOrEmpty(msg) ? DisplayStyle.None : DisplayStyle.Flex; };
+            nodeView.OnValidationChanged += updateHeader;
+            updateHeader();
 
-            // Dialogue UI
-            if (ev.Type == EpisodeEventType.Dialogue)
+            container.Add(NarrativeUIHelper.CreateLabel($"{ev.Type} Properties", "section-header"));
+
+            switch (ev.Type)
             {
-                var speaker = new TextField("Speaker Key") { value = ev.SpeakerKey };
-                speaker.RegisterValueChangedCallback(e => {
-                    Undo.RecordObject(containerSO, "Edit Speaker");
-                    ev.SpeakerKey = e.newValue;
-                    nodeView.UpdateVisuals();
-                });
-                container.Add(speaker);
-
-                var overrideName = new TextField("Name Override") { value = ev.OverrideSpeakerName };
-                overrideName.RegisterValueChangedCallback(e => {
-                    Undo.RecordObject(containerSO, "Edit Name Override");
-                    ev.OverrideSpeakerName = e.newValue;
-                });
-                container.Add(overrideName);
-
-                var text = new TextField("Dialogue Text") { value = ev.Text, multiline = true };
-                text.style.minHeight = 60;
-                text.RegisterValueChangedCallback(e => {
-                    Undo.RecordObject(containerSO, "Edit Dialogue Text");
-                    ev.Text = e.newValue;
-                    nodeView.UpdateVisuals();
-                });
-                container.Add(text);
+                case EpisodeEventType.Dialogue:
+                    container.Add(CreateField("Speaker", ev.SpeakerKey, "speaker", nodeView, v => ev.SpeakerKey = v, graph));
+                    container.Add(CreateField("Name", ev.OverrideSpeakerName, "none", nodeView, v => ev.OverrideSpeakerName = v, graph));
+                    container.Add(CreateField("Text", ev.Text, "text", nodeView, v => ev.Text = v, graph, true));
+                    break;
+                case EpisodeEventType.Choice:
+                    DrawChoices(container, ev, nodeView, graph);
+                    break;
+                case EpisodeEventType.BusinessStart:
+                    container.Add(CreateField("Ticket", ev.CraftingTicketKey, "none", nodeView, v => ev.CraftingTicketKey = v, graph));
+                    break;
+                case EpisodeEventType.BranchExit:
+                    container.Add(NarrativeUIHelper.CreateLabel("Select Output Branch", "field-label"));
+                    var row = NarrativeUIHelper.CreateRow();
+                    row.Add(new PopupField<string>(epNode.OutgoingBranches, ev.ExitBranchName ?? "").SetFlex(1).With(x => {
+                        x.RegisterValueChangedCallback(e => { ev.ExitBranchName = e.newValue; nodeView.SetWarning(false); graph.ValidateAllNodes(); });
+                    }));
+                    row.Add(NarrativeUIHelper.CreateWarningIcon(nodeView, "exit"));
+                    container.Add(row);
+                    break;
             }
-            // Choice UI
-            else if (ev.Type == EpisodeEventType.Choice)
-            {
-                container.Add(new Label("Choice Options") { style = { unityFontStyleAndWeight = FontStyle.Bold, marginTop = 10, marginBottom = 5 } });
-                
-                var choiceList = new VisualElement();
-                container.Add(choiceList);
 
-                System.Action refreshChoices = null;
-                refreshChoices = () => {
-                    choiceList.Clear();
-                    for (int i = 0; i < ev.Choices.Count; i++)
-                    {
-                        int index = i;
-                        var c = ev.Choices[index];
-                        var box = new Box { style = { paddingLeft = 5, paddingRight = 5, paddingTop = 5, paddingBottom = 5, marginBottom = 5, backgroundColor = new Color(0.25f, 0.25f, 0.25f) } };
-                        
-                        var headerRow = new VisualElement { style = { flexDirection = FlexDirection.Row, justifyContent = Justify.SpaceBetween } };
-                        headerRow.Add(new Label($"Choice {index}") { style = { unityFontStyleAndWeight = FontStyle.Bold } });
-                        headerRow.Add(new Button(() => {
-                            Undo.RecordObject(containerSO, "Remove Choice");
-                            ev.Choices.RemoveAt(index);
-                            refreshChoices();
-                            graphView.NotifyInternalNodeStructureChanged(nodeView); // Internal Rebuild
-                            graphView.NotifyMainGraph(); // Main Rebuild
-                        }) { text = "X" });
-                        box.Add(headerRow);
+            container.Add(NarrativeUIHelper.CreateLabel("Tip: Use ports to connect flow.", "info-label").SetMargin(20, 0));
+        }
 
-                        var btnText = new TextField("Button Text") { value = c.ButtonText };
-                        btnText.RegisterValueChangedCallback(e => {
-                            Undo.RecordObject(containerSO, "Edit Choice Text");
-                            c.ButtonText = e.newValue;
-                            nodeView.RebuildPorts(); // Just text change, simple rebuild
-                            graphView.NotifyMainGraph();
-                        });
-                        box.Add(btnText);
+        private static VisualElement CreateField(string label, string val, string errKey, SequenceNodeView view, System.Action<string> setter, SequenceGraphView g, bool multi = false)
+        {
+            var row = NarrativeUIHelper.CreateRow();
+            row.Add(NarrativeUIHelper.CreateLabel(label, "field-label"));
+            row.Add(new TextField { value = val, multiline = multi }.SetFlex(1).With(x => {
+                x.RegisterValueChangedCallback(e => { setter(e.newValue); g.ValidateAllNodes(); });
+            }));
+            row.Add(NarrativeUIHelper.CreateWarningIcon(view, errKey));
+            return row;
+        }
 
-                        choiceList.Add(box);
-                    }
+        private static void DrawChoices(VisualElement container, EpisodeEvent ev, SequenceNodeView view, SequenceGraphView graph)
+        {
+            var sec = new VisualElement();
+            container.Add(NarrativeUIHelper.CreateLabel("Choice Options", "field-label"));
+            container.Add(sec);
+            System.Action refresh = null;
+            refresh = () => NarrativeUIHelper.DrawList(sec, ev.Choices, (c, choice, i) => {
+                var box = new Box().AddClass("inspector-container").SetMargin(0, 5);
+                var head = NarrativeUIHelper.CreateRow("choice-row");
+                head.Add(NarrativeUIHelper.CreateLabel($"Choice {i}", "field-label"));
+                head.Add(NarrativeUIHelper.CreateButton("X", () => { ev.Choices.RemoveAt(i); refresh(); graph.NotifyInternalNodeStructureChanged(view); graph.NotifyMainGraph(); }));
+                box.Add(head);
 
-                    var addBtn = new Button(() => {
-                        Undo.RecordObject(containerSO, "Add Choice");
-                        ev.Choices.Add(new ChoiceOptionData { ButtonText = "New Choice" });
-                        refreshChoices();
-                        graphView.NotifyInternalNodeStructureChanged(nodeView); // Internal Rebuild
-                        graphView.NotifyMainGraph(); // Main Rebuild
-                    }) { text = "+ Add Choice Option" };
-                    choiceList.Add(addBtn);
-                };
-                refreshChoices();
-            }
-            // Business Start UI
-            else if (ev.Type == EpisodeEventType.BusinessStart)
-            {
-                var ticket = new TextField("Crafting Ticket Key") { value = ev.CraftingTicketKey };
-                ticket.RegisterValueChangedCallback(e => {
-                    Undo.RecordObject(containerSO, "Edit Ticket Key");
-                    ev.CraftingTicketKey = e.newValue;
-                });
-                container.Add(ticket);
-            }
-            // Branch Exit UI
-            else if (ev.Type == EpisodeEventType.BranchExit)
-            {
-                container.Add(new Label("Select Output Branch") { style = { unityFontStyleAndWeight = FontStyle.Bold, marginTop = 10 } });
-                
-                var dropdown = new PopupField<string>("Exit Port", containerSO.OutgoingBranches, ev.ExitBranchName ?? (containerSO.OutgoingBranches.Count > 0 ? containerSO.OutgoingBranches[0] : ""));
-                dropdown.RegisterValueChangedCallback(e => {
-                    Undo.RecordObject(containerSO, "Change Exit Branch");
-                    ev.ExitBranchName = e.newValue;
-                    nodeView.UpdateVisuals();
-                });
-                container.Add(dropdown);
-            }
-            
-            // Helpful Tip
-            container.Add(new Label("Tip: Use the ports in the graph to connect dialogue flow.") 
-            { 
-                style = { whiteSpace = WhiteSpace.Normal, color = new Color(0.5f, 0.7f, 1f), fontSize = 10, marginTop = 20, unityFontStyleAndWeight = FontStyle.Italic } 
-            });
+                var row = NarrativeUIHelper.CreateRow();
+                row.Add(new TextField { value = choice.ButtonText }.SetFlex(1).With(x => {
+                    x.RegisterValueChangedCallback(e => { choice.ButtonText = e.newValue; graph.ValidateAllNodes(); });
+                }));
+                row.Add(NarrativeUIHelper.CreateWarningIcon(view, $"choice_{i}"));
+                box.Add(row);
+                c.Add(box);
+            }, () => { ev.Choices.Add(new ChoiceOptionData { ButtonText = "New" }); refresh(); graph.NotifyInternalNodeStructureChanged(view); graph.NotifyMainGraph(); });
+            refresh();
         }
     }
 }

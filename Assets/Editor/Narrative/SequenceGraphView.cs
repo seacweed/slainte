@@ -15,70 +15,85 @@ namespace NarrativeFlow.Editor
         public SequenceGraphView(EpisodeSequenceEditor window)
         {
             this.window = window;
-            
             SetupZoom(ContentZoomer.DefaultMinScale, ContentZoomer.DefaultMaxScale);
             this.AddManipulator(new ContentDragger());
             this.AddManipulator(new SelectionDragger());
             this.AddManipulator(new RectangleSelector());
-
-            var grid = new GridBackground();
-            Insert(0, grid);
-            grid.StretchToParentSize();
-
+            Insert(0, new GridBackground().With(g => g.StretchToParentSize()));
             graphViewChanged += OnGraphViewChanged;
         }
 
         public void Populate(EpisodeNodeSO node)
         {
             _targetNode = node;
-            
-            var elements = graphElements.ToList();
-            foreach (var elem in elements) RemoveElement(elem);
-
+            graphElements.ToList().ForEach(RemoveElement);
             if (_targetNode == null) return;
 
-            var nodeViews = new Dictionary<string, SequenceNodeView>();
+            var views = _targetNode.Events.Select(ev => new SequenceNodeView(ev, _targetNode, this)).ToDictionary(v => v.eventData.Guid);
+            views.Values.ToList().ForEach(AddElement);
 
-            foreach (var ev in _targetNode.Events)
-            {
-                var nodeView = new SequenceNodeView(ev, _targetNode, this);
-                AddElement(nodeView);
-                nodeViews[ev.Guid] = nodeView;
-            }
+            foreach (var view in views.Values) LinkNodeEdges(view, views);
+            
+            ValidateAllNodes();
+        }
 
-            foreach (var ev in _targetNode.Events)
+        public void ValidateAllNodes()
+        {
+            var nodeViews = graphElements.OfType<SequenceNodeView>().ToList();
+            foreach (var v in nodeViews)
             {
-                if (nodeViews.TryGetValue(ev.Guid, out var sourceView))
+                var errors = new List<string>();
+                var fieldErrors = new Dictionary<string, string>();
+                var ev = v.eventData;
+
+                if (ev.Type == EpisodeEventType.Dialogue)
                 {
-                    if (ev.Type == EpisodeEventType.Choice)
-                    {
-                        var choicePorts = sourceView.outputContainer.Query<Port>().ToList();
-                        for (int i = 0; i < ev.Choices.Count; i++)
-                        {
-                            if (i < choicePorts.Count && !string.IsNullOrEmpty(ev.Choices[i].TargetNodeId))
-                            {
-                                if (nodeViews.TryGetValue(ev.Choices[i].TargetNodeId, out var targetView))
-                                {
-                                    var edge = choicePorts[i].ConnectTo(targetView.inputContainer.Q<Port>());
-                                    AddElement(edge);
-                                }
-                            }
-                        }
-                    }
+                    if (string.IsNullOrEmpty(ev.Text)) { errors.Add("Empty Text"); fieldErrors["text"] = "Required"; }
+                    if (string.IsNullOrEmpty(ev.SpeakerKey)) { errors.Add("Empty Speaker"); fieldErrors["speaker"] = "Required"; }
+                }
+                else if (ev.Type == EpisodeEventType.Choice)
+                {
+                    if (ev.Choices == null || ev.Choices.Count == 0) errors.Add("No Choices");
                     else
                     {
-                        foreach (var nextGuid in ev.NextEventGuids)
+                        var texts = ev.Choices.Select(c => c.ButtonText.ToLower()).ToList();
+                        for (int i = 0; i < ev.Choices.Count; i++)
                         {
-                            if (nodeViews.TryGetValue(nextGuid, out var targetView))
+                            if (texts.Count(t => t == ev.Choices[i].ButtonText.ToLower()) > 1)
                             {
-                                var outPort = sourceView.outputContainer.Q<Port>();
-                                var inPort = targetView.inputContainer.Q<Port>();
-                                var edge = outPort.ConnectTo(inPort);
-                                AddElement(edge);
+                                fieldErrors[$"choice_{i}"] = "Duplicate Choice";
+                                if (!errors.Contains("Duplicate Choices")) errors.Add("Duplicate Choices");
                             }
                         }
                     }
                 }
+                else if (ev.Type == EpisodeEventType.BranchExit)
+                {
+                    if (string.IsNullOrEmpty(ev.ExitBranchName)) { errors.Add("Branch Not Selected"); fieldErrors["exit"] = "Required"; }
+                }
+
+                v.SetWarning(errors.Count > 0, string.Join("\n• ", errors), fieldErrors);
+            }
+        }
+
+        public void LinkNodeEdges(SequenceNodeView src, Dictionary<string, SequenceNodeView> allViews)
+        {
+            if (src.eventData.Type == EpisodeEventType.Choice)
+            {
+                var ports = src.outputContainer.Query<Port>().ToList();
+                for (int i = 0; i < src.eventData.Choices.Count; i++)
+                {
+                    var targetId = src.eventData.Choices[i].TargetNodeId;
+                    if (i < ports.Count && !string.IsNullOrEmpty(targetId) && allViews.TryGetValue(targetId, out var dest))
+                        AddElement(ports[i].ConnectTo(dest.inputContainer.Q<Port>()));
+                }
+            }
+            else
+            {
+                src.eventData.NextEventGuids.ForEach(nextId => {
+                    if (allViews.TryGetValue(nextId, out var dest))
+                        AddElement(src.outputContainer.Q<Port>().ConnectTo(dest.inputContainer.Q<Port>()));
+                });
             }
         }
 
@@ -88,261 +103,71 @@ namespace NarrativeFlow.Editor
             {
                 foreach (var edge in change.edgesToCreate)
                 {
-                    var source = edge.output.node as SequenceNodeView;
-                    var target = edge.input.node as SequenceNodeView;
-                    if (source != null && target != null)
+                    if (edge.output.node is SequenceNodeView src && edge.input.node is SequenceNodeView dest)
                     {
-                        Undo.RecordObject(_targetNode, "Connect Events");
-                        
-                        if (source.eventData.Type == EpisodeEventType.Choice)
+                        Undo.RecordObject(_targetNode, "Connect");
+                        if (src.eventData.Type == EpisodeEventType.Choice)
                         {
-                            // Map specific choice port to TargetNodeId
-                            var allOutputPorts = source.outputContainer.Query<Port>().ToList();
-                            int portIndex = allOutputPorts.IndexOf(edge.output as Port);
-                            if (portIndex >= 0 && portIndex < source.eventData.Choices.Count)
-                            {
-                                source.eventData.Choices[portIndex].TargetNodeId = target.eventData.Guid;
-                            }
+                            int idx = src.outputContainer.Query<Port>().ToList().IndexOf(edge.output as Port);
+                            if (idx >= 0 && idx < src.eventData.Choices.Count) src.eventData.Choices[idx].TargetNodeId = dest.eventData.Guid;
                         }
-                        else
-                        {
-                            // Default flow
-                            if (!source.eventData.NextEventGuids.Contains(target.eventData.Guid))
-                            {
-                                source.eventData.NextEventGuids.Add(target.eventData.Guid);
-                            }
-                        }
+                        else if (!src.eventData.NextEventGuids.Contains(dest.eventData.Guid)) src.eventData.NextEventGuids.Add(dest.eventData.Guid);
                     }
                 }
             }
-
             if (change.elementsToRemove != null)
             {
                 foreach (var elem in change.elementsToRemove)
                 {
-                    if (elem is SequenceNodeView nodeView)
+                    if (elem is SequenceNodeView v)
                     {
-                        Undo.RecordObject(_targetNode, "Remove Event");
-                        _targetNode.Events.Remove(nodeView.eventData);
-                        foreach (var other in _targetNode.Events)
-                        {
-                            other.NextEventGuids.Remove(nodeView.eventData.Guid);
-                            foreach (var c in other.Choices) if (c.TargetNodeId == nodeView.eventData.Guid) c.TargetNodeId = null;
-                        }
+                        Undo.RecordObject(_targetNode, "Remove");
+                        _targetNode.Events.Remove(v.eventData);
+                        _targetNode.Events.ForEach(o => { o.NextEventGuids.Remove(v.eventData.Guid); o.Choices.ForEach(c => { if (c.TargetNodeId == v.eventData.Guid) c.TargetNodeId = null; }); });
                     }
-                    else if (elem is Edge edge)
+                    else if (elem is Edge e && e.output.node is SequenceNodeView s && e.input.node is SequenceNodeView d)
                     {
-                        var source = edge.output.node as SequenceNodeView;
-                        var target = edge.input.node as SequenceNodeView;
-                        if (source != null && target != null)
+                        Undo.RecordObject(_targetNode, "Disconnect");
+                        if (s.eventData.Type == EpisodeEventType.Choice)
                         {
-                            Undo.RecordObject(_targetNode, "Disconnect Events");
-                            if (source.eventData.Type == EpisodeEventType.Choice)
-                            {
-                                var allOutputPorts = source.outputContainer.Query<Port>().ToList();
-                                int portIndex = allOutputPorts.IndexOf(edge.output as Port);
-                                if (portIndex >= 0 && portIndex < source.eventData.Choices.Count)
-                                {
-                                    source.eventData.Choices[portIndex].TargetNodeId = null;
-                                }
-                            }
-                            else
-                            {
-                                source.eventData.NextEventGuids.Remove(target.eventData.Guid);
-                            }
+                            int idx = s.outputContainer.Query<Port>().ToList().IndexOf(e.output as Port);
+                            if (idx >= 0 && idx < s.eventData.Choices.Count) s.eventData.Choices[idx].TargetNodeId = null;
                         }
+                        else s.eventData.NextEventGuids.Remove(d.eventData.Guid);
                     }
                 }
             }
-
+            ValidateAllNodes();
             return change;
         }
 
-        public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)
-        {
-            return ports.ToList().Where(p => p.direction != startPort.direction && p.node != startPort.node).ToList();
-        }
-
-        public void CreateEvent(EpisodeEventType type, Vector2 position)
+        public override List<Port> GetCompatiblePorts(Port p, NodeAdapter a) => ports.ToList().Where(x => x.direction != p.direction && x.node != p.node).ToList();
+        
+        public void CreateEvent(EpisodeEventType type, Vector2 pos)
         {
             if (_targetNode == null) return;
-            
-            Undo.RecordObject(_targetNode, "Create Inner Event");
-            var newEv = new EpisodeEvent { Type = type, Position = position };
-            _targetNode.Events.Add(newEv);
-            
-            var nodeView = new SequenceNodeView(newEv, _targetNode, this);
-            AddElement(nodeView);
-
+            Undo.RecordObject(_targetNode, "Create Event");
+            var ev = new EpisodeEvent { Type = type, Position = pos };
+            _targetNode.Events.Add(ev);
+            AddElement(new SequenceNodeView(ev, _targetNode, this));
+            ValidateAllNodes();
             NotifyMainGraph();
         }
 
         public void NotifyMainGraph()
         {
-            if (window != null && window.mainGraphView != null)
-            {
-                var mainNodeView = window.mainGraphView.GetNodeByGuid(_targetNode.Guid) as NarrativeNodeView;
-                if (mainNodeView != null)
-                {
-                    window.mainGraphView.NotifyNodeStructureChanged(mainNodeView);
-                }
-            }
+            if (window?.mainGraphView != null && window.mainGraphView.GetNodeByGuid(_targetNode.Guid) is NarrativeNodeView v)
+                window.mainGraphView.NotifyNodeStructureChanged(v);
         }
 
-
-        // New Helper for internal port rebuilding
-        public void NotifyInternalNodeStructureChanged(SequenceNodeView nodeView)
+        public void NotifyInternalNodeStructureChanged(SequenceNodeView v)
         {
-            // Similar logic to main graph: clear invalid edges when ports change
-            var ports = nodeView.outputContainer.Query<Port>().ToList();
-            var visualEdgesToRemove = new List<Edge>();
-
-            foreach (var port in ports)
-            {
-                var connections = port.connections.ToList();
-                foreach (var edge in connections)
-                {
-                    visualEdgesToRemove.Add(edge);
-                    
-                    int portIndex = ports.IndexOf(port);
-                    if (nodeView.eventData.Type == EpisodeEventType.Choice)
-                    {
-                        if (portIndex >= 0 && portIndex < nodeView.eventData.Choices.Count)
-                            nodeView.eventData.Choices[portIndex].TargetNodeId = null;
-                    }
-                    else
-                    {
-                        // For non-choice nodes, we only have one logical flow usually
-                        nodeView.eventData.NextEventGuids.Clear();
-                    }
-                }
-            }
-
-            foreach (var edge in visualEdgesToRemove) RemoveElement(edge);
-            
-            nodeView.RebuildPorts();
-        }
-    }
-
-    public class SequenceNodeView : Node
-    {
-        public EpisodeEvent eventData;
-        private EpisodeNodeSO _container;
-        private SequenceGraphView _graph;
-        private Label _summaryLabel;
-
-        public SequenceNodeView(EpisodeEvent data, EpisodeNodeSO container, SequenceGraphView graph)
-        {
-            eventData = data;
-            _container = container;
-            _graph = graph;
-            
-            title = data.Type.ToString();
-            viewDataKey = data.Guid;
-            style.left = data.Position.x;
-            style.top = data.Position.y;
-
-            var outPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(bool));
-            outPort.portName = "Out";
-            outputContainer.Add(outPort);
-
-            // Disable Collapsible for internal sequence nodes as requested
-            capabilities &= ~Capabilities.Collapsible;
-
-            _summaryLabel = new Label { style = { whiteSpace = WhiteSpace.Normal, fontSize = 11, color = Color.gray, maxWidth = 150, paddingLeft = 5, paddingRight = 5, paddingTop = 5, paddingBottom = 5 } };
-
-            extensionContainer.Add(_summaryLabel);
-            
-            RebuildPorts();
-            UpdateVisuals();
-            RefreshExpandedState();
-        }
-
-        public void RebuildPorts()
-        {
-            outputContainer.Clear();
-
-            if (eventData.Type == EpisodeEventType.Choice)
-            {
-                for (int i = 0; i < eventData.Choices.Count; i++)
-                {
-                    var row = new VisualElement { style = { flexDirection = FlexDirection.Row, justifyContent = Justify.SpaceBetween, marginBottom = 2 } };
-                    row.Add(new Label(eventData.Choices[i].ButtonText) { style = { flexGrow = 1, fontSize = 10, marginRight = 5 } });
-                    
-                    var p = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool));
-                    p.portName = "";
-                    p.style.width = 16;
-                    row.Add(p);
-                    outputContainer.Add(row);
-                }
-
-                // Restore "+ Choice" button on the node itself for convenience
-                var addBtn = new Button(() => {
-                    Undo.RecordObject(_container, "Add Choice");
-                    eventData.Choices.Add(new ChoiceOptionData { ButtonText = "New Choice" });
-                    _graph.NotifyInternalNodeStructureChanged(this);
-                    _graph.NotifyMainGraph();
-                }) { text = "+ Choice", style = { fontSize = 9, height = 16, marginTop = 5 } };
-                outputContainer.Add(addBtn);
-            }
-            else
-            {
-                var outPort = InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Multi, typeof(bool));
-                outPort.portName = "Out";
-                outputContainer.Add(outPort);
-            }
-        }
-
-        public void UpdateVisuals()
-        {
-            if (eventData.Type == EpisodeEventType.Dialogue)
-            {
-                string preview = string.IsNullOrEmpty(eventData.Text) ? "(Empty Dialogue)" : eventData.Text;
-                if (preview.Length > 40) preview = preview.Substring(0, 37) + "...";
-                _summaryLabel.text = $"<b>{eventData.SpeakerKey}</b>\n{preview}";
-            }
-            else if (eventData.Type == EpisodeEventType.Choice)
-            {
-                _summaryLabel.text = $"{eventData.Choices.Count} Choice Options";
-            }
-            else if (eventData.Type == EpisodeEventType.BusinessStart)
-            {
-                _summaryLabel.text = $"Ticket: {eventData.CraftingTicketKey}";
-            }
-            else if (eventData.Type == EpisodeEventType.BranchExit)
-            {
-                _summaryLabel.text = $"EXIT -> <b>{eventData.ExitBranchName ?? "NOT SET"}</b>";
-                _summaryLabel.style.color = new Color(1f, 0.5f, 0.5f);
-            }
-            else
-            {
-                _summaryLabel.text = "Sequence Point";
-            }
-        }
-
-        public override void OnSelected()
-        {
-            base.OnSelected();
-            if (_graph.window != null)
-            {
-                _graph.window.OnSelectionChanged(this);
-            }
-        }
-
-        public override void OnUnselected()
-        {
-            base.OnUnselected();
-            if (_graph.window != null)
-            {
-                _graph.window.OnSelectionChanged(null);
-            }
-        }
-
-        public override void SetPosition(Rect newPos)
-        {
-            base.SetPosition(newPos);
-            Undo.RecordObject(_container, "Move Event");
-            eventData.Position = newPos.position;
+            var ports = v.outputContainer.Query<Port>().ToList();
+            ports.SelectMany(p => p.connections.ToList()).ToList().ForEach(RemoveElement);
+            v.RebuildPorts();
+            var allViews = graphElements.OfType<SequenceNodeView>().ToDictionary(nv => nv.eventData.Guid);
+            LinkNodeEdges(v, allViews);
+            ValidateAllNodes();
         }
     }
 }
