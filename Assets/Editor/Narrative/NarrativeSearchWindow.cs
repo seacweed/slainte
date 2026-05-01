@@ -32,6 +32,11 @@ namespace NarrativeFlow.Editor
                 {
                     level = 2,
                     userData = typeof(EpisodeNodeSO)
+                },
+                new SearchTreeEntry(new GUIContent("Trigger Node"))
+                {
+                    level = 2,
+                    userData = typeof(TriggerNodeSO)
                 }
             };
 

@@ -15,10 +15,10 @@ MonoBehaviour:
   Guid: eace957f-426b-495b-9a6e-5cf929d7faf0
   Position:
     serializedVersion: 2
-    x: 360
-    y: 255.20001
-    width: 136
-    height: 178.4
+    x: 424.80005
+    y: 265.6
+    width: 124.79999
+    height: 128
   CustomFields:
   - FieldName: Title
     FieldValue: "\uC774\uC0C1\uD55C \uB3D9\uC804"
@@ -30,6 +30,34 @@ MonoBehaviour:
     FieldValue: 
   - FieldName: IsCleared
     FieldValue: False
+  StartEventGuid: 
+  Events:
+  - Guid: 5a5211d4-1977-40e8-9a73-e9c7d0b1a8e9
+    Position: {x: 138.656, y: 64.288}
+    NextEventGuids:
+    - 346165cf-6ebd-4078-b2db-e878f48ab996
+    Type: 0
+    SpeakerKey: asd
+    OverrideSpeakerName: 
+    Text: asda
+    CharacterAppearances: []
+    Choices: []
+    CraftingTicketKey: 
+  - Guid: 346165cf-6ebd-4078-b2db-e878f48ab996
+    Position: {x: 274.4, y: 27.19999}
+    NextEventGuids: []
+    Type: 1
+    SpeakerKey: 
+    OverrideSpeakerName: 
+    Text: 
+    CharacterAppearances: []
+    Choices:
+    - ButtonText: New Choice
+      TargetNodeId: 
+      SetFlags: []
+      ClearFlags: []
+      VarChanges: []
+    CraftingTicketKey: 
 --- !u!114 &-6074970108715304164
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54,6 +82,8 @@ MonoBehaviour:
     FieldValue: 
   - FieldName: NewField
     FieldValue: 
+  StartEventGuid: 
+  Events: []
 --- !u!114 &-3690519989684819998
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -104,6 +134,8 @@ MonoBehaviour:
     FieldValue: 
   - FieldName: IsCleared
     FieldValue: False
+  StartEventGuid: 
+  Events: []
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -166,6 +198,8 @@ MonoBehaviour:
     FieldValue: 
   - FieldName: NewField
     FieldValue: 
+  StartEventGuid: 
+  Events: []
 --- !u!114 &4866711699634503307
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -196,3 +230,5 @@ MonoBehaviour:
     FieldValue: 
   - FieldName: IsCleared
     FieldValue: False
+  StartEventGuid: 
+  Events: []

@@ -75,11 +75,15 @@ namespace NarrativeFlow.Editor
                     if (nodeDictionary.TryGetValue(edgeData.BaseNodeGuid, out var baseNode) &&
                         nodeDictionary.TryGetValue(edgeData.TargetNodeGuid, out var targetNode))
                     {
-                        var outputPort = baseNode.outputContainer[edgeData.OutputPortIndex] as Port;
-                        var inputPort = targetNode.inputContainer[0] as Port;
+                        var outputPorts = baseNode.outputContainer.Query<Port>().ToList();
+                        if (edgeData.OutputPortIndex < outputPorts.Count)
+                        {
+                            var outputPort = outputPorts[edgeData.OutputPortIndex];
+                            var inputPort = targetNode.inputContainer.Q<Port>();
 
-                        var edge = outputPort.ConnectTo(inputPort);
-                        AddElement(edge);
+                            var edge = outputPort.ConnectTo(inputPort);
+                            AddElement(edge);
+                        }
                     }
                 }
             }
@@ -135,6 +139,51 @@ namespace NarrativeFlow.Editor
             AddElement(nodeView);
         }
 
+        public void NotifyNodeStructureChanged(NarrativeNodeView nodeView)
+        {
+            if (currentGraph == null) return;
+
+            var edgesToRemove = new List<EdgeData>();
+            var visualEdgesToRemove = new List<Edge>();
+
+            // Find all ports in the output container (including nested ones in choice rows)
+            var ports = nodeView.outputContainer.Query<Port>().ToList();
+            
+            foreach (var port in ports)
+            {
+                var connections = port.connections.ToList();
+                foreach (var edge in connections)
+                {
+                    visualEdgesToRemove.Add(edge);
+                    
+                    // The index should be the position in the Query list
+                    int portIndex = ports.IndexOf(port);
+                    var edgeData = currentGraph.Edges.Find(e => 
+                        e.BaseNodeGuid == nodeView.nodeData.Guid && 
+                        e.OutputPortIndex == portIndex);
+                    
+                    if (!string.IsNullOrEmpty(edgeData.BaseNodeGuid)) edgesToRemove.Add(edgeData);
+                }
+            }
+
+            // Remove visual elements
+            foreach (var edge in visualEdgesToRemove)
+            {
+                RemoveElement(edge);
+            }
+
+            // Remove from data
+            if (edgesToRemove.Count > 0)
+            {
+                Undo.RecordObject(currentGraph, "Remove Invalid Edges on Structure Change");
+                foreach (var ed in edgesToRemove) currentGraph.Edges.Remove(ed);
+                EditorUtility.SetDirty(currentGraph);
+            }
+
+            // Now the node can safely rebuild
+            nodeView.RebuildPorts();
+        }
+
         private GraphViewChange OnGraphViewChanged(GraphViewChange change)
         {
             if (change.elementsToRemove != null)
@@ -187,7 +236,11 @@ namespace NarrativeFlow.Editor
                     if (currentGraph != null && edge.output.node is NarrativeNodeView outNode && edge.input.node is NarrativeNodeView inNode)
                     {
                         Undo.RecordObject(currentGraph, "Add Edge");
-                        int outputIndex = outNode.outputContainer.IndexOf(edge.output);
+                        
+                        // IMPORTANT: Get the correct index from the Query list, NOT just the container child index
+                        var allOutputPorts = outNode.outputContainer.Query<Port>().ToList();
+                        int outputIndex = allOutputPorts.IndexOf(edge.output as Port);
+                        
                         currentGraph.Edges.Add(new EdgeData
                         {
                             BaseNodeGuid = outNode.nodeData.Guid,
