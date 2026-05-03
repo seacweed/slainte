@@ -49,14 +49,10 @@ public class CharacterView : MonoBehaviour
             _canvasGroup.alpha = 0f;
     }
 
-    public void ApplySlotLayout(RectTransform slot)
+    public void ApplySlotLayout(RectTransform slot, float widthOverride = 0f)
     {
         var rootRT = GetComponent<RectTransform>();
-        rootRT.anchorMin        = new Vector2(0f, 0f);
-        rootRT.anchorMax        = new Vector2(1f, 0f);
-        rootRT.pivot            = new Vector2(0.5f, 0f);
-        rootRT.offsetMin        = new Vector2(0f, rootRT.offsetMin.y);
-        rootRT.offsetMax        = new Vector2(0f, rootRT.offsetMax.y);
+        ApplyRootWidth(rootRT, widthOverride);
         rootRT.anchoredPosition = Vector2.zero;
         rootRT.localScale       = Vector3.one;
 
@@ -70,13 +66,36 @@ public class CharacterView : MonoBehaviour
         _visualRT.localScale       = Vector3.one;
     }
 
-    public void SwapSprite(Sprite sprite)
+    public void SwapSprite(Sprite sprite, float widthOverride = 0f)
     {
         if (_image != null)
             _image.sprite = sprite;
 
         if (_arf != null && sprite != null)
             _arf.aspectRatio = sprite.rect.width / sprite.rect.height;
+
+        var rootRT = GetComponent<RectTransform>();
+        ApplyRootWidth(rootRT, widthOverride);
+        rootRT.anchoredPosition = Vector2.zero;
+    }
+
+    private void ApplyRootWidth(RectTransform rt, float widthOverride)
+    {
+        if (widthOverride > 0f)
+        {
+            rt.anchorMin = new Vector2(0.5f, 0f);
+            rt.anchorMax = new Vector2(0.5f, 0f);
+            rt.pivot     = new Vector2(0.5f, 0f);
+            rt.sizeDelta = new Vector2(widthOverride, rt.sizeDelta.y);
+        }
+        else
+        {
+            rt.anchorMin = new Vector2(0f, 0f);
+            rt.anchorMax = new Vector2(1f, 0f);
+            rt.pivot     = new Vector2(0.5f, 0f);
+            rt.offsetMin = new Vector2(0f, rt.offsetMin.y);
+            rt.offsetMax = new Vector2(0f, rt.offsetMax.y);
+        }
     }
 
     public void PlayAppearAnimation(Action onComplete = null)

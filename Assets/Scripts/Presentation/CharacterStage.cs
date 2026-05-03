@@ -82,12 +82,13 @@ public class CharacterStage : MonoBehaviour
                 continue;
             }
 
-            Sprite sprite = data.GetSprite(entry.expressionKey);
+            Sprite sprite        = data.GetSprite(entry.expressionKey);
+            float  widthOverride = data.GetWidthOverride(entry.expressionKey);
 
             if (_activeViews.TryGetValue(entry.characterKey, out CharacterView existing))
             {
                 // Already on stage: swap sprite only, slot unchanged
-                existing.SwapSprite(sprite);
+                existing.SwapSprite(sprite, widthOverride);
             }
             else
             {
@@ -112,7 +113,7 @@ public class CharacterStage : MonoBehaviour
                 _activeViews[entry.characterKey]       = view;
                 _activeSlotIndices[entry.characterKey] = slotIndex;
 
-                view.ApplySlotLayout(slots[slotIndex]);
+                view.ApplySlotLayout(slots[slotIndex], widthOverride);
                 view.Setup(sprite);
 
                 pending++;
@@ -136,7 +137,7 @@ public class CharacterStage : MonoBehaviour
         CharacterData data = characterDB != null ? characterDB.FindByKey(characterKey) : null;
         if (data == null) return;
 
-        view.SwapSprite(data.GetSprite(expressionKey));
+        view.SwapSprite(data.GetSprite(expressionKey), data.GetWidthOverride(expressionKey));
     }
 
     private static Queue<int> RemoveFromQueue(Queue<int> queue, int value)

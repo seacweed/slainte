@@ -144,6 +144,8 @@ f72,frust,-1
 | `craftingTicketKey` | 사용할 제조 티켓 ID (`requiresCrafting=true` 일 때만 작성) | `sc0_f72` |
 | `nextNodeIdGood` | 제조 성공 시 이동할 노드 ID | `5-1-1` |
 | `nextNodeIdBad` | 제조 실패 시 이동할 노드 ID | `5-2-1` |
+| `bgmCommand` | BGM 명령 (`none` / `play` / `stop`, 비우면 `none`) | `play` |
+| `bgmClipName` | 재생할 BGM 파일명 (`bgmCommand=play` 일 때만 작성, 확장자 제외) | `bgm_tension` |
 
 **제조 판정 노드** 작성 시: `text`와 `nextNodeId`는 비우고, `requiresCrafting=true` + 성공/실패 노드 ID를 작성합니다.
 
@@ -153,9 +155,9 @@ f72,frust,-1
 
 ```csv
 #NODES
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad
-0,f72,???,흘..크흘…,1,false,,,
-5,f72,???,,,true,sc0_f72,5-1-1,5-2-1
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName
+0,f72,???,흘..크흘…,1,false,,,,play,bgm_tension
+5,f72,???,,,true,sc0_f72,5-1-1,5-2-1,,
 ```
 
 > **주의**: 대사에 쉼표(`,`)가 포함된 경우 반드시 큰따옴표로 감싸야 합니다.  
@@ -309,13 +311,13 @@ characterKey,expressionKey,slotIndex
 f72,neutral,-1
 
 #NODES
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad
-0,f72,???,뭘 마시겠어?,1,false,,,
-1,shaun,,추천해줘.,2,false,,,
-2,f72,,그럼 선택해.,,,false,,,
-3a,f72,,좋은 선택이야.,4,false,,,
-3b,f72,,그것도 나쁘지 않아.,4,false,,,
-4,f72,,또 오게.,,,false,,,
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName
+0,f72,???,뭘 마시겠어?,1,false,,,, play,bgm_bar
+1,shaun,,추천해줘.,2,false,,,,none,
+2,f72,,그럼 선택해.,,,false,,,,none,
+3a,f72,,좋은 선택이야.,4,false,,,,none,
+3b,f72,,그것도 나쁘지 않아.,4,false,,,,none,
+4,f72,,또 오게.,,,false,,,, stop,
 
 #NODE_CHARS
 nodeId,characterKey,expressionKey,slotIndex

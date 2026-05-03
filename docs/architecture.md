@@ -32,13 +32,16 @@
 
 **3. 캐릭터 표시 (`Assets/Scripts/Presentation/`)**
 
-- `CharacterView` — 프리팹 루트에 부착. `Setup(Sprite)` + `SwapSprite(Sprite)` + `PlayAppearAnimation()` / `PlayDisappearAnimation()` 제공. fade+rise+pop 애니메이션 처리. 슬롯 하단 기준으로 배치.
+- `CharacterView` — 프리팹 루트에 부착. `Setup(Sprite)` + `SwapSprite(Sprite, widthOverride)` + `PlayAppearAnimation()` / `PlayDisappearAnimation()` 제공. fade+rise+pop 애니메이션 처리. 슬롯 하단 기준으로 배치.
+  - `ApplySlotLayout(slot, widthOverride)` — `widthOverride`가 0이면 슬롯 전체 폭을 stretch로 채움(기본 600px). 양수면 슬롯 중심점 기준으로 해당 너비를 고정 적용해 인접 슬롯 영역까지 시각적으로 침범 가능.
 - `CharacterStage` — 슬롯 배열을 관리하고 `CharacterView`를 생성. `_activeViews`(key→view)와 `_activeSlotIndices`(key→슬롯 인덱스)로 현재 스테이지 상태를 추적합니다.
-  - `ShowCharacters(IReadOnlyList<CharacterSlotEntry>, onAllShown)` — 신규 캐릭터는 입장 애니메이션, 기존 캐릭터는 스프라이트 교체만 수행. 점유된 슬롯을 추적해 신규 캐릭터는 지정 슬롯 또는 빈 슬롯에 배정합니다.
-  - `SwapExpression(characterKey, expressionKey)` — 이미 스테이지에 있는 캐릭터의 표정만 교체.
+  - `ShowCharacters(IReadOnlyList<CharacterSlotEntry>, onAllShown)` — 신규 캐릭터는 입장 애니메이션, 기존 캐릭터는 스프라이트 교체만 수행. 점유된 슬롯을 추적해 신규 캐릭터는 지정 슬롯 또는 빈 슬롯에 배정합니다. `ExpressionEntry.widthOverride`를 자동으로 읽어 `CharacterView`에 전달합니다.
+  - `SwapExpression(characterKey, expressionKey)` — 이미 스테이지에 있는 캐릭터의 표정만 교체. widthOverride도 함께 반영.
   - `CustomerSpawner`(영업 씬 손님)와 `EpisodeRunner`(에피소드) 모두 `CustomerStage` 하나를 공유합니다. 슬롯 5개.
 - `CharacterSlotEntry` — `{ characterKey, expressionKey, slotIndex }` 세 필드. `slotIndex`가 0 이상이면 해당 인덱스 슬롯에 직접 배치, `-1`(기본값)이면 빈 슬롯에 자동 배정. 슬롯 인덱스: 0=Center, 1=Left, 2=Right, 3=Left2, 4=Right2, 5~8=Interaction0~3(통합 스프라이트 전용).
-- `CharacterData` — 캐릭터 1명 = 파일 1개. `defaultSprite` + `List<ExpressionEntry>` (`{ key, sprite }`)로 모든 표정을 하나의 에셋에 보관. `GetSprite(expressionKey)` 메서드로 조회(없으면 defaultSprite 반환).
+- `CharacterData` — 캐릭터 1명 = 파일 1개. `defaultSprite` + `List<ExpressionEntry>` (`{ key, sprite, widthOverride }`)로 모든 표정을 하나의 에셋에 보관.
+  - `GetSprite(expressionKey)` — 표정 키로 스프라이트 조회(없으면 defaultSprite 반환).
+  - `GetWidthOverride(expressionKey)` — 표정 키로 widthOverride 조회(없으면 0 반환). `ExpressionEntry.widthOverride`가 0이면 슬롯 기본 너비 사용, 양수면 해당 픽셀 너비로 렌더링.
   - **주인공은 1인칭 시점이므로 스프라이트 없음.** `CharacterData`는 화자 이름 표시용으로만 사용하고, `EpisodeNode.characters`에는 포함하지 않습니다.
 
 **4. 에피소드 (`Assets/Scripts/Conversation/Episode/`)**
@@ -80,7 +83,22 @@
 
 제조 완료는 `EpisodeRunner.NotifyCraftingCompleted(bool isGood)` 호출로 처리합니다. 현재는 `CraftingJudgeUI`의 GoodJob/BadJob 버튼으로 수동 판정합니다 (실제 제조 판정 미구현 상태의 임시 구현).
 
-**5. 영업 씬 손님 & 주문 (`Assets/Scripts/Conversation/Sell/`, `Assets/Scripts/OrderTicket/`)**
+**5. 오디오 (`Assets/Scripts/Audio/`)**
+
+`AudioManager` (`MonoSingleton<AudioManager>`). BGM 크로스페이드를 담당합니다:
+- `PlayBgm(string clipName, float fadeDuration)` — `Resources/BGM/{clipName}` 클립을 로드해 재생. 이미 같은 클립이 재생 중이면 무시. 두 `AudioSource`(bgmSourceA/B)를 교대로 사용해 크로스페이드 처리
+- `StopBgm(float fadeDuration)` — 현재 재생 중인 BGM을 페이드아웃 후 정지
+- Inspector에서 `bgmSourceA` / `bgmSourceB`를 직접 연결하거나, 비워두면 자동 생성
+
+`EpisodeNode` BGM 필드:
+- `bgmCommand: BgmCommand` — `None`(변경 없음, 기본값) / `Play`(재생) / `Stop`(정지)
+- `bgmClipName: string` — `Play`일 때만 사용. 확장자 없는 파일명 (`Resources/BGM/` 기준)
+
+`EpisodeRunner`가 노드 진입 시 `ApplyBgmCommand()`를 호출해 `AudioManager`에 위임합니다.
+
+BGM 클립은 `Assets/Resources/BGM/` 폴더에 배치해야 합니다.
+
+**6. 영업 씬 손님 & 주문 (`Assets/Scripts/Conversation/Sell/`, `Assets/Scripts/OrderTicket/`)**
 
 - `CustomerSpawner` — `CustomerOrderData.characterKey` + `expressionKeyMid`로 `CharacterStage`에 캐릭터 표시를 위임하고, 등장 완료 후 `DialogueController.StartDialogue()` 호출. `ShowFeedbackExpression(bool isGood)`으로 결과에 따라 표정 교체.
 - `OrderTicketManager` — 두 가지 경로로 티켓을 표시. ① `OrderMode`: `DialogueClosed` 이벤트 수신 후 표시. ② `CraftingMode`: `OnModeChanged` 이벤트로 모드 전환 시점에 즉시 표시. 두 경우 모두 `dialogue.HideImmediate()`를 먼저 호출해 대화창을 닫습니다. `EpisodeMode` 진입 시 티켓 초기화.
@@ -144,7 +162,7 @@ TMPro 타이핑 애니메이션. 모든 모드에서 공유하는 단일 컴포�
 
 - **씬 분리 + GameState 상태머신**: `GameManager.ChangeState()`가 `SceneTransitionManager`를 통해 씬 전환 처리. BusinessScene(에피소드) ↔ RestScene 전환
 - **씬 내 GameMode 상태머신**: `GameModeManager`가 패널 활성/비활성으로 씬 내 모드 전환 (씬 전환 없음)
-- **MonoSingleton<T>**: `GameProgress`, `GameModeManager`, `EpisodeManager`, `DataManager`, `GameManager` 모두 통일
+- **MonoSingleton<T>**: `GameProgress`, `GameModeManager`, `EpisodeManager`, `DataManager`, `GameManager`, `AudioManager` 모두 통일
 - **이벤트 기반 연결**: `DialogueController.DialogueClosed`, `GameModeManager.OnModeChanged`
 - **ScriptableObject 데이터베이스**: 모든 게임 컨텐츠를 에디터에서 구성, 하드코딩 없음
 - **인터페이스 기반 입력**: `IDialogueAdvanceHandler`, `ICameraInputHandler` — 수신자가 InputRouter에 의존하지 않음

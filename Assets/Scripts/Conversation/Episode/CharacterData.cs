@@ -10,6 +10,7 @@ public class CharacterData : ScriptableObject
     {
         public string key;
         public Sprite sprite;
+        public float widthOverride = 0f; // 0 = use slot default width
     }
 
     public string key;
@@ -32,5 +33,20 @@ public class CharacterData : ScriptableObject
         }
 
         return defaultSprite;
+    }
+
+    public float GetWidthOverride(string expressionKey)
+    {
+        if (!string.IsNullOrWhiteSpace(expressionKey))
+        {
+            for (int i = 0; i < expressions.Count; i++)
+            {
+                var e = expressions[i];
+                if (e != null && string.Equals(e.key, expressionKey, StringComparison.OrdinalIgnoreCase))
+                    return e.widthOverride;
+            }
+        }
+
+        return 0f;
     }
 }

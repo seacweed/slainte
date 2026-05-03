@@ -17,4 +17,5 @@ MonoBehaviour:
   defaultSprite: {fileID: 1042377703984387806, guid: 03fd5dc9efe9f344f8bec4a299fb0785, type: 3}
   expressions:
   - key: fight
-    sprite: {fileID: 1042377703984387806, guid: 03fd5dc9efe9f344f8bec4a299fb0785, type: 3}
+    sprite: {fileID: -1747210058070165492, guid: 9f10d58e02185e0449c4b9a0d5b7ba17, type: 3}
+    widthOverride: 0

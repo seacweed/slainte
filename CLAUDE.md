@@ -17,7 +17,7 @@
 
 ## 아키텍처 핵심
 
-- **싱글톤**: `MonoSingleton<T>` 통일 (`GameProgress`, `GameModeManager`, `EpisodeManager`, `DataManager`, `GameManager`)
+- **싱글톤**: `MonoSingleton<T>` 통일 (`GameProgress`, `GameModeManager`, `EpisodeManager`, `DataManager`, `GameManager`, `AudioManager`)
 - **런타임 상태 Source of Truth**: `GameProgress` (flags, completedEpisodeIds, vars, currentDay)
 - **에피소드 데이터**: `EpisodeData` 단일 SO — `Resources/EpisodeData/`에 배치, `EpisodeManager`가 일괄 로드
 - **씬 전환**: `GameManager` + `SceneTransitionManager` (Additive, 페이드)
