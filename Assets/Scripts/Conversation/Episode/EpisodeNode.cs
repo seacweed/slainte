@@ -34,4 +34,8 @@ public class EpisodeNode
     public string craftingTicketKey;
     public string nextNodeIdGood;
     public string nextNodeIdBad;
+
+    [Header("BGM (optional)")]
+    public BgmCommand bgmCommand = BgmCommand.None;
+    public string bgmClipName;
 }

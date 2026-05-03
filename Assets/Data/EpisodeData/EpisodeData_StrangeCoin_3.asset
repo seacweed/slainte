@@ -1,0 +1,4070 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ada6baddb75540a4ba25d31b476b855a, type: 3}
+  m_Name: EpisodeData_StrangeCoin_3
+  m_EditorClassIdentifier: Assembly-CSharp::EpisodeData
+  episodeId: StrangeCoin_3
+  episodeTitle: "\uC774\uC0C1\uD55C \uB3D9\uC804 - 3"
+  triggerCondition:
+    minDay: 0
+    requiredFlags: []
+    blockedFlags: []
+    prerequisiteEpisodeIds: []
+    requiredVars: []
+  openingCharacters:
+  - characterKey: sally
+    expressionKey: blood_tired
+    slotIndex: -1
+  - characterKey: 
+    expressionKey: 
+    slotIndex: -1
+  firstNodeId: 0
+  nodes:
+  - nodeId: 0
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "... \uBC14\uD150\uB354... \uB3C4\uC640\uC918!"
+    nextNodeId: 1
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally
+      expressionKey: blood_tired
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 1
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC140\uB9AC\uC528?! \uC774\uAC8C \uBB34\uC2A8... \uC628\uBAB8\uC774 \uD53C\uD22C\uC131\uC774\uC796\uC544\uC694!"
+    nextNodeId: 2
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally
+      expressionKey: blood_tired
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 2
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uAC71\uC815\uB9C8 \uB0B4 \uD53C\uB294 \uC544\uB2C8\uB2C8\uAE4C."
+    nextNodeId: 3
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally
+      expressionKey: blood_tired
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 3
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uB204\uAD6C \uD53C\uC778\uAC8C \uBB38\uC81C\uAC00 \uC544\uB2C8\uC796\uC544\uC694!"
+    nextNodeId: 4
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally
+      expressionKey: blood_tired
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 4
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC124\uBA85\uD560 \uC2DC\uAC04 \uC5C6\uC5B4. \uADF8\uB188\uB4E4\uC774\u2026
+      DSM\uB188\uB4E4\uC774 \uCAD3\uC544\uC624\uACE0 \uC788\uB2E4\uACE0. \uB098 \uC880...
+      \uC544\uBB34 \uB370\uB098 \uC228\uACA8\uC918. \uC81C\uBC1C!"
+    nextNodeId: 5
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally
+      expressionKey: blood_tired
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 5
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC5EC\uAE30 \uCE74\uC6B4\uD130 \uC544\uB798! \uB4E4\uC5B4\uAC00\uC2E4
+      \uC218 \uC788\uC73C\uC2DC\uACA0\uC5B4\uC694?"
+    nextNodeId: 6
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally
+      expressionKey: blood_tired
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 6
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uADF8\uB7FC, \uC2E0\uC138\uC880 \uC9C8\uAC8C"
+    nextNodeId: 7
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 7
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uD5C8\uC5B5-\uD5C8\uC5B5"
+    nextNodeId: 8
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_tired
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 8
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uB610 \uBD59\uB124\uC694. \uBC94\uC8C4\uC790 \uC158."
+    nextNodeId: 9
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_tired
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 9
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC870-\uC88B\uC740 \uBC24\uC785\uB2C8\uB2E4. \uC190\uB2D8?!"
+    nextNodeId: 10
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_tired
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 10
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uBAA8\uB974\uB294 \uCC99\uC740 \uADF8\uB9CC\uB450\uC2ED\uC2DC\uC624!
+      \uBC29\uAE08 \uC5EC\uAE30\uB85C \uB204\uAC00 \uB4E4\uC5B4\uC624\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uAE4C?"
+    nextNodeId: 11
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_angry
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 11
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uADF8\uBCF4\uB2E4, 12\uB2D8 \uD314\uC774 \uC65C \uADF8\uB798\uC694? \uAD1C\uCC2E\uC73C\uC2E0\uAC00\uC694?"
+    nextNodeId: 12
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_angry
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 12
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uBC29\uAE08 \uCAD3\uB358 \uBC94\uBC95\uC790\uAC00 \uC774 \uD38D\uC73C\uB85C
+      \uB6F0\uC5B4\uB4E4\uC5B4\uAC14\uB2E8 \uB9D0\uC785\uB2C8\uB2E4!"
+    nextNodeId: 13
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_angry
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 13
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uB9D0 \uB3CC\uB9AC\uC9C0 \uB9C8\uC2DC\uACE0 \uB300\uB2F5\uD574\uC8FC\uC2ED\uC2DC\uC624!"
+    nextNodeId: 
+    choices:
+    - buttonText: "\uC544\uBB34\uB3C4 \uB4E4\uC5B4\uC624\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4."
+      nextNodeId: 14-1-1
+      setFlags: []
+      clearFlags: []
+      varChanges: []
+    - buttonText: "\uB2E4\uB978 \uC190\uB2D8\uACFC \uD587\uAC08\uB9AC\uC2E0 \uAC70
+        \uC544\uB2D0\uAE4C\uC694?"
+      nextNodeId: 14-2-1
+      setFlags: []
+      clearFlags: []
+      varChanges: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_angry
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 14-1-1
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC544\uBB34\uB3C4 \uB4E4\uC5B4\uC624\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4."
+    nextNodeId: 14-1-2
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_angry
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 14-1-2
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uBED4\uBED4\uD55C \uAC70\uC9D3\uB9D0\uC5D0 \uB118\uC5B4\uAC00\uB4DC\uB9AC\uB294
+      \uAC83\uB3C4 \uD55C\uB450\uBC88 \uC785\uB2C8\uB2E4."
+    nextNodeId: 14-1-3
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_angry
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 14-1-3
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uD53C\uBC94\uBC85\uC774\uB41C \uBC94\uC8C4\uC790\uAC00 \uC774\uB9AC\uB85C
+      \uB3C4\uB9DD\uCCD0 \uC654\uB2E8 \uB9D0\uC785\uB2C8\uB2E4!"
+    nextNodeId: 15
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_angry
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 14-2-1
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uB2E4-\uB2E4\uB978 \uC190\uB2D8\uACFC \uD587\uAC08\uB9AC\uC2E0\uAC70
+      \uC544\uB2D0\uAE4C\uC694?"
+    nextNodeId: 14-2-2
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_angry
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 14-2-2
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uC601\uC5C5\uC740 \uB05D\uB09C\uAC78\uB85C \uC54C\uACE0\uC788\uB294\uB370\uC694."
+    nextNodeId: 14-2-3
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_angry
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 14-2-3
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uB2E4\uB978 \uC190\uB2D8\uC774 \uCC3E\uC544\uC62C \uB9AC\uAC00 \uC5C6\uC9C0
+      \uC54A\uC2B5\uB2C8\uAE4C!"
+    nextNodeId: 15
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_angry
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 15
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uC54C\uACA0\uAD70\uC694. \uAC19\uC740 \uBC94\uC8C4\uC790\uB77C\uACE0
+      \uAC10\uC2F8\uC8FC\uC2DC\uB294 \uAC81\uB2C8\uAE4C?"
+    nextNodeId: 16
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_angry
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 16
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uB2F9\uC7A5 \uC218\uC0C9\uB300\uB97C \uBD88\uB7EC\uC11C \uD38D \uC804\uCCB4\uB97C\u2026"
+    nextNodeId: 17
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_angry
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 17
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uC804\uCCB4\uB97C\u2026"
+    nextNodeId: 18
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_tired2
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 18
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "12\uB2D8\u2026?"
+    nextNodeId: 19
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_down
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 19
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "12\uB2D8?! \uAD1C\uCC2E\uC73C\uC138\uC694?!"
+    nextNodeId: 20
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_down
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 20
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC140\uB9AC\uC528? \uC774\uC81C \uB098\uC624\uC154\uB3C4 \uB420\uAC83
+      \uAC19\uC740\uB370\uC694\u2026"
+    nextNodeId: 21
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_down
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 21
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC73C.. \uD5C8\uB9AC\uC57C"
+    nextNodeId: 22
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_down
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 22
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC220\uC7A5\uC774\uB77C \uADF8\uB7F0\uC9C0 \uC220 \uB0C4\uC0C8\uAC00
+      \uC9C4\uB3D9\uD558\uB294\uAD70"
+    nextNodeId: 23
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_down
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 23
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: ...
+    nextNodeId: 24
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_down
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 24
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uBB50\uC57C \uC774\uAC70. \uACE0\uC791 \uADF8\uAC70\uC5D0 \uC4F0\uB7EC\uC9C4\uAC70\uC57C?"
+    nextNodeId: 
+    choices:
+    - buttonText: "\uC140\uB9AC\uC528! \uC5B4\uB5BB\uAC8C \uC880 \uD574\uC8FC\uC138\uC694!"
+      nextNodeId: 25-1-1
+      setFlags: []
+      clearFlags: []
+      varChanges: []
+    - buttonText: "\uC5B4\uB5BB\uAC8C \uD558\uC8E0? \uACBD\uCC30\uC774\uB77C\uB3C4
+        \uBD80\uB97C\uAE4C\uC694?"
+      nextNodeId: 25-2-1
+      setFlags: []
+      clearFlags: []
+      varChanges: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_down
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 25-1-1
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC140\uB9AC\uC528! \uC7A5\uB09C\uD558\uC9C0 \uB9C8\uC2DC\uACE0 \uC5B4\uB5BB\uAC8C\uC880
+      \uD574\uC8FC\uC138\uC694!"
+    nextNodeId: 25-1-2
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_down
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 25-1-2
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uD558, \uC54C\uC558\uB2E4\uACE0."
+    nextNodeId: 25-1-3
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_down
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 25-1-3
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uBE68\uB9AC \uC544\uBB34 \uC220\uC774\uB098 \uC918\uBD10. \uC54C\uCF5C
+      \uB3C4\uC218 \uB192\uC740\uAC78\uB85C."
+    nextNodeId: 26
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_down
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 25-2-1
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC5B4\uB5BB\uAC8C \uD558\uC8E0? \uACBD\uCC30\uC774\uB77C\uB3C4 \uBD80\uB97C\uAE4C\uC694?"
+    nextNodeId: 25-2-2
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_down
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 25-2-2
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uD558, \uBC14\uD150\uB354. \uB18D\uB2F4\uB3C4 \uD560 \uC904 \uC544\uB294\uAD70.
+      \uC220\uC9D1 \uBB38 \uB2EB\uC744 \uC77C \uC788\uC5B4?"
+    nextNodeId: 25-2-3
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_down
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 25-2-3
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: . . .
+    nextNodeId: 25-2-4
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_down
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 25-2-4
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uADF8-\uADF8\uB798\uB3C4 \uC774\uB807\uAC8C \uC4F0\uB7EC\uC9C0\uC168\uB294\uB370..!"
+    nextNodeId: 25-2-5
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_down
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 25-2-5
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uD5E4. \uB410\uC5B4. \uBE68\uB9AC \uC544\uBB34 \uC220\uC774\uB098 \uC918\uBD10.
+      \uC54C\uCF5C \uB3C4\uC218 \uB192\uC740\uAC78\uB85C."
+    nextNodeId: 26
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_down
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 26
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC220\uB85C \uBB58 \uC5B4\uB5BB\uAC8C \uD558\uC2DC\uB824\uACE0\uC694?"
+    nextNodeId: 27
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_down
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 27
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC18C\uB3C5\uD558\uACE0 \uC9C0\uD608\uC774\uB77C\uB3C4 \uD574\uC57C\uC9C0.
+      \uC774\uB300\uB85C \uB480\uB2E4\uAC04 \uC9C4\uC9DC \uC8FD\uC744\uC9C0\uB3C4
+      \uBAB0\uB77C."
+    nextNodeId: 28
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_down
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 28
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uB530\uB054\uD558\uAC8C \uC815\uC2E0\uB3C4 \uC880 \uCC28\uB9AC\uAC8C
+      \uD560\uACB8."
+    nextNodeId: 29
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_down
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 29
+    speakerKey: 
+    overrideSpeakerName: 
+    text: 
+    nextNodeId: 
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_down
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 1
+    craftingTicketKey: sc3_sally
+    nextNodeIdGood: 30-1-1
+    nextNodeIdBad: 30-2-1
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 30-1-1
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC88B\uC544. \uC54C\uCF5C \uD5A5\uC774 \uC9C4\uB3D9\uD558\uB294\uAD70."
+    nextNodeId: 30-1-2
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_down
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 30-1-2
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC774\uC815\uB3C4\uBA74 \uB418\uACA0\uC5B4."
+    nextNodeId: 31
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_down
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 30-2-1
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uBD80\uC871\uD574. \uB354 \uC318\uAC78\uB85C \uB2E4\uC2DC\uC918."
+    nextNodeId: 31
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: blood_down
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 31
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC790\u2026\uADF8\uB7FC \uC2DC\uC791\uD574\uBCFC\uAE4C."
+    nextNodeId: 32
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally_e12
+      expressionKey: treatment_mid
+      slotIndex: 7
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 32
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "<b>\uC73C\uC544\uC544\uC544\uC545!!!</b>"
+    nextNodeId: 33
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally_e12
+      expressionKey: treatment_mid
+      slotIndex: 7
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 33
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC870\uC6A9\uD788\uD574. \uACBD\uCC30\uC8FC\uC81C\uC5D0 \uD638\uB4E4\uAC11
+      \uB5A8\uAE30\uB294."
+    nextNodeId: 34
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally_e12
+      expressionKey: treatment_mid
+      slotIndex: 7
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 34
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uB2E4-\uB2F9\uC2E0! \uC544\uAE4C \uB3C4\uB9DD\uCE58\uB358\u2026\uADF8
+      \uBC94\uC8C4\uC790\u2026"
+    nextNodeId: 35
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally_e12
+      expressionKey: treatment_mid
+      slotIndex: 7
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 35
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uBC14\uD150\uB354! \uB3C4\uC640\uC918! \uC774\uB140\uC11D\uC774..!"
+    nextNodeId: 36
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally_e12
+      expressionKey: treatment_angry
+      slotIndex: 7
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 36
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC9C4\uC815\uD558\uC138\uC694, 12\uB2D8! \uB3C4\uC640\uB4DC\uB9AC\uB824\uACE0
+      \uD558\uB294 \uAC70\uC5D0\uC694!"
+    nextNodeId: 37
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally_e12
+      expressionKey: treatment_angry
+      slotIndex: 7
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 37
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uBC94\uC8C4\uC790\uC758 \uB3D9\uC815 \uB530\uC708 \uD544\uC694 \uC5C6\uC2B5\uB2C8\uB2E4.
+      \uB354\uB7EC\uC6B4 \uC190 \uCE58\uC6B0\uC2ED\uC2DC\uC624!"
+    nextNodeId: 38
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally_e12
+      expressionKey: treatment_angry
+      slotIndex: 7
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 38
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uB2E5\uCCD0, \uB124\uAC00 \uC4F0\uB7EC\uC9C0\uBA74 \uC9C0\uC6D0 \uBCD1\uB825\uC774
+      \uBAB0\uC544\uB2E5\uCE60 \uAC70\uC796\uC544. \uC5F0\uD569\uB188\uB4E4 \uC6C0\uC9C1\uC774\uB294\uAC8C
+      \uB2E4 \uAC70\uAE30\uC11C \uAC70\uAE30\uC9C0."
+    nextNodeId: 39
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally_e12
+      expressionKey: treatment_angry
+      slotIndex: 7
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 39
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uB108\uAC19\uC774 \uC21C\uC9C4\uD55C \uB188\uB4E4 \uAD74\uB824\uBA39\uB2E4
+      \uC8FD\uAE30\uB77C\uB3C4 \uD558\uBA74 \uAF2D \uB0A8\uC758 \uD0D3\uC744 \uD558\uC796\uC544."
+    nextNodeId: 40
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally_e12
+      expressionKey: treatment_angry
+      slotIndex: 7
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 40
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\u3147-\uC65C \uC774\uB7F0 \uC9D3\uC744 \uD558\uB294 \uAC81\uB2C8\uAE4C!
+      \uC6D0\uD558\uB294\uAC8C \uBB61\uB2C8\uAE4C!"
+    nextNodeId: 41
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally_e12
+      expressionKey: treatment_angry
+      slotIndex: 7
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 41
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uBC29\uD574\uB418\uB2C8\uAE4C \uADF8 \uC785\uC880 \uB2E4\uBB3C\uACE0
+      \uAC00\uB9CC\uD788\uC880 \uC788\uC73C\uBA74 \uC88B\uACA0\uB294\uB370."
+    nextNodeId: 42
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally_e12
+      expressionKey: treatment_angry
+      slotIndex: 7
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 42
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC140\uB9AC\uC528, \uBB50\uAC00 \uC5B4\uB5BB\uAC8C \uB41C\uAC74\uAC00\uC694?
+      12\uB2D8 \uC0C1\uCC98\uB294 \uC124\uB9C8 \uC140\uB9AC\uC528\uAED8\uC11C\u2026"
+    nextNodeId: 43
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally_e12
+      expressionKey: treatment_angry
+      slotIndex: 7
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 43
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uB2E4\uC9DC\uACE0\uC9DC \uAC1C\uAC70\uD488\uC744 \uBB3C\uACE0 \uB2EC\uB824\uB4DC\uB294\uB370
+      \uB2F9\uD558\uACE0\uB9CC \uC788\uC73C\uB77C\uB294 \uAC70\uC57C?"
+    nextNodeId: 44
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally_e12
+      expressionKey: treatment_angry
+      slotIndex: 7
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 44
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC800\uBC88\uC5D0 72\uAC00 \uADC0\uB754\uD574\uC92C\uC5B4. \uB098\uB791
+      \uB0B4 \uCE5C\uAD6C\uB4E4\uC744 \uCAD3\uB294 \uB188\uB4E4\uC774 \uC0DD\uACBC\uB2E4\uACE0."
+    nextNodeId: 45
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally_e12
+      expressionKey: treatment_angry
+      slotIndex: 7
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 45
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "UPD\uC77C\uAC70\uB77C\uACE0 \uC608\uC0C1\uC740 \uD588\uC9C0\uB9CC \uC774\uB7F0
+      \uC2E0\uCC38\uC77C \uC904\uC740 \uBAB0\uB790\uC9C0."
+    nextNodeId: 46
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally_e12
+      expressionKey: treatment_angry
+      slotIndex: 7
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 46
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "72..? \uC124\uB9C8 F72\uC120\uBC30\uB2D8\uC744 \uB9D0\uD558\uB294 \uAC81\uB2C8\uAE4C?"
+    nextNodeId: 47
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally_e12
+      expressionKey: treatment_mid
+      slotIndex: 7
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 47
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uB9DE\uC544. \uB140\uC11D \uD3C9\uC18C \uD589\uC2E4\uC744 \uBCF4\uBA74
+      \uB180\uB784\uAC83\uB3C4 \uC5C6\uC796\uC544?"
+    nextNodeId: 48
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally_e12
+      expressionKey: treatment_mid
+      slotIndex: 7
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 48
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uAC70\uC9D3\uB9D0 \uD558\uC9C0 \uB9C8\uC2ED\uC2DC\uC624. \uC544\uBB34\uB9AC
+      \uC120\uBC30\uB2D8\uC774 \uB77C\uC9C0\uB9CC \uB2F9\uC2E0\uAC19\uC740 \uBC94\uC8C4\uC790\uB791
+      \uC5B4\uC6B8\uB9B4 \uBD84\uC740 \uC544\uB2D9\uB2C8\uB2E4."
+    nextNodeId: 49
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally_e12
+      expressionKey: treatment_mid
+      slotIndex: 7
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 49
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC88B\uC744\uB300\uB85C \uC0DD\uAC01\uD574. \uB110 \uC0B4\uB9B0\uAC83\uB3C4
+      \uADF8 \uB140\uC11D\uC774\uB2C8\uAE4C."
+    nextNodeId: 50
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally_e12
+      expressionKey: treatment_mid
+      slotIndex: 7
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 50
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uC808 \uC0B4\uB838\uB2E4\uACE0\uC694?"
+    nextNodeId: 51
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally_e12
+      expressionKey: treatment_mid
+      slotIndex: 7
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 51
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: ". . . \uB2E4 \uB410\uC5B4."
+    nextNodeId: 52
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: sally_e12
+      expressionKey: treatment_mid
+      slotIndex: 7
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 52
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uD53C\uB294 \uBA4E\uC5C8\uC5B4. \uACEA\uC544 \uD130\uC9C0\uAE30 \uC2EB\uC73C\uBA74
+      \uB3CC\uC544\uAC00\uC11C \uC81C\uB300\uB85C \uCE58\uB8CC\uB098 \uBC1B\uC544."
+    nextNodeId: 53
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_closed
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 53
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uB9D0 \uB3CC\uB9AC\uC9C0 \uB9D0\uC544\uC8FC\uC2ED\uC2DC\uC624. \uC808
+      \uC0B4\uB838\uB2E4\uB294\uAC8C \uBB34\uC2A8 \uB73B\uC774\uC8E0?"
+    nextNodeId: 54
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 54
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC774\uB807\uAC8C \uCE58\uB8CC\uAE4C\uC9C0 \uD574\uC92C\uB294\uB370,
+      \uACE0\uB9D9\uB2E4\uB294 \uB9D0 \uC815\uB3C4\uB294 \uD574\uC904 \uC904 \uC54C\uC558\uB294\uB370"
+    nextNodeId: 55
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 55
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uADF8..\uADF8\uAC74.."
+    nextNodeId: 56
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 56
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uB124\uAC00 \uC8FD\uC744 \uD544\uC694\uAE4C\uC9C0\uB294 \uC5C6\uB2E4\uACE0
+      \uC0DD\uAC01\uD588\uC744 \uBFD0\uC774\uC57C."
+    nextNodeId: 57
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 57
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uB354\uB7EC\uC6B4 \uC5B4\uB978\uB4E4 \uC2F8\uC6C0\uC5D0 \uB108 \uAC19\uC740
+      \uC560\uC1A1\uC774\uAC00 \uB084 \uD544\uC694\uB294 \uC5C6\uC796\uC544."
+    nextNodeId: 58
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uC560\uC1A1\uC774\uAC00 \uC544\uB2C8\uB77C, UPD \uACBD\uBE44\uACFC \uC18C\uC18D
+      E12 \uC785\uB2C8\uB2E4."
+    nextNodeId: 59
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_angry
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 59
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC640. \uBC29\uAE08 \uADF8 \uB9D0 \uB0B4\uAC00 \uB4E4\uC5C8\uB358 \uB9D0\uC911
+      \uAC00\uC7A5 \uC560\uC1A1\uC774 \uAC19\uC740 \uB9D0\uC774\uC5C8\uC5B4."
+    nextNodeId: 60
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_angry
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 60
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uACBD\uCC30\uC744 \uBAA8\uC695\uD558\uC9C0 \uB9C8\uC2ED\uC2DC\uC624!"
+    nextNodeId: 61
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_angry
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 61
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uB2F9\uC2E0\uAC19\uC740 \uBC94\uC8C4\uC790\uB4E4\uC744 \uCAD3\uB290\uB77C
+      \uC9C0\uAE08\uB3C4 \uC5BC\uB9C8\uB098 \uB9CE\uC740 \uC0AC\uB78C\uB4E4\uC774
+      \uC560\uC4F0\uB294\uC9C0 \uC544\uC2ED\uB2C8\uAE4C!"
+    nextNodeId: 62
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_angry
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 62
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uADF8\uB7FC \uCAD3\uC9C0\uB97C \uB9D0\uB358\uAC00."
+    nextNodeId: 63
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_angry
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 63
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC6B0\uB9AC\uAC00 \uBB34\uC2A8 \uADF9\uC545\uBB34\uB3C4\uD55C \uD14C\uB7EC\uB2E8\uCCB4\uB77C\uB3C4
+      \uB418\uB294 \uC904 \uC544\uB098 \uBCF8\uB370, \uC6B0\uB9B0 \uADF8\uC800 \uB108\uD76C\uAC00
+      \uBC84\uB9B0 \uC4F0\uB808\uAE30\uD1B5\uC5D0\uC11C \uC228\uB9CC \uC26C\uACE0
+      \uC788\uC744 \uBFD0\uC774\uC57C."
+    nextNodeId: 64
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_angry
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 64
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uD558\uC544... \uC774 \uD38D\uC740 \uC815\uB9D0 \uC870\uC6A9\uD560 \uB0A0\uC774
+      \uC5C6\uAD70\uC694. \uBC14\uD150\uB354, \uB300\uCCB4 \uC65C \uC774\uB7F0 \uBC94\uC8C4\uC790\uB4E4\uACFC
+      \uC5B4\uC6B8\uB9AC\uB294 \uAC81\uB2C8\uAE4C?"
+    nextNodeId: 
+    choices:
+    - buttonText: "\uD38D\uC744 \uCC3E\uB294 \uBAA8\uB450\uB97C \uD658\uB300\uD558\uB294
+        \uAC83\uC774 \uC774 \uD38D\uC758 \uADDC\uCE59\uC785\uB2C8\uB2E4."
+      nextNodeId: 65-1-1
+      setFlags: []
+      clearFlags: []
+      varChanges: []
+    - buttonText: "\uBC94\uC8C4\uC790\uAC00 \uC544\uB2C8\uB77C \uC190\uB2D8\uC785\uB2C8\uB2E4."
+      nextNodeId: 65-2-1
+      setFlags: []
+      clearFlags: []
+      varChanges: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 65-1-1
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uD38D\uC744 \uCC3E\uB294 \uBAA8\uB450\uB97C \uD658\uB300\uD558\uB294
+      \uAC83\uC774 \uC774 \uD38D\uC758 \uADDC\uCE59\uC785\uB2C8\uB2E4."
+    nextNodeId: 65-1-2
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 65-1-2
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC5B4\uB5A4 \uC885\uC871\uC774\uAC74, \uACBD\uCC30\uC774\uAC74, \uBD80\uB791\uC790\uAC74
+      \uBAA8\uB450 \uCC28\uBCC4\uD558\uC9C0 \uC54A\uC544\uC694."
+    nextNodeId: 65-1-3
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 65-1-3
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uBD80\uB791\uC790\uB77C \uBBF8\uC548\uD558\uAC8C \uB410\uB124, \uBC14\uD150\uB354."
+    nextNodeId: 65-1-4
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 65-1-4
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uADF8\uB7F0 \uB73B\uC774 \uC544\uB2CC\uAC70 \uC544\uC2DC\uC796\uC544\uC694\u2026"
+    nextNodeId: 65-1-5
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 65-1-5
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uD2C0\uB9B0 \uB9D0\uC740 \uC544\uB2C8\uC8E0. \uC220\uC9D1\uC740 \uC6D0\uB798
+      \uADF8\uB7F0 \uACF5\uAC04 \uC544\uB2D9\uB2C8\uAE4C?"
+    nextNodeId: 66
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 65-2-1
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uBC94\uC8C4\uC790\uAC00 \uC544\uB2C8\uB77C \uC190\uB2D8\uC785\uB2C8\uB2E4."
+    nextNodeId: 65-2-2
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 65-2-2
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uADF8\uB9AC\uACE0 \uC774 \uBAA8\uB4E0 \uBAA8\uB4E0 \uC77C\uC758 \uC2DC\uC791\uC810\uC740
+      F72\uB2D8 \uC774\uB77C\uB294\uAC78 \uAE30\uC5B5\uD574\uC8FC\uC168\uC73C\uBA74
+      \uC88B\uACA0\uC2B5\uB2C8\uB2E4."
+    nextNodeId: 65-2-3
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 65-2-3
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uD2C0\uB9B0 \uB9D0\uC740 \uC544\uB2C8\uB124"
+    nextNodeId: 65-2-4
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 65-2-4
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uADF8-\uADF8\uAC74 \uC5C4\uC5F0\uD55C \uC21C\uCC30\uC758 \uC77C\uD658\uC774\uC5C8\uC2B5\uB2C8\uB2E4!"
+    nextNodeId: 65-2-5
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_frust
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 65-2-5
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC21C\uCC30 \uAC19\uC740 \uC18C\uB9AC\uD558\uB124, \uBD80\uD328\uACBD\uCC30\uC5D0
+      \uC138\uC0C1 \uBB3C\uC815 \uBAA8\uB974\uB294 \uC2E0\uCC38\uC774\uB77C\uB2C8
+      UPD\uB3C4 \uC624\uD569\uC9C0\uC878\uC774\uAD70."
+    nextNodeId: 66
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_frust
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_angry
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 66
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uD558\uC9C0\uB9CC \uD655\uC2E4\uD788 \uC190\uB2D8\uB4E4\uC774 \uC774\uB807\uAC8C
+      \uB2E4\uC591\uD588\uB358 \uC801\uC774 \uC5C6\uB124\uC694."
+    nextNodeId: 67
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_frust
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 67
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uD38D\uC5D0 \uACBD\uCC30\uC774 \uCCD0\uB4E4\uC5B4\uC628 \uAC83\uB3C4
+      10\uB144\uB9CC \uC778\uAC83 \uAC19\uC544\uC694."
+    nextNodeId: 68
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_frust
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 68
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "10\uB144? \uC0DD\uAC01\uBCF4\uB2E4 \uC624\uB798\uB41C \uD38D\uC774\uC5C8\uAD70."
+    nextNodeId: 69
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_frust
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 69
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC61B\uB0A0\uBD80\uD130 \uC544\uBC84\uC9C0\uB97C \uB530\uB77C \uD38D\uC744
+      \uC6B4\uC601\uD588\uC73C\uB2C8\uAE4C\uC694."
+    nextNodeId: 70
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_frust
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 70
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uC544\uBC84\uC9C0? \uC544\uBC84\uB2D8\uC740 \uC5B4\uB514 \uACC4\uC2ED\uB2C8\uAE4C?
+      \uC774\uB7F0 \uC704\uD5D8\uD55C \uACF3\uC744 \uC544\uB4E4\uC5D0\uAC8C \uD640\uB85C
+      \uB9E1\uAE30\uC2DC\uB2E4\uB2C8."
+    nextNodeId: 71
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 71
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "12. \uADF8\uB7F0\uAC74 \uD568\uBD80\uB85C \uBB3C\uC5B4\uBCF4\uB294\uAC70
+      \uC544\uB2C8\uC57C."
+    nextNodeId: 72
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_angry
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 72
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uB3CC\uC544\uAC00\uC168\uC5B4\uC694. \uC5BC\uB9C8 \uC804\uC5D0\uC694."
+    nextNodeId: 73
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_angry
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 73
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: <b>. . .</b>
+    nextNodeId: 74
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_closed
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 74
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: <b>. . .</b>
+    nextNodeId: 75
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_closed
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 75
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uADF8\uAC8C- \uADF8\uB7EC\uB2C8\uAE4C\u2026 \uC720\uAC10\uC785\uB2C8\uB2E4\u2026"
+    nextNodeId: 76-2-1
+    choices: []
+    flagBranches:
+    - requiredFlag: sc1_true
+      nextNodeId: 76-1-1
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_closed
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 76-1-1
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uADF8\uB7EC\uB2C8\uAE4C \uB124\uAC00 \uC5B4\uB9AC\uB2E4\uB294 \uAC70\uC57C.
+      \uB204\uAD6C\uB098 \uB108\uCC98\uB7FC \uD3C9\uBC94\uD55C \uAC00\uC871\uC744
+      \uAC00\uC9C0\uACE0 \uC788\uB294\uAC8C \uC544\uB2C8\uAC70\uB4E0."
+    nextNodeId: 76-1-2
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 76-1-2
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uCC98\uC74C\uBD80\uD130 \uD63C\uC790\uC600\uB358 \uC0AC\uB78C\uB3C4 \uC788\uACE0,
+      \uC18C\uC911\uD55C \uC774\uB97C \uB5A0\uB098\uBCF4\uB0B4\uACE0 \uD640\uB85C
+      \uB0A8\uACA8\uC9C4 \uC0AC\uB78C\uB3C4 \uB9CE\uC544."
+    nextNodeId: 76-1-3
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 76-1-3
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uC81C\uAC00 \uC123\uBD80\uB974\uAE34 \uD588\uC9C0\uB9CC, \uC800\uC5D0
+      \uB300\uD574\uC11C \uB2E4 \uC544\uB294 \uAC83 \uCC98\uB7FC \uB9D0\uC500\uD558\uC2DC\uB294
+      \uAC74 \uADF8\uB9CC\uB450\uC2DC\uC8E0."
+    nextNodeId: 77
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_angry
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 76-2-1
+    speakerKey: 
+    overrideSpeakerName: 
+    text: "\uC544\uC9C1 \uADF8\uB7F0 \uBB34\uAC8C\uB97C \uC27D\uAC8C \uC9C8 \uC218
+      \uC788\uB294 \uB098\uC774\uB85C \uBCF4\uC774\uC9C4 \uC54A\uB294\uB370, \uC720\uAC10\uC774\uC57C,
+      \uBC14\uD150\uB354."
+    nextNodeId: 76-2-2
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 76-2-2
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uADF8\uB7F0 \uBB34\uAC8C\uB294 \uB204\uAD6C\uB77C\uB3C4 \uC27D\uAC8C
+      \uC9C8 \uC218 \uC5C6\uB294 \uAC83\uC785\uB2C8\uB2E4."
+    nextNodeId: 76-2-3
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 76-2-3
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uD638\uC624, \uB9C8\uCE58 \uC0B0\uC804\uC218\uC804 \uB2E4 \uACAA\uC740
+      \uC591 \uC774\uC57C\uAE30\uD558\uB294\uAD70"
+    nextNodeId: 76-2-4
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 76-2-4
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uC81C\uAC00 \uC123\uBD80\uB974\uAE34 \uD588\uC9C0\uB9CC, \uC800\uB97C
+      \uC5B4\uB9B0\uC560 \uCDE8\uAE09\uD558\uB294\uAC74 \uADF8\uB9CC\uB450\uC2DC\uC8E0."
+    nextNodeId: 77
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_angry
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 77
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uAD1C\uCC2E\uC2B5\uB2C8\uB2E4, \uB450 \uBD84 \uB2E4. \uC544\uBC84\uC9C0\uAC00
+      \uB3CC\uC544\uAC00\uC168\uB2E4\uB294 \uC0AC\uC2E4\uC774 \uBE44\uBC00\uB3C4
+      \uC544\uB2CC\uAC78\uC694."
+    nextNodeId: 78
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_angry
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 78
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC544\uBC84\uC9C0\uAC00 \uB5A0\uB098\uC168\uC5B4\uB3C4 \uC544\uBB34\uAC83\uB3C4
+      \uBCC0\uD558\uAC8C \uB450\uC9C0 \uC54A\uC744\uAC70\uC5D0\uC694. \uC774 \uD38D\uB3C4,
+      \uC0AC\uB78C\uB4E4\uB3C4. \uC800 \uC790\uC2E0\uB3C4\uC694."
+    nextNodeId: 79
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 79
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uADF8\uAC8C \uC81C\uAC00 \uC138\uC0C1\uC744 \uBC84\uD2F0\uB294 \uBC29\uC2DD\uC785\uB2C8\uB2E4."
+    nextNodeId: 80
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 80
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uBC14\uD150\uB354\uB2D8\uC758 \uC544\uBC84\uC9C0 \uAED8\uC11C\uB294 \uD6CC\uB96D\uD55C
+      \uC720\uC0B0\uC744 \uB0A8\uAE30\uC168\uAD70\uC694. \uBC14\uD150\uB354 \uB2F9\uC2E0\uC744
+      \uD3EC\uD568\uD574\uC11C\uC694."
+    nextNodeId: 81
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 81
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uAC00\uC871\uC774\uB77C\uB294 \uB4E0\uB4E0\uD55C \uD1A0\uB300\uB97C \uC9C0\uD0A4\uACE0
+      \uB73B\uC744 \uC774\uC5B4\uAC00\uB294 \uAC74, \uC5F0\uD569\uC758 \uC2DC\uBBFC\uC73C\uB85C\uC11C
+      \uB2F9\uC5F0\uD55C \uC758\uBB34\uC774\uC790 \uBBF8\uB355\uC785\uB2C8\uB2E4."
+    nextNodeId: 82
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 82
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC820\uC7A5, <b>\uB300\uAC00\uB9AC \uAF43\uBC2D</b>\uC774\uB791 \uBA38\uB9AC\uAC00
+      \uC9C0\uB048\uAC70\uB824\uC11C \uBABB \uCC38\uACA0\uAD70. \uC704\uB85C\uC870\uCC28
+      \uAD50\uACFC\uC11C\uB97C \uC747\uB124."
+    nextNodeId: 83
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_angry
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 83
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uBC14\uD150\uB354, \uC2DC\uC6D0\uD558\uACE0 \uCC28\uAC00\uC6B4\uAC78\uB85C
+      \uD558\uB098 \uBD80\uD0C1\uD560\uAC8C."
+    nextNodeId: 84
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_angry
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 84
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uAE30\uB2E4\uB9AC\uB358 \uBC14\uC785\uB2C8\uB2E4. \uBC14\uB85C \uB300\uB839\uD574
+      \uB4DC\uB9AC\uC8E0."
+    nextNodeId: 85
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_angry
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 85
+    speakerKey: 
+    overrideSpeakerName: 
+    text: 
+    nextNodeId: 
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters: []
+    requiresCrafting: 1
+    craftingTicketKey: sc3_sally_1
+    nextNodeIdGood: 85-1-1
+    nextNodeIdBad: 85-2-1
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 85-1-1
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uD558\uC544.. \uC880 \uC0B4\uACA0\uAD70."
+    nextNodeId: 85-1-2
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 85-1-2
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC62C \uB54C\uB9C8\uB2E4 \uC2DC\uB044\uB7EC\uC6B4 \uACF3\uC774\uC9C0\uB9CC
+      \uC220\uB9DB\uC740 \uCD5C\uACE0\uB77C\uB2C8\uAE4C."
+    nextNodeId: 86
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 85-2-1
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\u2026\uC800\uBC88\uC5D4 \uB9DB\uC774 \uB354 \uAD1C\uCC2E\uC558\uB358\uAC83
+      \uAC19\uC740\uB370."
+    nextNodeId: 85-2-2
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 85-2-2
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uBB50, \uC624\uB298\uC740 \uC774\uAC78\uB85C \uB9CC\uC871\uD574\uC57C\uACA0\uAD70."
+    nextNodeId: 86
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 86
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: <b>. . .</b>
+    nextNodeId: 87
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 87
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC598\uD55C\uD14C\uB294\u2026 \uADF8\uB0E5 \uC544\uBB34\uAC70\uB098 \uC918."
+    nextNodeId: 88
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 88
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uC800\uB3C4 \uC8FC\uBB38\uD560 \uC904 \uC555\uB2C8\uB2E4!"
+    nextNodeId: 89
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_angry
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 89
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uB108 \uC220 \uB9C8\uC154\uBCF4\uAE34 \uD55C\uAC70\uC57C? \uC544\uB2C8,
+      \uB9C8\uC2E4 \uC218 \uC788\uB294 \uB098\uC774\uAE34 \uD55C\uAC70\uC57C?"
+    nextNodeId: 90
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_angry
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 90
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uD760\uD760. \uC798 \uBCF4\uC2ED\uC2DC\uC624!"
+    nextNodeId: 91
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 91
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "<b>\uBC14\uD150\uB354, \uB124\uADF8\uB85C\uB2C8 \uD558\uB098 \uBD80\uD0C1\uD560\uAC8C\uC694.</b>"
+    nextNodeId: 92
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 92
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC800\uBC88\uC5D0 \uBABB\uB4DC\uB9B0 <b>\uB124\uADF8\uB85C\uB2C8</b>.
+      \uC774\uBC88\uC5D0\uB294 \uC81C\uB300\uB85C \uB9CC\uB4E4\uC5B4 \uB4DC\uB9AC\uACA0\uC2B5\uB2C8\uB2E4."
+    nextNodeId: 93
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 93
+    speakerKey: 
+    overrideSpeakerName: 
+    text: 
+    nextNodeId: 
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters: []
+    requiresCrafting: 1
+    craftingTicketKey: sc3_e12
+    nextNodeIdGood: 93-1-1
+    nextNodeIdBad: 93-2-1
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 93-1-1
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uC73D.. \uBC14\uD150\uB354\u2026 \uC774\uAC70 \uC6D0\uB798.. \uC774\uB7F0
+      \uB9DB\uC785\uB2C8\uAE4C?"
+    nextNodeId: 93-1-2
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 93-1-2
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC65C? \uAD1C\uCC2E\uC544 \uBCF4\uC774\uB294\uB370?"
+    nextNodeId: 93-1-3
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 93-1-3
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC557, \uB9DB\uC5D0 \uBB38\uC81C\uB77C\uB3C4 \uC788\uB098\uC694?"
+    nextNodeId: 93-1-4
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 93-1-4
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uB9C9 \uC4F0\uACE0, \uC774\uC0C1\uD558\uAC8C \uB2EC\uACE0, \uC18C\uB3C5\uC57D
+      \uB0C4\uC0C8\uAC19\uC740\uAC8C \uB09C\uB2F5 \uB9D0\uC785\uB2C8\uB2E4! \uC704\uD5D8\uD55C\uAC78
+      \uD0C4\uAC74 \uC544\uB2C8\uC2DC\uACA0\uC8E0?"
+    nextNodeId: 93-1-5
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 93-1-5
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uBABB \uC0B4\uACA0\uAD70. \uADF8\uAC8C \uC220\uB9DB\uC774\uB77C\uB294
+      \uAC70\uC57C \uAF2C\uB9F9\uC544."
+    nextNodeId: 94
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 93-2-1
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uC73D.. \uBC14\uD150\uB354\u2026 \uC774\uAC70 \uC6D0\uB798.. \uC774\uB7F0
+      \uB9DB\uC785\uB2C8\uAE4C?"
+    nextNodeId: 93-2-2
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 93-2-2
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC65C? \uAD1C\uCC2E\uC544 \uBCF4\uC774\uB294\uB370?"
+    nextNodeId: 93-2-3
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 93-2-3
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC557, \uB9DB\uC5D0 \uBB38\uC81C\uB77C\uB3C4 \uC788\uB098\uC694?"
+    nextNodeId: 93-2-4
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 93-2-4
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uB9C9 \uC4F0\uACE0, \uC774\uC0C1\uD558\uAC8C \uB2EC\uACE0, \uC18C\uB3C5\uC57D
+      \uB0C4\uC0C8\uAC19\uC740\uAC8C \uB09C\uB2F5 \uB9D0\uC785\uB2C8\uB2E4! \uC704\uD5D8\uD55C\uAC78
+      \uD0C4\uAC74 \uC544\uB2C8\uC2DC\uACA0\uC8E0?"
+    nextNodeId: 93-2-5
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 93-2-5
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uBE44\uC728\uC774 \uC880 \uC774\uC0C1\uD558\uAE34 \uD558\uB124. \uADF8\uB798\uB3C4
+      \uC220\uC740 \uC220\uC778\uAC78."
+    nextNodeId: 94
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uC774\uAC8C \uB9D0\uC785\uB2C8\uAE4C? \uB3C4\uB300\uCCB4 \uC774\uB7F0\uAC78
+      \uC65C \uB9C8\uC2DC\uB294 \uAC81\uB2C8\uAE4C?"
+    nextNodeId: 95
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 95
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uD6D7, \uB108\uAC19\uC740 \uB300\uAC00\uB9AC \uAF43\uBC2D\uC774 \uC54C
+      \uB9AC\uAC00 \uC788\uB098."
+    nextNodeId: 96
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 96
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uBE4C\uC5B4\uBA39\uC744 \uD604\uC2E4\uC774 \uC54C\uCF54\uC62C\uBCF4\uB2E4
+      \uD6E8\uC52C \uB354 \uC9C0\uB3C5\uD558\uB2C8\uAE4C \uB9C8\uC2DC\uB294 \uAC70\uC9C0."
+    nextNodeId: 97
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 97
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC0AC\uB78C\uB4E4\uC740 \uC800\uB9C8\uB2E4\uC758 \uBC29\uC2DD\uC73C\uB85C
+      \uC138\uC0C1\uC744 \uBC84\uD168\uB0B4\uAE30 \uB9C8\uB828\uC774\uB2C8\uAE4C\uC694."
+    nextNodeId: 98
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 98
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uB204\uAD70\uAC00\uC5D0\uAC90 \uB3C5\uD55C \uC220 \uD55C \uC794\uC774
+      \uC704\uB85C\uAC00 \uB420 \uB54C\uAC00 \uC788\uC8E0."
+    nextNodeId: 99
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 99
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uADF8\uB9AC\uACE0 \uBD80\uC0C1\uB3C4 \uB35C \uC544\uD504\uAC8C \uD574\uC8FC\uC9C0.
+      \uADF8\uB7EC\uB2C8\uAE4C \uC880 \uB9C8\uC154\uB450\uB77C\uACE0."
+    nextNodeId: 100
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 100
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uC544\uC9C1\uB3C4 \uC774\uD574\uB418\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4.
+      \uC544\uD504\uC9C0 \uC54A\uB2E4\uACE0 \uCE58\uB8CC\uB418\uB294 \uAC74 \uC544\uB2C8\uC9C0
+      \uC54A\uC2B5\uB2C8\uAE4C?"
+    nextNodeId: 101
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 101
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC138\uC0C1\uC5D0\uB294 \uCE58\uB8CC\uB420 \uC218 \uC5C6\uB294 \uC0C1\uCC98\uB3C4
+      \uC788\uB294 \uAC70\uC57C."
+    nextNodeId: 102
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 102
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uD558, \uC544\uAE4C \uC18C\uAC01\uC7A5\uBD80\uD130 \uCAD3\uC73C\uBA74\uC11C
+      \uBD24\uC796\uC544. \uB0B4\uAC00 \uBB34\uC2A8 \uC9D3\uC744 \uD558\uBA74\uC11C
+      \uC0B4\uC544\uAC00\uB294\uC9C0."
+    nextNodeId: 103
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 103
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC18C\uAC01\uC7A5\uC774\uB77C\uBA74\u2026 \uC140\uB9AC\uC528\uAED8\uC11C
+      \uB4A4\uC9D1\uC5B4\uC4F0\uC2E0 \uD53C\uB294 \uC5ED\uC2DC\u2026"
+    nextNodeId: 104
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 104
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uB9DE\uC544. \uC624\uB298\uB3C4 \uC2DC\uCCB4\uB354\uBBF8\uC5D0\uC11C
+      \uC4F8 \uB9CC\uD55C \uAC83\uB4E4\uC744 \uCC3E\uACE0 \uC788\uC5C8\uC5B4."
+    nextNodeId: 105
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 105
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uBD88\uBC95\uC801\uC778 \uC2DC\uC2E0 \uD6FC\uC190\uC740 \uC804\uC5FC\uBCD1\uACFC
+      \uB370\uC774\uD130 \uC624\uC5FC\uC744 \uC720\uBC1C\uD569\uB2C8\uB2E4. \uADF8\uAC83\uC740
+      \uBA85\uBC31\uD55C \uC911\uBC94\uC8C4..."
+    nextNodeId: 106
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 106
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uAD50\uACFC\uC11C \uB2EC\uB2EC \uC678\uC6B0\uB294 \uC18C\uB9AC \uC880
+      \uADF8\uB9CC\uD574. \uC544\uBB34\uD2BC, \uC6B0\uB9AC\uB294 \uADF8\uB807\uAC8C
+      \uC0B4\uC544\uAC00. \uB3D9\uB8CC\uB4E4\uC758 \uC2DC\uCCB4\uB97C \uBC1F\uC544\uAC00\uBA74\uC11C
+      \uB9D0\uC774\uC57C."
+    nextNodeId: 107
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 107
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "F72\uC120\uBC30\uB2D8\uAED8 \uB4E4\uC5C8\uC2B5\uB2C8\uB2E4. \uD558\uC9C0\uB9CC
+      \uC5EC\uC804\uD788 \uB0A9\uB4DD\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4."
+    nextNodeId: 108
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 108
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "<b>\uBD84\uBA85 \uC5F0\uD569\uC740 \uBAA8\uB450\uC5D0\uAC8C \uD3C9\uB4F1\uD55C
+      \uAE30\uD68C\uB97C \uC92C\uC2B5\uB2C8\uB2E4.</b> \uADF8 \uAE30\uD68C\uB97C
+      \uAC77\uC5B4\uCC2C \uAC74 \uB2F9\uC2E0\uB4E4\uC758 \uC120\uD0DD \uC544\uB2D9\uB2C8\uAE4C?"
+    nextNodeId: 109
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 109
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uC0C1\uCC98\uB97C \uCE58\uB8CC\uD574\uC8FC\uC2E0 \uAC74 \uAC10\uC0AC\uD558\uC9C0\uB9CC,
+      \uADF8\uC5D0 \uB300\uD55C \uB2F5 \uB9CC\uD07C\uC740 \uB4E4\uC5B4\uC57C\uACA0\uC2B5\uB2C8\uB2E4."
+    nextNodeId: 110
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 110
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uD558, \uD3C9\uB4F1\uC774\uB77C."
+    nextNodeId: 111
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 111
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uCD5C\uC18C\uD55C \uB09C \uAD00\uB9AC\uAD6D\uC5D0 \uC788\uC744 \uB54C\uB3C4
+      \uD56D\uC0C1 2\uC778\uBD84\uC758 \uC77C\uC744 \uD574\uC57C \uD588\uC5B4. \uC544\uC8FC
+      \uD3C9\uB4F1\uD558\uAC8C\uB3C4 \uB9D0\uC774\uC57C."
+    nextNodeId: 112
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_serious
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 112
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uAC70\uC9D3\uB9D0 \uD558\uC9C0 \uB9C8\uC2ED\uC2DC\uC624. \uC5F0\uD569
+      \uD55C\uBA85\uC5D0\uAC90 \uD55C\uBA85\uBD84\uC758 \uC5C5\uBB34\uB9CC \uD560\uB2F9\uD569\uB2C8\uB2E4!"
+    nextNodeId: 113
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_angry
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 113
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uADF8\uAC74 \uB9DE\uC544. \uD63C\uC790 \uBAB8\uB3C4 \uBABB \uAC00\uB204\uB294
+      <b>\uB3D9\uC0DD</b> \uC77C\uAE4C\uC9C0 \uB0B4\uAC00 \uD574\uC57C \uD588\uAC70\uB4E0."
+    nextNodeId: 114
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_angry
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 114
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uC544\u2026"
+    nextNodeId: 115
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 115
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC5B4\uB838\uC744\uB54C \uBC84\uB824\uC84C\uC73C\uB2C8\uAE4C \uBD80\uBAA8\uAC00
+      \uB204\uAD70\uC9C0\uB3C4 \uBAB0\uB77C. \uD0D3\uD560 \uB9C8\uC74C\uC740 \uC5C6\uC5B4."
+    nextNodeId: 116
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 116
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC5F4 \uB2E4\uC12F \uC0B4 \uB54C \uC600\uC5B4. \uBB34\uB9AC\uD574\uC11C
+      \uC77C\uD558\uB2E4 \uC815\uC2E0\uC744 \uC783\uC5C8\uB294\uB370, \uB208\uC744
+      \uB5A0\uBCF4\uB2C8 \uD55C\uCABD \uD314\uC774 \uB0A0\uC544\uAC14\uB354\uB77C."
+    nextNodeId: 117
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 117
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: <b>. . .</b>
+    nextNodeId: 118
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 118
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC555\uCC29 \uAE30\uACC4\uCABD\uC73C\uB85C \uC4F0\uB7EC\uC9C4 \uBAA8\uC591\uC774\uC57C.
+      \uC790\uCE6B\uD558\uBA74 \uBA38\uB9AC\uAC00 \uB0A0\uC544\uAC08 \uBED4\uD588\uB2E4\uB2C8\uAE4C."
+    nextNodeId: 119
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 119
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uAD00\uB9AC\uAD6D\uC740 \uC5B4\uB5BB\uAC8C \uD588\uAC8C? \uC4F8\uBAA8\uAC00
+      \uC5C6\uC5B4\uC9C4 \uB0A0, \uACE0\uC7A5 \uB09C \uBD80\uD488 \uBC84\uB9AC\uB4EF\uC774
+      \uC18C\uAC01\uC7A5\uC73C\uB85C \uCCD0\uB123\uC5C8\uC5B4."
+    nextNodeId: 120
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 120
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uADF8\uB807\uAC8C \uC18C\uAC01\uC7A5\uC5D0\uC11C \uB3C4\uB9DD\uCCD0 \uB098\uC624\uC2E0
+      \uAC74\uAC00\uC694?"
+    nextNodeId: 121
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 121
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uBE44\uC2B7\uD558\uC9C0. <b>\uC544\uBB34\uAC1C\uB4E4</b>\uC774 \uC190\uC744
+      \uB0B4\uBC00\uC5C8\uC5B4. \uACB0\uAD6D \uC774\uC6A9\uD558\uB824\uB294 \uBAA9\uC801
+      \uC774\uC5C8\uC9C0\uB9CC \uC0B4\uC544\uB0A8\uAE30 \uC704\uD574\uC120 \uC5B4\uCA54
+      \uC218 \uC5C6\uC5C8\uC5B4."
+    nextNodeId: 122
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 122
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC6D0\uB798 \uC2E0\uBD84\uC744 \uC9C0\uC6B0\uACE0 <b>\uC774 \uC774\uB984</b>\uC744
+      \uC4F0\uAC8C \uB41C \uAC83\uB3C4 \uADF8\uB54C\uBD80\uD130\uC600\uC5B4."
+    nextNodeId: 123
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 123
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uADF8\uB7FC \uC140\uB9AC\uAC00 \uC9C4\uC9DC \uC774\uB984\uC774 \uC544\uB2CC
+      \uAC70\uC608\uC694?"
+    nextNodeId: 124
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 124
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uD6D7, \uADF8\uB7FC. \uC124\uB9C8 \uC774\uB7F0 \uC9D3\uC744 \uD558\uBA74\uC11C
+      \uBCF8\uBA85\uC744 \uC4F8\uAC70\uB77C \uC0DD\uAC01\uD55C \uAC70\uC57C?"
+    nextNodeId: 125
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 125
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uBB50, \uC544\uBB34\uD2BC \uADF8\uB54C\uBD80\uD130 \uB098\uB294 \uC18C\uAC01\uC7A5\uC5D0\uC11C
+      \uB098\uCC98\uB7FC \uC8FD\uC5B4\uAC00\uB358 \uC0AC\uB78C\uB4E4\uC758 \uC2DC\uCCB4\uB97C
+      \uB4A4\uC9C0\uAC8C \uB410\uC5B4."
+    nextNodeId: 126
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 126
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uADF8\uB798\uB3C4 \uC2DC\uCCB4\uB97C \uAC74\uB4DC\uB9AC\uB294 \uAC74\u2026"
+    nextNodeId: 127
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 127
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uADF8\uB7EC\uB2E4 \uC5BC\uB9C8 \uB4A4 <b>\uB3D9\uC0DD</b>\uC744 \uB9CC\uB0AC\uC5B4."
+    nextNodeId: 128
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 128
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "<b>\uB3D9\uC0DD\uC774\uC694\u2026?</b>"
+    nextNodeId: 129
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_frust
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 129
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "<b>\uC18C\uAC01\uC7A5\uC5D0\uC11C \uC8FD\uC740 \uCC44\uB85C.</b> \uD3D0\uAE30\uC6A9
+      \uCEE8\uD14C\uC774\uB108\uC5D0 \uC544\uBB34\uB807\uAC8C\uB098 \uC464\uC154\uB123\uC5B4\uC838
+      \uC788\uB354\uAD70."
+    nextNodeId: 130
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_frust
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 130
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uADF8 \uC798\uB09C \uC5F0\uD569\uC774 \uAD74\uB9AC\uB294 \uC138\uC0C1\uC774
+      \uC544\uC9C1\uB3C4 \uD3C9\uB4F1\uD574\uBCF4\uC5EC?"
+    nextNodeId: 131
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_frust
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 131
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uADF8\uB798\uB3C4 \uC7A5\uB840\uB97C \uCE58\uB7EC \uC904 \uC218 \uC788\uC5B4\uC11C
+      \uB2E4\uD589\uC774\uB77C\uACE0 \uD574\uB458\uAE4C."
+    nextNodeId: 132
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_frust
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 132
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uADF8-\uADF8\uB7F4\uB9AC\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4. \uC5F0\uD569\uC740
+      \uBAA8\uB450\uC5D0\uAC8C\u2026 \uADF8\uB7EC\uB2C8\uAE4C\u2026"
+    nextNodeId: 133
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_frust
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 133
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC774\uB7F0.. \uC774\uB807\uAC8C \uAE4C\uC9C0 \uC5B4\uB461\uAC8C \uB9CC\uB4E4
+      \uC0DD\uAC01\uC740 \uC5C6\uC5C8\uB294\uB370."
+    nextNodeId: 134
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_frust
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 134
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC804\uD600 \uC544\uB2D9\uB2C8\uB2E4. \uD38D\uC740 \uBB34\uAC70\uC6B4
+      \uC774\uC57C\uAE30\uB4E4\uC744 \uB0B4\uB824\uB193\uC744 \uC218 \uC788\uB294
+      \uACF3\uC774\uB2C8\uAE4C\uC694."
+    nextNodeId: 135
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_frust
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 135
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC220\uACFC \uD568\uAED8 \uADF8 \uAE30\uC5B5\uC758 \uBB34\uAC8C\uB3C4
+      \uC870\uAE08\uC774\uB098\uB9C8 \uB35C\uC5B4\uB0B4\uC168\uAE38 \uBC14\uB78D\uB2C8\uB2E4."
+    nextNodeId: 136
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_frust
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 136
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uCC38, \uB9D0\uC740 \uC798 \uD55C\uB2E4\uB2C8\uAE4C."
+    nextNodeId: 137
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_frust
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 137
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC774\uB9CC \uB4E4\uC5B4\uAC00 \uBD10\uC57C\uACA0\uC5B4."
+    nextNodeId: 138
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_frust
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 138
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uD3C9\uC548\uD55C \uBC24 \uB418\uC2DC\uAE38 \uBC14\uB78D\uB2C8\uB2E4.
+      \uC870\uC2EC\uD788 \uB4E4\uC5B4\uAC00\uC138\uC694. \uC140\uB9AC\uC528."
+    nextNodeId: 139
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_frust
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 139
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uBC14\uD150\uB354\uB3C4 \uC624\uB298 \uACE8\uCE58 \uC544\uD508 \uC18C\uB3D9\uC740
+      \uC6B0\uB9AC\uB85C \uB05D\uB098\uAE38 \uBC14\uB784\uAC8C."
+    nextNodeId: 140
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_frust
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 140
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uAF2C\uB9F9\uC774 \uB108\uB3C4 \uC0C1\uCC98\uAC00 \uB354 \uBC8C\uC5B4\uC9C0\uAE30
+      \uC804\uC5D0 \uC58C\uC804\uD788 \uBCD1\uB3D9\uC73C\uB85C \uAD74\uB7EC\uAC00\uB77C\uACE0."
+    nextNodeId: 141
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_frust
+      slotIndex: 2
+    - characterKey: sally
+      expressionKey: blood_smile
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 141
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "12\uB2D8, \uBB34\uB9AC\uD574\uC11C \uC77C\uC5B4\uB098\uC9C0 \uC54A\uC73C\uC154\uB3C4
+      \uB429\uB2C8\uB2E4. \uC0C1\uCC98\uB294 \uAD1C\uCC2E\uC73C\uC2E0\uAC00\uC694?"
+    nextNodeId: 142
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 142
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uC774 \uC815\uB3C4\uB294 \uBC84\uD2F8 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+    nextNodeId: 143
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_shame
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 143
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uC624\uB298 \uBC24 \uC788\uC5C8\uB358 \uC77C\uC740 \uBCF4\uACE0\uD558\uC9C0
+      \uC54A\uACA0\uC2B5\uB2C8\uB2E4\uB9CC, \uB2F9\uBD84\uAC04\uC740 \uBAB8\uC870\uC2EC\uD558\uC2ED\uC2DC\uC624."
+    nextNodeId: 144
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_smile
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 144
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC81C \uAC71\uC815\uC740 \uB9C8\uC138\uC694."
+    nextNodeId: 145
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_smile
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 145
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uB2E4\uC74C\uC5D0 \uBD05\uC2DC\uB2E4. \uADF8\uB54C\uB294 \uCE75\uD14C\uC77C\uB9CC
+      \uB9C8\uC2DC\uB7EC \uC624\uACA0\uC2B5\uB2C8\uB2E4."
+    nextNodeId: 146
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_smile
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 146
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uB124, \uC2AC\uB7F0\uCC60\uC758 \uBB38\uC740 \uC5B8\uC81C\uB098 \uC5F4\uB824\uC788\uC2B5\uB2C8\uB2E4."
+    nextNodeId: 
+    choices: []
+    flagBranches: []
+    varBranches: []
+    characters:
+    - characterKey: e12
+      expressionKey: injured_smile
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 
+    speakerKey: 
+    overrideSpeakerName: 
+    text: 
+    nextNodeId: 
+    choices:
+    - buttonText: 
+      nextNodeId: 
+      setFlags: []
+      clearFlags: []
+      varChanges: []
+    flagBranches:
+    - requiredFlag: 
+      nextNodeId: 
+    - requiredFlag: 
+      nextNodeId: 
+    varBranches: []
+    characters:
+    - characterKey: 
+      expressionKey: 
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  episodeDescription: 
+  iconNameBoard: 
+  iconNameArchive: 
+  characters: []

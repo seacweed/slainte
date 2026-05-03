@@ -18,17 +18,25 @@ MonoBehaviour:
   expressions:
   - key: mid
     sprite: {fileID: 4784050376637317797, guid: c24194f8e39730e45a0739d3a3562ba4, type: 3}
+    widthOverride: 0
   - key: aim
     sprite: {fileID: -2174666509651120633, guid: 43d38cc0c2a3d354d8358771fe8bfa55, type: 3}
+    widthOverride: 900
   - key: angry
     sprite: {fileID: 3145912355117297475, guid: ae99572c20e047a42bf4f61f61d67395, type: 3}
+    widthOverride: 0
   - key: smile
     sprite: {fileID: -8847821066434499957, guid: 4740474c6c48f974dbe4f6a6df7d3f12, type: 3}
+    widthOverride: 0
   - key: blood_angry
     sprite: {fileID: -6795192134317491185, guid: 7cf3402f9310c20468576734a4aa386d, type: 3}
+    widthOverride: 0
   - key: blood_mid
     sprite: {fileID: 7918521115296145216, guid: f9a51752153069a40b4591dd67ac7dd3, type: 3}
+    widthOverride: 0
   - key: blood_tired
     sprite: {fileID: 2811643952173041755, guid: 684b28dcea665c7419085653c523d969, type: 3}
+    widthOverride: 0
   - key: blood_smile
     sprite: {fileID: -1220385877937856334, guid: b9db1e04360b1c54f8a9ff1102a489b3, type: 3}
+    widthOverride: 0

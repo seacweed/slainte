@@ -295,15 +295,17 @@ public class EpisodeCsvImporter : EditorWindow
 
             data.nodes.Add(new EpisodeNode
             {
-                nodeId             = nid,
-                speakerKey         = Field(row, 1),
+                nodeId              = nid,
+                speakerKey          = Field(row, 1),
                 overrideSpeakerName = Field(row, 2),
-                text               = Field(row, 3),
-                nextNodeId         = Field(row, 4),
-                requiresCrafting   = crafting,
-                craftingTicketKey  = Field(row, 6),
-                nextNodeIdGood     = Field(row, 7),
-                nextNodeIdBad      = Field(row, 8),
+                text                = Field(row, 3),
+                nextNodeId          = Field(row, 4),
+                requiresCrafting    = crafting,
+                craftingTicketKey   = Field(row, 6),
+                nextNodeIdGood      = Field(row, 7),
+                nextNodeIdBad       = Field(row, 8),
+                bgmCommand          = ParseBgmCommand(Field(row, 9)),
+                bgmClipName         = Field(row, 10),
                 characters = nodeChars.TryGetValue(nid, out var chars)
                     ? chars : new List<CharacterSlotEntry>(),
                 choices = nodeChoices.TryGetValue(nid, out var choices)
@@ -406,6 +408,16 @@ public class EpisodeCsvImporter : EditorWindow
         }
 
         return null;
+    }
+
+    private static BgmCommand ParseBgmCommand(string value)
+    {
+        return value.Trim().ToLowerInvariant() switch
+        {
+            "play" => BgmCommand.Play,
+            "stop" => BgmCommand.Stop,
+            _      => BgmCommand.None
+        };
     }
 
     private static CompareOp ParseCompareOp(string op)

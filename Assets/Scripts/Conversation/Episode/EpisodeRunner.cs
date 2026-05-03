@@ -125,6 +125,8 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
             yield break;
         }
 
+        ApplyBgmCommand(_currentNode);
+
         if (_currentNode.characters != null && _currentNode.characters.Count > 0)
         {
             _waitingForCharacterAnim = true;
@@ -303,6 +305,16 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 
         for (int i = 0; i < choice.varChanges.Count; i++)
             progress.AddVar(choice.varChanges[i].varName, choice.varChanges[i].delta);
+    }
+
+    private void ApplyBgmCommand(EpisodeNode node)
+    {
+        if (node.bgmCommand == BgmCommand.None || AudioManager.Instance == null) return;
+
+        if (node.bgmCommand == BgmCommand.Play)
+            AudioManager.Instance.PlayBgm(node.bgmClipName);
+        else if (node.bgmCommand == BgmCommand.Stop)
+            AudioManager.Instance.StopBgm();
     }
 
     private string ResolveSpeakerName(EpisodeNode node)
