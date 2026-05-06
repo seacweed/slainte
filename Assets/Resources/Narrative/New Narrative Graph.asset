@@ -1,5 +1,33 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8030735209418691284
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: cff67a37-1945-4f84-922e-e3876aa883ee
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: cff67a37-1945-4f84-922e-e3876aa883ee
+  Position:
+    serializedVersion: 2
+    x: 583.1998
+    y: -24.800003
+    width: 108
+    height: 136
+  CustomFields:
+  - FieldName: Title
+    FieldValue: New Block
+  - FieldName: Description
+    FieldValue: 
+  StartEventGuid: 
+  Events: []
+  OutgoingBranches:
+  - Next
 --- !u!114 &-7127120222914740406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15,9 +43,9 @@ MonoBehaviour:
   Guid: eace957f-426b-495b-9a6e-5cf929d7faf0
   Position:
     serializedVersion: 2
-    x: 343.2
-    y: -41.887985
-    width: 135.19995
+    x: 377.60004
+    y: 14.032013
+    width: 135.20001
     height: 266.4
   CustomFields:
   - FieldName: Title
@@ -34,22 +62,21 @@ MonoBehaviour:
     FieldValue: 
   StartEventGuid: 
   Events:
-  - Guid: 5a5211d4-1977-40e8-9a73-e9c7d0b1a8e9
-    Position: {x: 94.399994, y: 122.16}
+  - Guid: e9a2e6c4-3713-4508-9e41-2b960d68d1df
+    Position: {x: -114.33859, y: -58.40008}
     NextEventGuids:
-    - 346165cf-6ebd-4078-b2db-e878f48ab996
-    - 8318d346-7af4-4686-9568-754bb33f1d64
-    - a7dfbedd-8215-44b8-9321-ee595e581665
+    - ad94c827-e694-424d-b5c0-deb9d5eb425f
+    - 9c2e0f48-97fb-4007-bab6-879738dc18b7
     Type: 0
-    SpeakerKey: asd
+    SpeakerKey: a
     OverrideSpeakerName: 
-    Text: asda
+    Text: aaaaaa
     CharacterAppearances: []
     Choices: []
     CraftingTicketKey: 
     ExitBranchName: 
-  - Guid: a7dfbedd-8215-44b8-9321-ee595e581665
-    Position: {x: 230.40002, y: 157.6}
+  - Guid: ad94c827-e694-424d-b5c0-deb9d5eb425f
+    Position: {x: 102.5581, y: 96.8}
     NextEventGuids: []
     Type: 1
     SpeakerKey: 
@@ -57,36 +84,36 @@ MonoBehaviour:
     Text: 
     CharacterAppearances: []
     Choices:
-    - ButtonText: New Choice
-      TargetNodeId: eec8a9db-f2c1-42fe-9527-5773736f5ce0
+    - ButtonText: 1
+      TargetNodeId: 9c2e0f48-97fb-4007-bab6-879738dc18b7
       SetFlags: []
       ClearFlags: []
       VarChanges: []
-    - ButtonText: New
-      TargetNodeId: fdb6d580-848b-4172-8c6d-416f72210d1b
+    - ButtonText: 2
+      TargetNodeId: f0c0c7e7-9652-48f5-87e4-ae3e0c8af54c
       SetFlags: []
       ClearFlags: []
       VarChanges: []
     CraftingTicketKey: 
     ExitBranchName: 
-  - Guid: fdb6d580-848b-4172-8c6d-416f72210d1b
-    Position: {x: 454.40002, y: 236.00002}
+  - Guid: 9c2e0f48-97fb-4007-bab6-879738dc18b7
+    Position: {x: 374.74356, y: -58.08526}
     NextEventGuids: []
     Type: 0
-    SpeakerKey: 
+    SpeakerKey: a
     OverrideSpeakerName: 
-    Text: 
+    Text: hi
     CharacterAppearances: []
     Choices: []
     CraftingTicketKey: 
     ExitBranchName: 
-  - Guid: eec8a9db-f2c1-42fe-9527-5773736f5ce0
-    Position: {x: 454.40002, y: 97.59999}
+  - Guid: f0c0c7e7-9652-48f5-87e4-ae3e0c8af54c
+    Position: {x: 374.40002, y: 96.960014}
     NextEventGuids: []
     Type: 0
-    SpeakerKey: 
+    SpeakerKey: a
     OverrideSpeakerName: 
-    Text: 
+    Text: no.
     CharacterAppearances: []
     Choices: []
     CraftingTicketKey: 
@@ -126,26 +153,6 @@ MonoBehaviour:
   OutgoingBranches:
   - Next
   - New
---- !u!114 &-3690519989684819998
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 956a2d30f4fb7e14d9d7d40a5afdaa93, type: 3}
-  m_Name: f3174ce8-850f-4d3d-858e-89bd51af4484
-  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EmptyNodeSO
-  Guid: f3174ce8-850f-4d3d-858e-89bd51af4484
-  Position:
-    serializedVersion: 2
-    x: 132.80002
-    y: 402.4
-    width: 136
-    height: 86.400024
-  CustomFields: []
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -162,46 +169,17 @@ MonoBehaviour:
   - {fileID: -7127120222914740406}
   - {fileID: 4866711699634503307}
   - {fileID: -6074970108715304164}
-  - {fileID: 2548980039588542765}
-  - {fileID: -3690519989684819998}
+  - {fileID: -8030735209418691284}
   Edges:
-  - BaseNodeGuid: f3174ce8-850f-4d3d-858e-89bd51af4484
-    TargetNodeGuid: 88be1ef7-38c6-4bb7-b892-669afec15e2d
-    OutputPortIndex: 0
   - BaseNodeGuid: 4b1c8b14-d725-4a88-9e7f-3e29344adcff
     TargetNodeGuid: eace957f-426b-495b-9a6e-5cf929d7faf0
     OutputPortIndex: 0
   - BaseNodeGuid: 4b1c8b14-d725-4a88-9e7f-3e29344adcff
     TargetNodeGuid: 9f0d5276-8e7c-46fa-a68f-a138d2b620be
     OutputPortIndex: 1
---- !u!114 &2548980039588542765
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
-  m_Name: 88be1ef7-38c6-4bb7-b892-669afec15e2d
-  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
-  Guid: 88be1ef7-38c6-4bb7-b892-669afec15e2d
-  Position:
-    serializedVersion: 2
-    x: 396.80005
-    y: 468.8
-    width: 136
-    height: 137.6
-  CustomFields:
-  - FieldName: a
-    FieldValue: 
-  - FieldName: NewField
-    FieldValue: 
-  StartEventGuid: 
-  Events: []
-  OutgoingBranches:
-  - Next
+  - BaseNodeGuid: eace957f-426b-495b-9a6e-5cf929d7faf0
+    TargetNodeGuid: cff67a37-1945-4f84-922e-e3876aa883ee
+    OutputPortIndex: 0
 --- !u!114 &4866711699634503307
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -217,10 +195,10 @@ MonoBehaviour:
   Guid: 9f0d5276-8e7c-46fa-a68f-a138d2b620be
   Position:
     serializedVersion: 2
-    x: 565.6
-    y: 110.79999
-    width: 136
-    height: 178.40001
+    x: 320.39996
+    y: 334.4
+    width: 135.20001
+    height: 226.40002
   CustomFields:
   - FieldName: Title
     FieldValue: New Episode

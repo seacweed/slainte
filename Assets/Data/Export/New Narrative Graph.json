@@ -1,0 +1,125 @@
+{
+    "episodeId": "New Narrative Graph",
+    "episodeTitle": "이상한 동전",
+    "triggerCondition": {
+        "minDay": 0,
+        "requiredFlags": [],
+        "blockedFlags": [],
+        "prerequisiteEpisodeIds": [],
+        "requiredVars": []
+    },
+    "openingCharacters": [],
+    "firstNodeId": "4b1c8b14-d725-4a88-9e7f-3e29344adcff_0",
+    "nodes": [
+        {
+            "nodeId": "eace957f-426b-495b-9a6e-5cf929d7faf0_0",
+            "speakerKey": "a",
+            "overrideSpeakerName": "",
+            "text": "aaaaaa",
+            "nextNodeId": "eace957f-426b-495b-9a6e-5cf929d7faf0_1",
+            "choices": [],
+            "flagBranches": [],
+            "varBranches": [],
+            "characters": [],
+            "requiresCrafting": false,
+            "craftingTicketKey": "",
+            "nextNodeIdGood": "",
+            "nextNodeIdBad": ""
+        },
+        {
+            "nodeId": "eace957f-426b-495b-9a6e-5cf929d7faf0_1",
+            "speakerKey": "",
+            "overrideSpeakerName": "",
+            "text": "",
+            "nextNodeId": "eace957f-426b-495b-9a6e-5cf929d7faf0_2",
+            "choices": [
+                {
+                    "buttonText": "1",
+                    "nextNodeId": "",
+                    "setFlags": [],
+                    "clearFlags": [],
+                    "varChanges": []
+                },
+                {
+                    "buttonText": "2",
+                    "nextNodeId": "",
+                    "setFlags": [],
+                    "clearFlags": [],
+                    "varChanges": []
+                }
+            ],
+            "flagBranches": [],
+            "varBranches": [],
+            "characters": [],
+            "requiresCrafting": false,
+            "craftingTicketKey": "",
+            "nextNodeIdGood": "",
+            "nextNodeIdBad": ""
+        },
+        {
+            "nodeId": "eace957f-426b-495b-9a6e-5cf929d7faf0_2",
+            "speakerKey": "a",
+            "overrideSpeakerName": "",
+            "text": "hi",
+            "nextNodeId": "eace957f-426b-495b-9a6e-5cf929d7faf0_3",
+            "choices": [],
+            "flagBranches": [],
+            "varBranches": [],
+            "characters": [],
+            "requiresCrafting": false,
+            "craftingTicketKey": "",
+            "nextNodeIdGood": "",
+            "nextNodeIdBad": ""
+        },
+        {
+            "nodeId": "eace957f-426b-495b-9a6e-5cf929d7faf0_3",
+            "speakerKey": "a",
+            "overrideSpeakerName": "",
+            "text": "no.",
+            "nextNodeId": "",
+            "choices": [],
+            "flagBranches": [],
+            "varBranches": [],
+            "characters": [],
+            "requiresCrafting": false,
+            "craftingTicketKey": "",
+            "nextNodeIdGood": "",
+            "nextNodeIdBad": ""
+        },
+        {
+            "nodeId": "9f0d5276-8e7c-46fa-a68f-a138d2b620be_0",
+            "speakerKey": "",
+            "overrideSpeakerName": "",
+            "text": "(Empty Node)",
+            "nextNodeId": "",
+            "choices": [],
+            "flagBranches": [],
+            "varBranches": [],
+            "characters": [],
+            "requiresCrafting": false,
+            "craftingTicketKey": "",
+            "nextNodeIdGood": "",
+            "nextNodeIdBad": ""
+        },
+        {
+            "nodeId": "4b1c8b14-d725-4a88-9e7f-3e29344adcff_0",
+            "speakerKey": "",
+            "overrideSpeakerName": "",
+            "text": "(Empty Node)",
+            "nextNodeId": "",
+            "choices": [],
+            "flagBranches": [],
+            "varBranches": [],
+            "characters": [],
+            "requiresCrafting": false,
+            "craftingTicketKey": "",
+            "nextNodeIdGood": "",
+            "nextNodeIdBad": ""
+        }
+    ],
+    "episodeDescription": "",
+    "iconNameBoard": "",
+    "iconNameArchive": "",
+    "characters": [],
+    "customConditionTexts": []
+}

@@ -15,6 +15,11 @@ namespace Slainte.Bartending
     [RequireComponent(typeof(SpriteRenderer), typeof(Collider2D))]
     public class BottleController : MonoBehaviour
     {
+        [Header("Item Data")]
+        [SerializeField] private ItemDef bottleData;
+        
+        public ItemDef BottleData => bottleData;
+
         [Header("Tilt Settings")]
         [SerializeField] private float maxTiltAngle = 120f;
         [SerializeField] private float tiltSensitivity = 0.5f;
@@ -48,6 +53,23 @@ namespace Slainte.Bartending
             mainCamera = Camera.main;
 
             originalSortingOrder = spriteRenderer.sortingOrder;
+
+            ApplyBottleData();
+        }
+
+        public void Init(ItemDef data)
+        {
+            bottleData = data;
+            ApplyBottleData();
+        }
+
+        private void ApplyBottleData()
+        {
+            if (bottleData != null && bottleData.icon != null)
+            {
+                if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
+                spriteRenderer.sprite = bottleData.icon;
+            }
         }
 
         private void Update()
