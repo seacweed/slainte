@@ -32,6 +32,13 @@ namespace Slainte.Bartending
         [Tooltip("Curve for the smooth return when right-click is released.")]
         [SerializeField] private AnimationCurve returnEase = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
+        [Header("Liquid Settings")]
+        public Transform liquidSpawnPoint;
+        public float maxCapacity = 100f;
+        public float currentCapacity = 100f;
+        public float pourRate = 0.05f;
+        private float pourTimer = 0f;
+
         private BottleState currentState = BottleState.Idle;
         private SpriteRenderer spriteRenderer;
         private Collider2D col;
@@ -75,6 +82,56 @@ namespace Slainte.Bartending
         private void Update()
         {
             HandleInput();
+            HandlePouring();
+        }
+
+        private void HandlePouring()
+        {
+            if (Mathf.Abs(currentAngle) >= 90f && currentCapacity > 0)
+            {
+                pourTimer += Time.deltaTime;
+                if (pourTimer >= pourRate)
+                {
+                    pourTimer = 0f;
+                    SpawnLiquid();
+                }
+            }
+            else
+            {
+                pourTimer = 0f;
+            }
+        }
+
+        private void SpawnLiquid()
+        {
+            if (LiquidPool.Instance == null) return;
+
+            if (liquidSpawnPoint == null)
+            {
+                Debug.LogWarning("⚠️ Liquid Spawn Point가 인스펙터에 할당되지 않았습니다! 병의 중심(몸체)에서 스폰됩니다.");
+            }
+
+            Vector3 spawnPos = liquidSpawnPoint != null ? liquidSpawnPoint.position : transform.position;
+            Vector3 randomOffset = new Vector3(Random.Range(-0.1f, 0.1f), 0, 0);
+
+            GameObject obj = LiquidPool.Instance.GetParticle(spawnPos + randomOffset);
+            if (obj != null)
+            {
+                Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
+                if (rb != null)
+                {
+                    rb.linearVelocity = Vector2.zero;
+                    rb.angularVelocity = 0f;
+                }
+                
+                LiquidReaction reaction = obj.GetComponent<LiquidReaction>();
+                if (reaction != null)
+                {
+                    reaction.WakeUp();
+                }
+
+                currentCapacity -= 1f; // Adjust amount per particle if needed
+            }
         }
 
         private void HandleInput()
