@@ -76,7 +76,7 @@ MonoBehaviour:
     CraftingTicketKey: 
     ExitBranchName: 
   - Guid: ad94c827-e694-424d-b5c0-deb9d5eb425f
-    Position: {x: 102.5581, y: 96.8}
+    Position: {x: 56, y: -58}
     NextEventGuids: []
     Type: 1
     SpeakerKey: 
@@ -97,7 +97,7 @@ MonoBehaviour:
     CraftingTicketKey: 
     ExitBranchName: 
   - Guid: 9c2e0f48-97fb-4007-bab6-879738dc18b7
-    Position: {x: 374.74356, y: -58.08526}
+    Position: {x: 255.16, y: -85}
     NextEventGuids: []
     Type: 0
     SpeakerKey: a
@@ -108,7 +108,7 @@ MonoBehaviour:
     CraftingTicketKey: 
     ExitBranchName: 
   - Guid: f0c0c7e7-9652-48f5-87e4-ae3e0c8af54c
-    Position: {x: 374.40002, y: 96.960014}
+    Position: {x: 224.79999, y: 57}
     NextEventGuids: []
     Type: 0
     SpeakerKey: a

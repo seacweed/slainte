@@ -7,7 +7,10 @@ public class LiquidPool : MonoBehaviour
     public GameObject particlePrefab;
     public int poolSize = 300; // 입자 최대 개수 제한
 
+
+
     private Queue<GameObject> poolQueue = new Queue<GameObject>();
+    private List<GameObject> activeParticles = new List<GameObject>();
 
     void Awake()
     {
@@ -33,6 +36,7 @@ public class LiquidPool : MonoBehaviour
             obj.transform.position = position;
             obj.transform.rotation = Quaternion.identity;
             obj.SetActive(true);
+            activeParticles.Add(obj);
             return obj;
         }
         else
@@ -46,6 +50,26 @@ public class LiquidPool : MonoBehaviour
     public void ReturnParticle(GameObject obj)
     {
         obj.SetActive(false);
+        activeParticles.Remove(obj);
         poolQueue.Enqueue(obj);
+    }
+
+    void Update()
+    {
+        for (int i = activeParticles.Count - 1; i >= 0; i--)
+        {
+            GameObject obj = activeParticles[i];
+            
+            if (obj.TryGetComponent(out ReturnToPool rtp) && rtp.CheckOOB())
+            {
+                ReturnParticle(obj);
+                continue;
+            }
+
+            if (obj.TryGetComponent(out LiquidReaction reaction))
+            {
+                reaction.CheckSleepState(Time.deltaTime);
+            }
+        }
     }
 }

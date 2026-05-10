@@ -5,10 +5,12 @@ public class DraggableBar : MonoBehaviour, IBeginDragHandler, IDragHandler
 {
     private Camera mainCamera;
     private Vector3 offset; // 마우스 클릭 지점과 오브젝트 중심 간의 차이
+    private Rigidbody2D rb;
 
     private void Awake()
     {
         mainCamera = Camera.main;
+        rb = GetComponent<Rigidbody2D>();
     }
 
     // 드래그 시작 시 한 번 호출
@@ -35,6 +37,14 @@ public class DraggableBar : MonoBehaviour, IBeginDragHandler, IDragHandler
         // newPosition.y = transform.position.y; // Y축 고정 (좌우로만 이동)
         // newPosition.x = transform.position.x; // X축 고정 (상하로만 이동)
 
-        transform.position = newPosition;
+        // 물리 엔진을 사용하여 이동 (콜라이더 겹침/압축 방지)
+        if (rb != null)
+        {
+            rb.MovePosition(newPosition);
+        }
+        else
+        {
+            transform.position = newPosition;
+        }
     }
 }

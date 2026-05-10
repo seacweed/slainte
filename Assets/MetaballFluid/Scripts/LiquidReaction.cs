@@ -12,7 +12,7 @@ public class LiquidReaction : MonoBehaviour
 
     [Header("최적화 (수면) 설정")]
     public float sleepVelocityThreshold = 0.05f; // 이 속도 이하로 내려가면 고인 물로 취급
-    public float timeToSleep = 0.5f; // 이 시간 동안 고여있으면 수면 상태 돌입
+    public float timeToSleep = 2.0f; // 기존 0.5f에서 2.0f로 증가 (충분히 퍼질 시간)
     private float settleTimer = 0f;
     private bool isLogicallySleeping = false;
 
@@ -23,14 +23,14 @@ public class LiquidReaction : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    void Update()
+    public void CheckSleepState(float deltaTime)
     {
         if (isLogicallySleeping) return;
 
         // 속도가 거의 0에 수렴하면(고여 있으면) 타이머 증가
         if (rb.linearVelocity.sqrMagnitude < sleepVelocityThreshold)
         {
-            settleTimer += Time.deltaTime;
+            settleTimer += deltaTime;
             if (settleTimer >= timeToSleep)
             {
                 GoToSleep();
