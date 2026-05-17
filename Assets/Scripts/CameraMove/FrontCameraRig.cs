@@ -13,18 +13,27 @@ public class FrontCameraRig : MonoBehaviour, ICameraInputHandler
     [SerializeField] float moveTime = 0.35f;
     [SerializeField] AnimationCurve ease = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
+    [Header("Drawer")]
+    [SerializeField] RectTransform drawerArea;
+
+    [Header("Focus")]
+    [SerializeField] Canvas rootCanvas;
+
     public bool IsAnimating => _animating;
 
-    bool _drawerOpen = false;
-    bool _shelfOpen  = false;
+    bool  _drawerOpen = false;
+    bool  _shelfOpen  = false;
+    float _focusX     = 0f;
 
-    Vector2 _fromPos, _toPos;
-    float   _t;
-    bool    _animating;
+    Vector2        _fromPos, _toPos;
+    float          _t;
+    bool           _animating;
+    System.Action  _onMoveComplete;
 
     void Awake()
     {
-        if (frontWorld == null) frontWorld = (RectTransform)transform;
+        if (frontWorld == null)  frontWorld  = (RectTransform)transform;
+        if (rootCanvas == null)  rootCanvas  = GetComponentInParent<Canvas>();
         frontWorld.anchoredPosition = Vector2.zero;
     }
 
@@ -40,6 +49,8 @@ public class FrontCameraRig : MonoBehaviour, ICameraInputHandler
         {
             frontWorld.anchoredPosition = _toPos;
             _animating = false;
+            _onMoveComplete?.Invoke();
+            _onMoveComplete = null;
         }
     }
 
@@ -62,10 +73,37 @@ public class FrontCameraRig : MonoBehaviour, ICameraInputHandler
         }
     }
 
+    public void PanToWorldCenterX(float worldX)
+    {
+        if (rootCanvas == null) return;
+        float delta = (Screen.width * 0.5f - worldX) / rootCanvas.scaleFactor;
+        _focusX = frontWorld.anchoredPosition.x + delta;
+        BeginMove(new Vector2(_focusX, frontWorld.anchoredPosition.y));
+    }
+
+    public void ResetPan()
+    {
+        _focusX = 0f;
+        BeginMove(Vector2.zero);
+    }
+
     public void SetDrawer(bool open)
     {
         _drawerOpen = open;
-        BeginMove(open ? new Vector2(0f, drawerShiftY) : Vector2.zero);
+        if (open)
+        {
+            if (drawerArea != null)
+                drawerArea.anchoredPosition = new Vector2(-_focusX, drawerArea.anchoredPosition.y);
+            BeginMove(new Vector2(_focusX, drawerShiftY));
+        }
+        else
+        {
+            BeginMove(new Vector2(_focusX, 0f), () =>
+            {
+                if (drawerArea != null)
+                    drawerArea.anchoredPosition = new Vector2(0f, drawerArea.anchoredPosition.y);
+            });
+        }
     }
 
     public void SetShelf(bool open)
@@ -74,11 +112,12 @@ public class FrontCameraRig : MonoBehaviour, ICameraInputHandler
         BeginMove(open ? new Vector2(-shelfShiftX, 0f) : Vector2.zero);
     }
 
-    private void BeginMove(Vector2 target)
+    private void BeginMove(Vector2 target, System.Action onComplete = null)
     {
-        _fromPos   = frontWorld.anchoredPosition;
-        _toPos     = target;
-        _t         = 0f;
-        _animating = true;
+        _fromPos        = frontWorld.anchoredPosition;
+        _toPos          = target;
+        _t              = 0f;
+        _animating      = true;
+        _onMoveComplete = onComplete;
     }
 }

@@ -101,12 +101,13 @@ public class DialogueController : MonoBehaviour
         ShowLine(line);
     }
 
-    public void ShowSingleLine(string speakerName, string text)
+    public void ShowSingleLine(string speakerName, string text, Color nameColor)
     {
         ShowSingleLine(new DialogueLine
         {
             speakerName = speakerName,
-            text = text
+            text = text,
+            nameColor = nameColor
         });
     }
 
@@ -170,6 +171,7 @@ public class DialogueController : MonoBehaviour
         SetNextIndicator(false);
 
         nameText.text = line.speakerName;
+        nameText.color = line.nameColor;
         _typingRoutine = StartCoroutine(TypeLine(line.text));
     }
 

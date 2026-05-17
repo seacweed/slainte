@@ -10,12 +10,14 @@ public class CharacterData : ScriptableObject
     {
         public string key;
         public Sprite sprite;
-        public float widthOverride = 0f; // 0 = use slot default width
+        public Sprite overlaySprite;
     }
 
     public string key;
     public string displayName;
+    public Color nameColor = Color.white;
     public Sprite defaultSprite;
+    public Sprite defaultOverlaySprite;
 
     [Header("Expressions")]
     public List<ExpressionEntry> expressions = new();
@@ -35,7 +37,7 @@ public class CharacterData : ScriptableObject
         return defaultSprite;
     }
 
-    public float GetWidthOverride(string expressionKey)
+    public Sprite GetOverlaySprite(string expressionKey)
     {
         if (!string.IsNullOrWhiteSpace(expressionKey))
         {
@@ -43,10 +45,11 @@ public class CharacterData : ScriptableObject
             {
                 var e = expressions[i];
                 if (e != null && string.Equals(e.key, expressionKey, StringComparison.OrdinalIgnoreCase))
-                    return e.widthOverride;
+                    return e.overlaySprite != null ? e.overlaySprite : defaultOverlaySprite;
             }
         }
 
-        return 0f;
+        return defaultOverlaySprite;
     }
+
 }

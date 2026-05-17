@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a71cdafabaa4d9e44a88c2c34f0fa33d, type: 3}
+  m_Name: CharacterData_sally_e12
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  key: sally_e12
+  displayName: 
+  defaultSprite: {fileID: 0}
+  defaultOverlaySprite: {fileID: 0}
+  expressions:
+  - key: treatment_mid
+    sprite: {fileID: 7052347056175741113, guid: 2c553484fa0e6e946a1c5ee62bb049c0, type: 3}
+    overlaySprite: {fileID: 7501573618146089432, guid: 7973e9b11eac2204ab085cd814d04b7e, type: 3}

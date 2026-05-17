@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
   key: shaun
   displayName: "\uC158"
+  nameColor: {r: 0.79607844, g: 0.7254902, b: 0.7254902, a: 1}
   defaultSprite: {fileID: 0}
+  defaultOverlaySprite: {fileID: 0}
   expressions: []

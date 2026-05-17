@@ -8,6 +8,7 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
     [Header("References")]
     [SerializeField] private GameModeManager   modeManager;
     [SerializeField] private CharacterStage    characterStage;
+    [SerializeField] private FrontCameraRig    cameraRig;
     [SerializeField] private DialogueController dialogue;
     [SerializeField] private CharacterDatabase  characterDB;
     [SerializeField] private GameProgress       progress;
@@ -37,6 +38,7 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
     private bool _isTransitioning;
 
     private readonly List<EpisodeChoiceButtonUI> _choiceButtons = new();
+    private Coroutine _panCoroutine;
 
     public bool IsRunning => _isRunning;
 
@@ -82,6 +84,7 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         bool done = false;
         characterStage?.ShowCharacters(_episode.openingCharacters, () => done = true);
         if (characterStage == null) done = true;
+        StartPanCoroutine();
 
         while (!done)
             yield return null;
@@ -133,6 +136,7 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
             bool shown = false;
             characterStage?.ShowCharacters(_currentNode.characters, () => shown = true);
             if (characterStage == null) shown = true;
+            StartPanCoroutine();
 
             while (!shown)
                 yield return null;
@@ -147,7 +151,8 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         }
 
         string speakerName = ResolveSpeakerName(_currentNode);
-        dialogue?.ShowSingleLine(speakerName, _currentNode.text);
+        Color speakerColor = ResolveSpeakerColor(_currentNode);
+        dialogue?.ShowSingleLine(speakerName, _currentNode.text, speakerColor);
 
         while (dialogue != null && dialogue.IsTyping)
             yield return null;
@@ -332,6 +337,18 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         return node.speakerKey;
     }
 
+    private Color ResolveSpeakerColor(EpisodeNode node)
+    {
+        if (characterDB != null && !string.IsNullOrWhiteSpace(node.speakerKey))
+        {
+            CharacterData ch = characterDB.FindByKey(node.speakerKey);
+            if (ch != null)
+                return ch.nameColor;
+        }
+
+        return Color.white;
+    }
+
     private void ClearChoices()
     {
         _choiceButtons.Clear();
@@ -342,12 +359,26 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
             Destroy(choiceRoot.GetChild(i).gameObject);
     }
 
+    private void StartPanCoroutine()
+    {
+        if (cameraRig == null || characterStage == null) return;
+        if (_panCoroutine != null) StopCoroutine(_panCoroutine);
+        _panCoroutine = StartCoroutine(PanToCenterNextFrame());
+    }
+
+    private IEnumerator PanToCenterNextFrame()
+    {
+        yield return null;
+        cameraRig.PanToWorldCenterX(characterStage.GetActiveGroupCenterWorldX());
+    }
+
     private void EndEncounter()
     {
         _isRunning = false;
         ClearChoices();
         dialogue?.HideImmediate();
         characterStage?.Clear();
+        cameraRig?.ResetPan();
 
         if (progress != null && _episode != null)
             progress.MarkEpisodeCompleted(_episode.episodeId);

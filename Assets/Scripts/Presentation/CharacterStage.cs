@@ -13,6 +13,9 @@ public class CharacterStage : MonoBehaviour
     [Header("Slots (Center, Left, Right, Left2, Right2...)")]
     [SerializeField] private List<RectTransform> slots = new();
 
+    [Header("Front Layer Container (above bar table)")]
+    [SerializeField] private RectTransform frontContainer;
+
     private readonly Dictionary<string, CharacterView> _activeViews      = new();
     private readonly Dictionary<string, int>           _activeSlotIndices = new();
 
@@ -33,19 +36,16 @@ public class CharacterStage : MonoBehaviour
             return;
         }
 
-        // Keys that should remain visible after this call
         var newKeySet = new HashSet<string>();
         for (int i = 0; i < entries.Count; i++)
             if (entries[i] != null && !string.IsNullOrWhiteSpace(entries[i].characterKey))
                 newKeySet.Add(entries[i].characterKey);
 
-        // Slots occupied by characters that are staying — must not be overwritten
         var occupiedSlots = new HashSet<int>();
         foreach (var kvp in _activeSlotIndices)
             if (newKeySet.Contains(kvp.Key))
                 occupiedSlots.Add(kvp.Value);
 
-        // Exit characters that are no longer needed
         var toRemove = new List<string>();
         foreach (var key in _activeViews.Keys)
             if (!newKeySet.Contains(key)) toRemove.Add(key);
@@ -62,13 +62,11 @@ public class CharacterStage : MonoBehaviour
             }
         }
 
-        // Build queue of free slot indices in ascending order
         var freeSlots = new Queue<int>();
         for (int i = 0; i < slots.Count; i++)
             if (!occupiedSlots.Contains(i))
                 freeSlots.Enqueue(i);
 
-        // Process entries
         int pending = 0;
         for (int i = 0; i < entries.Count; i++)
         {
@@ -83,16 +81,14 @@ public class CharacterStage : MonoBehaviour
             }
 
             Sprite sprite        = data.GetSprite(entry.expressionKey);
-            float  widthOverride = data.GetWidthOverride(entry.expressionKey);
+            Sprite overlaySprite = data.GetOverlaySprite(entry.expressionKey);
 
             if (_activeViews.TryGetValue(entry.characterKey, out CharacterView existing))
             {
-                // Already on stage: swap sprite only, slot unchanged
-                existing.SwapSprite(sprite, widthOverride);
+                existing.SwapSprite(sprite, overlaySprite);
             }
             else
             {
-                // New character: use explicit slot if specified, otherwise auto-assign
                 int slotIndex;
                 if (entry.slotIndex >= 0 && entry.slotIndex < slots.Count)
                 {
@@ -113,8 +109,9 @@ public class CharacterStage : MonoBehaviour
                 _activeViews[entry.characterKey]       = view;
                 _activeSlotIndices[entry.characterKey] = slotIndex;
 
-                view.ApplySlotLayout(slots[slotIndex], widthOverride);
-                view.Setup(sprite);
+                view.ApplySlotLayout(slots[slotIndex]);
+                view.Setup(sprite, overlaySprite);
+                view.AttachOverlayToFrontContainer(frontContainer);
 
                 pending++;
                 view.PlayAppearAnimation(() =>
@@ -137,7 +134,25 @@ public class CharacterStage : MonoBehaviour
         CharacterData data = characterDB != null ? characterDB.FindByKey(characterKey) : null;
         if (data == null) return;
 
-        view.SwapSprite(data.GetSprite(expressionKey), data.GetWidthOverride(expressionKey));
+        view.SwapSprite(data.GetSprite(expressionKey), data.GetOverlaySprite(expressionKey));
+    }
+
+    public float GetActiveGroupCenterWorldX()
+    {
+        if (_activeViews.Count == 0) return Screen.width * 0.5f;
+
+        float minX = float.MaxValue;
+        float maxX = float.MinValue;
+
+        foreach (var kvp in _activeViews)
+        {
+            if (kvp.Value == null) continue;
+            kvp.Value.GetVisualWorldBoundsX(out float left, out float right);
+            if (left  < minX) minX = left;
+            if (right > maxX) maxX = right;
+        }
+
+        return minX == float.MaxValue ? Screen.width * 0.5f : (minX + maxX) * 0.5f;
     }
 
     private static Queue<int> RemoveFromQueue(Queue<int> queue, int value)
