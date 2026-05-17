@@ -24,6 +24,9 @@ MonoBehaviour:
   - characterKey: f54
     expressionKey: mid
     slotIndex: 2
+  - characterKey: 
+    expressionKey: 
+    slotIndex: -1
   firstNodeId: 0
   nodes:
   - nodeId: 0
@@ -36,12 +39,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: laugh
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 1
     speakerKey: shaun
     overrideSpeakerName: 
@@ -52,12 +57,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: laugh
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 2
     speakerKey: f54
     overrideSpeakerName: 
@@ -68,12 +75,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: smile
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 3
     speakerKey: f54
     overrideSpeakerName: 
@@ -91,6 +100,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 4
     speakerKey: shaun
     overrideSpeakerName: 
@@ -107,6 +118,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 5
     speakerKey: f54
     overrideSpeakerName: 
@@ -124,6 +137,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 6
     speakerKey: f54
     overrideSpeakerName: 
@@ -142,6 +157,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 7
     speakerKey: f54
     overrideSpeakerName: 
@@ -153,12 +170,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: smile
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 8
     speakerKey: shaun
     overrideSpeakerName: 
@@ -169,12 +188,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: smile
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 9
     speakerKey: f54
     overrideSpeakerName: 
@@ -186,12 +207,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: laugh
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 10
     speakerKey: 
     overrideSpeakerName: 
@@ -202,13 +225,15 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: laugh
       slotIndex: 2
     requiresCrafting: 1
     craftingTicketKey: sc1_f54
-    nextNodeIdGood: 10-1-1
-    nextNodeIdBad: 10-2-1
-  - nodeId: 10-1-1
+    nextNodeIdGood: 10_1_1
+    nextNodeIdBad: 10_2_1
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 10_1_1
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uC74C. \uB298 \uCD5C\uACE0\uB77C\uB2C8\uAE4C."
@@ -218,13 +243,15 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: smile
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 10-2-1
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 10_2_1
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uD760.. \uC624\uB298\uC740 \uC0B4\uC9DD \uC544\uC27D\uB124?"
@@ -240,6 +267,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 11
     speakerKey: f54
     overrideSpeakerName: 
@@ -257,6 +286,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 12
     speakerKey: shaun
     overrideSpeakerName: 
@@ -274,6 +305,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 13
     speakerKey: f54
     overrideSpeakerName: 
@@ -284,12 +317,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: frust
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 14
     speakerKey: f54
     overrideSpeakerName: 
@@ -300,12 +335,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 15
     speakerKey: shaun
     overrideSpeakerName: 
@@ -318,12 +355,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 16
     speakerKey: f54
     overrideSpeakerName: 
@@ -335,12 +374,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 17
     speakerKey: shaun
     overrideSpeakerName: 
@@ -352,12 +393,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 18
     speakerKey: shaun
     overrideSpeakerName: 
@@ -369,12 +412,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 19
     speakerKey: f54
     overrideSpeakerName: 
@@ -385,12 +430,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 20
     speakerKey: f54
     overrideSpeakerName: 
@@ -402,12 +449,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 21
     speakerKey: f54
     overrideSpeakerName: 
@@ -419,12 +468,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 22
     speakerKey: f54
     overrideSpeakerName: 
@@ -437,12 +488,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 23
     speakerKey: shaun
     overrideSpeakerName: 
@@ -453,12 +506,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 24
     speakerKey: f54
     overrideSpeakerName: 
@@ -475,6 +530,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 25
     speakerKey: f54
     overrideSpeakerName: 
@@ -486,12 +543,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 26
     speakerKey: shaun
     overrideSpeakerName: 
@@ -502,12 +561,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 27
     speakerKey: f54
     overrideSpeakerName: 
@@ -519,12 +580,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 28
     speakerKey: shaun
     overrideSpeakerName: 
@@ -536,12 +599,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 29
     speakerKey: f54
     overrideSpeakerName: 
@@ -555,12 +620,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 30
     speakerKey: shaun
     overrideSpeakerName: 
@@ -571,18 +638,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
-    - characterKey: f72
-      expressionKey: mid
-      slotIndex: 0
-    - characterKey: sally
-      expressionKey: mid
-      slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 31
     speakerKey: f54
     overrideSpeakerName: 
@@ -593,18 +656,14 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
-    - characterKey: f72
-      expressionKey: mid
-      slotIndex: 0
-    - characterKey: sally
-      expressionKey: mid
-      slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 32
     speakerKey: f72
     overrideSpeakerName: ???
@@ -615,18 +674,17 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
       expressionKey: laugh
       slotIndex: 0
-    - characterKey: sally
-      expressionKey: mid
-      slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 33
     speakerKey: sally
     overrideSpeakerName: ???
@@ -637,7 +695,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
       expressionKey: laugh
@@ -649,6 +707,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 34
     speakerKey: f72
     overrideSpeakerName: ???
@@ -661,7 +721,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
       expressionKey: smile
@@ -673,6 +733,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 35
     speakerKey: f72
     overrideSpeakerName: ???
@@ -683,7 +745,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -695,6 +757,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 36
     speakerKey: f54
     overrideSpeakerName: 
@@ -705,7 +769,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -717,6 +781,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 37
     speakerKey: f54
     overrideSpeakerName: 
@@ -727,7 +793,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -739,6 +805,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 38
     speakerKey: sally
     overrideSpeakerName: ???
@@ -751,7 +819,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -763,6 +831,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 39
     speakerKey: f72
     overrideSpeakerName: 
@@ -773,7 +843,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: laugh
@@ -785,6 +855,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 40
     speakerKey: f54
     overrideSpeakerName: 
@@ -806,6 +878,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 41
     speakerKey: sally
     overrideSpeakerName: ???
@@ -825,6 +899,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 42
     speakerKey: shaun
     overrideSpeakerName: 
@@ -844,6 +920,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 43
     speakerKey: f72
     overrideSpeakerName: 
@@ -863,6 +941,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 44
     speakerKey: f54
     overrideSpeakerName: 
@@ -883,6 +963,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 45
     speakerKey: f72
     overrideSpeakerName: 
@@ -903,6 +985,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 46
     speakerKey: f54
     overrideSpeakerName: 
@@ -922,6 +1006,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 47
     speakerKey: f54
     overrideSpeakerName: 
@@ -942,6 +1028,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 48
     speakerKey: f54
     overrideSpeakerName: 
@@ -962,6 +1050,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 49
     speakerKey: sally
     overrideSpeakerName: ???
@@ -981,6 +1071,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 50
     speakerKey: f54
     overrideSpeakerName: 
@@ -1001,6 +1093,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 51
     speakerKey: shaun
     overrideSpeakerName: 
@@ -1020,6 +1114,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 52
     speakerKey: f54
     overrideSpeakerName: 
@@ -1039,6 +1135,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 53
     speakerKey: f72
     overrideSpeakerName: 
@@ -1058,6 +1156,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 54
     speakerKey: shaun
     overrideSpeakerName: 
@@ -1078,6 +1178,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 55
     speakerKey: shaun
     overrideSpeakerName: 
@@ -1099,6 +1201,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 56
     speakerKey: f72
     overrideSpeakerName: 
@@ -1118,6 +1222,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 57
     speakerKey: sally
     overrideSpeakerName: ???
@@ -1126,13 +1232,13 @@ MonoBehaviour:
     choices:
     - buttonText: "\uC190\uB2D8, \uB2F9\uC7A5 \uBB34\uAE30 \uC548 \uC9D1\uC5B4\uB123\uC73C\uC2DC\uBA74,
         \uC9C4\uC9DC \uACBD\uCC30 \uBD80\uB97C \uAC70\uC608\uC694!"
-      nextNodeId: 58-1-1
+      nextNodeId: 58_1_1
       setFlags: []
       clearFlags: []
       varChanges: []
     - buttonText: "\uC624\uB298\uC740 \uBABB \uBCF8 \uCC99\uD574\uB4DC\uB9B4\uD14C\uB2C8
         \uC774\uCBE4 \uD558\uC138\uC694."
-      nextNodeId: 58-2-1
+      nextNodeId: 58_2_1
       setFlags: []
       clearFlags: []
       varChanges: []
@@ -1149,12 +1255,14 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-1-1
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_1_1
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC190\uB2D8, \uB2F9\uC7A5 \uBB34\uAE30 \uC548 \uC9D1\uC5B4\uB123\uC73C\uC2DC\uBA74,
       \uC9C4\uC9DC \uACBD\uCC30 \uBD80\uB97C \uAC70\uC608\uC694!"
-    nextNodeId: 58-1-2
+    nextNodeId: 58_1_2
     choices: []
     flagBranches: []
     varBranches: []
@@ -1169,11 +1277,13 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-1-2
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_1_2
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uB098\uB3C4 \uC9C4\uC9DC \uACBD\uCC30\uC778\uB370\u2026"
-    nextNodeId: 58-1-3
+    nextNodeId: 58_1_3
     choices: []
     flagBranches: []
     varBranches: []
@@ -1188,11 +1298,13 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-1-3
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_1_3
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC798 \uC0DD\uAC01\uD558\uC138\uC694! \uC5EC\uAE34 9\uBC88\uAC00\uC785\uB2C8\uB2E4!"
-    nextNodeId: 58-1-4
+    nextNodeId: 58_1_4
     choices: []
     flagBranches: []
     varBranches: []
@@ -1207,11 +1319,13 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-1-4
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_1_4
     speakerKey: f54
     overrideSpeakerName: 
     text: ...
-    nextNodeId: 58-1-5
+    nextNodeId: 58_1_5
     choices: []
     flagBranches: []
     varBranches: []
@@ -1226,11 +1340,13 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-1-5
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_1_5
     speakerKey: sally
     overrideSpeakerName: ???
     text: "...\uB2E4 \uB2F9\uC2E0 \uB54C\uBB38\uC774\uC57C 72."
-    nextNodeId: 58-1-6
+    nextNodeId: 58_1_6
     choices: []
     flagBranches: []
     varBranches: []
@@ -1245,12 +1361,14 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-1-6
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_1_6
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uC790\uC790, \uB3D9\uB8CC\uB07C\uB9AC \uB108\uBB34 \uBE61\uBE61\uD558\uAC8C
       \uAD74\uC9C0 \uB9D0\uC790\uACE0."
-    nextNodeId: 58-1-7
+    nextNodeId: 58_1_7
     choices: []
     flagBranches: []
     varBranches: []
@@ -1265,22 +1383,24 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-1-7
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_1_7
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uB2E5\uCCD0. \uC158\uC744 \uBD10\uC11C\uB77C\uB3C4 \uB118\uC5B4\uAC00
       \uC8FC\uB294 \uAC70\uC57C. \uD5C8\uD2BC\uC218\uC791 \uBD80\uB9AC\uBA74 \uC0C1\uBD80\uC5D0
       \uBCF4\uACE0\uD574 \uBC84\uB9B4 \uD14C\uB2C8\uAE4C."
-    nextNodeId: 58-1-8
+    nextNodeId: 58_1_8
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
-      expressionKey: frust
+      expressionKey: angry
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -1289,18 +1409,20 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-1-8
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_1_8
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uC624\uB298\uC740 \uADF8\uB0E5 \uC11C\uB85C \uBABB \uBCF8 \uAC70\uB85C
       \uD558\uBA74 \uC548 \uB420\uAE4C?"
-    nextNodeId: 58-1-9
+    nextNodeId: 58_1_9
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -1312,18 +1434,20 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-1-9
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_1_9
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uB098\uB3C4 \uADF8\uB0E5... \uD1F4\uADFC\uD558\uACE0 \uBAA9\uC774 \uC880
       \uB9D0\uB790\uC744 \uBFD0\uC774\uC57C. \uC548 \uADF8\uB798, <b>\uC140\uB9AC</b>?"
-    nextNodeId: 58-1-10
+    nextNodeId: 58_1_10
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -1335,18 +1459,20 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-1-10
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_1_10
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uC820\uC7A5 72. \uBC16\uC5D0\uC11C \uC774\uB984\uC73C\uB85C \uBD80\uB974\uC9C0
       \uB9D0\uB77C\uACE0 \uBA87 \uBC88\uC744 \uB9D0\uD574."
-    nextNodeId: 58-1-11
+    nextNodeId: 58_1_11
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -1358,7 +1484,9 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-1-11
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_1_11
     speakerKey: sally
     overrideSpeakerName: 
     text: "...\uB2F9\uC2E0\uC774\uB791 \uC220 \uB9C8\uC2E4 \uC0DD\uAC01 \uC5C6\uC5B4.
@@ -1369,7 +1497,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -1381,12 +1509,14 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-2-1
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_2_1
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC624\uB298\uC740 \uBABB \uBCF8 \uCC99\uD574\uB4DC\uB9B4\uD14C\uB2C8
       \uC774\uCBE4 \uD558\uC138\uC694."
-    nextNodeId: 58-2-2
+    nextNodeId: 58_2_2
     choices: []
     flagBranches: []
     varBranches: []
@@ -1401,12 +1531,14 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-2-2
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_2_2
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC77C\uB2E8 \uBB34\uAE30 \uBA3C\uC800 \uB0B4\uB824\uB193\uC73C\uC2DC\uACE0
       \uB2E4\uB4E4 \uC549\uC544\uBCF4\uC2DC\uC8E0."
-    nextNodeId: 58-2-3
+    nextNodeId: 58_2_3
     choices: []
     flagBranches: []
     varBranches: []
@@ -1421,12 +1553,14 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-2-3
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_2_3
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uBC14\uD150\uB354, \uBB34\uC2A8 \uC624\uD574\uAC00 \uC788\uB294 \uBAA8\uC591\uC778\uB370,
       \uC6B0\uB9B0 \uADF8\uC800 \uC220\uB9CC \uB9C8\uC2DC\uB7EC \uC628 \uAC70\uC57C."
-    nextNodeId: 58-2-4
+    nextNodeId: 58_2_4
     choices: []
     flagBranches: []
     varBranches: []
@@ -1441,12 +1575,14 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-2-4
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_2_4
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uC5EC\uAE30 <b>\uC140\uB9AC</b>\uB791 \uB098\uB294 \uADF8.. \uC624\uB79C
       \uCE5C\uAD6C\uAC70\uB4E0!"
-    nextNodeId: 58-2-5
+    nextNodeId: 58_2_5
     choices: []
     flagBranches: []
     varBranches: []
@@ -1461,12 +1597,14 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-2-5
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_2_5
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uC820\uC7A5 72. \uBC16\uC5D0\uC11C \uC774\uB984\uC73C\uB85C \uBD80\uB974\uC9C0
       \uB9D0\uB77C\uACE0 \uBA87 \uBC88\uC744 \uB9D0\uD574."
-    nextNodeId: 58-2-6
+    nextNodeId: 58_2_6
     choices: []
     flagBranches: []
     varBranches: []
@@ -1481,18 +1619,20 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-2-6
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_2_6
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uADF8\uB807\uAC8C \uB9D0\uD558\uB2C8\uAE4C \uB354 \uC218\uC0C1\uD574
       \uBCF4\uC774\uC796\uC544!"
-    nextNodeId: 58-2-7
+    nextNodeId: 58_2_7
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -1504,19 +1644,21 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-2-7
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_2_7
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uD558! <b>\uADF8\uB0E5 \uC220\uB9CC \uB9C8\uC2DC\uB7EC \uC654\uB2E4\uACE0?</b>
       \uADF8 <b>\uB3D9\uC804</b>\uC73C\uB85C? \uC218\uC0C1\uD574\uB3C4 \uB108\uBB34
       \uC218\uC0C1\uD558\uB2E4\uB294 \uC0DD\uAC01 \uC548 \uB4E4\uC5B4?"
-    nextNodeId: 58-2-8
+    nextNodeId: 58_2_8
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -1528,17 +1670,19 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-2-8
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_2_8
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uC800..\uC815\uB9D0\uC774\uC57C! \uADF8\uB807\uC9C0? \uC140\uB9AC?"
-    nextNodeId: 58-2-9
+    nextNodeId: 58_2_9
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -1550,17 +1694,19 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-2-9
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_2_9
     speakerKey: sally
     overrideSpeakerName: 
     text: ...
-    nextNodeId: 58-2-10
+    nextNodeId: 58_2_10
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -1572,17 +1718,19 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-2-10
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_2_10
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uADF8\uB9CC\uD574 72. \uC6A9\uAC74\uB9CC \uB05D\uB0B4\uACE0 \uB098\uAC00\uC9C0."
-    nextNodeId: 58-2-11
+    nextNodeId: 58_2_11
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -1594,20 +1742,22 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-2-11
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_2_11
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uD558! \uC140\uB9AC! \uC774\uB7EC\uAE30\uC57C?"
-    nextNodeId: 58-2-12
+    nextNodeId: 58_2_12
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
-      expressionKey: devas
+      expressionKey: frust
       slotIndex: 0
     - characterKey: sally
       expressionKey: mid
@@ -1616,21 +1766,23 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-2-12
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_2_12
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uB108 \uAC19\uC740 \uBA4D\uCCAD\uC774\uB791 \uAC19\uC774 \uC788\uC73C\uBA74
       \uD56D\uC0C1 \uBB38\uC81C\uAC00 \uC0DD\uACA8."
-    nextNodeId: 58-2-13
+    nextNodeId: 58_2_13
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
-      expressionKey: devas
+      expressionKey: frust
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -1639,20 +1791,22 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-2-13
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_2_13
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uD2C0\uB9B0 \uB9D0\uC740 \uC544\uB2C8\uAD70."
-    nextNodeId: 58-2-14
+    nextNodeId: 58_2_14
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: devas
+      expressionKey: frust
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -1661,21 +1815,23 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-2-14
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_2_14
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uB3D9\uB8CC\uB07C\uB9AC \uB108\uBB34 \uBE61\uBE61\uD558\uAC8C \uAD74\uC9C0
       \uB9D0\uB77C\uACE0\u2026"
-    nextNodeId: 58-2-15
+    nextNodeId: 58_2_15
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: devas
+      expressionKey: frust
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -1684,7 +1840,9 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 58-2-15
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 58_2_15
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uB2E5\uCCD0. \uC158\uC744 \uBD10\uC11C\uB77C\uB3C4 \uB118\uC5B4\uAC00
@@ -1696,10 +1854,10 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
-      expressionKey: devas
+      expressionKey: frust
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -1708,6 +1866,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 59
     speakerKey: shaun
     overrideSpeakerName: 
@@ -1719,18 +1879,20 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
-      expressionKey: devas
+      expressionKey: mid
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 60
     speakerKey: f72
     overrideSpeakerName: 
@@ -1741,18 +1903,20 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: smile
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 61
     speakerKey: shaun
     overrideSpeakerName: 
@@ -1764,18 +1928,20 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: smile
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 62
     speakerKey: f72
     overrideSpeakerName: 
@@ -1785,13 +1951,13 @@ MonoBehaviour:
     choices:
     - buttonText: "<b>(\uD654\uD3D0\uB85C \uBC1B\uAE30)</b> \uACF5\uC2DD \uD654\uD3D0\uB85C
         \uC8FC\uC2DC\uC8E0. \uB300\uC2E0 \uB450 \uBC30\uB85C \uBC1B\uACA0\uC2B5\uB2C8\uB2E4."
-      nextNodeId: 63-1-1
+      nextNodeId: 63_1_1
       setFlags: []
       clearFlags: []
       varChanges: []
     - buttonText: "<b>(\uB3D9\uC804\uC73C\uB85C \uBC1B\uAE30)</b> \uB124. \uB300\uC2E0
         \uB450 \uBC30\uB85C \uC8FC\uC2DC\uC8E0."
-      nextNodeId: 63-2-1
+      nextNodeId: 63_2_1
       setFlags: []
       clearFlags: []
       varChanges: []
@@ -1799,65 +1965,71 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: laugh
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 63-1-1
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 63_1_1
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uACF5\uC2DD \uD654\uD3D0\uB85C \uC8FC\uC2DC\uC8E0. \uB300\uC2E0 \uB450
       \uBC30\uB85C \uBC1B\uACA0\uC2B5\uB2C8\uB2E4."
-    nextNodeId: 63-1-2
+    nextNodeId: 63_1_2
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: laugh
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 63-1-2
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 63_1_2
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uBB50? \uADF8\uAC74 \uB108\uBB34\uD558\uC796\uC544! \uC774\uAC83\uB3C4
       \uB3C8\uC774\uB77C\uACE0!"
-    nextNodeId: 63-1-3
+    nextNodeId: 63_1_3
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
-      expressionKey: devas
+      expressionKey: frust
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 63-1-3
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 63_1_3
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uD38D\uC5D0\uC11C \uC18C\uB780 \uD53C\uC6B4 \uAC12\uC785\uB2C8\uB2E4."
@@ -1867,85 +2039,93 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
-      expressionKey: devas
+      expressionKey: frust
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 63-2-1
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 63_2_1
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uB124. \uB300\uC2E0 \uB450 \uBC30\uB85C \uC8FC\uC2DC\uC8E0."
-    nextNodeId: 63-2-2
+    nextNodeId: 63_2_2
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: laugh
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 63-2-2
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 63_2_2
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uBB50? \uADF8\uAC74 \uB108\uBB34\uD558\uC796\uC544!"
-    nextNodeId: 63-2-3
+    nextNodeId: 63_2_3
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
-      expressionKey: devas
+      expressionKey: frust
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 63-2-3
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 63_2_3
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uD38D\uC5D0\uC11C \uC18C\uB780 \uD53C\uC6B4 \uAC12\uC785\uB2C8\uB2E4."
-    nextNodeId: 63-2-4
+    nextNodeId: 63_2_4
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
-      expressionKey: devas
+      expressionKey: frust
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 63-2-4
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 63_2_4
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uB09C \uBAA8\uB978\uB2E4. \uB4B7\uAC10\uB2F9\uC740 \uB124\uAC00 \uD574\uB77C."
@@ -1955,18 +2135,20 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: devas
+      expressionKey: frust
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 64
     speakerKey: 
     overrideSpeakerName: 
@@ -1977,19 +2159,21 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: devas
+      expressionKey: frust
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 1
     craftingTicketKey: sc1_f72
-    nextNodeIdGood: 64-1-1
-    nextNodeIdBad: 64-2-1
-  - nodeId: 64-1-1
+    nextNodeIdGood: 64_1_1
+    nextNodeIdBad: 64_2_1
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 64_1_1
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uD5C8, \uADF8\uB798\uB3C4 \uB3C8 \uC544\uAE4C\uC6B4 \uB9DB\uC740 \uC544\uB2C8\uB780
@@ -2000,42 +2184,46 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
       expressionKey: smile
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 64-2-1
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 64_2_1
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uC73C\uC545\u2026 \uC77C\uBD80\uB7EC \uC774\uB7F0 \uAC70 \uC8FC\uB294
       \uAC70\uC57C?"
-    nextNodeId: 64-2-2
+    nextNodeId: 64_2_2
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: devas
+      expressionKey: frust
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 64-2-2
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 64_2_2
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uAF34 \uC88B\uB124"
@@ -2045,18 +2233,20 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: laugh
       slotIndex: 2
     - characterKey: f72
-      expressionKey: devas
+      expressionKey: frust
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 65
     speakerKey: f54
     overrideSpeakerName: 
@@ -2067,18 +2257,20 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: mid
+      expressionKey: frust
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 66
     speakerKey: f72
     overrideSpeakerName: 
@@ -2090,18 +2282,20 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
       expressionKey: mid
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 67
     speakerKey: f54
     overrideSpeakerName: 
@@ -2114,18 +2308,20 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: mid
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 68
     speakerKey: f72
     overrideSpeakerName: 
@@ -2136,18 +2332,20 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: mid
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 69
     speakerKey: f72
     overrideSpeakerName: 
@@ -2159,18 +2357,20 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: mid
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 70
     speakerKey: f54
     overrideSpeakerName: 
@@ -2182,18 +2382,20 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: mid
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 71
     speakerKey: f54
     overrideSpeakerName: 
@@ -2205,18 +2407,20 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
       expressionKey: mid
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 72
     speakerKey: f72
     overrideSpeakerName: 
@@ -2228,18 +2432,20 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
       expressionKey: mid
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 73
     speakerKey: f72
     overrideSpeakerName: 
@@ -2251,18 +2457,20 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: annoy
+      expressionKey: angry
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 74
     speakerKey: f54
     overrideSpeakerName: 
@@ -2273,18 +2481,20 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: annoy
+      expressionKey: angry
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 75
     speakerKey: f72
     overrideSpeakerName: 
@@ -2296,18 +2506,20 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
       expressionKey: mid
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 76
     speakerKey: f72
     overrideSpeakerName: 
@@ -2321,18 +2533,20 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
       expressionKey: mid
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 77
     speakerKey: f72
     overrideSpeakerName: 
@@ -2345,18 +2559,20 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
       expressionKey: mid
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 78
     speakerKey: f54
     overrideSpeakerName: 
@@ -2368,18 +2584,20 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: mid
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 79
     speakerKey: f72
     overrideSpeakerName: 
@@ -2393,18 +2611,20 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: smile
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 80
     speakerKey: sally
     overrideSpeakerName: 
@@ -2417,7 +2637,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: smile
@@ -2429,6 +2649,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 81
     speakerKey: sally
     overrideSpeakerName: 
@@ -2440,7 +2662,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: smile
@@ -2452,6 +2674,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 82
     speakerKey: f54
     overrideSpeakerName: 
@@ -2462,7 +2686,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: frust
       slotIndex: 2
     - characterKey: f72
       expressionKey: smile
@@ -2474,6 +2698,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 83
     speakerKey: f54
     overrideSpeakerName: 
@@ -2486,7 +2712,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: frust
       slotIndex: 2
     - characterKey: f72
       expressionKey: smile
@@ -2498,6 +2724,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 84
     speakerKey: f72
     overrideSpeakerName: 
@@ -2509,10 +2737,10 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: frust
       slotIndex: 2
     - characterKey: f72
-      expressionKey: annoy
+      expressionKey: angry
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -2521,6 +2749,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 85
     speakerKey: f54
     overrideSpeakerName: 
@@ -2533,10 +2763,10 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: annoy
+      expressionKey: angry
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -2545,6 +2775,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 86
     speakerKey: sally
     overrideSpeakerName: 
@@ -2555,10 +2787,10 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: annoy
+      expressionKey: angry
       slotIndex: 0
     - characterKey: sally
       expressionKey: mid
@@ -2567,6 +2799,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 87
     speakerKey: f72
     overrideSpeakerName: 
@@ -2577,7 +2811,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -2589,6 +2823,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 88
     speakerKey: f54
     overrideSpeakerName: 
@@ -2601,7 +2837,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -2613,6 +2849,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 89
     speakerKey: f54
     overrideSpeakerName: 
@@ -2626,7 +2864,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -2638,6 +2876,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 90
     speakerKey: f54
     overrideSpeakerName: 
@@ -2650,7 +2890,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -2662,6 +2902,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 91
     speakerKey: f72
     overrideSpeakerName: 
@@ -2672,7 +2914,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -2684,6 +2926,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 92
     speakerKey: sally
     overrideSpeakerName: 
@@ -2696,7 +2940,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -2708,6 +2952,8 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 93
     speakerKey: sally
     overrideSpeakerName: 
@@ -2718,16 +2964,14 @@ MonoBehaviour:
     choices:
     - buttonText: "\uC0B4\uAE30 \uC704\uD55C \uC120\uD0DD\uC744 \uBE44\uB09C\uD560
         \uC21C \uC5C6\uC8E0."
-      nextNodeId: 94-1-1
+      nextNodeId: 94_1_1
       setFlags:
       - sc1_true
       clearFlags: []
-      varChanges:
-      - varName: sally
-        delta: 5
+      varChanges: []
     - buttonText: "\uC5B4\uB5A4 \uC774\uC720\uB4E0, \uBC94\uC8C4\uB294 \uD574\uB2F5\uC774
         \uB420 \uC218 \uC5C6\uC5B4\uC694."
-      nextNodeId: 94-2-1
+      nextNodeId: 94_2_1
       setFlags: []
       clearFlags: []
       varChanges: []
@@ -2735,7 +2979,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -2747,18 +2991,20 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-1
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_1
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC0B4\uAE30 \uC704\uD55C \uC120\uD0DD\uC744 \uBE44\uB09C\uD560 \uC21C
       \uC5C6\uC8E0."
-    nextNodeId: 94-1-2
+    nextNodeId: 94_1_2
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -2770,18 +3016,20 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-2
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_2
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uAC8C\uB2E4\uAC00 \uC5C4\uBC00\uD788 \uB530\uC838\uC11C \uB0A8\uD55C\uD14C
       \uD574\uB97C \uB07C\uCE58\uB294 \uAC83\uB3C4 \uC544\uB2C8\uC796\uC544\uC694."
-    nextNodeId: 94-1-3
+    nextNodeId: 94_1_3
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -2793,17 +3041,19 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-3
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_3
     speakerKey: sally
     overrideSpeakerName: 
     text: ...
-    nextNodeId: 94-1-4
+    nextNodeId: 94_1_4
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -2815,18 +3065,20 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-4
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_4
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uC158, \uB108\uAE4C\uC9C0 \uC65C \uADF8\uB798? \uC778\uAC04\uC73C\uB85C\uC11C
       \uB118\uC9C0 \uB9D0\uC544\uC57C \uD560 \uC120\uC774\uB77C\uB294 \uAC8C \uC788\uC796\uC544!"
-    nextNodeId: 94-1-5
+    nextNodeId: 94_1_5
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: frust
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -2838,18 +3090,20 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-5
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_5
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC140\uB9AC \uB9D0\uB300\uB85C \uC6B0\uB9B0 5\uBC88\uAC00\uC758 \uC0AC\uB78C\uB4E4\uC774
       \uC5B4\uB5BB\uAC8C \uC0B4\uC544\uAC00\uB294\uC9C0 \uBAA8\uB974\uC796\uC544."
-    nextNodeId: 94-1-6
+    nextNodeId: 94_1_6
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: frust
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -2861,18 +3115,20 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-6
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_6
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uBC14\uD150\uB354, \uB2F9\uC2E0... \uC758\uC678\uB85C \uC138\uC0C1\uC758
       \uC4F4\uB9DB\uC744 \uC544\uB294\uAD70."
-    nextNodeId: 94-1-7
+    nextNodeId: 94_1_7
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: frust
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -2884,17 +3140,19 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-7
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_7
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uBC14\uD150\uB354\uB294 \uB9CE\uC740 \uB9DB\uC5D0 \uC775\uC219\uD558\uB2F5\uB2C8\uB2E4."
-    nextNodeId: 94-1-8
+    nextNodeId: 94_1_8
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: frust
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -2906,17 +3164,19 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-8
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_8
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uC820\uC7A5, \uC81C\uBC95\uC774\uAD70."
-    nextNodeId: 94-1-9
+    nextNodeId: 94_1_9
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: frust
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -2928,19 +3188,21 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-9
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_9
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uADF8\uB798. 5\uBC88\uAC00 \uC560\uB4E4\uD55C\uD14C \uC778\uAC04\uC131\uC744
       \uBB3B\uB294 \uAC74 \uB108\uBB34 \uAC00\uD639\uD55C \uC77C\uC774\uC9C0. \uD558\uC9C0\uB9CC
       \uC140\uB9AC, \uB098\uB3C4 \uADF8 \uC815\uB3C4\uC77C \uC904\uC740 \uBAB0\uB790\uC5B4."
-    nextNodeId: 94-1-10
+    nextNodeId: 94_1_10
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: frust
       slotIndex: 2
     - characterKey: f72
       expressionKey: mid
@@ -2952,17 +3214,19 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-10
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_10
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uAC10 \uC7A1\uC558\uC73C\uBA74 \uB410\uC5B4."
-    nextNodeId: 94-1-11
+    nextNodeId: 94_1_11
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: frust
       slotIndex: 2
     - characterKey: f72
       expressionKey: mid
@@ -2974,19 +3238,21 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-11
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_11
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uC800\uBC88\uC5D0 \uB2F9\uC2E0\uC774 \uC900 \uC815\uBCF4 \uB355\uBD84\uC5D0
       \uC624\uB298 \uBA87 \uBA85\uC740 \uC18C\uAC01\uC7A5\uC5D0 \uC548 \uAC00\uACE0
       \uD3B8\uD788 \uC7A0\uB4E4 \uC218 \uC788\uACA0\uC9C0."
-    nextNodeId: 94-1-12
+    nextNodeId: 94_1_12
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: frust
       slotIndex: 2
     - characterKey: f72
       expressionKey: mid
@@ -2998,18 +3264,20 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-12
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_12
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uC544\uBB34\uD2BC, \uC2DC\uAC04\uC774 \uB2A6\uC5C8\uB124. 72. \uC774\uB9CC
       \uAC00\uBD10\uC57C\uACA0\uC5B4."
-    nextNodeId: 94-1-13
+    nextNodeId: 94_1_13
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: frust
       slotIndex: 2
     - characterKey: f72
       expressionKey: mid
@@ -3021,18 +3289,20 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-13
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_13
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uC7A0\uAE50, \uBC8C\uC368 \uAC00\uB294 \uAC70\uC57C? \uD55C\uC794\uD558\uACE0
       \uAC00\uC9C0?"
-    nextNodeId: 94-1-14
+    nextNodeId: 94_1_14
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: frust
       slotIndex: 2
     - characterKey: f72
       expressionKey: mid
@@ -3044,39 +3314,43 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-14
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_14
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uB2E4\uC74C\uC5D0 \uB610 \uBCF4\uC790 \uBC14\uD150\uB354."
-    nextNodeId: 94-1-15
+    nextNodeId: 94_1_15
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: frust
       slotIndex: 2
     - characterKey: f72
       expressionKey: mid
       slotIndex: 0
     - characterKey: sally
-      expressionKey: aim
+      expressionKey: smile
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-15
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_15
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uC7A0\uAE50, \uAC19\uC774 \uAC00!"
-    nextNodeId: 94-1-16
+    nextNodeId: 94_1_16
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: frust
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -3085,129 +3359,145 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-16
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_16
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uD5C8."
-    nextNodeId: 94-1-17
+    nextNodeId: 94_1_17
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-17
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_17
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uC158, \uC774\uC81C \uB124 \uD38D\uC774\uB2C8\uAE4C \uC0C1\uAD00\uC740
       \uC548 \uD560\uAC8C."
-    nextNodeId: 94-1-18
+    nextNodeId: 94_1_18
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-18
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_18
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uD558\uC9C0\uB9CC \uC194\uC9C1\uD788 \uB124\uAC00 \uC800\uB188\uB4E4\uC774\uB791
       \uC5EE\uC774\uB294 \uAC74 \uBD88\uC548\uD574."
-    nextNodeId: 94-1-19
+    nextNodeId: 94_1_19
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-19
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_19
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uD55C\uBC88 \uB9C8\uC74C\uC744 \uB0B4\uC8FC\uBA74 \uB108\uB97C \uAC09\uC544\uBA39\uC744
       \uB188\uB4E4\uC774\uC57C."
-    nextNodeId: 94-1-20
+    nextNodeId: 94_1_20
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-20
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_20
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uB098\uB294 \uC774 \uD38D\uC774 \uADF8\uB7F0 \uB054\uCC0D\uD55C \uC9C4\uC2E4\uC744
       \uC5B4\uCA54 \uC218 \uC5C6\uB294 \uC77C\uC774\uB77C\uBA70 \uC220\uB85C \uC53B\uC5B4\uB0B4\uB294
       \uACF3\uC774 \uB418\uC9C0 \uC54A\uAE38 \uBC14\uB784 \uBFD0\uC774\uC57C. \uADF8\uB7EC\uB2C8\uAE4C\u2026"
-    nextNodeId: 94-1-21
+    nextNodeId: 94_1_21
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-21
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_21
     speakerKey: shaun
     overrideSpeakerName: 
     text: 54.
-    nextNodeId: 94-1-22
+    nextNodeId: 94_1_22
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-22
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_22
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uBB34\uC2A8 \uB9D0\uC778\uC9C0 \uC54C\uC544. \uAC71\uC815\uD558\uC9C0\uB9C8."
-    nextNodeId: 94-1-23
+    nextNodeId: 94_1_23
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-23
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_23
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uBBF8\uC548, \uB9D0\uC774 \uB9CE\uC544\uC84C\uB124, \uC2DC\uAC04\uB3C4
       \uB2A6\uC5C8\uB294\uB370 \uC774\uB9CC \uB4E4\uC5B4\uAC00\uBCFC\uAC8C."
-    nextNodeId: 94-1-24
+    nextNodeId: 94_1_24
     choices: []
     flagBranches: []
     varBranches: []
@@ -3219,23 +3509,27 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-24
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_24
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uC158\u2026 \uADF8\u2026 \uC788\uC796\uC544\u2026"
-    nextNodeId: 94-1-25
+    nextNodeId: 94_1_25
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-1-25
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_1_25
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uBB34\uC2A8 \uC77C \uC788\uC73C\uBA74 \uAF2D \uC5F0\uB77D\uD574."
@@ -3245,73 +3539,79 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: smile
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-2-1
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_2_1
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC5B4\uB5A4 \uC774\uC720\uB4E0, \uBC94\uC8C4\uB294 \uD574\uB2F5\uC774
       \uB420 \uC218 \uC5C6\uC5B4\uC694."
-    nextNodeId: 94-2-2
+    nextNodeId: 94_2_2
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
-      expressionKey: frust
+      expressionKey: mid
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-2-2
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_2_2
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uB3D9\uB8CC\uC758 \uC8FD\uC74C\uC744 \uC774\uC6A9\uD574 \uC5F0\uBA85\uD558\uB294
       \uAC83\uBCF4\uB2E4 \uB354 \uB098\uC740 \uBC29\uC2DD\uC774 \uC788\uC744 \uAC70\uC608\uC694."
-    nextNodeId: 94-2-3
+    nextNodeId: 94_2_3
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
-      expressionKey: frust
+      expressionKey: mid
       slotIndex: 0
     - characterKey: sally
-      expressionKey: angry
+      expressionKey: mid
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-2-3
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_2_3
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uBC14\uD150\uB354, \uB2F9\uC2E0\uC740 \uBC30\uAC00 \uBD88\uB7EC\uC11C
       \uADF8\uB7F0 \uC18C\uB9B4 \uD558\uB294 \uAC70\uC57C."
-    nextNodeId: 94-2-4
+    nextNodeId: 94_2_4
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
-      expressionKey: frust
+      expressionKey: mid
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -3320,23 +3620,25 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-2-4
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_2_4
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uB2F9\uC7A5 \uB0B4\uC77C \uC544\uCE68\uC5D0 \uB208\uC744 \uB5B4\uC744
       \uB54C, \uB124 \uD314\uB2E4\uB9AC\uAC00 \uAE30\uACC4\uB85C \uBC14\uB014\uC9C0
       \uC544\uB2C8\uBA74 \uC18C\uAC01\uC7A5\uC5D0 \uB358\uC838\uC9C8\uC9C0 \uAC71\uC815\uD574
       \uBCF8 \uC801 \uC788\uC5B4?"
-    nextNodeId: 94-2-5
+    nextNodeId: 94_2_5
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: angry
       slotIndex: 2
     - characterKey: f72
-      expressionKey: frust
+      expressionKey: mid
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -3345,22 +3647,24 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-2-5
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_2_5
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uC158 \uB9D0\uC774 \uB9DE\uC544. \uC140\uB9AC, \uADF8\uB807\uB2E4\uACE0
       \uD574\uC11C \uADF8\uB7F0 \uC9D3\uC774 \uC815\uB2F9\uD654\uB418\uC9C0\uB294
       \uC54A\uC544."
-    nextNodeId: 94-2-6
+    nextNodeId: 94_2_6
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: frust
+      expressionKey: mid
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -3369,20 +3673,22 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-2-6
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_2_6
     speakerKey: sally
     overrideSpeakerName: 
     text: "<b>\uB2E5\uCCD0!</b> \uACE0\uC0C1\uD55C \uCC99\uD558\uC9C0 \uB9C8!"
-    nextNodeId: 94-2-7
+    nextNodeId: 94_2_7
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: frust
+      expressionKey: mid
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -3391,21 +3697,23 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-2-7
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_2_7
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uC81C\uAE30\uB784, \uC5ED\uC2DC 9\uBC88\uAC00\uC5D0 \uC624\uB294 \uAC8C
       \uC544\uB2C8\uC5C8\uC5B4! \uC5F0\uD569 \uB188\uB4E4\uC774\uB791 \uD55C\uD1B5\uC18D\uC774\uAD70."
-    nextNodeId: 94-2-8
+    nextNodeId: 94_2_8
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: frust
+      expressionKey: mid
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -3414,22 +3722,24 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-2-8
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_2_8
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uB09C \uC5F0\uD569\uB188\uB4E4\uC744 \uC704\uD574 \uC77C\uD558\uB294
       \uAC8C \uC544\uB2C8\uC57C. \uB098 \uC790\uC2E0\uACFC \uB0B4 \uCE5C\uAD6C\uB4E4\uC744
       \uC704\uD574 \uC77C\uD558\uB294 \uAC70\uC9C0."
-    nextNodeId: 94-2-9
+    nextNodeId: 94_2_9
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: frust
+      expressionKey: mid
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -3438,21 +3748,23 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-2-9
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_2_9
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uC2A4\uC2A4\uB85C\uB97C \uC704\uD574 <b>\uB354\uB7EC\uC6B4 \uC77C</b>\uC744
       \uD558\uB294 \uAC74 \uB108\uB3C4 \uB9C8\uCC2C\uAC00\uC9C0\uC796\uC544."
-    nextNodeId: 94-2-10
+    nextNodeId: 94_2_10
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: frust
+      expressionKey: mid
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -3461,21 +3773,23 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-2-10
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_2_10
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uC785 \uB2E4\uBB3C\uC5B4. \uB108\uB791 \uB098\uB294 \uD558\uB098\uB3C4
       \uC548 \uAC19\uC544."
-    nextNodeId: 94-2-11
+    nextNodeId: 94_2_11
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: frust
+      expressionKey: mid
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -3484,21 +3798,23 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-2-11
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_2_11
     speakerKey: sally
     overrideSpeakerName: 
     text: "72. \uB2E4\uC74C\uC5D0 \uC5F0\uB77D\uD574. \uC774\uB534 \uACF3\uC5D0\uB294
       \uC870\uAE08\uB3C4 \uB354 \uC788\uACE0 \uC2F6\uC9C0 \uC54A\uC73C\uB2C8\uAE4C."
-    nextNodeId: 94-2-12
+    nextNodeId: 94_2_12
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: frust
+      expressionKey: mid
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -3507,17 +3823,19 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-2-12
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_2_12
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uC138..\uC140\uB9AC! \uC5B4\uB514\uAC00! \uC7A0\uAE50\uB9CC \uAE30\uB2E4\uB824!"
-    nextNodeId: 94-2-13
+    nextNodeId: 94_2_13
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -3526,61 +3844,69 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-2-13
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_2_13
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uD5C8."
-    nextNodeId: 94-2-14
+    nextNodeId: 94_2_14
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-2-14
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_2_14
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uC544\uBB34\uAC1C\uB188\uB4E4 \uC0C1\uD669\uC774 \uC774 \uC815\uB3C4\uC77C
       \uC904\uC740 \uBAB0\uB790\uB294\uB370."
-    nextNodeId: 94-2-15
+    nextNodeId: 94_2_15
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-2-15
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_2_15
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC9C4\uC2EC\uC774\uC5C8\uC5B4? \uC2A4\uC2A4\uB85C\uB97C \uC704\uD574
       \uB354\uB7EC\uC6B4 \uC77C\uC744 \uD55C\uB2E4\uB294 \uB9D0."
-    nextNodeId: 94-2-16
+    nextNodeId: 94_2_16
     choices: []
     flagBranches: []
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-2-16
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_2_16
     speakerKey: f54
     overrideSpeakerName: 
     text: "\u2026\uBB50, \uAC70\uC9D3\uB9D0\uC740 \uC544\uB2C8\uC57C."
-    nextNodeId: 94-2-17
+    nextNodeId: 94_2_17
     choices: []
     flagBranches: []
     varBranches: []
@@ -3592,11 +3918,13 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-2-17
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_2_17
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC9C4\uC2EC\uC774\uC5C8\uB0D0\uB2C8\uAE4C."
-    nextNodeId: 94-2-18
+    nextNodeId: 94_2_18
     choices: []
     flagBranches: []
     varBranches: []
@@ -3604,16 +3932,21 @@ MonoBehaviour:
     - characterKey: f54
       expressionKey: mid
       slotIndex: 2
+    - characterKey: f54
+      expressionKey: mid
+      slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-2-18
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_2_18
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uBBF8\uC548, \uB9D0\uC774 \uB9CE\uC544\uC84C\uB124, \uC2DC\uAC04\uB3C4
       \uB2A6\uC5C8\uB294\uB370 \uC774\uB9CC \uB4E4\uC5B4\uAC00 \uBCFC\uAC8C."
-    nextNodeId: 94-2-19
+    nextNodeId: 94_2_19
     choices: []
     flagBranches: []
     varBranches: []
@@ -3621,15 +3954,20 @@ MonoBehaviour:
     - characterKey: f54
       expressionKey: mid
       slotIndex: 2
+    - characterKey: f54
+      expressionKey: mid
+      slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-2-19
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_2_19
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\u202654. \uADF8\u2026 \uC788\uC796\uC544\u2026"
-    nextNodeId: 94-2-20
+    nextNodeId: 94_2_20
     choices: []
     flagBranches: []
     varBranches: []
@@ -3637,15 +3975,20 @@ MonoBehaviour:
     - characterKey: f54
       expressionKey: mid
       slotIndex: 2
+    - characterKey: f54
+      expressionKey: mid
+      slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-2-20
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_2_20
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uBB34\uC2A8 \uC77C \uC788\uC73C\uBA74 \uAF2D \uC5F0\uB77D\uD574."
-    nextNodeId: 94-2-21
+    nextNodeId: 94_2_21
     choices: []
     flagBranches: []
     varBranches: []
@@ -3653,11 +3996,16 @@ MonoBehaviour:
     - characterKey: f54
       expressionKey: mid
       slotIndex: 2
+    - characterKey: f54
+      expressionKey: mid
+      slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
-  - nodeId: 94-2-21
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 94_2_21
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uC54C\uC558\uB2E4\uACE0."
@@ -3667,9 +4015,43 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
+      expressionKey: smile
+      slotIndex: 2
+    - characterKey: f54
       expressionKey: mid
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 
+    speakerKey: 
+    overrideSpeakerName: 
+    text: 
+    nextNodeId: 
+    choices:
+    - buttonText: 
+      nextNodeId: 
+      setFlags: []
+      clearFlags: []
+      varChanges: []
+    flagBranches:
+    - requiredFlag: 
+      nextNodeId: 
+    varBranches: []
+    characters:
+    - characterKey: 
+      expressionKey: 
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingTicketKey: 
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    bgmCommand: 0
+    bgmClipName: 
+  episodeDescription: 
+  iconNameBoard: 
+  iconNameArchive: 
+  characters: []

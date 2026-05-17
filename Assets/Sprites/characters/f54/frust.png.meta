@@ -103,12 +103,12 @@ TextureImporter:
       name: frust_0
       rect:
         serializedVersion: 2
-        x: 202
+        x: 0
         y: 0
-        width: 587
-        height: 960
+        width: 548
+        height: 1440
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 4253cac9b8421c5419afe14e8a709000
     internalID: 0
     vertices: []
     indices: 

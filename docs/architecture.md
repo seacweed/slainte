@@ -32,16 +32,21 @@
 
 **3. 캐릭터 표시 (`Assets/Scripts/Presentation/`)**
 
-- `CharacterView` — 프리팹 루트에 부착. `Setup(Sprite)` + `SwapSprite(Sprite, widthOverride)` + `PlayAppearAnimation()` / `PlayDisappearAnimation()` 제공. fade+rise+pop 애니메이션 처리. 슬롯 하단 기준으로 배치.
-  - `ApplySlotLayout(slot, widthOverride)` — `widthOverride`가 0이면 슬롯 전체 폭을 stretch로 채움(기본 600px). 양수면 슬롯 중심점 기준으로 해당 너비를 고정 적용해 인접 슬롯 영역까지 시각적으로 침범 가능.
+- `CharacterView` — 프리팹 루트에 부착. `Setup(Sprite, Sprite?)` + `SwapSprite(Sprite, Sprite?)` + `PlayAppearAnimation()` / `PlayDisappearAnimation()` 제공. fade+rise+pop 애니메이션 처리. 슬롯 하단 기준으로 배치.
+  - `ApplySlotLayout(slot)` — 슬롯 높이(1440, 화면 전체)를 채우고 `HeightControlsWidth` ARF로 스프라이트 원본 비율 유지하며 너비 자동 결정. 슬롯의 x 위치가 캐릭터 수평 중심.
+  - `AttachOverlayToFrontContainer(frontContainer)` — `VisualOverlay` 자식을 `frontContainer`로 reparent(`worldPositionStays: true`). 이후 애니메이션/alpha는 `Visual`과 동기화됨. `OnDestroy` 시 overlay GameObject 자동 정리.
+  - `GetVisualWorldBoundsX(out float left, out float right)` — `_visualRT.GetWorldCorners()`로 스프라이트의 실제 화면 공간 X 경계를 반환. `HeightControlsWidth` ARF가 너비를 확정하려면 1프레임이 필요하므로, 생성 직후 호출 시 부정확할 수 있음.
+  - 프리팹 자식 구조: `Visual`(바 테이블 뒤) + `VisualOverlay`(바 테이블 앞). overlay sprite가 null이면 `VisualOverlay`는 비활성화됨.
 - `CharacterStage` — 슬롯 배열을 관리하고 `CharacterView`를 생성. `_activeViews`(key→view)와 `_activeSlotIndices`(key→슬롯 인덱스)로 현재 스테이지 상태를 추적합니다.
-  - `ShowCharacters(IReadOnlyList<CharacterSlotEntry>, onAllShown)` — 신규 캐릭터는 입장 애니메이션, 기존 캐릭터는 스프라이트 교체만 수행. 점유된 슬롯을 추적해 신규 캐릭터는 지정 슬롯 또는 빈 슬롯에 배정합니다. `ExpressionEntry.widthOverride`를 자동으로 읽어 `CharacterView`에 전달합니다.
-  - `SwapExpression(characterKey, expressionKey)` — 이미 스테이지에 있는 캐릭터의 표정만 교체. widthOverride도 함께 반영.
+  - `ShowCharacters(IReadOnlyList<CharacterSlotEntry>, onAllShown)` — 신규 캐릭터는 입장 애니메이션, 기존 캐릭터는 스프라이트 교체만 수행. 점유된 슬롯을 추적해 신규 캐릭터는 지정 슬롯 또는 빈 슬롯에 배정합니다.
+  - `SwapExpression(characterKey, expressionKey)` — 이미 스테이지에 있는 캐릭터의 표정만 교체.
+  - `GetActiveGroupCenterWorldX()` — 활성 캐릭터 전체의 스프라이트 좌우 끝 X값(world space) 평균을 반환. 캐릭터가 없으면 `Screen.width * 0.5f` 반환.
   - `CustomerSpawner`(영업 씬 손님)와 `EpisodeRunner`(에피소드) 모두 `CustomerStage` 하나를 공유합니다. 슬롯 5개.
 - `CharacterSlotEntry` — `{ characterKey, expressionKey, slotIndex }` 세 필드. `slotIndex`가 0 이상이면 해당 인덱스 슬롯에 직접 배치, `-1`(기본값)이면 빈 슬롯에 자동 배정. 슬롯 인덱스: 0=Center, 1=Left, 2=Right, 3=Left2, 4=Right2, 5~8=Interaction0~3(통합 스프라이트 전용).
-- `CharacterData` — 캐릭터 1명 = 파일 1개. `defaultSprite` + `List<ExpressionEntry>` (`{ key, sprite, widthOverride }`)로 모든 표정을 하나의 에셋에 보관.
+- `CharacterData` — 캐릭터 1명 = 파일 1개. `defaultSprite` + `defaultOverlaySprite` + `List<ExpressionEntry>` (`{ key, sprite, overlaySprite }`)로 모든 표정을 하나의 에셋에 보관.
+  - `nameColor` — 대화창 이름 텍스트 색상. Inspector에서 캐릭터별로 지정. `overrideSpeakerName`이 있어도 항상 `speakerKey` 기준 색상이 적용됨.
   - `GetSprite(expressionKey)` — 표정 키로 스프라이트 조회(없으면 defaultSprite 반환).
-  - `GetWidthOverride(expressionKey)` — 표정 키로 widthOverride 조회(없으면 0 반환). `ExpressionEntry.widthOverride`가 0이면 슬롯 기본 너비 사용, 양수면 해당 픽셀 너비로 렌더링.
+  - `GetOverlaySprite(expressionKey)` — overlay 스프라이트 조회(없으면 defaultOverlaySprite 반환). overlay가 불필요한 캐릭터는 모든 overlay 필드를 비워두면 됨.
   - **주인공은 1인칭 시점이므로 스프라이트 없음.** `CharacterData`는 화자 이름 표시용으로만 사용하고, `EpisodeNode.characters`에는 포함하지 않습니다.
 
 **4. 에피소드 (`Assets/Scripts/Conversation/Episode/`)**
@@ -60,6 +65,8 @@
 - `_waitingForChoice` — 선택지 대기 중
 - `_isTransitioning` — 선택지 슬라이드 업/다운 및 버튼 페이드 아웃 중
 - `IsWaitingForChoice` (public) — `_waitingForChoice || _isTransitioning`. `InputRouter`가 이 값으로 `dialogue.Advance()` 폴스루를 차단함
+
+캐릭터 포커스 pan: `ShowCharacters` 호출 직후 `StartPanCoroutine()`으로 1프레임 지연 코루틴을 시작해 `FrontCameraRig.PanToWorldCenterX(CharacterStage.GetActiveGroupCenterWorldX())`를 호출. 1프레임 지연은 ARF가 너비를 확정한 후 world bounds를 읽기 위함. 에피소드 종료 시 `cameraRig.ResetPan()` 호출.
 
 선택지 표시 흐름: 말풍선 슬라이드 업 완료 후 버튼 생성. 버튼 크기 1500×80, 간격 20px. 선택 시 나머지 버튼은 즉시 투명 처리 후, 선택 버튼만 페이드 아웃(0.35s) → 슬라이드 백 → 다음 노드 진행.
 
@@ -133,13 +140,16 @@ CustomerOrderData
 - `UIItemDraggable`: **Move** 모드(술병 — 원본 이동) / **Copy** 모드(잔/도구 — 원본 유지, 복사본 배치)
 - `UIDropSlot`: 유효 드롭 타겟. Tool은 `toolPlaceableOnTable=true`인 경우만 허용
 - `ShelfUI` / `DrawerUI`: `ItemDef` 배열에서 아이템 UI 생성
-- `FrontCameraRig`: `ICameraInputHandler` 구현. `InputRouter`로부터 `CameraDirection` 명령 수신
+- `FrontCameraRig`: `ICameraInputHandler` 구현. `InputRouter`로부터 `CameraDirection` 명령 수신. `frontWorld` RectTransform을 이동시켜 화면 전체를 pan.
+  - **에피소드 캐릭터 포커스**: `_focusX` 필드로 현재 X 오프셋(canvas units)을 추적. `PanToWorldCenterX(worldX)` — world X 좌표가 화면 중앙에 오도록 `_focusX`를 계산 후 이동. `ResetPan()` — `_focusX = 0`, 원점 복귀.
+  - **서랍 열기/닫기**: `SetDrawer(true)` — `drawerArea.anchoredPosition.x = -_focusX`로 drawer를 화면 중앙에 배치 후 카메라는 Y축만 이동(`_focusX` 유지). `SetDrawer(false)` — pan 완료 콜백에서 `drawerArea.anchoredPosition.x = 0` 복원. pan 완료 콜백은 `BeginMove`의 `onComplete` 파라미터로 전달.
+  - **주의**: `VisualOverlay`가 `frontContainer`(FrontCameraRig 자식)에 reparent된 이후에는 CharacterStage나 슬롯을 이동하면 Visual/Overlay가 desynced됨. 수평 pan은 반드시 `FrontCameraRig` 이동으로만 처리할 것. 배경/바 테이블 에셋은 화면보다 넓어야 함(와이드 에셋 필요, 현재 미완).
 
 **8. 대화 렌더링 (`Assets/Scripts/Conversation/DialogueController.cs`)**
 
 TMPro 타이핑 애니메이션. 모든 모드에서 공유하는 단일 컴포넌트입니다:
 - `StartDialogue(List<DialogueLine>)` — 손님 대화용 배치 큐 방식
-- `ShowSingleLine(speakerName, text)` — 에피소드 노드별 단일 출력
+- `ShowSingleLine(speakerName, text, nameColor)` — 에피소드 노드별 단일 출력. `nameColor`는 `CharacterData.nameColor`에서 전달됨
 - `SkipTypingIfNeeded()` — 타이핑 스킵 (InputRouter → EncounterRunner → DialogueController 경로)
 - `SlideUpForChoices(float amount, Action onComplete)` — 선택지 표시 시 말풍선을 위로 이동 (smoothstep)
 - `SlideBackToOrigin(Action onComplete)` — 선택지 해제 후 말풍선 원위치 복귀

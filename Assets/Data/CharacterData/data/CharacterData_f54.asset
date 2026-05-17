@@ -14,26 +14,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
   key: f54
   displayName: F54
-  defaultSprite: {fileID: -7963430592884048618, guid: 4d310ee0a1329f841922b53174e162a2, type: 3}
+  nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  defaultSprite: {fileID: 0}
+  defaultOverlaySprite: {fileID: 0}
   expressions:
   - key: mid
     sprite: {fileID: -7963430592884048618, guid: 4d310ee0a1329f841922b53174e162a2, type: 3}
-    widthOverride: 0
+    overlaySprite: {fileID: 0}
   - key: angry
     sprite: {fileID: -9082789242079819192, guid: dd947b3fb6646394d8600e9a5b086832, type: 3}
-    widthOverride: 0
+    overlaySprite: {fileID: 0}
   - key: frust
     sprite: {fileID: -9110267390277040692, guid: 82f01000fecef16408b3b7adf9e08058, type: 3}
-    widthOverride: 0
+    overlaySprite: {fileID: 0}
   - key: laugh
     sprite: {fileID: 3329039666740383113, guid: 20926e55f4f636e479bdc63aca56e744, type: 3}
-    widthOverride: 0
+    overlaySprite: {fileID: 0}
   - key: serious
     sprite: {fileID: -8196591245953746782, guid: 70a555a3df542d84bb2a150a92ab294a, type: 3}
-    widthOverride: 0
+    overlaySprite: {fileID: 0}
   - key: shame
     sprite: {fileID: -6991104958293179531, guid: aa23b2bd2e96bbc4fbed54c442a68f84, type: 3}
-    widthOverride: 0
+    overlaySprite: {fileID: 0}
   - key: smile
     sprite: {fileID: 8580352971482666360, guid: 13a2c8126088b0c438ac13b383bc2763, type: 3}
-    widthOverride: 0
+    overlaySprite: {fileID: 0}

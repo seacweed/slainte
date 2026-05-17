@@ -8,6 +8,7 @@
 - 후에 다양한 기능이 추가될 수 있으므로 OOP 기반 설계, 확장성 고려한 코드 작성
 - 계획부터 말하고 승인 받은 후에 작업 진행
 - 최적화를 고려한 코드 작성
+- claude.md 업데이트 시 프로젝트 전체를 아우르는 중심 내용만 이 파일에 작성, 세부 사항들은 docs의 개별 문서에 작성. 필요시 새로운 문서 생성하고 claude.md에 링크 추가.
 
 ## 프로젝트 개요
 
@@ -23,6 +24,7 @@
 - **씬 전환**: `GameManager` + `SceneTransitionManager` (Additive, 페이드)
 - **게임 상태**: `GameState.Episode` / `GameState.Rest`
 
+
 ## 문서
 
 필요한 섹션만 읽어 컨텍스트 부하를 줄이세요.
@@ -30,6 +32,7 @@
 | 문서 | 내용 |
 |---|---|
 | [docs/corescene-systems.md](docs/corescene-systems.md) | CoreScene 매니저 구조, 게임 흐름, 저장/로드 |
+| [docs/restscene-systems.md](docs/restscene-systems.md) | RestScene UI 시스템 (에피소드 보드, 상점, 현황판, 툴팁) |
 | [docs/architecture.md](docs/architecture.md) | 에피소드 실행 엔진, 캐릭터, 드래그드롭, 대화 시스템 |
 | [docs/scene-structure.md](docs/scene-structure.md) | 씬 계층 구조 (Canvas, Panel, GameObject) |
 | [docs/episode-csv-guide.md](docs/episode-csv-guide.md) | 에피소드 CSV 작성법 (섹션 구조, 열 설명, 예시) |
