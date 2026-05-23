@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: c24194f8e39730e45a0739d3a3562ba4
+guid: 7f619780fd466d44681d5fa7a905475f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 4784050376637317797
-    second: sally_mid_0
+      213: -4027058767215579801
+    second: blood_smileClosed_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: sally_mid_0
+      name: blood_smileClosed_0
       rect:
         serializedVersion: 2
-        x: 190
+        x: 0
         y: 0
-        width: 673
-        height: 819
+        width: 717
+        height: 1440
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5a28a07787c546240800000000000000
-      internalID: 4784050376637317797
+      spriteID: 76d2e7233630d18c0800000000000000
+      internalID: -4027058767215579801
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: abb3df17fe0417c489e279d482e26af0
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      sally_mid_0: 4784050376637317797
+      blood_smileClosed_0: -4027058767215579801
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

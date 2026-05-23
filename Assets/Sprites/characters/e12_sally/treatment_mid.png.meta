@@ -1,10 +1,13 @@
 fileFormatVersion: 2
-guid: ae99572c20e047a42bf4f61f61d67395
+guid: c598d9f11dd6e7d4991cb633b5e45abe
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3145912355117297475
-    second: sally_angry_0
+      213: 7309965523620982664
+    second: treatment_mid_0
+  - first:
+      213: 5596484292000835802
+    second: treatment_mid_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +103,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: sally_angry_0
+      name: treatment_mid_0
       rect:
         serializedVersion: 2
-        x: 190
+        x: 0
         y: 0
-        width: 673
-        height: 819
+        width: 1464
+        height: 1440
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 34f67458e9688ab20800000000000000
-      internalID: 3145912355117297475
+      spriteID: 88fe7c3f9e6327560800000000000000
+      internalID: 7309965523620982664
       vertices: []
       indices: 
       edges: []
@@ -125,7 +128,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 3bae8aa4a0d4ab64c98f1e83560527c0
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +138,8 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      sally_angry_0: 3145912355117297475
+      treatment_mid_0: 7309965523620982664
+      treatment_mid_1: 5596484292000835802
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

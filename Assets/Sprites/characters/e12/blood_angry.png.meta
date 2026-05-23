@@ -103,12 +103,12 @@ TextureImporter:
       name: blood_angry_0
       rect:
         serializedVersion: 2
-        x: 74
+        x: 0
         y: 0
-        width: 923
-        height: 954
+        width: 733
+        height: 1440
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 1cb2567b02d64ed488b80cc3575e9c92
     internalID: 0
     vertices: []
     indices: 

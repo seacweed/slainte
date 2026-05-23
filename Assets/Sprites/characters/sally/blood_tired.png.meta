@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 9ff6288cd47a10740aa509c53d9742ec
+guid: fc530715f5483da4da2175c742682fd3
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8661627432989629312
-    second: blood_tired2_0
+      213: 1620443861845200053
+    second: blood_tired_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,12 +100,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: blood_tired2_0
+      name: blood_tired_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 733
+        width: 717
         height: 1440
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 084efdfadb7bbc780800000000000000
-      internalID: -8661627432989629312
+      spriteID: 5bccebb5b19fc7610800000000000000
+      internalID: 1620443861845200053
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 72b764cae9fb7f043900f2ceffebcd57
+    spriteID: 0977d9d78789c4443b5e071f1b96483d
     internalID: 0
     vertices: []
     indices: 
@@ -135,8 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      blood_tired2_0: -8661627432989629312
-      blood_tired2_1: 499599981
+      blood_tired_0: 1620443861845200053
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

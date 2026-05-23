@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 4740474c6c48f974dbe4f6a6df7d3f12
+guid: b6cc3c9dcbb65374f8477edee2464098
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8847821066434499957
-    second: sally_smile_0
+      213: 357006442158401228
+    second: down_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: sally_smile_0
+      name: down_0
       rect:
         serializedVersion: 2
-        x: 190
+        x: 0
         y: 0
-        width: 673
-        height: 819
+        width: 1464
+        height: 1440
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: b8a24fa2e99363580800000000000000
-      internalID: -8847821066434499957
+      spriteID: cc6a067b77754f400800000000000000
+      internalID: 357006442158401228
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: c85cc4111c231544593a0d3f67b043bd
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      sally_smile_0: -8847821066434499957
+      down_0: 357006442158401228
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
