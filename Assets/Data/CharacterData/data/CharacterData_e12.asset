@@ -25,7 +25,7 @@ MonoBehaviour:
     sprite: {fileID: -9082789242079819192, guid: d85344b6917c950428d5057e7e00b3b1, type: 3}
     overlaySprite: {fileID: 0}
   - key: mid
-    sprite: {fileID: -5219576998399052325, guid: 657c0b304ff74c643af053e35101fe1c, type: 3}
+    sprite: {fileID: -7963430592884048618, guid: 70fc882d2f013bd4d9684aae2e61f003, type: 3}
     overlaySprite: {fileID: 0}
   - key: serious
     sprite: {fileID: -8196591245953746782, guid: b8b8878dc6c99544bae6690997ae4fe3, type: 3}
@@ -41,9 +41,6 @@ MonoBehaviour:
     overlaySprite: {fileID: 0}
   - key: blood_angry
     sprite: {fileID: -816692220500740878, guid: 0eeec726da6935541b6e63115aae2edc, type: 3}
-    overlaySprite: {fileID: 0}
-  - key: blood_down
-    sprite: {fileID: 2398190543187069550, guid: fa43c030749d9174c8049a23cde43799, type: 3}
     overlaySprite: {fileID: 0}
   - key: blood_mid
     sprite: {fileID: 3374994579945756278, guid: f748fbe783258a141abea3bc8e2b655d, type: 3}
@@ -66,6 +63,12 @@ MonoBehaviour:
   - key: injured_shame
     sprite: {fileID: 3149064482198111347, guid: eef7efdb42d143544b41f472270048bb, type: 3}
     overlaySprite: {fileID: 0}
-  - key: 
-    sprite: {fileID: 0}
+  - key: injured_smile
+    sprite: {fileID: 1807541585462638619, guid: 53c8a8c8b5658a54ea9c2e6bdb06d8d0, type: 3}
     overlaySprite: {fileID: 0}
+  - key: blood_tired2
+    sprite: {fileID: -8661627432989629312, guid: 9ff6288cd47a10740aa509c53d9742ec, type: 3}
+    overlaySprite: {fileID: 0}
+  - key: blood_down
+    sprite: {fileID: 357006442158401228, guid: b6cc3c9dcbb65374f8477edee2464098, type: 3}
+    overlaySprite: {fileID: 357006442158401228, guid: b6cc3c9dcbb65374f8477edee2464098, type: 3}

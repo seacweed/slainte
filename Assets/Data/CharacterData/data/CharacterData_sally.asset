@@ -19,26 +19,35 @@ MonoBehaviour:
   defaultOverlaySprite: {fileID: 0}
   expressions:
   - key: mid
-    sprite: {fileID: 6494483499360657168, guid: 8d57a1abb0fb0f040b7cacd95875d75f, type: 3}
+    sprite: {fileID: -4509229159563578660, guid: 5fe8253a33a1c914eb8395b5be472275, type: 3}
     overlaySprite: {fileID: 0}
   - key: aim
-    sprite: {fileID: -2174666509651120633, guid: 43d38cc0c2a3d354d8358771fe8bfa55, type: 3}
+    sprite: {fileID: 58537775430694542, guid: cd25eadb51322a341aad1a0fe95d0e2c, type: 3}
     overlaySprite: {fileID: 0}
   - key: angry
-    sprite: {fileID: 3145912355117297475, guid: ae99572c20e047a42bf4f61f61d67395, type: 3}
+    sprite: {fileID: -9082789242079819192, guid: d75ff4c98af32164299458ecf76ff6b4, type: 3}
     overlaySprite: {fileID: 0}
   - key: smile
-    sprite: {fileID: -8847821066434499957, guid: 4740474c6c48f974dbe4f6a6df7d3f12, type: 3}
+    sprite: {fileID: 8580352971482666360, guid: 21c780eda21af25458182e93a00a920b, type: 3}
     overlaySprite: {fileID: 0}
   - key: blood_angry
-    sprite: {fileID: -6795192134317491185, guid: 7cf3402f9310c20468576734a4aa386d, type: 3}
+    sprite: {fileID: -816692220500740878, guid: fd76f46fe03483a408889ed0b78c95ef, type: 3}
     overlaySprite: {fileID: 0}
   - key: blood_mid
-    sprite: {fileID: 7918521115296145216, guid: f9a51752153069a40b4591dd67ac7dd3, type: 3}
+    sprite: {fileID: 3374994579945756278, guid: 9439ea3471839ca429b5dca4aefe99fd, type: 3}
     overlaySprite: {fileID: 0}
   - key: blood_tired
-    sprite: {fileID: 2811643952173041755, guid: 684b28dcea665c7419085653c523d969, type: 3}
+    sprite: {fileID: 1620443861845200053, guid: fc530715f5483da4da2175c742682fd3, type: 3}
     overlaySprite: {fileID: 0}
   - key: blood_smile
-    sprite: {fileID: -1220385877937856334, guid: b9db1e04360b1c54f8a9ff1102a489b3, type: 3}
+    sprite: {fileID: -521326214385864486, guid: aa236632e89b4c34fbb7b920e690bb90, type: 3}
+    overlaySprite: {fileID: 0}
+  - key: blood_smileClosed
+    sprite: {fileID: -4027058767215579801, guid: 7f619780fd466d44681d5fa7a905475f, type: 3}
+    overlaySprite: {fileID: 0}
+  - key: closed
+    sprite: {fileID: 3910119953844233957, guid: e19ce6e96b667244da5ef1ddfe88528c, type: 3}
+    overlaySprite: {fileID: 0}
+  - key: blood_closed
+    sprite: {fileID: 3206553586366147522, guid: 25092c95e6129744b828317320bd9287, type: 3}
     overlaySprite: {fileID: 0}

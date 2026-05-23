@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: fa43c030749d9174c8049a23cde43799
+guid: 903e3e95349abf74dad17f0cce4202c8
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2398190543187069550
-    second: blood_down_0
+      213: 1473237719973825897
+    second: treatment_under_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: blood_down_0
+      name: treatment_under_0
       rect:
         serializedVersion: 2
-        x: 30
-        y: 34
-        width: 908
-        height: 559
+        x: 0
+        y: 0
+        width: 1464
+        height: 1440
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e6acd56c795184120800000000000000
-      internalID: 2398190543187069550
+      spriteID: 96d0fb896edf17410800000000000000
+      internalID: 1473237719973825897
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: e2fd812dd1a8965498d91e827466c62f
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      blood_down_0: 2398190543187069550
+      treatment_under_0: 1473237719973825897
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

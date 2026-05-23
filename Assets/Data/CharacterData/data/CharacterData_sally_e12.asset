@@ -14,9 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
   key: sally_e12
   displayName: 
+  nameColor: {r: 1, g: 1, b: 1, a: 1}
   defaultSprite: {fileID: 0}
   defaultOverlaySprite: {fileID: 0}
   expressions:
   - key: treatment_mid
-    sprite: {fileID: 7052347056175741113, guid: 2c553484fa0e6e946a1c5ee62bb049c0, type: 3}
-    overlaySprite: {fileID: 7501573618146089432, guid: 7973e9b11eac2204ab085cd814d04b7e, type: 3}
+    sprite: {fileID: 1473237719973825897, guid: 903e3e95349abf74dad17f0cce4202c8, type: 3}
+    overlaySprite: {fileID: 7309965523620982664, guid: c598d9f11dd6e7d4991cb633b5e45abe, type: 3}
+  - key: treatment_angry
+    sprite: {fileID: 1473237719973825897, guid: 903e3e95349abf74dad17f0cce4202c8, type: 3}
+    overlaySprite: {fileID: 1344047454887173750, guid: bddd6aba86e5fc8419d458aa24f0fa3a, type: 3}
