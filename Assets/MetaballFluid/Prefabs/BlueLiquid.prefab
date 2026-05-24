@@ -82,7 +82,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 12
   m_MaskInteraction: 0
   m_Sprite: {fileID: -6956133408133828879, guid: 9016f903ca847144182d09f495ddbd16, type: 3}
   m_Color: {r: 0, g: 0, b: 1, a: 1}
@@ -169,5 +169,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0f6fbf3b8553dd4292a5e53886ba1f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LiquidReaction
+  spriteRenderer: {fileID: 0}
+  rb: {fileID: 0}
   mixSpeed: 10
   reactionCooldown: 0
+  sleepVelocityThreshold: 0.05
+  timeToSleep: 2

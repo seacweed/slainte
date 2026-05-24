@@ -5,7 +5,7 @@ public class LiquidPool : MonoBehaviour
 {
     public static LiquidPool Instance;
     public GameObject particlePrefab;
-    public int poolSize = 300; // 입자 최대 개수 제한
+    public int poolSize = 900; // 입자 최대 개수 제한
 
 
 

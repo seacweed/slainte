@@ -13,7 +13,7 @@ namespace Slainte.Bartending
     }
 
     [RequireComponent(typeof(SpriteRenderer), typeof(Collider2D))]
-    public class BottleController : MonoBehaviour
+    public class BottleController : MonoBehaviour, IBartendingItem
     {
         [Header("Item Data")]
         [SerializeField] private ItemDef bottleData;
@@ -53,11 +53,31 @@ namespace Slainte.Bartending
         private float currentAngle = 0f;
         private Coroutine returnCoroutine;
 
+        private SlotController currentSlot; // 현재 안착되어 있는 슬롯 레퍼런스
+        private Vector3 dragVelocity = Vector3.zero;
+
         private void Start()
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
             col = GetComponent<Collider2D>();
             mainCamera = Camera.main;
+
+            // 1. Rigidbody2D 키네마틱 물리 셋업 강제 보장 (2D 물리 트리거 상호작용 완벽 복구)
+            Rigidbody2D rb = GetComponent<Rigidbody2D>();
+            if (rb == null)
+            {
+                rb = gameObject.AddComponent<Rigidbody2D>();
+            }
+            rb.bodyType = RigidbodyType2D.Kinematic;
+            rb.useFullKinematicContacts = true;
+
+            // 2. slotLayer가 빈 값이거나 Nothing일 시 스마트 자동 보정
+            if (slotLayer.value == 0)
+            {
+                int layerIdx = LayerMask.NameToLayer("Slot");
+                if (layerIdx == -1) layerIdx = 0;
+                slotLayer = 1 << layerIdx;
+            }
 
             originalSortingOrder = spriteRenderer.sortingOrder;
 
@@ -181,7 +201,13 @@ namespace Slainte.Bartending
         private void PickupBottle()
         {
             currentState = BottleState.PickedUp;
-            spriteRenderer.sortingOrder = PICKUP_SORTING_ORDER;
+            
+            // 기존 슬롯에서 집어올려질 때, 슬롯 점유 해제
+            if (currentSlot != null)
+            {
+                currentSlot.Vacate();
+                currentSlot = null;
+            }
             
             // Stop returning if it was returning while picked up again
             if (returnCoroutine != null)
@@ -195,30 +221,98 @@ namespace Slainte.Bartending
         {
             Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
             mousePos.z = 0f;
-            transform.position = mousePos;
+            
+            Rigidbody2D rb = GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                // 댐핑을 걷어내고 0초 즉각 1:1 마우스 매핑 + 연속 물리(Sweep) 충돌 보장
+                rb.MovePosition(mousePos);
+            }
+            else
+            {
+                transform.position = mousePos;
+            }
+        }
+
+        private float GetPivotToBottomOffset()
+        {
+            if (spriteRenderer != null && spriteRenderer.sprite != null)
+            {
+                return (spriteRenderer.sprite.pivot.y / spriteRenderer.sprite.pixelsPerUnit) * transform.localScale.y;
+            }
+            return 0f;
         }
 
         private void TryDropBottle()
         {
             Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-            Collider2D hit = Physics2D.OverlapPoint(mousePos, slotLayer);
+            Collider2D[] hits = Physics2D.OverlapPointAll(mousePos, slotLayer);
 
-            if (hit != null)
+            foreach (var hit in hits)
             {
-                // Snap to slot
-                transform.position = hit.transform.position;
-                transform.rotation = Quaternion.identity;
-                currentAngle = 0f;
-                
-                ReleaseBottle();
+                // 자기 자신 콜라이더는 건너뜁니다.
+                if (hit == col) continue;
+
+                SlotController slot = hit.GetComponent<SlotController>();
+                if (slot != null)
+                {
+                    // 슬롯이 비어있는 경우에만 안착 허용
+                    if (!slot.IsOccupied)
+                    {
+                        currentSlot = slot;
+                        slot.Occupy(this);
+
+                        // Snap to slot (바닥면 Y 오프셋 칼각 정렬!)
+                        float bottomOffset = GetPivotToBottomOffset();
+                        transform.position = new Vector3(hit.transform.position.x, hit.transform.position.y + bottomOffset, 0f);
+                        transform.rotation = Quaternion.identity;
+                        currentAngle = 0f;
+                        
+                        ReleaseBottle();
+                        return;
+                    }
+                }
+                else
+                {
+                    // Snap to slot (하위 호환용 단순 스냅)
+                    float bottomOffset = GetPivotToBottomOffset();
+                    transform.position = new Vector3(hit.transform.position.x, hit.transform.position.y + bottomOffset, 0f);
+                    transform.rotation = Quaternion.identity;
+                    currentAngle = 0f;
+                    
+                    ReleaseBottle();
+                    return;
+                }
             }
-            // If missed slot, do nothing (keep holding)
+        }
+
+        // IBartendingItem 인터페이스 완벽 구현부
+        public GameObject GameObject => gameObject;
+        public bool IsPickedUp => currentState == BottleState.PickedUp || currentState == BottleState.Tilting || currentState == BottleState.Returning;
+
+        public void SnapToSlot(Transform slotTransform, SlotController slot)
+        {
+            currentSlot = slot;
+            float bottomOffset = GetPivotToBottomOffset();
+            transform.position = new Vector3(slotTransform.position.x, slotTransform.position.y + bottomOffset, 0f);
+            transform.rotation = Quaternion.identity;
+            currentAngle = 0f;
+            ReleaseBottle();
+        }
+
+        public void OnPickedUp()
+        {
+            PickupBottle();
+        }
+
+        public void OnDropped()
+        {
+            TryDropBottle();
         }
 
         private void ReleaseBottle()
         {
             currentState = BottleState.Idle;
-            spriteRenderer.sortingOrder = originalSortingOrder;
             
             if (returnCoroutine != null)
             {
@@ -253,7 +347,15 @@ namespace Slainte.Bartending
             currentAngle += deltaY * tiltSensitivity * 10f;
             currentAngle = Mathf.Clamp(currentAngle, -maxTiltAngle, maxTiltAngle);
             
-            transform.rotation = Quaternion.Euler(0f, 0f, currentAngle);
+            Rigidbody2D rb = GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.MoveRotation(currentAngle);
+            }
+            else
+            {
+                transform.rotation = Quaternion.Euler(0f, 0f, currentAngle);
+            }
         }
 
         private void StartReturning()
@@ -279,6 +381,8 @@ namespace Slainte.Bartending
             float startAngle = currentAngle;
             float timeElapsed = 0f;
 
+            Rigidbody2D rb = GetComponent<Rigidbody2D>();
+
             while (timeElapsed < returnSpeed)
             {
                 timeElapsed += Time.deltaTime;
@@ -286,13 +390,27 @@ namespace Slainte.Bartending
                 float curveValue = returnEase.Evaluate(normalizedTime);
                 
                 currentAngle = Mathf.Lerp(startAngle, 0f, curveValue);
-                transform.rotation = Quaternion.Euler(0f, 0f, currentAngle);
+                if (rb != null)
+                {
+                    rb.MoveRotation(currentAngle);
+                }
+                else
+                {
+                    transform.rotation = Quaternion.Euler(0f, 0f, currentAngle);
+                }
                 
                 yield return null;
             }
 
             currentAngle = 0f;
-            transform.rotation = Quaternion.identity;
+            if (rb != null)
+            {
+                rb.MoveRotation(0f);
+            }
+            else
+            {
+                transform.rotation = Quaternion.identity;
+            }
             
             // Transition back to PickedUp state so they can move it or drop it again
             currentState = BottleState.PickedUp;
@@ -301,10 +419,10 @@ namespace Slainte.Bartending
 
         private bool IsMouseOverBottle()
         {
-            Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-            Collider2D hit = Physics2D.OverlapPoint(mousePos);
+            if (col == null) return false;
             
-            return hit != null && hit == col;
+            Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+            return col.OverlapPoint(mousePos);
         }
     }
 }
