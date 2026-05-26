@@ -177,7 +177,11 @@ namespace NarrativeFlow.Editor
                                         {
                                             if (cond.Type == TriggerConditionType.Flag)
                                             {
-                                                rNode.flagBranches.Add(new NodeFlagBranch { requiredFlag = cond.Key, nextNodeId = targetRId });
+                                                rNode.flagBranches.Add(new NodeFlagBranch
+                                                {
+                                                    requiredAllFlags = new List<string> { cond.Key },
+                                                    nextNodeId = targetRId
+                                                });
                                             }
                                             else
                                             {
@@ -287,7 +291,11 @@ namespace NarrativeFlow.Editor
                     string targetRId = ResolveTargetId(graph, targetEdge.TargetNodeGuid, nodeMapping);
                     if (cond.Type == TriggerConditionType.Flag)
                     {
-                        rNode.flagBranches.Add(new NodeFlagBranch { requiredFlag = cond.Key, nextNodeId = targetRId });
+                        rNode.flagBranches.Add(new NodeFlagBranch
+                        {
+                            requiredAllFlags = new List<string> { cond.Key },
+                            nextNodeId = targetRId
+                        });
                     }
                     else
                     {
