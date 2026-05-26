@@ -168,8 +168,10 @@ namespace Slainte.Bartending
 
         private void FollowMousePosition()
         {
-            Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-            mousePos.z = 0f;
+            if (!BartendingViewport.TryGetPointerWorldPosition(mainCamera, Input.mousePosition, out Vector3 mousePos))
+            {
+                return;
+            }
             
             Rigidbody2D rb = GetComponent<Rigidbody2D>();
             if (rb != null)
@@ -185,7 +187,11 @@ namespace Slainte.Bartending
 
         private void TryDropGlass()
         {
-            Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+            if (!BartendingViewport.TryGetPointerWorldPosition(mainCamera, Input.mousePosition, out Vector3 mousePos))
+            {
+                return;
+            }
+
             Collider2D[] hits = Physics2D.OverlapPointAll(mousePos, slotLayer);
 
             foreach (var hit in hits)
@@ -302,7 +308,7 @@ namespace Slainte.Bartending
 
             if (Mouse.current != null && mainCamera != null)
             {
-                Vector2 screenPos = mainCamera.WorldToScreenPoint(transform.position);
+                Vector2 screenPos = BartendingViewport.GetPointerScreenPosition(mainCamera, transform.position);
                 Mouse.current.WarpCursorPosition(screenPos);
             }
 
@@ -353,7 +359,11 @@ namespace Slainte.Bartending
         {
             if (mainCollider == null) return false;
             
-            Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+            if (!BartendingViewport.TryGetPointerWorldPosition(mainCamera, Input.mousePosition, out Vector3 mousePos))
+            {
+                return false;
+            }
+
             // 다른 겹치는 오브젝트(액체 입자 등)에 방해받지 않는 단독 격리 판정
             return mainCollider.OverlapPoint(mousePos);
         }

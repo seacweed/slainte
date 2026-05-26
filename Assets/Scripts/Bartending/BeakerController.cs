@@ -178,8 +178,10 @@ namespace Slainte.Bartending
 
         private void FollowMousePosition()
         {
-            Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-            mousePos.z = 0f;
+            if (!BartendingViewport.TryGetPointerWorldPosition(mainCamera, Input.mousePosition, out Vector3 mousePos))
+            {
+                return;
+            }
             
             Rigidbody2D rb = GetComponent<Rigidbody2D>();
             if (rb != null)
@@ -195,12 +197,30 @@ namespace Slainte.Bartending
 
         private float GetPivotToBottomOffset()
         {
-            return (height / 2f) - colliderYOffset;
+            float visibleBottom = float.PositiveInfinity;
+            foreach (SpriteRenderer renderer in GetComponentsInChildren<SpriteRenderer>(true))
+            {
+                if (renderer.sprite != null && renderer.gameObject.activeInHierarchy)
+                {
+                    visibleBottom = Mathf.Min(visibleBottom, renderer.bounds.min.y);
+                }
+            }
+
+            if (!float.IsPositiveInfinity(visibleBottom))
+            {
+                return transform.position.y - visibleBottom;
+            }
+
+            return ((height / 2f) - colliderYOffset) * Mathf.Abs(transform.lossyScale.y);
         }
 
         private void TryDropBeaker()
         {
-            Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+            if (!BartendingViewport.TryGetPointerWorldPosition(mainCamera, Input.mousePosition, out Vector3 mousePos))
+            {
+                return;
+            }
+
             Collider2D[] hits = Physics2D.OverlapPointAll(mousePos, slotLayer);
 
             foreach (var hit in hits)
@@ -218,9 +238,9 @@ namespace Slainte.Bartending
                         slot.Occupy(this);
 
                         // 슬롯 스냅 안착 (바닥면 Y 오프셋 칼각 정렬!)
+                        transform.rotation = Quaternion.identity;
                         float bottomOffset = GetPivotToBottomOffset();
                         transform.position = new Vector3(hit.transform.position.x, hit.transform.position.y + bottomOffset, 0f);
-                        transform.rotation = Quaternion.identity;
                         currentAngle = 0f;
                         
                         ReleaseBeaker();
@@ -230,9 +250,9 @@ namespace Slainte.Bartending
                 else
                 {
                     // 슬롯 스냅 안착 (하위 호환용)
+                    transform.rotation = Quaternion.identity;
                     float bottomOffset = GetPivotToBottomOffset();
                     transform.position = new Vector3(hit.transform.position.x, hit.transform.position.y + bottomOffset, 0f);
-                    transform.rotation = Quaternion.identity;
                     currentAngle = 0f;
                     
                     ReleaseBeaker();
@@ -248,9 +268,9 @@ namespace Slainte.Bartending
         public void SnapToSlot(Transform slotTransform, SlotController slot)
         {
             currentSlot = slot;
+            transform.rotation = Quaternion.identity;
             float bottomOffset = GetPivotToBottomOffset();
             transform.position = new Vector3(slotTransform.position.x, slotTransform.position.y + bottomOffset, 0f);
-            transform.rotation = Quaternion.identity;
             currentAngle = 0f;
             ReleaseBeaker();
         }
@@ -317,7 +337,7 @@ namespace Slainte.Bartending
 
             if (Mouse.current != null && mainCamera != null)
             {
-                Vector2 screenPos = mainCamera.WorldToScreenPoint(transform.position);
+                Vector2 screenPos = BartendingViewport.GetPointerScreenPosition(mainCamera, transform.position);
                 Mouse.current.WarpCursorPosition(screenPos);
             }
 
@@ -368,7 +388,11 @@ namespace Slainte.Bartending
         {
             if (mainCollider == null) return false;
             
-            Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+            if (!BartendingViewport.TryGetPointerWorldPosition(mainCamera, Input.mousePosition, out Vector3 mousePos))
+            {
+                return false;
+            }
+
             return mainCollider.OverlapPoint(mousePos);
         }
 

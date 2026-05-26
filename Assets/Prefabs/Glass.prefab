@@ -30,7 +30,7 @@ Transform:
   m_GameObject: {fileID: 2243653413097636618}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -2.89, y: -1.08, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -159,50 +159,42 @@ EdgeCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_EdgeRadius: 0.08
+  m_EdgeRadius: 0.096
   m_Points:
-  - {x: -0.9, y: 1.2}
-  - {x: -0.8735185, y: 1.08}
-  - {x: -0.8376296, y: 0.96}
-  - {x: -0.8004, y: 0.8400001}
-  - {x: -0.76954067, y: 0.72}
-  - {x: -0.7524074, y: 0.6}
-  - {x: -0.756, y: 0.48}
-  - {x: -0.7795191, y: 0.35999995}
-  - {x: -0.81308115, y: 0.24000007}
-  - {x: -0.8500253, y: 0.120000035}
-  - {x: -0.8839999, y: 0}
-  - {x: -0.9089628, y: -0.120000035}
-  - {x: -0.91918117, y: -0.24}
-  - {x: -0.90923154, y: -0.36}
-  - {x: -0.87399995, y: -0.48}
-  - {x: -0.8170139, y: -0.6}
-  - {x: -0.750963, y: -0.72}
-  - {x: -0.684375, y: -0.84000003}
-  - {x: -0.6253333, y: -0.96000004}
-  - {x: -0.5814768, y: -1.08}
-  - {x: -0.39999998, y: -1.2}
-  - {x: 0.39999998, y: -1.2}
-  - {x: 0.5814768, y: -1.08}
-  - {x: 0.6253333, y: -0.96000004}
-  - {x: 0.684375, y: -0.84000003}
-  - {x: 0.750963, y: -0.72}
-  - {x: 0.8170139, y: -0.6}
-  - {x: 0.87399995, y: -0.48}
-  - {x: 0.90923154, y: -0.36}
-  - {x: 0.91918117, y: -0.24}
-  - {x: 0.9089628, y: -0.120000035}
-  - {x: 0.8839999, y: 0}
-  - {x: 0.8500253, y: 0.120000035}
-  - {x: 0.81308115, y: 0.24000007}
-  - {x: 0.7795191, y: 0.35999995}
-  - {x: 0.756, y: 0.48}
-  - {x: 0.7524074, y: 0.6}
-  - {x: 0.76954067, y: 0.72}
-  - {x: 0.8004, y: 0.8400001}
-  - {x: 0.8376296, y: 0.96}
-  - {x: 0.8735185, y: 1.08}
-  - {x: 0.9, y: 1.2}
+  - {x: -1.0220728, y: 1.1}
+  - {x: -1.0123439, y: 0.975}
+  - {x: -1.002615, y: 0.85}
+  - {x: -0.9928861, y: 0.725}
+  - {x: -0.9831572, y: 0.6}
+  - {x: -0.9734283, y: 0.475}
+  - {x: -0.96369946, y: 0.35}
+  - {x: -0.95397055, y: 0.225}
+  - {x: -0.94424164, y: 0.1}
+  - {x: -0.93451273, y: -0.024999999}
+  - {x: -0.9247838, y: -0.15}
+  - {x: -0.915055, y: -0.275}
+  - {x: -0.90532607, y: -0.4}
+  - {x: -0.8656285, y: -0.525}
+  - {x: -0.83722043, y: -0.65}
+  - {x: -0.7568842, y: -0.775}
+  - {x: -0.4664105, y: -0.9}
+  - {x: 0.4664105, y: -0.9}
+  - {x: 0.7568842, y: -0.775}
+  - {x: 0.83722043, y: -0.65}
+  - {x: 0.8656285, y: -0.525}
+  - {x: 0.90532607, y: -0.4}
+  - {x: 0.915055, y: -0.275}
+  - {x: 0.9247838, y: -0.15}
+  - {x: 0.93451273, y: -0.024999999}
+  - {x: 0.94424164, y: 0.1}
+  - {x: 0.95397055, y: 0.225}
+  - {x: 0.96369946, y: 0.35}
+  - {x: 0.9734283, y: 0.475}
+  - {x: 0.9831572, y: 0.6}
+  - {x: 0.9928861, y: 0.725}
+  - {x: 1.002615, y: 0.85}
+  - {x: 1.0123439, y: 0.975}
+  - {x: 1.0220728, y: 1.1}
   m_AdjacentStartPoint: {x: 0, y: 0}
   m_AdjacentEndPoint: {x: 0, y: 0}
   m_UseAdjacentStartPoint: 0
@@ -219,17 +211,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fabb10d7e250e4842aaadf29d70e54a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.GlassController
-  bottomWidth: 1.4
-  topWidth: 1.8
-  height: 2.4
-  cornerRadius: 0.3
-  curveSegments: 20
+  bottomWidth: 1.732821
+  topWidth: 2.0441456
+  height: 2
+  cornerRadius: 0.4
+  curveSegments: 16
   glassProfile:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0.8
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -237,27 +229,9 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.3
-      value: 1.15
-      inSlope: 1
-      outSlope: 1
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 0.7
-      value: 0.9
-      inSlope: -0.6
-      outSlope: -0.6
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
       time: 1
       value: 1
-      inSlope: 0.2
+      inSlope: 0
       outSlope: 0
       tangentMode: 0
       weightedMode: 0
@@ -266,8 +240,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  colliderYOffset: 0
-  edgeRadius: 0.08
+  colliderYOffset: 0.1
+  edgeRadius: 0.096
   maxTiltAngle: 120
   tiltSensitivity: 0.5
   returnSpeed: 0.8
@@ -380,7 +354,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 13
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -3506323470341488099, guid: 969db120f22a7894dae08991179eed2c, type: 3}
+  m_Sprite: {fileID: -3087903877467082720, guid: 3b94a1308bd5e2b40b583b8c7cec106e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -416,7 +390,7 @@ Transform:
   m_GameObject: {fileID: 6000378384765731075}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1.11, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -471,7 +445,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 11
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 912448872342601277, guid: ac03c17244e36a346bd68717945c0311, type: 3}
+  m_Sprite: {fileID: 7702090560524413897, guid: 10edc6d87279e3248be9387de36b2e96, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -507,7 +481,7 @@ Transform:
   m_GameObject: {fileID: 7238923576205420223}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.13, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -562,7 +536,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 10
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 4002814560978655088, guid: f8dc1878cb1999f49b12864a8ce656a1, type: 3}
+  m_Sprite: {fileID: -1779848642029589441, guid: a8156f9609364e54f86213f1ad9f4ff1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

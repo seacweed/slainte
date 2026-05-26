@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68ad398e47524fd0bac4655185b0834d, type: 3}
+  m_Name: BusinessBartendingSettings
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.BusinessBartendingSettings
+  beakerPrefab: {fileID: 8706099201883949432, guid: ead121c425b1bdf48942d7144b694817, type: 3}
+  glassPrefab: {fileID: 2243653413097636618, guid: 0f545fa15c57b314184f5dc08a58782b, type: 3}
+  orangeJuiceBottlePrefab: {fileID: 6053965625356669504, guid: 5454dd416eb9f0147b2a3e044e81cc11, type: 3}
+  slotPrefab: {fileID: 7156230922021510026, guid: 7f969d5eb98ddb54f8d6e44e1a901c44, type: 3}
+  liquidParticlePrefab: {fileID: 6191169969125092929, guid: 44387e2fc656fda41b517e3cbf2b992c, type: 3}
+  renderTextureSize: {x: 2560, y: 1440}
+  cameraOrthographicSize: 5.2
+  renderLayer: 30
+  bottlePosition: {x: -8, y: -0.8, z: 0}
+  beakerPosition: {x: -1.6, y: -1, z: 0}
+  glassPosition: {x: 4.8, y: -1, z: 0}
+  slotPositions:
+  - {x: -8, y: -2.5, z: 0}
+  - {x: -4.8, y: -2.5, z: 0}
+  - {x: -1.6, y: -2.5, z: 0}
+  - {x: 1.6, y: -2.5, z: 0}
+  - {x: 4.8, y: -2.5, z: 0}
+  - {x: 8, y: -2.5, z: 0}
+  liquidPoolSize: 300
