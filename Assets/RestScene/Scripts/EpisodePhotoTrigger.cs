@@ -16,17 +16,27 @@ public class EpisodePhotoTrigger : MonoBehaviour, IPointerEnterHandler, IPointer
     private Image photoImage;     // 내 오브젝트에 붙어있는 Image 컴포넌트
     private bool isPinned = false; 
 
+    public static bool HasBoardPhoto(EpisodeData data)
+    {
+        string baseName = GetBoardPhotoBaseName(data);
+        return !string.IsNullOrEmpty(baseName) && LoadBoardSprite(baseName, "idle") != null;
+    }
+
     public void SetEpisodeData(EpisodeData data, EpisodeBoardManager manager)
     {
         episodeData = data;
         boardManager = manager;
 
-        if (data != null && !string.IsNullOrEmpty(data.iconNameBoard))
+        normalSprite = null;
+        hoverSprite = null;
+        selectedSprite = null;
+
+        string baseName = GetBoardPhotoBaseName(data);
+        if (!string.IsNullOrEmpty(baseName))
         {
-            string baseName = data.iconNameBoard;
-            normalSprite = Resources.Load<Sprite>($"Sprites/{baseName}-idle");
-            hoverSprite = Resources.Load<Sprite>($"Sprites/{baseName}-hover");
-            selectedSprite = Resources.Load<Sprite>($"Sprites/{baseName}-selected");
+            normalSprite = LoadBoardSprite(baseName, "idle");
+            hoverSprite = LoadBoardSprite(baseName, "hover");
+            selectedSprite = LoadBoardSprite(baseName, "selected");
 
             // 예외처리: 파일을 찾지 못한 경우 폴더 구조에 따라 다를 수 있으므로 기본 로드 시도
             if (normalSprite == null) normalSprite = Resources.Load<Sprite>(baseName + "-idle");
@@ -36,6 +46,22 @@ public class EpisodePhotoTrigger : MonoBehaviour, IPointerEnterHandler, IPointer
             if (photoImage != null && normalSprite != null)
                 photoImage.sprite = normalSprite;
         }
+    }
+
+    private static string GetBoardPhotoBaseName(EpisodeData data)
+    {
+        if (data == null) return null;
+        if (!string.IsNullOrEmpty(data.iconNameBoard)) return data.iconNameBoard;
+        if (string.IsNullOrEmpty(data.episodeId)) return null;
+
+        return data.episodeId.Replace("_", "-");
+    }
+
+    private static Sprite LoadBoardSprite(string baseName, string state)
+    {
+        Sprite sprite = Resources.Load<Sprite>($"Sprites/{baseName}-{state}");
+        if (sprite == null) sprite = Resources.Load<Sprite>($"{baseName}-{state}");
+        return sprite;
     }
 
     private void Awake() 

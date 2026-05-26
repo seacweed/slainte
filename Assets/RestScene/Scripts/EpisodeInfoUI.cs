@@ -14,11 +14,23 @@ public class EpisodeInfoUI : MonoBehaviour
     public GameObject portraitPrefab;
     public Sprite unknownPortrait;
 
+    [Header("Rendering")]
+    [SerializeField] private int tooltipSortingOrder = 100;
+
     private RectTransform rectTransform;
 
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
+
+        Canvas tooltipCanvas = GetComponent<Canvas>();
+        if (tooltipCanvas == null)
+        {
+            tooltipCanvas = gameObject.AddComponent<Canvas>();
+        }
+
+        tooltipCanvas.overrideSorting = true;
+        tooltipCanvas.sortingOrder = tooltipSortingOrder;
         gameObject.SetActive(false);
     }
 
@@ -139,7 +151,7 @@ public class EpisodeInfoUI : MonoBehaviour
         Vector3[] uiCorners = new Vector3[4];
         rectTransform.GetWorldCorners(uiCorners);
 
-        Canvas canvas = GetComponentInParent<Canvas>();
+        Canvas canvas = transform.parent != null ? transform.parent.GetComponentInParent<Canvas>() : null;
         if (canvas != null)
         {
             Vector3[] canvasCorners = new Vector3[4];

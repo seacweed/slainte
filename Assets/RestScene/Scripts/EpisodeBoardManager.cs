@@ -51,7 +51,15 @@ public class EpisodeBoardManager : BaseUIManager
     {
         if (EpisodeManager.Instance == null || GameProgress.Instance == null) return;
         
-        var boardEpisodes = EpisodeManager.Instance.GetBoardEpisodes();
+        var availableEpisodes = EpisodeManager.Instance.GetBoardEpisodes();
+        var boardEpisodes = new List<EpisodeData>();
+        foreach (var ep in availableEpisodes)
+        {
+            if (EpisodePhotoTrigger.HasBoardPhoto(ep))
+            {
+                boardEpisodes.Add(ep);
+            }
+        }
         
         // 1. 이미 슬롯에 있는 프리팹 캐싱 및 필요없는 프리팹 제거
         List<EpisodePhotoTrigger> currentPhotos = new List<EpisodePhotoTrigger>(GetComponentsInChildren<EpisodePhotoTrigger>(true));
