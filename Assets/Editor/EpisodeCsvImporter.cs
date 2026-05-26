@@ -8,7 +8,7 @@ using UnityEngine;
 public class EpisodeCsvImporter : EditorWindow
 {
     private string _csvPath = "";
-    private string _outputFolder = "Assets/Data/EpisodeData";
+    private string _outputFolder = "Assets/Resources/EpisodeData";
 
     [MenuItem("Tools/Slainte/Import Episode CSV")]
     public static void Open()
@@ -239,8 +239,9 @@ public class EpisodeCsvImporter : EditorWindow
 
             lookup[nid].Add(new NodeFlagBranch
             {
-                requiredFlag = Field(row, 1),
-                nextNodeId   = Field(row, 2)
+                requiredAllFlags = SplitBy(Field(row, 1), ','),
+                requiredAnyFlags = SplitBy(Field(row, 2), ','),
+                nextNodeId       = Field(row, 3)
             });
         }
 
@@ -306,6 +307,10 @@ public class EpisodeCsvImporter : EditorWindow
                 nextNodeIdBad       = Field(row, 8),
                 bgmCommand          = ParseBgmCommand(Field(row, 9)),
                 bgmClipName         = Field(row, 10),
+                craftingFlagGood         = Field(row, 11),
+                craftingFlagBad          = Field(row, 12),
+                craftingVarChangesGood   = ParseVarChangeList(Field(row, 13)),
+                craftingVarChangesBad    = ParseVarChangeList(Field(row, 14)),
                 characters = nodeChars.TryGetValue(nid, out var chars)
                     ? chars : new List<CharacterSlotEntry>(),
                 choices = nodeChoices.TryGetValue(nid, out var choices)
@@ -431,6 +436,18 @@ public class EpisodeCsvImporter : EditorWindow
             "<=" => CompareOp.LessOrEqual,
             _    => CompareOp.GreaterOrEqual
         };
+    }
+
+    private static List<string> SplitBy(string value, char separator)
+    {
+        var result = new List<string>();
+        if (string.IsNullOrWhiteSpace(value)) return result;
+        foreach (string item in value.Split(separator))
+        {
+            string t = item.Trim();
+            if (!string.IsNullOrEmpty(t)) result.Add(t);
+        }
+        return result;
     }
 
     private static List<string> SplitList(string value)

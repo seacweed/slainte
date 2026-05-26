@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ada6baddb75540a4ba25d31b476b855a, type: 3}
-  m_Name: EpisodeData_StrangeCoin_3
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EpisodeData
   episodeId: StrangeCoin_3
   episodeTitle: "\uC774\uC0C1\uD55C \uB3D9\uC804 - 3"
@@ -45,6 +45,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 1
@@ -63,6 +67,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 2
@@ -81,6 +89,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 3
@@ -99,6 +111,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 4
@@ -119,6 +135,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 5
@@ -138,6 +158,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 6
@@ -156,6 +180,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 7
@@ -174,6 +202,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 8
@@ -192,6 +224,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 9
@@ -210,6 +246,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 10
@@ -229,6 +269,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 11
@@ -247,6 +291,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 12
@@ -266,6 +314,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 13
@@ -275,13 +327,13 @@ MonoBehaviour:
     nextNodeId: 
     choices:
     - buttonText: "\uC544\uBB34\uB3C4 \uB4E4\uC5B4\uC624\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4."
-      nextNodeId: 14-1-1
+      nextNodeId: 14_1_1
       setFlags: []
       clearFlags: []
       varChanges: []
     - buttonText: "\uB2E4\uB978 \uC190\uB2D8\uACFC \uD587\uAC08\uB9AC\uC2E0 \uAC70
         \uC544\uB2D0\uAE4C\uC694?"
-      nextNodeId: 14-2-1
+      nextNodeId: 14_2_1
       setFlags: []
       clearFlags: []
       varChanges: []
@@ -295,13 +347,17 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 14-1-1
+  - nodeId: 14_1_1
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC544\uBB34\uB3C4 \uB4E4\uC5B4\uC624\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4."
-    nextNodeId: 14-1-2
+    nextNodeId: 14_1_2
     choices: []
     flagBranches: []
     varBranches: []
@@ -313,14 +369,18 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 14-1-2
+  - nodeId: 14_1_2
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uBED4\uBED4\uD55C \uAC70\uC9D3\uB9D0\uC5D0 \uB118\uC5B4\uAC00\uB4DC\uB9AC\uB294
       \uAC83\uB3C4 \uD55C\uB450\uBC88 \uC785\uB2C8\uB2E4."
-    nextNodeId: 14-1-3
+    nextNodeId: 14_1_3
     choices: []
     flagBranches: []
     varBranches: []
@@ -332,9 +392,13 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 14-1-3
+  - nodeId: 14_1_3
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uD53C\uBC94\uBC85\uC774\uB41C \uBC94\uC8C4\uC790\uAC00 \uC774\uB9AC\uB85C
@@ -351,14 +415,18 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 14-2-1
+  - nodeId: 14_2_1
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uB2E4-\uB2E4\uB978 \uC190\uB2D8\uACFC \uD587\uAC08\uB9AC\uC2E0\uAC70
       \uC544\uB2D0\uAE4C\uC694?"
-    nextNodeId: 14-2-2
+    nextNodeId: 14_2_2
     choices: []
     flagBranches: []
     varBranches: []
@@ -370,13 +438,17 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 14-2-2
+  - nodeId: 14_2_2
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uC601\uC5C5\uC740 \uB05D\uB09C\uAC78\uB85C \uC54C\uACE0\uC788\uB294\uB370\uC694."
-    nextNodeId: 14-2-3
+    nextNodeId: 14_2_3
     choices: []
     flagBranches: []
     varBranches: []
@@ -388,9 +460,13 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 14-2-3
+  - nodeId: 14_2_3
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uB2E4\uB978 \uC190\uB2D8\uC774 \uCC3E\uC544\uC62C \uB9AC\uAC00 \uC5C6\uC9C0
@@ -407,6 +483,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 15
@@ -426,6 +506,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 16
@@ -444,6 +528,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 17
@@ -462,6 +550,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 18
@@ -480,6 +572,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 19
@@ -498,6 +594,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 20
@@ -517,6 +617,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 21
@@ -538,6 +642,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 22
@@ -560,6 +668,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 23
@@ -581,6 +693,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 24
@@ -590,13 +706,13 @@ MonoBehaviour:
     nextNodeId: 
     choices:
     - buttonText: "\uC140\uB9AC\uC528! \uC5B4\uB5BB\uAC8C \uC880 \uD574\uC8FC\uC138\uC694!"
-      nextNodeId: 25-1-1
+      nextNodeId: 25_1_1
       setFlags: []
       clearFlags: []
       varChanges: []
     - buttonText: "\uC5B4\uB5BB\uAC8C \uD558\uC8E0? \uACBD\uCC30\uC774\uB77C\uB3C4
         \uBD80\uB97C\uAE4C\uC694?"
-      nextNodeId: 25-2-1
+      nextNodeId: 25_2_1
       setFlags: []
       clearFlags: []
       varChanges: []
@@ -613,14 +729,18 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 25-1-1
+  - nodeId: 25_1_1
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC140\uB9AC\uC528! \uC7A5\uB09C\uD558\uC9C0 \uB9C8\uC2DC\uACE0 \uC5B4\uB5BB\uAC8C\uC880
       \uD574\uC8FC\uC138\uC694!"
-    nextNodeId: 25-1-2
+    nextNodeId: 25_1_2
     choices: []
     flagBranches: []
     varBranches: []
@@ -635,13 +755,17 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 25-1-2
+  - nodeId: 25_1_2
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uD558, \uC54C\uC558\uB2E4\uACE0."
-    nextNodeId: 25-1-3
+    nextNodeId: 25_1_3
     choices: []
     flagBranches: []
     varBranches: []
@@ -656,9 +780,13 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 25-1-3
+  - nodeId: 25_1_3
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uBE68\uB9AC \uC544\uBB34 \uC220\uC774\uB098 \uC918\uBD10. \uC54C\uCF5C
@@ -678,13 +806,17 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 25-2-1
+  - nodeId: 25_2_1
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC5B4\uB5BB\uAC8C \uD558\uC8E0? \uACBD\uCC30\uC774\uB77C\uB3C4 \uBD80\uB97C\uAE4C\uC694?"
-    nextNodeId: 25-2-2
+    nextNodeId: 25_2_2
     choices: []
     flagBranches: []
     varBranches: []
@@ -699,14 +831,18 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 25-2-2
+  - nodeId: 25_2_2
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uD558, \uBC14\uD150\uB354. \uB18D\uB2F4\uB3C4 \uD560 \uC904 \uC544\uB294\uAD70.
       \uC220\uC9D1 \uBB38 \uB2EB\uC744 \uC77C \uC788\uC5B4?"
-    nextNodeId: 25-2-3
+    nextNodeId: 25_2_3
     choices: []
     flagBranches: []
     varBranches: []
@@ -721,13 +857,17 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 25-2-3
+  - nodeId: 25_2_3
     speakerKey: shaun
     overrideSpeakerName: 
     text: . . .
-    nextNodeId: 25-2-4
+    nextNodeId: 25_2_4
     choices: []
     flagBranches: []
     varBranches: []
@@ -742,13 +882,17 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 25-2-4
+  - nodeId: 25_2_4
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uADF8-\uADF8\uB798\uB3C4 \uC774\uB807\uAC8C \uC4F0\uB7EC\uC9C0\uC168\uB294\uB370..!"
-    nextNodeId: 25-2-5
+    nextNodeId: 25_2_5
     choices: []
     flagBranches: []
     varBranches: []
@@ -763,9 +907,13 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 25-2-5
+  - nodeId: 25_2_5
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uD5E4. \uB410\uC5B4. \uBE68\uB9AC \uC544\uBB34 \uC220\uC774\uB098 \uC918\uBD10.
@@ -785,6 +933,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 26
@@ -806,6 +958,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 27
@@ -829,6 +985,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 28
@@ -851,6 +1011,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 29
@@ -870,15 +1034,19 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 1
     craftingTicketKey: sc3_sally
-    nextNodeIdGood: 30-1-1
-    nextNodeIdBad: 30-2-1
+    nextNodeIdGood: 30_1_1
+    nextNodeIdBad: 30_2_1
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 30-1-1
+  - nodeId: 30_1_1
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uC88B\uC544. \uC54C\uCF5C \uD5A5\uC774 \uC9C4\uB3D9\uD558\uB294\uAD70."
-    nextNodeId: 30-1-2
+    nextNodeId: 30_1_2
     choices: []
     flagBranches: []
     varBranches: []
@@ -893,9 +1061,13 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 30-1-2
+  - nodeId: 30_1_2
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uC774\uC815\uB3C4\uBA74 \uB418\uACA0\uC5B4."
@@ -914,9 +1086,13 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 30-2-1
+  - nodeId: 30_2_1
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uBD80\uC871\uD574. \uB354 \uC318\uAC78\uB85C \uB2E4\uC2DC\uC918."
@@ -935,6 +1111,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 31
@@ -953,6 +1133,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 32
@@ -971,6 +1155,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 33
@@ -990,6 +1178,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 34
@@ -1009,6 +1201,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 35
@@ -1027,6 +1223,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 36
@@ -1046,6 +1246,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 37
@@ -1065,6 +1269,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 38
@@ -1085,6 +1293,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 39
@@ -1104,6 +1316,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 40
@@ -1123,6 +1339,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 41
@@ -1142,6 +1362,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 42
@@ -1161,6 +1385,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 43
@@ -1180,6 +1408,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 44
@@ -1199,6 +1431,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 45
@@ -1218,6 +1454,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 46
@@ -1236,6 +1476,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 47
@@ -1255,6 +1499,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 48
@@ -1275,6 +1523,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 49
@@ -1294,6 +1546,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 50
@@ -1312,6 +1568,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 51
@@ -1330,6 +1590,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 52
@@ -1352,6 +1616,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 53
@@ -1374,6 +1642,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 54
@@ -1396,6 +1668,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 55
@@ -1417,6 +1693,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 56
@@ -1439,6 +1719,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 57
@@ -1461,6 +1745,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 58
@@ -1483,6 +1771,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 59
@@ -1505,6 +1797,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 60
@@ -1526,6 +1822,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 61
@@ -1549,6 +1849,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 62
@@ -1570,6 +1874,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 63
@@ -1594,6 +1902,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 64
@@ -1606,12 +1918,12 @@ MonoBehaviour:
     choices:
     - buttonText: "\uD38D\uC744 \uCC3E\uB294 \uBAA8\uB450\uB97C \uD658\uB300\uD558\uB294
         \uAC83\uC774 \uC774 \uD38D\uC758 \uADDC\uCE59\uC785\uB2C8\uB2E4."
-      nextNodeId: 65-1-1
+      nextNodeId: 65_1_1
       setFlags: []
       clearFlags: []
       varChanges: []
     - buttonText: "\uBC94\uC8C4\uC790\uAC00 \uC544\uB2C8\uB77C \uC190\uB2D8\uC785\uB2C8\uB2E4."
-      nextNodeId: 65-2-1
+      nextNodeId: 65_2_1
       setFlags: []
       clearFlags: []
       varChanges: []
@@ -1628,14 +1940,18 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 65-1-1
+  - nodeId: 65_1_1
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uD38D\uC744 \uCC3E\uB294 \uBAA8\uB450\uB97C \uD658\uB300\uD558\uB294
       \uAC83\uC774 \uC774 \uD38D\uC758 \uADDC\uCE59\uC785\uB2C8\uB2E4."
-    nextNodeId: 65-1-2
+    nextNodeId: 65_1_2
     choices: []
     flagBranches: []
     varBranches: []
@@ -1650,14 +1966,18 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 65-1-2
+  - nodeId: 65_1_2
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC5B4\uB5A4 \uC885\uC871\uC774\uAC74, \uACBD\uCC30\uC774\uAC74, \uBD80\uB791\uC790\uAC74
       \uBAA8\uB450 \uCC28\uBCC4\uD558\uC9C0 \uC54A\uC544\uC694."
-    nextNodeId: 65-1-3
+    nextNodeId: 65_1_3
     choices: []
     flagBranches: []
     varBranches: []
@@ -1672,13 +1992,17 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 65-1-3
+  - nodeId: 65_1_3
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uBD80\uB791\uC790\uB77C \uBBF8\uC548\uD558\uAC8C \uB410\uB124, \uBC14\uD150\uB354."
-    nextNodeId: 65-1-4
+    nextNodeId: 65_1_4
     choices: []
     flagBranches: []
     varBranches: []
@@ -1693,13 +2017,17 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 65-1-4
+  - nodeId: 65_1_4
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uADF8\uB7F0 \uB73B\uC774 \uC544\uB2CC\uAC70 \uC544\uC2DC\uC796\uC544\uC694\u2026"
-    nextNodeId: 65-1-5
+    nextNodeId: 65_1_5
     choices: []
     flagBranches: []
     varBranches: []
@@ -1714,9 +2042,13 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 65-1-5
+  - nodeId: 65_1_5
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uD2C0\uB9B0 \uB9D0\uC740 \uC544\uB2C8\uC8E0. \uC220\uC9D1\uC740 \uC6D0\uB798
@@ -1736,13 +2068,17 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 65-2-1
+  - nodeId: 65_2_1
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uBC94\uC8C4\uC790\uAC00 \uC544\uB2C8\uB77C \uC190\uB2D8\uC785\uB2C8\uB2E4."
-    nextNodeId: 65-2-2
+    nextNodeId: 65_2_2
     choices: []
     flagBranches: []
     varBranches: []
@@ -1757,15 +2093,19 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 65-2-2
+  - nodeId: 65_2_2
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uADF8\uB9AC\uACE0 \uC774 \uBAA8\uB4E0 \uBAA8\uB4E0 \uC77C\uC758 \uC2DC\uC791\uC810\uC740
       F72\uB2D8 \uC774\uB77C\uB294\uAC78 \uAE30\uC5B5\uD574\uC8FC\uC168\uC73C\uBA74
       \uC88B\uACA0\uC2B5\uB2C8\uB2E4."
-    nextNodeId: 65-2-3
+    nextNodeId: 65_2_3
     choices: []
     flagBranches: []
     varBranches: []
@@ -1780,13 +2120,17 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 65-2-3
+  - nodeId: 65_2_3
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uD2C0\uB9B0 \uB9D0\uC740 \uC544\uB2C8\uB124"
-    nextNodeId: 65-2-4
+    nextNodeId: 65_2_4
     choices: []
     flagBranches: []
     varBranches: []
@@ -1801,13 +2145,17 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 65-2-4
+  - nodeId: 65_2_4
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uADF8-\uADF8\uAC74 \uC5C4\uC5F0\uD55C \uC21C\uCC30\uC758 \uC77C\uD658\uC774\uC5C8\uC2B5\uB2C8\uB2E4!"
-    nextNodeId: 65-2-5
+    nextNodeId: 65_2_5
     choices: []
     flagBranches: []
     varBranches: []
@@ -1822,9 +2170,13 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 65-2-5
+  - nodeId: 65_2_5
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uC21C\uCC30 \uAC19\uC740 \uC18C\uB9AC\uD558\uB124, \uBD80\uD328\uACBD\uCC30\uC5D0
@@ -1845,6 +2197,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 66
@@ -1867,6 +2223,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 67
@@ -1889,6 +2249,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 68
@@ -1910,6 +2274,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 69
@@ -1932,6 +2300,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 70
@@ -1955,6 +2327,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 71
@@ -1977,6 +2353,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 72
@@ -1998,6 +2378,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 73
@@ -2019,6 +2403,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 74
@@ -2040,17 +2428,23 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 75
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uADF8\uAC8C- \uADF8\uB7EC\uB2C8\uAE4C\u2026 \uC720\uAC10\uC785\uB2C8\uB2E4\u2026"
-    nextNodeId: 76-2-1
+    nextNodeId: 76_2_1
     choices: []
     flagBranches:
-    - requiredFlag: sc1_true
-      nextNodeId: 76-1-1
+    - requiredAllFlags:
+      - sc1_true
+      requiredAnyFlags: []
+      nextNodeId: 76_1_1
     varBranches: []
     characters:
     - characterKey: e12
@@ -2063,15 +2457,19 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 76-1-1
+  - nodeId: 76_1_1
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uADF8\uB7EC\uB2C8\uAE4C \uB124\uAC00 \uC5B4\uB9AC\uB2E4\uB294 \uAC70\uC57C.
       \uB204\uAD6C\uB098 \uB108\uCC98\uB7FC \uD3C9\uBC94\uD55C \uAC00\uC871\uC744
       \uAC00\uC9C0\uACE0 \uC788\uB294\uAC8C \uC544\uB2C8\uAC70\uB4E0."
-    nextNodeId: 76-1-2
+    nextNodeId: 76_1_2
     choices: []
     flagBranches: []
     varBranches: []
@@ -2086,15 +2484,19 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 76-1-2
+  - nodeId: 76_1_2
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uCC98\uC74C\uBD80\uD130 \uD63C\uC790\uC600\uB358 \uC0AC\uB78C\uB3C4 \uC788\uACE0,
       \uC18C\uC911\uD55C \uC774\uB97C \uB5A0\uB098\uBCF4\uB0B4\uACE0 \uD640\uB85C
       \uB0A8\uACA8\uC9C4 \uC0AC\uB78C\uB3C4 \uB9CE\uC544."
-    nextNodeId: 76-1-3
+    nextNodeId: 76_1_3
     choices: []
     flagBranches: []
     varBranches: []
@@ -2109,9 +2511,13 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 76-1-3
+  - nodeId: 76_1_3
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uC81C\uAC00 \uC123\uBD80\uB974\uAE34 \uD588\uC9C0\uB9CC, \uC800\uC5D0
@@ -2132,15 +2538,19 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 76-2-1
-    speakerKey: 
+  - nodeId: 76_2_1
+    speakerKey: sally
     overrideSpeakerName: 
     text: "\uC544\uC9C1 \uADF8\uB7F0 \uBB34\uAC8C\uB97C \uC27D\uAC8C \uC9C8 \uC218
       \uC788\uB294 \uB098\uC774\uB85C \uBCF4\uC774\uC9C4 \uC54A\uB294\uB370, \uC720\uAC10\uC774\uC57C,
       \uBC14\uD150\uB354."
-    nextNodeId: 76-2-2
+    nextNodeId: 76_2_2
     choices: []
     flagBranches: []
     varBranches: []
@@ -2155,14 +2565,18 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 76-2-2
+  - nodeId: 76_2_2
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uADF8\uB7F0 \uBB34\uAC8C\uB294 \uB204\uAD6C\uB77C\uB3C4 \uC27D\uAC8C
       \uC9C8 \uC218 \uC5C6\uB294 \uAC83\uC785\uB2C8\uB2E4."
-    nextNodeId: 76-2-3
+    nextNodeId: 76_2_3
     choices: []
     flagBranches: []
     varBranches: []
@@ -2177,14 +2591,18 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 76-2-3
+  - nodeId: 76_2_3
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uD638\uC624, \uB9C8\uCE58 \uC0B0\uC804\uC218\uC804 \uB2E4 \uACAA\uC740
       \uC591 \uC774\uC57C\uAE30\uD558\uB294\uAD70"
-    nextNodeId: 76-2-4
+    nextNodeId: 76_2_4
     choices: []
     flagBranches: []
     varBranches: []
@@ -2199,9 +2617,13 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 76-2-4
+  - nodeId: 76_2_4
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uC81C\uAC00 \uC123\uBD80\uB974\uAE34 \uD588\uC9C0\uB9CC, \uC800\uB97C
@@ -2221,6 +2643,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 77
@@ -2244,6 +2670,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 78
@@ -2267,6 +2697,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 79
@@ -2288,6 +2722,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 80
@@ -2311,6 +2749,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 81
@@ -2334,6 +2776,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 82
@@ -2357,6 +2803,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 83
@@ -2379,6 +2829,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 84
@@ -2401,6 +2855,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 85
@@ -2414,15 +2872,19 @@ MonoBehaviour:
     characters: []
     requiresCrafting: 1
     craftingTicketKey: sc3_sally_1
-    nextNodeIdGood: 85-1-1
-    nextNodeIdBad: 85-2-1
+    nextNodeIdGood: 85_1_1
+    nextNodeIdBad: 85_2_1
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 85-1-1
+  - nodeId: 85_1_1
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uD558\uC544.. \uC880 \uC0B4\uACA0\uAD70."
-    nextNodeId: 85-1-2
+    nextNodeId: 85_1_2
     choices: []
     flagBranches: []
     varBranches: []
@@ -2437,9 +2899,13 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 85-1-2
+  - nodeId: 85_1_2
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uC62C \uB54C\uB9C8\uB2E4 \uC2DC\uB044\uB7EC\uC6B4 \uACF3\uC774\uC9C0\uB9CC
@@ -2459,14 +2925,18 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 85-2-1
+  - nodeId: 85_2_1
     speakerKey: sally
     overrideSpeakerName: 
     text: "\u2026\uC800\uBC88\uC5D4 \uB9DB\uC774 \uB354 \uAD1C\uCC2E\uC558\uB358\uAC83
       \uAC19\uC740\uB370."
-    nextNodeId: 85-2-2
+    nextNodeId: 85_2_2
     choices: []
     flagBranches: []
     varBranches: []
@@ -2481,9 +2951,13 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 85-2-2
+  - nodeId: 85_2_2
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uBB50, \uC624\uB298\uC740 \uC774\uAC78\uB85C \uB9CC\uC871\uD574\uC57C\uACA0\uAD70."
@@ -2502,6 +2976,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 86
@@ -2523,6 +3001,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 87
@@ -2544,6 +3026,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 88
@@ -2565,6 +3051,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 89
@@ -2587,6 +3077,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 90
@@ -2608,6 +3102,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 91
@@ -2629,6 +3127,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 92
@@ -2651,6 +3153,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 93
@@ -2664,16 +3170,20 @@ MonoBehaviour:
     characters: []
     requiresCrafting: 1
     craftingTicketKey: sc3_e12
-    nextNodeIdGood: 93-1-1
-    nextNodeIdBad: 93-2-1
+    nextNodeIdGood: 93_1_1
+    nextNodeIdBad: 93_2_1
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 93-1-1
+  - nodeId: 93_1_1
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uC73D.. \uBC14\uD150\uB354\u2026 \uC774\uAC70 \uC6D0\uB798.. \uC774\uB7F0
       \uB9DB\uC785\uB2C8\uAE4C?"
-    nextNodeId: 93-1-2
+    nextNodeId: 93_1_2
     choices: []
     flagBranches: []
     varBranches: []
@@ -2688,13 +3198,17 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 93-1-2
+  - nodeId: 93_1_2
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uC65C? \uAD1C\uCC2E\uC544 \uBCF4\uC774\uB294\uB370?"
-    nextNodeId: 93-1-3
+    nextNodeId: 93_1_3
     choices: []
     flagBranches: []
     varBranches: []
@@ -2709,13 +3223,17 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 93-1-3
+  - nodeId: 93_1_3
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC557, \uB9DB\uC5D0 \uBB38\uC81C\uB77C\uB3C4 \uC788\uB098\uC694?"
-    nextNodeId: 93-1-4
+    nextNodeId: 93_1_4
     choices: []
     flagBranches: []
     varBranches: []
@@ -2730,15 +3248,19 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 93-1-4
+  - nodeId: 93_1_4
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uB9C9 \uC4F0\uACE0, \uC774\uC0C1\uD558\uAC8C \uB2EC\uACE0, \uC18C\uB3C5\uC57D
       \uB0C4\uC0C8\uAC19\uC740\uAC8C \uB09C\uB2F5 \uB9D0\uC785\uB2C8\uB2E4! \uC704\uD5D8\uD55C\uAC78
       \uD0C4\uAC74 \uC544\uB2C8\uC2DC\uACA0\uC8E0?"
-    nextNodeId: 93-1-5
+    nextNodeId: 93_1_5
     choices: []
     flagBranches: []
     varBranches: []
@@ -2753,9 +3275,13 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 93-1-5
+  - nodeId: 93_1_5
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uBABB \uC0B4\uACA0\uAD70. \uADF8\uAC8C \uC220\uB9DB\uC774\uB77C\uB294
@@ -2775,14 +3301,18 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 93-2-1
+  - nodeId: 93_2_1
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uC73D.. \uBC14\uD150\uB354\u2026 \uC774\uAC70 \uC6D0\uB798.. \uC774\uB7F0
       \uB9DB\uC785\uB2C8\uAE4C?"
-    nextNodeId: 93-2-2
+    nextNodeId: 93_2_2
     choices: []
     flagBranches: []
     varBranches: []
@@ -2797,13 +3327,17 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 93-2-2
+  - nodeId: 93_2_2
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uC65C? \uAD1C\uCC2E\uC544 \uBCF4\uC774\uB294\uB370?"
-    nextNodeId: 93-2-3
+    nextNodeId: 93_2_3
     choices: []
     flagBranches: []
     varBranches: []
@@ -2818,13 +3352,17 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 93-2-3
+  - nodeId: 93_2_3
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC557, \uB9DB\uC5D0 \uBB38\uC81C\uB77C\uB3C4 \uC788\uB098\uC694?"
-    nextNodeId: 93-2-4
+    nextNodeId: 93_2_4
     choices: []
     flagBranches: []
     varBranches: []
@@ -2839,15 +3377,19 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 93-2-4
+  - nodeId: 93_2_4
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uB9C9 \uC4F0\uACE0, \uC774\uC0C1\uD558\uAC8C \uB2EC\uACE0, \uC18C\uB3C5\uC57D
       \uB0C4\uC0C8\uAC19\uC740\uAC8C \uB09C\uB2F5 \uB9D0\uC785\uB2C8\uB2E4! \uC704\uD5D8\uD55C\uAC78
       \uD0C4\uAC74 \uC544\uB2C8\uC2DC\uACA0\uC8E0?"
-    nextNodeId: 93-2-5
+    nextNodeId: 93_2_5
     choices: []
     flagBranches: []
     varBranches: []
@@ -2862,9 +3404,13 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
-  - nodeId: 93-2-5
+  - nodeId: 93_2_5
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uBE44\uC728\uC774 \uC880 \uC774\uC0C1\uD558\uAE34 \uD558\uB124. \uADF8\uB798\uB3C4
@@ -2884,6 +3430,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 94
@@ -2906,6 +3456,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 95
@@ -2928,6 +3482,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 96
@@ -2950,6 +3508,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 97
@@ -2972,6 +3534,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 98
@@ -2994,6 +3560,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 99
@@ -3016,6 +3586,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 100
@@ -3039,6 +3613,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 101
@@ -3061,6 +3639,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 102
@@ -3084,6 +3666,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 103
@@ -3106,6 +3692,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 104
@@ -3128,6 +3718,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 105
@@ -3151,6 +3745,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 106
@@ -3175,6 +3773,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 107
@@ -3197,6 +3799,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 108
@@ -3220,6 +3826,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 109
@@ -3242,6 +3852,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 110
@@ -3263,6 +3877,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 111
@@ -3286,6 +3904,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 112
@@ -3308,6 +3930,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 113
@@ -3330,6 +3956,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 114
@@ -3351,6 +3981,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 115
@@ -3373,6 +4007,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 116
@@ -3396,6 +4034,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 117
@@ -3417,6 +4059,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 118
@@ -3439,6 +4085,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 119
@@ -3462,6 +4112,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 120
@@ -3484,6 +4138,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 121
@@ -3508,6 +4166,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 122
@@ -3530,6 +4192,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 123
@@ -3552,6 +4218,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 124
@@ -3574,6 +4244,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 125
@@ -3597,6 +4271,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 126
@@ -3618,6 +4296,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 127
@@ -3639,6 +4321,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 128
@@ -3660,6 +4346,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 129
@@ -3683,6 +4373,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 130
@@ -3705,6 +4399,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 131
@@ -3727,6 +4425,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 132
@@ -3749,6 +4451,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 133
@@ -3771,6 +4477,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 134
@@ -3794,6 +4504,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 135
@@ -3816,6 +4530,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 136
@@ -3837,6 +4555,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 137
@@ -3858,6 +4580,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 138
@@ -3880,6 +4606,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 139
@@ -3902,6 +4632,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 140
@@ -3924,6 +4658,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 141
@@ -3943,6 +4681,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 142
@@ -3961,6 +4703,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 143
@@ -3980,6 +4726,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 144
@@ -3998,6 +4748,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 145
@@ -4017,6 +4771,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 146
@@ -4035,6 +4793,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 
@@ -4049,9 +4811,11 @@ MonoBehaviour:
       clearFlags: []
       varChanges: []
     flagBranches:
-    - requiredFlag: 
+    - requiredAllFlags: []
+      requiredAnyFlags: []
       nextNodeId: 
-    - requiredFlag: 
+    - requiredAllFlags: []
+      requiredAnyFlags: []
       nextNodeId: 
     varBranches: []
     characters:
@@ -4062,6 +4826,10 @@ MonoBehaviour:
     craftingTicketKey: 
     nextNodeIdGood: 
     nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
     bgmCommand: 0
     bgmClipName: 
   episodeDescription: 
