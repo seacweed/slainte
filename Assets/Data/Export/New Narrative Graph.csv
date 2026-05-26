@@ -1,0 +1,17 @@
+#META
+episodeId,episodeTitle,firstNodeId
+New Narrative Graph,이상한 동전,4b1c8b14-d725-4a88-9e7f-3e29344adcff_0
+
+#NODES
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad
+eace957f-426b-495b-9a6e-5cf929d7faf0_0,a,,aaaaaa,eace957f-426b-495b-9a6e-5cf929d7faf0_1,false,,,
+eace957f-426b-495b-9a6e-5cf929d7faf0_1,,,,eace957f-426b-495b-9a6e-5cf929d7faf0_2,false,,,
+eace957f-426b-495b-9a6e-5cf929d7faf0_2,a,,hi,eace957f-426b-495b-9a6e-5cf929d7faf0_3,false,,,
+eace957f-426b-495b-9a6e-5cf929d7faf0_3,a,,no.,,false,,,
+9f0d5276-8e7c-46fa-a68f-a138d2b620be_0,,,(Empty Node),,false,,,
+4b1c8b14-d725-4a88-9e7f-3e29344adcff_0,,,(Empty Node),,false,,,
+
+#CHOICES
+nodeId,choiceIndex,buttonText,nextNodeId,setFlags,clearFlags,varChanges
+eace957f-426b-495b-9a6e-5cf929d7faf0_1,0,1,,,,
+eace957f-426b-495b-9a6e-5cf929d7faf0_1,1,2,,,,

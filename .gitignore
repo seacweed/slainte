@@ -92,3 +92,6 @@ crashlytics-build.properties
 !.ai_history/knowledge/
 !.ai_history/mcp_config.json
 !.ai_history/settings.json
+docs/portfolio.md
+docs/portfolio2.md
+docs/포트폴리오 개선 제안 - Google Gemini.pdf

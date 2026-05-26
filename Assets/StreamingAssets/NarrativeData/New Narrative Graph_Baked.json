@@ -1,0 +1,55 @@
+{
+  "Nodes": [
+    {
+      "NodeId": "eace957f-426b-495b-9a6e-5cf929d7faf0",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "New Episode",
+      "Description": "",
+      "DiscoveryCondition": "",
+      "ActivationCondition": "",
+      "IsCleared": "False",
+      "NextNodeIds": ["9f0d5276-8e7c-46fa-a68f-a138d2b620be", "673436c0-15c7-4a82-a493-7fd2c149b56b"]
+    },
+    {
+      "NodeId": "9f0d5276-8e7c-46fa-a68f-a138d2b620be",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "New Episode",
+      "Description": "",
+      "DiscoveryCondition": "",
+      "ActivationCondition": "",
+      "IsCleared": "False",
+      "NextNodeIds": ["673436c0-15c7-4a82-a493-7fd2c149b56b"]
+    },
+    {
+      "NodeId": "673436c0-15c7-4a82-a493-7fd2c149b56b",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "New Episode",
+      "Description": "",
+      "DiscoveryCondition": "",
+      "ActivationCondition": "",
+      "IsCleared": "False",
+      "NewField": "",
+      "NewField": "",
+      "NextNodeIds": []
+    },
+    {
+      "NodeId": "4b1c8b14-d725-4a88-9e7f-3e29344adcff",
+      "NodeType": "EpisodeNodeSO",
+      "a": "",
+      "NewField": "",
+      "NextNodeIds": ["eace957f-426b-495b-9a6e-5cf929d7faf0"]
+    },
+    {
+      "NodeId": "88be1ef7-38c6-4bb7-b892-669afec15e2d",
+      "NodeType": "EpisodeNodeSO",
+      "a": "",
+      "NewField": "",
+      "NextNodeIds": []
+    },
+    {
+      "NodeId": "f3174ce8-850f-4d3d-858e-89bd51af4484",
+      "NodeType": "EmptyNodeSO",
+      "NextNodeIds": ["eace957f-426b-495b-9a6e-5cf929d7faf0", "88be1ef7-38c6-4bb7-b892-669afec15e2d"]
+    }
+  ]
+}

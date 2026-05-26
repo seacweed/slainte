@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
@@ -12,7 +13,8 @@ public class EpisodeBoardManager : BaseUIManager
     private Vector3 originalPos;
 
     [Header("Episode Board UI")]
-    public EpisodeInfoWindow infoWindow; // 사진 옆에 뜨는 상세 정보창
+    public GameObject photoPrefab; // 생성할 사진 프리팹
+    public Transform[] boardSlots; // 고정된 6개의 슬롯 자리
     
     [Header("Bottom UI")]
     public TextMeshProUGUI bottomEpisodeNameText; // 하단 텍스트 박스
@@ -44,28 +46,107 @@ public class EpisodeBoardManager : BaseUIManager
         ResetBoard();   // 열릴 때마다 선택 내역 깔끔하게 초기화
     }
 
-    // 모든 사진(자식 오브젝트)들을 슬롯으로 간주하고, 가능한 에피소드들을 순서대로 채워넣습니다.
+    // 6자리 슬롯에 맞게 에피소드를 랜덤 배치하고 위치 유지
     public void RefreshBoard()
     {
-        EpisodePhotoTrigger[] allPhotos = GetComponentsInChildren<EpisodePhotoTrigger>(true);
+        if (EpisodeManager.Instance == null || GameProgress.Instance == null) return;
         
-        if (EpisodeManager.Instance == null) return;
+        var boardEpisodes = EpisodeManager.Instance.GetBoardEpisodes();
         
-        var availableEpisodes = EpisodeManager.Instance.GetAvailableEpisodes();
-        
-        for (int i = 0; i < allPhotos.Length; i++)
+        // 1. 이미 슬롯에 있는 프리팹 캐싱 및 필요없는 프리팹 제거
+        List<EpisodePhotoTrigger> currentPhotos = new List<EpisodePhotoTrigger>(GetComponentsInChildren<EpisodePhotoTrigger>(true));
+        foreach (var photo in currentPhotos)
         {
-            if (i < availableEpisodes.Count)
+            // 현재 사진이 가진 에피소드가 여전히 활성화(visible) 상태인지 확인
+            bool stillVisible = false;
+            foreach (var ep in boardEpisodes)
             {
-                // 슬롯에 유효한 에피소드 덮어씌우고 활성화
-                allPhotos[i].SetEpisodeData(availableEpisodes[i]);
-                allPhotos[i].gameObject.SetActive(true);
+                if (ep.episodeId == photo.episodeData?.episodeId)
+                {
+                    stillVisible = true;
+                    break;
+                }
             }
-            else
+
+            // 조건 미달(진행불가 등)로 더이상 보이지 않아야 하거나 클리어된 경우 삭제 및 저장된 자리값 초기화
+            if (!stillVisible)
             {
-                // 빈 슬롯은 숨기고 데이터 초기화
-                allPhotos[i].SetEpisodeData(null);
-                allPhotos[i].gameObject.SetActive(false);
+                if (photo.episodeData != null)
+                {
+                    GameProgress.Instance.SetVar($"BoardSlot_{photo.episodeData.episodeId}", 0);
+                }
+                Destroy(photo.gameObject);
+            }
+        }
+
+        // 삭제가 즉시 반영되지 않으므로, 한 틱 뒤를 고려하거나 잔여 슬롯 추적
+        bool[] filledSlots = new bool[boardSlots.Length];
+        
+        // 2. 이미 자리를 배정받았던 에피소드부터 예약
+        foreach (var ep in boardEpisodes)
+        {
+            int savedSlot = GameProgress.Instance.GetVar($"BoardSlot_{ep.episodeId}") - 1;
+            if (savedSlot >= 0 && savedSlot < boardSlots.Length)
+            {
+                filledSlots[savedSlot] = true;
+            }
+        }
+
+        // 3. 자리가 없는(새로 발견된) 에피소드들에게 빈 슬롯 무작위 배정 및 생성
+        foreach (var ep in boardEpisodes)
+        {
+            int savedSlot = GameProgress.Instance.GetVar($"BoardSlot_{ep.episodeId}") - 1;
+            int targetSlot = savedSlot;
+
+            if (savedSlot < 0 || savedSlot >= boardSlots.Length)
+            {
+                // 빈 슬롯 찾기
+                System.Collections.Generic.List<int> emptySlots = new System.Collections.Generic.List<int>();
+                for (int i = 0; i < boardSlots.Length; i++)
+                {
+                    if (!filledSlots[i]) emptySlots.Add(i);
+                }
+
+                if (emptySlots.Count == 0)
+                {
+                    Debug.LogWarning("[EpisodeBoardManager] 보드에 자리가 부족합니다!");
+                    continue; // 6개 초과 시 스킵
+                }
+
+                int rnd = Random.Range(0, emptySlots.Count);
+                targetSlot = emptySlots[rnd];
+                filledSlots[targetSlot] = true;
+
+                // 새 자리 저장 (1-indexed)
+                GameProgress.Instance.SetVar($"BoardSlot_{ep.episodeId}", targetSlot + 1);
+            }
+
+            // 해당 에피소드의 프리팹이 이미 존재하면 생성 안 함
+            bool alreadyExists = false;
+            foreach (var p in GetComponentsInChildren<EpisodePhotoTrigger>(true))
+            {
+                if (p.episodeData?.episodeId == ep.episodeId)
+                {
+                    alreadyExists = true;
+                    // 부모만 보장해주기
+                    p.transform.SetParent(boardSlots[targetSlot], false);
+                    p.transform.localPosition = Vector3.zero;
+                    p.gameObject.SetActive(true);
+                    p.SetEpisodeData(ep, this);
+                    break;
+                }
+            }
+
+            // 없으면 생성
+            if (!alreadyExists && photoPrefab != null)
+            {
+                GameObject newPhoto = Instantiate(photoPrefab, boardSlots[targetSlot]);
+                newPhoto.transform.localPosition = Vector3.zero;
+                EpisodePhotoTrigger trigger = newPhoto.GetComponent<EpisodePhotoTrigger>();
+                if (trigger != null)
+                {
+                    trigger.SetEpisodeData(ep, this);
+                }
             }
         }
     }
@@ -136,10 +217,20 @@ public class EpisodeBoardManager : BaseUIManager
     {
         PinnedPhoto = photo;
 
+        bool canStart = false;
+        if (EpisodeManager.Instance != null && GameProgress.Instance != null)
+        {
+            canStart = EpisodeManager.Instance.CanStart(photo.episodeData, GameProgress.Instance);
+        }
+
         // 하단 UI 활성화
-        if (bottomEpisodeNameText) bottomEpisodeNameText.text = photo.episodeData.episodeTitle;
-        if (startButton) startButton.interactable = true; 
-        if (startButtonImage) startButtonImage.color = buttonActiveColor; 
+        if (bottomEpisodeNameText) 
+        {
+            bottomEpisodeNameText.text = canStart ? photo.episodeData.episodeTitle : $"{photo.episodeData.episodeTitle} <color=#ff8888>(조건 미달성)</color>";
+        }
+
+        if (startButton) startButton.interactable = canStart; 
+        if (startButtonImage) startButtonImage.color = canStart ? buttonActiveColor : buttonInactiveColor; 
     }
 
     // 초기화 (허공 클릭, 창 닫기, 혹은 다른 사진 클릭 시 이전 사진 Unpin용)
@@ -147,12 +238,10 @@ public class EpisodeBoardManager : BaseUIManager
     {
         if (PinnedPhoto != null)
         {
-            PinnedPhoto.Unpin(); // 이전 사진 테두리 및 오버레이 끄기
+            PinnedPhoto.Unpin(); // 이전 사진 테두리 및 정보창 끄기
             PinnedPhoto = null;
         }
 
-        if (infoWindow != null) infoWindow.Hide(); // 상세 정보창 끄기
-        
         // 하단 UI 비활성화
         if (bottomEpisodeNameText) bottomEpisodeNameText.text = "에피소드를 선택해주세요.";
         if (startButton) startButton.interactable = false; 
