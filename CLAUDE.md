@@ -14,7 +14,7 @@
 
 **Slainte**는 Unity 2023.3.5f2(URP)로 제작 중인 내러티브 바텐딩 게임입니다. 이름은 아일랜드어로 "건배"를 뜻합니다. 에피소드 기반의 비주얼 노벨식 스토리텔링과 드래그-드롭 바텐딩 메커니즘을 결합한 게임입니다.
 
-**게임 진행 흐름**: Episode(BusinessScene) → Rest(RestScene) → Episode → Rest → ...
+**게임 진행 흐름**: MainMenu → Episode(BusinessScene) → Rest(RestScene) → Episode → Rest → ...
 
 ## 아키텍처 핵심
 
@@ -22,7 +22,9 @@
 - **런타임 상태 Source of Truth**: `GameProgress` (flags, completedEpisodeIds, vars, currentDay)
 - **에피소드 데이터**: `EpisodeData` 단일 SO — `Resources/EpisodeData/`에 배치, `EpisodeManager`가 일괄 로드
 - **씬 전환**: `GameManager` + `SceneTransitionManager` (Additive, 페이드)
-- **게임 상태**: `GameState.Episode` / `GameState.Rest`
+- **게임 상태**: `GameState.None`(MainMenu 초기) / `GameState.Episode` / `GameState.Rest`
+- **에피소드 종료**: `EpisodeRunner.EndEncounter()` → `EpisodeManager.ClearEpisode()` → `GameManager.ChangeState(Rest)`
+- **GameProgress 접근**: `EpisodeRunner` 내부에서는 항상 `GameProgress.Instance` 직접 참조 (`Progress` 프로퍼티)
 
 
 ## 문서

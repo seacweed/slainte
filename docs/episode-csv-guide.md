@@ -146,6 +146,10 @@ f72,frust,-1
 | `nextNodeIdBad` | 제조 실패 시 이동할 노드 ID | `5-2-1` |
 | `bgmCommand` | BGM 명령 (`none` / `play` / `stop`, 비우면 `none`) | `play` |
 | `bgmClipName` | 재생할 BGM 파일명 (`bgmCommand=play` 일 때만 작성, 확장자 제외) | `bgm_tension` |
+| `craftingFlagGood` | 제조 **성공** 시 설정할 플래그 | `sc0_crafted_good` |
+| `craftingFlagBad` | 제조 **실패** 시 설정할 플래그 | `sc0_crafted_bad` |
+| `craftingVarChangesGood` | 제조 **성공** 시 수치 변수 변경 (`\|` 구분, `+`/`-` 증감) | `sally_affinity+5` |
+| `craftingVarChangesBad` | 제조 **실패** 시 수치 변수 변경 (`\|` 구분, `+`/`-` 증감) | `sally_affinity-2` |
 
 **제조 판정 노드** 작성 시: `text`와 `nextNodeId`는 비우고, `requiresCrafting=true` + 성공/실패 노드 ID를 작성합니다.
 
@@ -155,9 +159,9 @@ f72,frust,-1
 
 ```csv
 #NODES
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName
-0,f72,???,흘..크흘…,1,false,,,,play,bgm_tension
-5,f72,???,,,true,sc0_f72,5-1-1,5-2-1,,
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad
+0,f72,???,흘..크흘…,1,false,,,,play,bgm_tension,,,,
+5,f72,???,,,true,sc0_f72,5-1-1,5-2-1,,,sc0_crafted_good,sc0_crafted_bad,sally_affinity+5,sally_affinity-2
 ```
 
 > **주의**: 대사에 쉼표(`,`)가 포함된 경우 반드시 큰따옴표로 감싸야 합니다.  
@@ -220,17 +224,20 @@ nodeId,choiceIndex,buttonText,nextNodeId,setFlags,clearFlags,varChanges
 | 열 | 설명 | 예시 |
 |---|---|---|
 | `nodeId` | 분기가 적용될 노드 ID | `5` |
-| `requiredFlag` | 이 플래그가 켜져 있으면 분기 | `flag_took_coin` |
-| `nextNodeId` | 분기 시 이동할 노드 ID | `5_alt` |
+| `requiredAllFlags` | 이 플래그가 **모두** 켜져 있어야 분기 (쉼표 구분, AND 조건) | `flag_a,flag_b` |
+| `requiredAnyFlags` | 이 플래그 중 **하나라도** 켜져 있으면 분기 (쉼표 구분, OR 조건) | `flag_c,flag_d` |
+| `nextNodeId` | 조건 충족 시 이동할 노드 ID | `5_alt` |
 
+- `requiredAllFlags`와 `requiredAnyFlags` 중 하나만 사용합니다. 둘 다 값이 있으면 `requiredAllFlags`(AND)가 우선합니다.
 - 한 노드에 여러 조건을 쓰려면 **행을 여러 개** 작성합니다. 위에서 아래 순서로 확인하고, 처음으로 맞는 조건으로 이동합니다.
 - 어떤 조건도 맞지 않으면 `#NODES`의 `nextNodeId`로 이동합니다.
 - `NODE_BRANCHES`가 먼저 확인되고, 이후 `NODE_VAR_BRANCHES`가 확인됩니다.
 
 ```csv
 #NODE_BRANCHES
-nodeId,requiredFlag,nextNodeId
-5,flag_took_coin,5_alt
+nodeId,requiredAllFlags,requiredAnyFlags,nextNodeId
+5,flag_a,flag_b,,5_and_alt
+6,,flag_c,flag_d,6_or_alt
 ```
 
 ---
@@ -311,13 +318,13 @@ characterKey,expressionKey,slotIndex
 f72,neutral,-1
 
 #NODES
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName
-0,f72,???,뭘 마시겠어?,1,false,,,, play,bgm_bar
-1,shaun,,추천해줘.,2,false,,,,none,
-2,f72,,그럼 선택해.,,,false,,,,none,
-3a,f72,,좋은 선택이야.,4,false,,,,none,
-3b,f72,,그것도 나쁘지 않아.,4,false,,,,none,
-4,f72,,또 오게.,,,false,,,, stop,
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad
+0,f72,???,뭘 마시겠어?,1,false,,,,play,bgm_bar,,,,
+1,shaun,,추천해줘.,2,false,,,,none,,,,,
+2,f72,,그럼 선택해.,,false,,,,none,,,,,
+3a,f72,,좋은 선택이야.,4,false,,,,none,,,,,
+3b,f72,,그것도 나쁘지 않아.,4,false,,,,none,,,,,
+4,f72,,또 오게.,,false,,,,stop,,,,,
 
 #NODE_CHARS
 nodeId,characterKey,expressionKey,slotIndex
@@ -334,7 +341,7 @@ nodeId,choiceIndex,buttonText,nextNodeId,setFlags,clearFlags,varChanges
 2,1,위스키,3b,flag_chose_whiskey,,
 
 #NODE_BRANCHES
-nodeId,requiredFlag,nextNodeId
+nodeId,requiredAllFlags,requiredAnyFlags,nextNodeId
 
 #NODE_VAR_BRANCHES
 nodeId,varName,op,threshold,nextNodeId
@@ -347,7 +354,7 @@ nodeId,varName,op,threshold,nextNodeId
 1. Unity 메뉴 → **Tools > Slainte > Import Episode CSV**
 2. **Browse** 버튼으로 작성한 CSV 파일 선택
 3. **Import** 클릭
-4. `Assets/Data/EpisodeData/EpisodeData_{episodeId}.asset` 으로 저장됨
+4. `Assets/Resources/EpisodeData/EpisodeData_{episodeId}.asset` 으로 저장됨
 
 같은 `episodeId`의 에셋이 이미 존재하면 **덮어씁니다**.
 

@@ -34,6 +34,10 @@ public class EpisodeNode
     public string craftingTicketKey;
     public string nextNodeIdGood;
     public string nextNodeIdBad;
+    public string craftingFlagGood;
+    public string craftingFlagBad;
+    public List<VarChange> craftingVarChangesGood = new();
+    public List<VarChange> craftingVarChangesBad  = new();
 
     [Header("BGM (optional)")]
     public BgmCommand bgmCommand = BgmCommand.None;

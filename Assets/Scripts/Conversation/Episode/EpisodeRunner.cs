@@ -11,7 +11,6 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
     [SerializeField] private FrontCameraRig    cameraRig;
     [SerializeField] private DialogueController dialogue;
     [SerializeField] private CharacterDatabase  characterDB;
-    [SerializeField] private GameProgress       progress;
 
     [Header("Choice UI")]
     [SerializeField] private Transform            choiceRoot;
@@ -22,6 +21,8 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 
     [Header("Timing")]
     [SerializeField] private float startDelay = 0.15f;
+
+    private GameProgress Progress => GameProgress.Instance;
 
     private const float ChoiceButtonHeight  = 80f;
     private const float ChoiceButtonSpacing = 20f;
@@ -49,11 +50,7 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 
     public event Action OnEncounterCompleted;
 
-    void Awake()
-    {
-        if (progress == null)
-            progress = GameProgress.Instance;
-    }
+    void Awake() { }
 
     public void Begin(EpisodeData episode)
     {
@@ -64,10 +61,11 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         }
 
         _episode = episode;
-        _isRunning        = false;
-        _waitingForChoice = false;
+        _isRunning          = false;
+        _waitingForChoice   = false;
         _waitingForCrafting = false;
 
+        modeManager?.RequestModeChange(GameMode.EpisodeMode);
         ClearChoices();
         dialogue?.HideImmediate();
         StartCoroutine(BeginRoutine());
@@ -193,6 +191,14 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
     {
         if (_currentNode == null) { EndEncounter(); return; }
 
+        string flag = isGood ? _currentNode.craftingFlagGood : _currentNode.craftingFlagBad;
+        if (!string.IsNullOrWhiteSpace(flag))
+            Progress?.SetFlag(flag);
+
+        var varChanges = isGood ? _currentNode.craftingVarChangesGood : _currentNode.craftingVarChangesBad;
+        for (int i = 0; i < varChanges.Count; i++)
+            Progress?.AddVar(varChanges[i].varName, varChanges[i].delta);
+
         string preferred = isGood ? _currentNode.nextNodeIdGood : _currentNode.nextNodeIdBad;
         string nextId = string.IsNullOrWhiteSpace(preferred) ? _currentNode.nextNodeId : preferred;
 
@@ -212,14 +218,12 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 
     private string ResolveNextNodeId(EpisodeNode node)
     {
-        if (progress != null)
+        if (Progress != null)
         {
             for (int i = 0; i < node.flagBranches.Count; i++)
             {
                 NodeFlagBranch branch = node.flagBranches[i];
-                if (!string.IsNullOrWhiteSpace(branch.requiredFlag)
-                    && progress.HasFlag(branch.requiredFlag)
-                    && !string.IsNullOrWhiteSpace(branch.nextNodeId))
+                if (!string.IsNullOrWhiteSpace(branch.nextNodeId) && EvaluateFlagBranch(branch))
                     return branch.nextNodeId;
             }
 
@@ -227,13 +231,30 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
             {
                 NodeVarBranch branch = node.varBranches[i];
                 if (branch.condition != null
-                    && branch.condition.Evaluate(progress.GetVar(branch.condition.varName))
+                    && branch.condition.Evaluate(Progress.GetVar(branch.condition.varName))
                     && !string.IsNullOrWhiteSpace(branch.nextNodeId))
                     return branch.nextNodeId;
             }
         }
 
         return node.nextNodeId;
+    }
+
+    private bool EvaluateFlagBranch(NodeFlagBranch branch)
+    {
+        if (branch.requiredAllFlags.Count > 0)
+        {
+            for (int i = 0; i < branch.requiredAllFlags.Count; i++)
+                if (!Progress.HasFlag(branch.requiredAllFlags[i])) return false;
+            return true;
+        }
+        if (branch.requiredAnyFlags.Count > 0)
+        {
+            for (int i = 0; i < branch.requiredAnyFlags.Count; i++)
+                if (Progress.HasFlag(branch.requiredAnyFlags[i])) return true;
+            return false;
+        }
+        return false;
     }
 
     private void ShowChoices(List<EpisodeChoice> choices)
@@ -300,16 +321,16 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 
     private void ApplyChoiceEffects(EpisodeChoice choice)
     {
-        if (progress == null) return;
+        if (Progress == null) return;
 
         for (int i = 0; i < choice.setFlags.Count; i++)
-            progress.SetFlag(choice.setFlags[i]);
+            Progress.SetFlag(choice.setFlags[i]);
 
         for (int i = 0; i < choice.clearFlags.Count; i++)
-            progress.ClearFlag(choice.clearFlags[i]);
+            Progress.ClearFlag(choice.clearFlags[i]);
 
         for (int i = 0; i < choice.varChanges.Count; i++)
-            progress.AddVar(choice.varChanges[i].varName, choice.varChanges[i].delta);
+            Progress.AddVar(choice.varChanges[i].varName, choice.varChanges[i].delta);
     }
 
     private void ApplyBgmCommand(EpisodeNode node)
@@ -380,10 +401,10 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         characterStage?.Clear();
         cameraRig?.ResetPan();
 
-        if (progress != null && _episode != null)
-            progress.MarkEpisodeCompleted(_episode.episodeId);
-
-        modeManager?.RequestModeChange(GameMode.OrderMode);
+        string episodeId = _episode?.episodeId;
         OnEncounterCompleted?.Invoke();
+
+        EpisodeManager.Instance?.ClearEpisode(episodeId);
+        GameManager.Instance?.ChangeState(GameState.Rest);
     }
 }
