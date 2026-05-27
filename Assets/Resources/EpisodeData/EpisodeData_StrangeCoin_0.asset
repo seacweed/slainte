@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ada6baddb75540a4ba25d31b476b855a, type: 3}
-  m_Name: 
+  m_Name: EpisodeData_StrangeCoin_0
   m_EditorClassIdentifier: Assembly-CSharp::EpisodeData
   episodeId: StrangeCoin_0
   episodeTitle: "\uC774\uC0C1\uD55C \uB3D9\uC804 - 0"
@@ -377,3 +377,4 @@ MonoBehaviour:
   iconNameBoard: 
   iconNameArchive: 
   characters: []
+  customConditionTexts: []

@@ -51,10 +51,13 @@ public enum GameState { None, Episode, Rest }
 | 메서드 | 설명 |
 |---|---|
 | `LoadFrom(SaveData)` | DataManager.Load() 직후 호출, 디스크 데이터를 런타임 상태로 반영 |
-| `GetFlagList()` / `GetCompletedList()` / `GetVarKeys()` / `GetVarValues()` | DataManager.Save() 직전 데이터 수거용 |
+| `GetFlagList()` / `GetCompletedList()` | DataManager.Save() 직전 데이터 수거용 |
+| `GetAffinityKeys()` / `GetAffinityValues()` | 호감도 변수 직렬화용 수거 |
+| `GetBoardSlotKeys()` / `GetBoardSlotValues()` | 보드 슬롯 위치 직렬화용 수거 |
 | `HasFlag` / `SetFlag` / `ClearFlag` | 스토리 플래그 관리 |
 | `IsEpisodeCompleted` / `MarkEpisodeCompleted` | 에피소드 완료 기록 |
-| `GetVar` / `SetVar` / `AddVar` | 정수형 전역 변수 (호감도 등) |
+| `GetAffinity` / `SetAffinity` / `AddAffinity` | 호감도 정수 변수 — CSV `varName` 필드와 연결 |
+| `GetBoardSlot` / `SetBoardSlot` / `ClearBoardSlot` | 에피소드 보드 슬롯 위치 (affinity와 저장소 분리) |
 | `SetCurrentDay` / `CurrentDay` | 게임 내 일수 |
 
 ## DataManager (`CoreScene/Scripts/DataManager.cs`)
@@ -75,13 +78,16 @@ public class SaveData
     public int dayCount;
     public List<string> flags;
     public List<string> completedEpisodeIds;
-    public List<string> varKeys;
-    public List<int>    varValues;
+    public List<string> affinityKeys;    // 호감도 변수 키
+    public List<int>    affinityValues;
+    public List<string> boardSlotKeys;   // 에피소드 보드 슬롯 위치
+    public List<int>    boardSlotValues;
 }
 ```
+
+> **주의**: 필드명 변경(`varKeys`→`affinityKeys`)으로 이전 세이브 파일과 호환되지 않음.
 
 ## 미결 사항
 
 - `EpisodeData`에 조건 텍스트 필드 추가 예정 — `EpisodeInfoWindow.conditionsText` UI 연결 대기 중
 - 캐릭터 조우 여부 추적 — `EpisodeInfoWindow.unknownPortrait` 로직 보존됨, 추후 `GameProgress` 구조 추가 검토
-- Yarn Spinner 패키지 — `DialogueManager.cs` 삭제됨, 패키지 자체 제거 여부는 추후 결정

@@ -16,7 +16,6 @@
     │   ├── FrontCameraRig     (이 RectTransform 전체가 이동하는 단위)
     │   │   ├── BarCounter     (UIDropSlot들, 기본 뷰)
     │   │   ├── CustomerStage  (CharacterStage — 영업/에피소드 공용)
-    │   │   ├── ShelfArea      (ShelfUI, 오른쪽 오프스크린 — D키로 이동해서 노출)
     │   │   └── DrawerArea     (DrawerUI, 아래쪽 오프스크린 — S키로 이동해서 노출)
     │   └── EpisodeRunner      (FrontCameraRig 밖 — 카메라 이동 영향 없음)
     ├── DialoguePanel          (모든 모드에서 표시)

@@ -77,7 +77,7 @@ public class EpisodeInfoUI : MonoBehaviour
 
                 foreach (var vc in cond.requiredVars)
                 {
-                    bool met = vc.Evaluate(gp.GetVar(vc.varName));
+                    bool met = vc.Evaluate(gp.GetAffinity(vc.varName));
                     string opStr = GetOpString(vc.op);
                     cText += (met ? "<color=green>🔓</color>" : "<color=red>🔒</color>") + $" {vc.varName} {opStr} {vc.threshold}\n";
                 }

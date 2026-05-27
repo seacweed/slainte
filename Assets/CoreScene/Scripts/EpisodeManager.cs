@@ -79,7 +79,7 @@ public class EpisodeManager : MonoSingleton<EpisodeManager>
         for (int i = 0; i < cond.requiredVars.Count; i++)
         {
             VarCondition vc = cond.requiredVars[i];
-            if (!vc.Evaluate(gp.GetVar(vc.varName))) return false;
+            if (!vc.Evaluate(gp.GetAffinity(vc.varName))) return false;
         }
 
         return true;

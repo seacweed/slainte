@@ -21,7 +21,7 @@
 | 키 | OrderMode | EpisodeMode | CraftingMode |
 |---|---|---|---|
 | Space / LMB | `DialogueController.Advance()` | `EpisodeRunner.OnAdvanceInput()` | `EpisodeRunner.OnAdvanceInput()` |
-| S / W / D / A | `FrontCameraRig` 이동 (대화 중 불가) | — | `FrontCameraRig` 이동 |
+| S / W | `FrontCameraRig` 서랍 열기/닫기 (대화 중 불가) | — | `FrontCameraRig` 서랍 열기/닫기 |
 | E | `OrderTicketUI.Toggle()` | — | — |
 | 1 (테스트) | `CustomerSpawner.ShowCustomers("yukari")` | — | — |
 | 2 (테스트) | `testEpisode` 조건 없이 즉시 실행 | — | — |
@@ -29,6 +29,9 @@
 수신자 인터페이스:
 - `IDialogueAdvanceHandler` — `CanReceiveAdvanceInput`, `OnAdvanceInput()`
 - `ICameraInputHandler` — `IsAnimating`, `OnCameraInput(CameraDirection)`
+
+`CameraDirection` 열거형: `DrawerOpen` / `DrawerClose` (S/W 키). 술장(Shelf) 제거로 `ShelfOpen` / `ShelfClose` 삭제됨.
+`FrontCameraRig` 수평 이동은 캐릭터 포커스 전용 `PanToWorldCenterX()` / `ResetPan()`만 남음.
 
 **3. 캐릭터 표시 (`Assets/Scripts/Presentation/`)**
 

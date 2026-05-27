@@ -182,10 +182,10 @@ f72,frust,-1
 
 ```csv
 #NODES
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName
-0,f72,???,흘..크흘…,1,false,,,,play,bgm_tension
-1,shaun,,뭔가 원하는 게 있나요?,2,false,,,,,,
-2,f72,,,,true,sc0_f72,3a,3b,,
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad
+0,f72,???,흘..크흘…,1,false,,,,play,bgm_tension,,,,
+1,shaun,,뭔가 원하는 게 있나요?,2,false,,,,,,,,
+2,f72,,,,true,sc0_f72,3a,3b,,,sc0_good,sc0_bad,sally_affinity+5,sally_affinity-2
 ```
 
 ---
@@ -238,24 +238,25 @@ nodeId,choiceIndex,buttonText,nextNodeId,setFlags,clearFlags,varChanges
 
 ### NODE_BRANCHES — 플래그 분기
 
-특정 플래그가 켜져 있을 때 다른 노드로 이동합니다.  
+특정 플래그 상태에 따라 다른 노드로 이동합니다.  
 분기가 없으면 **헤더 행만 남기고 비워두세요**.
 
 | 열 | 설명 | 예시 |
 |---|---|---|
 | `nodeId` | 분기 확인을 할 노드 ID | `5` |
-| `requiredFlag` | 이 플래그가 켜져 있으면 분기 | `flag_took_coin` |
+| `requiredAllFlags` | 이 플래그가 **모두** 켜져 있어야 분기 (AND 조건, `\|` 구분) | `flag_a\|flag_b` |
+| `requiredAnyFlags` | 이 플래그 중 **하나라도** 켜져 있으면 분기 (OR 조건, `\|` 구분) | `flag_c\|flag_d` |
 | `nextNodeId` | 분기 시 이동할 노드 ID | `5_alt` |
 
-- 한 노드에 여러 조건이 있으면 **행을 여러 개** 씁니다.
-- 위에서 아래 순서로 확인하며 처음 맞는 조건으로 이동합니다.
+- `requiredAllFlags`와 `requiredAnyFlags` 중 **하나만** 사용합니다. 둘 다 값이 있으면 `requiredAllFlags`(AND)가 우선합니다.
+- 한 노드에 여러 조건이 있으면 **행을 여러 개** 씁니다. 위에서 아래 순서로 확인하며 처음 맞는 조건으로 이동합니다.
 - 어떤 조건도 해당 없으면 `#NODES`의 `nextNodeId`로 이동합니다.
 
 ```csv
 #NODE_BRANCHES
-nodeId,requiredFlag,nextNodeId
-5,flag_took_coin,5_alt
-5,flag_saw_fight,5_alt2
+nodeId,requiredAllFlags,requiredAnyFlags,nextNodeId
+5,flag_took_coin,,5_alt
+6,,flag_saw_fight|flag_heard_rumor,6_alt
 ```
 
 ---
@@ -339,10 +340,11 @@ nodeId,speakerKey,...,text,nextNodeId,...
 
 ```csv
 #NODES
-5,f72,,,오늘 어땠어요?,6,false,,,,
+5,f72,,,오늘 어땠어요?,6,false,,,,,,,,
 
 #NODE_BRANCHES
-5,flag_took_coin,5_alt
+nodeId,requiredAllFlags,requiredAnyFlags,nextNodeId
+5,flag_took_coin,,5_alt
 ```
 
 ---
@@ -406,13 +408,13 @@ characterKey,expressionKey,slotIndex
 f72,neutral,-1
 
 #NODES
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName
-0,f72,???,뭘 마시겠어?,1,false,,,,play,bgm_bar
-1,shaun,,추천해줘.,2,false,,,,,,
-2,f72,,그럼 선택해.,,false,,,,,,
-3a,f72,,좋은 선택이야.,4,false,,,,,,
-3b,f72,,그것도 나쁘지 않아.,4,false,,,,,,
-4,f72,,또 오게.,,false,,,,stop,
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad
+0,f72,???,뭘 마시겠어?,1,false,,,,play,bgm_bar,,,,
+1,shaun,,추천해줘.,2,false,,,,,,,,
+2,f72,,그럼 선택해.,,false,,,,,,,,
+3a,f72,,좋은 선택이야.,4,false,,,,,,,,
+3b,f72,,그것도 나쁘지 않아.,4,false,,,,,,,,
+4,f72,,또 오게.,,false,,,,stop,,,,,
 
 #NODE_CHARS
 nodeId,characterKey,expressionKey,slotIndex
@@ -428,7 +430,7 @@ nodeId,choiceIndex,buttonText,nextNodeId,setFlags,clearFlags,varChanges
 2,1,위스키,3b,flag_chose_whiskey,,
 
 #NODE_BRANCHES
-nodeId,requiredFlag,nextNodeId
+nodeId,requiredAllFlags,requiredAnyFlags,nextNodeId
 
 #NODE_VAR_BRANCHES
 nodeId,varName,op,threshold,nextNodeId

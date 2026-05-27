@@ -197,7 +197,7 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 
         var varChanges = isGood ? _currentNode.craftingVarChangesGood : _currentNode.craftingVarChangesBad;
         for (int i = 0; i < varChanges.Count; i++)
-            Progress?.AddVar(varChanges[i].varName, varChanges[i].delta);
+            Progress?.AddAffinity(varChanges[i].varName, varChanges[i].delta);
 
         string preferred = isGood ? _currentNode.nextNodeIdGood : _currentNode.nextNodeIdBad;
         string nextId = string.IsNullOrWhiteSpace(preferred) ? _currentNode.nextNodeId : preferred;
@@ -231,7 +231,7 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
             {
                 NodeVarBranch branch = node.varBranches[i];
                 if (branch.condition != null
-                    && branch.condition.Evaluate(Progress.GetVar(branch.condition.varName))
+                    && branch.condition.Evaluate(Progress.GetAffinity(branch.condition.varName))
                     && !string.IsNullOrWhiteSpace(branch.nextNodeId))
                     return branch.nextNodeId;
             }
@@ -330,7 +330,7 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
             Progress.ClearFlag(choice.clearFlags[i]);
 
         for (int i = 0; i < choice.varChanges.Count; i++)
-            Progress.AddVar(choice.varChanges[i].varName, choice.varChanges[i].delta);
+            Progress.AddAffinity(choice.varChanges[i].varName, choice.varChanges[i].delta);
     }
 
     private void ApplyBgmCommand(EpisodeNode node)

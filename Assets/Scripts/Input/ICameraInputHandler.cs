@@ -1,9 +1,7 @@
 public enum CameraDirection
 {
     DrawerOpen,
-    DrawerClose,
-    ShelfOpen,
-    ShelfClose
+    DrawerClose
 }
 
 public interface ICameraInputHandler
