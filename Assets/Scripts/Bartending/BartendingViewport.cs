@@ -50,8 +50,32 @@ namespace Slainte.Bartending
         {
             ReleaseTargetTexture();
 
-            int width = Mathf.Max(16, renderSize.x);
-            int height = Mathf.Max(16, renderSize.y);
+            int width = renderSize.x;
+            int height = renderSize.y;
+
+            RectTransform rectTransform = transform as RectTransform;
+            if (rectTransform != null)
+            {
+                Vector3[] corners = new Vector3[4];
+                rectTransform.GetWorldCorners(corners);
+                Canvas canvas = rectTransform.GetComponentInParent<Canvas>();
+                Camera canvasCamera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay 
+                    ? canvas.worldCamera 
+                    : null;
+                Vector2 bottomLeft = RectTransformUtility.WorldToScreenPoint(canvasCamera, corners[0]);
+                Vector2 topRight = RectTransformUtility.WorldToScreenPoint(canvasCamera, corners[2]);
+                int pixelWidth = Mathf.RoundToInt(Mathf.Abs(topRight.x - bottomLeft.x));
+                int pixelHeight = Mathf.RoundToInt(Mathf.Abs(topRight.y - bottomLeft.y));
+
+                if (pixelWidth > 16 && pixelHeight > 16)
+                {
+                    width = pixelWidth;
+                    height = pixelHeight;
+                }
+            }
+
+            width = Mathf.Max(16, width);
+            height = Mathf.Max(16, height);
             targetTexture = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32)
             {
                 name = "BusinessBartendingView",
@@ -219,6 +243,14 @@ namespace Slainte.Bartending
             }
 
             return canvas.worldCamera;
+        }
+
+        private void OnRectTransformDimensionsChange()
+        {
+            if (isActiveAndEnabled && worldCamera != null)
+            {
+                BuildTargetTexture();
+            }
         }
     }
 }

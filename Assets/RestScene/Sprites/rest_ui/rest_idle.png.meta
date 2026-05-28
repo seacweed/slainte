@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: b52d8895e8e823b4082431a23a09cb85
+guid: 62abee50c61c3174da0b833332d17974
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -9107930371530684046
-    second: StrangeCoin-3-idle_0
+      213: -492229861233477233
+    second: rest_idle_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -48,7 +48,7 @@ TextureImporter:
   compressionQuality: 50
   spriteMode: 2
   spriteExtrude: 1
-  spriteMeshType: 1
+  spriteMeshType: 0
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: StrangeCoin-3-idle_0
+      name: rest_idle_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 400
-        height: 400
+        width: 2560
+        height: 1440
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2790ced35912a9180800000000000000
-      internalID: -9107930371530684046
+      spriteID: f89b6559c8f3b29f0800000000000000
+      internalID: -492229861233477233
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: dfdc2bd28b8297a448c7277a689f9866
+    spriteID: fee74ae803d39224ebf8049ca2545f85
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      StrangeCoin-3-idle_0: -9107930371530684046
+      rest_idle_0: -492229861233477233
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
