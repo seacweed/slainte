@@ -568,7 +568,7 @@ MonoBehaviour:
     characters:
     - characterKey: e12
       expressionKey: blood_down
-      slotIndex: 2
+      slotIndex: 7
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
@@ -590,7 +590,7 @@ MonoBehaviour:
     characters:
     - characterKey: e12
       expressionKey: blood_down
-      slotIndex: 2
+      slotIndex: 7
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
@@ -613,7 +613,7 @@ MonoBehaviour:
     characters:
     - characterKey: e12
       expressionKey: blood_down
-      slotIndex: 2
+      slotIndex: 7
     requiresCrafting: 0
     craftingTicketKey: 
     nextNodeIdGood: 
@@ -635,7 +635,7 @@ MonoBehaviour:
     characters:
     - characterKey: e12
       expressionKey: blood_down
-      slotIndex: 2
+      slotIndex: 7
     - characterKey: sally
       expressionKey: blood_mid
       slotIndex: 1
@@ -661,7 +661,7 @@ MonoBehaviour:
     characters:
     - characterKey: e12
       expressionKey: blood_down
-      slotIndex: 2
+      slotIndex: 7
     - characterKey: sally
       expressionKey: blood_mid
       slotIndex: 1
@@ -686,7 +686,7 @@ MonoBehaviour:
     characters:
     - characterKey: e12
       expressionKey: blood_down
-      slotIndex: 2
+      slotIndex: 7
     - characterKey: sally
       expressionKey: blood_mid
       slotIndex: 1
@@ -722,7 +722,7 @@ MonoBehaviour:
     characters:
     - characterKey: e12
       expressionKey: blood_down
-      slotIndex: 2
+      slotIndex: 7
     - characterKey: sally
       expressionKey: blood_mid
       slotIndex: 1
@@ -748,7 +748,7 @@ MonoBehaviour:
     characters:
     - characterKey: e12
       expressionKey: blood_down
-      slotIndex: 2
+      slotIndex: 7
     - characterKey: sally
       expressionKey: blood_mid
       slotIndex: 1
@@ -773,7 +773,7 @@ MonoBehaviour:
     characters:
     - characterKey: e12
       expressionKey: blood_down
-      slotIndex: 2
+      slotIndex: 7
     - characterKey: sally
       expressionKey: blood_mid
       slotIndex: 1
@@ -799,7 +799,7 @@ MonoBehaviour:
     characters:
     - characterKey: e12
       expressionKey: blood_down
-      slotIndex: 2
+      slotIndex: 7
     - characterKey: sally
       expressionKey: blood_mid
       slotIndex: 1
@@ -824,7 +824,7 @@ MonoBehaviour:
     characters:
     - characterKey: e12
       expressionKey: blood_down
-      slotIndex: 2
+      slotIndex: 7
     - characterKey: sally
       expressionKey: blood_mid
       slotIndex: 1
@@ -850,7 +850,7 @@ MonoBehaviour:
     characters:
     - characterKey: e12
       expressionKey: blood_down
-      slotIndex: 2
+      slotIndex: 7
     - characterKey: sally
       expressionKey: blood_mid
       slotIndex: 1
@@ -875,7 +875,7 @@ MonoBehaviour:
     characters:
     - characterKey: e12
       expressionKey: blood_down
-      slotIndex: 2
+      slotIndex: 7
     - characterKey: sally
       expressionKey: blood_mid
       slotIndex: 1
@@ -900,7 +900,7 @@ MonoBehaviour:
     characters:
     - characterKey: e12
       expressionKey: blood_down
-      slotIndex: 2
+      slotIndex: 7
     - characterKey: sally
       expressionKey: blood_mid
       slotIndex: 1
@@ -926,7 +926,7 @@ MonoBehaviour:
     characters:
     - characterKey: e12
       expressionKey: blood_down
-      slotIndex: 2
+      slotIndex: 7
     - characterKey: sally
       expressionKey: blood_mid
       slotIndex: 1
@@ -951,7 +951,7 @@ MonoBehaviour:
     characters:
     - characterKey: e12
       expressionKey: blood_down
-      slotIndex: 2
+      slotIndex: 7
     - characterKey: sally
       expressionKey: blood_mid
       slotIndex: 1
@@ -978,7 +978,7 @@ MonoBehaviour:
     characters:
     - characterKey: e12
       expressionKey: blood_down
-      slotIndex: 2
+      slotIndex: 7
     - characterKey: sally
       expressionKey: blood_mid
       slotIndex: 1
@@ -1004,7 +1004,7 @@ MonoBehaviour:
     characters:
     - characterKey: e12
       expressionKey: blood_down
-      slotIndex: 2
+      slotIndex: 7
     - characterKey: sally
       expressionKey: blood_mid
       slotIndex: 1
@@ -1029,7 +1029,7 @@ MonoBehaviour:
     characters:
     - characterKey: e12
       expressionKey: blood_down
-      slotIndex: 2
+      slotIndex: 7
     - characterKey: sally
       expressionKey: blood_mid
       slotIndex: 1
@@ -1054,7 +1054,7 @@ MonoBehaviour:
     characters:
     - characterKey: e12
       expressionKey: blood_down
-      slotIndex: 2
+      slotIndex: 7
     - characterKey: sally
       expressionKey: blood_smile
       slotIndex: 1
@@ -1079,7 +1079,7 @@ MonoBehaviour:
     characters:
     - characterKey: e12
       expressionKey: blood_down
-      slotIndex: 2
+      slotIndex: 7
     - characterKey: sally
       expressionKey: blood_smile
       slotIndex: 1
@@ -1104,7 +1104,7 @@ MonoBehaviour:
     characters:
     - characterKey: e12
       expressionKey: blood_down
-      slotIndex: 2
+      slotIndex: 7
     - characterKey: sally
       expressionKey: blood_mid
       slotIndex: 1
@@ -2370,7 +2370,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: e12
-      expressionKey: injured_serious
+      expressionKey: injured_frust
       slotIndex: 2
     - characterKey: sally
       expressionKey: blood_angry
@@ -2395,7 +2395,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: e12
-      expressionKey: injured_serious
+      expressionKey: injured_frust
       slotIndex: 2
     - characterKey: sally
       expressionKey: blood_closed
@@ -2420,7 +2420,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: e12
-      expressionKey: injured_shame
+      expressionKey: injured_frust
       slotIndex: 2
     - characterKey: sally
       expressionKey: blood_closed
@@ -2573,7 +2573,7 @@ MonoBehaviour:
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 76_2_2
-    speakerKey: shaun
+    speakerKey: e12
     overrideSpeakerName: 
     text: "\uADF8\uB7F0 \uBB34\uAC8C\uB294 \uB204\uAD6C\uB77C\uB3C4 \uC27D\uAC8C
       \uC9C8 \uC218 \uC5C6\uB294 \uAC83\uC785\uB2C8\uB2E4."
@@ -2599,7 +2599,7 @@ MonoBehaviour:
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 76_2_3
-    speakerKey: shaun
+    speakerKey: sally
     overrideSpeakerName: 
     text: "\uD638\uC624, \uB9C8\uCE58 \uC0B0\uC804\uC218\uC804 \uB2E4 \uACAA\uC740
       \uC591 \uC774\uC57C\uAE30\uD558\uB294\uAD70"

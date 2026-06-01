@@ -12,7 +12,7 @@ f72,frust,-1,,,,,,,,,,
 ,,,,,,,,,,,,
 #NODES,,,,,,,,,,,,
 nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad
-0,f72,???,흠..크흠…,1,FALSE,,,,,,,
+0,f72,???,흠..크흠…,1,FALSE,,,,play,Ep_main_0,,
 1,f72,???,(은밀히 수상한 화폐를 건네며) 여기 <b>갓파더</b> 하나.,2,FALSE,,,,,,,
 2,shaun,,죄송합니다 손님. 저희는 공식 화폐만 받습니다만…,3,FALSE,,,,,,,
 3,f72,???,순진한 바텐더 씨는 경찰 무서운 줄 모르는군!,4,FALSE,,,,,,,

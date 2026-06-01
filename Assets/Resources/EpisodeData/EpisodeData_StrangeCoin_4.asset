@@ -1533,7 +1533,8 @@ MonoBehaviour:
   - nodeId: 38
     speakerKey: f72
     overrideSpeakerName: 
-    text: "\uBB50\uC57C, \uBC14\uD150\uB354\uC528."
+    text: "\uBB50\uC57C, \uBB50\uAC00 \uC5B4\uB5BB\uAC8C \uB41C \uAC70\uC57C? \uC11C\uB85C
+      \uC544\uB294 \uC0AC\uC774\uC57C?"
     nextNodeId: 39
     choices: []
     flagBranches: []

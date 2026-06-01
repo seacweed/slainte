@@ -2612,7 +2612,7 @@ MonoBehaviour:
   - nodeId: 2_2_39
     speakerKey: shaun
     overrideSpeakerName: 
-    text: "\uAC71\uC815\uD558\uC9C0 \uB9C8\uC138\uC694. \uC140\uB9AC. \uBC14\uD150\uB354\uB294
+    text: "\uAC71\uC815\uD558\uC9C0 \uB9C8\uC138\uC694. \uC140\uB9AC\uC528. \uBC14\uD150\uB354\uB294
       \uC785\uC774 \uBB34\uAC70\uC6B0\uB2C8\uAE4C\uC694."
     nextNodeId: 2_2_40
     choices: []
@@ -2772,7 +2772,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f72
-      expressionKey: mid
+      expressionKey: frust
       slotIndex: 0
     - characterKey: sally
       expressionKey: mid
@@ -3643,7 +3643,7 @@ MonoBehaviour:
       expressionKey: angry
       slotIndex: 1
     - characterKey: e12
-      expressionKey: mid
+      expressionKey: shame
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
@@ -3853,7 +3853,7 @@ MonoBehaviour:
       expressionKey: angry
       slotIndex: 1
     - characterKey: e12
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
@@ -3881,7 +3881,7 @@ MonoBehaviour:
       expressionKey: angry
       slotIndex: 1
     - characterKey: e12
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
@@ -3909,7 +3909,7 @@ MonoBehaviour:
       expressionKey: angry
       slotIndex: 1
     - characterKey: e12
-      expressionKey: mid
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingTicketKey: 
@@ -4101,7 +4101,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f72
-      expressionKey: frust
+      expressionKey: devas
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -4130,7 +4130,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f72
-      expressionKey: frust
+      expressionKey: devas
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -4158,7 +4158,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f72
-      expressionKey: frust
+      expressionKey: devas
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -4187,7 +4187,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f72
-      expressionKey: frust
+      expressionKey: devas
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry

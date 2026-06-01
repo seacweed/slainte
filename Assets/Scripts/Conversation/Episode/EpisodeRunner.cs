@@ -400,6 +400,7 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         dialogue?.HideImmediate();
         characterStage?.Clear();
         cameraRig?.ResetPan();
+        AudioManager.Instance?.StopBgm();
 
         string episodeId = _episode?.episodeId;
         OnEncounterCompleted?.Invoke();

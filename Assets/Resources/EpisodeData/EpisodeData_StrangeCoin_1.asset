@@ -50,8 +50,8 @@ MonoBehaviour:
     craftingFlagBad: 
     craftingVarChangesGood: []
     craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
+    bgmCommand: 1
+    bgmClipName: Ep_main_0
   - nodeId: 1
     speakerKey: shaun
     overrideSpeakerName: 
@@ -910,8 +910,8 @@ MonoBehaviour:
     craftingFlagBad: 
     craftingVarChangesGood: []
     craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
+    bgmCommand: 1
+    bgmClipName: Ep_tension
   - nodeId: 36
     speakerKey: f54
     overrideSpeakerName: 
@@ -1331,8 +1331,8 @@ MonoBehaviour:
     craftingFlagBad: 
     craftingVarChangesGood: []
     craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
+    bgmCommand: 2
+    bgmClipName: Ep_tension
   - nodeId: 52
     speakerKey: f54
     overrideSpeakerName: 
@@ -1356,8 +1356,8 @@ MonoBehaviour:
     craftingFlagBad: 
     craftingVarChangesGood: []
     craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
+    bgmCommand: 1
+    bgmClipName: Ep_main_0
   - nodeId: 53
     speakerKey: f72
     overrideSpeakerName: 
@@ -1667,7 +1667,7 @@ MonoBehaviour:
       expressionKey: angry
       slotIndex: 2
     - characterKey: f72
-      expressionKey: angry
+      expressionKey: annoy
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -2899,7 +2899,7 @@ MonoBehaviour:
       expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: angry
+      expressionKey: annoy
       slotIndex: 0
     - characterKey: sally
       expressionKey: mid
@@ -2927,7 +2927,7 @@ MonoBehaviour:
       expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: angry
+      expressionKey: annoy
       slotIndex: 0
     - characterKey: sally
       expressionKey: mid
@@ -3223,7 +3223,7 @@ MonoBehaviour:
       expressionKey: frust
       slotIndex: 2
     - characterKey: f72
-      expressionKey: angry
+      expressionKey: annoy
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -3253,7 +3253,7 @@ MonoBehaviour:
       expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: angry
+      expressionKey: annoy
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -3281,7 +3281,7 @@ MonoBehaviour:
       expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: angry
+      expressionKey: annoy
       slotIndex: 0
     - characterKey: sally
       expressionKey: mid

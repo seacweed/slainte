@@ -49,8 +49,8 @@ MonoBehaviour:
     craftingFlagBad: 
     craftingVarChangesGood: []
     craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
+    bgmCommand: 1
+    bgmClipName: Ep_main_0
   - nodeId: 1
     speakerKey: f72
     overrideSpeakerName: ???
