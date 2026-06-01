@@ -39,3 +39,5 @@ CSV 작성 방법은 [episode-csv-guide.md](episode-csv-guide.md) 를 참고하�
 | `#NODES` | 대화 노드 목록 |
 | `#NODE_CHARS` | 노드별 캐릭터 표정 |
 | `#CHOICES` | 플레이어 선택지 |
+| `#NODE_BRANCHES` | 플래그 조건 분기 (`requiredAllFlags` AND / `requiredAnyFlags` OR) |
+| `#NODE_VAR_BRANCHES` | 수치 변수(호감도 등) 조건 분기 |

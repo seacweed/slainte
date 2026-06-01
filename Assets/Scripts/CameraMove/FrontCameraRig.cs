@@ -7,7 +7,6 @@ public class FrontCameraRig : MonoBehaviour, ICameraInputHandler
 
     [Header("How much to shift to reveal")]
     [SerializeField] float drawerShiftY = 800f;
-    [SerializeField] float shelfShiftX  = 2560f;
 
     [Header("Motion")]
     [SerializeField] float moveTime = 0.35f;
@@ -22,7 +21,6 @@ public class FrontCameraRig : MonoBehaviour, ICameraInputHandler
     public bool IsAnimating => _animating;
 
     bool  _drawerOpen = false;
-    bool  _shelfOpen  = false;
     float _focusX     = 0f;
 
     Vector2        _fromPos, _toPos;
@@ -59,16 +57,10 @@ public class FrontCameraRig : MonoBehaviour, ICameraInputHandler
         switch (direction)
         {
             case CameraDirection.DrawerOpen:
-                if (!_drawerOpen && !_shelfOpen) SetDrawer(true);
+                if (!_drawerOpen) SetDrawer(true);
                 break;
             case CameraDirection.DrawerClose:
                 if (_drawerOpen) SetDrawer(false);
-                break;
-            case CameraDirection.ShelfOpen:
-                if (!_shelfOpen && !_drawerOpen) SetShelf(true);
-                break;
-            case CameraDirection.ShelfClose:
-                if (_shelfOpen) SetShelf(false);
                 break;
         }
     }
@@ -104,12 +96,6 @@ public class FrontCameraRig : MonoBehaviour, ICameraInputHandler
                     drawerArea.anchoredPosition = new Vector2(0f, drawerArea.anchoredPosition.y);
             });
         }
-    }
-
-    public void SetShelf(bool open)
-    {
-        _shelfOpen = open;
-        BeginMove(open ? new Vector2(-shelfShiftX, 0f) : Vector2.zero);
     }
 
     private void BeginMove(Vector2 target, System.Action onComplete = null)

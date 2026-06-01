@@ -8,6 +8,8 @@ public class SaveData
     public int dayCount = 1;
     public List<string> flags = new();
     public List<string> completedEpisodeIds = new();
-    public List<string> varKeys = new();
-    public List<int> varValues = new();
+    public List<string> affinityKeys   = new();
+    public List<int>    affinityValues = new();
+    public List<string> boardSlotKeys   = new();
+    public List<int>    boardSlotValues = new();
 }

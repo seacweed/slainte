@@ -54,8 +54,6 @@ public class InputRouter : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.S)) cameraRig.OnCameraInput(CameraDirection.DrawerOpen);
         if (Input.GetKeyDown(KeyCode.W)) cameraRig.OnCameraInput(CameraDirection.DrawerClose);
-        if (Input.GetKeyDown(KeyCode.D)) cameraRig.OnCameraInput(CameraDirection.ShelfOpen);
-        if (Input.GetKeyDown(KeyCode.A)) cameraRig.OnCameraInput(CameraDirection.ShelfClose);
     }
 
     private void RouteAdvanceToEncounter()

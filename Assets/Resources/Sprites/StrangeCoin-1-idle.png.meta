@@ -116,12 +116,12 @@ TextureImporter:
       name: StrangeCoin-1-idle_0
       rect:
         serializedVersion: 2
-        x: 9
-        y: 4
-        width: 386
-        height: 392
+        x: 0
+        y: 0
+        width: 400
+        height: 400
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 005646dd0d1ae5e49ae59cb929e4d7d1
     internalID: 0
     vertices: []
     indices: 

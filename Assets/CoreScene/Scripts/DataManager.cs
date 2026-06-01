@@ -22,8 +22,10 @@ public class DataManager : MonoSingleton<DataManager>
             CurrentData.dayCount            = gp.CurrentDay;
             CurrentData.flags               = gp.GetFlagList();
             CurrentData.completedEpisodeIds = gp.GetCompletedList();
-            CurrentData.varKeys             = gp.GetVarKeys();
-            CurrentData.varValues           = gp.GetVarValues();
+            CurrentData.affinityKeys        = gp.GetAffinityKeys();
+            CurrentData.affinityValues      = gp.GetAffinityValues();
+            CurrentData.boardSlotKeys       = gp.GetBoardSlotKeys();
+            CurrentData.boardSlotValues     = gp.GetBoardSlotValues();
         }
 
         string json = JsonUtility.ToJson(CurrentData, true);

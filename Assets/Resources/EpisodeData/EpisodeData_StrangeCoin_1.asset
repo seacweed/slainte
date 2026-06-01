@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ada6baddb75540a4ba25d31b476b855a, type: 3}
-  m_Name: 
+  m_Name: EpisodeData_StrangeCoin_1
   m_EditorClassIdentifier: Assembly-CSharp::EpisodeData
   episodeId: StrangeCoin_1
   episodeTitle: "\uC774\uC0C1\uD55C \uB3D9\uC804 - 1"
@@ -18,7 +18,8 @@ MonoBehaviour:
     minDay: 0
     requiredFlags: []
     blockedFlags: []
-    prerequisiteEpisodeIds: []
+    prerequisiteEpisodeIds:
+    - StrangeCoin_0
     requiredVars: []
   openingCharacters:
   - characterKey: f54
@@ -49,8 +50,8 @@ MonoBehaviour:
     craftingFlagBad: 
     craftingVarChangesGood: []
     craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
+    bgmCommand: 1
+    bgmClipName: Ep_main_0
   - nodeId: 1
     speakerKey: shaun
     overrideSpeakerName: 
@@ -909,8 +910,8 @@ MonoBehaviour:
     craftingFlagBad: 
     craftingVarChangesGood: []
     craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
+    bgmCommand: 1
+    bgmClipName: Ep_tension
   - nodeId: 36
     speakerKey: f54
     overrideSpeakerName: 
@@ -1330,8 +1331,8 @@ MonoBehaviour:
     craftingFlagBad: 
     craftingVarChangesGood: []
     craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
+    bgmCommand: 2
+    bgmClipName: Ep_tension
   - nodeId: 52
     speakerKey: f54
     overrideSpeakerName: 
@@ -1355,8 +1356,8 @@ MonoBehaviour:
     craftingFlagBad: 
     craftingVarChangesGood: []
     craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
+    bgmCommand: 1
+    bgmClipName: Ep_main_0
   - nodeId: 53
     speakerKey: f72
     overrideSpeakerName: 
@@ -1666,7 +1667,7 @@ MonoBehaviour:
       expressionKey: angry
       slotIndex: 2
     - characterKey: f72
-      expressionKey: angry
+      expressionKey: annoy
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -2898,7 +2899,7 @@ MonoBehaviour:
       expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: angry
+      expressionKey: annoy
       slotIndex: 0
     - characterKey: sally
       expressionKey: mid
@@ -2926,7 +2927,7 @@ MonoBehaviour:
       expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: angry
+      expressionKey: annoy
       slotIndex: 0
     - characterKey: sally
       expressionKey: mid
@@ -3222,7 +3223,7 @@ MonoBehaviour:
       expressionKey: frust
       slotIndex: 2
     - characterKey: f72
-      expressionKey: angry
+      expressionKey: annoy
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -3252,7 +3253,7 @@ MonoBehaviour:
       expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: angry
+      expressionKey: annoy
       slotIndex: 0
     - characterKey: sally
       expressionKey: angry
@@ -3280,7 +3281,7 @@ MonoBehaviour:
       expressionKey: serious
       slotIndex: 2
     - characterKey: f72
-      expressionKey: angry
+      expressionKey: annoy
       slotIndex: 0
     - characterKey: sally
       expressionKey: mid
@@ -4769,3 +4770,4 @@ MonoBehaviour:
   iconNameBoard: 
   iconNameArchive: 
   characters: []
+  customConditionTexts: []

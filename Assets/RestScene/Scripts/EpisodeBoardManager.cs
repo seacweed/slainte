@@ -51,7 +51,15 @@ public class EpisodeBoardManager : BaseUIManager
     {
         if (EpisodeManager.Instance == null || GameProgress.Instance == null) return;
         
-        var boardEpisodes = EpisodeManager.Instance.GetBoardEpisodes();
+        var availableEpisodes = EpisodeManager.Instance.GetBoardEpisodes();
+        var boardEpisodes = new List<EpisodeData>();
+        foreach (var ep in availableEpisodes)
+        {
+            if (EpisodePhotoTrigger.HasBoardPhoto(ep))
+            {
+                boardEpisodes.Add(ep);
+            }
+        }
         
         // 1. 이미 슬롯에 있는 프리팹 캐싱 및 필요없는 프리팹 제거
         List<EpisodePhotoTrigger> currentPhotos = new List<EpisodePhotoTrigger>(GetComponentsInChildren<EpisodePhotoTrigger>(true));
@@ -73,7 +81,7 @@ public class EpisodeBoardManager : BaseUIManager
             {
                 if (photo.episodeData != null)
                 {
-                    GameProgress.Instance.SetVar($"BoardSlot_{photo.episodeData.episodeId}", 0);
+                    GameProgress.Instance.ClearBoardSlot(photo.episodeData.episodeId);
                 }
                 Destroy(photo.gameObject);
             }
@@ -85,7 +93,7 @@ public class EpisodeBoardManager : BaseUIManager
         // 2. 이미 자리를 배정받았던 에피소드부터 예약
         foreach (var ep in boardEpisodes)
         {
-            int savedSlot = GameProgress.Instance.GetVar($"BoardSlot_{ep.episodeId}") - 1;
+            int savedSlot = GameProgress.Instance.GetBoardSlot(ep.episodeId) - 1;
             if (savedSlot >= 0 && savedSlot < boardSlots.Length)
             {
                 filledSlots[savedSlot] = true;
@@ -95,7 +103,7 @@ public class EpisodeBoardManager : BaseUIManager
         // 3. 자리가 없는(새로 발견된) 에피소드들에게 빈 슬롯 무작위 배정 및 생성
         foreach (var ep in boardEpisodes)
         {
-            int savedSlot = GameProgress.Instance.GetVar($"BoardSlot_{ep.episodeId}") - 1;
+            int savedSlot = GameProgress.Instance.GetBoardSlot(ep.episodeId) - 1;
             int targetSlot = savedSlot;
 
             if (savedSlot < 0 || savedSlot >= boardSlots.Length)
@@ -118,7 +126,7 @@ public class EpisodeBoardManager : BaseUIManager
                 filledSlots[targetSlot] = true;
 
                 // 새 자리 저장 (1-indexed)
-                GameProgress.Instance.SetVar($"BoardSlot_{ep.episodeId}", targetSlot + 1);
+                GameProgress.Instance.SetBoardSlot(ep.episodeId, targetSlot + 1);
             }
 
             // 해당 에피소드의 프리팹이 이미 존재하면 생성 안 함

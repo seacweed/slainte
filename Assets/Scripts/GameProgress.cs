@@ -7,13 +7,18 @@ public class GameProgress : MonoSingleton<GameProgress>
     [SerializeField] private List<string> flags = new();
     [SerializeField] private List<string> completedEpisodeIds = new();
 
-    [Header("Numeric Variables")]
-    [SerializeField] private List<string> varKeys   = new();
-    [SerializeField] private List<int>    varValues = new();
+    [Header("Affinity Variables")]
+    [SerializeField] private List<string> affinityKeys   = new();
+    [SerializeField] private List<int>    affinityValues = new();
+
+    [Header("Board Slot Positions")]
+    [SerializeField] private List<string> boardSlotKeys   = new();
+    [SerializeField] private List<int>    boardSlotValues = new();
 
     private HashSet<string>         _flagSet;
     private HashSet<string>         _completedSet;
-    private Dictionary<string, int> _vars;
+    private Dictionary<string, int> _affinity;
+    private Dictionary<string, int> _boardSlots;
 
     public int CurrentDay => currentDay;
 
@@ -28,10 +33,15 @@ public class GameProgress : MonoSingleton<GameProgress>
         _flagSet      = new HashSet<string>(flags);
         _completedSet = new HashSet<string>(completedEpisodeIds);
 
-        _vars = new Dictionary<string, int>();
-        int count = Mathf.Min(varKeys.Count, varValues.Count);
-        for (int i = 0; i < count; i++)
-            _vars[varKeys[i]] = varValues[i];
+        _affinity = new Dictionary<string, int>();
+        int affinityCount = Mathf.Min(affinityKeys.Count, affinityValues.Count);
+        for (int i = 0; i < affinityCount; i++)
+            _affinity[affinityKeys[i]] = affinityValues[i];
+
+        _boardSlots = new Dictionary<string, int>();
+        int slotCount = Mathf.Min(boardSlotKeys.Count, boardSlotValues.Count);
+        for (int i = 0; i < slotCount; i++)
+            _boardSlots[boardSlotKeys[i]] = boardSlotValues[i];
     }
 
     public void LoadFrom(SaveData data)
@@ -41,16 +51,22 @@ public class GameProgress : MonoSingleton<GameProgress>
         currentDay          = data.dayCount;
         flags               = new List<string>(data.flags ?? new List<string>());
         completedEpisodeIds = new List<string>(data.completedEpisodeIds ?? new List<string>());
-        varKeys             = new List<string>(data.varKeys ?? new List<string>());
-        varValues           = new List<int>(data.varValues ?? new List<int>());
+        affinityKeys        = new List<string>(data.affinityKeys ?? new List<string>());
+        affinityValues      = new List<int>(data.affinityValues ?? new List<int>());
+        boardSlotKeys       = new List<string>(data.boardSlotKeys ?? new List<string>());
+        boardSlotValues     = new List<int>(data.boardSlotValues ?? new List<int>());
 
         RebuildRuntimeSets();
     }
 
-    public List<string> GetFlagList()      => new List<string>(flags);
-    public List<string> GetCompletedList() => new List<string>(completedEpisodeIds);
-    public List<string> GetVarKeys()       => new List<string>(varKeys);
-    public List<int>    GetVarValues()     => new List<int>(varValues);
+    public List<string> GetFlagList()         => new List<string>(flags);
+    public List<string> GetCompletedList()    => new List<string>(completedEpisodeIds);
+    public List<string> GetAffinityKeys()     => new List<string>(affinityKeys);
+    public List<int>    GetAffinityValues()   => new List<int>(affinityValues);
+    public List<string> GetBoardSlotKeys()    => new List<string>(boardSlotKeys);
+    public List<int>    GetBoardSlotValues()  => new List<int>(boardSlotValues);
+
+    // ── Flags ──────────────────────────────────────────────────
 
     public bool HasFlag(string flag)
     {
@@ -70,6 +86,8 @@ public class GameProgress : MonoSingleton<GameProgress>
         if (_flagSet.Remove(flag)) flags.Remove(flag);
     }
 
+    // ── Episodes ───────────────────────────────────────────────
+
     public bool IsEpisodeCompleted(string episodeId)
     {
         if (string.IsNullOrWhiteSpace(episodeId)) return false;
@@ -87,38 +105,80 @@ public class GameProgress : MonoSingleton<GameProgress>
         currentDay = Mathf.Max(0, day);
     }
 
-    public int GetVar(string varName)
+    // ── Affinity Variables ─────────────────────────────────────
+
+    public int GetAffinity(string varName)
     {
         if (string.IsNullOrWhiteSpace(varName)) return 0;
-        _vars.TryGetValue(varName, out int value);
+        _affinity.TryGetValue(varName, out int value);
         return value;
     }
 
-    public void SetVar(string varName, int value)
+    public void SetAffinity(string varName, int value)
     {
         if (string.IsNullOrWhiteSpace(varName)) return;
-        _vars[varName] = value;
-        SyncVarToLists(varName, value);
+        _affinity[varName] = value;
+        SyncAffinityToLists(varName, value);
     }
 
-    public void AddVar(string varName, int delta)
+    public void AddAffinity(string varName, int delta)
     {
         if (string.IsNullOrWhiteSpace(varName)) return;
-        _vars.TryGetValue(varName, out int current);
+        _affinity.TryGetValue(varName, out int current);
         int next = current + delta;
-        _vars[varName] = next;
-        SyncVarToLists(varName, next);
+        _affinity[varName] = next;
+        SyncAffinityToLists(varName, next);
     }
 
-    private void SyncVarToLists(string varName, int value)
+    private void SyncAffinityToLists(string varName, int value)
     {
-        int idx = varKeys.IndexOf(varName);
+        int idx = affinityKeys.IndexOf(varName);
         if (idx >= 0)
-            varValues[idx] = value;
+            affinityValues[idx] = value;
         else
         {
-            varKeys.Add(varName);
-            varValues.Add(value);
+            affinityKeys.Add(varName);
+            affinityValues.Add(value);
+        }
+    }
+
+    // ── Board Slot Positions ───────────────────────────────────
+
+    public int GetBoardSlot(string episodeId)
+    {
+        if (string.IsNullOrWhiteSpace(episodeId)) return 0;
+        _boardSlots.TryGetValue(episodeId, out int value);
+        return value;
+    }
+
+    public void SetBoardSlot(string episodeId, int slotIndex)
+    {
+        if (string.IsNullOrWhiteSpace(episodeId)) return;
+        _boardSlots[episodeId] = slotIndex;
+        SyncBoardSlotToLists(episodeId, slotIndex);
+    }
+
+    public void ClearBoardSlot(string episodeId)
+    {
+        if (string.IsNullOrWhiteSpace(episodeId)) return;
+        if (!_boardSlots.Remove(episodeId)) return;
+        int idx = boardSlotKeys.IndexOf(episodeId);
+        if (idx >= 0)
+        {
+            boardSlotKeys.RemoveAt(idx);
+            boardSlotValues.RemoveAt(idx);
+        }
+    }
+
+    private void SyncBoardSlotToLists(string episodeId, int slotIndex)
+    {
+        int idx = boardSlotKeys.IndexOf(episodeId);
+        if (idx >= 0)
+            boardSlotValues[idx] = slotIndex;
+        else
+        {
+            boardSlotKeys.Add(episodeId);
+            boardSlotValues.Add(slotIndex);
         }
     }
 }

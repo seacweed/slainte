@@ -76,21 +76,38 @@ ExitButton                  — 팝업 닫기 버튼
 | 메서드 | 설명 |
 |---|---|
 | `OnOpen()` | `RefreshBoard()` + `ResetBoard()` |
-| `RefreshBoard()` | `EpisodeManager.GetAvailableEpisodes()` 결과로 슬롯 채우기. 초과 슬롯은 비활성화 |
-| `PinEpisode(photo)` | `PinnedPhoto` 설정, 하단 텍스트/버튼 활성화 |
-| `ResetBoard()` | 이전 사진 `Unpin()`, `EpisodeInfoWindow.Hide()`, 하단 UI 비활성화 |
+| `RefreshBoard()` | `EpisodeManager.GetBoardEpisodes()`로 표시할 에피소드 목록 확보, 동적 프리팹 생성/제거 |
+| `PinEpisode(photo)` | `PinnedPhoto` 설정, `EpisodeManager.CanStart()` 결과에 따라 하단 텍스트/버튼 활성화 |
+| `ResetBoard()` | 이전 사진 `Unpin()`, 하단 UI 비활성화 |
 | `OnStartButtonClicked()` | `EpisodeManager.StartEpisode(PinnedPhoto.episodeData.episodeId)` → `CloseUI()` |
+
+**RefreshBoard() 상세 흐름**
+
+1. `GetBoardEpisodes()` + `EpisodePhotoTrigger.HasBoardPhoto()` 필터로 표시 대상 목록 확정
+2. 기존 자식 `EpisodePhotoTrigger` 순회 — 더 이상 표시 불필요한 항목은 `GameProgress.ClearBoardSlot(id)` 후 `Destroy`
+3. `GameProgress.GetBoardSlot(id) - 1`로 이미 자리가 배정된 에피소드 슬롯 예약 (저장값은 1-indexed)
+4. 자리 없는 신규 에피소드에 빈 슬롯 무작위 배정 → `GameProgress.SetBoardSlot(id, idx+1)` 저장
+5. 프리팹이 이미 존재하면 부모만 올바른 슬롯으로 이동, 없으면 `photoPrefab` 인스턴스 생성
 
 **Inspector 직렬화 필드**
 
 ```csharp
-public EpisodeInfoWindow infoWindow;         // 상세 정보 팝업
+public GameObject photoPrefab;        // 에피소드 사진 프리팹
+public Transform[] boardSlots;        // 고정된 6개 슬롯 위치
 public TextMeshProUGUI bottomEpisodeNameText;
 public Button startButton;
 public Image startButtonImage;
-public Color buttonActiveColor;   // 선택 시
-public Color buttonInactiveColor; // 미선택 시
+public Color buttonActiveColor;       // 선택 시
+public Color buttonInactiveColor;     // 미선택 시
 ```
+
+### EpisodeManager — 보드 관련 메서드
+
+| 메서드 | 설명 |
+|---|---|
+| `GetBoardEpisodes()` | 완료되지 않은 에피소드 중 `IsVisible()` 통과한 목록 반환 |
+| `IsVisible(ep, gp)` | `CanStart()` 가 참이거나, `{episodeId}_Discovered` 플래그가 있으면 true |
+| `GetAvailableEpisodes()` | `CanStart()` 통과한 에피소드만 반환 (시작 가능 판단용) |
 
 ---
 
@@ -107,9 +124,14 @@ public Color buttonInactiveColor; // 미선택 시
 **아웃라인 형태** (`DrawOutlineShape`)
 - `PolygonCollider2D` 우선, 없으면 `BoxCollider2D` 기반으로 4점 사각형 생성
 
-**`SetEpisodeData(EpisodeData data)`**
+**`SetEpisodeData(EpisodeData data, EpisodeBoardManager board)`**
 - `data.iconNameBoard`로 `Resources.Load<Sprite>("Sprites/{name}")` 시도
 - `Image` 컴포넌트 우선, 없으면 `SpriteRenderer` 대체
+
+**`static HasBoardPhoto(EpisodeData ep)`**
+- `ep.iconNameBoard`가 있으면 그 이름으로, 없으면 `ep.episodeId.Replace("_", "-")`를 기본 이름으로 사용
+- `Resources/Sprites/{baseName}-idle` 스프라이트 로드 성공 여부로 표시 가능 여부 판단
+- 보드에 표시하려면 `Resources/Sprites/`에 `{baseName}-idle/hover/selected` 3종 스프라이트 필요
 
 ---
 

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ada6baddb75540a4ba25d31b476b855a, type: 3}
-  m_Name: 
+  m_Name: EpisodeData_StrangeCoin_4
   m_EditorClassIdentifier: Assembly-CSharp::EpisodeData
   episodeId: StrangeCoin_4
   episodeTitle: "\uC774\uC0C1\uD55C \uB3D9\uC804 - 4"
@@ -18,7 +18,8 @@ MonoBehaviour:
     minDay: 0
     requiredFlags: []
     blockedFlags: []
-    prerequisiteEpisodeIds: []
+    prerequisiteEpisodeIds:
+    - StrangeCoin_3
     requiredVars: []
   openingCharacters:
   - characterKey: 
@@ -1532,7 +1533,8 @@ MonoBehaviour:
   - nodeId: 38
     speakerKey: f72
     overrideSpeakerName: 
-    text: "\uBB50\uC57C, \uBC14\uD150\uB354\uC528."
+    text: "\uBB50\uC57C, \uBB50\uAC00 \uC5B4\uB5BB\uAC8C \uB41C \uAC70\uC57C? \uC11C\uB85C
+      \uC544\uB294 \uC0AC\uC774\uC57C?"
     nextNodeId: 39
     choices: []
     flagBranches: []
@@ -5776,3 +5778,4 @@ MonoBehaviour:
   iconNameBoard: 
   iconNameArchive: 
   characters: []
+  customConditionTexts: []
