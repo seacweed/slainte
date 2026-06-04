@@ -28,12 +28,18 @@ namespace NarrativeFlow
         [TextArea(2, 5)]
         public string Text;
         public List<CharacterSlotEntryData> CharacterAppearances = new();
+        public BgmCommand BgmCommand = BgmCommand.None;
+        public string BgmClipName;
 
         // Choice Fields
         public List<ChoiceOptionData> Choices = new();
 
         // Business Fields
         public string CraftingTicketKey;
+        public string CraftingFlagGood;
+        public string CraftingFlagBad;
+        public List<VarChangeData> CraftingVarChangesGood = new();
+        public List<VarChangeData> CraftingVarChangesBad = new();
 
         // Branch Exit
         public string ExitBranchName;

@@ -32,9 +32,11 @@ namespace NarrativeFlow.Editor
             var views = _targetNode.Events.Select(ev => new SequenceNodeView(ev, _targetNode, this)).ToDictionary(v => v.eventData.Guid);
             views.Values.ToList().ForEach(AddElement);
 
-            foreach (var view in views.Values) LinkNodeEdges(view, views);
-            
-            ValidateAllNodes();
+            // Defer edge linking and validation until the next frame to ensure layouts are resolved and lines connect correctly
+            schedule.Execute(() => {
+                foreach (var view in views.Values) LinkNodeEdges(view, views);
+                ValidateAllNodes();
+            });
         }
 
         public void ValidateAllNodes()
@@ -99,6 +101,7 @@ namespace NarrativeFlow.Editor
 
         private GraphViewChange OnGraphViewChanged(GraphViewChange change)
         {
+            bool changed = false;
             if (change.edgesToCreate != null)
             {
                 foreach (var edge in change.edgesToCreate)
@@ -112,6 +115,7 @@ namespace NarrativeFlow.Editor
                             if (idx >= 0 && idx < src.eventData.Choices.Count) src.eventData.Choices[idx].TargetNodeId = dest.eventData.Guid;
                         }
                         else if (!src.eventData.NextEventGuids.Contains(dest.eventData.Guid)) src.eventData.NextEventGuids.Add(dest.eventData.Guid);
+                        changed = true;
                     }
                 }
             }
@@ -124,6 +128,7 @@ namespace NarrativeFlow.Editor
                         Undo.RecordObject(_targetNode, "Remove");
                         _targetNode.Events.Remove(v.eventData);
                         _targetNode.Events.ForEach(o => { o.NextEventGuids.Remove(v.eventData.Guid); o.Choices.ForEach(c => { if (c.TargetNodeId == v.eventData.Guid) c.TargetNodeId = null; }); });
+                        changed = true;
                     }
                     else if (elem is Edge e && e.output.node is SequenceNodeView s && e.input.node is SequenceNodeView d)
                     {
@@ -134,8 +139,13 @@ namespace NarrativeFlow.Editor
                             if (idx >= 0 && idx < s.eventData.Choices.Count) s.eventData.Choices[idx].TargetNodeId = null;
                         }
                         else s.eventData.NextEventGuids.Remove(d.eventData.Guid);
+                        changed = true;
                     }
                 }
+            }
+            if (changed)
+            {
+                EditorUtility.SetDirty(_targetNode);
             }
             ValidateAllNodes();
             return change;
@@ -149,6 +159,7 @@ namespace NarrativeFlow.Editor
             Undo.RecordObject(_targetNode, "Create Event");
             var ev = new EpisodeEvent { Type = type, Position = pos };
             _targetNode.Events.Add(ev);
+            EditorUtility.SetDirty(_targetNode);
             AddElement(new SequenceNodeView(ev, _targetNode, this));
             ValidateAllNodes();
             NotifyMainGraph();

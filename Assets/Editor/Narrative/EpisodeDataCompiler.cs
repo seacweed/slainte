@@ -26,194 +26,243 @@ namespace NarrativeFlow.Editor
         public void Compile(NarrativeGraphSO graph)
         {
             string episodeId = graph.name;
-            // Get title from first EpisodeNodeSO's custom fields if exists
-            string episodeTitle = episodeId;
-            var firstNode = graph.Nodes.OfType<EpisodeNodeSO>().FirstOrDefault();
-            if (firstNode != null)
-            {
-                var titleField = firstNode.CustomFields.Find(f => f.FieldName != null && f.FieldName.ToLower() == "title");
-                if (titleField != null && !string.IsNullOrEmpty(titleField.FieldValue))
-                {
-                    episodeTitle = titleField.FieldValue;
-                }
-            }
+            string episodeTitle = string.IsNullOrEmpty(graph.episodeTitle) ? episodeId : graph.episodeTitle;
 
             EpisodeData runtimeData = ScriptableObject.CreateInstance<EpisodeData>();
             runtimeData.episodeId = episodeId;
             runtimeData.episodeTitle = episodeTitle;
+            runtimeData.episodeDescription = graph.episodeDescription;
+            runtimeData.iconNameBoard = graph.iconNameBoard;
+            runtimeData.iconNameArchive = graph.iconNameArchive;
+            runtimeData.characters = new List<EpisodeCharacter>(graph.characters);
+            runtimeData.customConditionTexts = new List<string>(graph.customConditionTexts);
 
-            // Mapping: Graph Node Guid -> List of Runtime Node IDs (since one graph node can be multiple runtime nodes)
-            var nodeMapping = new Dictionary<string, List<string>>();
-            
-            // First pass: Generate all runtime nodes and assign IDs
+            // Copy trigger conditions and opening characters directly
+            runtimeData.triggerCondition = graph.triggerCondition;
+            runtimeData.openingCharacters = new List<CharacterSlotEntry>(graph.openingCharacters);
+
+            // Maps: Block Guid -> First compiled node ID (used for block-level transitions)
+            var blockStartRuntimeId = new Dictionary<string, string>();
+            // Maps: Event Guid -> Compiled runtime node ID
+            var eventToRuntimeIdMap = new Dictionary<string, string>();
+
+            // First pass: Traverse/Sort sequences in EpisodeNodeSO and assign IDs, and generate Trigger Nodes
             foreach (var gNode in graph.Nodes)
             {
                 if (gNode is EpisodeNodeSO epNode)
                 {
+                    var traversedEvents = GetTraversedEvents(epNode);
                     var runtimeIds = new List<string>();
-                    if (epNode.Events.Count == 0)
+
+                    if (traversedEvents.Count == 0)
                     {
                         // Create a dummy node if empty
                         string rid = $"{gNode.Guid}_0";
                         runtimeIds.Add(rid);
-                        runtimeData.nodes.Add(new EpisodeNode { nodeId = rid, text = "(Empty Node)" });
+                        blockStartRuntimeId[gNode.Guid] = rid;
+
+                        var rNode = new EpisodeNode { nodeId = rid, text = "(Empty Node)" };
+                        runtimeData.nodes.Add(rNode);
                     }
                     else
                     {
-                        for (int i = 0; i < epNode.Events.Count; i++)
+                        for (int i = 0; i < traversedEvents.Count; i++)
                         {
                             string rid = $"{gNode.Guid}_{i}";
                             runtimeIds.Add(rid);
-                            var ev = epNode.Events[i];
+                            var ev = traversedEvents[i];
+                            eventToRuntimeIdMap[ev.Guid] = rid;
+
                             var rNode = new EpisodeNode { nodeId = rid };
-                            
-                            if (ev.Type == EpisodeEventType.Dialogue)
-                            {
-                                rNode.speakerKey = ev.SpeakerKey;
-                                rNode.overrideSpeakerName = ev.OverrideSpeakerName;
-                                rNode.text = ev.Text;
-                            }
-                            else if (ev.Type == EpisodeEventType.BusinessStart)
-                            {
-                                rNode.requiresCrafting = true;
-                                rNode.craftingTicketKey = ev.CraftingTicketKey;
-                            }
-                            else if (ev.Type == EpisodeEventType.Choice)
-                            {
-                                foreach (var c in ev.Choices)
-                                {
-                                    rNode.choices.Add(new EpisodeChoice
-                                    {
-                                        buttonText = c.ButtonText,
-                                        setFlags = new List<string>(c.SetFlags),
-                                        clearFlags = new List<string>(c.ClearFlags),
-                                        // TargetNodeId will be resolved in second pass
-                                    });
-                                }
-                            }
-                            // BusinessEnd is a logical point, usually it's the LAST event in a block
-                            // that has two output ports. In runtime, it's properties on the BusinessStart node.
-                            // Wait, if BusinessEnd is a separate event, we need to merge it back to the Start node
-                            // OR the Start node handles the jump. 
-                            // Current EpisodeNode structure: requiresCrafting=true node has nextNodeIdGood/Bad.
-                            
                             runtimeData.nodes.Add(rNode);
                         }
+                        blockStartRuntimeId[gNode.Guid] = runtimeIds[0];
                     }
-                    nodeMapping[gNode.Guid] = runtimeIds;
                 }
                 else if (gNode is TriggerNodeSO triggerNode)
                 {
-                    // Trigger nodes are logical routers, they don't produce Dialogue nodes
-                    // But they need an ID to be referenced? 
-                    // Actually, if Node A -> Trigger T -> Node B, 
-                    // Node A's nextNodeId (or branches) should point directly to Node B.
-                    // We'll handle this in second pass resolution.
+                    // Compile trigger node into an empty routing node
+                    string rid = $"TRIGGER_{triggerNode.Guid}";
+                    blockStartRuntimeId[gNode.Guid] = rid;
+
+                    var rNode = new EpisodeNode { nodeId = rid };
+                    runtimeData.nodes.Add(rNode);
                 }
             }
 
-            // Find Start Node (no incoming edges)
+            // Find Start Node in the main graph (node with no incoming edges)
             var incomingCount = new Dictionary<string, int>();
             foreach (var n in graph.Nodes) incomingCount[n.Guid] = 0;
             foreach (var e in graph.Edges) if (incomingCount.ContainsKey(e.TargetNodeGuid)) incomingCount[e.TargetNodeGuid]++;
-            
+
             var startNodeGuid = incomingCount.OrderBy(kvp => kvp.Value).FirstOrDefault().Key;
-            if (nodeMapping.TryGetValue(startNodeGuid, out var startIds))
+            if (!string.IsNullOrEmpty(startNodeGuid) && blockStartRuntimeId.TryGetValue(startNodeGuid, out var startId))
             {
-                runtimeData.firstNodeId = startIds[0];
+                runtimeData.firstNodeId = startId;
             }
 
-            // Second pass: Link nodes
+            // Second pass: Populate fields and establish links
             foreach (var gNode in graph.Nodes)
             {
                 if (gNode is EpisodeNodeSO epNode)
                 {
-                    var rIds = nodeMapping[gNode.Guid];
-                    for (int i = 0; i < epNode.Events.Count; i++)
-                    {
-                        var ev = epNode.Events[i];
-                        var rNode = runtimeData.FindNode(rIds[i]);
+                    var traversedEvents = GetTraversedEvents(epNode);
+                    var edges = graph.Edges.Where(e => e.BaseNodeGuid == gNode.Guid).OrderBy(e => e.OutputPortIndex).ToList();
 
-                        // Internal link within block
-                        if (i < epNode.Events.Count - 1)
+                    for (int i = 0; i < traversedEvents.Count; i++)
+                    {
+                        var ev = traversedEvents[i];
+                        string rid = eventToRuntimeIdMap[ev.Guid];
+                        var rNode = runtimeData.FindNode(rid);
+
+                        // Dialogue fields
+                        if (ev.Type == EpisodeEventType.Dialogue)
                         {
-                            rNode.nextNodeId = rIds[i+1];
-                            
-                            // Special case: if this is a choice event, the choices override nextNodeId
-                            // But in our graph, choice output ports are handled at the block level.
-                            // This is a bit tricky. If Choice is NOT the last event, where do the choices go?
-                            // In this simple compiler, we assume Choice/BusinessEnd are LAST in the block if they lead to other nodes.
-                        }
-                        else
-                        {
-                            // Last event in block - link to next graph nodes
-                            var edges = graph.Edges.Where(e => e.BaseNodeGuid == gNode.Guid).OrderBy(e => e.OutputPortIndex).ToList();
-                            
-                            if (ev.Type == EpisodeEventType.Choice)
+                            rNode.speakerKey = ev.SpeakerKey;
+                            rNode.overrideSpeakerName = ev.OverrideSpeakerName;
+                            rNode.text = ev.Text;
+                            rNode.bgmCommand = ev.BgmCommand;
+                            rNode.bgmClipName = ev.BgmClipName;
+
+                            // Map character appearances
+                            rNode.characters = new List<CharacterSlotEntry>();
+                            foreach (var ca in ev.CharacterAppearances)
                             {
-                                for (int j = 0; j < ev.Choices.Count && j < edges.Count; j++)
+                                rNode.characters.Add(new CharacterSlotEntry
                                 {
-                                    rNode.choices[j].nextNodeId = ResolveTargetId(graph, edges[j].TargetNodeGuid, nodeMapping);
+                                    characterKey = ca.CharacterKey,
+                                    expressionKey = ca.ExpressionKey,
+                                    slotIndex = ca.SlotIndex
+                                });
+                            }
+                        }
+                        // BusinessStart fields
+                        else if (ev.Type == EpisodeEventType.BusinessStart)
+                        {
+                            rNode.requiresCrafting = true;
+                            rNode.craftingTicketKey = ev.CraftingTicketKey;
+                            rNode.craftingFlagGood = ev.CraftingFlagGood;
+                            rNode.craftingFlagBad = ev.CraftingFlagBad;
+
+                            rNode.craftingVarChangesGood = new List<VarChange>();
+                            foreach (var vc in ev.CraftingVarChangesGood)
+                            {
+                                rNode.craftingVarChangesGood.Add(new VarChange { varName = vc.VarName, delta = vc.Delta });
+                            }
+
+                            rNode.craftingVarChangesBad = new List<VarChange>();
+                            foreach (var vc in ev.CraftingVarChangesBad)
+                            {
+                                rNode.craftingVarChangesBad.Add(new VarChange { varName = vc.VarName, delta = vc.Delta });
+                            }
+
+                            // Success (Port 0) and Failure (Port 1) exits
+                            if (edges.Count > 0) rNode.nextNodeIdGood = ResolveTargetId(graph, edges[0].TargetNodeGuid, blockStartRuntimeId);
+                            if (edges.Count > 1) rNode.nextNodeIdBad = ResolveTargetId(graph, edges[1].TargetNodeGuid, blockStartRuntimeId);
+                        }
+                        // Choice fields
+                        else if (ev.Type == EpisodeEventType.Choice)
+                        {
+                            rNode.choices = new List<EpisodeChoice>();
+                            foreach (var c in ev.Choices)
+                            {
+                                var rc = new EpisodeChoice
+                                {
+                                    buttonText = c.ButtonText,
+                                    setFlags = new List<string>(c.SetFlags),
+                                    clearFlags = new List<string>(c.ClearFlags),
+                                    varChanges = new List<VarChange>()
+                                };
+
+                                foreach (var vc in c.VarChanges)
+                                {
+                                    rc.varChanges.Add(new VarChange { varName = vc.VarName, delta = vc.Delta });
+                                }
+
+                                if (!string.IsNullOrEmpty(c.TargetNodeId) && eventToRuntimeIdMap.TryGetValue(c.TargetNodeId, out string choiceTargetRid))
+                                {
+                                    rc.nextNodeId = choiceTargetRid;
+                                }
+                                rNode.choices.Add(rc);
+                            }
+                        }
+                        // BranchExit fields
+                        else if (ev.Type == EpisodeEventType.BranchExit)
+                        {
+                            int branchIdx = epNode.OutgoingBranches.IndexOf(ev.ExitBranchName);
+                            if (branchIdx >= 0)
+                            {
+                                var branchEdge = edges.Find(e => e.OutputPortIndex == branchIdx);
+                                if (branchEdge.BaseNodeGuid != null)
+                                {
+                                    rNode.nextNodeId = ResolveTargetId(graph, branchEdge.TargetNodeGuid, blockStartRuntimeId);
                                 }
                             }
-                            else if (ev.Type == EpisodeEventType.BusinessEnd || rNode.requiresCrafting)
+                        }
+
+                        // Set default nextNodeId if not Choice/BusinessStart/BranchExit
+                        if (ev.Type != EpisodeEventType.Choice && ev.Type != EpisodeEventType.BusinessStart && ev.Type != EpisodeEventType.BranchExit)
+                        {
+                            // If has internal connection
+                            if (ev.NextEventGuids.Count > 0 && eventToRuntimeIdMap.TryGetValue(ev.NextEventGuids[0], out string nextEventRid))
                             {
-                                // BusinessEnd logic: Success = port 0, Fail = port 1
-                                if (edges.Count > 0) rNode.nextNodeIdGood = ResolveTargetId(graph, edges[0].TargetNodeGuid, nodeMapping);
-                                if (edges.Count > 1) rNode.nextNodeIdBad = ResolveTargetId(graph, edges[1].TargetNodeGuid, nodeMapping);
+                                rNode.nextNodeId = nextEventRid;
                             }
                             else
                             {
-                                // Handle manual branches with potential conditions
-                                for (int j = 0; j < edges.Count; j++)
+                                // Otherwise exit block using default port (Port 0)
+                                var defaultEdge = edges.Find(e => e.OutputPortIndex == 0);
+                                if (defaultEdge.BaseNodeGuid != null)
                                 {
-                                    var edge = edges[j];
-                                    if (j < epNode.OutgoingBranches.Count)
-                                    {
-                                        string branchDef = epNode.OutgoingBranches[j];
-                                        string targetRId = ResolveTargetId(graph, edge.TargetNodeGuid, nodeMapping);
-                                        
-                                        if (TryParseCondition(branchDef, out var cond))
-                                        {
-                                            if (cond.Type == TriggerConditionType.Flag)
-                                            {
-                                                rNode.flagBranches.Add(new NodeFlagBranch
-                                                {
-                                                    requiredAllFlags = new List<string> { cond.Key },
-                                                    nextNodeId = targetRId
-                                                });
-                                            }
-                                            else
-                                            {
-                                                rNode.varBranches.Add(new NodeVarBranch { 
-                                                    condition = new VarCondition { varName = cond.Key, threshold = int.Parse(cond.Value) }, 
-                                                    nextNodeId = targetRId 
-                                                });
-                                            }
-                                        }
-                                        else if (j == 0 || branchDef.ToLower() == "next" || branchDef.ToLower() == "default")
-                                        {
-                                            // Fallback next node
-                                            rNode.nextNodeId = targetRId;
-                                        }
-                                    }
-                                }
-                                
-                                // Also handle cases where a TriggerNode might be directly connected
-                                if (edges.Count > 0 && rNode.nextNodeId == null && rNode.flagBranches.Count == 0 && rNode.varBranches.Count == 0)
-                                {
-                                    var targetNode = graph.Nodes.Find(n => n.Guid == edges[0].TargetNodeGuid);
-                                    if (targetNode is TriggerNodeSO triggerNode)
-                                    {
-                                        InjectTriggerLogic(rNode, triggerNode, graph, nodeMapping);
-                                    }
-                                    else
-                                    {
-                                        rNode.nextNodeId = ResolveTargetId(graph, edges[0].TargetNodeGuid, nodeMapping);
-                                    }
+                                    rNode.nextNodeId = ResolveTargetId(graph, defaultEdge.TargetNodeGuid, blockStartRuntimeId);
                                 }
                             }
                         }
+                    }
+                }
+                else if (gNode is TriggerNodeSO triggerNode)
+                {
+                    string rid = $"TRIGGER_{triggerNode.Guid}";
+                    var rNode = runtimeData.FindNode(rid);
+                    var edges = graph.Edges.Where(e => e.BaseNodeGuid == gNode.Guid).OrderBy(e => e.OutputPortIndex).ToList();
+
+                    // Map trigger conditions
+                    rNode.flagBranches = new List<NodeFlagBranch>();
+                    rNode.varBranches = new List<NodeVarBranch>();
+
+                    for (int i = 0; i < triggerNode.Conditions.Count; i++)
+                    {
+                        var cond = triggerNode.Conditions[i];
+                        var edge = edges.Find(e => e.OutputPortIndex == i);
+
+                        if (edge.BaseNodeGuid != null)
+                        {
+                            string targetRid = ResolveTargetId(graph, edge.TargetNodeGuid, blockStartRuntimeId);
+
+                            if (cond.Type == TriggerConditionType.Flag)
+                            {
+                                rNode.flagBranches.Add(new NodeFlagBranch
+                                {
+                                    requiredAllFlags = new List<string> { cond.Key },
+                                    nextNodeId = targetRid
+                                });
+                            }
+                            else
+                            {
+                                rNode.varBranches.Add(new NodeVarBranch
+                                {
+                                    condition = new VarCondition { varName = cond.Key, op = ParseCompareOp(cond.Operator), threshold = int.Parse(cond.Value) },
+                                    nextNodeId = targetRid
+                                });
+                            }
+                        }
+                    }
+
+                    // Else port (last port)
+                    var elseEdge = edges.Find(e => e.OutputPortIndex == triggerNode.Conditions.Count);
+                    if (elseEdge.BaseNodeGuid != null)
+                    {
+                        rNode.nextNodeId = ResolveTargetId(graph, elseEdge.TargetNodeGuid, blockStartRuntimeId);
                     }
                 }
             }
@@ -222,12 +271,24 @@ namespace NarrativeFlow.Editor
             string dir = "Assets/Resources/EpisodeData";
             if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
             string path = $"{dir}/EpisodeData_{episodeId}.asset";
-            AssetDatabase.CreateAsset(runtimeData, path);
+
+            // Maintain custom inspector fields when overwriting
+            EpisodeData existing = AssetDatabase.LoadAssetAtPath<EpisodeData>(path);
+            if (existing != null)
+            {
+                EditorUtility.CopySerialized(runtimeData, existing);
+                EditorUtility.SetDirty(existing);
+            }
+            else
+            {
+                AssetDatabase.CreateAsset(runtimeData, path);
+            }
+
             AssetDatabase.SaveAssets();
-            
+            AssetDatabase.Refresh();
             Debug.Log($"Compiled {episodeId} to {path}");
 
-            // Also Export to JSON and CSV if desired
+            // Export to JSON and CSV
             ExportToJson(runtimeData, episodeId);
             ExportToCsv(runtimeData, episodeId);
         }
@@ -243,7 +304,6 @@ namespace NarrativeFlow.Editor
 
         private void ExportToCsv(EpisodeData data, string id)
         {
-            // Simple CSV export logic following the project's CSV guide
             var sb = new System.Text.StringBuilder();
             
             sb.AppendLine("#META");
@@ -270,7 +330,8 @@ namespace NarrativeFlow.Editor
                     var c = n.choices[i];
                     string sFlags = string.Join("|", c.setFlags);
                     string cFlags = string.Join("|", c.clearFlags);
-                    sb.AppendLine($"{n.nodeId},{i},{c.buttonText},{c.nextNodeId},{sFlags},{cFlags},");
+                    string vChanges = string.Join("|", c.varChanges.Select(vc => $"{vc.varName}{(vc.delta >= 0 ? "+" : "")}{vc.delta}"));
+                    sb.AppendLine($"{n.nodeId},{i},{c.buttonText},{c.nextNodeId},{sFlags},{cFlags},{vChanges}");
                 }
             }
 
@@ -280,93 +341,119 @@ namespace NarrativeFlow.Editor
             Debug.Log($"Exported CSV to {dir}/{id}.csv");
         }
 
-        private void InjectTriggerLogic(EpisodeNode rNode, TriggerNodeSO triggerNode, NarrativeGraphSO graph, Dictionary<string, List<string>> nodeMapping)
+        private string ResolveTargetId(NarrativeGraphSO graph, string targetGuid, Dictionary<string, string> blockStartRuntimeId)
         {
-            // Inject trigger logic into this runtime node
-            foreach (var cond in triggerNode.Conditions)
+            if (blockStartRuntimeId.TryGetValue(targetGuid, out string startId))
             {
-                var targetEdge = graph.Edges.Find(e => e.BaseNodeGuid == triggerNode.Guid && e.OutputPortIndex == triggerNode.Conditions.IndexOf(cond));
-                if (!string.IsNullOrEmpty(targetEdge.BaseNodeGuid))
+                return startId;
+            }
+            return null;
+        }
+
+        private List<EpisodeEvent> GetTraversedEvents(EpisodeNodeSO epNode)
+        {
+            var traversedList = new List<EpisodeEvent>();
+            if (epNode.Events == null || epNode.Events.Count == 0) return traversedList;
+
+            var eventMap = epNode.Events.ToDictionary(e => e.Guid);
+
+            // 1. Identify start node
+            EpisodeEvent startEvent = null;
+            if (!string.IsNullOrEmpty(epNode.StartEventGuid) && eventMap.TryGetValue(epNode.StartEventGuid, out var sEv))
+            {
+                startEvent = sEv;
+            }
+            else
+            {
+                // Find node with 0 incoming connections
+                var incoming = new Dictionary<string, int>();
+                foreach (var ev in epNode.Events) incoming[ev.Guid] = 0;
+                foreach (var ev in epNode.Events)
                 {
-                    string targetRId = ResolveTargetId(graph, targetEdge.TargetNodeGuid, nodeMapping);
-                    if (cond.Type == TriggerConditionType.Flag)
+                    if (ev.Type == EpisodeEventType.Choice)
                     {
-                        rNode.flagBranches.Add(new NodeFlagBranch
+                        foreach (var c in ev.Choices)
                         {
-                            requiredAllFlags = new List<string> { cond.Key },
-                            nextNodeId = targetRId
-                        });
+                            if (!string.IsNullOrEmpty(c.TargetNodeId) && incoming.ContainsKey(c.TargetNodeId))
+                                incoming[c.TargetNodeId]++;
+                        }
                     }
                     else
                     {
-                        rNode.varBranches.Add(new NodeVarBranch { 
-                            condition = new VarCondition { varName = cond.Key, threshold = int.Parse(cond.Value) }, 
-                            nextNodeId = targetRId 
-                        });
+                        foreach (var nextId in ev.NextEventGuids)
+                        {
+                            if (incoming.ContainsKey(nextId)) incoming[nextId]++;
+                        }
+                    }
+                }
+                var startCandidate = incoming.OrderBy(kvp => kvp.Value).FirstOrDefault();
+                if (!string.IsNullOrEmpty(startCandidate.Key))
+                {
+                    startEvent = eventMap[startCandidate.Key];
+                }
+            }
+
+            if (startEvent == null) startEvent = epNode.Events[0];
+
+            // 2. Perform BFS/DFS traversal
+            var visited = new HashSet<string>();
+            var queue = new Queue<EpisodeEvent>();
+            queue.Enqueue(startEvent);
+            visited.Add(startEvent.Guid);
+
+            while (queue.Count > 0)
+            {
+                var ev = queue.Dequeue();
+                traversedList.Add(ev);
+
+                if (ev.Type == EpisodeEventType.Choice)
+                {
+                    foreach (var c in ev.Choices)
+                    {
+                        if (!string.IsNullOrEmpty(c.TargetNodeId) && eventMap.TryGetValue(c.TargetNodeId, out var targetEv) && !visited.Contains(c.TargetNodeId))
+                        {
+                            queue.Enqueue(targetEv);
+                            visited.Add(c.TargetNodeId);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var nextId in ev.NextEventGuids)
+                    {
+                        if (eventMap.TryGetValue(nextId, out var targetEv) && !visited.Contains(nextId))
+                        {
+                            queue.Enqueue(targetEv);
+                            visited.Add(nextId);
+                        }
                     }
                 }
             }
-            // Handle Else port (last port of trigger)
-            var elseEdge = graph.Edges.Find(e => e.BaseNodeGuid == triggerNode.Guid && e.OutputPortIndex == triggerNode.Conditions.Count);
-            if (!string.IsNullOrEmpty(elseEdge.BaseNodeGuid))
+
+            // 3. Append isolated (unvisited) nodes at the end to prevent data loss
+            foreach (var ev in epNode.Events)
             {
-                rNode.nextNodeId = ResolveTargetId(graph, elseEdge.TargetNodeGuid, nodeMapping);
+                if (!visited.Contains(ev.Guid))
+                {
+                    traversedList.Add(ev);
+                    visited.Add(ev.Guid);
+                }
             }
+
+            return traversedList;
         }
 
-        private bool TryParseCondition(string input, out GraphTriggerCondition cond)
+        private CompareOp ParseCompareOp(string op)
         {
-            cond = new GraphTriggerCondition();
-            
-            // Expected formats:
-            // "Money > 100" (Variable)
-            // "FlagName == true" (Flag)
-            // "FlagName == false" (Flag)
-            
-            string[] parts = input.Split(' ', System.StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length < 3) return false;
-
-            string key = parts[0];
-            string op = parts[1];
-            string val = parts[2];
-
-            if (val.ToLower() == "true" || val.ToLower() == "false")
+            return op.Trim() switch
             {
-                cond.Type = TriggerConditionType.Flag;
-                cond.Key = key;
-                // Note: current NodeFlagBranch system usually checks for 'Presence' of flag
-                // We assume if someone puts "Flag == false", the system handles it or we use a convention
-                return true;
-            }
-            else if (int.TryParse(val, out _))
-            {
-                cond.Type = TriggerConditionType.Variable;
-                cond.Key = key;
-                cond.Operator = op;
-                cond.Value = val;
-                return true;
-            }
-
-            return false;
-        }
-
-        private string ResolveTargetId(NarrativeGraphSO graph, string targetGuid, Dictionary<string, List<string>> nodeMapping)
-        {
-            var targetNode = graph.Nodes.Find(n => n.Guid == targetGuid);
-            if (targetNode is EpisodeNodeSO)
-            {
-                return nodeMapping[targetGuid][0];
-            }
-            else if (targetNode is TriggerNodeSO)
-            {
-                // Recursive resolution through trigger
-                // For now, this is a placeholder. 
-                // A true trigger would return a branch structure, but EpisodeNode already has branches.
-                // Simplified: Just point to the first node of the first branch for now, 
-                // but real implementation should inject branches into the PREVIOUS node.
-                return $"TRIGGER_{targetGuid}"; 
-            }
-            return null;
+                ">=" => CompareOp.GreaterOrEqual,
+                ">"  => CompareOp.Greater,
+                "==" => CompareOp.Equal,
+                "<"  => CompareOp.Less,
+                "<=" => CompareOp.LessOrEqual,
+                _    => CompareOp.GreaterOrEqual
+            };
         }
     }
 }

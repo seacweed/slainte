@@ -126,6 +126,17 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
             yield break;
         }
 
+        // Auto-advance for empty routing/trigger nodes
+        if (string.IsNullOrEmpty(_currentNode.text) &&
+            string.IsNullOrEmpty(_currentNode.speakerKey) &&
+            !_currentNode.requiresCrafting &&
+            (_currentNode.choices == null || _currentNode.choices.Count == 0))
+        {
+            ApplyBgmCommand(_currentNode);
+            GoToNext();
+            yield break;
+        }
+
         ApplyBgmCommand(_currentNode);
 
         if (_currentNode.characters != null && _currentNode.characters.Count > 0)

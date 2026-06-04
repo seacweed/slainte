@@ -26,6 +26,7 @@ namespace NarrativeFlow.Editor
             title = data.Type.ToString();
             viewDataKey = data.Guid;
             SetPosition(new Rect(data.Position, Vector2.zero));
+            this.styleSheets.Add(NarrativeUIHelper.LoadStyle());
 
             inputContainer.Add(InstantiatePort(Orientation.Horizontal, Direction.Input, Port.Capacity.Multi, typeof(bool)).With(p => p.portName = "In"));
             
@@ -67,15 +68,32 @@ namespace NarrativeFlow.Editor
             
             _fieldErrors = fieldErrors ?? new Dictionary<string, string>();
             
-            // Re-draw node content to update red borders on ports
+            // Re-draw node content to update red borders on ports without recreating them (which would break connections)
             UpdateVisuals();
-            RebuildPorts(); 
+            UpdatePortValidationVisuals(); 
             
             OnValidationChanged?.Invoke();
         }
 
         public string GetWarningMessage() => _warningIcon != null && _warningIcon.style.display == DisplayStyle.Flex ? _warningIcon.tooltip : "";
         public string GetFieldError(string key) => _fieldErrors.TryGetValue(key, out var msg) ? msg : null;
+
+        public void UpdatePortValidationVisuals()
+        {
+            if (eventData.Type == EpisodeEventType.Choice)
+            {
+                var children = outputContainer.Children().ToList();
+                for (int i = 0; i < eventData.Choices.Count; i++)
+                {
+                    if (i < children.Count)
+                    {
+                        var row = children[i];
+                        var err = GetFieldError($"choice_{i}");
+                        row.MarkError(err, !string.IsNullOrEmpty(err));
+                    }
+                }
+            }
+        }
 
         public void RebuildPorts()
         {
@@ -85,9 +103,13 @@ namespace NarrativeFlow.Editor
                 for (int i = 0; i < eventData.Choices.Count; i++)
                 {
                     var c = eventData.Choices[i];
-                    var row = NarrativeUIHelper.CreateRow(justify: Justify.SpaceBetween);
+                    var row = NarrativeUIHelper.CreateRow("choice-row", Justify.SpaceBetween);
                     row.Add(NarrativeUIHelper.CreateLabel(c.ButtonText, fontSize: 10).With(l => l.style.marginRight = 5));
-                    row.Add(InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool)).With(p => { p.portName = ""; p.style.width = 16; }));
+                    row.Add(InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool)).With(p => { 
+                        p.portName = ""; 
+                        p.style.width = 16; 
+                        p.Query<Label>().ForEach(l => l.style.display = DisplayStyle.None); // Hide default port labels/colons
+                    }));
                     
                     var err = GetFieldError($"choice_{i}");
                     row.MarkError(err, !string.IsNullOrEmpty(err));
@@ -121,6 +143,6 @@ namespace NarrativeFlow.Editor
 
         public override void OnSelected() { base.OnSelected(); _graph.window?.OnSelectionChanged(this); }
         public override void OnUnselected() { base.OnUnselected(); _graph.window?.OnSelectionChanged(null); }
-        public override void SetPosition(Rect newPos) { base.SetPosition(newPos); Undo.RecordObject(_container, "Move"); eventData.Position = newPos.position; }
+        public override void SetPosition(Rect newPos) { base.SetPosition(newPos); Undo.RecordObject(_container, "Move"); eventData.Position = newPos.position; EditorUtility.SetDirty(_container); }
     }
 }

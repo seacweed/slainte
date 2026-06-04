@@ -145,7 +145,11 @@ namespace NarrativeFlow.Editor
                 {
                     var row = NarrativeUIHelper.CreateRow("choice-row");
                     row.Add(NarrativeUIHelper.CreateLabel(ep.OutgoingBranches[i], "field-value"));
-                    row.Add(InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool)).With(p => { p.portName = ""; p.style.width = 20; }));
+                    row.Add(InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool)).With(p => { 
+                        p.portName = ""; 
+                        p.style.width = 20; 
+                        p.Query<Label>().ForEach(l => l.style.display = DisplayStyle.None); // Hide default port labels/colons
+                    }));
                     
                     var err = GetFieldError($"branch_{i}");
                     row.MarkError(err, !string.IsNullOrEmpty(err));
@@ -159,7 +163,11 @@ namespace NarrativeFlow.Editor
                 {
                     var row = NarrativeUIHelper.CreateRow("choice-row");
                     row.Add(NarrativeUIHelper.CreateLabel(i < tr.Conditions.Count ? $"Case {i}" : "Else", "field-value").With(l => { if (i >= tr.Conditions.Count) l.style.color = Color.gray; }));
-                    row.Add(InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool)).With(p => { p.portName = ""; p.style.width = 20; }));
+                    row.Add(InstantiatePort(Orientation.Horizontal, Direction.Output, Port.Capacity.Single, typeof(bool)).With(p => { 
+                        p.portName = ""; 
+                        p.style.width = 20; 
+                        p.Query<Label>().ForEach(l => l.style.display = DisplayStyle.None); // Hide default port labels/colons
+                    }));
                     outputContainer.Add(row);
                 }
             }

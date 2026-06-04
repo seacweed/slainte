@@ -72,8 +72,14 @@ MonoBehaviour:
     OverrideSpeakerName: 
     Text: aaaaaa
     CharacterAppearances: []
+    BgmCommand: 0
+    BgmClipName: 
     Choices: []
     CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
     ExitBranchName: 
   - Guid: ad94c827-e694-424d-b5c0-deb9d5eb425f
     Position: {x: 56, y: -58}
@@ -83,6 +89,8 @@ MonoBehaviour:
     OverrideSpeakerName: 
     Text: 
     CharacterAppearances: []
+    BgmCommand: 0
+    BgmClipName: 
     Choices:
     - ButtonText: 1
       TargetNodeId: 9c2e0f48-97fb-4007-bab6-879738dc18b7
@@ -95,6 +103,10 @@ MonoBehaviour:
       ClearFlags: []
       VarChanges: []
     CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
     ExitBranchName: 
   - Guid: 9c2e0f48-97fb-4007-bab6-879738dc18b7
     Position: {x: 255.16, y: -85}
@@ -104,8 +116,14 @@ MonoBehaviour:
     OverrideSpeakerName: 
     Text: hi
     CharacterAppearances: []
+    BgmCommand: 0
+    BgmClipName: 
     Choices: []
     CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
     ExitBranchName: 
   - Guid: f0c0c7e7-9652-48f5-87e4-ae3e0c8af54c
     Position: {x: 224.79999, y: 57}
@@ -115,8 +133,14 @@ MonoBehaviour:
     OverrideSpeakerName: 
     Text: no.
     CharacterAppearances: []
+    BgmCommand: 0
+    BgmClipName: 
     Choices: []
     CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
     ExitBranchName: 
   OutgoingBranches:
   - money<10
@@ -149,7 +173,78 @@ MonoBehaviour:
   - FieldName: Title
     FieldValue: aas
   StartEventGuid: 
-  Events: []
+  Events:
+  - Guid: b5e2f247-0643-4abb-9fe9-36e8b4a7739a
+    Position: {x: 80.79999, y: 168.8}
+    NextEventGuids:
+    - a96528a2-f508-4467-89f7-4e8fe1ee2952
+    Type: 0
+    SpeakerKey: F54
+    OverrideSpeakerName: 
+    Text: sdasd
+    CharacterAppearances: []
+    BgmCommand: 0
+    BgmClipName: 
+    Choices: []
+    CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
+    ExitBranchName: 
+  - Guid: a96528a2-f508-4467-89f7-4e8fe1ee2952
+    Position: {x: 291.2, y: 216.8}
+    NextEventGuids: []
+    Type: 1
+    SpeakerKey: 
+    OverrideSpeakerName: 
+    Text: 
+    CharacterAppearances: []
+    BgmCommand: 0
+    BgmClipName: 
+    Choices:
+    - ButtonText: i==0
+      TargetNodeId: 
+      SetFlags:
+      - flag_to_set
+      ClearFlags:
+      - flag_to_clear
+      VarChanges:
+      - VarName: 
+        Delta: 0
+    - ButtonText: New
+      TargetNodeId: 
+      SetFlags: []
+      ClearFlags: []
+      VarChanges: []
+    CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
+    ExitBranchName: 
+  - Guid: ee127626-ad17-4c0f-a3e4-60aec558c8fb
+    Position: {x: 419.93607, y: 216.80002}
+    NextEventGuids: []
+    Type: 1
+    SpeakerKey: 
+    OverrideSpeakerName: 
+    Text: 
+    CharacterAppearances: []
+    BgmCommand: 0
+    BgmClipName: 
+    Choices:
+    - ButtonText: New
+      TargetNodeId: 
+      SetFlags: []
+      ClearFlags: []
+      VarChanges: []
+    CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
+    ExitBranchName: 
   OutgoingBranches:
   - Next
   - New
@@ -165,6 +260,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d79caea9d5f0474f8e1b7b289e47fad, type: 3}
   m_Name: New Narrative Graph
   m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.NarrativeGraphSO
+  episodeTitle: 
+  triggerCondition:
+    minDay: 0
+    requiredFlags: []
+    blockedFlags: []
+    prerequisiteEpisodeIds: []
+    requiredVars: []
+  openingCharacters: []
+  episodeDescription: 
+  iconNameBoard: 
+  iconNameArchive: 
+  characters: []
+  customConditionTexts: []
   Nodes:
   - {fileID: -7127120222914740406}
   - {fileID: 4866711699634503307}
