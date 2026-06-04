@@ -80,12 +80,14 @@ public class CharacterStage : MonoBehaviour
                 continue;
             }
 
-            Sprite sprite        = data.GetSprite(entry.expressionKey);
-            Sprite overlaySprite = data.GetOverlaySprite(entry.expressionKey);
+            Sprite sprite             = data.GetSprite(entry.expressionKey);
+            Sprite overlaySprite      = data.GetOverlaySprite(entry.expressionKey);
+            Sprite blinkSprite        = data.GetBlinkSprite(entry.expressionKey);
+            Sprite blinkOverlaySprite = data.GetBlinkOverlaySprite(entry.expressionKey);
 
             if (_activeViews.TryGetValue(entry.characterKey, out CharacterView existing))
             {
-                existing.SwapSprite(sprite, overlaySprite);
+                existing.SwapSprite(sprite, overlaySprite, blinkSprite, blinkOverlaySprite);
             }
             else
             {
@@ -110,7 +112,7 @@ public class CharacterStage : MonoBehaviour
                 _activeSlotIndices[entry.characterKey] = slotIndex;
 
                 view.ApplySlotLayout(slots[slotIndex]);
-                view.Setup(sprite, overlaySprite);
+                view.Setup(sprite, overlaySprite, blinkSprite, blinkOverlaySprite);
                 view.AttachOverlayToFrontContainer(frontContainer);
 
                 pending++;
@@ -134,7 +136,11 @@ public class CharacterStage : MonoBehaviour
         CharacterData data = characterDB != null ? characterDB.FindByKey(characterKey) : null;
         if (data == null) return;
 
-        view.SwapSprite(data.GetSprite(expressionKey), data.GetOverlaySprite(expressionKey));
+        view.SwapSprite(
+            data.GetSprite(expressionKey),
+            data.GetOverlaySprite(expressionKey),
+            data.GetBlinkSprite(expressionKey),
+            data.GetBlinkOverlaySprite(expressionKey));
     }
 
     public float GetActiveGroupCenterWorldX()

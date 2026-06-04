@@ -17,25 +17,46 @@ MonoBehaviour:
   nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
   defaultSprite: {fileID: 0}
   defaultOverlaySprite: {fileID: 0}
+  defaultBlinkSprite: {fileID: 0}
+  defaultBlinkOverlaySprite: {fileID: 0}
   expressions:
   - key: mid
     sprite: {fileID: -7963430592884048618, guid: 4d310ee0a1329f841922b53174e162a2, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: -2973031717827081531, guid: 445df34af18b0cf41bbacd3d51717a32, type: 3}
+    blinkOverlaySprite: {fileID: 0}
   - key: angry
     sprite: {fileID: -9082789242079819192, guid: dd947b3fb6646394d8600e9a5b086832, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 6615453753646093957, guid: aa0d2cc032dba1444a8396f0b9487e27, type: 3}
+    blinkOverlaySprite: {fileID: 0}
   - key: frust
     sprite: {fileID: -9110267390277040692, guid: 82f01000fecef16408b3b7adf9e08058, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
   - key: laugh
     sprite: {fileID: 3329039666740383113, guid: 20926e55f4f636e479bdc63aca56e744, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
   - key: serious
     sprite: {fileID: -8196591245953746782, guid: 70a555a3df542d84bb2a150a92ab294a, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
   - key: shame
     sprite: {fileID: -6991104958293179531, guid: aa23b2bd2e96bbc4fbed54c442a68f84, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
   - key: smile
     sprite: {fileID: 8580352971482666360, guid: 13a2c8126088b0c438ac13b383bc2763, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
+  - key: angry_left
+    sprite: {fileID: 4053281868181025459, guid: 2b74444c764e4444d84c15bc66e2760f, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 6615453753646093957, guid: aa0d2cc032dba1444a8396f0b9487e27, type: 3}
+    blinkOverlaySprite: {fileID: 0}

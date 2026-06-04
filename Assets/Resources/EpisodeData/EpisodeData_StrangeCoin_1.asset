@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ada6baddb75540a4ba25d31b476b855a, type: 3}
-  m_Name: EpisodeData_StrangeCoin_1
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EpisodeData
   episodeId: StrangeCoin_1
   episodeTitle: "\uC774\uC0C1\uD55C \uB3D9\uC804 - 1"
@@ -525,8 +525,8 @@ MonoBehaviour:
     craftingFlagBad: 
     craftingVarChangesGood: []
     craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
+    bgmCommand: 2
+    bgmClipName: Ep_main_0
   - nodeId: 20
     speakerKey: f54
     overrideSpeakerName: 
@@ -836,7 +836,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: serious
+      expressionKey: angry_left
       slotIndex: 2
     - characterKey: f72
       expressionKey: laugh
@@ -866,7 +866,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: serious
+      expressionKey: angry_left
       slotIndex: 2
     - characterKey: f72
       expressionKey: smile
@@ -894,7 +894,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: serious
+      expressionKey: angry_left
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -910,8 +910,8 @@ MonoBehaviour:
     craftingFlagBad: 
     craftingVarChangesGood: []
     craftingVarChangesBad: []
-    bgmCommand: 1
-    bgmClipName: Ep_tension
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 36
     speakerKey: f54
     overrideSpeakerName: 
@@ -922,7 +922,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: angry
+      expressionKey: angry_left
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -950,7 +950,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: angry
+      expressionKey: angry_left
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -980,7 +980,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: angry
+      expressionKey: angry_left
       slotIndex: 2
     - characterKey: f72
       expressionKey: frust
@@ -996,8 +996,8 @@ MonoBehaviour:
     craftingFlagBad: 
     craftingVarChangesGood: []
     craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
+    bgmCommand: 1
+    bgmClipName: Ep_tension
   - nodeId: 39
     speakerKey: f72
     overrideSpeakerName: 
@@ -1008,7 +1008,7 @@ MonoBehaviour:
     varBranches: []
     characters:
     - characterKey: f54
-      expressionKey: angry
+      expressionKey: angry_left
       slotIndex: 2
     - characterKey: f72
       expressionKey: laugh
@@ -1331,8 +1331,8 @@ MonoBehaviour:
     craftingFlagBad: 
     craftingVarChangesGood: []
     craftingVarChangesBad: []
-    bgmCommand: 2
-    bgmClipName: Ep_tension
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 52
     speakerKey: f54
     overrideSpeakerName: 
@@ -1356,8 +1356,8 @@ MonoBehaviour:
     craftingFlagBad: 
     craftingVarChangesGood: []
     craftingVarChangesBad: []
-    bgmCommand: 1
-    bgmClipName: Ep_main_0
+    bgmCommand: 0
+    bgmClipName: 
   - nodeId: 53
     speakerKey: f72
     overrideSpeakerName: 
@@ -1599,8 +1599,8 @@ MonoBehaviour:
     craftingFlagBad: 
     craftingVarChangesGood: []
     craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
+    bgmCommand: 2
+    bgmClipName: Ep_tension
   - nodeId: 58_1_5
     speakerKey: sally
     overrideSpeakerName: ???
@@ -1822,8 +1822,8 @@ MonoBehaviour:
     craftingFlagBad: 
     craftingVarChangesGood: []
     craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
+    bgmCommand: 2
+    bgmClipName: Ep_tension
   - nodeId: 58_2_2
     speakerKey: shaun
     overrideSpeakerName: 
@@ -2242,8 +2242,8 @@ MonoBehaviour:
     craftingFlagBad: 
     craftingVarChangesGood: []
     craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
+    bgmCommand: 1
+    bgmClipName: Ep_main_0
   - nodeId: 60
     speakerKey: f72
     overrideSpeakerName: 

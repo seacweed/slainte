@@ -11,6 +11,8 @@ public class CharacterData : ScriptableObject
         public string key;
         public Sprite sprite;
         public Sprite overlaySprite;
+        public Sprite blinkSprite;
+        public Sprite blinkOverlaySprite;
     }
 
     public string key;
@@ -18,6 +20,8 @@ public class CharacterData : ScriptableObject
     public Color nameColor = Color.white;
     public Sprite defaultSprite;
     public Sprite defaultOverlaySprite;
+    public Sprite defaultBlinkSprite;
+    public Sprite defaultBlinkOverlaySprite;
 
     [Header("Expressions")]
     public List<ExpressionEntry> expressions = new();
@@ -50,6 +54,36 @@ public class CharacterData : ScriptableObject
         }
 
         return defaultOverlaySprite;
+    }
+
+    public Sprite GetBlinkSprite(string expressionKey)
+    {
+        if (!string.IsNullOrWhiteSpace(expressionKey))
+        {
+            for (int i = 0; i < expressions.Count; i++)
+            {
+                var e = expressions[i];
+                if (e != null && string.Equals(e.key, expressionKey, StringComparison.OrdinalIgnoreCase))
+                    return e.blinkSprite != null ? e.blinkSprite : defaultBlinkSprite;
+            }
+        }
+
+        return defaultBlinkSprite;
+    }
+
+    public Sprite GetBlinkOverlaySprite(string expressionKey)
+    {
+        if (!string.IsNullOrWhiteSpace(expressionKey))
+        {
+            for (int i = 0; i < expressions.Count; i++)
+            {
+                var e = expressions[i];
+                if (e != null && string.Equals(e.key, expressionKey, StringComparison.OrdinalIgnoreCase))
+                    return e.blinkOverlaySprite != null ? e.blinkOverlaySprite : defaultBlinkOverlaySprite;
+            }
+        }
+
+        return defaultBlinkOverlaySprite;
     }
 
 }

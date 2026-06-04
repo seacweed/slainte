@@ -35,7 +35,9 @@
 
 **3. 캐릭터 표시 (`Assets/Scripts/Presentation/`)**
 
-- `CharacterView` — 프리팹 루트에 부착. `Setup(Sprite, Sprite?)` + `SwapSprite(Sprite, Sprite?)` + `PlayAppearAnimation()` / `PlayDisappearAnimation()` 제공. fade+rise+pop 애니메이션 처리. 슬롯 하단 기준으로 배치.
+- `CharacterView` — 프리팹 루트에 부착. `Setup(Sprite, Sprite?, blinkSprite?, blinkOverlaySprite?)` + `SwapSprite(Sprite, Sprite?, blinkSprite?, blinkOverlaySprite?)` + `PlayAppearAnimation()` / `PlayDisappearAnimation()` 제공. fade+rise+pop 애니메이션 처리. 슬롯 하단 기준으로 배치.
+  - **깜빡임**: 등장 애니메이션 완료 후 자동 시작. 5~15초 랜덤 간격으로 눈 감은 스프라이트로 교체 후 1초 뒤 복원. `blinkSprite`가 null이면 비활성화. `SwapSprite` 호출 시 새 blink 스프라이트로 재시작. 퇴장 애니메이션 시작 시 중단.
+  - `sprite`가 null이면 `_image` 컴포넌트를 비활성화 (overlay만 있는 캐릭터에 사용). Inspector에서 `blinkDuration`(기본 1s), `blinkIntervalMin`(5s), `blinkIntervalMax`(15s) 조정 가능.
   - `ApplySlotLayout(slot)` — 슬롯 높이(1440, 화면 전체)를 채우고 `HeightControlsWidth` ARF로 스프라이트 원본 비율 유지하며 너비 자동 결정. 슬롯의 x 위치가 캐릭터 수평 중심.
   - `AttachOverlayToFrontContainer(frontContainer)` — `VisualOverlay` 자식을 `frontContainer`로 reparent(`worldPositionStays: true`). 이후 애니메이션/alpha는 `Visual`과 동기화됨. `OnDestroy` 시 overlay GameObject 자동 정리.
   - `GetVisualWorldBoundsX(out float left, out float right)` — `_visualRT.GetWorldCorners()`로 스프라이트의 실제 화면 공간 X 경계를 반환. `HeightControlsWidth` ARF가 너비를 확정하려면 1프레임이 필요하므로, 생성 직후 호출 시 부정확할 수 있음.
@@ -46,10 +48,11 @@
   - `GetActiveGroupCenterWorldX()` — 활성 캐릭터 전체의 스프라이트 좌우 끝 X값(world space) 평균을 반환. 캐릭터가 없으면 `Screen.width * 0.5f` 반환.
   - `CustomerSpawner`(영업 씬 손님)와 `EpisodeRunner`(에피소드) 모두 `CustomerStage` 하나를 공유합니다. 슬롯 5개.
 - `CharacterSlotEntry` — `{ characterKey, expressionKey, slotIndex }` 세 필드. `slotIndex`가 0 이상이면 해당 인덱스 슬롯에 직접 배치, `-1`(기본값)이면 빈 슬롯에 자동 배정. 슬롯 인덱스: 0=Center, 1=Left, 2=Right, 3=Left2, 4=Right2, 5~8=Interaction0~3(통합 스프라이트 전용).
-- `CharacterData` — 캐릭터 1명 = 파일 1개. `defaultSprite` + `defaultOverlaySprite` + `List<ExpressionEntry>` (`{ key, sprite, overlaySprite }`)로 모든 표정을 하나의 에셋에 보관.
+- `CharacterData` — 캐릭터 1명 = 파일 1개. `defaultSprite` + `defaultOverlaySprite` + `List<ExpressionEntry>` (`{ key, sprite, overlaySprite, blinkSprite, blinkOverlaySprite }`)로 모든 표정을 하나의 에셋에 보관.
   - `nameColor` — 대화창 이름 텍스트 색상. Inspector에서 캐릭터별로 지정. `overrideSpeakerName`이 있어도 항상 `speakerKey` 기준 색상이 적용됨.
   - `GetSprite(expressionKey)` — 표정 키로 스프라이트 조회(없으면 defaultSprite 반환).
   - `GetOverlaySprite(expressionKey)` — overlay 스프라이트 조회(없으면 defaultOverlaySprite 반환). overlay가 불필요한 캐릭터는 모든 overlay 필드를 비워두면 됨.
+  - `GetBlinkSprite(expressionKey)` / `GetBlinkOverlaySprite(expressionKey)` — 눈 감은 스프라이트 조회. 표정에 지정된 값이 없으면 `defaultBlinkSprite` / `defaultBlinkOverlaySprite` 반환. 둘 다 null이면 해당 표정에서 깜빡임 없음.
   - **주인공은 1인칭 시점이므로 스프라이트 없음.** `CharacterData`는 화자 이름 표시용으로만 사용하고, `EpisodeNode.characters`에는 포함하지 않습니다.
 
 **4. 에피소드 (`Assets/Scripts/Conversation/Episode/`)**
