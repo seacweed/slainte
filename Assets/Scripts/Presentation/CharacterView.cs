@@ -12,6 +12,11 @@ public class CharacterView : MonoBehaviour
     [SerializeField] private float popHeight    = 35f;
     [SerializeField] private float popDuration  = 0.12f;
 
+    [Header("Blink")]
+    [SerializeField] private float blinkDuration    = 1f;
+    [SerializeField] private float blinkIntervalMin = 5f;
+    [SerializeField] private float blinkIntervalMax = 15f;
+
     private Image             _image;
     private CanvasGroup       _canvasGroup;
     private AspectRatioFitter _arf;
@@ -25,6 +30,12 @@ public class CharacterView : MonoBehaviour
     private bool              _overlayAttached;
 
     private Coroutine _animRoutine;
+    private Coroutine _blinkRoutine;
+
+    private Sprite _currentSprite;
+    private Sprite _currentOverlaySprite;
+    private Sprite _blinkSprite;
+    private Sprite _blinkOverlaySprite;
 
     void Awake()
     {
@@ -50,10 +61,18 @@ public class CharacterView : MonoBehaviour
         }
     }
 
-    public void Setup(Sprite sprite, Sprite overlaySprite = null)
+    public void Setup(Sprite sprite, Sprite overlaySprite = null, Sprite blinkSprite = null, Sprite blinkOverlaySprite = null)
     {
+        _currentSprite        = sprite;
+        _currentOverlaySprite = overlaySprite;
+        _blinkSprite          = blinkSprite;
+        _blinkOverlaySprite   = blinkOverlaySprite;
+
         if (_image != null)
-            _image.sprite = sprite;
+        {
+            _image.sprite  = sprite;
+            _image.enabled = sprite != null;
+        }
 
         if (_arf != null && sprite != null)
         {
@@ -110,10 +129,20 @@ public class CharacterView : MonoBehaviour
             ApplyVisualLayout(_overlayRT);
     }
 
-    public void SwapSprite(Sprite sprite, Sprite overlaySprite = null)
+    public void SwapSprite(Sprite sprite, Sprite overlaySprite = null, Sprite blinkSprite = null, Sprite blinkOverlaySprite = null)
     {
+        _currentSprite        = sprite;
+        _currentOverlaySprite = overlaySprite;
+        _blinkSprite          = blinkSprite;
+        _blinkOverlaySprite   = blinkOverlaySprite;
+
+        StopBlink();
+
         if (_image != null)
-            _image.sprite = sprite;
+        {
+            _image.sprite  = sprite;
+            _image.enabled = sprite != null;
+        }
 
         if (_arf != null && sprite != null)
             _arf.aspectRatio = sprite.rect.width / sprite.rect.height;
@@ -123,6 +152,8 @@ public class CharacterView : MonoBehaviour
             _overlayImage.sprite  = overlaySprite;
             _overlayImage.enabled = overlaySprite != null;
         }
+
+        StartBlink();
     }
 
     public void GetVisualWorldBoundsX(out float left, out float right)
@@ -168,8 +199,43 @@ public class CharacterView : MonoBehaviour
 
     public void PlayDisappearAnimation(Action onComplete = null)
     {
+        StopBlink();
         if (_animRoutine != null) StopCoroutine(_animRoutine);
         _animRoutine = StartCoroutine(DisappearRoutine(onComplete));
+    }
+
+    private void StartBlink()
+    {
+        if (_blinkSprite == null) return;
+        if (_blinkRoutine != null) StopCoroutine(_blinkRoutine);
+        _blinkRoutine = StartCoroutine(BlinkRoutine());
+    }
+
+    private void StopBlink()
+    {
+        if (_blinkRoutine != null)
+        {
+            StopCoroutine(_blinkRoutine);
+            _blinkRoutine = null;
+        }
+    }
+
+    private IEnumerator BlinkRoutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(UnityEngine.Random.Range(blinkIntervalMin, blinkIntervalMax));
+
+            if (_image != null) _image.sprite = _blinkSprite;
+            if (_overlayImage != null && _blinkOverlaySprite != null)
+                _overlayImage.sprite = _blinkOverlaySprite;
+
+            yield return new WaitForSeconds(blinkDuration);
+
+            if (_image != null) _image.sprite = _currentSprite;
+            if (_overlayImage != null && _blinkOverlaySprite != null)
+                _overlayImage.sprite = _currentOverlaySprite;
+        }
     }
 
     private IEnumerator AppearRoutine(Action onComplete)
@@ -230,6 +296,7 @@ public class CharacterView : MonoBehaviour
         if (HasOverlay()) _overlayCanvasGroup.alpha = 1f;
 
         _animRoutine = null;
+        StartBlink();
         onComplete?.Invoke();
     }
 

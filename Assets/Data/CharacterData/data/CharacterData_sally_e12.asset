@@ -17,10 +17,21 @@ MonoBehaviour:
   nameColor: {r: 1, g: 1, b: 1, a: 1}
   defaultSprite: {fileID: 0}
   defaultOverlaySprite: {fileID: 0}
+  defaultBlinkSprite: {fileID: 0}
+  defaultBlinkOverlaySprite: {fileID: 0}
   expressions:
   - key: treatment_mid
     sprite: {fileID: 1473237719973825897, guid: 903e3e95349abf74dad17f0cce4202c8, type: 3}
     overlaySprite: {fileID: 7309965523620982664, guid: c598d9f11dd6e7d4991cb633b5e45abe, type: 3}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
   - key: treatment_angry
     sprite: {fileID: 1473237719973825897, guid: 903e3e95349abf74dad17f0cce4202c8, type: 3}
     overlaySprite: {fileID: 1344047454887173750, guid: bddd6aba86e5fc8419d458aa24f0fa3a, type: 3}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
+  - key: blood_down
+    sprite: {fileID: 0}
+    overlaySprite: {fileID: 357006442158401228, guid: b6cc3c9dcbb65374f8477edee2464098, type: 3}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}

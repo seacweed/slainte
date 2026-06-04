@@ -5577,7 +5577,7 @@ MonoBehaviour:
   dialogue: {fileID: 1187678688}
   episodeRunner: {fileID: 409392692}
   customerSpawner: {fileID: 1483023178}
-  testEpisode: {fileID: 11400000, guid: 327c5e7958f65894b984e81a1c60adcb, type: 2}
+  testEpisode: {fileID: 11400000, guid: cda3cacf5fba7f2418903e796812a6ab, type: 2}
 --- !u!1 &2112139633
 GameObject:
   m_ObjectHideFlags: 0
