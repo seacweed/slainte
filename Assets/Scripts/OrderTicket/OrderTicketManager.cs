@@ -26,6 +26,13 @@ public class OrderTicketManager : MonoBehaviour
         _pendingTicketKey = ticketKey;
     }
 
+    // Ignored when no ticket has been prepared yet, so an empty ticket can't be toggled into view.
+    public void ToggleTicket()
+    {
+        if (string.IsNullOrWhiteSpace(_pendingTicketKey)) return;
+        ticketUI?.Toggle();
+    }
+
     // OrderMode: dialogue closes -> show ticket
     private void HandleDialogueClosed()
     {
@@ -43,7 +50,7 @@ public class OrderTicketManager : MonoBehaviour
         else if (newMode == GameMode.EpisodeMode)
         {
             _pendingTicketKey = null;
-            ticketUI?.HideImmediate();
+            ticketUI?.HideAnimated();
         }
     }
 

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameModeManager : MonoSingleton<GameModeManager>
@@ -7,9 +6,12 @@ public class GameModeManager : MonoSingleton<GameModeManager>
     [Header("Panels")]
     [SerializeField] private CanvasGroup frontWorldPanel;
     [SerializeField] private CanvasGroup dialoguePanel;
-    [SerializeField] private CanvasGroup orderTicketPanel;
     [SerializeField] private CanvasGroup choiceContainer;
     [SerializeField] private CanvasGroup craftingJudgePanel;
+
+    [Header("UI")]
+    [SerializeField] private RecipeBookUI recipeBook;
+    [SerializeField] private OrderTicketUI orderTicketUI;
 
     [Header("Initial Mode")]
     [SerializeField] private GameMode initialMode = GameMode.OrderMode;
@@ -53,16 +55,23 @@ public class GameModeManager : MonoSingleton<GameModeManager>
         bool showDialogue     = mode == GameMode.OrderMode
                              || mode == GameMode.EpisodeMode
                              || mode == GameMode.CraftingMode;
-        bool showOrderTicket  = mode == GameMode.OrderMode
-                             || mode == GameMode.CraftingMode;
-        bool showChoices       = mode == GameMode.EpisodeMode;
+        bool showChoices      = mode == GameMode.EpisodeMode;
         bool showCraftingJudge = mode == GameMode.CraftingMode;
 
-        SetGroup(frontWorldPanel,   showFrontWorld);
-        SetGroup(dialoguePanel,     showDialogue);
-        SetGroup(orderTicketPanel,  showOrderTicket);
-        SetGroup(choiceContainer,   showChoices);
+        SetGroup(frontWorldPanel,    showFrontWorld);
+        SetGroup(dialoguePanel,      showDialogue);
+        SetGroup(choiceContainer,    showChoices);
         SetGroup(craftingJudgePanel, showCraftingJudge);
+
+        bool isEpisode = mode == GameMode.EpisodeMode;
+        recipeBook?.SetInteractable(!isEpisode);
+        orderTicketUI?.SetInteractable(!isEpisode);
+
+        if (!isEpisode)
+        {
+            recipeBook?.Open();
+            orderTicketUI?.Open();
+        }
     }
 
     private static void SetGroup(CanvasGroup cg, bool on)
