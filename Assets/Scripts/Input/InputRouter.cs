@@ -3,10 +3,11 @@ using UnityEngine;
 public class InputRouter : MonoBehaviour
 {
     [Header("Dependencies")]
-    [SerializeField] private GameModeManager modeManager;
-    [SerializeField] private FrontCameraRig  cameraRig;
-    [SerializeField] private OrderTicketUI   ticketUI;
+    [SerializeField] private GameModeManager    modeManager;
+    [SerializeField] private FrontCameraRig     cameraRig;
+    [SerializeField] private RecipeBookUI       recipeBook;
     [SerializeField] private DialogueController dialogue;
+    [SerializeField] private OrderTicketManager orderTicketManager;
 
     [Header("Dialogue Handlers")]
     [SerializeField] private EpisodeRunner episodeRunner;
@@ -18,6 +19,7 @@ public class InputRouter : MonoBehaviour
     void Update()
     {
         bool advancePressed = Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space);
+        bool bookPressed    = Input.GetKeyDown(KeyCode.Tab);
         bool ticketPressed  = Input.GetKeyDown(KeyCode.E);
 
         GameMode mode = modeManager != null ? modeManager.CurrentMode : GameMode.OrderMode;
@@ -27,7 +29,8 @@ public class InputRouter : MonoBehaviour
             case GameMode.OrderMode:
                 if (dialogue == null || !dialogue.IsOpen) HandleCameraInput();
                 if (advancePressed) dialogue?.Advance();
-                if (ticketPressed)  ticketUI?.Toggle();
+                if (bookPressed)    recipeBook?.Toggle();
+                if (ticketPressed)  orderTicketManager?.ToggleTicket();
                 if (Input.GetKeyDown(KeyCode.Alpha1))
                     customerSpawner?.ShowCustomers(new[] { "yukari" });
                 if (Input.GetKeyDown(KeyCode.Alpha2) && testEpisode != null)
@@ -44,6 +47,8 @@ public class InputRouter : MonoBehaviour
             case GameMode.CraftingMode:
                 HandleCameraInput();
                 if (advancePressed) RouteAdvanceToEncounter();
+                if (bookPressed)    recipeBook?.Toggle();
+                if (ticketPressed)  orderTicketManager?.ToggleTicket();
                 break;
         }
     }

@@ -7,6 +7,7 @@
 - 코드 내에 한글 사용 금지(주석 제외)
 - 후에 다양한 기능이 추가될 수 있으므로 OOP 기반 설계, 확장성 고려한 코드 작성
 - 계획부터 말하고 승인 받은 후에 작업 진행
+- 요구사항이 명확하지 않거나 부족한 점이 있는 경우 반드시 질문 후 답변
 - 최적화를 고려한 코드 작성
 - claude.md 업데이트 시 프로젝트 전체를 아우르는 중심 내용만 이 파일에 작성(docs에 추가될 내용은 작성하지 말 것), 세부 사항들은 docs의 개별 문서에 작성. 필요시 새로운 문서 생성하고 claude.md에 링크 추가.
 
@@ -25,8 +26,7 @@
 - **씬 전환**: `GameManager` + `SceneTransitionManager` (Additive, 페이드)
 - **게임 상태**: `GameState.None`(MainMenu 초기) / `GameState.Episode` / `GameState.Rest`
 - **에피소드 종료**: `EpisodeRunner.EndEncounter()` → `EpisodeManager.ClearEpisode()` → `GameManager.ChangeState(Rest)`
-- **GameProgress 접근**: `EpisodeRunner` 내부에서는 항상 `GameProgress.Instance` 직접 참조 (`Progress` 프로퍼티)
-
+- **UI 패널 open/close**: `GameModeManager`가 단순 표시용 패널은 `CanvasGroup` 즉시 on-off로, 사용자 토글이 필요한 패널(주문서, 도감)은 `SetInteractable()`/`Open()` 호출만 하고 실제 슬라이드 애니메이션은 각 UI가 자체 관리
 
 ## 문서
 
@@ -36,7 +36,11 @@
 |---|---|
 | [docs/corescene-systems.md](docs/corescene-systems.md) | CoreScene 매니저 구조, 게임 흐름, 저장/로드 |
 | [docs/restscene-systems.md](docs/restscene-systems.md) | RestScene UI 시스템 (에피소드 보드, 상점, 현황판, 툴팁) |
-| [docs/architecture.md](docs/architecture.md) | 에피소드 실행 엔진, 캐릭터, 드래그드롭, 대화 시스템 |
+| [docs/architecture.md](docs/architecture.md) | GameMode/패널 구조, 입력 처리, GameProgress, 데이터 패턴, 공용 UI 유틸리티 |
+| [docs/character-presentation.md](docs/character-presentation.md) | 캐릭터 표시(CharacterView/CharacterStage/CharacterData), 대화 렌더링 |
+| [docs/episode-engine.md](docs/episode-engine.md) | 에피소드 오케스트레이션(EpisodeRunner, 분기, 제조 트리거), 오디오/BGM |
+| [docs/business-interactions.md](docs/business-interactions.md) | 영업 씬 손님&주문, 드래그-드롭 바텐딩 |
+| [docs/recipe-book-search.md](docs/recipe-book-search.md) | 도감 검색 UI(RecipeSearchUI/RecipeSearchOptionButton), 화면 전환 흐름 |
 | [docs/scene-structure.md](docs/scene-structure.md) | 씬 계층 구조 (Canvas, Panel, GameObject) |
 | [docs/episode-csv-guide.md](docs/episode-csv-guide.md) | 에피소드 CSV 작성법 (섹션 구조, 열 설명, 예시) |
 | [docs/bartending-systems.md](docs/bartending-systems.md) | 바텐딩 도구(GlassController 등), MetaballFluid 액체 입자 시스템 |

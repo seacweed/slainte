@@ -1,118 +1,172 @@
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
 public class OrderTicketUI : MonoBehaviour
 {
+    private enum TicketState { Closed, Open }
+
+    [Header("Sprites")]
+    [SerializeField] private Sprite spriteOpen;
+    [SerializeField] private Sprite spriteClosed;
+
     [Header("Scroll")]
-    [SerializeField] ScrollRect scrollRect;
-    [SerializeField] RectTransform contentRect;
+    [SerializeField] private ScrollRect    scrollRect;
+    [SerializeField] private RectTransform contentRect;
 
     [Header("Header")]
-    [SerializeField] TMP_Text customerNameText;
+    [SerializeField] private TMP_Text customerNameText;
 
     [Header("Items")]
-    [SerializeField] Transform itemsContainer;
-    [SerializeField] ItemRowUI itemRowPrefab;
+    [SerializeField] private Transform itemsContainer;
+    [SerializeField] private ItemRowUI itemRowPrefab;
 
     [Header("Memo")]
-    [SerializeField] TMP_Text memoText;
+    [SerializeField] private TMP_Text memoText;
+
+    [Header("References")]
+    [SerializeField] private RectTransform ticketRect;
+    [SerializeField] private CanvasGroup   canvasGroup;
+    [SerializeField] private Button        toggleButton;
+    [SerializeField] private Image         buttonImage;
 
     [Header("Slide")]
-    [SerializeField] RectTransform ticketRect;
-    [SerializeField] Vector2 upAnchoredPos = new Vector2(40f, -40f);
-    [SerializeField] float foldedVisibleHeight = 36f;
-    [SerializeField] float slideDuration = 0.25f;
+    [SerializeField] private float hideOffsetY   = 250f;
+    [SerializeField] private float slideDuration = 0.25f;
 
-    [Header("Behavior")]
-    [SerializeField] CanvasGroup canvasGroup;
-    [SerializeField] bool startExpanded = true;
+    private Vector2 _visiblePos;
+    private Vector2 HiddenPos => _visiblePos + new Vector2(0f, hideOffsetY);
 
-    Vector2 downAnchoredPos;
-    bool isUp;
-    Coroutine slideCo;
+    private TicketState _state = TicketState.Closed;
+    private Coroutine    _slideCo;
 
     void Awake()
     {
-        if (!ticketRect) ticketRect = (RectTransform)transform;
+        if (!ticketRect)  ticketRect  = (RectTransform)transform;
         if (!canvasGroup) canvasGroup = GetComponent<CanvasGroup>();
-        HideImmediate();
+        if (!buttonImage && toggleButton) buttonImage = toggleButton.GetComponent<Image>();
+
+        _visiblePos = ticketRect.anchoredPosition;
+        ApplyClosedState();
+        SetButtonInteractable(true);
     }
 
     public void Show(OrderTicketData data)
     {
-        // 텍스트 세팅
         if (customerNameText) customerNameText.text = data.customerName;
-        if (memoText) memoText.text = data.memo ?? "";
+        if (memoText)         memoText.text         = data.memo ?? "";
 
-        // 아이템 라인 생성
         ClearItems();
         if (data.items != null)
-        {
             foreach (var it in data.items)
             {
                 var row = Instantiate(itemRowPrefab, itemsContainer);
                 row.Set(it.name, it.qty, it.price);
             }
-        }
 
-        // 표시
-        gameObject.SetActive(true);
-        if (canvasGroup)
-        {
-            canvasGroup.alpha = 1f;
-            canvasGroup.blocksRaycasts = true;
-            canvasGroup.interactable = true;
-        }
-
-        // ✅ 레이아웃 갱신 + 스크롤 상단 리셋
         Canvas.ForceUpdateCanvases();
         if (contentRect) LayoutRebuilder.ForceRebuildLayoutImmediate(contentRect);
-        if (scrollRect) scrollRect.verticalNormalizedPosition = 1f;
+        if (scrollRect)  scrollRect.verticalNormalizedPosition = 1f;
 
-        // ✅ 접힘 위치 계산 (티켓 높이 고정이지만 안전하게)
-        float h = ticketRect.rect.height;
-        downAnchoredPos = upAnchoredPos + new Vector2(0f, h - foldedVisibleHeight);
-
-        isUp = startExpanded;
-        ticketRect.anchoredPosition = isUp ? upAnchoredPos : downAnchoredPos;
+        BeginOpen();
     }
 
-    void ClearItems()
+    public void Toggle()
+    {
+        if (_slideCo != null) return;
+
+        if      (_state == TicketState.Open)   BeginClose();
+        else if (_state == TicketState.Closed) BeginOpen();
+    }
+
+    public void Open()
+    {
+        if (_state == TicketState.Closed) BeginOpen();
+    }
+
+    public void HideAnimated() => BeginClose();
+
+    // EpisodeMode: close if open and disable interaction
+    // OrderMode/CraftingMode: re-enable interaction
+    public void SetInteractable(bool on)
+    {
+        SetButtonInteractable(on);
+
+        if (!on && _state == TicketState.Open)
+            BeginClose();
+    }
+
+    // Open: fade/raycast in immediately, swap sprite, then slide in
+    private void BeginOpen()
+    {
+        _state = TicketState.Open;
+        if (canvasGroup) canvasGroup.alpha = 1f;
+        SetCanvasInteractable(true);
+        ApplySprite(spriteOpen);
+        Slide(_visiblePos, null);
+    }
+
+    // Close: slide out, then fade/raycast off
+    private void BeginClose()
+    {
+        Slide(HiddenPos, () =>
+        {
+            _state = TicketState.Closed;
+            ApplyClosedState();
+        });
+    }
+
+    private void ApplyClosedState()
+    {
+        ticketRect.anchoredPosition = HiddenPos;
+        if (canvasGroup) canvasGroup.alpha = 0f;
+        SetCanvasInteractable(false);
+        ApplySprite(spriteClosed);
+    }
+
+    private void SetCanvasInteractable(bool on)
+    {
+        if (!canvasGroup) return;
+        canvasGroup.interactable   = on;
+        canvasGroup.blocksRaycasts = on;
+    }
+
+    private void ApplySprite(Sprite s)
+    {
+        if (buttonImage != null && s != null) buttonImage.sprite = s;
+    }
+
+    private void SetButtonInteractable(bool on)
+    {
+        if (toggleButton) toggleButton.interactable = on;
+    }
+
+    private void ClearItems()
     {
         if (!itemsContainer) return;
         for (int i = itemsContainer.childCount - 1; i >= 0; i--)
             Destroy(itemsContainer.GetChild(i).gameObject);
     }
 
-    public void HideImmediate()
+    private void Slide(Vector2 target, Action onComplete)
     {
-        if (canvasGroup)
-        {
-            canvasGroup.alpha = 0f;
-            canvasGroup.blocksRaycasts = false;
-            canvasGroup.interactable = false;
-        }
-        gameObject.SetActive(false);
+        StopSlide();
+        _slideCo = StartCoroutine(SlideRoutine(target, onComplete));
     }
 
-    public void Toggle()
+    private void StopSlide()
     {
-        if (!gameObject.activeInHierarchy) return;
-
-        isUp = !isUp;
-        Vector2 target = isUp ? upAnchoredPos : downAnchoredPos;
-
-        if (slideCo != null) StopCoroutine(slideCo);
-        slideCo = StartCoroutine(SlideTo(target));
+        if (_slideCo == null) return;
+        StopCoroutine(_slideCo);
+        _slideCo = null;
     }
 
-    IEnumerator SlideTo(Vector2 target)
+    private IEnumerator SlideRoutine(Vector2 target, Action onComplete)
     {
         Vector2 start = ticketRect.anchoredPosition;
-        float t = 0f;
+        float   t     = 0f;
 
         while (t < 1f)
         {
@@ -123,6 +177,7 @@ public class OrderTicketUI : MonoBehaviour
         }
 
         ticketRect.anchoredPosition = target;
-        slideCo = null;
+        _slideCo = null;
+        onComplete?.Invoke();
     }
 }
