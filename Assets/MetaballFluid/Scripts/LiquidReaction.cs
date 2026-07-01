@@ -1,4 +1,5 @@
 using UnityEngine;
+using Slainte.Bartending;
 
 public class LiquidReaction : MonoBehaviour
 {
@@ -76,6 +77,7 @@ public class LiquidReaction : MonoBehaviour
 
     void MixAttributes(LiquidReaction other)
     {
+        MixPayload(other);
         // 3차 최적화: 상대방의 컴포넌트(Rigidbody2D 등)를 매번 GetComponent로 가져오지 않고,
         // 상대방 스크립트(LiquidReaction)가 미리 캐싱해둔 public 변수를 직접 읽어옵니다.
         Rigidbody2D otherRb = other.rb;
@@ -118,5 +120,19 @@ public class LiquidReaction : MonoBehaviour
         float diffA = a.a > b.a ? a.a - b.a : b.a - a.a;
         
         return diffR < 0.02f && diffG < 0.02f && diffB < 0.02f && diffA < 0.02f;
+    }
+
+    void MixPayload(LiquidReaction other)
+    {
+        if (other == null)
+            return;
+
+        LiquidParticleData mine = GetComponent<LiquidParticleData>();
+        LiquidParticleData theirs = other.GetComponent<LiquidParticleData>();
+
+        if (mine == null || theirs == null)
+            return;
+
+        mine.MixPayloadWith(theirs, mixSpeed);
     }
 }

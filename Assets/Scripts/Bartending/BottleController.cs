@@ -86,17 +86,28 @@ namespace Slainte.Bartending
 
         public void Init(ItemDef data)
         {
+            if (data == null || data.type != ItemType.Bottle)
+            {
+                Debug.LogWarning("BottleController requires ItemDef with type Bottle.");
+                return;
+            }
+
             bottleData = data;
             ApplyBottleData();
         }
-
         private void ApplyBottleData()
         {
-            if (bottleData != null && bottleData.icon != null)
-            {
-                if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
+            if (bottleData == null || bottleData.type != ItemType.Bottle)
+                return;
+
+            if (spriteRenderer == null)
+                spriteRenderer = GetComponent<SpriteRenderer>();
+
+            if (bottleData.icon != null)
                 spriteRenderer.sprite = bottleData.icon;
-            }
+
+            maxCapacity = bottleData.capacityMl;
+            currentCapacity = bottleData.capacityMl;
         }
 
         private void Update()
@@ -137,6 +148,16 @@ namespace Slainte.Bartending
             GameObject obj = LiquidPool.Instance.GetParticle(spawnPos + randomOffset);
             if (obj != null)
             {
+                if (bottleData != null && bottleData.type == ItemType.Bottle)
+                {
+                    LiquidParticleData particleData = obj.GetComponent<LiquidParticleData>();
+                    if (particleData != null)
+                        particleData.SetPayload(bottleData, 1f);
+
+                    SpriteRenderer particleRenderer = obj.GetComponent<SpriteRenderer>();
+                    if (particleRenderer != null)
+                        particleRenderer.color = bottleData.liquidColor;
+                }
                 Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
                 if (rb != null)
                 {

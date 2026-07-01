@@ -951,6 +951,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0.73
       objectReference: {fileID: 0}
+    - target: {fileID: 3637454003154016808, guid: e5555af92399ef7408c7b909cbc4ff38, type: 3}
+      propertyPath: bottleData
+      value: 
+      objectReference: {fileID: 11400000, guid: ec5f018bd74408549946479bd5acc502, type: 2}
     - target: {fileID: 4041685629584967810, guid: e5555af92399ef7408c7b909cbc4ff38, type: 3}
       propertyPath: m_Size.x
       value: 1.1610765
@@ -1439,6 +1443,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 1.47
       objectReference: {fileID: 0}
+    - target: {fileID: 3637454003154016808, guid: e5555af92399ef7408c7b909cbc4ff38, type: 3}
+      propertyPath: bottleData
+      value: 
+      objectReference: {fileID: 11400000, guid: fca0f78cd9c0ace40a495646580d7ee5, type: 2}
     - target: {fileID: 4041685629584967810, guid: e5555af92399ef7408c7b909cbc4ff38, type: 3}
       propertyPath: m_Size.y
       value: 2.9490268
