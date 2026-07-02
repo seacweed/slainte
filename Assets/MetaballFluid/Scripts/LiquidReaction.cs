@@ -11,10 +11,12 @@ public class LiquidReaction : MonoBehaviour
     public float mixSpeed = 0.25f;
     public float reactionCooldown = 0.05f;
     public float compositionDifferenceTolerance = 0.001f;
+    public float passiveMixSpeed = 0.005f;
     public float agitationMixSpeed = 0.12f;
     public float agitationMixRadius = 0.16f;
     public float agitationMixInterval = 0.05f;
     public float agitationVelocityThreshold = 0.15f;
+    public float agitationFullMixRelativeSpeed = 0.45f;
     public int agitationMaxPartners = 3;
     private float lastReactionTime;
     private float nextAgitationMixTime;
@@ -145,12 +147,12 @@ public class LiquidReaction : MonoBehaviour
         MixParticleData(other, mixSpeed);
     }
 
-    void MixParticleData(LiquidReaction other, float strength)
+    void MixParticleData(LiquidReaction other, float strength, bool wakeParticles = true)
     {
-        if (isLogicallySleeping)
+        if (wakeParticles && isLogicallySleeping)
             WakeUp();
 
-        if (other.isLogicallySleeping)
+        if (wakeParticles && other.isLogicallySleeping)
             other.WakeUp();
 
         particleData.MixPayloadWith(other.particleData, strength);
@@ -163,7 +165,6 @@ public class LiquidReaction : MonoBehaviour
         if (isLogicallySleeping) return;
         if (rb == null) return;
         if (Time.time < nextAgitationMixTime) return;
-        if (rb.linearVelocity.sqrMagnitude < agitationVelocityThreshold * agitationVelocityThreshold) return;
 
         nextAgitationMixTime = Time.time + agitationMixInterval;
 
@@ -198,7 +199,12 @@ public class LiquidReaction : MonoBehaviour
             if (!HasMeaningfulMixTarget(other))
                 continue;
 
-            MixParticleData(other, agitationMixSpeed);
+            float relativeMixStrength = GetRelativeVelocityMixStrength(other);
+            float mixStrength = Mathf.Clamp01(passiveMixSpeed + relativeMixStrength);
+            if (mixStrength <= 0f)
+                continue;
+
+            MixParticleData(other, mixStrength, relativeMixStrength > 0f);
             MixPhysicalAttributes(other);
             mixedPartners++;
 
@@ -208,6 +214,26 @@ public class LiquidReaction : MonoBehaviour
 
         for (int i = 0; i < count; i++)
             NearbyParticles[i] = null;
+    }
+
+    float GetRelativeVelocityMixStrength(LiquidReaction other)
+    {
+        if (other == null || rb == null || other.rb == null)
+            return 0f;
+
+        float relativeSpeed = (rb.linearVelocity - other.rb.linearVelocity).magnitude;
+        if (relativeSpeed < agitationVelocityThreshold)
+            return 0f;
+
+        float fullMixSpeed = Mathf.Max(
+            agitationVelocityThreshold + 0.001f,
+            agitationFullMixRelativeSpeed);
+        float agitation = Mathf.InverseLerp(
+            agitationVelocityThreshold,
+            fullMixSpeed,
+            relativeSpeed);
+
+        return agitationMixSpeed * agitation;
     }
 
     void MixPhysicalAttributes(LiquidReaction other)

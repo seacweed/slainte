@@ -176,10 +176,12 @@ MonoBehaviour:
   mixSpeed: 0.02
   reactionCooldown: 0.05
   compositionDifferenceTolerance: 0.001
+  passiveMixSpeed: 0.005
   agitationMixSpeed: 0.5
   agitationMixRadius: 0.16
   agitationMixInterval: 0.05
   agitationVelocityThreshold: 0.1
+  agitationFullMixRelativeSpeed: 0.45
   agitationMaxPartners: 5
   sleepVelocityThreshold: 0.05
   timeToSleep: 2

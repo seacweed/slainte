@@ -22,7 +22,7 @@ MonoBehaviour:
   bottleCategory: 0
   liquidType: 0
   capacityMl: 700
-  liquidColor: {r: 1, g: 1, b: 1, a: 0.40392157}
+  liquidColor: {r: 0.4433962, g: 0.49169675, b: 1, a: 0.40392157}
   density: 0.95
   dragMovesObject: 1
   toolPlaceableOnTable: 0

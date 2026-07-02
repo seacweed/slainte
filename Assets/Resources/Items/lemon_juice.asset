@@ -22,7 +22,7 @@ MonoBehaviour:
   bottleCategory: 3
   liquidType: 5
   capacityMl: 300
-  liquidColor: {r: 1, g: 0.913274, b: 0.28490567, a: 0.5058824}
+  liquidColor: {r: 1, g: 0.44841516, b: 0.28627455, a: 0.5058824}
   density: 1.03
   dragMovesObject: 1
   toolPlaceableOnTable: 0
