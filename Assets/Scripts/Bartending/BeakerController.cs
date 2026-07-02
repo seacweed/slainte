@@ -44,6 +44,7 @@ namespace Slainte.Bartending
 
         private BeakerState currentState = BeakerState.Idle;
         private Collider2D mainCollider; // 부모 드래그 터치 감지용 트리거 콜라이더
+        private VesselLiquidTracker liquidTracker;
         private Camera mainCamera;
         
         private float initialAngle;
@@ -57,6 +58,8 @@ namespace Slainte.Bartending
         private int[] originalSortingOrders;
         private const int PICKUP_SORTING_ORDER_BASE = 100;
 
+        public VesselLiquidTracker LiquidTracker => liquidTracker;
+
         private void Start()
         {
             mainCollider = GetComponent<Collider2D>();
@@ -65,6 +68,8 @@ namespace Slainte.Bartending
             if (Application.isPlaying)
             {
                 // 1. Rigidbody2D 키네마틱 물리 셋업 강제 보장 (2D 물리 트리거 상호작용 완벽 복구)
+                EnsureLiquidTracker();
+
                 Rigidbody2D rb = GetComponent<Rigidbody2D>();
                 if (rb == null)
                 {
@@ -94,6 +99,16 @@ namespace Slainte.Bartending
             {
                 currentState = BeakerState.Idle;
             }
+        }
+
+        private void EnsureLiquidTracker()
+        {
+            liquidTracker = GetComponent<VesselLiquidTracker>();
+            if (liquidTracker == null)
+                liquidTracker = gameObject.AddComponent<VesselLiquidTracker>();
+
+            if (!liquidTracker.HasTriggerCollider())
+                Debug.LogWarning($"{name} needs a trigger Collider2D for VesselLiquidTracker.");
         }
 
         private void Reset()

@@ -124,6 +124,77 @@ namespace Slainte.Bartending
                     keys.Add(item);
             }
         }
+
+        public Color EvaluateColor(float minimumAlpha = 0.75f)
+        {
+            float validTotal = 0f;
+            for (int i = 0; i < portions.Count; i++)
+            {
+                LiquidPortion portion = portions[i];
+                if (portion.sourceItem != null && portion.volumeMl > 0f)
+                    validTotal += portion.volumeMl;
+            }
+
+            if (validTotal <= 0f)
+                return Color.clear;
+
+            float r = 0f;
+            float g = 0f;
+            float b = 0f;
+            float a = 0f;
+
+            for (int i = 0; i < portions.Count; i++)
+            {
+                LiquidPortion portion = portions[i];
+                if (portion.sourceItem == null || portion.volumeMl <= 0f)
+                    continue;
+
+                float weight = portion.volumeMl / validTotal;
+                Color sourceColor = portion.sourceItem.liquidColor;
+
+                r += sourceColor.r * weight;
+                g += sourceColor.g * weight;
+                b += sourceColor.b * weight;
+                a += Mathf.Max(sourceColor.a, minimumAlpha) * weight;
+            }
+
+            return new Color(
+                Mathf.Clamp01(r),
+                Mathf.Clamp01(g),
+                Mathf.Clamp01(b),
+                Mathf.Clamp01(a));
+        }
+
+        public bool HasDifferentComposition(LiquidPayload other, float tolerance = 0.001f)
+        {
+            if (other == null)
+                return TotalVolumeMl > tolerance;
+
+            float myTotal = TotalVolumeMl;
+            float otherTotal = other.TotalVolumeMl;
+
+            if (myTotal <= tolerance && otherTotal <= tolerance)
+                return false;
+
+            if (myTotal <= tolerance || otherTotal <= tolerance)
+                return true;
+
+            List<ItemDef> keys = new();
+            AddKeys(this, keys);
+            AddKeys(other, keys);
+
+            for (int i = 0; i < keys.Count; i++)
+            {
+                ItemDef item = keys[i];
+                float myRatio = GetVolume(item) / myTotal;
+                float otherRatio = other.GetVolume(item) / otherTotal;
+
+                if (Mathf.Abs(myRatio - otherRatio) > tolerance)
+                    return true;
+            }
+
+            return false;
+        }
     }
 
     public sealed class LiquidParticleData : MonoBehaviour
@@ -131,10 +202,18 @@ namespace Slainte.Bartending
         public LiquidPayload payload = new();
         public bool hasBeenCollected;
 
+        private SpriteRenderer spriteRenderer;
+
+        private void Awake()
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+        }
+
         public void SetPayload(ItemDef sourceItem, float volumeMl)
         {
             hasBeenCollected = false;
             payload.SetSingle(sourceItem, volumeMl);
+            ApplyVisualFromPayload();
         }
 
         public void MixPayloadWith(LiquidParticleData other, float strength)
@@ -143,6 +222,22 @@ namespace Slainte.Bartending
                 return;
 
             LiquidPayload.MixPair(payload, other.payload, strength);
+        }
+
+        public bool HasDifferentComposition(LiquidParticleData other, float tolerance = 0.001f)
+        {
+            return other != null && payload.HasDifferentComposition(other.payload, tolerance);
+        }
+
+        public void ApplyVisualFromPayload()
+        {
+            if (spriteRenderer == null)
+                spriteRenderer = GetComponent<SpriteRenderer>();
+
+            if (spriteRenderer == null)
+                return;
+
+            spriteRenderer.color = payload.EvaluateColor();
         }
     }
 }

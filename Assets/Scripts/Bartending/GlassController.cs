@@ -47,6 +47,7 @@ namespace Slainte.Bartending
 
         private GlassState currentState = GlassState.Idle;
         private Collider2D mainCollider; // 마우스 클릭용 터치 트리거 콜라이더
+        private VesselLiquidTracker liquidTracker;
         private Camera mainCamera;
         
         private float initialAngle;
@@ -54,6 +55,8 @@ namespace Slainte.Bartending
         private Coroutine returnCoroutine;
 
         private SlotController currentSlot; // 현재 점유 중인 슬롯 레퍼런스
+
+        public VesselLiquidTracker LiquidTracker => liquidTracker;
 
         private void Start()
         {
@@ -63,6 +66,8 @@ namespace Slainte.Bartending
             if (Application.isPlaying)
             {
                 // 1. Rigidbody2D 키네마틱 물리 셋업 강제 보장 (2D 물리 트리거 상호작용 완벽 복구)
+                EnsureLiquidTracker();
+
                 Rigidbody2D rb = GetComponent<Rigidbody2D>();
                 if (rb == null)
                 {
@@ -84,6 +89,16 @@ namespace Slainte.Bartending
             {
                 currentState = GlassState.Idle;
             }
+        }
+
+        private void EnsureLiquidTracker()
+        {
+            liquidTracker = GetComponent<VesselLiquidTracker>();
+            if (liquidTracker == null)
+                liquidTracker = gameObject.AddComponent<VesselLiquidTracker>();
+
+            if (!liquidTracker.HasTriggerCollider())
+                Debug.LogWarning($"{name} needs a trigger Collider2D for VesselLiquidTracker.");
         }
 
         private void Reset()

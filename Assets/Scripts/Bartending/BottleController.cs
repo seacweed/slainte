@@ -153,10 +153,6 @@ namespace Slainte.Bartending
                     LiquidParticleData particleData = obj.GetComponent<LiquidParticleData>();
                     if (particleData != null)
                         particleData.SetPayload(bottleData, 1f);
-
-                    SpriteRenderer particleRenderer = obj.GetComponent<SpriteRenderer>();
-                    if (particleRenderer != null)
-                        particleRenderer.color = bottleData.liquidColor;
                 }
                 Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
                 if (rb != null)
