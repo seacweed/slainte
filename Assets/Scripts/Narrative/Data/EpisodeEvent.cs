@@ -32,8 +32,16 @@ namespace NarrativeFlow
         // Choice Fields
         public List<ChoiceOptionData> Choices = new();
 
+        // BGM Fields (applied on any event, usually Dialogue)
+        public BgmCommand BgmCommand;
+        public string BgmClipName;
+
         // Business Fields
         public string CraftingTicketKey;
+        public string CraftingFlagGood;
+        public string CraftingFlagBad;
+        public List<VarChangeData> CraftingVarChangesGood = new();
+        public List<VarChangeData> CraftingVarChangesBad  = new();
 
         // Branch Exit
         public string ExitBranchName;

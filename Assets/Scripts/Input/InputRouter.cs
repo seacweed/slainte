@@ -6,8 +6,9 @@ public class InputRouter : MonoBehaviour
     [SerializeField] private GameModeManager    modeManager;
     [SerializeField] private FrontCameraRig     cameraRig;
     [SerializeField] private RecipeBookUI       recipeBook;
-    [SerializeField] private DialogueController dialogue;
     [SerializeField] private OrderTicketManager orderTicketManager;
+    [SerializeField] private LiquorShelfUI      liquorShelf;
+    [SerializeField] private DialogueController dialogue;
 
     [Header("Dialogue Handlers")]
     [SerializeField] private EpisodeRunner episodeRunner;
@@ -21,6 +22,7 @@ public class InputRouter : MonoBehaviour
         bool advancePressed = Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space);
         bool bookPressed    = Input.GetKeyDown(KeyCode.Tab);
         bool ticketPressed  = Input.GetKeyDown(KeyCode.E);
+        bool shelfPressed   = Input.GetKeyDown(KeyCode.R);
 
         GameMode mode = modeManager != null ? modeManager.CurrentMode : GameMode.OrderMode;
 
@@ -31,6 +33,7 @@ public class InputRouter : MonoBehaviour
                 if (advancePressed) dialogue?.Advance();
                 if (bookPressed)    recipeBook?.Toggle();
                 if (ticketPressed)  orderTicketManager?.ToggleTicket();
+                if (shelfPressed)   liquorShelf?.Toggle();
                 if (Input.GetKeyDown(KeyCode.Alpha1))
                     customerSpawner?.ShowCustomers(new[] { "yukari" });
                 if (Input.GetKeyDown(KeyCode.Alpha2) && testEpisode != null)
@@ -49,6 +52,7 @@ public class InputRouter : MonoBehaviour
                 if (advancePressed) RouteAdvanceToEncounter();
                 if (bookPressed)    recipeBook?.Toggle();
                 if (ticketPressed)  orderTicketManager?.ToggleTicket();
+                if (shelfPressed)   liquorShelf?.Toggle();
                 break;
         }
     }

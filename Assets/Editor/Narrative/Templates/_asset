@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: _asset
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 
+  Position:
+    serializedVersion: 2
+    x: 50
+    y: -261.32
+    width: 287
+    height: 125
+  CustomFields:
+  - FieldName: Title
+    FieldValue: "(\uC740\uBC00\uD788 \uC218\uC0C1\uD55C \uD654\uD3D0\uB97C \uAC74\uB124\uBA70)
+      \uC5EC\uAE30 <b>\uAC13\uD30C\uB354..."
+  StartEventGuid: 
+  Events:
+  - Guid: e4823381-e818-49ec-b9f3-53ba0752cded
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    SpeakerKey: f72
+    OverrideSpeakerName: ???
+    Text: "(\uC740\uBC00\uD788 \uC218\uC0C1\uD55C \uD654\uD3D0\uB97C \uAC74\uB124\uBA70)
+      \uC5EC\uAE30 <b>\uAC13\uD30C\uB354</b> \uD558\uB098."
+    CharacterAppearances:
+    - CharacterKey: f72
+      ExpressionKey: mid
+      SlotIndex: -1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next

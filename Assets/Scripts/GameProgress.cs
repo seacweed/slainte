@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GameProgress : MonoSingleton<GameProgress>
 {
+    public static event Action<string, int> OnAffinityChanged;
+
     [SerializeField] private int currentDay = 1;
     [SerializeField] private List<string> flags = new();
     [SerializeField] private List<string> completedEpisodeIds = new();
@@ -15,10 +18,15 @@ public class GameProgress : MonoSingleton<GameProgress>
     [SerializeField] private List<string> boardSlotKeys   = new();
     [SerializeField] private List<int>    boardSlotValues = new();
 
-    private HashSet<string>         _flagSet;
-    private HashSet<string>         _completedSet;
-    private Dictionary<string, int> _affinity;
-    private Dictionary<string, int> _boardSlots;
+    [Header("Bottle Amounts")]
+    [SerializeField] private List<string> bottleAmountKeys   = new();
+    [SerializeField] private List<float>  bottleAmountValues = new();
+
+    private HashSet<string>           _flagSet;
+    private HashSet<string>           _completedSet;
+    private Dictionary<string, int>   _affinity;
+    private Dictionary<string, int>   _boardSlots;
+    private Dictionary<string, float> _bottleAmounts;
 
     public int CurrentDay => currentDay;
 
@@ -28,6 +36,7 @@ public class GameProgress : MonoSingleton<GameProgress>
         RebuildRuntimeSets();
     }
 
+    [ContextMenu("Rebuild Runtime Sets (Debug)")]
     private void RebuildRuntimeSets()
     {
         _flagSet      = new HashSet<string>(flags);
@@ -42,6 +51,11 @@ public class GameProgress : MonoSingleton<GameProgress>
         int slotCount = Mathf.Min(boardSlotKeys.Count, boardSlotValues.Count);
         for (int i = 0; i < slotCount; i++)
             _boardSlots[boardSlotKeys[i]] = boardSlotValues[i];
+
+        _bottleAmounts = new Dictionary<string, float>();
+        int bottleCount = Mathf.Min(bottleAmountKeys.Count, bottleAmountValues.Count);
+        for (int i = 0; i < bottleCount; i++)
+            _bottleAmounts[bottleAmountKeys[i]] = bottleAmountValues[i];
     }
 
     public void LoadFrom(SaveData data)
@@ -55,6 +69,8 @@ public class GameProgress : MonoSingleton<GameProgress>
         affinityValues      = new List<int>(data.affinityValues ?? new List<int>());
         boardSlotKeys       = new List<string>(data.boardSlotKeys ?? new List<string>());
         boardSlotValues     = new List<int>(data.boardSlotValues ?? new List<int>());
+        bottleAmountKeys    = new List<string>(data.bottleAmountKeys ?? new List<string>());
+        bottleAmountValues  = new List<float>(data.bottleAmountValues ?? new List<float>());
 
         RebuildRuntimeSets();
     }
@@ -65,6 +81,8 @@ public class GameProgress : MonoSingleton<GameProgress>
     public List<int>    GetAffinityValues()   => new List<int>(affinityValues);
     public List<string> GetBoardSlotKeys()    => new List<string>(boardSlotKeys);
     public List<int>    GetBoardSlotValues()  => new List<int>(boardSlotValues);
+    public List<string> GetBottleAmountKeys()   => new List<string>(bottleAmountKeys);
+    public List<float>  GetBottleAmountValues() => new List<float>(bottleAmountValues);
 
     // ── Flags ──────────────────────────────────────────────────
 
@@ -117,8 +135,12 @@ public class GameProgress : MonoSingleton<GameProgress>
     public void SetAffinity(string varName, int value)
     {
         if (string.IsNullOrWhiteSpace(varName)) return;
+        _affinity.TryGetValue(varName, out int current);
+        int delta = value - current;
         _affinity[varName] = value;
         SyncAffinityToLists(varName, value);
+        if (delta != 0)
+            OnAffinityChanged?.Invoke(varName, delta);
     }
 
     public void AddAffinity(string varName, int delta)
@@ -128,6 +150,8 @@ public class GameProgress : MonoSingleton<GameProgress>
         int next = current + delta;
         _affinity[varName] = next;
         SyncAffinityToLists(varName, next);
+        if (delta != 0)
+            OnAffinityChanged?.Invoke(varName, delta);
     }
 
     private void SyncAffinityToLists(string varName, int value)
@@ -179,6 +203,33 @@ public class GameProgress : MonoSingleton<GameProgress>
         {
             boardSlotKeys.Add(episodeId);
             boardSlotValues.Add(slotIndex);
+        }
+    }
+
+    // ── Bottle Amounts ─────────────────────────────────────────
+
+    public float GetBottleAmount(string bottleId, float defaultValue)
+    {
+        if (string.IsNullOrWhiteSpace(bottleId)) return defaultValue;
+        return _bottleAmounts.TryGetValue(bottleId, out float value) ? value : defaultValue;
+    }
+
+    public void SetBottleAmount(string bottleId, float value)
+    {
+        if (string.IsNullOrWhiteSpace(bottleId)) return;
+        _bottleAmounts[bottleId] = value;
+        SyncBottleAmountToLists(bottleId, value);
+    }
+
+    private void SyncBottleAmountToLists(string bottleId, float value)
+    {
+        int idx = bottleAmountKeys.IndexOf(bottleId);
+        if (idx >= 0)
+            bottleAmountValues[idx] = value;
+        else
+        {
+            bottleAmountKeys.Add(bottleId);
+            bottleAmountValues.Add(value);
         }
     }
 }

@@ -10,8 +10,9 @@ public class GameModeManager : MonoSingleton<GameModeManager>
     [SerializeField] private CanvasGroup craftingJudgePanel;
 
     [Header("UI")]
-    [SerializeField] private RecipeBookUI recipeBook;
+    [SerializeField] private RecipeBookUI  recipeBook;
     [SerializeField] private OrderTicketUI orderTicketUI;
+    [SerializeField] private LiquorShelfUI liquorShelf;
 
     [Header("Initial Mode")]
     [SerializeField] private GameMode initialMode = GameMode.OrderMode;
@@ -66,6 +67,7 @@ public class GameModeManager : MonoSingleton<GameModeManager>
         bool isEpisode = mode == GameMode.EpisodeMode;
         recipeBook?.SetInteractable(!isEpisode);
         orderTicketUI?.SetInteractable(!isEpisode);
+        liquorShelf?.SetInteractable(!isEpisode);
 
         if (!isEpisode)
         {

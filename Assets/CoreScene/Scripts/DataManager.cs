@@ -26,6 +26,8 @@ public class DataManager : MonoSingleton<DataManager>
             CurrentData.affinityValues      = gp.GetAffinityValues();
             CurrentData.boardSlotKeys       = gp.GetBoardSlotKeys();
             CurrentData.boardSlotValues     = gp.GetBoardSlotValues();
+            CurrentData.bottleAmountKeys    = gp.GetBottleAmountKeys();
+            CurrentData.bottleAmountValues  = gp.GetBottleAmountValues();
         }
 
         string json = JsonUtility.ToJson(CurrentData, true);

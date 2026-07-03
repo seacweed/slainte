@@ -1,0 +1,788 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7360521305668432779
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: e80f0e16-1daf-4b70-aaa1-4e877459a0aa
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: e80f0e16-1daf-4b70-aaa1-4e877459a0aa
+  Position:
+    serializedVersion: 2
+    x: 50
+    y: -261.32
+    width: 287
+    height: 125
+  CustomFields:
+  - FieldName: Title
+    FieldValue: "(\uC740\uBC00\uD788 \uC218\uC0C1\uD55C \uD654\uD3D0\uB97C \uAC74\uB124\uBA70)
+      \uC5EC\uAE30 <b>\uAC13\uD30C\uB354..."
+  StartEventGuid: 
+  Events:
+  - Guid: e4823381-e818-49ec-b9f3-53ba0752cded
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    SpeakerKey: f72
+    OverrideSpeakerName: ???
+    Text: "(\uC740\uBC00\uD788 \uC218\uC0C1\uD55C \uD654\uD3D0\uB97C \uAC74\uB124\uBA70)
+      \uC5EC\uAE30 <b>\uAC13\uD30C\uB354</b> \uD558\uB098."
+    CharacterAppearances:
+    - CharacterKey: f72
+      ExpressionKey: mid
+      SlotIndex: -1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+--- !u!114 &-6535562315065397183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: b211b9ca-b00f-4bfb-8aab-8d55e8857616
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: b211b9ca-b00f-4bfb-8aab-8d55e8857616
+  Position:
+    serializedVersion: 2
+    x: 2075
+    y: -50
+    width: 212
+    height: 125
+  CustomFields:
+  - FieldName: Title
+    FieldValue: "\uC5EC\uAE30\uB77C\uACE0 <b>5\uBC88\uAC00</b>\uB791 \uB2E4\uB97C\uAC8C
+      \uC5C6\uAD70."
+  StartEventGuid: 
+  Events:
+  - Guid: c4bb0884-99f0-4c3d-91a2-3af871461198
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    SpeakerKey: f72
+    OverrideSpeakerName: ???
+    Text: "\uC5EC\uAE30\uB77C\uACE0 <b>5\uBC88\uAC00</b>\uB791 \uB2E4\uB97C\uAC8C
+      \uC5C6\uAD70."
+    CharacterAppearances:
+    - CharacterKey: f72
+      ExpressionKey: devas
+      SlotIndex: -1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+--- !u!114 &-6403092502465087265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 517cc84a-63ac-4f69-8c16-291fc0c03bff
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 517cc84a-63ac-4f69-8c16-291fc0c03bff
+  Position:
+    serializedVersion: 2
+    x: 2044
+    y: -261
+    width: 215
+    height: 125
+  CustomFields:
+  - FieldName: Title
+    FieldValue: "<b>5\uBC88\uAC00</b>\uC758 \uC2F8\uAD6C\uB824 <b>\uBC00\uC8FC</b>\uB791\uC740..."
+  StartEventGuid: 
+  Events:
+  - Guid: b07ebd6a-2da5-4972-bf6b-5b85b114af98
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    SpeakerKey: f72
+    OverrideSpeakerName: ???
+    Text: "<b>5\uBC88\uAC00</b>\uC758 \uC2F8\uAD6C\uB824 <b>\uBC00\uC8FC</b>\uB791\uC740
+      \uCC28\uC6D0\uC774 \uB2EC\uB77C."
+    CharacterAppearances:
+    - CharacterKey: f72
+      ExpressionKey: smile
+      SlotIndex: -1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+--- !u!114 &-5368168961170789124
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: a61070f0-2c25-438a-9479-982286133cdf
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: a61070f0-2c25-438a-9479-982286133cdf
+  Position:
+    serializedVersion: 2
+    x: 424
+    y: -261
+    width: 317
+    height: 125
+  CustomFields:
+  - FieldName: Title
+    FieldValue: "\uC8C4\uC1A1\uD569\uB2C8\uB2E4 \uC190\uB2D8. \uC800\uD76C\uB294
+      \uACF5\uC2DD \uD654\uD3D0\uB9CC \uBC1B\uC2B5\uB2C8\uB2E4\uB9CC\u2026"
+  StartEventGuid: 
+  Events:
+  - Guid: 6d08a23c-c0d9-4667-80c2-ff0eccd3a276
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uC8C4\uC1A1\uD569\uB2C8\uB2E4 \uC190\uB2D8. \uC800\uD76C\uB294 \uACF5\uC2DD
+      \uD654\uD3D0\uB9CC \uBC1B\uC2B5\uB2C8\uB2E4\uB9CC\u2026"
+    CharacterAppearances:
+    - CharacterKey: f72
+      ExpressionKey: mid
+      SlotIndex: -1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+--- !u!114 &-5140671402398285309
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: fb4a2718-f5db-4f21-a88b-38d41066de58
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: fb4a2718-f5db-4f21-a88b-38d41066de58
+  Position:
+    serializedVersion: 2
+    x: 1579
+    y: -261
+    width: 108
+    height: 136
+  CustomFields:
+  - FieldName: Title
+    FieldValue: 5
+  StartEventGuid: 
+  Events:
+  - Guid: d82fa27d-f7aa-4270-a2b8-ac3ff161445b
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 2
+    SpeakerKey: 
+    OverrideSpeakerName: 
+    Text: 
+    CharacterAppearances: []
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    CraftingTicketKey: sc0_f72
+    CraftingFlagGood: sc0_true
+    CraftingFlagBad: sc0_false
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Good
+  - Bad
+--- !u!114 &-3813293801075371526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 7add28b0-ef0f-4c12-b666-b1b25fabe751
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 7add28b0-ef0f-4c12-b666-b1b25fabe751
+  Position:
+    serializedVersion: 2
+    x: 817
+    y: -261
+    width: 286
+    height: 125
+  CustomFields:
+  - FieldName: Title
+    FieldValue: "\uC21C\uC9C4\uD55C \uBC14\uD150\uB354 \uC528\uB294 \uACBD\uCC30
+      \uBB34\uC11C\uC6B4 \uC904 \uBAA8\uB974\uB294\uAD70!"
+  StartEventGuid: 
+  Events:
+  - Guid: efe30cca-b539-48d5-976c-2d1608785ae3
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    SpeakerKey: f72
+    OverrideSpeakerName: ???
+    Text: "\uC21C\uC9C4\uD55C \uBC14\uD150\uB354 \uC528\uB294 \uACBD\uCC30 \uBB34\uC11C\uC6B4
+      \uC904 \uBAA8\uB974\uB294\uAD70!"
+    CharacterAppearances:
+    - CharacterKey: f72
+      ExpressionKey: annoy
+      SlotIndex: -1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+--- !u!114 &-3219502311457498859
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 6bf3a053-8500-41bc-b26d-b6b490b0f0d0
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 6bf3a053-8500-41bc-b26d-b6b490b0f0d0
+  Position:
+    serializedVersion: 2
+    x: 2576
+    y: -261
+    width: 210
+    height: 155
+  CustomFields:
+  - FieldName: Title
+    FieldValue: "\uBC00\uC8FC \uC598\uAE30\uB294 \uBE44\uBC00\uC774\uC57C. \uC54C\uACA0\uC9C0?"
+  StartEventGuid: 
+  Events:
+  - Guid: b91d68d9-51d7-492d-bb55-668edafffa97
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    SpeakerKey: f72
+    OverrideSpeakerName: ???
+    Text: "\uBC00\uC8FC \uC598\uAE30\uB294 \uBE44\uBC00\uC774\uC57C. \uC54C\uACA0\uC9C0?"
+    CharacterAppearances:
+    - CharacterKey: f72
+      ExpressionKey: mid
+      SlotIndex: -1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+--- !u!114 &-335983608149652978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 07b3e284-a86a-4d7d-a373-23f91f42348f
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 07b3e284-a86a-4d7d-a373-23f91f42348f
+  Position:
+    serializedVersion: 2
+    x: 1280
+    y: 440
+    width: 200
+    height: 150
+  CustomFields:
+  - FieldName: Title
+    FieldValue: 
+  StartEventGuid: 
+  Events:
+  - Guid: 08c52390-2143-46af-921d-0a62d04d5239
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 1
+    SpeakerKey: 
+    OverrideSpeakerName: 
+    Text: 
+    CharacterAppearances: []
+    Choices:
+    - ButtonText: 
+      TargetNodeId: 
+      SetFlags: []
+      ClearFlags: []
+      VarChanges: []
+    BgmCommand: 0
+    BgmClipName: 
+    CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Choice
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d79caea9d5f0474f8e1b7b289e47fad, type: 3}
+  m_Name: StrangeCoin_0
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.NarrativeGraphSO
+  EpisodeId: StrangeCoin_0
+  EpisodeTitle: "\uC774\uC0C1\uD55C \uB3D9\uC804 - 0"
+  StartNodeGuid: 16d10591-a858-4ffa-9bb1-15173d3d95ad
+  TriggerCondition:
+    minDay: 0
+    requiredFlags: []
+    blockedFlags: []
+    prerequisiteEpisodeIds: []
+    requiredVars: []
+  OpeningCharacters:
+  - characterKey: f72
+    expressionKey: frust
+    slotIndex: -1
+  - characterKey: 
+    expressionKey: 
+    slotIndex: -1
+  Nodes:
+  - {fileID: 9055326420971196}
+  - {fileID: -7360521305668432779}
+  - {fileID: -5368168961170789124}
+  - {fileID: -3813293801075371526}
+  - {fileID: 1611326209335542353}
+  - {fileID: -5140671402398285309}
+  - {fileID: 6251272745270169534}
+  - {fileID: 3991486029908397572}
+  - {fileID: -6403092502465087265}
+  - {fileID: -6535562315065397183}
+  - {fileID: 4369720994425863478}
+  - {fileID: 6383222623800790726}
+  - {fileID: -3219502311457498859}
+  - {fileID: 7141314668565235872}
+  - {fileID: -335983608149652978}
+  Edges:
+  - BaseNodeGuid: 16d10591-a858-4ffa-9bb1-15173d3d95ad
+    TargetNodeGuid: e80f0e16-1daf-4b70-aaa1-4e877459a0aa
+    OutputPortIndex: 0
+  - BaseNodeGuid: e80f0e16-1daf-4b70-aaa1-4e877459a0aa
+    TargetNodeGuid: a61070f0-2c25-438a-9479-982286133cdf
+    OutputPortIndex: 0
+  - BaseNodeGuid: a61070f0-2c25-438a-9479-982286133cdf
+    TargetNodeGuid: 7add28b0-ef0f-4c12-b666-b1b25fabe751
+    OutputPortIndex: 0
+  - BaseNodeGuid: 7add28b0-ef0f-4c12-b666-b1b25fabe751
+    TargetNodeGuid: 72eda5aa-94ce-43da-9978-016b573b8321
+    OutputPortIndex: 0
+  - BaseNodeGuid: fb4a2718-f5db-4f21-a88b-38d41066de58
+    TargetNodeGuid: 655e17af-fbb2-43e4-a7eb-38b25135c3ee
+    OutputPortIndex: 0
+  - BaseNodeGuid: fb4a2718-f5db-4f21-a88b-38d41066de58
+    TargetNodeGuid: 086a3ef9-2f2f-40c2-b62a-19126b4bc938
+    OutputPortIndex: 1
+  - BaseNodeGuid: 655e17af-fbb2-43e4-a7eb-38b25135c3ee
+    TargetNodeGuid: 517cc84a-63ac-4f69-8c16-291fc0c03bff
+    OutputPortIndex: 0
+  - BaseNodeGuid: 086a3ef9-2f2f-40c2-b62a-19126b4bc938
+    TargetNodeGuid: b211b9ca-b00f-4bfb-8aab-8d55e8857616
+    OutputPortIndex: 0
+  - BaseNodeGuid: 517cc84a-63ac-4f69-8c16-291fc0c03bff
+    TargetNodeGuid: 45bea96c-4cd3-44d4-8b6e-b0fbeba7f59a
+    OutputPortIndex: 0
+  - BaseNodeGuid: b211b9ca-b00f-4bfb-8aab-8d55e8857616
+    TargetNodeGuid: b20bf7e9-e6aa-4867-8d6d-9132e1d9f5a7
+    OutputPortIndex: 0
+  - BaseNodeGuid: 45bea96c-4cd3-44d4-8b6e-b0fbeba7f59a
+    TargetNodeGuid: 6bf3a053-8500-41bc-b26d-b6b490b0f0d0
+    OutputPortIndex: 0
+  - BaseNodeGuid: b20bf7e9-e6aa-4867-8d6d-9132e1d9f5a7
+    TargetNodeGuid: 0ccadb3f-625f-4cdd-b045-e23ce608a58b
+    OutputPortIndex: 0
+  - BaseNodeGuid: 72eda5aa-94ce-43da-9978-016b573b8321
+    TargetNodeGuid: fb4a2718-f5db-4f21-a88b-38d41066de58
+    OutputPortIndex: 0
+--- !u!114 &9055326420971196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 16d10591-a858-4ffa-9bb1-15173d3d95ad
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 16d10591-a858-4ffa-9bb1-15173d3d95ad
+  Position:
+    serializedVersion: 2
+    x: -202
+    y: -261
+    width: 194
+    height: 169
+  CustomFields:
+  - FieldName: Title
+    FieldValue: "\uD760..\uD06C\uD760\u2026"
+  StartEventGuid: 
+  Events:
+  - Guid: 7864031a-5a5d-4a68-ba65-500e8029e4f2
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    SpeakerKey: f72
+    OverrideSpeakerName: ???
+    Text: "\uD760..\uD06C\uD760\u2026"
+    CharacterAppearances:
+    - CharacterKey: f72
+      ExpressionKey: annoy
+      SlotIndex: -1
+    Choices: []
+    BgmCommand: 1
+    BgmClipName: Ep_main_0
+    CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+--- !u!114 &1611326209335542353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 72eda5aa-94ce-43da-9978-016b573b8321
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 72eda5aa-94ce-43da-9978-016b573b8321
+  Position:
+    serializedVersion: 2
+    x: 1186
+    y: -261
+    width: 297
+    height: 125
+  CustomFields:
+  - FieldName: Title
+    FieldValue: "\uC601\uC5C5 \uC815\uC9C0\uB418\uACE0 \uC2F6\uC9C0 \uC54A\uC73C\uBA74
+      <u>\uB2F9\uC7A5 \uC220 \uB0B4\uC624\uB294 ..."
+  StartEventGuid: 
+  Events:
+  - Guid: 9f283bd3-5912-4e2d-baee-27dd53a6c8bc
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    SpeakerKey: f72
+    OverrideSpeakerName: ???
+    Text: "\uC601\uC5C5 \uC815\uC9C0\uB418\uACE0 \uC2F6\uC9C0 \uC54A\uC73C\uBA74
+      <u>\uB2F9\uC7A5 \uC220 \uB0B4\uC624\uB294 \uAC8C \uC88B\uC744\uAC70\uC57C!</u>"
+    CharacterAppearances:
+    - CharacterKey: f72
+      ExpressionKey: annoy
+      SlotIndex: -1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+--- !u!114 &3991486029908397572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 086a3ef9-2f2f-40c2-b62a-19126b4bc938
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 086a3ef9-2f2f-40c2-b62a-19126b4bc938
+  Position:
+    serializedVersion: 2
+    x: 1812
+    y: -50
+    width: 213
+    height: 155
+  CustomFields:
+  - FieldName: Title
+    FieldValue: "\uC774\uBD10. \uC774\uAC70 \uB0B4\uAC00 \uC8FC\uBB38\uD55C\uAC70
+      \uB9DE\uC544?"
+  StartEventGuid: 
+  Events:
+  - Guid: b3c09596-72dd-493f-b513-57c14bfcba67
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    SpeakerKey: f72
+    OverrideSpeakerName: ???
+    Text: "\uC774\uBD10. \uC774\uAC70 \uB0B4\uAC00 \uC8FC\uBB38\uD55C\uAC70 \uB9DE\uC544?"
+    CharacterAppearances:
+    - CharacterKey: f72
+      ExpressionKey: devas
+      SlotIndex: -1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+--- !u!114 &4369720994425863478
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 45bea96c-4cd3-44d4-8b6e-b0fbeba7f59a
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 45bea96c-4cd3-44d4-8b6e-b0fbeba7f59a
+  Position:
+    serializedVersion: 2
+    x: 2339
+    y: -261
+    width: 104
+    height: 125
+  CustomFields:
+  - FieldName: Title
+    FieldValue: "\uC544."
+  StartEventGuid: 
+  Events:
+  - Guid: 12005cdb-f95c-41a8-b792-5f5ab15941fe
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    SpeakerKey: f72
+    OverrideSpeakerName: ???
+    Text: "\uC544."
+    CharacterAppearances:
+    - CharacterKey: f72
+      ExpressionKey: frust
+      SlotIndex: -1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+--- !u!114 &6251272745270169534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 655e17af-fbb2-43e4-a7eb-38b25135c3ee
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 655e17af-fbb2-43e4-a7eb-38b25135c3ee
+  Position:
+    serializedVersion: 2
+    x: 1831
+    y: -261
+    width: 153
+    height: 125
+  CustomFields:
+  - FieldName: Title
+    FieldValue: "\uC18C\uBB38\uB300\uB85C \uAF64 \uAD1C\uCC2E\uAD70."
+  StartEventGuid: 
+  Events:
+  - Guid: 86b8d799-5d70-42bf-9d8d-dbaec5cca225
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    SpeakerKey: f72
+    OverrideSpeakerName: ???
+    Text: "\uC18C\uBB38\uB300\uB85C \uAF64 \uAD1C\uCC2E\uAD70."
+    CharacterAppearances:
+    - CharacterKey: f72
+      ExpressionKey: smile
+      SlotIndex: -1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+--- !u!114 &6383222623800790726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: b20bf7e9-e6aa-4867-8d6d-9132e1d9f5a7
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: b20bf7e9-e6aa-4867-8d6d-9132e1d9f5a7
+  Position:
+    serializedVersion: 2
+    x: 2339
+    y: -50
+    width: 104
+    height: 125
+  CustomFields:
+  - FieldName: Title
+    FieldValue: "\uC544."
+  StartEventGuid: 
+  Events:
+  - Guid: 832658a0-e5f3-4670-b90b-19fcb218c686
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    SpeakerKey: f72
+    OverrideSpeakerName: ???
+    Text: "\uC544."
+    CharacterAppearances:
+    - CharacterKey: f72
+      ExpressionKey: frust
+      SlotIndex: -1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+--- !u!114 &7141314668565235872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 0ccadb3f-625f-4cdd-b045-e23ce608a58b
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 0ccadb3f-625f-4cdd-b045-e23ce608a58b
+  Position:
+    serializedVersion: 2
+    x: 2592
+    y: -50
+    width: 194
+    height: 155
+  CustomFields:
+  - FieldName: Title
+    FieldValue: "\uBC29\uAE08 \uC774\uC57C\uAE30\uB294 \uC78A\uC5B4!"
+  StartEventGuid: 
+  Events:
+  - Guid: 4517b78f-b76d-4db2-9dec-168581088bb0
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    SpeakerKey: f72
+    OverrideSpeakerName: ???
+    Text: "\uBC29\uAE08 \uC774\uC57C\uAE30\uB294 \uC78A\uC5B4!"
+    CharacterAppearances:
+    - CharacterKey: f72
+      ExpressionKey: annoy
+      SlotIndex: -1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next

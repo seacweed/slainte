@@ -160,6 +160,13 @@ namespace NarrativeFlow.Editor
                 window.mainGraphView.NotifyNodeStructureChanged(v);
         }
 
+        public void RefreshMainGraphVisuals()
+        {
+            if (_targetNode == null || window?.mainGraphView == null) return;
+            if (window.mainGraphView.GetNodeByGuid(_targetNode.Guid) is NarrativeNodeView v)
+                v.RefreshVisuals();
+        }
+
         public void NotifyInternalNodeStructureChanged(SequenceNodeView v)
         {
             var ports = v.outputContainer.Query<Port>().ToList();

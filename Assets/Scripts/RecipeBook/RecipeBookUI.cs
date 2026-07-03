@@ -12,7 +12,7 @@ public class RecipeBookUI : MonoBehaviour
     [SerializeField] private Sprite spriteClosed;
 
     [Header("References")]
-    [SerializeField] private Image         buttonImage;
+    [SerializeField] private Image         panelImage;
     [SerializeField] private RectTransform bookRect;
     [SerializeField] private Button        toggleButton;
 
@@ -33,7 +33,6 @@ public class RecipeBookUI : MonoBehaviour
     void Awake()
     {
         if (!bookRect) bookRect = (RectTransform)transform;
-        if (!buttonImage && toggleButton) buttonImage = toggleButton.GetComponent<Image>();
 
         ApplySprite(spriteClosed);
         SetAnchoredX(closedX);
@@ -91,7 +90,7 @@ public class RecipeBookUI : MonoBehaviour
 
     private void ApplySprite(Sprite s)
     {
-        if (buttonImage != null && s != null) buttonImage.sprite = s;
+        if (panelImage != null && s != null) panelImage.sprite = s;
     }
 
     private void SetAnchoredX(float x)
