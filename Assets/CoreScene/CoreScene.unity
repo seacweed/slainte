@@ -402,7 +402,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1887207210}
   - component: {fileID: 1887207209}
-  - component: {fileID: 1887207208}
   - component: {fileID: 1887207207}
   - component: {fileID: 1887207211}
   - component: {fileID: 1887207212}
@@ -425,18 +424,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2a712b3bfd1be74b8aaa20889003020, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DataManager
---- !u!114 &1887207208
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1887207206}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45e4ea4da7539b3428b799ff232681ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DialogueManager
 --- !u!114 &1887207209
 MonoBehaviour:
   m_ObjectHideFlags: 0

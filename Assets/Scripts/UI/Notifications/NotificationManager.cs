@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NotificationManager : MonoSingleton<NotificationManager>
+public class NotificationManager : SceneSingleton<NotificationManager>
 {
     [SerializeField] private AffinityNotificationUI notificationPrefab;
     [SerializeField] private Transform container;

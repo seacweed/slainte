@@ -19,7 +19,7 @@
 
 ## 아키텍처 핵심
 
-- **싱글톤**: `MonoSingleton<T>` 통일 (`GameProgress`, `GameModeManager`, `EpisodeManager`, `DataManager`, `GameManager`, `AudioManager`, `NotificationManager`)
+- **싱글톤**: 전역 상태는 `MonoSingleton<T>`(DontDestroyOnLoad 유지, `GameProgress`, `EpisodeManager`, `DataManager`, `GameManager`, `AudioManager`, `SceneTransitionManager`), 씬 종속 UI 매니저는 `SceneSingleton<T>`(DontDestroyOnLoad 없음, `GameModeManager`, `NotificationManager`) — BusinessScene처럼 Additive로 매 에피소드 언로드/재로드되는 씬에서 씬 로컬 UI를 직접 참조하는 매니저가 전역 싱글톤이면 재로드 시 낡은 인스턴스를 참조하는 버그가 생기므로 분리
 - **런타임 상태 Source of Truth**: `GameProgress` (flags, completedEpisodeIds, affinityVars, boardSlots, currentDay)
 - **에피소드 데이터**: `EpisodeData` 단일 SO — `Resources/EpisodeData/`에 배치, `EpisodeManager`가 일괄 로드
 - **Canvas**: ScreenSpace-Overlay, Canvas Scaler Reference Resolution **2560×1440 (QHD)**. 1 canvas unit = 1px at QHD
@@ -27,6 +27,7 @@
 - **게임 상태**: `GameState.None`(MainMenu 초기) / `GameState.Episode` / `GameState.Rest`
 - **에피소드 종료**: `EpisodeRunner.EndEncounter()` → `EpisodeManager.ClearEpisode()` → `GameManager.ChangeState(Rest)`
 - **UI 패널 open/close**: `GameModeManager`가 단순 표시용 패널은 `CanvasGroup` 즉시 on-off로, 사용자 토글이 필요한 패널(주문서, 도감, 술장)은 `SetInteractable()`/`Open()` 호출만 하고 실제 슬라이드 애니메이션은 각 UI가 자체 관리
+- **카메라 이동**: `FrontCameraRig`가 `frontWorld` anchoredPosition으로 배경을 가로(에피소드 캐릭터 포커스)·세로(서랍 열기, S/W키)로 이동. 주문서/도감/술장 패널은 세로 이동만 따라가고 가로 팬에는 화면 고정 (`verticalFollowPanels`)
 - **술장**: `LiquorShelfUI` — 우측 슬라이드 토글(R키), 카테고리별 컨테이너 show/hide, `GameProgress` 해금 플래그로 슬롯 표시 제어. 버튼 이미지는 버튼이 아닌 패널 자체의 Image 컴포넌트(`panelImage`)를 교체하는 방식 (`RecipeBookUI`, `OrderTicketUI` 공통 적용). 병 잔여량은 `GameProgress`가 소스오브트루스, 호버 시 `LiquorBottleInfoCard`가 병 개수 기반 상태 표시
 - **알림 시스템**: `GameProgress.OnAffinityChanged` 이벤트 → `NotificationManager` 수신 → 화면 우상단 순차 표시. `AnimatedSpriteUI`(PNG 프레임 배열 코루틴 재생)로 방향 애니메이션 처리
 - **에피소드 그래프 편집**: `NarrativeGraphSO`(그래프 SO) → `EpisodeDataCompiler` → `EpisodeData`(런타임). 역방향: `EpisodeDataImporter`. 노드 ID 자동 할당: `NarrativeNodeIdAssigner`. CSV와 양방향 호환 유지

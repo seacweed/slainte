@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class GameModeManager : MonoSingleton<GameModeManager>
+public class GameModeManager : SceneSingleton<GameModeManager>
 {
     [Header("Panels")]
     [SerializeField] private CanvasGroup frontWorldPanel;
