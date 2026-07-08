@@ -13,15 +13,25 @@ namespace Slainte.Bartending
         [SerializeField] private string dataFolder = "Data";
         [SerializeField] private string recipesFileName = "recipes.csv";
         [SerializeField] private string recipeIngredientsFileName = "recipe_ingredients.csv";
+        [SerializeField] private string orderTemplatesFileName = "order_templates.csv";
         [SerializeField] private string itemResourcesPath = "Items";
         [SerializeField] private ItemDef[] additionalItems;
+
+        [Header("Order")]
+        [SerializeField] private bool generateOrderOnReload = true;
+        [SerializeField] private string fixedRecipeOrderId = "";
+        [SerializeField] private KeyCode nextOrderKey = KeyCode.N;
 
         [Header("Input")]
         [SerializeField] private KeyCode submitKey = KeyCode.Return;
         [SerializeField] private bool drawResultOnGui = true;
 
         private CocktailEvaluator evaluator;
+        private CocktailOrderEvaluator orderEvaluator;
+        private CocktailOrderGenerator orderGenerator;
         private CocktailRecipeCatalog recipeCatalog;
+        private CocktailOrderTemplateCatalog orderTemplateCatalog;
+        private GeneratedCocktailOrder currentOrder;
         private string lastResultText = "Press Enter to evaluate the target glass.";
 
         private void Start()
@@ -33,6 +43,9 @@ namespace Slainte.Bartending
         {
             if (Input.GetKeyDown(submitKey))
                 Submit();
+
+            if (Input.GetKeyDown(nextOrderKey))
+                GenerateNewOrder();
         }
 
         public void Reload()
@@ -44,8 +57,50 @@ namespace Slainte.Bartending
                 recipesFileName,
                 recipeIngredientsFileName);
             evaluator = new CocktailEvaluator(recipeCatalog);
-            lastResultText = $"Loaded {recipeCatalog.Count} recipe(s). Press {submitKey} to evaluate.";
+            orderTemplateCatalog = CocktailOrderCsvLoader.LoadTemplatesFromStreamingAssets(
+                dataFolder,
+                orderTemplatesFileName);
+            orderGenerator = new CocktailOrderGenerator(recipeCatalog, orderTemplateCatalog);
+            orderEvaluator = new CocktailOrderEvaluator(evaluator);
+
+            if (generateOrderOnReload)
+            {
+                GenerateNewOrder();
+                return;
+            }
+
+            lastResultText = $"Loaded {recipeCatalog.Count} recipe(s), {orderTemplateCatalog.Count} order template(s). Press {nextOrderKey} for an order.";
             Debug.Log($"[CocktailEvaluationTester] {lastResultText}");
+        }
+
+        public void GenerateNewOrder()
+        {
+            if (orderGenerator == null)
+            {
+                ItemDefCatalog itemCatalog = ItemDefCatalog.LoadFromResources(itemResourcesPath, additionalItems);
+                recipeCatalog = CocktailRecipeCsvLoader.LoadFromStreamingAssets(
+                    itemCatalog,
+                    dataFolder,
+                    recipesFileName,
+                    recipeIngredientsFileName);
+                evaluator = new CocktailEvaluator(recipeCatalog);
+                orderTemplateCatalog = CocktailOrderCsvLoader.LoadTemplatesFromStreamingAssets(
+                    dataFolder,
+                    orderTemplatesFileName);
+                orderGenerator = new CocktailOrderGenerator(recipeCatalog, orderTemplateCatalog);
+                orderEvaluator = new CocktailOrderEvaluator(evaluator);
+            }
+
+            currentOrder = orderGenerator.GenerateRecipeOrder(fixedRecipeOrderId);
+            if (currentOrder == null)
+            {
+                lastResultText = $"Loaded {recipeCatalog.Count} recipe(s), {orderTemplateCatalog.Count} order template(s). No order generated.";
+                Debug.LogWarning($"[CocktailEvaluationTester] {lastResultText}");
+                return;
+            }
+
+            lastResultText = BuildCurrentOrderText();
+            Debug.Log($"[CocktailEvaluationTester]\n{lastResultText}");
         }
 
         public void Submit()
@@ -61,10 +116,37 @@ namespace Slainte.Bartending
             if (evaluator == null)
                 Reload();
 
+            if (currentOrder == null)
+                GenerateNewOrder();
+
             CocktailComposition composition = tracker.BuildComposition();
-            CocktailEvaluationResult result = evaluator.Evaluate(composition);
-            lastResultText = result.ToDebugString();
+            CocktailEvaluationResult detectedRecipeResult = evaluator.Evaluate(composition);
+            if (currentOrder != null && orderEvaluator != null)
+            {
+                CocktailOrderEvaluationResult orderResult = orderEvaluator.Evaluate(
+                    currentOrder,
+                    composition,
+                    detectedRecipeResult);
+                lastResultText = orderResult.ToDebugString();
+            }
+            else
+            {
+                lastResultText = detectedRecipeResult.ToDebugString();
+            }
+
             Debug.Log($"[CocktailEvaluationTester]\n{lastResultText}");
+        }
+
+        private string BuildCurrentOrderText()
+        {
+            if (currentOrder == null)
+                return $"No active order. Press {nextOrderKey} for a new order.";
+
+            return "Current Order\n"
+                + currentOrder.line
+                + "\nRequested: "
+                + currentOrder.RequestedRecipeName
+                + $"\nPress {submitKey} to submit. Press {nextOrderKey} for a new order.";
         }
 
         private VesselLiquidTracker ResolveTargetTracker()
@@ -91,8 +173,8 @@ namespace Slainte.Bartending
             if (!drawResultOnGui)
                 return;
 
-            const float width = 360f;
-            GUI.Box(new Rect(12f, 12f, width, 180f), lastResultText);
+            const float width = 440f;
+            GUI.Box(new Rect(12f, 12f, width, 260f), lastResultText);
         }
     }
 }

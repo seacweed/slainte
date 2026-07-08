@@ -115,6 +115,17 @@ namespace Slainte.Bartending
             return best ?? CreateNoRecipeResult(composition, "No matching recipe.");
         }
 
+        public CocktailEvaluationResult EvaluateRecipe(string recipeId, CocktailComposition composition)
+        {
+            if (recipeCatalog == null || recipeCatalog.Count == 0)
+                return CreateNoRecipeResult(composition, "No recipes loaded.");
+
+            if (!recipeCatalog.TryGet(recipeId, out CocktailRecipe recipe))
+                return CreateNoRecipeResult(composition, $"Recipe '{recipeId}' not loaded.");
+
+            return EvaluateRecipe(recipe, composition);
+        }
+
         private static CocktailEvaluationResult EvaluateRecipe(CocktailRecipe recipe, CocktailComposition composition)
         {
             CocktailEvaluationResult result = new CocktailEvaluationResult

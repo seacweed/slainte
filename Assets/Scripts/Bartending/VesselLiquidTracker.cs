@@ -119,6 +119,32 @@ namespace Slainte.Bartending
             return composition;
         }
 
+        public void TranslateTrackedParticles(Vector2 delta)
+        {
+            if (delta.sqrMagnitude <= 0.000001f)
+                return;
+
+            Cleanup();
+            RefreshTrackedParticles();
+
+            foreach (LiquidParticleData particle in particles)
+            {
+                if (particle == null)
+                    continue;
+
+                Rigidbody2D particleBody = particle.GetComponent<Rigidbody2D>();
+                if (particleBody != null)
+                {
+                    particleBody.position += delta;
+                    particleBody.WakeUp();
+                }
+                else
+                {
+                    particle.transform.position += (Vector3)delta;
+                }
+            }
+        }
+
         private void Track(Collider2D other)
         {
             if (other == null)
