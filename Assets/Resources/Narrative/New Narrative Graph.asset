@@ -73,7 +73,13 @@ MonoBehaviour:
     Text: aaaaaa
     CharacterAppearances: []
     Choices: []
+    BgmCommand: 0
+    BgmClipName: 
     CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
     ExitBranchName: 
   - Guid: ad94c827-e694-424d-b5c0-deb9d5eb425f
     Position: {x: 56, y: -58}
@@ -94,7 +100,13 @@ MonoBehaviour:
       SetFlags: []
       ClearFlags: []
       VarChanges: []
+    BgmCommand: 0
+    BgmClipName: 
     CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
     ExitBranchName: 
   - Guid: 9c2e0f48-97fb-4007-bab6-879738dc18b7
     Position: {x: 255.16, y: -85}
@@ -105,7 +117,13 @@ MonoBehaviour:
     Text: hi
     CharacterAppearances: []
     Choices: []
+    BgmCommand: 0
+    BgmClipName: 
     CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
     ExitBranchName: 
   - Guid: f0c0c7e7-9652-48f5-87e4-ae3e0c8af54c
     Position: {x: 224.79999, y: 57}
@@ -116,7 +134,13 @@ MonoBehaviour:
     Text: no.
     CharacterAppearances: []
     Choices: []
+    BgmCommand: 0
+    BgmClipName: 
     CraftingTicketKey: 
+    CraftingFlagGood: 
+    CraftingFlagBad: 
+    CraftingVarChangesGood: []
+    CraftingVarChangesBad: []
     ExitBranchName: 
   OutgoingBranches:
   - money<10
@@ -165,6 +189,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d79caea9d5f0474f8e1b7b289e47fad, type: 3}
   m_Name: New Narrative Graph
   m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.NarrativeGraphSO
+  EpisodeId: 
+  EpisodeTitle: 
+  StartNodeGuid: 
+  TriggerCondition:
+    minDay: 0
+    requiredFlags: []
+    blockedFlags: []
+    prerequisiteEpisodeIds: []
+    requiredVars: []
+  OpeningCharacters: []
   Nodes:
   - {fileID: -7127120222914740406}
   - {fileID: 4866711699634503307}

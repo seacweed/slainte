@@ -94,7 +94,8 @@ namespace NarrativeFlow.Editor
             AssetDatabase.SaveAssets();
 
             AddElement(new NarrativeNodeView(nodeData));
-            ValidateAllNodes(); // Validation after creation
+            NarrativeNodeIdAssigner.RegenerateIds(currentGraph);
+            ValidateAllNodes();
         }
 
         public void CreateNodeFromTemplate(NodeDataSO template, Vector2 position)
@@ -120,8 +121,8 @@ namespace NarrativeFlow.Editor
 
             var nodeView = new NarrativeNodeView(nodeData);
             AddElement(nodeView);
-            
-            ValidateAllNodes(); // Initial check
+            NarrativeNodeIdAssigner.RegenerateIds(currentGraph);
+            ValidateAllNodes();
         }
 
         public void ValidateAllNodes()
@@ -310,6 +311,15 @@ namespace NarrativeFlow.Editor
                 {
                     change.edgesToCreate.Remove(edge);
                 }
+            }
+
+            bool structureChanged =
+                (change.elementsToRemove?.Any(e => e is NarrativeNodeView || e is Edge) ?? false) ||
+                (change.edgesToCreate?.Count > 0);
+            if (structureChanged && currentGraph != null)
+            {
+                NarrativeNodeIdAssigner.RegenerateIds(currentGraph);
+                ValidateAllNodes();
             }
 
             return change;

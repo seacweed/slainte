@@ -120,12 +120,116 @@ namespace NarrativeFlow.Editor
 
         private void DrawEpisode(EpisodeNodeSO ep)
         {
-            _body.Add(NarrativeUIHelper.CreateLabel($"{ep.Events.Count} Events", "field-label").With(l => l.style.color = new Color(0.4f, 0.7f, 1f)));
-            if (ep.Events.Count > 0 && ep.Events[0].Type == EpisodeEventType.Dialogue)
+            if (ep.Events.Count == 0)
             {
-                string txt = ep.Events[0].Text ?? "";
-                _body.Add(NarrativeUIHelper.CreateLabel(txt.Length > 40 ? txt.Substring(0, 37) + "..." : txt, "info-label"));
+                _body.Add(NarrativeUIHelper.CreateLabel("(No Events)", "info-label").With(l => l.style.color = Color.gray));
+                return;
             }
+
+            foreach (var ev in ep.Events)
+            {
+                var card = new VisualElement();
+                card.style.borderTopWidth = card.style.borderBottomWidth = card.style.borderLeftWidth = card.style.borderRightWidth = 1;
+                card.style.borderTopColor = card.style.borderBottomColor = card.style.borderLeftColor = card.style.borderRightColor = new Color(0.25f, 0.25f, 0.25f);
+                card.style.borderTopLeftRadius = card.style.borderTopRightRadius = card.style.borderBottomLeftRadius = card.style.borderBottomRightRadius = 3;
+                card.style.marginBottom = 4;
+                card.style.paddingTop = card.style.paddingBottom = card.style.paddingLeft = card.style.paddingRight = 4;
+
+                switch (ev.Type)
+                {
+                    case EpisodeEventType.Dialogue:    AddDialogueInfo(card, ev);     break;
+                    case EpisodeEventType.Choice:      AddChoiceInfo(card, ev);       break;
+                    case EpisodeEventType.BusinessStart: AddBusinessStartInfo(card, ev); break;
+                    case EpisodeEventType.BusinessEnd:
+                        card.Add(NarrativeUIHelper.CreateLabel("CRAFTING END", "field-label").With(l => l.style.color = new Color(1f, 0.6f, 0.4f)));
+                        break;
+                    case EpisodeEventType.BranchExit:
+                        var exitRow = NarrativeUIHelper.CreateRow();
+                        exitRow.Add(NarrativeUIHelper.CreateLabel("EXIT →", "field-label").With(l => l.style.color = new Color(1f, 0.5f, 0.5f)));
+                        if (!string.IsNullOrEmpty(ev.ExitBranchName))
+                            exitRow.Add(NarrativeUIHelper.CreateLabel($" {ev.ExitBranchName}", "info-label").With(l => l.style.color = Color.white));
+                        card.Add(exitRow);
+                        break;
+                }
+
+                _body.Add(card);
+            }
+        }
+
+        private static void AddDialogueInfo(VisualElement card, EpisodeEvent ev)
+        {
+            var header = NarrativeUIHelper.CreateRow();
+            header.Add(NarrativeUIHelper.CreateLabel("DIALOGUE", "field-label").With(l => l.style.color = new Color(0.5f, 0.8f, 1f)));
+            if (!string.IsNullOrEmpty(ev.SpeakerKey))
+                header.Add(NarrativeUIHelper.CreateLabel($"  {ev.SpeakerKey}", "field-label").With(l => l.style.color = new Color(1f, 0.8f, 0.4f)));
+            card.Add(header);
+
+            string txt = ev.Text ?? "";
+            if (!string.IsNullOrEmpty(txt))
+            {
+                var tl = NarrativeUIHelper.CreateLabel(txt.Length > 60 ? txt.Substring(0, 57) + "..." : txt, "info-label");
+                tl.style.whiteSpace = WhiteSpace.Normal;
+                tl.style.color = new Color(0.9f, 0.9f, 0.9f);
+                card.Add(tl);
+            }
+
+            foreach (var c in ev.CharacterAppearances)
+                card.Add(NarrativeUIHelper.CreateLabel($"[{c.CharacterKey}] {c.ExpressionKey}  s:{c.SlotIndex}", "info-label")
+                    .With(l => l.style.color = new Color(0.6f, 1f, 0.6f)));
+
+            if (ev.BgmCommand != BgmCommand.None)
+                card.Add(NarrativeUIHelper.CreateLabel($"BGM {ev.BgmCommand} {ev.BgmClipName}", "info-label")
+                    .With(l => l.style.color = new Color(1f, 0.7f, 1f)));
+        }
+
+        private static void AddChoiceInfo(VisualElement card, EpisodeEvent ev)
+        {
+            var header = NarrativeUIHelper.CreateRow();
+            header.Add(NarrativeUIHelper.CreateLabel("CHOICE", "field-label").With(l => l.style.color = new Color(1f, 0.85f, 0.4f)));
+            if (!string.IsNullOrEmpty(ev.SpeakerKey))
+                header.Add(NarrativeUIHelper.CreateLabel($"  {ev.SpeakerKey}", "field-label").With(l => l.style.color = new Color(1f, 0.8f, 0.4f)));
+            card.Add(header);
+
+            string txt = ev.Text ?? "";
+            if (!string.IsNullOrEmpty(txt))
+            {
+                var tl = NarrativeUIHelper.CreateLabel(txt.Length > 60 ? txt.Substring(0, 57) + "..." : txt, "info-label");
+                tl.style.whiteSpace = WhiteSpace.Normal;
+                tl.style.color = new Color(0.9f, 0.9f, 0.9f);
+                card.Add(tl);
+            }
+
+            foreach (var c in ev.Choices)
+            {
+                card.Add(NarrativeUIHelper.CreateLabel($"> {(string.IsNullOrEmpty(c.ButtonText) ? "(empty)" : c.ButtonText)}", "info-label")
+                    .With(l => l.style.color = Color.white));
+
+                var parts = new List<string>();
+                foreach (var f in c.SetFlags)   parts.Add($"+{f}");
+                foreach (var f in c.ClearFlags) parts.Add($"-{f}");
+                foreach (var v in c.VarChanges) parts.Add($"{v.VarName}{(v.Delta >= 0 ? "+" : "")}{v.Delta}");
+                if (parts.Count > 0)
+                {
+                    var summary = NarrativeUIHelper.CreateLabel("  " + string.Join("  ", parts), "info-label");
+                    summary.style.color = new Color(0.9f, 0.9f, 0.4f);
+                    summary.style.whiteSpace = WhiteSpace.Normal;
+                    card.Add(summary);
+                }
+            }
+        }
+
+        private static void AddBusinessStartInfo(VisualElement card, EpisodeEvent ev)
+        {
+            var header = NarrativeUIHelper.CreateRow();
+            header.Add(NarrativeUIHelper.CreateLabel("CRAFTING", "field-label").With(l => l.style.color = new Color(1f, 0.6f, 0.4f)));
+            if (!string.IsNullOrEmpty(ev.CraftingTicketKey))
+                header.Add(NarrativeUIHelper.CreateLabel($"  {ev.CraftingTicketKey}", "info-label").With(l => l.style.color = new Color(0.9f, 0.9f, 0.9f)));
+            card.Add(header);
+
+            if (!string.IsNullOrEmpty(ev.CraftingFlagGood))
+                card.Add(NarrativeUIHelper.CreateLabel($"[G] {ev.CraftingFlagGood}", "info-label").With(l => l.style.color = new Color(0.5f, 1f, 0.5f)));
+            if (!string.IsNullOrEmpty(ev.CraftingFlagBad))
+                card.Add(NarrativeUIHelper.CreateLabel($"[B] {ev.CraftingFlagBad}", "info-label").With(l => l.style.color = new Color(1f, 0.5f, 0.5f)));
         }
 
         private void DrawTrigger(TriggerNodeSO tr)

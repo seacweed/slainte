@@ -13,7 +13,7 @@ Unity 에디터에서 사용할 수 있는 커스텀 툴 목록입니다.
 ## 에피소드 CSV 임포터
 
 CSV 파일을 읽어 `EpisodeData` ScriptableObject를 생성하는 툴입니다.  
-CSV 작성 방법은 [episode-csv-guide.md](episode-csv-guide.md) 를 참고하세요.
+CSV 작성 방법은 [../narrative/episode-csv-guide.md](../narrative/episode-csv-guide.md) 를 참고하세요.
 
 ### 사용 방법
 

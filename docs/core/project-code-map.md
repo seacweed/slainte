@@ -280,6 +280,6 @@ flowchart TB
 
 1. 에피소드 런타임의 주 경로는 `EpisodeData` + `EpisodeRunner`이다. `NarrativeGraphSO`/`NarrativeManager`/그래프 컴파일러는 별도의 편집·베이크 경로로 존재하므로, 어느 쪽을 원본으로 삼는지 정한 뒤 콘텐츠를 변경하는 것이 안전하다.
 2. `MainMenuManager`는 현재 새 게임 시작 시 `StrangeCoin_0` ID를 직접 시작한다. 이는 현재 진입 구현의 사실이며, 상황판 카드 선택 경로와는 별개다.
-3. 씬/프리팹 YAML에는 현재 소스 파일 목록에서 확인되지 않은 컴포넌트명(`DialogueManager`, `EpisodeTriggerManager`, `EpisodeInfoWindow`) 참조가 남아 있다. 실제 Missing Script 상태인지는 Unity Inspector에서 점검할 필요가 있다.
+3. 씬/프리팹 YAML에는 현재 소스 파일 목록에서 확인되지 않은 컴포넌트명(`DialogueManager`, `EpisodeInfoWindow`) 참조가 남아 있다. 실제 Missing Script 상태인지는 Unity Inspector에서 점검할 필요가 있다. (`EpisodeTriggerManager`는 스크립트가 삭제된 뒤 씬에 남아있던 Missing Script GameObject였으며 제거됨)
 4. `RestScene` 상황판은 현재 사진 표시만 코드로 보완되어 있으며, 에피소드의 순차 노출이나 분기별 카드 공개 규칙은 별도 설계가 필요한 영역이다.
 

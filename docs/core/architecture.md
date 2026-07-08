@@ -81,6 +81,6 @@ architecture.md 업데이트 시 관련 문서에 입력할 사항들은 해당 
 
 | 문서 | 내용 |
 |---|---|
-| [character-presentation.md](character-presentation.md) | 캐릭터 표시(`CharacterView`/`CharacterStage`/`CharacterData`), 대화 렌더링(`DialogueController`) |
-| [episode-engine.md](episode-engine.md) | 에피소드 오케스트레이션(`EpisodeRunner`, 분기, 제조 트리거), 오디오/BGM(`AudioManager`) |
-| [business-interactions.md](business-interactions.md) | 영업 씬 손님&주문(`CustomerSpawner`/`OrderTicketManager`/`OrderTicketUI`), 드래그-드롭 바텐딩(`ItemDef`/`DragManager`/`FrontCameraRig`) |
+| [../gameplay/character-presentation.md](../gameplay/character-presentation.md) | 캐릭터 표시(`CharacterView`/`CharacterStage`/`CharacterData`), 대화 렌더링(`DialogueController`) |
+| [../narrative/episode-engine.md](../narrative/episode-engine.md) | 에피소드 오케스트레이션(`EpisodeRunner`, 분기, 제조 트리거), 오디오/BGM(`AudioManager`) |
+| [../gameplay/business-interactions.md](../gameplay/business-interactions.md) | 영업 씬 손님&주문(`CustomerSpawner`/`OrderTicketManager`/`OrderTicketUI`), 드래그-드롭 바텐딩(`ItemDef`/`DragManager`/`FrontCameraRig`) |

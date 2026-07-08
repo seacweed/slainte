@@ -30,7 +30,7 @@ public class OrderTicketUI : MonoBehaviour
     [SerializeField] private RectTransform ticketRect;
     [SerializeField] private CanvasGroup   canvasGroup;
     [SerializeField] private Button        toggleButton;
-    [SerializeField] private Image         buttonImage;
+    [SerializeField] private Image         panelImage;
 
     [Header("Slide")]
     [SerializeField] private float hideOffsetY   = 250f;
@@ -46,7 +46,6 @@ public class OrderTicketUI : MonoBehaviour
     {
         if (!ticketRect)  ticketRect  = (RectTransform)transform;
         if (!canvasGroup) canvasGroup = GetComponent<CanvasGroup>();
-        if (!buttonImage && toggleButton) buttonImage = toggleButton.GetComponent<Image>();
 
         _visiblePos = ticketRect.anchoredPosition;
         ApplyClosedState();
@@ -135,7 +134,7 @@ public class OrderTicketUI : MonoBehaviour
 
     private void ApplySprite(Sprite s)
     {
-        if (buttonImage != null && s != null) buttonImage.sprite = s;
+        if (panelImage != null && s != null) panelImage.sprite = s;
     }
 
     private void SetButtonInteractable(bool on)

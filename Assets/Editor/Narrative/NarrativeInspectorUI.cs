@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -11,7 +12,13 @@ namespace NarrativeFlow.Editor
         {
             container.Clear();
             container.styleSheets.Add(NarrativeUIHelper.LoadStyle());
-            if (nodeView == null) { DrawTemplates(container, editor); return; }
+            if (nodeView == null)
+            {
+                DrawGraphMetadata(container, gv);
+                container.Add(NarrativeUIHelper.CreateDivider());
+                DrawTemplates(container, editor);
+                return;
+            }
 
             nodeView.ClearValidationEvents();
             var data = nodeView.nodeData;
@@ -101,6 +108,81 @@ namespace NarrativeFlow.Editor
                 c.Add(box);
             }, () => { tr.Conditions.Add(new GraphTriggerCondition()); refresh(); gv.ValidateAllNodes(); });
             refresh();
+        }
+
+        private static void DrawGraphMetadata(VisualElement container, NarrativeGraphView gv)
+        {
+            var graph = gv.currentGraph;
+            if (graph == null)
+            {
+                container.Add(NarrativeUIHelper.CreateLabel("No graph loaded.", "info-label").SetMargin(20, 0));
+                return;
+            }
+
+            container.Add(NarrativeUIHelper.CreateLabel("Graph Settings", "section-header"));
+
+            // Episode ID
+            var idRow = NarrativeUIHelper.CreateRow();
+            idRow.Add(NarrativeUIHelper.CreateLabel("Episode ID", "field-label").With(l => l.style.width = 90));
+            idRow.Add(new TextField { value = graph.EpisodeId }.SetFlex(1).With(x =>
+                x.RegisterValueChangedCallback(e => { Undo.RecordObject(graph, "Set EpisodeId"); graph.EpisodeId = e.newValue; EditorUtility.SetDirty(graph); })));
+            container.Add(idRow);
+
+            // Episode Title
+            var titleRow = NarrativeUIHelper.CreateRow();
+            titleRow.Add(NarrativeUIHelper.CreateLabel("Title", "field-label").With(l => l.style.width = 90));
+            titleRow.Add(new TextField { value = graph.EpisodeTitle }.SetFlex(1).With(x =>
+                x.RegisterValueChangedCallback(e => { Undo.RecordObject(graph, "Set EpisodeTitle"); graph.EpisodeTitle = e.newValue; EditorUtility.SetDirty(graph); })));
+            container.Add(titleRow);
+
+            // Start Node dropdown
+            container.Add(NarrativeUIHelper.CreateDivider());
+            container.Add(NarrativeUIHelper.CreateLabel("Start Node", "field-label"));
+            var episodeNodes = graph.Nodes.OfType<EpisodeNodeSO>().ToList();
+            if (episodeNodes.Count > 0)
+            {
+                var labels = episodeNodes.Select(GetNodeTitle).ToList();
+                labels.Insert(0, "(None)");
+
+                int startIdx = 0;
+                if (!string.IsNullOrEmpty(graph.StartNodeGuid))
+                {
+                    int found = episodeNodes.FindIndex(n => n.Guid == graph.StartNodeGuid);
+                    if (found >= 0) startIdx = found + 1;
+                }
+
+                var popup = new PopupField<string>(labels, startIdx);
+                popup.RegisterValueChangedCallback(e =>
+                {
+                    int idx = labels.IndexOf(e.newValue);
+                    Undo.RecordObject(graph, "Set StartNode");
+                    graph.StartNodeGuid = idx > 0 ? episodeNodes[idx - 1].Guid : "";
+                    EditorUtility.SetDirty(graph);
+                });
+                container.Add(popup);
+            }
+            else
+            {
+                container.Add(NarrativeUIHelper.CreateLabel("(Add episode blocks first)", "info-label").With(l => l.style.color = Color.gray));
+            }
+
+            // Trigger & Opening Characters note
+            container.Add(NarrativeUIHelper.CreateDivider());
+            container.Add(NarrativeUIHelper.CreateLabel("Trigger / Opening Chars", "field-label"));
+            container.Add(NarrativeUIHelper.CreateLabel("Select the graph asset in the Project panel to edit in the Inspector.", "info-label")
+                .With(l => { l.style.color = Color.gray; l.style.whiteSpace = WhiteSpace.Normal; }));
+            container.Add(new Button(() => { Selection.activeObject = graph; EditorGUIUtility.PingObject(graph); }) { text = "Ping Graph Asset" }.SetMargin(4, 0));
+
+            // Compile shortcut
+            container.Add(NarrativeUIHelper.CreateDivider());
+            container.Add(new Button(() => new EpisodeDataCompiler().Compile(graph)) { text = "Compile to EpisodeData" }
+                .With(b => { b.style.height = 30; b.style.backgroundColor = new Color(0.15f, 0.35f, 0.15f); }).SetMargin(4, 0));
+        }
+
+        private static string GetNodeTitle(EpisodeNodeSO node)
+        {
+            var titleField = node.CustomFields?.Find(f => f.FieldName?.ToLower() == "title");
+            return !string.IsNullOrEmpty(titleField?.FieldValue) ? titleField.FieldValue : node.name;
         }
 
         private static void DrawTemplates(VisualElement container, NarrativeGraphEditor editor)

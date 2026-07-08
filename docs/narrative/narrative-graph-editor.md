@@ -1,0 +1,143 @@
+# 내러티브 그래프 에디터 — 아키텍처
+
+## 개요
+
+CSV 기반 에피소드 편집을 대체/보완하는 비주얼 노드 에디터.  
+`NarrativeGraphSO`(그래프 전용 SO) → `EpisodeDataCompiler` → `EpisodeData`(런타임) 파이프라인.  
+CSV와 양방향 호환 유지.
+
+---
+
+## 파일 구조
+
+```
+Assets/
+  Scripts/Narrative/Data/
+    NarrativeGraphSO.cs       — 그래프 SO (노드 목록, 엣지 목록, 메타데이터)
+    EpisodeNodeSO.cs          — Event Block 노드 (List<EpisodeEvent>, OutgoingBranches)
+    TriggerNodeSO.cs          — 조건 라우터 노드 (List<GraphTriggerCondition>)
+    NodeDataSO.cs             — 공통 베이스 (Guid, Position, CustomFields)
+    EpisodeEvent.cs           — 시퀀스 이벤트 단위 (Dialogue/Choice/BusinessStart/…)
+
+  Editor/Narrative/
+    NarrativeGraphEditor.cs       — EditorWindow 진입점
+    NarrativeGraphView.cs         — 메인 그래프 GraphView (노드 CRUD, 엣지 관리)
+    NarrativeNodeView.cs          — 노드 카드 렌더링 (인라인 이벤트 요약 표시)
+    NarrativeInspectorUI.cs       — 우측 인스펙터 (노드 선택 시 / 미선택 시 그래프 메타)
+    NarrativeUIHelper.cs          — 공용 UI 유틸리티
+    NarrativeSearchWindow.cs      — 노드 생성 검색창
+    EpisodeSequenceEditor.cs      — 시퀀스 에디터 EditorWindow (이중 클릭 시 오픈)
+    SequenceGraphView.cs          — 시퀀스 내부 GraphView
+    SequenceNodeView.cs           — 시퀀스 노드 카드
+    SequenceInspectorUI.cs        — 시퀀스 인스펙터 (각 이벤트 필드 편집)
+    EpisodeDataCompiler.cs        — NarrativeGraphSO → EpisodeData 컴파일
+    EpisodeDataImporter.cs        — EpisodeData → NarrativeGraphSO 역임포트
+    NarrativeNodeIdAssigner.cs    — 그래프 구조 기반 노드 ID 자동 할당
+    TemplateManager.cs            — 노드 템플릿 저장/로드
+```
+
+---
+
+## 데이터 모델
+
+### NarrativeGraphSO
+```
+EpisodeId, EpisodeTitle, StartNodeGuid    — 에피소드 식별 메타
+TriggerCondition: EpisodeTriggerCondition — 발동 조건
+OpeningCharacters: List<CharacterSlotEntry>
+Nodes: List<NodeDataSO>                  — 서브에셋으로 AddObjectToAsset
+Edges: List<EdgeData>                    — { BaseNodeGuid, TargetNodeGuid, OutputPortIndex }
+```
+
+저장 경로: `Assets/Narrative/Graphs/{episodeId}.asset`
+
+### EpisodeNodeSO (Event Block)
+```
+Events: List<EpisodeEvent>   — 순차 실행될 이벤트 목록
+OutgoingBranches: List<string>  — 출력 포트 레이블 (포트 인덱스 = 리스트 인덱스)
+```
+
+### EpisodeEvent 타입별 사용 필드
+
+| Type | 주요 필드 |
+|---|---|
+| Dialogue | SpeakerKey, OverrideSpeakerName, Text, CharacterAppearances, BgmCommand/BgmClipName |
+| Choice | SpeakerKey, Text (선택지 전 대사), Choices[].ButtonText/SetFlags/ClearFlags/VarChanges |
+| BusinessStart | CraftingTicketKey, CraftingFlagGood/Bad, CraftingVarChangesGood/Bad |
+| BusinessEnd | (포트만 사용) |
+| BranchExit | ExitBranchName |
+
+### TriggerNodeSO (조건 라우터)
+```
+Conditions: List<GraphTriggerCondition>  — { Type, Key, Operator, Value }
+```
+포트: 조건 0,1,… + Else(마지막). 컴파일 시 런타임 노드에 인라인되어 별도 EpisodeNode 미생성.
+
+---
+
+## 컴파일 파이프라인 (EpisodeDataCompiler)
+
+`Narrative > Compile Graph` 또는 Graph Settings 패널의 버튼.
+
+1. `graph.StartNodeGuid` 기준 BFS 순회
+2. `EpisodeNodeSO` → `EpisodeNode` 변환 (`BuildRuntimeNode`)
+3. `TriggerNodeSO` 만나면 `InjectTriggerLogic` 호출 → 업스트림 노드의 flagBranches/varBranches에 인라인
+4. 출력 엣지 포트별로 `nextNodeId / nextNodeIdGood / nextNodeIdBad / choices[].nextNodeId` 연결
+5. `Assets/Resources/EpisodeData/EpisodeData_{id}.asset` 저장 (기존 파일은 CopySerialized로 덮어쓰기)
+6. CSV export: `ExportToCsv()` — `EpisodeCsvImporter`와 동일한 15컬럼 NODES 포맷 + 전체 섹션
+
+### 런타임 nodeId 결정
+컴파일 시 BFS 방문 순서대로 `{episodeId}_n{1,2,3,...}` 자동 부여.  
+그래프의 "Title" 필드(노드 카드 표시명)와는 별개.
+
+---
+
+## 역임포트 (EpisodeDataImporter)
+
+`Narrative > Import EpisodeData to Graph`  
+선택된 `EpisodeData` SO를 `NarrativeGraphSO`로 변환.
+
+- BFS 순회 → EpisodeNodeSO 1개/런타임 노드
+- Choice 노드: SpeakerKey, Text, Choices 모두 복사
+- 엣지: flagBranches/varBranches → OutgoingBranches 레이블 (`{flag} == true`, `{var} >= {threshold}`) 자동 생성
+- Grid 배치: 5열 × 320px, 220px 간격
+
+---
+
+## 노드 ID 자동 할당 (NarrativeNodeIdAssigner)
+
+노드/엣지 추가·삭제·연결 시 `OnGraphViewChanged`에서 자동 트리거.  
+결과는 `CustomFields["Title"]`에 저장되어 노드 카드 제목으로 표시됨.
+
+### 명명 규칙
+```
+직선 흐름:    1 → 2 → 3 → 4
+분기 (N포트): 3에서 분기 → 3_1_1, 3_2_1
+              이어지면:   3_1_2, 3_1_3 / 3_2_2, 3_2_3
+병합:         3_1_2와 3_2_4가 합쳐지면 → 4
+              (각 pathId 오른쪽 _ 2개 제거 후 increment)
+중첩 분기:    3_1_2에서 재분기 → 3_1_2_1_1, 3_1_2_2_1
+              병합 → 3_1_3
+Start 미도달: x1, x2, …
+```
+
+EpisodeNodeSO 간 직접 엣지만 추적 (TriggerNodeSO 경유 엣지 제외).
+
+---
+
+## 그래프 뷰 주요 동작
+
+| 동작 | 결과 |
+|---|---|
+| Space / 우클릭 | 노드 생성 검색창 |
+| 노드 더블클릭 | Sequence Editor 오픈 |
+| Ctrl+드래그 | 범위 선택 |
+| 노드/엣지 선택 후 Delete | 삭제 (엣지 데이터 자동 정리) |
+| 엣지 연결/삭제 | ID 자동 재할당 |
+
+---
+
+## CSV 호환성
+
+`EpisodeDataCompiler.ExportToCsv()` 출력 포맷이 `EpisodeCsvImporter`의 파싱 포맷과 동일.  
+그래프 편집 → 컴파일 → 런타임 SO 생성 경로와 CSV → 임포트 → 런타임 SO 생성 경로는 동일한 `EpisodeData`를 생성.

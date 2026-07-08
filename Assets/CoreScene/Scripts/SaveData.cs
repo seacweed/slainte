@@ -12,4 +12,6 @@ public class SaveData
     public List<int>    affinityValues = new();
     public List<string> boardSlotKeys   = new();
     public List<int>    boardSlotValues = new();
+    public List<string> bottleAmountKeys   = new();
+    public List<float>  bottleAmountValues = new();
 }

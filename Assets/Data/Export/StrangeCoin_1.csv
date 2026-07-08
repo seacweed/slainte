@@ -1,0 +1,589 @@
+﻿#META
+episodeId,episodeTitle,firstNodeId
+StrangeCoin_1,이상한 동전 - 1,222be7dc-ff4c-4d58-b49c-07be7439c88d_0
+
+#TRIGGER
+minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars
+0,,,StrangeCoin_0,
+
+#OPENING_CHARS
+characterKey,expressionKey,slotIndex
+f54,mid,2
+,,-1
+
+#NODES
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad
+222be7dc-ff4c-4d58-b49c-07be7439c88d_0,f54,,좋은 저녁! 펍은 좀 어때?,9596ab3d-9f35-4284-8bee-6f195d110979_0,false,,,,Play,Ep_main_0,,,,
+9596ab3d-9f35-4284-8bee-6f195d110979_0,shaun,,어서 와. 한결같지. 다행히도.,fbf8e595-bd30-4fda-88c0-3ea0b2507c78_0,false,,,,None,,,,,
+fbf8e595-bd30-4fda-88c0-3ea0b2507c78_0,f54,,헤헤. 그거 다행이네.,7aca1869-9630-4f98-9ad0-df1de495bace_0,false,,,,None,,,,,
+7aca1869-9630-4f98-9ad0-df1de495bace_0,f54,,<b>5번가</b>에서 일이 있어서 처리하고 오느라 늦었어.,c21ad2df-4367-4afb-aae9-d1cc82c9a6bb_0,false,,,,None,,,,,
+c21ad2df-4367-4afb-aae9-d1cc82c9a6bb_0,shaun,,<b>5번가</b>?,9f6462be-723d-4990-bf32-a74a9036d709_0,false,,,,None,,,,,
+9f6462be-723d-4990-bf32-a74a9036d709_0,f54,,"응. 너야 펍에만 있어서 모르겠지만, 웬만하면 거긴 가지 마.",ea7ca12a-387e-4666-a599-bf0c88860e72_0,false,,,,None,,,,,
+ea7ca12a-387e-4666-a599-bf0c88860e72_0,f54,,"스캐빈저, 약쟁이들 소굴이야. <b>UPD</b>가 5번가를 통째로 쓸어버리지 않는 게 더 이상할 정도야.",4de6ad22-2694-41f5-a242-5083e32b078d_0,false,,,,None,,,,,
+4de6ad22-2694-41f5-a242-5083e32b078d_0,f54,,"아무튼, 손님 불렀으면 술 한잔은 내줘야지. 위스키 한잔!",b616d83b-3a3c-4f81-9a90-5c860b8d22af_0,false,,,,None,,,,,
+b616d83b-3a3c-4f81-9a90-5c860b8d22af_0,shaun,,너 아직 근무 중인 거 아니야?,00cc4e78-12e9-4c7e-b07f-589376541ad6_0,false,,,,None,,,,,
+00cc4e78-12e9-4c7e-b07f-589376541ad6_0,f54,,상관 없잖아! 한 시간 남았는데 그사이에 일이라도 터지겠어?,86aefa76-fc12-4b3c-8d10-8a26ee05b9df_0,false,,,,None,,,,,
+86aefa76-fc12-4b3c-8d10-8a26ee05b9df_0,,,,,true,sc1_f54,465d6dca-aea1-4d4a-8a1d-afa96de6351c_0,b0cd8d57-51dd-4236-b664-fec6b238d31d_0,None,,,,,
+465d6dca-aea1-4d4a-8a1d-afa96de6351c_0,f54,,음. 늘 최고라니까.,8b28aa07-1051-421e-9822-a097f3d6cd2d_0,false,,,,None,,,,,
+b0cd8d57-51dd-4236-b664-fec6b238d31d_0,f54,,흠.. 오늘은 살짝 아쉽네?,8b28aa07-1051-421e-9822-a097f3d6cd2d_0,false,,,,None,,,,,
+8b28aa07-1051-421e-9822-a097f3d6cd2d_0,f54,,"그래서 말이야, 무슨 일로 부른 거야? 심각한 일은 아니지?",d76573d6-1884-40c8-ab96-414bb7dc3d0f_0,false,,,,None,,,,,
+d76573d6-1884-40c8-ab96-414bb7dc3d0f_0,shaun,,혹시 말이야… 이 <b>동전</b>에 대해서 좀 알아?,55fc5198-2ec7-4b1a-90bf-5ca39cc81ea6_0,false,,,,None,,,,,
+55fc5198-2ec7-4b1a-90bf-5ca39cc81ea6_0,f54,,...,3b15a257-44d5-4921-a91c-64f81d1d303e_0,false,,,,None,,,,,
+3b15a257-44d5-4921-a91c-64f81d1d303e_0,f54,,이거 어디서 난 거야?,654271f7-88e0-40b8-8567-9378f7bb2c18_0,false,,,,None,,,,,
+654271f7-88e0-40b8-8567-9378f7bb2c18_0,shaun,,"얼마 전에 웬 경찰 손님이 이 동전으로 술값을 냈는데, 아무래도 이상해서.",0e2c25af-77b8-4d70-8511-b40ea199187a_0,false,,,,None,,,,,
+0e2c25af-77b8-4d70-8511-b40ea199187a_0,f54,,"그래서, 이걸 받고 술을 내준 거야?",5c0f5901-0cf5-4475-afee-34c6af944232_0,false,,,,None,,,,,
+5c0f5901-0cf5-4475-afee-34c6af944232_0,shaun,,워낙 바쁜 시간대여서 이것저것 따질 겨를이 없었어. 게다가 경찰이었다고.,46676bda-ef6d-4821-afc0-5f6e8e3c6563_0,false,,,,None,,,,,
+46676bda-ef6d-4821-afc0-5f6e8e3c6563_0,shaun,,거절하면 무슨 짓을 당할지 뻔하니까…,987369f0-120d-4165-90d8-308e54fcc5ed_0,false,,,,None,,,,,
+987369f0-120d-4165-90d8-308e54fcc5ed_0,f54,,흠…,10db86f0-0c18-4c60-8441-4b2691a0e1dd_0,false,,,,Stop,Ep_main_0,,,,
+10db86f0-0c18-4c60-8441-4b2691a0e1dd_0,f54,,잘 들어. 이건 <b>아무개들</b>이 쓰는 동전이야.,2e85ea52-180f-4c4e-8d0e-abc11cacd99b_0,false,,,,None,,,,,
+2e85ea52-180f-4c4e-8d0e-abc11cacd99b_0,f54,,5번가 깡패놈들이 쓰는 불법 화폐라고.,a3de06e1-9854-4f16-b49f-e203f0a238a8_0,false,,,,None,,,,,
+a3de06e1-9854-4f16-b49f-e203f0a238a8_0,f54,,"너야 몰랐겠지만, 이 동전을 받았다는 것만으로도 문제가 될 수 있어.",249b38c7-7631-42c6-aa97-cc6fc5f07f66_0,false,,,,None,,,,,
+249b38c7-7631-42c6-aa97-cc6fc5f07f66_0,shaun,,"잠깐, 뭐라고?",820e174c-ff10-4af5-b712-42e2603c7ef7_0,false,,,,None,,,,,
+820e174c-ff10-4af5-b712-42e2603c7ef7_0,f54,,진정해. 난 네 편이니까.,819edc65-1e99-485a-acd3-ff770f9fb098_0,false,,,,None,,,,,
+819edc65-1e99-485a-acd3-ff770f9fb098_0,f54,,이런 거야 적당히 내 선에서 처리할 수 있는데 문제는…,d43ed00f-51f0-4448-b9e4-84cf0b5fc3a0_0,false,,,,None,,,,,
+d43ed00f-51f0-4448-b9e4-84cf0b5fc3a0_0,shaun,,문제는…?,fa7067b1-8d89-45fe-9091-81b927e46013_0,false,,,,None,,,,,
+fa7067b1-8d89-45fe-9091-81b927e46013_0,f54,,"<b>UPD</b> 소속이 이걸로 술값을 냈다고? 션, 그 인간 얼굴 기억해?",19fd2817-f388-4f67-b6c1-ea40e59b597c_0,false,,,,None,,,,,
+19fd2817-f388-4f67-b6c1-ea40e59b597c_0,shaun,,낭인족이었어. 꽤 능글맞은 인상이었는데... 이름은 모르겠고.,b99c11bc-a2fd-4e9e-ae59-188b80b5dbac_0,false,,,,None,,,,,
+b99c11bc-a2fd-4e9e-ae59-188b80b5dbac_0,f54,,"제정신이 아니네. 이 <b>동전</b>이 여기 있다는 건, 우리 내부의 쥐새끼가 이 펍을 지들 뒷거래 장소로 찍었다는 소리야. 내가 당장...",d92362ac-e049-4fba-ae22-39c2f3af8572_0,false,,,,None,,,,,
+d92362ac-e049-4fba-ae22-39c2f3af8572_0,shaun,,어서오세… 아.,a67c1091-73ba-4e61-8822-2afee84c1792_0,false,,,,None,,,,,
+a67c1091-73ba-4e61-8822-2afee84c1792_0,f54,,...,d5ed55f8-8d5a-4af7-8f6b-babb8349c1c1_0,false,,,,None,,,,,
+d5ed55f8-8d5a-4af7-8f6b-babb8349c1c1_0,f72,???,"여어, 바텐더! 아직 영업 안 끝났지?",bc0f1619-bbcb-4e6e-ad15-bd7255282049_0,false,,,,None,,,,,
+bc0f1619-bbcb-4e6e-ad15-bd7255282049_0,sally,???,...목소리 낮춰. 사람 없는 곳이라며.,88c50753-e9cb-4478-8301-ce8026332d73_0,false,,,,None,,,,,
+88c50753-e9cb-4478-8301-ce8026332d73_0,f72,???,"에이, 셀리. 저번에 왔을 때 괜찮았다니까. 저번이랑 같은 걸로… (동전을 내밀며)",51ddf4f8-d871-443a-aeca-384fdce04dd9_0,false,,,,None,,,,,
+51ddf4f8-d871-443a-aeca-384fdce04dd9_0,f72,???,"...어, 어라?",1449ba0e-3880-4260-a699-3b24174394b1_0,false,,,,None,,,,,
+1449ba0e-3880-4260-a699-3b24174394b1_0,f54,,...F72? 너 지금 손에 든 거 뭐야?,536b35ce-90cf-448d-99b3-7cfa6adbe5ca_0,false,,,,None,,,,,
+536b35ce-90cf-448d-99b3-7cfa6adbe5ca_0,f54,,이 사람은 또 누구야?,d6ef7410-c375-4193-9d23-3f1b86f536a9_0,false,,,,None,,,,,
+d6ef7410-c375-4193-9d23-3f1b86f536a9_0,sally,???,…다른 경찰이 있을 거란 얘기는 없었잖아! 우릴 팔아넘기기라도 하려는 거야?,5b558763-c4f3-44fd-847a-0f6a91f4114b_0,false,,,,Play,Ep_tension,,,,
+5b558763-c4f3-44fd-847a-0f6a91f4114b_0,f72,,"아, 아니야! 오해라고!",d1a6b891-b064-4ead-993f-ed5715e9f20d_0,false,,,,None,,,,,
+d1a6b891-b064-4ead-993f-ed5715e9f20d_0,f54,,5번가 담당인데 이상하게 잘 버틴다 했어. 결국 아무개들 쪽에 붙어먹은 거야?,40bad693-44ae-45cc-b46f-eff5638f010f_0,false,,,,None,,,,,
+40bad693-44ae-45cc-b46f-eff5638f010f_0,sally,???,손 떼.,78486c61-5459-420e-9ed6-86eccb0b1370_0,false,,,,None,,,,,
+78486c61-5459-420e-9ed6-86eccb0b1370_0,shaun,,ㅈ..잠깐 뭐가 어떻게…,4e33a145-db1b-4ddb-a088-e0c81456b48c_0,false,,,,None,,,,,
+4e33a145-db1b-4ddb-a088-e0c81456b48c_0,f72,,잠시만 둘 다 진정하시고…,b72cde13-f243-4dc7-a4e7-0647e303267e_0,false,,,,None,,,,,
+b72cde13-f243-4dc7-a4e7-0647e303267e_0,f54,,이 동전을 쓰는건 명백한 규정 위반이야!,29e6b945-1d21-4af4-9e90-ad0ba3e0e6c5_0,false,,,,None,,,,,
+29e6b945-1d21-4af4-9e90-ad0ba3e0e6c5_0,f72,,너야말로 근무 중에 매일 술 마시잖아!,54528950-2cfb-4033-9bf3-5ad8a334a633_0,false,,,,None,,,,,
+54528950-2cfb-4033-9bf3-5ad8a334a633_0,f54,,ㄱ..그건!,9e26d96d-5f04-4d8a-95ce-0a544288f10d_0,false,,,,None,,,,,
+9e26d96d-5f04-4d8a-95ce-0a544288f10d_0,f54,,곧 근무 끝나니까 그런 거야! 그리고 이 정도는 괜찮다고…,41de88e1-f032-4955-86a7-397436d458a9_0,false,,,,None,,,,,
+41de88e1-f032-4955-86a7-397436d458a9_0,f54,,이거랑 그거랑 같아? 이건 말 그대로 <b>처분</b>감이야!,abfed4e4-f671-4aae-8b34-be7587ec4f99_0,false,,,,None,,,,,
+abfed4e4-f671-4aae-8b34-be7587ec4f99_0,sally,???,72. 말만해. 쏴버릴 테니까.,d3994c74-4d72-44a4-85f0-8c23e0a9763c_0,false,,,,None,,,,,
+d3994c74-4d72-44a4-85f0-8c23e0a9763c_0,f54,,잘 생각하는게 좋을거야. 여긴 5번가가 아니니까.,493672e4-ff89-40eb-a481-8c4a4f19ad9d_0,false,,,,None,,,,,
+493672e4-ff89-40eb-a481-8c4a4f19ad9d_0,shaun,,<b>모두 그만하세요!</b>,5da2059c-e589-45cf-9649-6bdd61295424_0,false,,,,None,,,,,
+5da2059c-e589-45cf-9649-6bdd61295424_0,f54,,...,321295f3-e972-4d28-aae7-676223590b42_0,false,,,,None,,,,,
+321295f3-e972-4d28-aae7-676223590b42_0,f72,,...,ba4e5c66-3560-4848-98e5-b73494d1c78b_0,false,,,,None,,,,,
+ba4e5c66-3560-4848-98e5-b73494d1c78b_0,shaun,,"F54, 부탁할게. 가게에서 싸우면 여러모로 곤란해져.",37ee60a5-1d22-4c24-ad3f-238b461a6512_0,false,,,,None,,,,,
+37ee60a5-1d22-4c24-ad3f-238b461a6512_0,shaun,,그리고 낭인 경찰 씨! 당신도 잘한 거 하나 없으니까 가만히 계세요!,404c88d7-ac12-45a4-84d3-8df316552843_0,false,,,,None,,,,,
+404c88d7-ac12-45a4-84d3-8df316552843_0,f72,,난 아무것도…,e38e03c8-ee64-41c6-b993-3cf3ee9d621d_0,false,,,,None,,,,,
+e38e03c8-ee64-41c6-b993-3cf3ee9d621d_0,,,,,false,,,,None,,,,,
+230022ad-c979-4124-b448-842e486db352_0,shaun,,"손님, 당장 무기 안 집어넣으시면, 진짜 경찰 부를 거예요!",3c02f4df-0fe2-4249-867e-aebb7c9741da_0,false,,,,None,,,,,
+ca461a26-8b27-440a-88bb-9fbff09c000f_0,shaun,,오늘은 못 본 척해드릴테니 이쯤 하세요.,40202dd0-b24e-4d18-aefc-bccb2f0fde6d_0,false,,,,Stop,Ep_tension,,,,
+3c02f4df-0fe2-4249-867e-aebb7c9741da_0,f54,,나도 진짜 경찰인데…,80f09f6f-5996-4a3a-ac44-4bd27bef92bf_0,false,,,,None,,,,,
+40202dd0-b24e-4d18-aefc-bccb2f0fde6d_0,shaun,,일단 무기 먼저 내려놓으시고 다들 앉아보시죠.,4cff275f-5ed3-422d-afc8-93b69a3235d4_0,false,,,,None,,,,,
+80f09f6f-5996-4a3a-ac44-4bd27bef92bf_0,shaun,,잘 생각하세요! 여긴 9번가입니다!,e5e375ab-bfc3-4361-8c6d-e93843dd68d5_0,false,,,,None,,,,,
+4cff275f-5ed3-422d-afc8-93b69a3235d4_0,f72,,"바텐더, 무슨 오해가 있는 모양인데, 우린 그저 술만 마시러 온 거야.",46a9d56f-09de-4923-8181-81b4b439c688_0,false,,,,None,,,,,
+e5e375ab-bfc3-4361-8c6d-e93843dd68d5_0,f54,,...,6f14795c-50e0-46b1-bc20-c7ef9d9e85d5_0,false,,,,Stop,Ep_tension,,,,
+46a9d56f-09de-4923-8181-81b4b439c688_0,f72,,여기 <b>셀리</b>랑 나는 그.. 오랜 친구거든!,d1e19b3e-511e-416a-9266-a92119be2832_0,false,,,,None,,,,,
+6f14795c-50e0-46b1-bc20-c7ef9d9e85d5_0,sally,???,...다 당신 때문이야 72.,12689a99-3072-4a89-8cfe-7b5792d30d6d_0,false,,,,None,,,,,
+d1e19b3e-511e-416a-9266-a92119be2832_0,sally,,젠장 72. 밖에서 이름으로 부르지 말라고 몇 번을 말해.,8f9e1355-49ac-4ff2-b6a9-812c38f26970_0,false,,,,None,,,,,
+12689a99-3072-4a89-8cfe-7b5792d30d6d_0,f72,,"자자, 동료끼리 너무 빡빡하게 굴지 말자고.",401e60b0-0dfe-49ce-ba6b-e61f1a2c38d2_0,false,,,,None,,,,,
+8f9e1355-49ac-4ff2-b6a9-812c38f26970_0,f72,,그렇게 말하니까 더 수상해 보이잖아!,fdefdcb3-cbcf-47f4-a2dd-40cada9ce2c9_0,false,,,,None,,,,,
+401e60b0-0dfe-49ce-ba6b-e61f1a2c38d2_0,f54,,닥쳐. 션을 봐서라도 넘어가 주는 거야. 허튼수작 부리면 상부에 보고해 버릴 테니까.,39867b33-8d64-48a7-b3ce-d741135029c9_0,false,,,,None,,,,,
+fdefdcb3-cbcf-47f4-a2dd-40cada9ce2c9_0,f54,,하! <b>그냥 술만 마시러 왔다고?</b> 그 <b>동전</b>으로? 수상해도 너무 수상하다는 생각 안 들어?,4280926b-a7b2-4a9d-b9af-8c44832d813e_0,false,,,,None,,,,,
+39867b33-8d64-48a7-b3ce-d741135029c9_0,f72,,오늘은 그냥 서로 못 본 거로 하면 안 될까?,13319d4f-e46f-4865-a078-086e6da9da00_0,false,,,,None,,,,,
+4280926b-a7b2-4a9d-b9af-8c44832d813e_0,f72,,저..정말이야! 그렇지? 셀리?,b9c89499-c7bd-44b3-9086-9b32673aa4cc_0,false,,,,None,,,,,
+13319d4f-e46f-4865-a078-086e6da9da00_0,f72,,"나도 그냥... 퇴근하고 목이 좀 말랐을 뿐이야. 안 그래, <b>셀리</b>?",577cf214-bda6-438a-b17a-9a42ec5ab253_0,false,,,,None,,,,,
+b9c89499-c7bd-44b3-9086-9b32673aa4cc_0,sally,,...,961ac7ec-51a2-49ee-afe8-82453e55d8e3_0,false,,,,None,,,,,
+577cf214-bda6-438a-b17a-9a42ec5ab253_0,sally,,젠장 72. 밖에서 이름으로 부르지 말라고 몇 번을 말해.,b6ab324a-b742-4e72-a618-19a7c6de363e_0,false,,,,None,,,,,
+961ac7ec-51a2-49ee-afe8-82453e55d8e3_0,sally,,그만해 72. 용건만 끝내고 나가지.,80c7c97f-5aec-4111-b992-7d018ee1abc1_0,false,,,,None,,,,,
+b6ab324a-b742-4e72-a618-19a7c6de363e_0,sally,,...당신이랑 술 마실 생각 없어. 용건만 끝내고 나가지.,152250f1-044c-4087-9409-5309b310ed67_0,false,,,,None,,,,,
+80c7c97f-5aec-4111-b992-7d018ee1abc1_0,f72,,하! 셀리! 이러기야?,c685a209-c99c-4f4a-bd57-78f4752238d9_0,false,,,,None,,,,,
+152250f1-044c-4087-9409-5309b310ed67_0,shaun,,"F54, 너도 일단 앉아. 그럼, F72씨라고 했나요?",ad29f1ce-575b-4ffe-9c78-f6843411e65a_0,false,,,,Play,Ep_main_0,,,,
+c685a209-c99c-4f4a-bd57-78f4752238d9_0,sally,,너 같은 멍청이랑 같이 있으면 항상 문제가 생겨.,a7f0d44c-757d-48f6-a4fc-8621ccb4987c_0,false,,,,None,,,,,
+ad29f1ce-575b-4ffe-9c78-f6843411e65a_0,f72,,"맞아, 다들 그렇게 부르지.",2c520bb4-689c-4f40-b0dc-aaae237b2846_0,false,,,,None,,,,,
+a7f0d44c-757d-48f6-a4fc-8621ccb4987c_0,f54,,틀린 말은 아니군.,f93bc694-495d-4ef0-81df-e8c641d8afd2_0,false,,,,None,,,,,
+2c520bb4-689c-4f40-b0dc-aaae237b2846_0,shaun,,그럼 우선 저번에 시키신 걸로 드리겠습니다.,eac6a087-fba1-42fb-b80e-f7afbc244f29_0,false,,,,None,,,,,
+f93bc694-495d-4ef0-81df-e8c641d8afd2_0,f72,,동료끼리 너무 빡빡하게 굴지 말라고…,db8d73dc-08a0-4ce8-b196-e85abe63b6a9_0,false,,,,None,,,,,
+eac6a087-fba1-42fb-b80e-f7afbc244f29_0,,,,,false,,,,None,,,,,
+db8d73dc-08a0-4ce8-b196-e85abe63b6a9_0,f54,,닥쳐. 션을 봐서라도 넘어가 주는거 야. 허튼수작 부리면 상부에 보고해 버릴 테니까.,152250f1-044c-4087-9409-5309b310ed67_0,false,,,,None,,,,,
+9d6e2560-7b25-47a0-ad04-4d3da2273bcf_0,shaun,,공식 화폐로 주시죠. 대신 두 배로 받겠습니다.,ccf1a138-d39c-49ce-902e-f37a58d00443_0,false,,,,None,,,,,
+733b9927-448e-4894-857c-c8eac13e6381_0,shaun,,네. 대신 두 배로 주시죠.,f4a0f518-42ff-4cf9-af4f-1a217098bc69_0,false,,,,None,,,,,
+ccf1a138-d39c-49ce-902e-f37a58d00443_0,f72,,뭐? 그건 너무하잖아! 이것도 돈이라고!,6e080448-9cfa-4fcc-bbf9-acf5ef932e27_0,false,,,,None,,,,,
+f4a0f518-42ff-4cf9-af4f-1a217098bc69_0,f72,,뭐? 그건 너무하잖아!,1335dbf1-f94e-4cb9-bfda-7b53b77f1234_0,false,,,,None,,,,,
+6e080448-9cfa-4fcc-bbf9-acf5ef932e27_0,shaun,,펍에서 소란 피운 값입니다.,64ca3be7-e403-411c-944c-6ec589c63e52_0,false,,,,None,,,,,
+1335dbf1-f94e-4cb9-bfda-7b53b77f1234_0,shaun,,펍에서 소란 피운 값입니다.,4932ed34-31d5-4a9e-8640-42bf9b228f18_0,false,,,,None,,,,,
+64ca3be7-e403-411c-944c-6ec589c63e52_0,,,,,true,sc1_f72,14ca7747-8646-4062-a1c5-41ca4971739c_0,8f30984b-6898-4ea2-b32f-0c0ee8c0313d_0,None,,,,,
+4932ed34-31d5-4a9e-8640-42bf9b228f18_0,f54,,난 모른다. 뒷감당은 네가 해라.,64ca3be7-e403-411c-944c-6ec589c63e52_0,false,,,,None,,,,,
+14ca7747-8646-4062-a1c5-41ca4971739c_0,f72,,"허, 그래도 돈 아까운 맛은 아니란 말이지.",282bb8bc-d32f-42a7-948c-32ce6989ab10_0,false,,,,None,,,,,
+8f30984b-6898-4ea2-b32f-0c0ee8c0313d_0,f72,,으악… 일부러 이런 거 주는 거야?,78e9cd9b-67a0-4c2a-b305-b7cd81539292_0,false,,,,None,,,,,
+282bb8bc-d32f-42a7-948c-32ce6989ab10_0,f54,,"그래서, 여긴 진짜로 왜 온 거야?",6e88ae1d-ea03-4afc-a8ae-9740dcd11739_0,false,,,,None,,,,,
+78e9cd9b-67a0-4c2a-b305-b7cd81539292_0,f54,,꼴 좋네,282bb8bc-d32f-42a7-948c-32ce6989ab10_0,false,,,,None,,,,,
+6e88ae1d-ea03-4afc-a8ae-9740dcd11739_0,f72,,듣고서 아까처럼 화내지 않기로 약속하면 말해줄게.,1bf2e286-d850-43b2-ad33-b57360a47b78_0,false,,,,None,,,,,
+1bf2e286-d850-43b2-ad33-b57360a47b78_0,f54,,"이건 뭐, 내가 잘못이라도 했나? 경찰이 좀도둑들이랑 어울리는 주제에!",1575ac0e-4e4c-4e20-9435-8a784cff5838_0,false,,,,None,,,,,
+1575ac0e-4e4c-4e20-9435-8a784cff5838_0,f72,,<b>아아-</b> 거기까지!,09ff8917-e18e-415e-8ad6-a5abb6ec8c94_0,false,,,,None,,,,,
+09ff8917-e18e-415e-8ad6-a5abb6ec8c94_0,f72,,보는 눈이 많아서 조용히 만날 공간이 필요했을 뿐이야.,32340457-3052-4cab-af83-8f4250c898bf_0,false,,,,None,,,,,
+32340457-3052-4cab-af83-8f4250c898bf_0,f54,,"미안한데, 여긴 내 소중한 아지트거든? 눈독을 들이지 말라고.",7e054510-f2ab-4c48-835d-edbc0897ac4f_0,false,,,,None,,,,,
+7e054510-f2ab-4c48-835d-edbc0897ac4f_0,f54,,그런 만남은 네 관할인 5번가에서 하지 그래? 거기야말로 UPD 사각지대잖아?,20adc295-b0f6-46b3-96c6-00c14c7fe552_0,false,,,,None,,,,,
+20adc295-b0f6-46b3-96c6-00c14c7fe552_0,f72,,피해야 할 놈들이 UPD뿐만이 아니니까 그러지.,c4124e01-a161-4315-af47-b9b7dc5bc017_0,false,,,,None,,,,,
+c4124e01-a161-4315-af47-b9b7dc5bc017_0,f72,,서로를 위해 조용히 처리하는 게 좋아.,a89336b5-fcfa-4fef-8c7a-e5e0f7eeed08_0,false,,,,None,,,,,
+a89336b5-fcfa-4fef-8c7a-e5e0f7eeed08_0,f54,,처리?,30a2356b-e00d-4a41-a4b6-d581db488213_0,false,,,,None,,,,,
+30a2356b-e00d-4a41-a4b6-d581db488213_0,f72,,"오해하지는 말라고, 사건 수습. 난 거기까지만 관여해.",bed4ed42-97dc-4f65-a3b0-6f3a1def2e7f_0,false,,,,None,,,,,
+bed4ed42-97dc-4f65-a3b0-6f3a1def2e7f_0,f72,,왜 5번가 치안이 그 모양인데 내가 멀쩡히 근무 중인지 알아? 보고서에 올리는 범죄율은 낮으니까 그래.,ef8517ba-8a01-4fff-99e1-d6f4d31372bb_0,false,,,,None,,,,,
+ef8517ba-8a01-4fff-99e1-d6f4d31372bb_0,f72,,"범죄 시간, 위치 등을 미리 알 수 있으니까 보고에 안 올라가게 카메라 끄고, 순찰 인원 빼는 거지.",1d1c9c15-d92f-4837-98ef-4f612ef92e8e_0,false,,,,None,,,,,
+1d1c9c15-d92f-4837-98ef-4f612ef92e8e_0,f54,,자랑이냐? 뒷돈이나 받아먹으면서 당당하기는.,1d2698a4-acca-465f-899c-96066a745dbb_0,false,,,,None,,,,,
+1d2698a4-acca-465f-899c-96066a745dbb_0,f72,,"이 친구 같은 애들이 길바닥에서 굶어 죽는 것보다는, 내가 적당히 눈감아주고 뒷돈 좀 챙기는 게 서로 윈윈 아니겠어?",73051ec6-7d42-4ea6-807b-3b6d59d96c6f_0,false,,,,None,,,,,
+73051ec6-7d42-4ea6-807b-3b6d59d96c6f_0,sally,,"윈윈? 입 조심해, 72. 우리가 그 돈을 어떻게 모으는지 관심도 없잖아.",941b4ab7-a2c6-446e-a2da-09a1203eb356_0,false,,,,None,,,,,
+941b4ab7-a2c6-446e-a2da-09a1203eb356_0,sally,,<b>소각장</b>에 가본적이라도 있어? 너 그곳이 어떤지도 모르잖아.,b1f323f2-cac6-4b71-8090-2beef9cd6ec9_0,false,,,,None,,,,,
+b1f323f2-cac6-4b71-8090-2beef9cd6ec9_0,f54,,<b>소각장</b>? 너희들 설마…,093bfb98-ada0-4b12-addf-391694dee11b_0,false,,,,None,,,,,
+093bfb98-ada0-4b12-addf-391694dee11b_0,f54,,너희들 <b>밀주</b>나 <b>아편</b>만 손대는 줄 알았는데… 그 정도가 아닌 거야?,ade09ed7-4860-4c3b-9fe8-475f1967a35f_0,false,,,,None,,,,,
+ade09ed7-4860-4c3b-9fe8-475f1967a35f_0,f72,,왜? 뭐가 그리 심각해? 강도질보다야 쓰레기장 뒤지는 게 괜찮지 않아?,d3850cb3-3156-43da-9f4a-dab9296e17ce_0,false,,,,None,,,,,
+d3850cb3-3156-43da-9f4a-dab9296e17ce_0,f54,,"72. 넌 여기 온지 얼마 안 돼서 잘 모르겠지만, UPD에 계속 도는 얘기가 있어.",18804078-8cc2-424f-9771-cfba2780004a_0,false,,,,None,,,,,
+18804078-8cc2-424f-9771-cfba2780004a_0,sally,,...,cedc1640-84ff-4966-bc44-d8dcd5a31b83_0,false,,,,None,,,,,
+cedc1640-84ff-4966-bc44-d8dcd5a31b83_0,f72,,..?,ece9771f-0a5b-4fdb-b36e-e9791255ccb4_0,false,,,,None,,,,,
+ece9771f-0a5b-4fdb-b36e-e9791255ccb4_0,f54,,"관리국 노역자들은 부상을 당하거나 과로로 쓰러지면 치료받지 못하고, 그대로 소각장에 버려져.",40507ab4-54c5-4a22-b837-9d9a7c566724_0,false,,,,None,,,,,
+40507ab4-54c5-4a22-b837-9d9a7c566724_0,f54,,소각장에는 안구랑 장기가 다 사라진 시체들이 가득하대. 그래서 관리국이 몰래 장기를 빼돌리는 게 아니냐는 말이 있었어.,506d99be-07bc-406a-a9a0-c322d620ac70_0,false,,,,None,,,,,
+506d99be-07bc-406a-a9a0-c322d620ac70_0,f54,,그런데 그게 관리국 짓이 아니라 너희 짓이였다고? 같은 인간끼리 그런 짓을 해?,4441e55f-0805-4cd9-a83e-c80ff4142480_0,false,,,,None,,,,,
+4441e55f-0805-4cd9-a83e-c80ff4142480_0,f72,,"잠깐, 정말이야? 셀리?",7c7f996b-6bbc-4a60-a1fd-3d136e4a3333_0,false,,,,None,,,,,
+7c7f996b-6bbc-4a60-a1fd-3d136e4a3333_0,sally,,<b>닥쳐</b>. <b>연합의 개새끼들</b>한테 우리가 살아가는 방식을 평가받을 마음은 없어.,45820fbf-e14d-47d9-94e1-73ca251baf94_0,false,,,,None,,,,,
+45820fbf-e14d-47d9-94e1-73ca251baf94_0,,,,,false,,,,None,,,,,
+720157b9-2119-4e22-bf5e-0ce992500850_0,shaun,,살기 위한 선택을 비난할 순 없죠.,aacd87f8-1f89-4ea0-b41c-797eb5e8ab89_0,false,,,,None,,,,,
+4b80f3c1-88f1-4a5b-89f5-4fba4996279e_0,shaun,,"어떤 이유든, 범죄는 해답이 될 수 없어요.",90a87d89-bf0b-4e5d-acf1-969eb26c1e5d_0,false,,,,None,,,,,
+aacd87f8-1f89-4ea0-b41c-797eb5e8ab89_0,shaun,,게다가 엄밀히 따져서 남한테 해를 끼치는 것도 아니잖아요.,3245a40f-f615-4bce-a2ba-8b0b46d66c79_0,false,,,,None,,,,,
+90a87d89-bf0b-4e5d-acf1-969eb26c1e5d_0,shaun,,동료의 죽음을 이용해 연명하는 것보다 더 나은 방식이 있을 거예요.,3c609c48-d03f-485f-9f1f-55bd16a4f3b2_0,false,,,,None,,,,,
+3245a40f-f615-4bce-a2ba-8b0b46d66c79_0,sally,,...,39dbe5f2-f2c1-46aa-93e7-c64e3ac88cae_0,false,,,,None,,,,,
+3c609c48-d03f-485f-9f1f-55bd16a4f3b2_0,sally,,"바텐더, 당신은 배가 불러서 그런 소릴 하는 거야.",3e50d5d0-0206-4b6c-8681-a41648c785ca_0,false,,,,None,,,,,
+39dbe5f2-f2c1-46aa-93e7-c64e3ac88cae_0,f54,,"션, 너까지 왜 그래? 인간으로서 넘지 말아야 할 선이라는 게 있잖아!",43632108-e085-4318-b1be-3672b38a214a_0,false,,,,None,,,,,
+3e50d5d0-0206-4b6c-8681-a41648c785ca_0,sally,,"당장 내일 아침에 눈을 떴을 때, 네 팔다리가 기계로 바뀔지 아니면 소각장에 던져질지 걱정해 본 적 있어?",736f20f7-bf9e-4978-ad2f-b03b1b705f23_0,false,,,,None,,,,,
+43632108-e085-4318-b1be-3672b38a214a_0,shaun,,셀리 말대로 우린 5번가의 사람들이 어떻게 살아가는지 모르잖아.,e26842ff-2bfa-45db-951c-525f6b75f189_0,false,,,,None,,,,,
+736f20f7-bf9e-4978-ad2f-b03b1b705f23_0,f54,,"션 말이 맞아. 셀리, 그렇다고 해서 그런 짓이 정당화되지는 않아.",98e56c24-a3de-4d35-a678-8b1f7e80cb86_0,false,,,,None,,,,,
+e26842ff-2bfa-45db-951c-525f6b75f189_0,sally,,"바텐더, 당신... 의외로 세상의 쓴맛을 아는군.",d142f02f-d5df-4154-bc8f-f9e8ff485dc2_0,false,,,,None,,,,,
+98e56c24-a3de-4d35-a678-8b1f7e80cb86_0,sally,,<b>닥쳐!</b> 고상한 척하지 마!,ff6d227f-2578-4c88-9784-51abc4ff95ba_0,false,,,,None,,,,,
+d142f02f-d5df-4154-bc8f-f9e8ff485dc2_0,shaun,,바텐더는 많은 맛에 익숙하답니다.,12659b04-406e-48dd-8fcc-bce4ab2fcf3f_0,false,,,,None,,,,,
+ff6d227f-2578-4c88-9784-51abc4ff95ba_0,sally,,"제기랄, 역시 9번가에 오는 게 아니었어! 연합 놈들이랑 한통속이군.",5a6ec20f-7b57-4d45-b0d4-1f41360ee3d9_0,false,,,,None,,,,,
+12659b04-406e-48dd-8fcc-bce4ab2fcf3f_0,sally,,"젠장, 제법이군.",9926ac9b-67f4-4d63-8b48-7af7e3288040_0,false,,,,None,,,,,
+5a6ec20f-7b57-4d45-b0d4-1f41360ee3d9_0,f54,,난 연합놈들을 위해 일하는 게 아니야. 나 자신과 내 친구들을 위해 일하는 거지.,e7654605-c07b-4115-9136-1a78f72d0ed8_0,false,,,,None,,,,,
+9926ac9b-67f4-4d63-8b48-7af7e3288040_0,f72,,"그래. 5번가 애들한테 인간성을 묻는 건 너무 가혹한 일이지. 하지만 셀리, 나도 그 정도일 줄은 몰랐어.",3d395314-e467-4c01-933c-735843c60936_0,false,,,,None,,,,,
+e7654605-c07b-4115-9136-1a78f72d0ed8_0,f54,,스스로를 위해 <b>더러운 일</b>을 하는 건 너도 마찬가지잖아.,329911bb-0003-4528-8275-25b8617c0392_0,false,,,,None,,,,,
+3d395314-e467-4c01-933c-735843c60936_0,sally,,감 잡았으면 됐어.,9b3fd0e9-d9de-4a8d-82c1-e6bc6d5de272_0,false,,,,None,,,,,
+329911bb-0003-4528-8275-25b8617c0392_0,sally,,입 다물어. 너랑 나는 하나도 안 같아.,60edc501-2e28-4684-a93f-a35a2b0de338_0,false,,,,None,,,,,
+9b3fd0e9-d9de-4a8d-82c1-e6bc6d5de272_0,sally,,저번에 당신이 준 정보 덕분에 오늘 몇 명은 소각장에 안 가고 편히 잠들 수 있겠지.,7cb81810-f275-463c-ba9e-74c2552ddf04_0,false,,,,None,,,,,
+60edc501-2e28-4684-a93f-a35a2b0de338_0,sally,,72. 다음에 연락해. 이딴 곳에는 조금도 더 있고 싶지 않으니까.,e93b7a87-d0d2-4693-ad8b-23f31dc12471_0,false,,,,None,,,,,
+7cb81810-f275-463c-ba9e-74c2552ddf04_0,sally,,"아무튼, 시간이 늦었네. 72. 이만 가봐야겠어.",e4a0655b-26d2-4d48-b3ac-c8815ecb02b8_0,false,,,,None,,,,,
+e93b7a87-d0d2-4693-ad8b-23f31dc12471_0,f72,,세..셀리! 어디가! 잠깐만 기다려!,ae7042e6-775e-4162-8498-99d42720b612_0,false,,,,None,,,,,
+e4a0655b-26d2-4d48-b3ac-c8815ecb02b8_0,f72,,"잠깐, 벌써 가는 거야? 한잔하고 가지?",4477e574-2a4a-4fff-88c3-ea9891282747_0,false,,,,None,,,,,
+ae7042e6-775e-4162-8498-99d42720b612_0,f54,,허.,f19677f6-5e16-4c29-ac13-6608974aae35_0,false,,,,None,,,,,
+4477e574-2a4a-4fff-88c3-ea9891282747_0,sally,,다음에 또 보자 바텐더.,444a85b4-c172-408a-9627-7cd850522b0e_0,false,,,,None,,,,,
+f19677f6-5e16-4c29-ac13-6608974aae35_0,f54,,아무개놈들 상황이 이 정도일 줄은 몰랐는데.,60bf9620-7834-4131-a170-e22f81795387_0,false,,,,None,,,,,
+444a85b4-c172-408a-9627-7cd850522b0e_0,f72,,"잠깐, 같이 가!",b8e3fd03-e387-40e2-bbec-e6ae620883df_0,false,,,,None,,,,,
+60bf9620-7834-4131-a170-e22f81795387_0,shaun,,진심이었어? 스스로를 위해 더러운 일을 한다는 말.,d6a71a6a-dddc-419d-a948-c1e780810dd6_0,false,,,,None,,,,,
+b8e3fd03-e387-40e2-bbec-e6ae620883df_0,f54,,허.,57017172-b3e9-46f5-9a91-9605c484cbb7_0,false,,,,None,,,,,
+d6a71a6a-dddc-419d-a948-c1e780810dd6_0,f54,,"…뭐, 거짓말은 아니야.",81c26d35-a9f6-40ab-b7d2-285d94de630c_0,false,,,,None,,,,,
+57017172-b3e9-46f5-9a91-9605c484cbb7_0,f54,,"션, 이제 네 펍이니까 상관은 안 할게.",7ff95995-abab-48f8-9c50-726b497af4b3_0,false,,,,None,,,,,
+81c26d35-a9f6-40ab-b7d2-285d94de630c_0,shaun,,진심이었냐니까.,4e0a74ac-c38d-48a2-a5a9-7edc44f9a90d_0,false,,,,None,,,,,
+7ff95995-abab-48f8-9c50-726b497af4b3_0,f54,,하지만 솔직히 네가 저놈들이랑 엮이는 건 불안해.,83bd7ae3-8941-44ca-9e22-e6d26ca43999_0,false,,,,None,,,,,
+4e0a74ac-c38d-48a2-a5a9-7edc44f9a90d_0,f54,,"미안, 말이 많아졌네, 시간도 늦었는데 이만 들어가 볼게.",79a2f2c6-0c67-425b-8526-c0f52392e638_0,false,,,,None,,,,,
+83bd7ae3-8941-44ca-9e22-e6d26ca43999_0,f54,,한번 마음을 내주면 너를 갉아먹을 놈들이야.,908cf193-e72f-4443-a27e-18842a6be10f_0,false,,,,None,,,,,
+79a2f2c6-0c67-425b-8526-c0f52392e638_0,shaun,,…54. 그… 있잖아…,07bfccb8-10a2-4520-a273-1a0a18b15642_0,false,,,,None,,,,,
+908cf193-e72f-4443-a27e-18842a6be10f_0,f54,,나는 이 펍이 그런 끔찍한 진실을 어쩔 수 없는 일이라며 술로 씻어내는 곳이 되지 않길 바랄 뿐이야. 그러니까…,7a8f8c25-33b6-43f5-9a18-8eed9c4c207e_0,false,,,,None,,,,,
+07bfccb8-10a2-4520-a273-1a0a18b15642_0,shaun,,무슨 일 있으면 꼭 연락해.,e8646a9e-301b-4add-912b-70100c6a5da4_0,false,,,,None,,,,,
+7a8f8c25-33b6-43f5-9a18-8eed9c4c207e_0,shaun,,54.,13593503-fe96-4b59-b282-94ab39fdaeed_0,false,,,,None,,,,,
+e8646a9e-301b-4add-912b-70100c6a5da4_0,f54,,알았다고.,,false,,,,None,,,,,
+13593503-fe96-4b59-b282-94ab39fdaeed_0,shaun,,무슨 말인지 알아. 걱정하지마.,b009128d-2083-4a06-a9a1-3c009dec39e1_0,false,,,,None,,,,,
+b009128d-2083-4a06-a9a1-3c009dec39e1_0,f54,,"미안, 말이 많아졌네, 시간도 늦었는데 이만 들어가볼게.",09e719b8-0e68-4306-a010-9da94aae04e8_0,false,,,,None,,,,,
+09e719b8-0e68-4306-a010-9da94aae04e8_0,f54,,션… 그… 있잖아…,093c9a16-6574-4a89-83c0-d215cb59480a_0,false,,,,None,,,,,
+093c9a16-6574-4a89-83c0-d215cb59480a_0,f54,,무슨 일 있으면 꼭 연락해.,,false,,,,None,,,,,
+fb9c61a8-95fc-4379-85ed-d451dd235805_0,,,,,false,,,,None,,,,,
+
+#NODE_CHARS
+nodeId,characterKey,expressionKey,slotIndex
+222be7dc-ff4c-4d58-b49c-07be7439c88d_0,f54,laugh,2
+9596ab3d-9f35-4284-8bee-6f195d110979_0,f54,laugh,2
+fbf8e595-bd30-4fda-88c0-3ea0b2507c78_0,f54,smile,2
+7aca1869-9630-4f98-9ad0-df1de495bace_0,f54,mid,2
+c21ad2df-4367-4afb-aae9-d1cc82c9a6bb_0,f54,mid,2
+9f6462be-723d-4990-bf32-a74a9036d709_0,f54,mid,2
+ea7ca12a-387e-4666-a599-bf0c88860e72_0,f54,mid,2
+4de6ad22-2694-41f5-a242-5083e32b078d_0,f54,smile,2
+b616d83b-3a3c-4f81-9a90-5c860b8d22af_0,f54,smile,2
+00cc4e78-12e9-4c7e-b07f-589376541ad6_0,f54,laugh,2
+465d6dca-aea1-4d4a-8a1d-afa96de6351c_0,f54,smile,2
+b0cd8d57-51dd-4236-b664-fec6b238d31d_0,f54,mid,2
+8b28aa07-1051-421e-9822-a097f3d6cd2d_0,f54,mid,2
+d76573d6-1884-40c8-ab96-414bb7dc3d0f_0,f54,mid,2
+55fc5198-2ec7-4b1a-90bf-5ca39cc81ea6_0,f54,frust,2
+3b15a257-44d5-4921-a91c-64f81d1d303e_0,f54,serious,2
+654271f7-88e0-40b8-8567-9378f7bb2c18_0,f54,serious,2
+0e2c25af-77b8-4d70-8511-b40ea199187a_0,f54,serious,2
+5c0f5901-0cf5-4475-afee-34c6af944232_0,f54,serious,2
+46676bda-ef6d-4821-afc0-5f6e8e3c6563_0,f54,serious,2
+987369f0-120d-4165-90d8-308e54fcc5ed_0,f54,serious,2
+10db86f0-0c18-4c60-8441-4b2691a0e1dd_0,f54,serious,2
+2e85ea52-180f-4c4e-8d0e-abc11cacd99b_0,f54,serious,2
+a3de06e1-9854-4f16-b49f-e203f0a238a8_0,f54,serious,2
+249b38c7-7631-42c6-aa97-cc6fc5f07f66_0,f54,serious,2
+820e174c-ff10-4af5-b712-42e2603c7ef7_0,f54,mid,2
+819edc65-1e99-485a-acd3-ff770f9fb098_0,f54,serious,2
+d43ed00f-51f0-4448-b9e4-84cf0b5fc3a0_0,f54,serious,2
+fa7067b1-8d89-45fe-9091-81b927e46013_0,f54,angry,2
+19fd2817-f388-4f67-b6c1-ea40e59b597c_0,f54,angry,2
+b99c11bc-a2fd-4e9e-ae59-188b80b5dbac_0,f54,angry,2
+d92362ac-e049-4fba-ae22-39c2f3af8572_0,f54,angry,2
+a67c1091-73ba-4e61-8822-2afee84c1792_0,f54,serious,2
+d5ed55f8-8d5a-4af7-8f6b-babb8349c1c1_0,f54,serious,2
+d5ed55f8-8d5a-4af7-8f6b-babb8349c1c1_0,f72,laugh,0
+bc0f1619-bbcb-4e6e-ad15-bd7255282049_0,f54,angry_left,2
+bc0f1619-bbcb-4e6e-ad15-bd7255282049_0,f72,laugh,0
+bc0f1619-bbcb-4e6e-ad15-bd7255282049_0,sally,mid,1
+88c50753-e9cb-4478-8301-ce8026332d73_0,f54,angry_left,2
+88c50753-e9cb-4478-8301-ce8026332d73_0,f72,smile,0
+88c50753-e9cb-4478-8301-ce8026332d73_0,sally,mid,1
+51ddf4f8-d871-443a-aeca-384fdce04dd9_0,f54,angry_left,2
+51ddf4f8-d871-443a-aeca-384fdce04dd9_0,f72,frust,0
+51ddf4f8-d871-443a-aeca-384fdce04dd9_0,sally,mid,1
+1449ba0e-3880-4260-a699-3b24174394b1_0,f54,angry_left,2
+1449ba0e-3880-4260-a699-3b24174394b1_0,f72,frust,0
+1449ba0e-3880-4260-a699-3b24174394b1_0,sally,mid,1
+536b35ce-90cf-448d-99b3-7cfa6adbe5ca_0,f54,angry_left,2
+536b35ce-90cf-448d-99b3-7cfa6adbe5ca_0,f72,frust,0
+536b35ce-90cf-448d-99b3-7cfa6adbe5ca_0,sally,mid,1
+d6ef7410-c375-4193-9d23-3f1b86f536a9_0,f54,angry_left,2
+d6ef7410-c375-4193-9d23-3f1b86f536a9_0,f72,frust,0
+d6ef7410-c375-4193-9d23-3f1b86f536a9_0,sally,angry,1
+5b558763-c4f3-44fd-847a-0f6a91f4114b_0,f54,angry_left,2
+5b558763-c4f3-44fd-847a-0f6a91f4114b_0,f72,laugh,0
+5b558763-c4f3-44fd-847a-0f6a91f4114b_0,sally,angry,1
+d1a6b891-b064-4ead-993f-ed5715e9f20d_0,f54_f72,fight,7
+d1a6b891-b064-4ead-993f-ed5715e9f20d_0,sally,angry,1
+40bad693-44ae-45cc-b46f-eff5638f010f_0,f54_f72,fight,7
+40bad693-44ae-45cc-b46f-eff5638f010f_0,sally,aim,1
+78486c61-5459-420e-9ed6-86eccb0b1370_0,f54_f72,fight,7
+78486c61-5459-420e-9ed6-86eccb0b1370_0,sally,aim,1
+4e33a145-db1b-4ddb-a088-e0c81456b48c_0,f54_f72,fight,7
+4e33a145-db1b-4ddb-a088-e0c81456b48c_0,sally,aim,1
+b72cde13-f243-4dc7-a4e7-0647e303267e_0,f54_f72,fight,7
+b72cde13-f243-4dc7-a4e7-0647e303267e_0,sally,aim,1
+29e6b945-1d21-4af4-9e90-ad0ba3e0e6c5_0,f54_f72,fight,7
+29e6b945-1d21-4af4-9e90-ad0ba3e0e6c5_0,sally,aim,1
+54528950-2cfb-4033-9bf3-5ad8a334a633_0,f54_f72,fight,7
+54528950-2cfb-4033-9bf3-5ad8a334a633_0,sally,aim,1
+9e26d96d-5f04-4d8a-95ce-0a544288f10d_0,f54_f72,fight,7
+9e26d96d-5f04-4d8a-95ce-0a544288f10d_0,sally,aim,1
+41de88e1-f032-4955-86a7-397436d458a9_0,f54_f72,fight,7
+41de88e1-f032-4955-86a7-397436d458a9_0,sally,aim,1
+abfed4e4-f671-4aae-8b34-be7587ec4f99_0,f54_f72,fight,7
+abfed4e4-f671-4aae-8b34-be7587ec4f99_0,sally,aim,1
+d3994c74-4d72-44a4-85f0-8c23e0a9763c_0,f54_f72,fight,7
+d3994c74-4d72-44a4-85f0-8c23e0a9763c_0,sally,aim,1
+493672e4-ff89-40eb-a481-8c4a4f19ad9d_0,f54_f72,fight,7
+493672e4-ff89-40eb-a481-8c4a4f19ad9d_0,sally,aim,1
+5da2059c-e589-45cf-9649-6bdd61295424_0,f54_f72,fight,7
+5da2059c-e589-45cf-9649-6bdd61295424_0,sally,aim,1
+321295f3-e972-4d28-aae7-676223590b42_0,f54_f72,fight,7
+321295f3-e972-4d28-aae7-676223590b42_0,sally,aim,1
+ba4e5c66-3560-4848-98e5-b73494d1c78b_0,f54_f72,fight,7
+ba4e5c66-3560-4848-98e5-b73494d1c78b_0,sally,aim,1
+37ee60a5-1d22-4c24-ad3f-238b461a6512_0,f54_f72,fight,7
+37ee60a5-1d22-4c24-ad3f-238b461a6512_0,sally,aim,1
+404c88d7-ac12-45a4-84d3-8df316552843_0,f54_f72,fight,7
+404c88d7-ac12-45a4-84d3-8df316552843_0,sally,aim,1
+230022ad-c979-4124-b448-842e486db352_0,f54_f72,fight,7
+230022ad-c979-4124-b448-842e486db352_0,sally,aim,1
+ca461a26-8b27-440a-88bb-9fbff09c000f_0,f54_f72,fight,7
+ca461a26-8b27-440a-88bb-9fbff09c000f_0,sally,aim,1
+3c02f4df-0fe2-4249-867e-aebb7c9741da_0,f54_f72,fight,7
+3c02f4df-0fe2-4249-867e-aebb7c9741da_0,sally,aim,1
+40202dd0-b24e-4d18-aefc-bccb2f0fde6d_0,f54_f72,fight,7
+40202dd0-b24e-4d18-aefc-bccb2f0fde6d_0,sally,aim,1
+80f09f6f-5996-4a3a-ac44-4bd27bef92bf_0,f54_f72,fight,7
+80f09f6f-5996-4a3a-ac44-4bd27bef92bf_0,sally,aim,1
+4cff275f-5ed3-422d-afc8-93b69a3235d4_0,f54_f72,fight,7
+4cff275f-5ed3-422d-afc8-93b69a3235d4_0,sally,aim,1
+e5e375ab-bfc3-4361-8c6d-e93843dd68d5_0,f54_f72,fight,7
+e5e375ab-bfc3-4361-8c6d-e93843dd68d5_0,sally,aim,1
+46a9d56f-09de-4923-8181-81b4b439c688_0,f54_f72,fight,7
+46a9d56f-09de-4923-8181-81b4b439c688_0,sally,aim,1
+6f14795c-50e0-46b1-bc20-c7ef9d9e85d5_0,f54_f72,fight,7
+6f14795c-50e0-46b1-bc20-c7ef9d9e85d5_0,sally,angry,1
+d1e19b3e-511e-416a-9266-a92119be2832_0,f54_f72,fight,7
+d1e19b3e-511e-416a-9266-a92119be2832_0,sally,angry,1
+12689a99-3072-4a89-8cfe-7b5792d30d6d_0,f54_f72,fight,7
+12689a99-3072-4a89-8cfe-7b5792d30d6d_0,sally,angry,1
+8f9e1355-49ac-4ff2-b6a9-812c38f26970_0,f54,serious,2
+8f9e1355-49ac-4ff2-b6a9-812c38f26970_0,f72,frust,0
+8f9e1355-49ac-4ff2-b6a9-812c38f26970_0,sally,angry,1
+401e60b0-0dfe-49ce-ba6b-e61f1a2c38d2_0,f54,angry,2
+401e60b0-0dfe-49ce-ba6b-e61f1a2c38d2_0,f72,annoy,0
+401e60b0-0dfe-49ce-ba6b-e61f1a2c38d2_0,sally,angry,1
+fdefdcb3-cbcf-47f4-a2dd-40cada9ce2c9_0,f54,angry,2
+fdefdcb3-cbcf-47f4-a2dd-40cada9ce2c9_0,f72,frust,0
+fdefdcb3-cbcf-47f4-a2dd-40cada9ce2c9_0,sally,angry,1
+39867b33-8d64-48a7-b3ce-d741135029c9_0,f54,angry,2
+39867b33-8d64-48a7-b3ce-d741135029c9_0,f72,frust,0
+39867b33-8d64-48a7-b3ce-d741135029c9_0,sally,angry,1
+4280926b-a7b2-4a9d-b9af-8c44832d813e_0,f54,angry,2
+4280926b-a7b2-4a9d-b9af-8c44832d813e_0,f72,frust,0
+4280926b-a7b2-4a9d-b9af-8c44832d813e_0,sally,angry,1
+13319d4f-e46f-4865-a078-086e6da9da00_0,f54,angry,2
+13319d4f-e46f-4865-a078-086e6da9da00_0,f72,frust,0
+13319d4f-e46f-4865-a078-086e6da9da00_0,sally,angry,1
+b9c89499-c7bd-44b3-9086-9b32673aa4cc_0,f54,angry,2
+b9c89499-c7bd-44b3-9086-9b32673aa4cc_0,f72,frust,0
+b9c89499-c7bd-44b3-9086-9b32673aa4cc_0,sally,angry,1
+577cf214-bda6-438a-b17a-9a42ec5ab253_0,f54,angry,2
+577cf214-bda6-438a-b17a-9a42ec5ab253_0,f72,frust,0
+577cf214-bda6-438a-b17a-9a42ec5ab253_0,sally,angry,1
+961ac7ec-51a2-49ee-afe8-82453e55d8e3_0,f54,angry,2
+961ac7ec-51a2-49ee-afe8-82453e55d8e3_0,f72,frust,0
+961ac7ec-51a2-49ee-afe8-82453e55d8e3_0,sally,mid,1
+b6ab324a-b742-4e72-a618-19a7c6de363e_0,f54,angry,2
+b6ab324a-b742-4e72-a618-19a7c6de363e_0,f72,frust,0
+b6ab324a-b742-4e72-a618-19a7c6de363e_0,sally,mid,1
+80c7c97f-5aec-4111-b992-7d018ee1abc1_0,f54,angry,2
+80c7c97f-5aec-4111-b992-7d018ee1abc1_0,f72,frust,0
+80c7c97f-5aec-4111-b992-7d018ee1abc1_0,sally,mid,1
+152250f1-044c-4087-9409-5309b310ed67_0,f54,angry,2
+152250f1-044c-4087-9409-5309b310ed67_0,f72,mid,0
+152250f1-044c-4087-9409-5309b310ed67_0,sally,mid,1
+c685a209-c99c-4f4a-bd57-78f4752238d9_0,f54,angry,2
+c685a209-c99c-4f4a-bd57-78f4752238d9_0,f72,frust,0
+c685a209-c99c-4f4a-bd57-78f4752238d9_0,sally,angry,1
+ad29f1ce-575b-4ffe-9c78-f6843411e65a_0,f54,angry,2
+ad29f1ce-575b-4ffe-9c78-f6843411e65a_0,f72,smile,0
+ad29f1ce-575b-4ffe-9c78-f6843411e65a_0,sally,mid,1
+a7f0d44c-757d-48f6-a4fc-8621ccb4987c_0,f54,serious,2
+a7f0d44c-757d-48f6-a4fc-8621ccb4987c_0,f72,frust,0
+a7f0d44c-757d-48f6-a4fc-8621ccb4987c_0,sally,angry,1
+2c520bb4-689c-4f40-b0dc-aaae237b2846_0,f54,angry,2
+2c520bb4-689c-4f40-b0dc-aaae237b2846_0,f72,smile,0
+2c520bb4-689c-4f40-b0dc-aaae237b2846_0,sally,mid,1
+f93bc694-495d-4ef0-81df-e8c641d8afd2_0,f54,serious,2
+f93bc694-495d-4ef0-81df-e8c641d8afd2_0,f72,frust,0
+f93bc694-495d-4ef0-81df-e8c641d8afd2_0,sally,angry,1
+db8d73dc-08a0-4ce8-b196-e85abe63b6a9_0,f54,angry,2
+db8d73dc-08a0-4ce8-b196-e85abe63b6a9_0,f72,frust,0
+db8d73dc-08a0-4ce8-b196-e85abe63b6a9_0,sally,angry,1
+9d6e2560-7b25-47a0-ad04-4d3da2273bcf_0,f54,angry,2
+9d6e2560-7b25-47a0-ad04-4d3da2273bcf_0,f72,laugh,0
+9d6e2560-7b25-47a0-ad04-4d3da2273bcf_0,sally,mid,1
+733b9927-448e-4894-857c-c8eac13e6381_0,f54,angry,2
+733b9927-448e-4894-857c-c8eac13e6381_0,f72,laugh,0
+733b9927-448e-4894-857c-c8eac13e6381_0,sally,mid,1
+ccf1a138-d39c-49ce-902e-f37a58d00443_0,f54,angry,2
+ccf1a138-d39c-49ce-902e-f37a58d00443_0,f72,frust,0
+ccf1a138-d39c-49ce-902e-f37a58d00443_0,sally,mid,1
+f4a0f518-42ff-4cf9-af4f-1a217098bc69_0,f54,angry,2
+f4a0f518-42ff-4cf9-af4f-1a217098bc69_0,f72,frust,0
+f4a0f518-42ff-4cf9-af4f-1a217098bc69_0,sally,mid,1
+6e080448-9cfa-4fcc-bbf9-acf5ef932e27_0,f54,angry,2
+6e080448-9cfa-4fcc-bbf9-acf5ef932e27_0,f72,frust,0
+6e080448-9cfa-4fcc-bbf9-acf5ef932e27_0,sally,mid,1
+1335dbf1-f94e-4cb9-bfda-7b53b77f1234_0,f54,angry,2
+1335dbf1-f94e-4cb9-bfda-7b53b77f1234_0,f72,frust,0
+1335dbf1-f94e-4cb9-bfda-7b53b77f1234_0,sally,mid,1
+4932ed34-31d5-4a9e-8640-42bf9b228f18_0,f54,serious,2
+4932ed34-31d5-4a9e-8640-42bf9b228f18_0,f72,frust,0
+4932ed34-31d5-4a9e-8640-42bf9b228f18_0,sally,mid,1
+14ca7747-8646-4062-a1c5-41ca4971739c_0,f54,serious,2
+14ca7747-8646-4062-a1c5-41ca4971739c_0,f72,smile,0
+14ca7747-8646-4062-a1c5-41ca4971739c_0,sally,mid,1
+8f30984b-6898-4ea2-b32f-0c0ee8c0313d_0,f54,serious,2
+8f30984b-6898-4ea2-b32f-0c0ee8c0313d_0,f72,frust,0
+8f30984b-6898-4ea2-b32f-0c0ee8c0313d_0,sally,mid,1
+282bb8bc-d32f-42a7-948c-32ce6989ab10_0,f54,serious,2
+282bb8bc-d32f-42a7-948c-32ce6989ab10_0,f72,frust,0
+282bb8bc-d32f-42a7-948c-32ce6989ab10_0,sally,mid,1
+78e9cd9b-67a0-4c2a-b305-b7cd81539292_0,f54,laugh,2
+78e9cd9b-67a0-4c2a-b305-b7cd81539292_0,f72,frust,0
+78e9cd9b-67a0-4c2a-b305-b7cd81539292_0,sally,mid,1
+6e88ae1d-ea03-4afc-a8ae-9740dcd11739_0,f54,serious,2
+6e88ae1d-ea03-4afc-a8ae-9740dcd11739_0,f72,mid,0
+6e88ae1d-ea03-4afc-a8ae-9740dcd11739_0,sally,mid,1
+1bf2e286-d850-43b2-ad33-b57360a47b78_0,f54,angry,2
+1bf2e286-d850-43b2-ad33-b57360a47b78_0,f72,mid,0
+1bf2e286-d850-43b2-ad33-b57360a47b78_0,sally,mid,1
+1575ac0e-4e4c-4e20-9435-8a784cff5838_0,f54,angry,2
+1575ac0e-4e4c-4e20-9435-8a784cff5838_0,f72,mid,0
+1575ac0e-4e4c-4e20-9435-8a784cff5838_0,sally,mid,1
+09ff8917-e18e-415e-8ad6-a5abb6ec8c94_0,f54,angry,2
+09ff8917-e18e-415e-8ad6-a5abb6ec8c94_0,f72,mid,0
+09ff8917-e18e-415e-8ad6-a5abb6ec8c94_0,sally,mid,1
+32340457-3052-4cab-af83-8f4250c898bf_0,f54,angry,2
+32340457-3052-4cab-af83-8f4250c898bf_0,f72,mid,0
+32340457-3052-4cab-af83-8f4250c898bf_0,sally,mid,1
+7e054510-f2ab-4c48-835d-edbc0897ac4f_0,f54,serious,2
+7e054510-f2ab-4c48-835d-edbc0897ac4f_0,f72,mid,0
+7e054510-f2ab-4c48-835d-edbc0897ac4f_0,sally,mid,1
+20adc295-b0f6-46b3-96c6-00c14c7fe552_0,f54,serious,2
+20adc295-b0f6-46b3-96c6-00c14c7fe552_0,f72,mid,0
+20adc295-b0f6-46b3-96c6-00c14c7fe552_0,sally,mid,1
+c4124e01-a161-4315-af47-b9b7dc5bc017_0,f54,serious,2
+c4124e01-a161-4315-af47-b9b7dc5bc017_0,f72,annoy,0
+c4124e01-a161-4315-af47-b9b7dc5bc017_0,sally,mid,1
+a89336b5-fcfa-4fef-8c7a-e5e0f7eeed08_0,f54,serious,2
+a89336b5-fcfa-4fef-8c7a-e5e0f7eeed08_0,f72,annoy,0
+a89336b5-fcfa-4fef-8c7a-e5e0f7eeed08_0,sally,mid,1
+30a2356b-e00d-4a41-a4b6-d581db488213_0,f54,serious,2
+30a2356b-e00d-4a41-a4b6-d581db488213_0,f72,mid,0
+30a2356b-e00d-4a41-a4b6-d581db488213_0,sally,mid,1
+bed4ed42-97dc-4f65-a3b0-6f3a1def2e7f_0,f54,serious,2
+bed4ed42-97dc-4f65-a3b0-6f3a1def2e7f_0,f72,mid,0
+bed4ed42-97dc-4f65-a3b0-6f3a1def2e7f_0,sally,mid,1
+ef8517ba-8a01-4fff-99e1-d6f4d31372bb_0,f54,serious,2
+ef8517ba-8a01-4fff-99e1-d6f4d31372bb_0,f72,mid,0
+ef8517ba-8a01-4fff-99e1-d6f4d31372bb_0,sally,mid,1
+1d1c9c15-d92f-4837-98ef-4f612ef92e8e_0,f54,angry,2
+1d1c9c15-d92f-4837-98ef-4f612ef92e8e_0,f72,mid,0
+1d1c9c15-d92f-4837-98ef-4f612ef92e8e_0,sally,mid,1
+1d2698a4-acca-465f-899c-96066a745dbb_0,f54,angry,2
+1d2698a4-acca-465f-899c-96066a745dbb_0,f72,smile,0
+1d2698a4-acca-465f-899c-96066a745dbb_0,sally,mid,1
+73051ec6-7d42-4ea6-807b-3b6d59d96c6f_0,f54,angry,2
+73051ec6-7d42-4ea6-807b-3b6d59d96c6f_0,f72,smile,0
+73051ec6-7d42-4ea6-807b-3b6d59d96c6f_0,sally,angry,1
+941b4ab7-a2c6-446e-a2da-09a1203eb356_0,f54,angry,2
+941b4ab7-a2c6-446e-a2da-09a1203eb356_0,f72,smile,0
+941b4ab7-a2c6-446e-a2da-09a1203eb356_0,sally,angry,1
+b1f323f2-cac6-4b71-8090-2beef9cd6ec9_0,f54,frust,2
+b1f323f2-cac6-4b71-8090-2beef9cd6ec9_0,f72,smile,0
+b1f323f2-cac6-4b71-8090-2beef9cd6ec9_0,sally,angry,1
+093bfb98-ada0-4b12-addf-391694dee11b_0,f54,frust,2
+093bfb98-ada0-4b12-addf-391694dee11b_0,f72,smile,0
+093bfb98-ada0-4b12-addf-391694dee11b_0,sally,angry,1
+ade09ed7-4860-4c3b-9fe8-475f1967a35f_0,f54,frust,2
+ade09ed7-4860-4c3b-9fe8-475f1967a35f_0,f72,annoy,0
+ade09ed7-4860-4c3b-9fe8-475f1967a35f_0,sally,angry,1
+d3850cb3-3156-43da-9f4a-dab9296e17ce_0,f54,serious,2
+d3850cb3-3156-43da-9f4a-dab9296e17ce_0,f72,annoy,0
+d3850cb3-3156-43da-9f4a-dab9296e17ce_0,sally,angry,1
+18804078-8cc2-424f-9771-cfba2780004a_0,f54,serious,2
+18804078-8cc2-424f-9771-cfba2780004a_0,f72,annoy,0
+18804078-8cc2-424f-9771-cfba2780004a_0,sally,mid,1
+cedc1640-84ff-4966-bc44-d8dcd5a31b83_0,f54,serious,2
+cedc1640-84ff-4966-bc44-d8dcd5a31b83_0,f72,frust,0
+cedc1640-84ff-4966-bc44-d8dcd5a31b83_0,sally,mid,1
+ece9771f-0a5b-4fdb-b36e-e9791255ccb4_0,f54,serious,2
+ece9771f-0a5b-4fdb-b36e-e9791255ccb4_0,f72,frust,0
+ece9771f-0a5b-4fdb-b36e-e9791255ccb4_0,sally,mid,1
+40507ab4-54c5-4a22-b837-9d9a7c566724_0,f54,serious,2
+40507ab4-54c5-4a22-b837-9d9a7c566724_0,f72,frust,0
+40507ab4-54c5-4a22-b837-9d9a7c566724_0,sally,mid,1
+506d99be-07bc-406a-a9a0-c322d620ac70_0,f54,angry,2
+506d99be-07bc-406a-a9a0-c322d620ac70_0,f72,frust,0
+506d99be-07bc-406a-a9a0-c322d620ac70_0,sally,mid,1
+4441e55f-0805-4cd9-a83e-c80ff4142480_0,f54,angry,2
+4441e55f-0805-4cd9-a83e-c80ff4142480_0,f72,frust,0
+4441e55f-0805-4cd9-a83e-c80ff4142480_0,sally,mid,1
+7c7f996b-6bbc-4a60-a1fd-3d136e4a3333_0,f54,angry,2
+7c7f996b-6bbc-4a60-a1fd-3d136e4a3333_0,f72,frust,0
+7c7f996b-6bbc-4a60-a1fd-3d136e4a3333_0,sally,angry,1
+720157b9-2119-4e22-bf5e-0ce992500850_0,f54,angry,2
+720157b9-2119-4e22-bf5e-0ce992500850_0,f72,frust,0
+720157b9-2119-4e22-bf5e-0ce992500850_0,sally,angry,1
+4b80f3c1-88f1-4a5b-89f5-4fba4996279e_0,f54,angry,2
+4b80f3c1-88f1-4a5b-89f5-4fba4996279e_0,f72,mid,0
+4b80f3c1-88f1-4a5b-89f5-4fba4996279e_0,sally,mid,1
+aacd87f8-1f89-4ea0-b41c-797eb5e8ab89_0,f54,angry,2
+aacd87f8-1f89-4ea0-b41c-797eb5e8ab89_0,f72,frust,0
+aacd87f8-1f89-4ea0-b41c-797eb5e8ab89_0,sally,angry,1
+90a87d89-bf0b-4e5d-acf1-969eb26c1e5d_0,f54,angry,2
+90a87d89-bf0b-4e5d-acf1-969eb26c1e5d_0,f72,mid,0
+90a87d89-bf0b-4e5d-acf1-969eb26c1e5d_0,sally,mid,1
+3245a40f-f615-4bce-a2ba-8b0b46d66c79_0,f54,angry,2
+3245a40f-f615-4bce-a2ba-8b0b46d66c79_0,f72,frust,0
+3245a40f-f615-4bce-a2ba-8b0b46d66c79_0,sally,mid,1
+3c609c48-d03f-485f-9f1f-55bd16a4f3b2_0,f54,angry,2
+3c609c48-d03f-485f-9f1f-55bd16a4f3b2_0,f72,mid,0
+3c609c48-d03f-485f-9f1f-55bd16a4f3b2_0,sally,angry,1
+39dbe5f2-f2c1-46aa-93e7-c64e3ac88cae_0,f54,frust,2
+39dbe5f2-f2c1-46aa-93e7-c64e3ac88cae_0,f72,frust,0
+39dbe5f2-f2c1-46aa-93e7-c64e3ac88cae_0,sally,mid,1
+3e50d5d0-0206-4b6c-8681-a41648c785ca_0,f54,angry,2
+3e50d5d0-0206-4b6c-8681-a41648c785ca_0,f72,mid,0
+3e50d5d0-0206-4b6c-8681-a41648c785ca_0,sally,angry,1
+43632108-e085-4318-b1be-3672b38a214a_0,f54,frust,2
+43632108-e085-4318-b1be-3672b38a214a_0,f72,frust,0
+43632108-e085-4318-b1be-3672b38a214a_0,sally,mid,1
+736f20f7-bf9e-4978-ad2f-b03b1b705f23_0,f54,serious,2
+736f20f7-bf9e-4978-ad2f-b03b1b705f23_0,f72,mid,0
+736f20f7-bf9e-4978-ad2f-b03b1b705f23_0,sally,angry,1
+e26842ff-2bfa-45db-951c-525f6b75f189_0,f54,frust,2
+e26842ff-2bfa-45db-951c-525f6b75f189_0,f72,frust,0
+e26842ff-2bfa-45db-951c-525f6b75f189_0,sally,mid,1
+98e56c24-a3de-4d35-a678-8b1f7e80cb86_0,f54,serious,2
+98e56c24-a3de-4d35-a678-8b1f7e80cb86_0,f72,mid,0
+98e56c24-a3de-4d35-a678-8b1f7e80cb86_0,sally,angry,1
+d142f02f-d5df-4154-bc8f-f9e8ff485dc2_0,f54,frust,2
+d142f02f-d5df-4154-bc8f-f9e8ff485dc2_0,f72,frust,0
+d142f02f-d5df-4154-bc8f-f9e8ff485dc2_0,sally,mid,1
+ff6d227f-2578-4c88-9784-51abc4ff95ba_0,f54,serious,2
+ff6d227f-2578-4c88-9784-51abc4ff95ba_0,f72,mid,0
+ff6d227f-2578-4c88-9784-51abc4ff95ba_0,sally,angry,1
+12659b04-406e-48dd-8fcc-bce4ab2fcf3f_0,f54,frust,2
+12659b04-406e-48dd-8fcc-bce4ab2fcf3f_0,f72,frust,0
+12659b04-406e-48dd-8fcc-bce4ab2fcf3f_0,sally,smile,1
+5a6ec20f-7b57-4d45-b0d4-1f41360ee3d9_0,f54,serious,2
+5a6ec20f-7b57-4d45-b0d4-1f41360ee3d9_0,f72,mid,0
+5a6ec20f-7b57-4d45-b0d4-1f41360ee3d9_0,sally,angry,1
+9926ac9b-67f4-4d63-8b48-7af7e3288040_0,f54,frust,2
+9926ac9b-67f4-4d63-8b48-7af7e3288040_0,f72,mid,0
+9926ac9b-67f4-4d63-8b48-7af7e3288040_0,sally,smile,1
+e7654605-c07b-4115-9136-1a78f72d0ed8_0,f54,serious,2
+e7654605-c07b-4115-9136-1a78f72d0ed8_0,f72,mid,0
+e7654605-c07b-4115-9136-1a78f72d0ed8_0,sally,angry,1
+3d395314-e467-4c01-933c-735843c60936_0,f54,frust,2
+3d395314-e467-4c01-933c-735843c60936_0,f72,mid,0
+3d395314-e467-4c01-933c-735843c60936_0,sally,mid,1
+329911bb-0003-4528-8275-25b8617c0392_0,f54,serious,2
+329911bb-0003-4528-8275-25b8617c0392_0,f72,mid,0
+329911bb-0003-4528-8275-25b8617c0392_0,sally,angry,1
+9b3fd0e9-d9de-4a8d-82c1-e6bc6d5de272_0,f54,frust,2
+9b3fd0e9-d9de-4a8d-82c1-e6bc6d5de272_0,f72,mid,0
+9b3fd0e9-d9de-4a8d-82c1-e6bc6d5de272_0,sally,mid,1
+60edc501-2e28-4684-a93f-a35a2b0de338_0,f54,serious,2
+60edc501-2e28-4684-a93f-a35a2b0de338_0,f72,mid,0
+60edc501-2e28-4684-a93f-a35a2b0de338_0,sally,angry,1
+7cb81810-f275-463c-ba9e-74c2552ddf04_0,f54,frust,2
+7cb81810-f275-463c-ba9e-74c2552ddf04_0,f72,mid,0
+7cb81810-f275-463c-ba9e-74c2552ddf04_0,sally,mid,1
+e93b7a87-d0d2-4693-ad8b-23f31dc12471_0,f54,serious,2
+e93b7a87-d0d2-4693-ad8b-23f31dc12471_0,f72,frust,0
+e4a0655b-26d2-4d48-b3ac-c8815ecb02b8_0,f54,frust,2
+e4a0655b-26d2-4d48-b3ac-c8815ecb02b8_0,f72,mid,0
+e4a0655b-26d2-4d48-b3ac-c8815ecb02b8_0,sally,mid,1
+ae7042e6-775e-4162-8498-99d42720b612_0,f54,serious,2
+4477e574-2a4a-4fff-88c3-ea9891282747_0,f54,frust,2
+4477e574-2a4a-4fff-88c3-ea9891282747_0,f72,mid,0
+4477e574-2a4a-4fff-88c3-ea9891282747_0,sally,smile,1
+f19677f6-5e16-4c29-ac13-6608974aae35_0,f54,serious,2
+444a85b4-c172-408a-9627-7cd850522b0e_0,f54,frust,2
+444a85b4-c172-408a-9627-7cd850522b0e_0,f72,frust,0
+60bf9620-7834-4131-a170-e22f81795387_0,f54,serious,2
+b8e3fd03-e387-40e2-bbec-e6ae620883df_0,f54,serious,2
+d6a71a6a-dddc-419d-a948-c1e780810dd6_0,f54,mid,2
+57017172-b3e9-46f5-9a91-9605c484cbb7_0,f54,serious,2
+81c26d35-a9f6-40ab-b7d2-285d94de630c_0,f54,mid,2
+81c26d35-a9f6-40ab-b7d2-285d94de630c_0,f54,mid,2
+7ff95995-abab-48f8-9c50-726b497af4b3_0,f54,serious,2
+4e0a74ac-c38d-48a2-a5a9-7edc44f9a90d_0,f54,mid,2
+4e0a74ac-c38d-48a2-a5a9-7edc44f9a90d_0,f54,mid,2
+83bd7ae3-8941-44ca-9e22-e6d26ca43999_0,f54,serious,2
+79a2f2c6-0c67-425b-8526-c0f52392e638_0,f54,mid,2
+79a2f2c6-0c67-425b-8526-c0f52392e638_0,f54,mid,2
+908cf193-e72f-4443-a27e-18842a6be10f_0,f54,serious,2
+07bfccb8-10a2-4520-a273-1a0a18b15642_0,f54,mid,2
+07bfccb8-10a2-4520-a273-1a0a18b15642_0,f54,mid,2
+7a8f8c25-33b6-43f5-9a18-8eed9c4c207e_0,f54,serious,2
+e8646a9e-301b-4add-912b-70100c6a5da4_0,f54,smile,2
+e8646a9e-301b-4add-912b-70100c6a5da4_0,f54,mid,2
+13593503-fe96-4b59-b282-94ab39fdaeed_0,f54,serious,2
+b009128d-2083-4a06-a9a1-3c009dec39e1_0,f54,mid,2
+09e719b8-0e68-4306-a010-9da94aae04e8_0,f54,serious,2
+093c9a16-6574-4a89-83c0-d215cb59480a_0,f54,smile,2
+
+#CHOICES
+nodeId,choiceIndex,buttonText,nextNodeId,setFlags,clearFlags,varChanges
+e38e03c8-ee64-41c6-b993-3cf3ee9d621d_0,0,"손님, 당장 무기 안 집어넣으시면, 진짜 경찰 부를 거예요!",230022ad-c979-4124-b448-842e486db352_0,,,
+e38e03c8-ee64-41c6-b993-3cf3ee9d621d_0,1,오늘은 못 본 척해드릴테니 이쯤 하세요.,ca461a26-8b27-440a-88bb-9fbff09c000f_0,,,sally+5
+eac6a087-fba1-42fb-b80e-f7afbc244f29_0,0,<b>(화폐로 받기)</b> 공식 화폐로 주시죠. 대신 두 배로 받겠습니다.,9d6e2560-7b25-47a0-ad04-4d3da2273bcf_0,,,
+eac6a087-fba1-42fb-b80e-f7afbc244f29_0,1,<b>(동전으로 받기)</b> 네. 대신 두 배로 주시죠.,733b9927-448e-4894-857c-c8eac13e6381_0,,,
+45820fbf-e14d-47d9-94e1-73ca251baf94_0,0,살기 위한 선택을 비난할 순 없죠.,720157b9-2119-4e22-bf5e-0ce992500850_0,sc1_true,,sally+5
+45820fbf-e14d-47d9-94e1-73ca251baf94_0,1,"어떤 이유든, 범죄는 해답이 될 수 없어요.",4b80f3c1-88f1-4a5b-89f5-4fba4996279e_0,sc1_false,,
+fb9c61a8-95fc-4379-85ed-d451dd235805_0,0,,,,,
+
