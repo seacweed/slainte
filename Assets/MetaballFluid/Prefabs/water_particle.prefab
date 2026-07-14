@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 868663704262612070}
   - component: {fileID: 4114187303655173092}
   - component: {fileID: -7268521361020896117}
+  - component: {fileID: 5766191493085132373}
   m_Layer: 4
   m_Name: water_particle
   m_TagString: Untagged
@@ -85,7 +86,7 @@ SpriteRenderer:
   m_SortingOrder: 12
   m_MaskInteraction: 0
   m_Sprite: {fileID: -6956133408133828879, guid: 9016f903ca847144182d09f495ddbd16, type: 3}
-  m_Color: {r: 1, g: 0.46787477, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -171,7 +172,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LiquidReaction
   spriteRenderer: {fileID: 0}
   rb: {fileID: 0}
-  mixSpeed: 0.1
-  reactionCooldown: 0.1
+  particleData: {fileID: 0}
+  mixSpeed: 0.02
+  reactionCooldown: 0.05
+  compositionDifferenceTolerance: 0.001
+  passiveMixSpeed: 0.005
+  agitationMixSpeed: 0.5
+  agitationMixRadius: 0.16
+  agitationMixInterval: 0.05
+  agitationVelocityThreshold: 0.1
+  agitationFullMixRelativeSpeed: 0.45
+  agitationMaxPartners: 5
   sleepVelocityThreshold: 0.05
-  timeToSleep: 0.5
+  timeToSleep: 2
+--- !u!114 &5766191493085132373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6191169969125092929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5610638212e19f64d91ec02552c1d3f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.LiquidParticleData
+  payload:
+    portions: []
+  hasBeenCollected: 0

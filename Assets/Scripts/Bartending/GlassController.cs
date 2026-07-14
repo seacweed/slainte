@@ -47,13 +47,17 @@ namespace Slainte.Bartending
 
         private GlassState currentState = GlassState.Idle;
         private Collider2D mainCollider; // 마우스 클릭용 터치 트리거 콜라이더
+        private VesselLiquidTracker liquidTracker;
         private Camera mainCamera;
         
         private float initialAngle;
         private float currentAngle = 0f;
         private Coroutine returnCoroutine;
+        private Vector3 dragOffset;
 
         private SlotController currentSlot; // 현재 점유 중인 슬롯 레퍼런스
+
+        public VesselLiquidTracker LiquidTracker => liquidTracker;
 
         private void Start()
         {
@@ -63,6 +67,8 @@ namespace Slainte.Bartending
             if (Application.isPlaying)
             {
                 // 1. Rigidbody2D 키네마틱 물리 셋업 강제 보장 (2D 물리 트리거 상호작용 완벽 복구)
+                EnsureLiquidTracker();
+
                 Rigidbody2D rb = GetComponent<Rigidbody2D>();
                 if (rb == null)
                 {
@@ -84,6 +90,16 @@ namespace Slainte.Bartending
             {
                 currentState = GlassState.Idle;
             }
+        }
+
+        private void EnsureLiquidTracker()
+        {
+            liquidTracker = GetComponent<VesselLiquidTracker>();
+            if (liquidTracker == null)
+                liquidTracker = gameObject.AddComponent<VesselLiquidTracker>();
+
+            if (!liquidTracker.HasTriggerCollider())
+                Debug.LogWarning($"{name} needs a trigger Collider2D for VesselLiquidTracker.");
         }
 
         private void Reset()
@@ -164,6 +180,8 @@ namespace Slainte.Bartending
                 StopCoroutine(returnCoroutine);
                 returnCoroutine = null;
             }
+
+            CaptureDragOffset();
         }
 
         private void FollowMousePosition()
@@ -172,17 +190,31 @@ namespace Slainte.Bartending
             {
                 return;
             }
+
+            Vector3 targetPosition = mousePos + dragOffset;
             
             Rigidbody2D rb = GetComponent<Rigidbody2D>();
             if (rb != null)
             {
                 // 댐핑 없는 즉각 1:1 추종 + 연속 물리(Sweep) 충돌 보장
-                rb.MovePosition(mousePos);
+                rb.MovePosition(targetPosition);
             }
             else
             {
-                transform.position = mousePos;
+                transform.position = targetPosition;
             }
+        }
+
+        private void CaptureDragOffset()
+        {
+            if (!BartendingViewport.TryGetPointerWorldPosition(mainCamera, Input.mousePosition, out Vector3 mousePos))
+            {
+                dragOffset = Vector3.zero;
+                return;
+            }
+
+            dragOffset = transform.position - mousePos;
+            dragOffset.z = 0f;
         }
 
         private void TryDropGlass()
@@ -210,7 +242,7 @@ namespace Slainte.Bartending
 
                         // 슬롯 스냅 안착 (바닥면 Y 오프셋 칼각 정렬!)
                         float bottomOffset = GetPivotToBottomOffset();
-                        transform.position = new Vector3(hit.transform.position.x, hit.transform.position.y + bottomOffset, 0f);
+                        MoveVesselAndContents(new Vector3(hit.transform.position.x, hit.transform.position.y + bottomOffset, 0f));
                         transform.rotation = Quaternion.identity;
                         currentAngle = 0f;
                         
@@ -222,7 +254,7 @@ namespace Slainte.Bartending
                 {
                     // 슬롯 스냅 안착 (하위 호환용)
                     float bottomOffset = GetPivotToBottomOffset();
-                    transform.position = new Vector3(hit.transform.position.x, hit.transform.position.y + bottomOffset, 0f);
+                    MoveVesselAndContents(new Vector3(hit.transform.position.x, hit.transform.position.y + bottomOffset, 0f));
                     transform.rotation = Quaternion.identity;
                     currentAngle = 0f;
                     
@@ -240,10 +272,23 @@ namespace Slainte.Bartending
         {
             currentSlot = slot;
             float bottomOffset = GetPivotToBottomOffset();
-            transform.position = new Vector3(slotTransform.position.x, slotTransform.position.y + bottomOffset, 0f);
+            MoveVesselAndContents(new Vector3(slotTransform.position.x, slotTransform.position.y + bottomOffset, 0f));
             transform.rotation = Quaternion.identity;
             currentAngle = 0f;
             ReleaseGlass();
+        }
+
+        private void MoveVesselAndContents(Vector3 targetPosition)
+        {
+            targetPosition.z = 0f;
+            Vector2 delta = targetPosition - transform.position;
+            liquidTracker?.TranslateTrackedParticles(delta);
+
+            Rigidbody2D rb = GetComponent<Rigidbody2D>();
+            if (rb != null)
+                rb.position = targetPosition;
+            else
+                transform.position = targetPosition;
         }
 
         public void OnPickedUp()
@@ -311,6 +356,8 @@ namespace Slainte.Bartending
                 Vector2 screenPos = BartendingViewport.GetPointerScreenPosition(mainCamera, transform.position);
                 Mouse.current.WarpCursorPosition(screenPos);
             }
+
+            dragOffset = Vector3.zero;
 
             returnCoroutine = StartCoroutine(ReturnToUprightRoutine());
         }

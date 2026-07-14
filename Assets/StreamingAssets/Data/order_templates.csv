@@ -1,0 +1,4 @@
+id,orderType,lineTemplate,weight
+recipe_prefer_01,RecipeOrder,오늘은 {recipeName}으로 하지.,1
+recipe_prefer_02,RecipeOrder,{recipeName} 한 잔 부탁하네.,1
+recipe_prefer_03,RecipeOrder,이번 잔은 {recipeName}으로 가겠네.,1
