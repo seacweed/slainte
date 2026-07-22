@@ -1,5 +1,19 @@
 # 영업 씬 상호작용
 
+## Business order vertical slice
+
+The first integrated order flow is implemented under `Assets/Scripts/Business/`.
+
+- `BusinessFlowBootstrap` resolves scene-local dependencies and starts the saved business sequence when no episode is active.
+- `BusinessSequencePlanner` creates the fixed day snapshot. `BusinessSequenceRunner` advances it and calls `DataManager.Save()` only at order boundaries.
+- `BusinessOrderSessionController` owns presentation, decision, crafting, evaluation, feedback, reward, cleanup, and completion.
+- `BusinessOrderSessionUI` creates Accept, Reject, Serve, Discard, and Abandon controls at runtime.
+- `BusinessOrderFlowSettings` contains fixed orders, Good/Mid/Bad thresholds, rewards, and fallback feedback.
+- `BusinessBartendingBootstrap` creates recipe bottles from authoritative `ItemDef` assets. Bottle amounts update `GameProgress`; discarding does not restore used ingredients.
+- `BusinessFlowSceneSetup` creates the settings/sample assets and connects `BusinessFlowBootstrap` to `BusinessScene` through the Unity Editor API.
+
+Current sample: `vertical_slice_vodka_lemon` requests `vodka_lemon` with Breeze Vodka 50 ml and Lemon Juice 30 ml.
+
 ## 영업 씬 손님 & 주문 (`Assets/Scripts/Conversation/Sell/`, `Assets/Scripts/OrderTicket/`)
 
 - `CustomerSpawner` — `CustomerOrderData.characterKey` + `expressionKeyMid`로 `CharacterStage`에 캐릭터 표시를 위임하고, 등장 완료 후 `DialogueController.StartDialogue()` 호출. `ShowFeedbackExpression(bool isGood)`으로 결과에 따라 표정 교체.

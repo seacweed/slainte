@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Slainte.Business;
 using UnityEngine;
 
 public class CustomerSpawner : MonoBehaviour
@@ -9,6 +10,8 @@ public class CustomerSpawner : MonoBehaviour
     [SerializeField] private OrderTicketManager    ticketManager;
 
     private CustomerOrderData _currentOrderData;
+
+    public CustomerOrderData CurrentOrderData => _currentOrderData;
 
     public void ShowCustomers(IReadOnlyList<string> orderKeys)
     {
@@ -42,6 +45,36 @@ public class CustomerSpawner : MonoBehaviour
             : _currentOrderData.expressionKeyBad;
 
         characterStage?.SwapExpression(_currentOrderData.characterKey, expressionKey);
+    }
+
+    public bool ShowFeedback(OrderEvaluationGrade grade)
+    {
+        if (_currentOrderData == null)
+            return false;
+
+        if (!string.IsNullOrWhiteSpace(_currentOrderData.characterKey))
+        {
+            string expressionKey = grade switch
+            {
+                OrderEvaluationGrade.Good => _currentOrderData.expressionKeyGood,
+                OrderEvaluationGrade.Mid => _currentOrderData.expressionKeyMid,
+                _ => _currentOrderData.expressionKeyBad
+            };
+            characterStage?.SwapExpression(_currentOrderData.characterKey, expressionKey);
+        }
+
+        List<DialogueLine> lines = grade switch
+        {
+            OrderEvaluationGrade.Good => _currentOrderData.feedbackLinesGood,
+            OrderEvaluationGrade.Mid => _currentOrderData.feedbackLinesMid,
+            _ => _currentOrderData.feedbackLinesBad
+        };
+
+        if (lines == null || lines.Count == 0)
+            return false;
+
+        dialogue?.StartDialogue(lines);
+        return dialogue != null;
     }
 
     public void Clear()

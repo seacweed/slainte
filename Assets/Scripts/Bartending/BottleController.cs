@@ -38,6 +38,10 @@ namespace Slainte.Bartending
         public float currentCapacity = 100f;
         public float pourRate = 0.05f;
         private float pourTimer = 0f;
+        private float? initialCapacityOverride;
+
+        public float CurrentCapacity => currentCapacity;
+        public event System.Action<BottleController, float> CapacityChanged;
 
         private BottleState currentState = BottleState.Idle;
         private SpriteRenderer spriteRenderer;
@@ -107,7 +111,21 @@ namespace Slainte.Bartending
                 spriteRenderer.sprite = bottleData.icon;
 
             maxCapacity = bottleData.capacityMl;
-            currentCapacity = bottleData.capacityMl;
+            currentCapacity = initialCapacityOverride.HasValue
+                ? Mathf.Clamp(initialCapacityOverride.Value, 0f, maxCapacity)
+                : bottleData.capacityMl;
+        }
+
+        public void SetCurrentCapacity(float value, bool notify = false)
+        {
+            initialCapacityOverride = Mathf.Max(0f, value);
+            float upperBound = bottleData != null && bottleData.type == ItemType.Bottle
+                ? bottleData.capacityMl
+                : Mathf.Max(maxCapacity, initialCapacityOverride.Value);
+            currentCapacity = Mathf.Clamp(initialCapacityOverride.Value, 0f, upperBound);
+
+            if (notify)
+                CapacityChanged?.Invoke(this, currentCapacity);
         }
 
         private void Update()
@@ -152,7 +170,7 @@ namespace Slainte.Bartending
                 {
                     LiquidParticleData particleData = obj.GetComponent<LiquidParticleData>();
                     if (particleData != null)
-                        particleData.SetPayload(bottleData, 1f);
+                        particleData.SetPayload(bottleData, Mathf.Min(1f, currentCapacity));
                 }
                 Rigidbody2D rb = obj.GetComponent<Rigidbody2D>();
                 if (rb != null)
@@ -167,7 +185,9 @@ namespace Slainte.Bartending
                     reaction.WakeUp();
                 }
 
-                currentCapacity -= 1f; // Adjust amount per particle if needed
+                currentCapacity = Mathf.Max(0f, currentCapacity - 1f);
+                initialCapacityOverride = currentCapacity;
+                CapacityChanged?.Invoke(this, currentCapacity);
             }
         }
 

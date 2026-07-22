@@ -18,5 +18,6 @@ public class CustomerOrderData : ScriptableObject
 
     [Header("Feedback")]
     public List<DialogueLine> feedbackLinesGood = new();
+    public List<DialogueLine> feedbackLinesMid = new();
     public List<DialogueLine> feedbackLinesBad  = new();
 }

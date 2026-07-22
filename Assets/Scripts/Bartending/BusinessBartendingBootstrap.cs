@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -12,6 +13,7 @@ namespace Slainte.Bartending
         private const string SettingsResourcePath = "Bartending/BusinessBartendingSettings";
 
         private readonly List<GameObject> hiddenCanvasItems = new List<GameObject>();
+        private readonly List<BottleController> sessionBottles = new List<BottleController>();
         private Scene targetScene;
         private BusinessBartendingSettings settings;
         private GameModeManager modeManager;
@@ -19,8 +21,14 @@ namespace Slainte.Bartending
         private BartendingViewport sessionViewport;
         private LiquidPool sessionLiquidPool;
         private Coroutine snapRoutine;
+        private Coroutine resetRoutine;
+        private Coroutine readyRoutine;
         private Camera sourceCamera;
         private int sourceCameraMask;
+
+        public VesselLiquidTracker CurrentTargetTracker { get; private set; }
+        public event Action<VesselLiquidTracker> SessionReady;
+        public event Action SessionDestroyed;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void RegisterSceneHook()
@@ -125,14 +133,18 @@ namespace Slainte.Bartending
 
             GetSlotLayout(targetScene, sessionViewport, settings, out List<Vector3> slotPositions, out float itemScale);
             List<SlotController> slots = CreateSlots(world.transform, settings, slotPositions, itemScale);
-            IBartendingItem bottle = CreateItem(
-                settings.orangeJuiceBottlePrefab, world.transform, "OrangeJuiceBottle", settings.bottlePosition, renderLayer, itemScale);
+            List<IBartendingItem> startingItems = new List<IBartendingItem>();
+            CreateInitialBottles(world.transform, renderLayer, itemScale, startingItems);
             IBartendingItem beaker = CreateItem(
                 settings.beakerPrefab, world.transform, "Beaker", settings.beakerPosition, renderLayer, itemScale);
             IBartendingItem glass = CreateItem(
                 settings.glassPrefab, world.transform, "Glass", settings.glassPosition, renderLayer, itemScale);
+            startingItems.Add(beaker);
+            startingItems.Add(glass);
             sessionLiquidPool = CreateLiquidPool(world.transform, settings, renderLayer, itemScale);
-            snapRoutine = StartCoroutine(SnapStartingItems(slots, bottle, beaker, glass));
+            snapRoutine = StartCoroutine(SnapStartingItems(slots, startingItems));
+
+            readyRoutine = StartCoroutine(CaptureTargetTracker(glass as GlassController));
 
             sourceCamera = Camera.main;
             if (sourceCamera != null && sourceCamera != camera)
@@ -163,6 +175,19 @@ namespace Slainte.Bartending
             }
             sessionLiquidPool = null;
 
+            for (int i = 0; i < sessionBottles.Count; i++)
+            {
+                if (sessionBottles[i] != null)
+                    sessionBottles[i].CapacityChanged -= HandleBottleCapacityChanged;
+            }
+
+            if (readyRoutine != null)
+            {
+                StopCoroutine(readyRoutine);
+                readyRoutine = null;
+            }
+            sessionBottles.Clear();
+
             if (sessionRoot != null)
             {
                 sessionRoot.SetActive(false);
@@ -171,6 +196,107 @@ namespace Slainte.Bartending
             }
 
             RestoreSessionOverrides();
+            CurrentTargetTracker = null;
+            SessionDestroyed?.Invoke();
+        }
+
+        private IEnumerator CaptureTargetTracker(GlassController glass)
+        {
+            yield return null;
+            CurrentTargetTracker = glass != null ? glass.LiquidTracker : null;
+            readyRoutine = null;
+            SessionReady?.Invoke(CurrentTargetTracker);
+        }
+
+        public void DiscardAndResetSession()
+        {
+            if (modeManager == null || modeManager.CurrentMode != GameMode.CraftingMode)
+                return;
+
+            if (resetRoutine == null)
+                resetRoutine = StartCoroutine(ResetSessionRoutine());
+        }
+
+        private IEnumerator ResetSessionRoutine()
+        {
+            DestroySession();
+            yield return null;
+            if (modeManager != null && modeManager.CurrentMode == GameMode.CraftingMode)
+                CreateSession();
+            resetRoutine = null;
+        }
+
+        private void CreateInitialBottles(
+            Transform parent,
+            int renderLayer,
+            float itemScale,
+            List<IBartendingItem> startingItems)
+        {
+            ItemDef[] bottleItems = settings.initialBottleItems;
+            if (bottleItems == null || bottleItems.Length == 0)
+            {
+                IBartendingItem fallback = CreateItem(
+                    settings.orangeJuiceBottlePrefab,
+                    parent,
+                    "Bottle",
+                    settings.bottlePosition,
+                    renderLayer,
+                    itemScale);
+                startingItems.Add(fallback);
+                RegisterBottle(fallback as BottleController);
+                return;
+            }
+
+            for (int i = 0; i < bottleItems.Length; i++)
+            {
+                ItemDef item = bottleItems[i];
+                if (item == null || item.type != ItemType.Bottle)
+                    continue;
+
+                Vector3 position = settings.bottlePositions != null && i < settings.bottlePositions.Length
+                    ? settings.bottlePositions[i]
+                    : settings.bottlePosition + new Vector3(i * 3.2f, 0f, 0f);
+                IBartendingItem bottleItem = CreateItem(
+                    settings.orangeJuiceBottlePrefab,
+                    parent,
+                    string.IsNullOrWhiteSpace(item.displayName) ? item.id : item.displayName,
+                    position,
+                    renderLayer,
+                    itemScale);
+
+                if (bottleItem is BottleController bottle)
+                {
+                    bottle.Init(item);
+                    RegisterBottle(bottle);
+                }
+
+                startingItems.Add(bottleItem);
+            }
+        }
+
+        private void RegisterBottle(BottleController bottle)
+        {
+            if (bottle == null || sessionBottles.Contains(bottle))
+                return;
+
+            ItemDef item = bottle.BottleData;
+            if (item != null && !string.IsNullOrWhiteSpace(item.id) && GameProgress.Instance != null)
+            {
+                float amount = GameProgress.Instance.GetBottleAmount(item.id, item.capacityMl);
+                bottle.SetCurrentCapacity(amount);
+            }
+
+            bottle.CapacityChanged += HandleBottleCapacityChanged;
+            sessionBottles.Add(bottle);
+        }
+
+        private static void HandleBottleCapacityChanged(BottleController bottle, float amount)
+        {
+            ItemDef item = bottle != null ? bottle.BottleData : null;
+            if (item == null || string.IsNullOrWhiteSpace(item.id) || GameProgress.Instance == null)
+                return;
+
+            GameProgress.Instance.SetBottleAmount(item.id, amount);
         }
 
         private Camera CreateWorldCamera(Transform parent, BusinessBartendingSettings settings, int renderLayer)
@@ -343,15 +469,15 @@ namespace Slainte.Bartending
 
         private static IEnumerator SnapStartingItems(
             List<SlotController> slots,
-            IBartendingItem bottle,
-            IBartendingItem beaker,
-            IBartendingItem glass)
+            List<IBartendingItem> items)
         {
             yield return null;
 
-            SnapToStartingSlot(bottle, slots, 0);
-            SnapToStartingSlot(beaker, slots, 2);
-            SnapToStartingSlot(glass, slots, 4);
+            if (items == null)
+                yield break;
+
+            for (int i = 0; i < items.Count && i < slots.Count; i++)
+                SnapToStartingSlot(items[i], slots, i);
         }
 
         private static void SnapToStartingSlot(IBartendingItem item, List<SlotController> slots, int index)

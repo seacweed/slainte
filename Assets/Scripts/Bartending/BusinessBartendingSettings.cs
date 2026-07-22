@@ -12,6 +12,14 @@ namespace Slainte.Bartending
         public GameObject slotPrefab;
         public GameObject liquidParticlePrefab;
 
+        [Header("Initial Bottles")]
+        public ItemDef[] initialBottleItems;
+        public Vector3[] bottlePositions =
+        {
+            new Vector3(-8f, -0.8f, 0f),
+            new Vector3(-4.8f, -0.8f, 0f)
+        };
+
         [Header("Viewport")]
         public Vector2Int renderTextureSize = new Vector2Int(2560, 1440);
         public float cameraOrthographicSize = 5.2f;

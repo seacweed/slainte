@@ -22,6 +22,11 @@ public class GameProgress : MonoSingleton<GameProgress>
     [SerializeField] private List<string> bottleAmountKeys   = new();
     [SerializeField] private List<float>  bottleAmountValues = new();
 
+    [Header("Business Progress")]
+    [SerializeField] private int money;
+    [SerializeField] private int reputation;
+    [SerializeField] private BusinessDaySnapshot businessDay = new();
+
     private HashSet<string>           _flagSet;
     private HashSet<string>           _completedSet;
     private Dictionary<string, int>   _affinity;
@@ -29,6 +34,8 @@ public class GameProgress : MonoSingleton<GameProgress>
     private Dictionary<string, float> _bottleAmounts;
 
     public int CurrentDay => currentDay;
+    public int Money => money;
+    public int Reputation => reputation;
 
     protected override void Awake()
     {
@@ -71,6 +78,9 @@ public class GameProgress : MonoSingleton<GameProgress>
         boardSlotValues     = new List<int>(data.boardSlotValues ?? new List<int>());
         bottleAmountKeys    = new List<string>(data.bottleAmountKeys ?? new List<string>());
         bottleAmountValues  = new List<float>(data.bottleAmountValues ?? new List<float>());
+        money                = data.money;
+        reputation           = data.reputation;
+        businessDay          = data.businessDay != null ? data.businessDay.Clone() : new BusinessDaySnapshot();
 
         RebuildRuntimeSets();
     }
@@ -83,6 +93,8 @@ public class GameProgress : MonoSingleton<GameProgress>
     public List<int>    GetBoardSlotValues()  => new List<int>(boardSlotValues);
     public List<string> GetBottleAmountKeys()   => new List<string>(bottleAmountKeys);
     public List<float>  GetBottleAmountValues() => new List<float>(bottleAmountValues);
+    public BusinessDaySnapshot GetBusinessDaySnapshot() =>
+        businessDay != null ? businessDay.Clone() : new BusinessDaySnapshot();
 
     // ── Flags ──────────────────────────────────────────────────
 
@@ -219,6 +231,38 @@ public class GameProgress : MonoSingleton<GameProgress>
         if (string.IsNullOrWhiteSpace(bottleId)) return;
         _bottleAmounts[bottleId] = value;
         SyncBottleAmountToLists(bottleId, value);
+    }
+
+    public void AddMoney(int amount)
+    {
+        money = Mathf.Max(0, money + amount);
+    }
+
+    public void AddReputation(int amount)
+    {
+        reputation += amount;
+    }
+
+    public void SetBusinessDaySnapshot(BusinessDaySnapshot snapshot)
+    {
+        businessDay = snapshot != null ? snapshot.Clone() : new BusinessDaySnapshot();
+    }
+
+    public void AdvanceBusinessSequence()
+    {
+        if (businessDay == null)
+            businessDay = new BusinessDaySnapshot();
+
+        businessDay.currentIndex = Mathf.Min(
+            businessDay.currentIndex + 1,
+            businessDay.entries != null ? businessDay.entries.Count : 0);
+        businessDay.isCompleted = businessDay.entries == null
+            || businessDay.currentIndex >= businessDay.entries.Count;
+    }
+
+    public void ClearBusinessDaySnapshot()
+    {
+        businessDay = new BusinessDaySnapshot();
     }
 
     private void SyncBottleAmountToLists(string bottleId, float value)
