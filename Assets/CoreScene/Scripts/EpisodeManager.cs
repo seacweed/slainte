@@ -103,6 +103,8 @@ public class EpisodeManager : MonoSingleton<EpisodeManager>
     public void ClearEpisode(string episodeId)
     {
         GameProgress.Instance?.MarkEpisodeCompleted(episodeId);
+        if (CurrentPlayingEpisodeID == episodeId)
+            CurrentPlayingEpisodeID = null;
         DataManager.Instance?.Save();
         Debug.Log($"[EpisodeManager] Episode cleared: {episodeId}");
     }

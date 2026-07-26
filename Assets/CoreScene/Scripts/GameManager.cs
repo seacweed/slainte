@@ -1,10 +1,12 @@
 using System;
+using Slainte.Business;
 using UnityEngine;
 
 public enum GameState
 {
     None,
     Episode,
+    Business,
     Rest
 }
 
@@ -42,6 +44,17 @@ public class GameManager : MonoSingleton<GameManager>
                     EpisodeData data = EpisodeManager.Instance?.GetEpisodeData(epId);
                     var runner = UnityEngine.Object.FindFirstObjectByType<EpisodeRunner>();
                     runner?.Begin(data);
+                };
+                break;
+            case GameState.Business:
+                sceneName = "BusinessScene";
+                onTransitionComplete = () =>
+                {
+                    var bootstrap = UnityEngine.Object.FindFirstObjectByType<BusinessFlowBootstrap>();
+                    if (bootstrap != null)
+                        bootstrap.StartBusinessSequence();
+                    else
+                        Debug.LogError("[GameManager] BusinessFlowBootstrap was not found.");
                 };
                 break;
             case GameState.Rest:

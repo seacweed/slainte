@@ -403,9 +403,9 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         AudioManager.Instance?.StopBgm();
 
         string episodeId = _episode?.episodeId;
+        _episode = null;
         OnEncounterCompleted?.Invoke();
 
-        EpisodeManager.Instance?.ClearEpisode(episodeId);
-        GameManager.Instance?.ChangeState(GameState.Rest);
+        DayFlowManager.Instance.CompleteEpisode(episodeId);
     }
 }

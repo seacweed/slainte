@@ -210,13 +210,12 @@ public class EpisodeBoardManager : BaseUIManager
 
     private void OnStartButtonClicked()
     {
-        if (PinnedPhoto != null && EpisodeManager.Instance != null)
+        if (PinnedPhoto != null)
         {
-            // 1. 코어 씬 매니저에 에피소드 시작 기록
-            EpisodeManager.Instance.StartEpisode(PinnedPhoto.episodeData.episodeId);
-            
-            // 2. 창 닫기
-            CloseUI();
+            bool started = DayFlowManager.Instance.StartEpisodeFromRest(
+                PinnedPhoto.episodeData.episodeId);
+            if (started)
+                CloseUI();
         }
     }
 

@@ -5,20 +5,31 @@ CoreScene은 게임 전체에서 DontDestroyOnLoad로 유지되는 매니저들�
 ## 게임 진행 흐름
 
 ```
-RestScene
-  └─ EpisodeBoardManager (에피소드 선택)
+MainMenu
+  └─ DayFlowManager.StartInitialEpisode(id)
        └─ EpisodeManager.StartEpisode(id)
-            ├─ DataManager.Save()
             └─ GameManager.ChangeState(GameState.Episode)
-                  └─ SceneTransitionManager → BusinessScene 로드
-                        └─ EpisodeRunner.Begin(EpisodeData) (씬 로드 완료 콜백)
+                 └─ BusinessScene → EpisodeRunner.Begin(EpisodeData)
 
-BusinessScene (에피소드 진행)
-  └─ EpisodeManager.ClearEpisode(id)
-        ├─ GameProgress.MarkEpisodeCompleted(id)
-        ├─ DataManager.Save()
-        └─ GameManager.ChangeState(GameState.Rest)
-              └─ SceneTransitionManager → RestScene 로드
+BusinessScene (Episode)
+  └─ EpisodeRunner 완료
+       └─ DayFlowManager.CompleteEpisode(id)
+            ├─ EpisodeManager.ClearEpisode(id)
+            └─ GameManager.ChangeState(GameState.Business)
+                 └─ 같은 BusinessScene에서 BusinessSequenceRunner 시작
+
+BusinessScene (Business)
+  └─ BusinessSequenceRunner 완료
+       └─ DayFlowManager.CompleteBusinessDay()
+            ├─ currentDay + 1
+            ├─ DataManager.Save()
+            └─ GameManager.ChangeState(GameState.Rest)
+                 └─ RestScene 로드
+
+RestScene
+  └─ EpisodeBoardManager (다음 날 에피소드 선택)
+       └─ DayFlowManager.StartEpisodeFromRest(id)
+            └─ GameState.Episode로 전환하며 반복
 ```
 
 ## GameManager (`CoreScene/Scripts/GameManager.cs`)
@@ -26,11 +37,23 @@ BusinessScene (에피소드 진행)
 `MonoSingleton<GameManager>`. 게임 상태 전환과 씬 로드를 담당합니다.
 
 ```csharp
-public enum GameState { None, Episode, Rest }
+public enum GameState { None, Episode, Business, Rest }
 ```
 
 - `ChangeState(GameState)` — 이전 상태가 Episode였으면 자동 저장 후 씬 전환
 - Episode 전환 시: BusinessScene 로드 → 콜백에서 `EpisodeRunner.Begin(EpisodeData)` 호출
+- Business 전환 시: BusinessScene을 재로드하지 않고 `BusinessFlowBootstrap.StartBusinessSequence()` 호출
+- Rest 전환 시: RestScene 로드
+
+## DayFlowManager (`CoreScene/Scripts/DayFlowManager.cs`)
+
+`MonoSingleton<DayFlowManager>`. 에피소드, 영업, 휴식 사이의 하루 단위 전환을 담당합니다.
+
+- `StartInitialEpisode(id)` — 메인 메뉴에서 첫 에피소드 시작
+- `StartEpisodeFromRest(id)` — 휴식 화면에서 선택한 다음 에피소드 시작
+- `CompleteEpisode(id)` — 에피소드 완료 처리 후 같은 BusinessScene에서 영업 시작
+- `CompleteBusinessDay()` — 날짜를 1 증가시키고 저장한 뒤 RestScene으로 전환
+- `currentDay`는 영업 완료 시 증가하므로 RestScene의 에피소드 조건은 다음 날을 기준으로 평가됨
 
 ## EpisodeManager (`CoreScene/Scripts/EpisodeManager.cs`)
 
@@ -41,7 +64,7 @@ public enum GameState { None, Episode, Rest }
 - `CanStart(EpisodeData, GameProgress)` — `EpisodeTriggerCondition` 기반 조건 검사
   - `minDay`, `requiredFlags`, `blockedFlags`, `prerequisiteEpisodeIds`, `requiredVars` 순서로 검사
 - `StartEpisode(id)` — `CurrentPlayingEpisodeID` 설정 → 저장 → `GameState.Episode` 전환
-- `ClearEpisode(id)` — `GameProgress.MarkEpisodeCompleted()` → 저장
+- `ClearEpisode(id)` — `GameProgress.MarkEpisodeCompleted()` → 현재 에피소드 ID 초기화 → 저장
 - `GetEpisodeData(id)` — id로 EpisodeData 검색
 
 ## GameProgress (`Scripts/GameProgress.cs`)
@@ -59,6 +82,8 @@ public enum GameState { None, Episode, Rest }
 | `GetAffinity` / `SetAffinity` / `AddAffinity` | 호감도 정수 변수 — CSV `varName` 필드와 연결 |
 | `GetBoardSlot` / `SetBoardSlot` / `ClearBoardSlot` | 에피소드 보드 슬롯 위치 (affinity와 저장소 분리) |
 | `SetCurrentDay` / `CurrentDay` | 게임 내 일수 |
+| `GetBusinessDaySnapshot` / `SetBusinessDaySnapshot` | 진행 중인 영업 순서 저장/복원 |
+| `AdvanceBusinessSequence` | 영업 주문 순서 진행 |
 
 ## DataManager (`CoreScene/Scripts/DataManager.cs`)
 

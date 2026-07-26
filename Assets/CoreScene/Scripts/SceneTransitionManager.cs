@@ -53,6 +53,14 @@ public class SceneTransitionManager : MonoSingleton<SceneTransitionManager>
     // 💡 2. 매개변수에 Action onComplete = null 추가
     public void TransitionToSubScene(string sceneToLoad, Action onComplete = null)
     {
+        Scene loadedScene = SceneManager.GetSceneByName(sceneToLoad);
+        if (currentActiveScene == sceneToLoad && loadedScene.IsValid() && loadedScene.isLoaded)
+        {
+            SceneManager.SetActiveScene(loadedScene);
+            onComplete?.Invoke();
+            return;
+        }
+
         StartCoroutine(TransitionRoutine(sceneToLoad, onComplete));
     }
 

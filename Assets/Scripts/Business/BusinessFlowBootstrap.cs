@@ -16,6 +16,10 @@ namespace Slainte.Business
         private BusinessSequenceRunner sequenceRunner;
         private BusinessOrderSessionUI sessionUi;
         private CraftingJudgeUI legacyCraftingJudge;
+        private GameModeManager modeManager;
+        private bool runtimeInitialized;
+        private bool businessStartRequested;
+        private bool businessSequenceActive;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void RegisterSceneHook()
@@ -52,13 +56,15 @@ namespace Slainte.Business
             yield return null;
 
             if (settings != null && settings.autoStart && !HasActiveEpisode())
-                sequenceRunner?.StartSequence();
+                StartBusinessSequence();
         }
 
         private void OnDestroy()
         {
             if (orderSession != null)
                 orderSession.StateChanged -= HandleOrderSessionStateChanged;
+            if (sequenceRunner != null)
+                sequenceRunner.BusinessDayCompleted -= HandleBusinessDayCompleted;
         }
 
         private void InitializeRuntime()
@@ -71,7 +77,7 @@ namespace Slainte.Business
                 return;
             }
 
-            GameModeManager modeManager = FindInScene<GameModeManager>(scene);
+            modeManager = FindInScene<GameModeManager>(scene);
             CustomerSpawner customerSpawner = FindInScene<CustomerSpawner>(scene);
             DialogueController dialogue = FindInScene<DialogueController>(scene);
             OrderTicketManager ticketManager = FindInScene<OrderTicketManager>(scene);
@@ -109,6 +115,31 @@ namespace Slainte.Business
                 settings);
             sequenceRunner.Initialize(orderSession, sessionUi, settings);
             orderSession.StateChanged += HandleOrderSessionStateChanged;
+            sequenceRunner.BusinessDayCompleted += HandleBusinessDayCompleted;
+            runtimeInitialized = true;
+
+            if (businessStartRequested)
+                StartBusinessSequence();
+        }
+
+        public void StartBusinessSequence()
+        {
+            businessStartRequested = true;
+            if (!runtimeInitialized || sequenceRunner == null)
+                return;
+
+            businessStartRequested = false;
+            businessSequenceActive = true;
+            modeManager?.RequestModeChange(GameMode.OrderMode);
+            if (legacyCraftingJudge != null)
+                legacyCraftingJudge.gameObject.SetActive(false);
+            sequenceRunner.StartSequence();
+        }
+
+        private void HandleBusinessDayCompleted()
+        {
+            businessSequenceActive = false;
+            DayFlowManager.Instance.CompleteBusinessDay();
         }
 
         private void HandleOrderSessionStateChanged(
@@ -118,7 +149,8 @@ namespace Slainte.Business
             if (legacyCraftingJudge == null)
                 return;
 
-            bool hideLegacyJudge = next == BusinessOrderSessionState.Crafting
+            bool hideLegacyJudge = businessSequenceActive
+                || next == BusinessOrderSessionState.Crafting
                 || next == BusinessOrderSessionState.Evaluating;
             legacyCraftingJudge.gameObject.SetActive(!hideLegacyJudge);
         }

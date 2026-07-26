@@ -70,7 +70,7 @@ architecture.md 업데이트 시 관련 문서에 입력할 사항들은 해당 
 
 ## 주요 설계 패턴
 
-- **씬 분리 + GameState 상태머신**: `GameManager.ChangeState()`가 `SceneTransitionManager`를 통해 씬 전환 처리. BusinessScene(에피소드) ↔ RestScene 전환
+- **하루 흐름 + GameState 상태머신**: `DayFlowManager`가 Episode → Business → Rest 순서를 조율하고, `GameManager.ChangeState()`가 필요한 씬 전환을 처리. Episode와 Business는 같은 BusinessScene을 공유
 - **씬 내 GameMode 상태머신**: `GameModeManager`가 패널 활성/비활성으로 씬 내 모드 전환 (씬 전환 없음)
 - **MonoSingleton<T>**: `GameProgress`, `GameModeManager`, `EpisodeManager`, `DataManager`, `GameManager`, `AudioManager` 모두 통일
 - **이벤트 기반 연결**: `DialogueController.DialogueClosed`, `GameModeManager.OnModeChanged`

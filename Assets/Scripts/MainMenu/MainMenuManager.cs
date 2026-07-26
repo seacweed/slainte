@@ -13,6 +13,6 @@ public class MainMenuManager : MonoBehaviour
 
     private void OnStartClicked()
     {
-        EpisodeManager.Instance?.StartEpisode("StrangeCoin_0");
+        DayFlowManager.Instance.StartInitialEpisode("StrangeCoin_0");
     }
 }

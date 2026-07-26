@@ -649,6 +649,20 @@ namespace Slainte.Editor
                 return false;
             }
 
+            if (progress.CurrentDay != snapshot.day + 1)
+            {
+                failure = $"Day did not advance after business completion: business day {snapshot.day}, "
+                    + $"current day {progress.CurrentDay}.";
+                return false;
+            }
+
+            if (GameManager.Instance.CurrentState != GameState.Rest)
+            {
+                failure = $"Game state did not advance to Rest after business completion: "
+                    + $"{GameManager.Instance.CurrentState}.";
+                return false;
+            }
+
             int expectedMoney = smokeBaselineMoney;
             int expectedReputation = smokeBaselineReputation;
             if (smokeScenario == SmokeScenario.SubmitBad)
