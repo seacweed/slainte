@@ -11,7 +11,7 @@ characterKey,expressionKey,slotIndex,,,,,,,,,,
 f54,mid,2,,,,,,,,,,
 ,,,,,,,,,,,,
 #NODES,,,,,,,,,,,,
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad,craftingRecipeId
 0,f54,,좋은 저녁! 펍은 좀 어때?,1,FALSE,,,,play,Ep_main_0,,
 1,shaun,,어서 와. 한결같지. 다행히도.,2,FALSE,,,,,,,
 2,f54,,헤헤. 그거 다행이네.,3,FALSE,,,,,,,
@@ -22,7 +22,7 @@ nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingT
 7,f54,,"아무튼, 손님 불렀으면 술 한잔은 내줘야지. 위스키 한잔!",8,FALSE,,,,,,,
 8,shaun,,너 아직 근무 중인 거 아니야?,9,FALSE,,,,,,,
 9,f54,,상관 없잖아! 한 시간 남았는데 그사이에 일이라도 터지겠어?,10,FALSE,,,,,,,
-10,,,,,TRUE,sc1_f54,10_1_1,10_2_1,,,,
+10,,,,,TRUE,sc1_f54,10_1_1,10_2_1,,,,,,,whiskey_neat
 10_1_1,f54,,음. 늘 최고라니까.,11,FALSE,,,,,,,
 10_2_1,f54,,흠.. 오늘은 살짝 아쉽네?,11,FALSE,,,,,,,
 11,f54,,"그래서 말이야, 무슨 일로 부른 거야? 심각한 일은 아니지?",12,FALSE,,,,,,,
@@ -109,7 +109,7 @@ nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingT
 63_2_2,f72,,뭐? 그건 너무하잖아!,63_2_3,FALSE,,,,,,,
 63_2_3,shaun,,펍에서 소란 피운 값입니다.,63_2_4,FALSE,,,,,,,
 63_2_4,f54,,난 모른다. 뒷감당은 네가 해라.,64,FALSE,,,,,,,
-64,,,,,TRUE,sc1_f72,64_1_1,64_2_1,,,,
+64,,,,,TRUE,sc1_f72,64_1_1,64_2_1,,,,,,,vodka_lemon
 64_1_1,f72,,"허, 그래도 돈 아까운 맛은 아니란 말이지.",65,FALSE,,,,,,,
 64_2_1,f72,,으악… 일부러 이런 거 주는 거야?,64_2_2,FALSE,,,,,,,
 64_2_2,f54,,꼴 좋네,65,FALSE,,,,,,,

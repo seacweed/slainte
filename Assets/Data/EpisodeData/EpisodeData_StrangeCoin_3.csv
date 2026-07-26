@@ -11,7 +11,7 @@ characterKey,expressionKey,slotIndex,,,,,,
 sally,blood_tired,-1,,,,,,
 ,,,,,,,,
 #NODES,,,,,,,,
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad,craftingRecipeId
 0,sally,,... 바텐더... 도와줘!,1,FALSE,,,
 1,shaun,,셀리씨?! 이게 무슨... 온몸이 피투성이잖아요!,2,FALSE,,,
 2,sally,,걱정마 내 피는 아니니까.,3,FALSE,,,

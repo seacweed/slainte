@@ -16,13 +16,15 @@ namespace Slainte.Business
         private CocktailOrderGenerator orderGenerator;
         private CocktailOrderEvaluator orderEvaluator;
         private GeneratedCocktailOrder currentOrder;
-        private BusinessSequenceEntrySnapshot currentEntry;
+        private OrderSessionRequest currentRequest;
         private VesselLiquidTracker servingTarget;
         private BusinessOrderSessionResult pendingResult;
+        private Action<BusinessOrderSessionResult> completionCallback;
         private bool initialized;
 
         public BusinessOrderSessionState State { get; private set; } = BusinessOrderSessionState.Idle;
         public string CurrentRecipeName => currentOrder?.RequestedRecipeName ?? string.Empty;
+        public bool CanAbandonCurrentOrder => currentRequest != null && currentRequest.allowAbandon;
 
         public event Action<BusinessOrderSessionState, BusinessOrderSessionState> StateChanged;
         public event Action<BusinessOrderSessionResult> OrderCompleted;
@@ -72,45 +74,64 @@ namespace Slainte.Business
 
         public bool BeginOrder(BusinessSequenceEntrySnapshot entry)
         {
-            if (!initialized || entry == null || string.IsNullOrWhiteSpace(entry.entryId))
+            return BeginOrder(OrderSessionRequest.ForBusiness(entry), null);
+        }
+
+        public bool BeginOrder(
+            OrderSessionRequest request,
+            Action<BusinessOrderSessionResult> onCompleted)
+        {
+            if (!initialized
+                || request == null
+                || string.IsNullOrWhiteSpace(request.sessionId)
+                || string.IsNullOrWhiteSpace(request.requestedRecipeId))
                 return false;
 
             if (State != BusinessOrderSessionState.Idle && State != BusinessOrderSessionState.Completed)
                 return false;
 
-            currentEntry = entry.Clone();
-            currentOrder = orderGenerator?.GenerateRecipeOrder(currentEntry.contentId);
+            currentRequest = request;
+            completionCallback = onCompleted;
+            currentOrder = orderGenerator?.GenerateRecipeOrder(currentRequest.requestedRecipeId);
             pendingResult = null;
             servingTarget = null;
 
             if (currentOrder == null)
             {
-                ui?.ShowError("The requested recipe could not be loaded: " + currentEntry.contentId);
+                ui?.ShowError("The requested recipe could not be loaded: " + currentRequest.requestedRecipeId);
                 CompleteCurrentOrder(new BusinessOrderSessionResult
                 {
-                    customerOrderKey = currentEntry.entryId,
-                    requestedRecipeId = currentEntry.contentId,
+                    outcome = OrderSessionOutcome.Failed,
+                    customerOrderKey = currentRequest.customerOrderKey,
+                    requestedRecipeId = currentRequest.requestedRecipeId,
                     accepted = false,
                     grade = OrderEvaluationGrade.Bad
                 });
-                return false;
+                return true;
+            }
+
+            if (!currentRequest.presentOrder)
+            {
+                BeginCrafting();
+                return true;
             }
 
             SetState(BusinessOrderSessionState.PresentingOrder);
-            ui?.ShowPresentingOrder(currentEntry.entryId);
-            customerSpawner?.ShowCustomers(new[] { currentEntry.entryId });
+            ui?.ShowPresentingOrder(currentRequest.customerOrderKey);
+            customerSpawner?.ShowCustomers(new[] { currentRequest.customerOrderKey });
 
             if (customerSpawner == null || customerSpawner.CurrentOrderData == null)
             {
-                ui?.ShowError("Customer order data could not be loaded: " + currentEntry.entryId);
+                ui?.ShowError("Customer order data could not be loaded: " + currentRequest.customerOrderKey);
                 CompleteCurrentOrder(new BusinessOrderSessionResult
                 {
-                    customerOrderKey = currentEntry.entryId,
-                    requestedRecipeId = currentEntry.contentId,
+                    outcome = OrderSessionOutcome.Failed,
+                    customerOrderKey = currentRequest.customerOrderKey,
+                    requestedRecipeId = currentRequest.requestedRecipeId,
                     accepted = false,
                     grade = OrderEvaluationGrade.Bad
                 });
-                return false;
+                return true;
             }
 
             return true;
@@ -121,22 +142,36 @@ namespace Slainte.Business
             if (State != BusinessOrderSessionState.AwaitingDecision)
                 return;
 
+            BeginCrafting();
+        }
+
+        private void BeginCrafting()
+        {
+            if (currentRequest == null)
+                return;
+
+            if (!string.IsNullOrWhiteSpace(currentRequest.ticketKey))
+                ticketManager?.Prepare(currentRequest.ticketKey);
+
             SetState(BusinessOrderSessionState.Crafting);
-            ui?.ShowCrafting(CurrentRecipeName);
+            ui?.ShowCrafting(CurrentRecipeName, currentRequest.allowAbandon);
             modeManager?.RequestModeChange(GameMode.CraftingMode);
             servingTarget = bartending != null ? bartending.CurrentTargetTracker : null;
         }
 
         public void RejectOrder()
         {
-            if (State != BusinessOrderSessionState.AwaitingDecision)
+            if (State != BusinessOrderSessionState.AwaitingDecision
+                || currentRequest == null
+                || !currentRequest.allowReject)
                 return;
 
             ticketManager?.ClearTicket();
             CompleteCurrentOrder(new BusinessOrderSessionResult
             {
-                customerOrderKey = currentEntry.entryId,
-                requestedRecipeId = currentEntry.contentId,
+                outcome = OrderSessionOutcome.Rejected,
+                customerOrderKey = currentRequest.customerOrderKey,
+                requestedRecipeId = currentRequest.requestedRecipeId,
                 accepted = false,
                 grade = OrderEvaluationGrade.Bad
             });
@@ -149,20 +184,23 @@ namespace Slainte.Business
 
             servingTarget = null;
             bartending?.DiscardAndResetSession();
-            ui?.ShowCrafting(CurrentRecipeName);
+            ui?.ShowCrafting(CurrentRecipeName, CanAbandonCurrentOrder);
         }
 
         public void ConfirmAbandonOrder()
         {
-            if (State != BusinessOrderSessionState.Crafting)
+            if (State != BusinessOrderSessionState.Crafting
+                || currentRequest == null
+                || !currentRequest.allowAbandon)
                 return;
 
             modeManager?.RequestModeChange(GameMode.OrderMode);
             ticketManager?.ClearTicket();
             CompleteCurrentOrder(new BusinessOrderSessionResult
             {
-                customerOrderKey = currentEntry.entryId,
-                requestedRecipeId = currentEntry.contentId,
+                outcome = OrderSessionOutcome.Abandoned,
+                customerOrderKey = currentRequest.customerOrderKey,
+                requestedRecipeId = currentRequest.requestedRecipeId,
                 accepted = true,
                 abandoned = true,
                 grade = OrderEvaluationGrade.Bad,
@@ -192,8 +230,9 @@ namespace Slainte.Business
             OrderEvaluationGrade grade = OrderEvaluationGrader.Resolve(evaluation, settings);
             pendingResult = new BusinessOrderSessionResult
             {
-                customerOrderKey = currentEntry.entryId,
-                requestedRecipeId = currentEntry.contentId,
+                outcome = OrderSessionOutcome.Served,
+                customerOrderKey = currentRequest.customerOrderKey,
+                requestedRecipeId = currentRequest.requestedRecipeId,
                 accepted = true,
                 grade = grade,
                 moneyDelta = settings != null ? settings.GetMoneyReward(grade) : 0,
@@ -246,7 +285,7 @@ namespace Slainte.Business
             if (State == BusinessOrderSessionState.PresentingOrder)
             {
                 SetState(BusinessOrderSessionState.AwaitingDecision);
-                ui?.ShowDecision();
+                ui?.ShowDecision(currentRequest == null || currentRequest.allowReject);
                 return;
             }
 
@@ -280,17 +319,28 @@ namespace Slainte.Business
             if (result == null)
                 return;
 
+            OrderSessionRequest completedRequest = currentRequest;
+            result.sessionId = completedRequest?.sessionId ?? result.sessionId;
+            result.owner = completedRequest?.owner ?? result.owner;
+
             GameProgress progress = GameProgress.Instance;
-            if (progress != null)
+            if (progress != null && completedRequest != null && completedRequest.applyProgressRewards)
             {
                 progress.AddMoney(result.moneyDelta);
                 progress.AddReputation(result.reputationDelta);
             }
 
-            customerSpawner?.Clear();
+            if (completedRequest == null || completedRequest.clearCustomerOnComplete)
+                customerSpawner?.Clear();
             ticketManager?.ClearTicket();
             SetState(BusinessOrderSessionState.Completed);
+
+            Action<BusinessOrderSessionResult> callback = completionCallback;
+            completionCallback = null;
+            currentRequest = null;
+            currentOrder = null;
             OrderCompleted?.Invoke(result);
+            callback?.Invoke(result);
         }
 
         private void SetState(BusinessOrderSessionState nextState)

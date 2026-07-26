@@ -30,7 +30,7 @@
     │               └── Content      (ContentHeightToBackground)
     │                   ├── ShelfBGImage              (Image + AspectRatioFitter, 카테고리 전환 시 sprite 교체)
     │                   └── [CategoryContainer × N]   (카테고리별, SetActive로 전환 — LiquorBottleSlotUI 수동 배치)
-    ├── CraftingJudgePanel     (CraftingJudgeUI, CraftingMode에서만 표시 — 임시 판정 버튼)
+    ├── CraftingJudgePanel     (레거시 디버그 UI — 공용 주문 세션 사용 시 런타임 비활성화)
     │   ├── GoodJobButton      (화면 왼쪽)
     │   └── BadJobButton       (화면 오른쪽)
     └── HUD

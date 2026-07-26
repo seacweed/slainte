@@ -25,6 +25,8 @@ namespace Slainte.Bartending
         private GameObject sessionRoot;
         private Transform sessionWorld;
         private BartendingViewport sessionViewport;
+        private RectTransform slotLayoutTemplate;
+        private RectTransform sessionSlotLayout;
         private LiquidPool sessionLiquidPool;
         private int sessionRenderLayer;
         private float sessionItemScale = 1f;
@@ -33,6 +35,7 @@ namespace Slainte.Bartending
         private Coroutine readyRoutine;
         private Camera sourceCamera;
         private int sourceCameraMask;
+        private bool slotLayoutTemplateWasActive;
 
         public VesselLiquidTracker CurrentTargetTracker { get; private set; }
         public int SessionBottleCount => sessionBottles.Count;
@@ -91,6 +94,7 @@ namespace Slainte.Bartending
                 return;
             }
 
+            CaptureSlotLayoutTemplate(scene);
             HideCanvasBartendingItems(scene);
             modeManager.OnModeChanged += HandleModeChanged;
             StartCoroutine(SyncInitialMode());
@@ -142,8 +146,18 @@ namespace Slainte.Bartending
             Camera camera = CreateWorldCamera(world.transform, settings, renderLayer);
             sessionViewport = CreateViewport(counter, camera, settings);
             Canvas.ForceUpdateCanvases();
+            sessionSlotLayout = CreateSessionSlotLayout(
+                slotLayoutTemplate,
+                sessionViewport != null ? sessionViewport.transform as RectTransform : null,
+                counter);
+            Canvas.ForceUpdateCanvases();
 
-            GetSlotLayout(targetScene, sessionViewport, settings, out List<Vector3> slotPositions, out float itemScale);
+            GetSlotLayout(
+                sessionSlotLayout,
+                sessionViewport,
+                settings,
+                out List<Vector3> slotPositions,
+                out float itemScale);
             sessionItemScale = itemScale;
             sessionSlots.Clear();
             sessionSlots.AddRange(CreateSlots(world.transform, settings, slotPositions, itemScale));
@@ -181,6 +195,13 @@ namespace Slainte.Bartending
                 sessionViewport.gameObject.SetActive(false);
                 Destroy(sessionViewport.gameObject);
                 sessionViewport = null;
+            }
+
+            if (sessionSlotLayout != null)
+            {
+                sessionSlotLayout.gameObject.SetActive(false);
+                Destroy(sessionSlotLayout.gameObject);
+                sessionSlotLayout = null;
             }
 
             if (sessionLiquidPool != null && LiquidPool.Instance == sessionLiquidPool)
@@ -471,7 +492,7 @@ namespace Slainte.Bartending
         }
 
         private static void GetSlotLayout(
-            Scene scene,
+            RectTransform tableSlots,
             BartendingViewport viewport,
             BusinessBartendingSettings settings,
             out List<Vector3> positions,
@@ -482,7 +503,6 @@ namespace Slainte.Bartending
                 : new List<Vector3>();
             itemScale = 1f;
 
-            RectTransform tableSlots = FindNamedRectTransform(scene, "TableSlots");
             if (tableSlots == null || viewport == null)
             {
                 return;
@@ -521,6 +541,161 @@ namespace Slainte.Bartending
                 float averageWidth = accumulatedWidth / mappedSlots.Count;
                 itemScale = Mathf.Clamp(averageWidth / referenceWidth, 0.1f, 2f);
             }
+        }
+
+        private static RectTransform CreateSessionSlotLayout(
+            RectTransform template,
+            RectTransform viewport,
+            RectTransform counter)
+        {
+            if (template == null)
+                return null;
+
+            Transform targetParent = viewport != null && viewport.parent != null
+                ? viewport.parent
+                : template.parent;
+            RectTransform layout = Instantiate(template, targetParent, false);
+            layout.name = "BartendingSessionSlots";
+            layout.anchorMin = new Vector2(0.5f, 0.5f);
+            layout.anchorMax = new Vector2(0.5f, 0.5f);
+            layout.pivot = new Vector2(0.5f, 0.5f);
+            layout.localRotation = Quaternion.identity;
+            layout.localScale = Vector3.one;
+            layout.anchoredPosition = Vector2.zero;
+            if (viewport != null)
+                layout.SetSiblingIndex(viewport.GetSiblingIndex());
+
+            foreach (UIDropSlot dropSlot in layout.GetComponentsInChildren<UIDropSlot>(true))
+                dropSlot.enabled = false;
+            foreach (Graphic graphic in layout.GetComponentsInChildren<Graphic>(true))
+            {
+                graphic.raycastTarget = false;
+                graphic.enabled = false;
+            }
+
+            layout.gameObject.SetActive(true);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(layout);
+            Canvas.ForceUpdateCanvases();
+            AlignSlotLayoutToVisibleTable(layout, counter, viewport);
+            return layout;
+        }
+
+        private static void AlignSlotLayoutToVisibleTable(
+            RectTransform layout,
+            RectTransform content,
+            RectTransform viewport)
+        {
+            if (layout == null || content == null || viewport == null)
+                return;
+
+            RectTransform visibleViewport = GetRootCanvasRect(viewport);
+            if (visibleViewport == null)
+                visibleViewport = viewport;
+
+            Rect contentScreenRect = GetScreenRect(content);
+            Rect viewportScreenRect = GetScreenRect(visibleViewport);
+            float xMin = Mathf.Max(contentScreenRect.xMin, viewportScreenRect.xMin);
+            float xMax = Mathf.Min(contentScreenRect.xMax, viewportScreenRect.xMax);
+            float yMin = Mathf.Max(contentScreenRect.yMin, viewportScreenRect.yMin);
+            float yMax = Mathf.Min(contentScreenRect.yMax, viewportScreenRect.yMax);
+            if (xMax <= xMin || yMax <= yMin
+                || !TryGetSlotLayoutScreenCenter(layout, out Vector2 slotScreenCenter))
+                return;
+
+            Vector2 targetScreenCenter = new Vector2(
+                (xMin + xMax) * 0.5f,
+                (yMin + yMax) * 0.5f);
+            Camera layoutCamera = GetCanvasCamera(layout);
+            Vector2 layoutScreenPosition = RectTransformUtility.WorldToScreenPoint(
+                layoutCamera,
+                layout.position);
+            Vector2 alignedScreenPosition =
+                layoutScreenPosition + targetScreenCenter - slotScreenCenter;
+
+            RectTransform parent = layout.parent as RectTransform;
+            if (parent != null
+                && RectTransformUtility.ScreenPointToWorldPointInRectangle(
+                    parent,
+                    alignedScreenPosition,
+                    GetCanvasCamera(parent),
+                    out Vector3 alignedWorldPosition))
+            {
+                layout.position = alignedWorldPosition;
+            }
+        }
+
+        private static bool TryGetSlotLayoutScreenCenter(
+            RectTransform layout,
+            out Vector2 screenCenter)
+        {
+            UIDropSlot[] dropSlots = layout.GetComponentsInChildren<UIDropSlot>(true);
+            bool hasBounds = false;
+            Rect bounds = default;
+            foreach (UIDropSlot dropSlot in dropSlots)
+            {
+                if (!(dropSlot.transform is RectTransform slotRect))
+                    continue;
+
+                Rect slotScreenRect = GetScreenRect(slotRect);
+                if (!hasBounds)
+                {
+                    bounds = slotScreenRect;
+                    hasBounds = true;
+                }
+                else
+                {
+                    bounds = Rect.MinMaxRect(
+                        Mathf.Min(bounds.xMin, slotScreenRect.xMin),
+                        Mathf.Min(bounds.yMin, slotScreenRect.yMin),
+                        Mathf.Max(bounds.xMax, slotScreenRect.xMax),
+                        Mathf.Max(bounds.yMax, slotScreenRect.yMax));
+                }
+            }
+
+            screenCenter = hasBounds ? bounds.center : default;
+            return hasBounds;
+        }
+
+        private static RectTransform GetRootCanvasRect(RectTransform rectTransform)
+        {
+            Canvas canvas = rectTransform != null
+                ? rectTransform.GetComponentInParent<Canvas>()
+                : null;
+            return canvas != null && canvas.rootCanvas != null
+                ? canvas.rootCanvas.transform as RectTransform
+                : null;
+        }
+
+        private static Rect GetScreenRect(RectTransform rectTransform)
+        {
+            Vector3[] corners = new Vector3[4];
+            rectTransform.GetWorldCorners(corners);
+            Camera canvasCamera = GetCanvasCamera(rectTransform);
+            Vector2 first = RectTransformUtility.WorldToScreenPoint(canvasCamera, corners[0]);
+            float xMin = first.x;
+            float xMax = first.x;
+            float yMin = first.y;
+            float yMax = first.y;
+            for (int i = 1; i < corners.Length; i++)
+            {
+                Vector2 point = RectTransformUtility.WorldToScreenPoint(canvasCamera, corners[i]);
+                xMin = Mathf.Min(xMin, point.x);
+                xMax = Mathf.Max(xMax, point.x);
+                yMin = Mathf.Min(yMin, point.y);
+                yMax = Mathf.Max(yMax, point.y);
+            }
+
+            return Rect.MinMaxRect(xMin, yMin, xMax, yMax);
+        }
+
+        private static Camera GetCanvasCamera(RectTransform rectTransform)
+        {
+            Canvas canvas = rectTransform != null
+                ? rectTransform.GetComponentInParent<Canvas>()
+                : null;
+            return canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay
+                ? null
+                : canvas.worldCamera;
         }
 
         private static List<SlotController> CreateSlots(
@@ -580,6 +755,11 @@ namespace Slainte.Bartending
             item.transform.localRotation = Quaternion.identity;
             item.transform.localScale = Vector3.one * itemScale;
             SetLayerRecursively(item, renderLayer);
+            foreach (VesselLiquidTracker tracker
+                     in item.GetComponentsInChildren<VesselLiquidTracker>(true))
+            {
+                tracker.SetDebugViewEnabled(false);
+            }
             return item.GetComponent<IBartendingItem>();
         }
 
@@ -660,6 +840,21 @@ namespace Slainte.Bartending
             public float Width { get; }
         }
 
+        private void CaptureSlotLayoutTemplate(Scene scene)
+        {
+            slotLayoutTemplate = FindNamedRectTransform(scene, "TableSlots");
+            if (slotLayoutTemplate == null)
+            {
+                Debug.LogWarning(
+                    "Business bartending could not find TableSlots. "
+                    + "The settings fallback positions will be used.");
+                return;
+            }
+
+            slotLayoutTemplateWasActive = slotLayoutTemplate.gameObject.activeSelf;
+            slotLayoutTemplate.gameObject.SetActive(false);
+        }
+
         private void HideCanvasBartendingItems(Scene scene)
         {
             foreach (Canvas canvas in FindAllInScene<Canvas>(scene))
@@ -691,6 +886,7 @@ namespace Slainte.Bartending
 
             DestroySession(clearBottleSelections: true);
             RestoreHiddenCanvasItems();
+            RestoreSlotLayoutTemplate();
         }
 
         private void RestoreSessionOverrides()
@@ -713,6 +909,13 @@ namespace Slainte.Bartending
             }
 
             hiddenCanvasItems.Clear();
+        }
+
+        private void RestoreSlotLayoutTemplate()
+        {
+            if (slotLayoutTemplate != null)
+                slotLayoutTemplate.gameObject.SetActive(slotLayoutTemplateWasActive);
+            slotLayoutTemplate = null;
         }
 
         private static void SetLayerRecursively(GameObject root, int layer)

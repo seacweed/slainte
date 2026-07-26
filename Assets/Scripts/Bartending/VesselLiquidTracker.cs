@@ -211,6 +211,12 @@ namespace Slainte.Bartending
             return false;
         }
 
+        public void SetDebugViewEnabled(bool enabled)
+        {
+            drawDebugGizmos = enabled;
+            drawRuntimeLabel = enabled;
+        }
+
         private void OnDrawGizmos()
         {
             if (!drawDebugGizmos || drawOnlyWhenSelected)

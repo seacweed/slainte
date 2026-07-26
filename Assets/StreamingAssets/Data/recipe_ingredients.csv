@@ -1,3 +1,4 @@
 recipeId,ingredientId,targetMl,toleranceMl
 vodka_lemon,breeze_vodka,50,8
 vodka_lemon,lemon_juice,30,8
+whiskey_neat,lans_whiskey,50,5

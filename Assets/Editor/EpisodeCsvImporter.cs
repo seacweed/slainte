@@ -300,6 +300,12 @@ public class EpisodeCsvImporter : EditorWindow
             string nid = Field(row, 0);
             bool crafting = string.Equals(Field(row, 5), "true", StringComparison.OrdinalIgnoreCase)
                          || Field(row, 5) == "1";
+            string craftingRecipeId = Field(row, 15);
+            if (crafting && string.IsNullOrWhiteSpace(craftingRecipeId))
+            {
+                Debug.LogError(
+                    $"[EpisodeCsvImporter] Crafting node '{nid}' is missing craftingRecipeId.");
+            }
 
             data.nodes.Add(new EpisodeNode
             {
@@ -318,6 +324,7 @@ public class EpisodeCsvImporter : EditorWindow
                 craftingFlagBad          = Field(row, 12),
                 craftingVarChangesGood   = ParseVarChangeList(Field(row, 13)),
                 craftingVarChangesBad    = ParseVarChangeList(Field(row, 14)),
+                craftingRecipeId         = craftingRecipeId,
                 characters = nodeChars.TryGetValue(nid, out var chars)
                     ? chars : new List<CharacterSlotEntry>(),
                 choices = nodeChoices.TryGetValue(nid, out var choices)

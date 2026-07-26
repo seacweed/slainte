@@ -1557,6 +1557,7 @@ MonoBehaviour:
     BgmCommand: 0
     BgmClipName: 
     CraftingTicketKey: sc1_f72
+    CraftingRecipeId: vodka_lemon
     CraftingFlagGood: 
     CraftingFlagBad: 
     CraftingVarChangesGood: []
@@ -1902,6 +1903,7 @@ MonoBehaviour:
     BgmCommand: 0
     BgmClipName: 
     CraftingTicketKey: sc1_f54
+    CraftingRecipeId: whiskey_neat
     CraftingFlagGood: 
     CraftingFlagBad: 
     CraftingVarChangesGood: []

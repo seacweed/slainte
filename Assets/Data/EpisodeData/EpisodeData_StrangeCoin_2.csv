@@ -10,7 +10,7 @@ minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,,,,
 characterKey,expressionKey,slotIndex,,,,,,
 ,,,,,,,,
 #NODES,,,,,,,,
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad,craftingRecipeId
 0,shaun,,어서오세요. 손님.,1,FALSE,,,
 1,shaun,,오늘 하루는 어떠셨…,2_2_1,FALSE,,,
 2_1_1,sally,,…좋은 저녁이야 바텐더,2_1_2,FALSE,,,

@@ -12,6 +12,9 @@ MainMenu
                  └─ BusinessScene → EpisodeRunner.Begin(EpisodeData)
 
 BusinessScene (Episode)
+  ├─ 제조 노드 → 공용 주문 세션
+  │    ├─ 영업과 동일한 제조·판정·피드백
+  │    └─ 사용한 병 재고 차감 후 에피소드 결과 분기로 복귀
   └─ EpisodeRunner 완료
        └─ DayFlowManager.CompleteEpisode(id)
             ├─ EpisodeManager.ClearEpisode(id)

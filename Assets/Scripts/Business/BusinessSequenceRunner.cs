@@ -90,6 +90,9 @@ namespace Slainte.Business
 
         private void HandleOrderCompleted(BusinessOrderSessionResult result)
         {
+            if (!started || result == null || result.owner != OrderSessionOwner.Business)
+                return;
+
             AdvanceAndSave();
             ScheduleNextEntry();
         }

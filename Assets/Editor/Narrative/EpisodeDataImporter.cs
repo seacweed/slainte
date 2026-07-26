@@ -172,6 +172,7 @@ namespace NarrativeFlow.Editor
             {
                 ev.Type               = EpisodeEventType.BusinessStart;
                 ev.CraftingTicketKey  = rNode.craftingTicketKey;
+                ev.CraftingRecipeId   = rNode.craftingRecipeId;
                 ev.CraftingFlagGood   = rNode.craftingFlagGood;
                 ev.CraftingFlagBad    = rNode.craftingFlagBad;
                 ev.CraftingVarChangesGood = rNode.craftingVarChangesGood

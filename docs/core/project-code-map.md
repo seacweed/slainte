@@ -178,7 +178,7 @@ flowchart TB
     Mode -->|"CraftingMode 진입"| Bootstrap["BusinessBartendingBootstrap"]
     Bootstrap --> Viewport["BartendingViewport + RenderTexture"]
     Bootstrap --> Physics["Bottle / Beaker / Glass / Slot / LiquidPool"]
-    Judge["CraftingJudgeUI"] -->|"Good / Bad"| Runner
+    Session["BusinessOrderSessionController"] -->|"Good / Mid / Bad"| Runner
 ```
 
 ### 내부 모드
@@ -272,7 +272,7 @@ flowchart TB
 | 에피소드 대사, 선택, 조건, 분기 | `Assets/Data/EpisodeData/*.csv`, `EpisodeCsvImporter`, `EpisodeData`/`EpisodeNode` |
 | 에피소드가 언제 시작 가능한지 | `EpisodeManager.CanStart()`, `EpisodeTriggerCondition`, `GameProgress` |
 | BusinessScene에서 대사가 어떻게 재생되는지 | `EpisodeRunner`, `DialogueController`, `CharacterStage` |
-| 제조 분기 처리 | `EpisodeRunner.NotifyCraftingCompleted()`, `CraftingJudgeUI`, `OrderTicketManager` |
+| 제조 분기 처리 | `EpisodeRunner`, `BusinessOrderSessionController`, `OrderTicketManager` |
 | 휴식 상황판에서 사진을 표시하는 방식 | `EpisodeBoardManager`, `EpisodePhotoTrigger`, `EpisodeInfoUI` |
 | 씬 간 이동/저장 | `GameManager`, `SceneTransitionManager`, `DataManager`, `GameProgress` |
 

@@ -10,10 +10,20 @@ The first integrated order flow is implemented under `Assets/Scripts/Business/`.
 - `BusinessOrderSessionUI` creates Accept, Reject, Serve, Discard, and Abandon controls at runtime.
 - `BusinessOrderFlowSettings` contains fixed orders, Good/Mid/Bad thresholds, rewards, and fallback feedback.
 - `BusinessBartendingBootstrap` starts with tools only. A `LiquorBottleSlotUI` left-click resolves a same-ID `ItemDef` and places the bottle from the rightmost free table slot.
+- The scene `TableSlots` object is a hidden layout template. `BusinessBartendingBootstrap` intersects the full `BarCounter` screen rect with the root Canvas (the actual Game View), measures the combined bounds of the generated slot children, and aligns that bounds center with the visible table area's center. Matching world-space collision slots exist only while an order is in `CraftingMode`; the temporary layout and collision slots are both destroyed when crafting ends.
 - Bottle objects track the active bottle amount while `GameProgress` stores total inventory. Discarding recreates the workspace without restoring ingredients or losing the selected bottles.
 - `BusinessFlowSceneSetup` creates the settings/sample assets and connects `BusinessFlowBootstrap` to `BusinessScene` through the Unity Editor API.
 
 Current sample: `vertical_slice_vodka_lemon` requests `vodka_lemon` with Breeze Vodka 50 ml and Lemon Juice 30 ml.
+
+## Episode crafting integration
+
+- Episode crafting nodes call the same `BusinessOrderSessionController` used by the business sequence.
+- `craftingTicketKey` selects the visible ticket, while `craftingRecipeId` selects the recipe evaluated from `recipes.csv`.
+- Episode orders skip the business accept/reject presentation and return the result to `EpisodeRunner`.
+- Bottle capacity changes update the shared `GameProgress` inventory. Serving and discarding both retain consumed amounts, and the episode saves after the order result is applied.
+- Episode orders do not advance the business snapshot, change the day, or grant business money/reputation rewards.
+- `Good` returns to the good branch; `Mid` and `Bad` return to the bad branch.
 
 ## 영업 씬 손님 & 주문 (`Assets/Scripts/Conversation/Sell/`, `Assets/Scripts/OrderTicket/`)
 

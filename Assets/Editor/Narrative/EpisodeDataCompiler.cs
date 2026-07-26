@@ -146,6 +146,7 @@ namespace NarrativeFlow.Editor
                 case EpisodeEventType.BusinessStart:
                     n.requiresCrafting       = true;
                     n.craftingTicketKey      = ev.CraftingTicketKey;
+                    n.craftingRecipeId       = ev.CraftingRecipeId;
                     n.craftingFlagGood       = ev.CraftingFlagGood;
                     n.craftingFlagBad        = ev.CraftingFlagBad;
                     n.craftingVarChangesGood = ev.CraftingVarChangesGood
@@ -358,12 +359,12 @@ namespace NarrativeFlow.Editor
             }
 
             sb.AppendLine("#NODES");
-            sb.AppendLine("nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad");
+            sb.AppendLine("nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad,craftingRecipeId");
             foreach (var n in data.nodes)
             {
                 string varGood = VarChangesToCsv(n.craftingVarChangesGood);
                 string varBad  = VarChangesToCsv(n.craftingVarChangesBad);
-                sb.AppendLine($"{n.nodeId},{n.speakerKey},{n.overrideSpeakerName},{Csv(n.text)},{n.nextNodeId},{n.requiresCrafting.ToString().ToLower()},{n.craftingTicketKey},{n.nextNodeIdGood},{n.nextNodeIdBad},{n.bgmCommand},{n.bgmClipName},{n.craftingFlagGood},{n.craftingFlagBad},{varGood},{varBad}");
+                sb.AppendLine($"{n.nodeId},{n.speakerKey},{n.overrideSpeakerName},{Csv(n.text)},{n.nextNodeId},{n.requiresCrafting.ToString().ToLower()},{n.craftingTicketKey},{n.nextNodeIdGood},{n.nextNodeIdBad},{n.bgmCommand},{n.bgmClipName},{n.craftingFlagGood},{n.craftingFlagBad},{varGood},{varBad},{n.craftingRecipeId}");
             }
             sb.AppendLine();
 

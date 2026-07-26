@@ -26,7 +26,8 @@ namespace Slainte.Editor
         {
             SubmitBad,
             Reject,
-            DiscardAbandon
+            DiscardAbandon,
+            EpisodeResourceUse
         }
 
         private const string ScenePath = "Assets/BusinessScene.unity";
@@ -50,9 +51,18 @@ namespace Slainte.Editor
         private static bool smokeBaselinesCaptured;
         private static int smokeBaselineMoney;
         private static int smokeBaselineReputation;
+        private static int smokeBaselineDay;
+        private static int smokeBaselineBusinessIndex;
+        private static int smokeBaselineBusinessCount;
+        private static bool smokeBaselineBusinessCompleted;
         private static int smokeOriginalBottleInstanceId;
         private static float smokeExpectedVodkaCapacity;
         private static float smokeExpectedVodkaInventoryAmount;
+        private static bool episodeOrderRequested;
+        private static bool episodeOrderCompleted;
+        private static BusinessOrderSessionResult episodeOrderResult;
+        private static bool smokeOriginalAutoStart;
+        private static bool smokeAutoStartOverridden;
         private static bool previousEnterPlayModeOptionsEnabled;
         private static EnterPlayModeOptions previousEnterPlayModeOptions;
         private static string smokeAutosavePath;
@@ -92,6 +102,11 @@ namespace Slainte.Editor
             StartSmokeTest(SmokeScenario.DiscardAbandon);
         }
 
+        public static void RunEpisodeResourceQaFromCommandLine()
+        {
+            StartSmokeTest(SmokeScenario.EpisodeResourceUse);
+        }
+
         public static void RunDataQaFromCommandLine()
         {
             try
@@ -115,9 +130,15 @@ namespace Slainte.Editor
             smokeStartedAt = EditorApplication.timeSinceStartup;
             smokeExitCode = 1;
             smokeBaselinesCaptured = false;
+            episodeOrderRequested = false;
+            episodeOrderCompleted = false;
+            episodeOrderResult = null;
             smokeOriginalBottleInstanceId = 0;
             smokeExpectedVodkaCapacity = 0f;
             smokeExpectedVodkaInventoryAmount = 0f;
+            smokeAutoStartOverridden = false;
+            if (scenario == SmokeScenario.EpisodeResourceUse)
+                OverrideAutoStartForEpisodeQa();
             PrepareSmokeAutosaveBackup();
             previousEnterPlayModeOptionsEnabled = EditorSettings.enterPlayModeOptionsEnabled;
             previousEnterPlayModeOptions = EditorSettings.enterPlayModeOptions;
@@ -385,6 +406,7 @@ namespace Slainte.Editor
 
             EditorSettings.enterPlayModeOptionsEnabled = previousEnterPlayModeOptionsEnabled;
             EditorSettings.enterPlayModeOptions = previousEnterPlayModeOptions;
+            RestoreAutoStartAfterEpisodeQa();
             if (!RestoreSmokeAutosave())
                 smokeExitCode = 1;
             AssetDatabase.SaveAssets();
@@ -418,12 +440,23 @@ namespace Slainte.Editor
 
                 smokeBaselineMoney = progress.Money;
                 smokeBaselineReputation = progress.Reputation;
+                smokeBaselineDay = progress.CurrentDay;
+                BusinessDaySnapshot baselineSnapshot = progress.GetBusinessDaySnapshot();
+                smokeBaselineBusinessIndex = baselineSnapshot.currentIndex;
+                smokeBaselineBusinessCount = baselineSnapshot.entries?.Count ?? 0;
+                smokeBaselineBusinessCompleted = baselineSnapshot.isCompleted;
                 smokeBaselinesCaptured = true;
             }
 
             switch (smokePhase)
             {
                 case SmokePhase.WaitingForOrder:
+                    if (smokeScenario == SmokeScenario.EpisodeResourceUse)
+                    {
+                        TryStartEpisodeResourceOrder();
+                        break;
+                    }
+
                     if (session.State == BusinessOrderSessionState.PresentingOrder)
                     {
                         AdvanceDialogue(dialogue);
@@ -450,7 +483,18 @@ namespace Slainte.Editor
                             Object.FindFirstObjectByType<BusinessBartendingBootstrap>();
                         if (bartending != null && bartending.CurrentTargetTracker != null)
                         {
-                            if (smokeScenario == SmokeScenario.SubmitBad)
+                            if (smokeScenario == SmokeScenario.EpisodeResourceUse)
+                            {
+                                if (!PrepareEpisodeResourceUse(bartending, out string failure))
+                                {
+                                    FinishSmokeTest(false, failure);
+                                    break;
+                                }
+
+                                session.SubmitOrder();
+                                smokePhase = SmokePhase.WaitingForFeedback;
+                            }
+                            else if (smokeScenario == SmokeScenario.SubmitBad)
                             {
                                 session.SubmitOrder();
                                 smokePhase = SmokePhase.WaitingForFeedback;
@@ -556,6 +600,18 @@ namespace Slainte.Editor
                     break;
 
                 case SmokePhase.WaitingForCompletion:
+                    if (smokeScenario == SmokeScenario.EpisodeResourceUse)
+                    {
+                        if (!episodeOrderCompleted)
+                            break;
+
+                        if (TryValidateEpisodeResourceScenario(session, out string episodeFailure))
+                            FinishSmokeTest(true, "EpisodeResourceUse QA passed.");
+                        else
+                            FinishSmokeTest(false, episodeFailure);
+                        break;
+                    }
+
                     BusinessDaySnapshot snapshot = GameProgress.Instance?.GetBusinessDaySnapshot();
                     if (snapshot != null && snapshot.isCompleted)
                     {
@@ -566,6 +622,145 @@ namespace Slainte.Editor
                     }
                     break;
             }
+        }
+
+        private static void TryStartEpisodeResourceOrder()
+        {
+            if (episodeOrderRequested)
+            {
+                smokePhase = SmokePhase.WaitingForCrafting;
+                return;
+            }
+
+            BusinessFlowBootstrap bootstrap = Object.FindFirstObjectByType<BusinessFlowBootstrap>();
+            if (bootstrap == null || !bootstrap.IsRuntimeReady)
+                return;
+
+            var request = new OrderSessionRequest
+            {
+                sessionId = "qa_episode_resource_use",
+                owner = OrderSessionOwner.Episode,
+                requestedRecipeId = "vodka_lemon",
+                ticketKey = VerticalOrderKey,
+                presentOrder = false,
+                allowReject = false,
+                allowAbandon = false,
+                applyProgressRewards = false,
+                clearCustomerOnComplete = false
+            };
+
+            episodeOrderRequested = bootstrap.StartEpisodeOrder(request, result =>
+            {
+                episodeOrderResult = result;
+                episodeOrderCompleted = true;
+                GameModeManager modeManager = Object.FindFirstObjectByType<GameModeManager>();
+                modeManager?.RequestModeChange(GameMode.EpisodeMode);
+                DataManager.Instance?.Save();
+            });
+        }
+
+        private static bool PrepareEpisodeResourceUse(
+            BusinessBartendingBootstrap bartending,
+            out string failure)
+        {
+            failure = string.Empty;
+            BottleController vodkaBottle = FindBottle("breeze_vodka");
+            if (vodkaBottle == null)
+            {
+                if (bartending.SessionBottleCount != 0)
+                {
+                    failure = "A bottle auto-spawned before the episode order used the liquor shelf.";
+                    return false;
+                }
+
+                if (!ClickShelfBottle("breeze_vodka", out string shelfFailure))
+                {
+                    failure = "Episode order could not select vodka from the liquor shelf: " + shelfFailure;
+                    return false;
+                }
+
+                vodkaBottle = FindBottle("breeze_vodka");
+            }
+
+            if (vodkaBottle == null)
+            {
+                failure = "Episode order did not create the selected vodka bottle.";
+                return false;
+            }
+
+            LiquorBottleSlotUI vodkaShelfSlot = FindShelfBottleSlot("breeze_vodka");
+            float defaultInventoryAmount =
+                vodkaShelfSlot != null && vodkaShelfSlot.Definition != null
+                    ? vodkaShelfSlot.Definition.MaxAmount
+                    : vodkaBottle.CurrentCapacity;
+            float inventoryAmount = GameProgress.Instance.GetBottleAmount(
+                "breeze_vodka",
+                defaultInventoryAmount);
+            smokeExpectedVodkaCapacity = Mathf.Max(0f, vodkaBottle.CurrentCapacity - 10f);
+            smokeExpectedVodkaInventoryAmount = Mathf.Max(0f, inventoryAmount - 10f);
+            vodkaBottle.SetCurrentCapacity(smokeExpectedVodkaCapacity, true);
+            return true;
+        }
+
+        private static bool TryValidateEpisodeResourceScenario(
+            BusinessOrderSessionController session,
+            out string failure)
+        {
+            failure = string.Empty;
+            GameProgress progress = GameProgress.Instance;
+            if (progress == null)
+            {
+                failure = "GameProgress became unavailable during episode resource validation.";
+                return false;
+            }
+
+            if (episodeOrderResult == null
+                || episodeOrderResult.owner != OrderSessionOwner.Episode
+                || episodeOrderResult.outcome != OrderSessionOutcome.Served)
+            {
+                failure = "Episode order did not return the expected episode-owned served result.";
+                return false;
+            }
+
+            if (session.State != BusinessOrderSessionState.Completed)
+            {
+                failure = "Episode order session did not reach Completed state.";
+                return false;
+            }
+
+            if (!Mathf.Approximately(
+                    progress.GetBottleAmount("breeze_vodka", -1f),
+                    smokeExpectedVodkaInventoryAmount))
+            {
+                failure = "Episode order did not retain the consumed bottle inventory.";
+                return false;
+            }
+
+            if (progress.Money != smokeBaselineMoney || progress.Reputation != smokeBaselineReputation)
+            {
+                failure = "Episode order incorrectly applied business money or reputation rewards.";
+                return false;
+            }
+
+            BusinessDaySnapshot snapshot = progress.GetBusinessDaySnapshot();
+            int entryCount = snapshot.entries?.Count ?? 0;
+            if (progress.CurrentDay != smokeBaselineDay
+                || snapshot.currentIndex != smokeBaselineBusinessIndex
+                || entryCount != smokeBaselineBusinessCount
+                || snapshot.isCompleted != smokeBaselineBusinessCompleted)
+            {
+                failure = "Episode order incorrectly changed the day or business sequence snapshot.";
+                return false;
+            }
+
+            GameModeManager modeManager = Object.FindFirstObjectByType<GameModeManager>();
+            if (modeManager != null && modeManager.CurrentMode != GameMode.EpisodeMode)
+            {
+                failure = "Episode order did not return control to EpisodeMode.";
+                return false;
+            }
+
+            return true;
         }
 
         private static BottleController FindBottle(string itemId)
@@ -732,6 +927,36 @@ namespace Slainte.Editor
 
             EditorApplication.update -= TickSmokeTest;
             EditorApplication.ExitPlaymode();
+        }
+
+        private static void OverrideAutoStartForEpisodeQa()
+        {
+            BusinessOrderFlowSettings settings =
+                AssetDatabase.LoadAssetAtPath<BusinessOrderFlowSettings>(SettingsPath);
+            if (settings == null)
+                return;
+
+            smokeOriginalAutoStart = settings.autoStart;
+            settings.autoStart = false;
+            smokeAutoStartOverridden = true;
+            EditorUtility.SetDirty(settings);
+            AssetDatabase.SaveAssets();
+        }
+
+        private static void RestoreAutoStartAfterEpisodeQa()
+        {
+            if (!smokeAutoStartOverridden)
+                return;
+
+            BusinessOrderFlowSettings settings =
+                AssetDatabase.LoadAssetAtPath<BusinessOrderFlowSettings>(SettingsPath);
+            if (settings != null)
+            {
+                settings.autoStart = smokeOriginalAutoStart;
+                EditorUtility.SetDirty(settings);
+            }
+
+            smokeAutoStartOverridden = false;
         }
 
         private static void PrepareSmokeAutosaveBackup()

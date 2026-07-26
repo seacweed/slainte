@@ -11,7 +11,7 @@ characterKey,expressionKey,slotIndex,,,,,,,,,,
 ,,,,,,,,,,,,
 ,,,,,,,,,,,,
 #NODES,,,,,,,,,,,,
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad,craftingRecipeId
 0,f72,,정말이라니까! 라티오들은 손가락으로 액체를 마신다고!,1,FALSE,,,,,,,
 1,sally,,거짓말도 적당히 해. 그런걸 누가 믿어?,2,FALSE,,,,,,,
 2,f72,,왜 아무도 안 믿어주는거야! 내가 오늘 그걸 보려고 얼마나 애썼는줄 알아?,3,FALSE,,,,,,,

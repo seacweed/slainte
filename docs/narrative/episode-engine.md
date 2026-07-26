@@ -26,7 +26,7 @@
 `EpisodeData.openingCharacters: List<CharacterSlotEntry>` — 에피소드 시작 시 표시할 캐릭터+표정.
 `EpisodeNode.characters: List<CharacterSlotEntry>` — 해당 노드에서 표시할 캐릭터+표정. 비어 있으면 스테이지 변경 없음.
 `EpisodeNode` 제조 관련 필드:
-- `requiresCrafting: bool` + `craftingTicketKey: string` — 노드 진입 시 `CraftingMode`로 전환
+- `requiresCrafting: bool` + `craftingTicketKey: string` + `craftingRecipeId: string` — 공용 주문 세션을 통해 티켓과 레시피를 준비하고 `CraftingMode`로 전환
 - `nextNodeIdGood: string` / `nextNodeIdBad: string` — 제조 결과에 따른 분기 노드 (비어 있으면 `nextNodeId` 사용)
 
 `EpisodeNode` 분기 필드:
@@ -41,7 +41,11 @@
 `EpisodeTriggerCondition` 필드:
 - `requiredVars: List<VarCondition>` — 수치 변수 조건이 모두 충족되어야 에피소드 발동. `VarCondition`은 `varName`, `op`(`CompareOp` 열거형), `threshold` 보유
 
-제조 완료는 `EpisodeRunner.NotifyCraftingCompleted(bool isGood)` 호출로 처리합니다. 현재는 `CraftingJudgeUI`의 GoodJob/BadJob 버튼으로 수동 판정합니다 (실제 제조 판정 미구현 상태의 임시 구현).
+에피소드 제조는 영업과 동일한 `BusinessOrderSessionController`와 `BusinessBartendingBootstrap`을 사용합니다. 주문 세션이 제조·제출·Good/Mid/Bad 판정·피드백을 처리하고, `EpisodeRunner`는 결과를 받아 `Good`만 성공 분기로, `Mid`와 `Bad`는 실패 분기로 연결합니다. 병 용량 변화는 즉시 `GameProgress` 재고에 반영되며 제조 완료 시 저장됩니다. 폐기한 재료도 복구되지 않습니다.
+
+테이블 슬롯 UI와 실제 충돌 슬롯은 제조 세션이 `CraftingMode`에 들어갈 때 전체 `BarCounter`와 루트 Canvas(실제 Game View)가 화면에서 겹치는 영역, 즉 현재 보이는 테이블 부분의 중앙에 생성됩니다. 이때 레이아웃 오브젝트 자체가 아니라 생성된 슬롯 자식 전체의 경계 중앙을 맞춥니다. 제조를 벗어나면 함께 제거되며, 씬의 `TableSlots`는 크기와 간격 계산용 비활성 템플릿으로만 사용합니다.
+
+에피소드 주문은 영업 보상과 영업 진행도를 적용하지 않습니다. `CraftingJudgeUI`는 레거시 디버그 UI로 런타임에서 비활성화됩니다.
 
 ## 오디오 (`Assets/Scripts/Audio/`)
 

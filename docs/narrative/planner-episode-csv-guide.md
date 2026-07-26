@@ -165,6 +165,7 @@ f72,frust,-1
 | `nextNodeId` | 다음 노드 ID. 비우면 에피소드 종료 | `1` |
 | `requiresCrafting` | 제조 판정 여부 | `false` |
 | `craftingTicketKey` | 제조 티켓 ID (판정 있을 때만) | `sc0_f72` |
+| `craftingRecipeId` | 실제 제조·판정에 사용할 레시피 ID (`recipes.csv`) | `vodka_lemon` |
 | `nextNodeIdGood` | 제조 성공 시 이동 노드 | `5-1-1` |
 | `nextNodeIdBad` | 제조 실패 시 이동 노드 | `5-2-1` |
 | `bgmCommand` | BGM 명령 (`play` / `stop` / `none` 또는 빈 칸) | `play` |
@@ -182,10 +183,10 @@ f72,frust,-1
 
 ```csv
 #NODES
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad
-0,f72,???,흘..크흘…,1,false,,,,play,bgm_tension,,,,
-1,shaun,,뭔가 원하는 게 있나요?,2,false,,,,,,,,
-2,f72,,,,true,sc0_f72,3a,3b,,,sc0_good,sc0_bad,sally_affinity+5,sally_affinity-2
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad,craftingRecipeId
+0,f72,???,흘..크흘…,1,false,,,,play,bgm_tension,,,,,
+1,shaun,,뭔가 원하는 게 있나요?,2,false,,,,,,,,,
+2,f72,,,,true,sc0_f72,3a,3b,,,sc0_good,sc0_bad,sally_affinity+5,sally_affinity-2,vodka_lemon
 ```
 
 ---
@@ -376,7 +377,9 @@ nodeId,requiredAllFlags,requiredAnyFlags,nextNodeId
 
 1. 해당 노드의 `text`와 `nextNodeId`는 **비워둡니다**.
 2. `requiresCrafting`을 `true`로 설정합니다.
-3. `craftingTicketKey`, `nextNodeIdGood`, `nextNodeIdBad`를 채웁니다.
+3. `craftingTicketKey`, `craftingRecipeId`, `nextNodeIdGood`, `nextNodeIdBad`를 채웁니다.
+4. 제조에서는 영업과 같은 병 재고를 사용합니다. 사용하거나 폐기한 재료는 복구되지 않습니다.
+5. 판정이 `Good`이면 성공 분기, `Mid` 또는 `Bad`이면 실패 분기로 이동합니다.
 
 ```
 노드 5 (제조 판정) ─── 성공 → 노드 5-1-1
@@ -385,7 +388,7 @@ nodeId,requiredAllFlags,requiredAnyFlags,nextNodeId
 
 ```csv
 #NODES
-5,,,,,true,sc0_f72,5-1-1,5-2-1,,
+5,,,,,true,sc0_f72,5-1-1,5-2-1,,,,,,,vodka_lemon
 ```
 
 ---
@@ -408,7 +411,7 @@ characterKey,expressionKey,slotIndex
 f72,neutral,-1
 
 #NODES
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad,craftingRecipeId
 0,f72,???,뭘 마시겠어?,1,false,,,,play,bgm_bar,,,,
 1,shaun,,추천해줘.,2,false,,,,,,,,
 2,f72,,그럼 선택해.,,false,,,,,,,,

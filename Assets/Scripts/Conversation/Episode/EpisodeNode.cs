@@ -32,6 +32,7 @@ public class EpisodeNode
     [Header("Crafting (optional)")]
     public bool   requiresCrafting = false;
     public string craftingTicketKey;
+    public string craftingRecipeId;
     public string nextNodeIdGood;
     public string nextNodeIdBad;
     public string craftingFlagGood;

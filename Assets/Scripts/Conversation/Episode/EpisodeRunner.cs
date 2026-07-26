@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Slainte.Business;
 using UnityEngine;
 
 public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
@@ -171,16 +172,69 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
     {
         _waitingForCrafting = true;
 
-        if (!string.IsNullOrWhiteSpace(node.craftingTicketKey))
-            ticketManager?.Prepare(node.craftingTicketKey);
+        if (string.IsNullOrWhiteSpace(node.craftingRecipeId))
+        {
+            Debug.LogError(
+                $"[EpisodeRunner] Crafting node '{node.nodeId}' has no recipe ID. "
+                + "The bad branch will be used.");
+            CompleteCraftingNode(false);
+            yield break;
+        }
 
-        modeManager?.RequestModeChange(GameMode.CraftingMode);
+        const float bootstrapTimeout = 5f;
+        float timeoutAt = Time.realtimeSinceStartup + bootstrapTimeout;
+        BusinessFlowBootstrap bootstrap = null;
+        while (bootstrap == null || !bootstrap.IsRuntimeReady)
+        {
+            bootstrap = FindFirstObjectByType<BusinessFlowBootstrap>();
+            if (Time.realtimeSinceStartup >= timeoutAt)
+            {
+                Debug.LogError("[EpisodeRunner] Timed out while waiting for the shared order session.");
+                CompleteCraftingNode(false);
+                yield break;
+            }
+            yield return null;
+        }
+
+        var request = new OrderSessionRequest
+        {
+            sessionId = $"{_episode.episodeId}:{node.nodeId}",
+            owner = OrderSessionOwner.Episode,
+            requestedRecipeId = node.craftingRecipeId,
+            ticketKey = node.craftingTicketKey,
+            presentOrder = false,
+            allowReject = false,
+            allowAbandon = false,
+            applyProgressRewards = false,
+            clearCustomerOnComplete = false
+        };
+
+        if (!bootstrap.StartEpisodeOrder(request, HandleEpisodeOrderCompleted))
+        {
+            Debug.LogError(
+                $"[EpisodeRunner] Could not start the shared order session for node '{node.nodeId}'.");
+            CompleteCraftingNode(false);
+            yield break;
+        }
 
         while (_waitingForCrafting)
             yield return null;
     }
 
+    private void HandleEpisodeOrderCompleted(BusinessOrderSessionResult result)
+    {
+        bool isGood = result != null
+            && result.outcome == OrderSessionOutcome.Served
+            && result.grade == OrderEvaluationGrade.Good;
+        CompleteCraftingNode(isGood);
+    }
+
     public void NotifyCraftingCompleted(bool isGood)
+    {
+        CompleteCraftingNode(isGood);
+    }
+
+    private void CompleteCraftingNode(bool isGood)
     {
         _waitingForCrafting = false;
         modeManager?.RequestModeChange(GameMode.EpisodeMode);
@@ -201,6 +255,8 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 
         string preferred = isGood ? _currentNode.nextNodeIdGood : _currentNode.nextNodeIdBad;
         string nextId = string.IsNullOrWhiteSpace(preferred) ? _currentNode.nextNodeId : preferred;
+
+        DataManager.Instance?.Save();
 
         if (string.IsNullOrWhiteSpace(nextId)) { EndEncounter(); return; }
         EnterNode(nextId);

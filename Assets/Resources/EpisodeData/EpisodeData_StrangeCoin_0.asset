@@ -157,6 +157,7 @@ MonoBehaviour:
       slotIndex: -1
     requiresCrafting: 1
     craftingTicketKey: sc0_f72
+    craftingRecipeId: vodka_lemon
     nextNodeIdGood: 5_1_1
     nextNodeIdBad: 5_2_1
     craftingFlagGood: sc0_true

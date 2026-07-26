@@ -142,6 +142,7 @@ f72,frust,-1
 | `nextNodeId` | 다음에 이동할 노드 ID (비우면 에피소드 종료) | `1` |
 | `requiresCrafting` | 제조 판정 여부 (`true` / `false`) | `false` |
 | `craftingTicketKey` | 사용할 제조 티켓 ID (`requiresCrafting=true` 일 때만 작성) | `sc0_f72` |
+| `craftingRecipeId` | 실제 판정에 사용할 `recipes.csv`의 레시피 ID. 제조 노드에서는 필수 | `vodka_lemon` |
 | `nextNodeIdGood` | 제조 성공 시 이동할 노드 ID | `5-1-1` |
 | `nextNodeIdBad` | 제조 실패 시 이동할 노드 ID | `5-2-1` |
 | `bgmCommand` | BGM 명령 (`none` / `play` / `stop`, 비우면 `none`) | `play` |
@@ -151,7 +152,7 @@ f72,frust,-1
 | `craftingVarChangesGood` | 제조 **성공** 시 수치 변수 변경 (`\|` 구분, `+`/`-` 증감) | `sally_affinity+5` |
 | `craftingVarChangesBad` | 제조 **실패** 시 수치 변수 변경 (`\|` 구분, `+`/`-` 증감) | `sally_affinity-2` |
 
-**제조 판정 노드** 작성 시: `text`와 `nextNodeId`는 비우고, `requiresCrafting=true` + 성공/실패 노드 ID를 작성합니다.
+**제조 판정 노드** 작성 시: `text`와 `nextNodeId`는 비우고, `requiresCrafting=true`, `craftingTicketKey`, `craftingRecipeId`, 성공/실패 노드 ID를 작성합니다. 실제 병 재고를 영업과 공유하며, 제출 결과가 `Good`일 때만 성공 분기로 이동합니다. `Mid`와 `Bad`는 실패 분기로 이동합니다.
 
 **선택지 노드** 작성 시: `nextNodeId`는 비우고 `#CHOICES` 섹션에 선택지를 작성합니다.
 
@@ -159,9 +160,9 @@ f72,frust,-1
 
 ```csv
 #NODES
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad
-0,f72,???,흘..크흘…,1,false,,,,play,bgm_tension,,,,
-5,f72,???,,,true,sc0_f72,5-1-1,5-2-1,,,sc0_crafted_good,sc0_crafted_bad,sally_affinity+5,sally_affinity-2
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad,craftingRecipeId
+0,f72,???,흘..크흘…,1,false,,,,play,bgm_tension,,,,,
+5,f72,???,,,true,sc0_f72,5-1-1,5-2-1,,,sc0_crafted_good,sc0_crafted_bad,sally_affinity+5,sally_affinity-2,vodka_lemon
 ```
 
 > **주의**: 대사에 쉼표(`,`)가 포함된 경우 반드시 큰따옴표로 감싸야 합니다.  
@@ -318,7 +319,7 @@ characterKey,expressionKey,slotIndex
 f72,neutral,-1
 
 #NODES
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad,craftingRecipeId
 0,f72,???,뭘 마시겠어?,1,false,,,,play,bgm_bar,,,,
 1,shaun,,추천해줘.,2,false,,,,none,,,,,
 2,f72,,그럼 선택해.,,false,,,,none,,,,,

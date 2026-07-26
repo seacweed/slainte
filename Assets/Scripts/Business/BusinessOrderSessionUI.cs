@@ -62,15 +62,17 @@ namespace Slainte.Business
             SetGroups(false, false, false);
         }
 
-        public void ShowDecision()
+        public void ShowDecision(bool allowReject = true)
         {
             SetStatus("Accept or reject the order.");
+            SetButtonVisible(decisionGroup, "RejectButton", allowReject);
             SetGroups(true, false, false);
         }
 
-        public void ShowCrafting(string recipeName)
+        public void ShowCrafting(string recipeName, bool allowAbandon = true)
         {
             SetStatus("Crafting: " + recipeName);
+            SetButtonVisible(craftingGroup, "AbandonButton", allowAbandon);
             SetGroups(false, true, false);
         }
 
@@ -119,9 +121,19 @@ namespace Slainte.Business
         private void HideAbandonConfirmation()
         {
             if (controller != null)
-                ShowCrafting(controller.CurrentRecipeName);
+                ShowCrafting(controller.CurrentRecipeName, controller.CanAbandonCurrentOrder);
             else
                 SetGroups(false, true, false);
+        }
+
+        private static void SetButtonVisible(GameObject group, string buttonName, bool visible)
+        {
+            if (group == null)
+                return;
+
+            Transform button = group.transform.Find(buttonName);
+            if (button != null)
+                button.gameObject.SetActive(visible);
         }
 
         private void SetStatus(string message)

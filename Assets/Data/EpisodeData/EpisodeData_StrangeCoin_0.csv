@@ -11,13 +11,13 @@ characterKey,expressionKey,slotIndex,,,,,,,,,,
 f72,frust,-1,,,,,,,,,,
 ,,,,,,,,,,,,
 #NODES,,,,,,,,,,,,
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad,craftingRecipeId
 0,f72,???,흠..크흠…,1,FALSE,,,,play,Ep_main_0,,
 1,f72,???,(은밀히 수상한 화폐를 건네며) 여기 <b>갓파더</b> 하나.,2,FALSE,,,,,,,
 2,shaun,,죄송합니다 손님. 저희는 공식 화폐만 받습니다만…,3,FALSE,,,,,,,
 3,f72,???,순진한 바텐더 씨는 경찰 무서운 줄 모르는군!,4,FALSE,,,,,,,
 4,f72,???,영업 정지되고 싶지 않으면 <u>당장 술 내오는 게 좋을거야!</u>,5,FALSE,,,,,,,
-5,,,,,TRUE,sc0_f72,5_1_1,5_2_1,,,sc0_true,sc0_false
+5,,,,,TRUE,sc0_f72,5_1_1,5_2_1,,,sc0_true,sc0_false,,,vodka_lemon
 5_1_1,f72,???,소문대로 꽤 괜찮군.,5_1_2,FALSE,,,,,,,
 5_1_2,f72,???,<b>5번가</b>의 싸구려 <b>밀주</b>랑은 차원이 달라.,5_1_3,FALSE,,,,,,,
 5_1_3,f72,???,아.,5_1_4,FALSE,,,,,,,

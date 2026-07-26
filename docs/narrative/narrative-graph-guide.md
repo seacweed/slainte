@@ -92,6 +92,7 @@ Sequence Editor 빈 공간 **우클릭** → 이벤트 타입 선택 후 배치 
 | 필드 | 설명 |
 |---|---|
 | Ticket | CraftingTicket 키 |
+| Recipe | `recipes.csv`에서 사용할 실제 판정 레시피 ID |
 | Flag (Good/Bad) | 제조 성공/실패 시 설정할 플래그 |
 | Var Changes (Good/Bad) | 제조 결과에 따른 변수 변화 |
 

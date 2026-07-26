@@ -13,10 +13,10 @@ architecture.md 업데이트 시 관련 문서에 입력할 사항들은 해당 
 |---|---|---|
 | `OrderMode` | 기본 영업 상태 (초기 모드) | FrontWorldPanel + DialoguePanel + OrderTicketPanel(open) + RecipeBookPanel(open) |
 | `EpisodeMode` | 에피소드 실행 중 | FrontWorldPanel + DialoguePanel (OrderTicketPanel/RecipeBookPanel 토글 잠금·슬라이드 닫힘) |
-| `CraftingMode` | 에피소드 중 칵테일 제조 | FrontWorldPanel + DialoguePanel + OrderTicketPanel(open) + RecipeBookPanel(open) + CraftingJudgePanel |
+| `CraftingMode` | 영업·에피소드 공용 칵테일 제조 | FrontWorldPanel + DialoguePanel + OrderTicketPanel(open) + RecipeBookPanel(open) |
 
 `GameModeManager`가 `RequestModeChange(GameMode)`를 통해 모드 전환을 처리하고 `OnModeChanged` 이벤트를 발행합니다. **씬 전환은 없습니다.** 패널 제어는 두 방식으로 나뉩니다:
-- `FrontWorldPanel` / `DialoguePanel` / `ChoiceContainer` / `CraftingJudgePanel` — `CanvasGroup` alpha/interactable 즉시 on-off
+- `FrontWorldPanel` / `DialoguePanel` / `ChoiceContainer` — `CanvasGroup` alpha/interactable 즉시 on-off. `CraftingJudgePanel`은 레거시 디버그 UI로 런타임 비활성화
 - `OrderTicketPanel` / `RecipeBookPanel` — 자체 슬라이드 애니메이션으로 open/close. `GameModeManager`는 `SetInteractable(bool)`(EpisodeMode 잠금)과 `Open()`(OrderMode/CraftingMode 진입 시 강제 open)만 호출
 
 **2. 입력 처리 (`Assets/Scripts/Input/`)**
@@ -71,6 +71,7 @@ architecture.md 업데이트 시 관련 문서에 입력할 사항들은 해당 
 ## 주요 설계 패턴
 
 - **하루 흐름 + GameState 상태머신**: `DayFlowManager`가 Episode → Business → Rest 순서를 조율하고, `GameManager.ChangeState()`가 필요한 씬 전환을 처리. Episode와 Business는 같은 BusinessScene을 공유
+- **공용 주문 세션**: 영업 시퀀스와 에피소드 제조 노드가 같은 주문 세션·바텐딩 런타임·재고를 사용. 호출자별로 영업 진행 또는 에피소드 분기 후처리만 분리
 - **씬 내 GameMode 상태머신**: `GameModeManager`가 패널 활성/비활성으로 씬 내 모드 전환 (씬 전환 없음)
 - **MonoSingleton<T>**: `GameProgress`, `GameModeManager`, `EpisodeManager`, `DataManager`, `GameManager`, `AudioManager` 모두 통일
 - **이벤트 기반 연결**: `DialogueController.DialogueClosed`, `GameModeManager.OnModeChanged`

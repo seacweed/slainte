@@ -63,7 +63,7 @@ OutgoingBranches: List<string>  — 출력 포트 레이블 (포트 인덱스 = 
 |---|---|
 | Dialogue | SpeakerKey, OverrideSpeakerName, Text, CharacterAppearances, BgmCommand/BgmClipName |
 | Choice | SpeakerKey, Text (선택지 전 대사), Choices[].ButtonText/SetFlags/ClearFlags/VarChanges |
-| BusinessStart | CraftingTicketKey, CraftingFlagGood/Bad, CraftingVarChangesGood/Bad |
+| BusinessStart | CraftingTicketKey, CraftingRecipeId, CraftingFlagGood/Bad, CraftingVarChangesGood/Bad |
 | BusinessEnd | (포트만 사용) |
 | BranchExit | ExitBranchName |
 

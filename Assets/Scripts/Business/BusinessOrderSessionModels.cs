@@ -2,6 +2,20 @@ using Slainte.Bartending;
 
 namespace Slainte.Business
 {
+    public enum OrderSessionOwner
+    {
+        Business,
+        Episode
+    }
+
+    public enum OrderSessionOutcome
+    {
+        Served,
+        Rejected,
+        Abandoned,
+        Failed
+    }
+
     public enum BusinessOrderSessionState
     {
         Idle,
@@ -11,6 +25,40 @@ namespace Slainte.Business
         Evaluating,
         PresentingFeedback,
         Completed
+    }
+
+    public sealed class OrderSessionRequest
+    {
+        public string sessionId;
+        public OrderSessionOwner owner;
+        public string customerOrderKey;
+        public string requestedRecipeId;
+        public string ticketKey;
+        public bool presentOrder = true;
+        public bool allowReject = true;
+        public bool allowAbandon = true;
+        public bool applyProgressRewards = true;
+        public bool clearCustomerOnComplete = true;
+
+        public static OrderSessionRequest ForBusiness(BusinessSequenceEntrySnapshot entry)
+        {
+            if (entry == null)
+                return null;
+
+            return new OrderSessionRequest
+            {
+                sessionId = entry.entryId,
+                owner = OrderSessionOwner.Business,
+                customerOrderKey = entry.entryId,
+                requestedRecipeId = entry.contentId,
+                ticketKey = entry.entryId,
+                presentOrder = true,
+                allowReject = true,
+                allowAbandon = true,
+                applyProgressRewards = true,
+                clearCustomerOnComplete = true
+            };
+        }
     }
 
     public enum OrderEvaluationGrade
@@ -41,6 +89,9 @@ namespace Slainte.Business
 
     public sealed class BusinessOrderSessionResult
     {
+        public string sessionId;
+        public OrderSessionOwner owner;
+        public OrderSessionOutcome outcome;
         public string customerOrderKey;
         public string requestedRecipeId;
         public bool accepted;

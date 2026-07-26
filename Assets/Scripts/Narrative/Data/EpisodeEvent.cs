@@ -38,6 +38,7 @@ namespace NarrativeFlow
 
         // Business Fields
         public string CraftingTicketKey;
+        public string CraftingRecipeId;
         public string CraftingFlagGood;
         public string CraftingFlagBad;
         public List<VarChangeData> CraftingVarChangesGood = new();

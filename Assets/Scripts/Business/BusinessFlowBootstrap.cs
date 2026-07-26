@@ -20,6 +20,9 @@ namespace Slainte.Business
         private bool runtimeInitialized;
         private bool businessStartRequested;
         private bool businessSequenceActive;
+        private bool episodeOrderActive;
+
+        public bool IsRuntimeReady => runtimeInitialized;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void RegisterSceneHook()
@@ -117,6 +120,8 @@ namespace Slainte.Business
             orderSession.StateChanged += HandleOrderSessionStateChanged;
             sequenceRunner.BusinessDayCompleted += HandleBusinessDayCompleted;
             runtimeInitialized = true;
+            if (legacyCraftingJudge != null)
+                legacyCraftingJudge.gameObject.SetActive(false);
 
             if (businessStartRequested)
                 StartBusinessSequence();
@@ -125,7 +130,7 @@ namespace Slainte.Business
         public void StartBusinessSequence()
         {
             businessStartRequested = true;
-            if (!runtimeInitialized || sequenceRunner == null)
+            if (!runtimeInitialized || sequenceRunner == null || episodeOrderActive)
                 return;
 
             businessStartRequested = false;
@@ -134,6 +139,37 @@ namespace Slainte.Business
             if (legacyCraftingJudge != null)
                 legacyCraftingJudge.gameObject.SetActive(false);
             sequenceRunner.StartSequence();
+        }
+
+        public bool StartEpisodeOrder(
+            OrderSessionRequest request,
+            System.Action<BusinessOrderSessionResult> onCompleted)
+        {
+            if (!runtimeInitialized
+                || orderSession == null
+                || businessSequenceActive
+                || episodeOrderActive
+                || request == null
+                || request.owner != OrderSessionOwner.Episode)
+            {
+                return false;
+            }
+
+            episodeOrderActive = true;
+            if (legacyCraftingJudge != null)
+                legacyCraftingJudge.gameObject.SetActive(false);
+
+            bool started = orderSession.BeginOrder(request, result =>
+            {
+                episodeOrderActive = false;
+                if (legacyCraftingJudge != null)
+                    legacyCraftingJudge.gameObject.SetActive(false);
+                onCompleted?.Invoke(result);
+            });
+
+            if (!started)
+                episodeOrderActive = false;
+            return started;
         }
 
         private void HandleBusinessDayCompleted()
@@ -150,9 +186,10 @@ namespace Slainte.Business
                 return;
 
             bool hideLegacyJudge = businessSequenceActive
+                || episodeOrderActive
                 || next == BusinessOrderSessionState.Crafting
                 || next == BusinessOrderSessionState.Evaluating;
-            legacyCraftingJudge.gameObject.SetActive(!hideLegacyJudge);
+            legacyCraftingJudge.gameObject.SetActive(!hideLegacyJudge && !runtimeInitialized);
         }
 
         private static bool HasActiveEpisode()
