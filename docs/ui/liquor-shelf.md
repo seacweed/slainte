@@ -10,7 +10,7 @@
 |---|---|---|
 | `LiquorShelfUI` | ShelfPanel | 메인 컨트롤러 — 슬라이드, 카테고리 전환, EpisodeMode 대응 |
 | `LiquorCategoryButtonUI` | 카테고리 버튼 프리팹 | 클릭 시 `LiquorShelfUI.OpenCategory()` 호출 |
-| `LiquorBottleSlotUI` | 개별 슬롯 오브젝트 | 해금 플래그 확인 후 이미지 on/off, 호버 시 정보카드 표시, 상시 잔여량 바 갱신 |
+| `LiquorBottleSlotUI` | 개별 슬롯 오브젝트 | 해금 플래그 확인, 호버 정보 표시, 잔여량 갱신, 제작 중 좌클릭 선택 |
 | `LiquorBottleInfoCard` | ShelfPanel 직계 자식 (씬에 단 하나) | 호버한 병의 이름/소분류/병 단위 상태/잔여량 표시 |
 | `LiquorBottleDef` | ScriptableObject | 술 데이터 (id, sprite, unlockFlagKey, subCategory, bottleCount, unitVolume) |
 | `LiquorCategoryDef` | ScriptableObject | 카테고리 데이터 (id, displayName, icon) |
@@ -58,6 +58,7 @@ LiquorShelfPanel  [LiquorShelfUI]  ← shelfPanelRect (우측 슬라이드 대�
 ## 입력
 
 - **R키**: `LiquorShelfUI.Toggle()` — 열려있으면 닫기, 닫혀있으면 마지막 카테고리(없으면 첫 번째)로 열기
+- **술병 좌클릭**: CraftingMode에서 해당 병을 테이블 오른쪽 빈 슬롯부터 즉시 배치
 - OrderMode / CraftingMode에서만 동작, EpisodeMode에서는 무시
 
 ## GameModeManager 연동
@@ -71,6 +72,9 @@ LiquorShelfPanel  [LiquorShelfUI]  ← shelfPanelRect (우측 슬라이드 대�
 - `Awake`에서 `Refresh()` 자동 호출
 - `unlockFlagKey`가 비어있거나 `GameProgress.HasFlag(unlockFlagKey)`이면 이미지 표시
 - `IPointerEnterHandler`/`IPointerExitHandler` 구현 → 호버 시 `LiquorBottleInfoCard.Instance.Show(def, amount, rect)` / `Hide()`
+- `IPointerClickHandler` 구현 → 좌클릭 시 `BusinessBartendingBootstrap.TryPlaceBottleFromShelf()` 호출
+- 같은 종류의 병이 이미 테이블에 있거나 재고가 0이거나 빈 슬롯이 없으면 배치하지 않음
+- `LiquorBottleDef.id`와 `Resources/Items` 아래 제작용 `ItemDef.id`가 같아야 실제 병을 생성할 수 있음
 - `amountFillImage`(선택, `Image` Type=Filled/Horizontal)가 연결돼 있으면 `Refresh()`마다 `fillAmount = amount / def.MaxAmount`로 상시 갱신 (호버 무관, 잠금 시 자동 숨김)
 
 ## 잔여량 저장 (GameProgress)
@@ -99,7 +103,15 @@ LiquorShelfPanel  [LiquorShelfUI]  ← shelfPanelRect (우측 슬라이드 대�
 |---|---|
 | `BottleSlot1`에 `Image` 컴포넌트 누락 | 씬에 수동 배치된 슬롯 중 다수가 `Image` 컴포넌트 없이 `LiquorBottleSlotUI`만 붙어있어 스프라이트가 안 뜸. 여러 개 동시 선택 후 Add Component로 일괄 추가 가능 |
 | `unlockFlagKey` 미해금 | 테스트 데이터에 `unlockFlagKey`가 채워져 있고 `GameProgress.flags`가 비어있으면 스프라이트가 조용히 안 뜸(에러 없음). 테스트 시에는 비워두거나 `SetFlag()`로 미리 심어둘 것 |
-| 잔여량-바텐딩 연동 | 실제로 따를 때 잔여량이 줄어드는 로직은 DragandDrop/바텐딩 브랜치 정리 이후 별도 작업 (아직 미구현) |
+| `ItemDef` 미연결 | 술장에는 보이지만 같은 ID의 제작용 `ItemDef`가 없으면 테이블 병을 만들 수 없음 |
+
+## 바텐딩 재고 연동
+
+- 제작 세션 시작 시 술병은 자동 생성되지 않으며 비커와 잔만 왼쪽 슬롯에 배치됨
+- 술장에서 처음 선택한 병은 가장 오른쪽 빈 슬롯, 다음 병은 그 왼쪽 빈 슬롯에 배치됨
+- `GameProgress`에는 같은 종류의 모든 병을 합친 총 ml를 저장하고, 테이블 병에는 현재 사용 중인 한 병의 ml만 표시
+- 따를 때 현재 병과 총재고가 함께 감소하며, 칵테일 폐기로 작업대를 재생성해도 선택 병과 부분 잔량이 유지됨
+- 주문 완료·거절·제작 포기 후에는 테이블 병 선택 상태를 정리하고 다음 주문은 다시 술장에서 선택
 
 ## ContentHeightToBackground 세팅
 

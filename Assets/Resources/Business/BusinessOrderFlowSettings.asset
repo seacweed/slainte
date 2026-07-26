@@ -27,5 +27,6 @@ MonoBehaviour:
   abandonReputationReward: -2
   feedbackSpeakerName: "\uC190\uB2D8"
   goodFeedbackText: "\uC644\uBCBD\uD574. \uB531 \uC6D0\uD558\uB358 \uB9DB\uC774\uC57C."
-  midFeedbackText: "\uBE44\uC2B7\uD558\uAE34 \uD55C\uB370, \uBB54\uAC00 \uC870\uAE08 \uC544\uC26C\uC6CC."
+  midFeedbackText: "\uBE44\uC2B7\uD558\uAE34 \uD55C\uB370, \uBB54\uAC00 \uC870\uAE08
+    \uC544\uC26C\uC6CC."
   badFeedbackText: "\uC774\uAC74 \uB0B4\uAC00 \uC8FC\uBB38\uD55C \uC220\uC774 \uC544\uB2C8\uC57C."

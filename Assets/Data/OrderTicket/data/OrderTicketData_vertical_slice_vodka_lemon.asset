@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OrderTicketData
   key: vertical_slice_vodka_lemon
   customerName: "\uC720\uCE74\uB9AC"
-  memo: "\uBCF4\uB4DC\uCE74 \uB808\uBAAC: \uBCF4\uB4DC\uCE74 50 ml, \uB808\uBAAC \uC8FC\uC2A4 30 ml."
+  memo: "\uBCF4\uB4DC\uCE74 \uB808\uBAAC: \uBCF4\uB4DC\uCE74 50 ml, \uB808\uBAAC
+    \uC8FC\uC2A4 30 ml."
   items:
   - name: "\uBE0C\uB9AC\uC988 \uBCF4\uB4DC\uCE74"
     qty: 50

@@ -5,7 +5,9 @@ using Slainte.Business;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace Slainte.Editor
 {
@@ -33,6 +35,7 @@ namespace Slainte.Editor
         private const string BartendingSettingsPath = "Assets/Resources/Bartending/BusinessBartendingSettings.asset";
         private const string VodkaItemPath = "Assets/Resources/Items/breeze_vodka.asset";
         private const string LemonItemPath = "Assets/Resources/Items/lemon_juice.asset";
+        private const string LemonShelfPath = "Assets/Data/LiquorBottle/lemonJuice.asset";
         private const string VerticalOrderKey = "vertical_slice_vodka_lemon";
         private const string CustomerOrderPath =
             "Assets/Data/CustomerOrder/data/CustomerOrder_vertical_slice_vodka_lemon.asset";
@@ -49,6 +52,7 @@ namespace Slainte.Editor
         private static int smokeBaselineReputation;
         private static int smokeOriginalBottleInstanceId;
         private static float smokeExpectedVodkaCapacity;
+        private static float smokeExpectedVodkaInventoryAmount;
         private static bool previousEnterPlayModeOptionsEnabled;
         private static EnterPlayModeOptions previousEnterPlayModeOptions;
         private static string smokeAutosavePath;
@@ -60,8 +64,9 @@ namespace Slainte.Editor
         {
             BusinessOrderFlowSettings flowSettings = EnsureFlowSettings();
             EnsureVerticalSliceOrderData();
+            LiquorBottleDef lemonShelfDefinition = EnsureLemonShelfData();
             ConfigureBartendingSettings();
-            ConfigureScene(flowSettings);
+            ConfigureScene(flowSettings, lemonShelfDefinition);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Debug.Log("[BusinessFlowSceneSetup] Business flow setup applied.");
@@ -112,6 +117,7 @@ namespace Slainte.Editor
             smokeBaselinesCaptured = false;
             smokeOriginalBottleInstanceId = 0;
             smokeExpectedVodkaCapacity = 0f;
+            smokeExpectedVodkaInventoryAmount = 0f;
             PrepareSmokeAutosaveBackup();
             previousEnterPlayModeOptionsEnabled = EditorSettings.enterPlayModeOptionsEnabled;
             previousEnterPlayModeOptions = EditorSettings.enterPlayModeOptions;
@@ -166,10 +172,14 @@ namespace Slainte.Editor
             BusinessBartendingSettings bartendingSettings =
                 AssetDatabase.LoadAssetAtPath<BusinessBartendingSettings>(BartendingSettingsPath);
             AssertQa(bartendingSettings != null, "Business bartending settings asset is missing.");
-            AssertQa(HasBottleItem(bartendingSettings, "breeze_vodka"),
-                "Breeze Vodka is missing from initial bottles.");
-            AssertQa(HasBottleItem(bartendingSettings, "lemon_juice"),
-                "Lemon Juice is missing from initial bottles.");
+            AssertQa(bartendingSettings.initialBottleItems == null
+                    || bartendingSettings.initialBottleItems.Length == 0,
+                "Business bartending must not auto-spawn shelf bottles.");
+
+            LiquorBottleDef lemonShelfDefinition =
+                AssetDatabase.LoadAssetAtPath<LiquorBottleDef>(LemonShelfPath);
+            AssertQa(lemonShelfDefinition != null && lemonShelfDefinition.id == "lemon_juice",
+                "Lemon Juice is missing from the liquor shelf data.");
 
             BusinessDaySnapshot firstPlan = BusinessSequencePlanner.CreateFixed(3, settings);
             BusinessDaySnapshot secondPlan = BusinessSequencePlanner.CreateFixed(3, settings);
@@ -224,21 +234,6 @@ namespace Slainte.Editor
                 "Empty glass was not graded Bad.");
         }
 
-        private static bool HasBottleItem(BusinessBartendingSettings settings, string id)
-        {
-            if (settings?.initialBottleItems == null)
-                return false;
-
-            for (int i = 0; i < settings.initialBottleItems.Length; i++)
-            {
-                ItemDef item = settings.initialBottleItems[i];
-                if (item != null && string.Equals(item.id, id, System.StringComparison.OrdinalIgnoreCase))
-                    return true;
-            }
-
-            return false;
-        }
-
         private static void AssertQa(bool condition, string message)
         {
             if (!condition)
@@ -273,6 +268,31 @@ namespace Slainte.Editor
 
             EditorUtility.SetDirty(settings);
             return settings;
+        }
+
+        private static LiquorBottleDef EnsureLemonShelfData()
+        {
+            ItemDef lemonItem = AssetDatabase.LoadAssetAtPath<ItemDef>(LemonItemPath);
+            if (lemonItem == null)
+                throw new System.InvalidOperationException("Lemon Juice ItemDef is missing.");
+
+            LiquorBottleDef shelfDefinition =
+                AssetDatabase.LoadAssetAtPath<LiquorBottleDef>(LemonShelfPath);
+            if (shelfDefinition == null)
+            {
+                shelfDefinition = ScriptableObject.CreateInstance<LiquorBottleDef>();
+                AssetDatabase.CreateAsset(shelfDefinition, LemonShelfPath);
+            }
+
+            shelfDefinition.id = lemonItem.id;
+            shelfDefinition.displayName = lemonItem.displayName;
+            shelfDefinition.sprite = lemonItem.icon;
+            shelfDefinition.unlockFlagKey = string.Empty;
+            shelfDefinition.subCategory = "과일 주스";
+            shelfDefinition.bottleCount = 6;
+            shelfDefinition.unitVolume = lemonItem.capacityMl;
+            EditorUtility.SetDirty(shelfDefinition);
+            return shelfDefinition;
         }
 
         private static void EnsureVerticalSliceOrderData()
@@ -440,12 +460,45 @@ namespace Slainte.Editor
                                 BottleController vodkaBottle = FindBottle("breeze_vodka");
                                 if (vodkaBottle == null)
                                 {
-                                    FinishSmokeTest(false, "Breeze Vodka bottle was not created.");
+                                    if (bartending.SessionBottleCount != 0)
+                                    {
+                                        FinishSmokeTest(false,
+                                            "A bottle auto-spawned before the liquor shelf was used.");
+                                        break;
+                                    }
+
+                                    bool vodkaSelected =
+                                        ClickShelfBottle("breeze_vodka", out string vodkaFailure);
+                                    bool lemonSelected =
+                                        ClickShelfBottle("lemon_juice", out string lemonFailure);
+                                    if (!vodkaSelected || !lemonSelected)
+                                    {
+                                        FinishSmokeTest(false,
+                                            "Liquor shelf click failed: " + vodkaFailure + lemonFailure);
+                                        break;
+                                    }
+
+                                    vodkaBottle = FindBottle("breeze_vodka");
+                                }
+
+                                if (vodkaBottle == null || bartending.SessionBottleCount != 2)
+                                {
+                                    FinishSmokeTest(false,
+                                        "Liquor shelf selections did not create both recipe bottles.");
                                     break;
                                 }
 
+                                LiquorBottleSlotUI vodkaShelfSlot = FindShelfBottleSlot("breeze_vodka");
+                                float defaultInventoryAmount =
+                                    vodkaShelfSlot != null && vodkaShelfSlot.Definition != null
+                                        ? vodkaShelfSlot.Definition.MaxAmount
+                                        : vodkaBottle.CurrentCapacity;
+                                float inventoryAmount = GameProgress.Instance.GetBottleAmount(
+                                    "breeze_vodka",
+                                    defaultInventoryAmount);
                                 smokeOriginalBottleInstanceId = vodkaBottle.GetInstanceID();
                                 smokeExpectedVodkaCapacity = Mathf.Max(0f, vodkaBottle.CurrentCapacity - 10f);
+                                smokeExpectedVodkaInventoryAmount = Mathf.Max(0f, inventoryAmount - 10f);
                                 vodkaBottle.SetCurrentCapacity(smokeExpectedVodkaCapacity, true);
                                 session.DiscardCocktail();
                                 smokePhase = SmokePhase.WaitingForDiscardReset;
@@ -478,10 +531,11 @@ namespace Slainte.Editor
                     float savedBottleAmount = GameProgress.Instance.GetBottleAmount(
                         "breeze_vodka",
                         -1f);
-                    if (!Mathf.Approximately(savedBottleAmount, smokeExpectedVodkaCapacity))
+                    if (!Mathf.Approximately(savedBottleAmount, smokeExpectedVodkaInventoryAmount))
                     {
                         FinishSmokeTest(false,
-                            $"Bottle capacity was not retained in GameProgress: expected {smokeExpectedVodkaCapacity}, "
+                            $"Bottle inventory was not retained in GameProgress: expected "
+                            + $"{smokeExpectedVodkaInventoryAmount}, "
                             + $"actual {savedBottleAmount}.");
                         break;
                     }
@@ -525,6 +579,47 @@ namespace Slainte.Editor
             }
 
             return null;
+        }
+
+        private static LiquorBottleSlotUI FindShelfBottleSlot(string itemId)
+        {
+            LiquorBottleSlotUI[] slots =
+                Object.FindObjectsByType<LiquorBottleSlotUI>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < slots.Length; i++)
+            {
+                LiquorBottleDef definition = slots[i] != null ? slots[i].Definition : null;
+                if (definition != null
+                    && string.Equals(definition.id, itemId, System.StringComparison.OrdinalIgnoreCase))
+                {
+                    return slots[i];
+                }
+            }
+
+            return null;
+        }
+
+        private static bool ClickShelfBottle(string itemId, out string failure)
+        {
+            LiquorBottleSlotUI shelfSlot = FindShelfBottleSlot(itemId);
+            if (shelfSlot == null)
+            {
+                failure = itemId + " shelf slot is missing. ";
+                return false;
+            }
+
+            shelfSlot.OnPointerClick(new PointerEventData(EventSystem.current)
+            {
+                button = PointerEventData.InputButton.Left
+            });
+
+            if (FindBottle(itemId) == null)
+            {
+                failure = itemId + " did not create a table bottle. ";
+                return false;
+            }
+
+            failure = string.Empty;
+            return true;
         }
 
         private static bool TryValidateCompletedScenario(
@@ -576,7 +671,7 @@ namespace Slainte.Editor
             if (smokeScenario == SmokeScenario.DiscardAbandon
                 && !Mathf.Approximately(
                     progress.GetBottleAmount("breeze_vodka", -1f),
-                    smokeExpectedVodkaCapacity))
+                    smokeExpectedVodkaInventoryAmount))
             {
                 failure = "Abandon completion did not retain the discarded session's bottle amount.";
                 return false;
@@ -639,6 +734,13 @@ namespace Slainte.Editor
             smokeAutosaveExisted = File.Exists(smokeAutosavePath);
             if (smokeAutosaveExisted)
                 File.Copy(smokeAutosavePath, smokeAutosaveBackupPath, true);
+
+            string autosaveDirectory = Path.GetDirectoryName(smokeAutosavePath);
+            if (!string.IsNullOrWhiteSpace(autosaveDirectory))
+                Directory.CreateDirectory(autosaveDirectory);
+            File.WriteAllText(
+                smokeAutosavePath,
+                JsonUtility.ToJson(new SaveData { dayCount = 1 }, true));
         }
 
         private static bool RestoreSmokeAutosave()
@@ -672,24 +774,19 @@ namespace Slainte.Editor
         {
             BusinessBartendingSettings settings =
                 AssetDatabase.LoadAssetAtPath<BusinessBartendingSettings>(BartendingSettingsPath);
-            ItemDef vodka = AssetDatabase.LoadAssetAtPath<ItemDef>(VodkaItemPath);
-            ItemDef lemon = AssetDatabase.LoadAssetAtPath<ItemDef>(LemonItemPath);
-            if (settings == null || vodka == null || lemon == null)
+            if (settings == null)
             {
-                Debug.LogError("Business bartending settings or recipe bottle ItemDefs are missing.");
+                Debug.LogError("Business bartending settings are missing.");
                 return;
             }
 
-            settings.initialBottleItems = new[] { vodka, lemon };
-            settings.bottlePositions = new[]
-            {
-                new Vector3(-8f, -0.8f, 0f),
-                new Vector3(-4.8f, -0.8f, 0f)
-            };
+            settings.initialBottleItems = System.Array.Empty<ItemDef>();
             EditorUtility.SetDirty(settings);
         }
 
-        private static void ConfigureScene(BusinessOrderFlowSettings settings)
+        private static void ConfigureScene(
+            BusinessOrderFlowSettings settings,
+            LiquorBottleDef lemonShelfDefinition)
         {
             Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
             BusinessFlowBootstrap bootstrap = FindInScene<BusinessFlowBootstrap>(scene);
@@ -704,8 +801,56 @@ namespace Slainte.Editor
             serializedBootstrap.FindProperty("settings").objectReferenceValue = settings;
             serializedBootstrap.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(bootstrap);
+            ConfigureLemonShelfSlot(scene, lemonShelfDefinition);
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
+        }
+
+        private static void ConfigureLemonShelfSlot(Scene scene, LiquorBottleDef lemonShelfDefinition)
+        {
+            if (lemonShelfDefinition == null)
+                return;
+
+            List<LiquorBottleSlotUI> shelfSlots = new List<LiquorBottleSlotUI>();
+            foreach (GameObject root in scene.GetRootGameObjects())
+                shelfSlots.AddRange(root.GetComponentsInChildren<LiquorBottleSlotUI>(true));
+
+            if (shelfSlots.Exists(slot => slot != null
+                    && slot.Definition != null
+                    && string.Equals(
+                        slot.Definition.id,
+                        lemonShelfDefinition.id,
+                        System.StringComparison.OrdinalIgnoreCase)))
+            {
+                return;
+            }
+
+            LiquorBottleSlotUI anchor = shelfSlots.Find(slot => slot != null
+                && slot.Definition != null
+                && slot.Definition.id == "tropical_juice");
+            LiquorBottleSlotUI target = null;
+            if (anchor != null && anchor.transform.parent != null)
+            {
+                LiquorBottleSlotUI[] siblings =
+                    anchor.transform.parent.GetComponentsInChildren<LiquorBottleSlotUI>(true);
+                target = System.Array.Find(siblings, slot => slot != null && slot.Definition == null);
+            }
+
+            target ??= shelfSlots.Find(slot => slot != null && slot.Definition == null);
+            if (target == null)
+                throw new System.InvalidOperationException("No empty liquor shelf slot is available for Lemon Juice.");
+
+            SerializedObject serializedSlot = new SerializedObject(target);
+            serializedSlot.FindProperty("def").objectReferenceValue = lemonShelfDefinition;
+            serializedSlot.ApplyModifiedPropertiesWithoutUndo();
+
+            Image image = target.GetComponent<Image>();
+            if (image == null)
+                image = target.gameObject.AddComponent<Image>();
+            image.raycastTarget = true;
+            image.preserveAspect = true;
+            EditorUtility.SetDirty(image);
+            EditorUtility.SetDirty(target);
         }
 
         private static T FindInScene<T>(Scene scene) where T : Component

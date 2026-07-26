@@ -30,9 +30,11 @@ MonoBehaviour:
     nameColor: {r: 1, g: 0.84, b: 0.58, a: 1}
   feedbackLinesMid:
   - speakerName: "\uC720\uCE74\uB9AC"
-    text: "\uB098\uC058\uC9C4 \uC54A\uC740\uB370, \uADE0\uD615\uC774 \uC870\uAE08 \uC544\uC27D\uB124."
+    text: "\uB098\uC058\uC9C4 \uC54A\uC740\uB370, \uADE0\uD615\uC774 \uC870\uAE08
+      \uC544\uC27D\uB124."
     nameColor: {r: 1, g: 0.84, b: 0.58, a: 1}
   feedbackLinesBad:
   - speakerName: "\uC720\uCE74\uB9AC"
-    text: "\uC774\uAC74 \uB0B4\uAC00 \uC8FC\uBB38\uD55C \uC220\uC774 \uC544\uB2CC \uAC83 \uAC19\uC544."
+    text: "\uC774\uAC74 \uB0B4\uAC00 \uC8FC\uBB38\uD55C \uC220\uC774 \uC544\uB2CC
+      \uAC83 \uAC19\uC544."
     nameColor: {r: 1, g: 0.84, b: 0.58, a: 1}

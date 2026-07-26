@@ -17,9 +17,7 @@ MonoBehaviour:
   orangeJuiceBottlePrefab: {fileID: 6053965625356669504, guid: 5454dd416eb9f0147b2a3e044e81cc11, type: 3}
   slotPrefab: {fileID: 7156230922021510026, guid: 7f969d5eb98ddb54f8d6e44e1a901c44, type: 3}
   liquidParticlePrefab: {fileID: 6191169969125092929, guid: 44387e2fc656fda41b517e3cbf2b992c, type: 3}
-  initialBottleItems:
-  - {fileID: 11400000, guid: fca0f78cd9c0ace40a495646580d7ee5, type: 2}
-  - {fileID: 11400000, guid: ec5f018bd74408549946479bd5acc502, type: 2}
+  initialBottleItems: []
   bottlePositions:
   - {x: -8, y: -0.8, z: 0}
   - {x: -4.8, y: -0.8, z: 0}

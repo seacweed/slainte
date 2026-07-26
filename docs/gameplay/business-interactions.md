@@ -9,7 +9,8 @@ The first integrated order flow is implemented under `Assets/Scripts/Business/`.
 - `BusinessOrderSessionController` owns presentation, decision, crafting, evaluation, feedback, reward, cleanup, and completion.
 - `BusinessOrderSessionUI` creates Accept, Reject, Serve, Discard, and Abandon controls at runtime.
 - `BusinessOrderFlowSettings` contains fixed orders, Good/Mid/Bad thresholds, rewards, and fallback feedback.
-- `BusinessBartendingBootstrap` creates recipe bottles from authoritative `ItemDef` assets. Bottle amounts update `GameProgress`; discarding does not restore used ingredients.
+- `BusinessBartendingBootstrap` starts with tools only. A `LiquorBottleSlotUI` left-click resolves a same-ID `ItemDef` and places the bottle from the rightmost free table slot.
+- Bottle objects track the active bottle amount while `GameProgress` stores total inventory. Discarding recreates the workspace without restoring ingredients or losing the selected bottles.
 - `BusinessFlowSceneSetup` creates the settings/sample assets and connects `BusinessFlowBootstrap` to `BusinessScene` through the Unity Editor API.
 
 Current sample: `vertical_slice_vodka_lemon` requests `vodka_lemon` with Breeze Vodka 50 ml and Lemon Juice 30 ml.
