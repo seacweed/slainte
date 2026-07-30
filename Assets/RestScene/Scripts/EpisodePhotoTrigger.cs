@@ -89,26 +89,31 @@ public class EpisodePhotoTrigger : MonoBehaviour, IPointerEnterHandler, IPointer
         if (infoUI != null) infoUI.Hide(); 
     }
 
-    public void OnPointerClick(PointerEventData eventData) 
+    public void OnPointerClick(PointerEventData eventData)
     {
         if (eventData.button != PointerEventData.InputButton.Left) return;
-        if (boardManager.PinnedPhoto != null && boardManager.PinnedPhoto != this) return;
 
-        isPinned = !isPinned; 
-        
-        if (isPinned) 
+        if (boardManager.PinnedPhoto == this)
         {
-            // 선택 이미지로 교체
-            if (photoImage != null && selectedSprite != null) photoImage.sprite = selectedSprite;
-            
-            if (infoUI != null) infoUI.Show(episodeData, transform as RectTransform);
-            boardManager.PinEpisode(this);
-        } 
-        else 
-        { 
-            // 나를 다시 클릭해서 취소한 경우
-            boardManager.ResetBoard(); 
+            // 이미 포커스된 나를 다시 클릭해서 선택 해제한 경우
+            isPinned = false;
+            boardManager.ResetBoard();
+            return;
         }
+
+        if (boardManager.PinnedPhoto != null)
+        {
+            // 다른 사진이 포커스되어 있었다면 그쪽부터 선택 해제하고 포커스 전환
+            boardManager.PinnedPhoto.Unpin();
+        }
+
+        isPinned = true;
+
+        // 선택 이미지로 교체
+        if (photoImage != null && selectedSprite != null) photoImage.sprite = selectedSprite;
+
+        if (infoUI != null) infoUI.Show(episodeData, transform as RectTransform);
+        boardManager.PinEpisode(this);
     }
 
     // 매니저가 초기화할 때 외부에서 호출하는 함수

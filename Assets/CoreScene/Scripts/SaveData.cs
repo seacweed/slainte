@@ -14,4 +14,11 @@ public class SaveData
     public List<int>    boardSlotValues = new();
     public List<string> bottleAmountKeys   = new();
     public List<float>  bottleAmountValues = new();
+    public List<string> customerAppearanceKeys   = new();
+    public List<int>    customerAppearanceValues = new();
+    public string currentChapterId  = "";
+    public int    currentMoney      = 0;
+    public int    dayDrinkSalesCount = 0;
+    public int    dayDrinkRevenue    = 0;
+    public int    dayTotalIncome     = 0;
 }

@@ -75,11 +75,11 @@ ExitButton                  — 팝업 닫기 버튼
 
 | 메서드 | 설명 |
 |---|---|
-| `OnOpen()` | `RefreshBoard()` + `ResetBoard()` |
+| `OnOpen()` | 미완료 필수 에피소드가 있으면 `ShowMandatoryGate()`로 보드를 비우고 안내만 표시, 없으면 `RefreshBoard()` + `ResetBoard()` |
 | `RefreshBoard()` | `EpisodeManager.GetBoardEpisodes()`로 표시할 에피소드 목록 확보, 동적 프리팹 생성/제거 |
-| `PinEpisode(photo)` | `PinnedPhoto` 설정, `EpisodeManager.CanStart()` 결과에 따라 하단 텍스트/버튼 활성화 |
-| `ResetBoard()` | 이전 사진 `Unpin()`, 하단 UI 비활성화 |
-| `OnStartButtonClicked()` | `EpisodeManager.StartEpisode(PinnedPhoto.episodeData.episodeId)` → `CloseUI()` |
+| `PinEpisode(photo)` | `PinnedPhoto` 설정, `EpisodeManager.IsPlayable()`(플레이 조건) 결과에 따라 하단 텍스트/버튼 활성화 |
+| `ResetBoard()` | 이전 사진 `Unpin()`, 아무것도 선택하지 않은 기본 상태 — 하단 텍스트 "영업" + Play 버튼 **활성** |
+| `OnStartButtonClicked()` | `PinnedPhoto != null`이면 `DayFlowController.StartDefaultEpisode(id)`, null이면(미선택 상태) `DayFlowController.StartBusinessDay()` → 이후 `CloseUI()` |
 
 **RefreshBoard() 상세 흐름**
 
@@ -106,8 +106,12 @@ public Color buttonInactiveColor;     // 미선택 시
 | 메서드 | 설명 |
 |---|---|
 | `GetBoardEpisodes()` | 완료되지 않은 에피소드 중 `IsVisible()` 통과한 목록 반환 |
-| `IsVisible(ep, gp)` | `CanStart()` 가 참이거나, `{episodeId}_Discovered` 플래그가 있으면 true |
-| `GetAvailableEpisodes()` | `CanStart()` 통과한 에피소드만 반환 (시작 가능 판단용) |
+| `IsVisible(ep, gp)` | `IsUnlocked()` 가 참이거나, `{episodeId}_Discovered` 플래그가 있으면 true |
+| `GetAvailableEpisodes()` | `IsUnlocked()`(해금 조건) 통과한 에피소드만 반환 |
+| `IsUnlocked(ep, gp)` | `ep.triggerCondition`(해금 조건) 평가 — 만족하면 작전판에 노출 |
+| `IsPlayable(ep, gp)` | `ep.playCondition`(플레이 조건) 평가 — 만족해야 Play 버튼 활성화. 조건 없으면 항상 true |
+
+해금 조건과 플레이 조건은 독립적: 해금은 됐지만 플레이 조건 미달이면 보드엔 뜨되 Play 버튼은 비활성 상태로 남음. 자세한 내용은 [game-flow-design.md](../core/game-flow-design.md) 참고.
 
 ---
 
@@ -116,13 +120,11 @@ public Color buttonInactiveColor;     // 미선택 시
 에피소드 보드의 개별 사진 슬롯. `IPointerEnterHandler`, `IPointerExitHandler`, `IPointerClickHandler` 구현.
 
 **상태**
-- 기본: 테두리 없음, 오버레이 없음
-- 호버: `LineRenderer` 테두리 표시, `EpisodeInfoWindow.Show()` (다른 사진이 핀된 경우 무시)
-- 핀(클릭): 테두리 + `yellowOverlay` 활성화, `EpisodeBoardManager.PinEpisode()` 호출
-- 언핀(재클릭): `EpisodeBoardManager.ResetBoard()` 호출
-
-**아웃라인 형태** (`DrawOutlineShape`)
-- `PolygonCollider2D` 우선, 없으면 `BoxCollider2D` 기반으로 4점 사각형 생성
+- 기본: `normalSprite`, 오버레이 없음
+- 호버: `hoverSprite`로 교체, `EpisodeInfoUI.Show()` (다른 사진이 이미 pin된 경우 호버 무시)
+- 핀(클릭): `selectedSprite`로 교체, `EpisodeInfoUI.Show()` 유지, `EpisodeBoardManager.PinEpisode()` 호출
+  - 다른 사진이 이미 pin된 상태에서 클릭하면 그 사진을 먼저 `Unpin()`한 뒤 새 사진을 pin (포커스 전환)
+- 언핀(pin된 사진을 재클릭): `isPinned = false` + `EpisodeBoardManager.ResetBoard()` 호출 → 보드가 "영업" 기본 상태로 복귀
 
 **`SetEpisodeData(EpisodeData data, EpisodeBoardManager board)`**
 - `data.iconNameBoard`로 `Resources.Load<Sprite>("Sprites/{name}")` 시도

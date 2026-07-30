@@ -12,12 +12,9 @@ public class EpisodeUIManager : BaseUIManager
     [Header("Dashboard UI")]
     public TextMeshProUGUI moneyText;
     public TextMeshProUGUI statusText;
-    public Button toggleButton;
+    public Button startBusinessButton;
     public TextMeshProUGUI btnText;
 
-    // 임시 데이터 (나중에 GameManager 연동)
-    private bool isBusinessOpen = false;
-    private int money = 5000;
     private Vector3 originalPos;
 
     protected override void Awake()
@@ -25,8 +22,8 @@ public class EpisodeUIManager : BaseUIManager
         base.Awake();
         // UI의 원래 위치(정중앙) 저장
         originalPos = GetComponent<RectTransform>().anchoredPosition;
-        
-        if (toggleButton) toggleButton.onClick.AddListener(OnToggleClick);
+
+        if (startBusinessButton) startBusinessButton.onClick.AddListener(OnStartBusinessClicked);
     }
 
     protected override void OnOpen()
@@ -82,26 +79,21 @@ public class EpisodeUIManager : BaseUIManager
         gameObject.SetActive(false);
     }
 
-    // --- [비즈니스 로직] ---
-    void OnToggleClick()
+    // --- [영업 시작] ---
+    private void OnStartBusinessClicked()
     {
-        isBusinessOpen = !isBusinessOpen;
-        UpdateDashboard();
+        DayFlowController.Instance?.StartBusinessDay();
+        CloseUI();
     }
 
-    void UpdateDashboard()
+    private void UpdateDashboard()
     {
+        GameProgress gp = GameProgress.Instance;
+        int money = gp != null ? gp.CurrentMoney : 0;
+        int day   = gp != null ? gp.CurrentDay : 1;
+
         if (moneyText) moneyText.text = $"{money:N0} G";
-        
-        if (isBusinessOpen)
-        {
-            if(statusText) { statusText.text = "영업 중 (OPEN)"; statusText.color = Color.green; }
-            if(btnText) btnText.text = "마감하기";
-        }
-        else
-        {
-            if(statusText) { statusText.text = "준비 중 (CLOSED)"; statusText.color = Color.red; }
-            if(btnText) btnText.text = "오픈하기";
-        }
+        if (statusText) statusText.text = $"Day {day}";
+        if (btnText) btnText.text = "영업 시작";
     }
 }

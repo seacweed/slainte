@@ -13,6 +13,14 @@ public class MainMenuManager : MonoBehaviour
 
     private void OnStartClicked()
     {
+        GameProgress gp = GameProgress.Instance;
+        if (gp != null && string.IsNullOrEmpty(gp.CurrentChapterId))
+        {
+            ChapterData firstChapter = ChapterData.LoadFirst();
+            if (firstChapter != null)
+                gp.SetCurrentChapter(firstChapter.chapterId);
+        }
+
         EpisodeManager.Instance?.StartEpisode("StrangeCoin_0");
     }
 }

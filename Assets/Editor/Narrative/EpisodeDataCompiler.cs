@@ -27,9 +27,13 @@ namespace NarrativeFlow.Editor
             string episodeTitle = !string.IsNullOrEmpty(graph.EpisodeTitle) ? graph.EpisodeTitle : episodeId;
 
             EpisodeData data = ScriptableObject.CreateInstance<EpisodeData>();
-            data.episodeId    = episodeId;
-            data.episodeTitle = episodeTitle;
+            data.episodeId     = episodeId;
+            data.episodeTitle  = episodeTitle;
+            data.chapterId     = graph.ChapterId;
+            data.episodeType   = graph.EpisodeType;
+            data.mandatorySlot = graph.MandatorySlot;
             data.triggerCondition  = graph.TriggerCondition ?? new EpisodeTriggerCondition();
+            data.playCondition     = graph.PlayCondition ?? new EpisodeTriggerCondition();
             data.openingCharacters = (graph.OpeningCharacters ?? new List<CharacterSlotEntry>())
                 .Select(c => new CharacterSlotEntry { characterKey = c.characterKey, expressionKey = c.expressionKey, slotIndex = c.slotIndex })
                 .ToList();
@@ -223,6 +227,13 @@ namespace NarrativeFlow.Editor
                             { condition = new VarCondition { varName = cond.Key, op = op, threshold = thr }, nextNodeId = targetId });
                     }
                 }
+                else if (IsBareEpisodeIdLabel(label))
+                {
+                    // Bare label (no operator, not "Next"/"Default") is treated as a prerequisite episode id,
+                    // e.g. "StrangeCoin_0" → this branch is taken once that episode is completed.
+                    rNode.episodeBranches.Add(new NodeEpisodeBranch
+                        { requiredCompletedEpisodeId = label.Trim(), nextNodeId = targetId });
+                }
                 else if (rNode.nextNodeId == null)
                 {
                     rNode.nextNodeId = targetId;
@@ -295,6 +306,17 @@ namespace NarrativeFlow.Editor
 
         // ── Condition parsing ─────────────────────────────────────────────────────
 
+        // "Next"/"Default"가 아니고 flag/var 조건 형식(연산자 포함)도 아닌 순수 텍스트 라벨은
+        // 에피소드 ID로 취급한다 (예: "StrangeCoin_0" → 해당 에피소드 완료 시 이 분기로 이동).
+        private static bool IsBareEpisodeIdLabel(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return false;
+            string trimmed = input.Trim();
+            if (string.Equals(trimmed, "Next", System.StringComparison.OrdinalIgnoreCase)) return false;
+            if (string.Equals(trimmed, "Default", System.StringComparison.OrdinalIgnoreCase)) return false;
+            return true;
+        }
+
         private static bool TryParseCondition(string input, out GraphTriggerCondition cond)
         {
             cond = new GraphTriggerCondition();
@@ -334,17 +356,29 @@ namespace NarrativeFlow.Editor
             var sb = new StringBuilder();
 
             sb.AppendLine("#META");
-            sb.AppendLine("episodeId,episodeTitle,firstNodeId");
-            sb.AppendLine($"{data.episodeId},{data.episodeTitle},{data.firstNodeId}");
+            sb.AppendLine("episodeId,episodeTitle,firstNodeId,episodeType,mandatorySlot,chapterId");
+            sb.AppendLine($"{data.episodeId},{data.episodeTitle},{data.firstNodeId},{data.episodeType},{data.mandatorySlot},{data.chapterId}");
             sb.AppendLine();
 
             if (data.triggerCondition != null)
             {
                 var tc = data.triggerCondition;
                 sb.AppendLine("#TRIGGER");
-                sb.AppendLine("minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars");
+                sb.AppendLine("minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCustomerAppearances");
                 string reqVars = string.Join("|", tc.requiredVars.Select(v => $"{v.varName}{CompareOpToString(v.op)}{v.threshold}"));
-                sb.AppendLine($"{tc.minDay},{string.Join("|", tc.requiredFlags)},{string.Join("|", tc.blockedFlags)},{string.Join("|", tc.prerequisiteEpisodeIds)},{reqVars}");
+                string reqAppearances = string.Join("|", tc.requiredCustomerAppearances.Select(a => $"{a.characterId}:{a.count}"));
+                sb.AppendLine($"{tc.minDay},{string.Join("|", tc.requiredFlags)},{string.Join("|", tc.blockedFlags)},{string.Join("|", tc.prerequisiteEpisodeIds)},{reqVars},{reqAppearances}");
+                sb.AppendLine();
+            }
+
+            if (data.playCondition != null)
+            {
+                var pc = data.playCondition;
+                sb.AppendLine("#PLAY_TRIGGER");
+                sb.AppendLine("minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCustomerAppearances");
+                string reqVars = string.Join("|", pc.requiredVars.Select(v => $"{v.varName}{CompareOpToString(v.op)}{v.threshold}"));
+                string reqAppearances = string.Join("|", pc.requiredCustomerAppearances.Select(a => $"{a.characterId}:{a.count}"));
+                sb.AppendLine($"{pc.minDay},{string.Join("|", pc.requiredFlags)},{string.Join("|", pc.blockedFlags)},{string.Join("|", pc.prerequisiteEpisodeIds)},{reqVars},{reqAppearances}");
                 sb.AppendLine();
             }
 
@@ -412,6 +446,17 @@ namespace NarrativeFlow.Editor
                 foreach (var n in data.nodes)
                     foreach (var b in n.varBranches)
                         sb.AppendLine($"{n.nodeId},{b.condition.varName},{CompareOpToString(b.condition.op)},{b.condition.threshold},{b.nextNodeId}");
+                sb.AppendLine();
+            }
+
+            bool hasEpisodeBranches = data.nodes.Any(n => n.episodeBranches.Count > 0);
+            if (hasEpisodeBranches)
+            {
+                sb.AppendLine("#NODE_EPISODE_BRANCHES");
+                sb.AppendLine("nodeId,requiredCompletedEpisodeId,nextNodeId");
+                foreach (var n in data.nodes)
+                    foreach (var b in n.episodeBranches)
+                        sb.AppendLine($"{n.nodeId},{b.requiredCompletedEpisodeId},{b.nextNodeId}");
             }
 
             const string dir = "Assets/Data/Export";

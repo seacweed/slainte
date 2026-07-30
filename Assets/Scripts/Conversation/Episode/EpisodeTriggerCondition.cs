@@ -10,4 +10,5 @@ public class EpisodeTriggerCondition
     public List<string>       blockedFlags           = new();
     public List<string>       prerequisiteEpisodeIds = new();
     public List<VarCondition> requiredVars           = new();
+    public List<CustomerAppearanceCondition> requiredCustomerAppearances = new();
 }

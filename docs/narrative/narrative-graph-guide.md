@@ -45,6 +45,19 @@ Unity 메뉴 → **Narrative > Open Narrative Graph Editor**
 
 > Choice 이벤트가 있는 노드는 선택지 수와 포트 수를 일치시켜야 합니다.
 
+### 분기 포트 라벨 규칙
+
+Outcome Branches의 라벨 텍스트로 분기 조건 타입이 결정됩니다 (컴파일 시 `EpisodeDataCompiler`가 라벨을 파싱).
+
+| 라벨 형식 | 예시 | 분기 타입 |
+|---|---|---|
+| `플래그명 == true` | `flag_met_customer == true` | 플래그 분기 (`NODE_BRANCHES`) |
+| `변수명 연산자 값` | `sally_affinity >= 10` | 변수 분기 (`NODE_VAR_BRANCHES`) |
+| 그 외 순수 텍스트 (연산자 없음) | `StrangeCoin_0` | **에피소드 완료 분기** (`NODE_EPISODE_BRANCHES`) — 해당 에피소드가 완료되어야 이 포트로 이동 |
+| `Next` / `Default` | `Next` | 조건 없는 기본 다음 노드 |
+
+에피소드 완료 분기는 별도 접두사 없이 **에피소드 ID를 라벨에 그대로 적으면** 됩니다. "A 에피소드 클리어 후 B 에피소드 진행 시 내용이 바뀐다" 같은 챕터 간 연동에 사용.
+
 ---
 
 ## 4. 노드 ID (자동 할당)
@@ -123,7 +136,12 @@ Sequence Editor 빈 공간 **우클릭** → 이벤트 타입 선택 후 배치 
 | Episode ID | `EpisodeData`의 `episodeId` — 컴파일 파일명에 사용 |
 | Title | 에피소드 표시 제목 |
 | Start Node | 에피소드 진입 노드 지정 (ID `1`이 자동 할당됨) |
+| Chapter Id | 소속 챕터 ID (`ChapterData.chapterId`와 매칭) |
+| Episode Type | `Default`(Rest 보드에서 직접 선택) / `Mandatory`(필수, 영업 전후 자동 삽입) |
+| Mandatory Slot | `Episode Type = Mandatory`일 때만 사용. `BeforeBusiness` / `AfterBusiness` |
 | Trigger / Opening Chars | **Ping Graph Asset** 버튼으로 Project 뷰에서 직접 Inspector 편집 |
+
+> 필수 에피소드/챕터/영업 흐름 전체 설계는 [game-flow-design.md](../core/game-flow-design.md) 참고.
 
 ---
 

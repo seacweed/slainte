@@ -42,8 +42,26 @@ public class EpisodeBoardManager : BaseUIManager
     // 창이 열릴 때 자동으로 실행되는 함수
     protected override void OnOpen()
     {
+        if (EpisodeManager.Instance != null && EpisodeManager.Instance.HasPendingMandatoryEpisode())
+        {
+            ShowMandatoryGate(); // 미완료 필수 에피소드가 있으면 보드 선택 자체를 막음
+            return;
+        }
+
         RefreshBoard(); // 조건에 따라 에피소드 표출 여부 갱신
         ResetBoard();   // 열릴 때마다 선택 내역 깔끔하게 초기화
+    }
+
+    // 필수 에피소드가 남아있을 때: 보드를 비우고 안내 문구만 표시
+    private void ShowMandatoryGate()
+    {
+        foreach (var photo in GetComponentsInChildren<EpisodePhotoTrigger>(true))
+            Destroy(photo.gameObject);
+
+        PinnedPhoto = null;
+        if (bottomEpisodeNameText) bottomEpisodeNameText.text = "먼저 영업을 통해 필수 에피소드를 진행해주세요.";
+        if (startButton) startButton.interactable = false;
+        if (startButtonImage) startButtonImage.color = buttonInactiveColor;
     }
 
     // 6자리 슬롯에 맞게 에피소드를 랜덤 배치하고 위치 유지
@@ -210,14 +228,21 @@ public class EpisodeBoardManager : BaseUIManager
 
     private void OnStartButtonClicked()
     {
-        if (PinnedPhoto != null && EpisodeManager.Instance != null)
+        if (DayFlowController.Instance == null) return;
+
+        if (PinnedPhoto != null)
         {
-            // 1. 코어 씬 매니저에 에피소드 시작 기록
-            EpisodeManager.Instance.StartEpisode(PinnedPhoto.episodeData.episodeId);
-            
-            // 2. 창 닫기
-            CloseUI();
+            // 1. 하루 흐름 컨트롤러에 기본 에피소드 시작 요청 (완료 후 정산으로 이어짐)
+            DayFlowController.Instance.StartDefaultEpisode(PinnedPhoto.episodeData.episodeId);
         }
+        else
+        {
+            // 아무것도 선택하지 않은 기본 상태 = 영업 시작
+            DayFlowController.Instance.StartBusinessDay();
+        }
+
+        // 2. 창 닫기
+        CloseUI();
     }
 
     // 사진이 클릭되었을 때 호출됨 (EpisodePhotoTrigger에서 호출)
@@ -225,23 +250,23 @@ public class EpisodeBoardManager : BaseUIManager
     {
         PinnedPhoto = photo;
 
-        bool canStart = false;
+        bool canPlay = false;
         if (EpisodeManager.Instance != null && GameProgress.Instance != null)
         {
-            canStart = EpisodeManager.Instance.CanStart(photo.episodeData, GameProgress.Instance);
+            canPlay = EpisodeManager.Instance.IsPlayable(photo.episodeData, GameProgress.Instance);
         }
 
         // 하단 UI 활성화
-        if (bottomEpisodeNameText) 
+        if (bottomEpisodeNameText)
         {
-            bottomEpisodeNameText.text = canStart ? photo.episodeData.episodeTitle : $"{photo.episodeData.episodeTitle} <color=#ff8888>(조건 미달성)</color>";
+            bottomEpisodeNameText.text = canPlay ? photo.episodeData.episodeTitle : $"{photo.episodeData.episodeTitle} <color=#ff8888>(조건 미달성)</color>";
         }
 
-        if (startButton) startButton.interactable = canStart; 
-        if (startButtonImage) startButtonImage.color = canStart ? buttonActiveColor : buttonInactiveColor; 
+        if (startButton) startButton.interactable = canPlay;
+        if (startButtonImage) startButtonImage.color = canPlay ? buttonActiveColor : buttonInactiveColor;
     }
 
-    // 초기화 (허공 클릭, 창 닫기, 혹은 다른 사진 클릭 시 이전 사진 Unpin용)
+    // 초기화 (허공 클릭, 창 닫기, 혹은 다른 사진 클릭 시 이전 사진 Unpin용) — 아무것도 선택 안 한 기본 상태 = 영업
     public void ResetBoard()
     {
         if (PinnedPhoto != null)
@@ -250,9 +275,8 @@ public class EpisodeBoardManager : BaseUIManager
             PinnedPhoto = null;
         }
 
-        // 하단 UI 비활성화
-        if (bottomEpisodeNameText) bottomEpisodeNameText.text = "에피소드를 선택해주세요.";
-        if (startButton) startButton.interactable = false; 
-        if (startButtonImage) startButtonImage.color = buttonInactiveColor; 
+        if (bottomEpisodeNameText) bottomEpisodeNameText.text = "영업";
+        if (startButton) startButton.interactable = true;
+        if (startButtonImage) startButtonImage.color = buttonActiveColor;
     }
 }

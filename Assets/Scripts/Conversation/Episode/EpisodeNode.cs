@@ -26,6 +26,9 @@ public class EpisodeNode
     [Header("Var Branches")]
     public List<NodeVarBranch> varBranches = new();
 
+    [Header("Episode Branches")]
+    public List<NodeEpisodeBranch> episodeBranches = new();
+
     [Header("Presentation (optional)")]
     public List<CharacterSlotEntry> characters = new();
 
