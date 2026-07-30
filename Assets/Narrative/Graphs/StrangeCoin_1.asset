@@ -1681,8 +1681,8 @@ MonoBehaviour:
     serializedVersion: 2
     x: 1280
     y: 220
-    width: 200
-    height: 150
+    width: 332
+    height: 155
   CustomFields:
   - FieldName: Title
     FieldValue: 10
@@ -1834,10 +1834,10 @@ MonoBehaviour:
   Guid: 7aca1869-9630-4f98-9ad0-df1de495bace
   Position:
     serializedVersion: 2
-    x: 960
+    x: 915
     y: 0
-    width: 200
-    height: 150
+    width: 272
+    height: 155
   CustomFields:
   - FieldName: Title
     FieldValue: 4
@@ -2138,10 +2138,10 @@ MonoBehaviour:
   Guid: b616d83b-3a3c-4f81-9a90-5c860b8d22af
   Position:
     serializedVersion: 2
-    x: 960
+    x: 1068
     y: 220
-    width: 200
-    height: 150
+    width: 194
+    height: 155
   CustomFields:
   - FieldName: Title
     FieldValue: 9
@@ -3411,10 +3411,10 @@ MonoBehaviour:
   Guid: c21ad2df-4367-4afb-aae9-d1cc82c9a6bb
   Position:
     serializedVersion: 2
-    x: 1280
+    x: 1244
     y: 0
-    width: 200
-    height: 150
+    width: 194
+    height: 155
   CustomFields:
   - FieldName: Title
     FieldValue: 5
@@ -4404,15 +4404,6 @@ MonoBehaviour:
   - BaseNodeGuid: 9596ab3d-9f35-4284-8bee-6f195d110979
     TargetNodeGuid: fbf8e595-bd30-4fda-88c0-3ea0b2507c78
     OutputPortIndex: 0
-  - BaseNodeGuid: fbf8e595-bd30-4fda-88c0-3ea0b2507c78
-    TargetNodeGuid: 7aca1869-9630-4f98-9ad0-df1de495bace
-    OutputPortIndex: 0
-  - BaseNodeGuid: 7aca1869-9630-4f98-9ad0-df1de495bace
-    TargetNodeGuid: c21ad2df-4367-4afb-aae9-d1cc82c9a6bb
-    OutputPortIndex: 0
-  - BaseNodeGuid: c21ad2df-4367-4afb-aae9-d1cc82c9a6bb
-    TargetNodeGuid: 9f6462be-723d-4990-bf32-a74a9036d709
-    OutputPortIndex: 0
   - BaseNodeGuid: 9f6462be-723d-4990-bf32-a74a9036d709
     TargetNodeGuid: ea7ca12a-387e-4666-a599-bf0c88860e72
     OutputPortIndex: 0
@@ -4937,6 +4928,15 @@ MonoBehaviour:
     OutputPortIndex: 0
   - BaseNodeGuid: 222be7dc-ff4c-4d58-b49c-07be7439c88d
     TargetNodeGuid: 9596ab3d-9f35-4284-8bee-6f195d110979
+    OutputPortIndex: 0
+  - BaseNodeGuid: fbf8e595-bd30-4fda-88c0-3ea0b2507c78
+    TargetNodeGuid: 7aca1869-9630-4f98-9ad0-df1de495bace
+    OutputPortIndex: 0
+  - BaseNodeGuid: 7aca1869-9630-4f98-9ad0-df1de495bace
+    TargetNodeGuid: c21ad2df-4367-4afb-aae9-d1cc82c9a6bb
+    OutputPortIndex: 0
+  - BaseNodeGuid: c21ad2df-4367-4afb-aae9-d1cc82c9a6bb
+    TargetNodeGuid: 9f6462be-723d-4990-bf32-a74a9036d709
     OutputPortIndex: 0
 --- !u!114 &87715998384982209
 MonoBehaviour:
@@ -8901,10 +8901,10 @@ MonoBehaviour:
   Guid: 5c0f5901-0cf5-4475-afee-34c6af944232
   Position:
     serializedVersion: 2
-    x: 1280
+    x: 1250
     y: 660
-    width: 200
-    height: 150
+    width: 398
+    height: 155
   CustomFields:
   - FieldName: Title
     FieldValue: 18
@@ -9101,10 +9101,10 @@ MonoBehaviour:
   Guid: 4de6ad22-2694-41f5-a242-5083e32b078d
   Position:
     serializedVersion: 2
-    x: 640
+    x: 724
     y: 220
-    width: 200
-    height: 150
+    width: 310
+    height: 155
   CustomFields:
   - FieldName: Title
     FieldValue: 8

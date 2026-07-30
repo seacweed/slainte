@@ -98,13 +98,15 @@ public class EpisodeCsvImporter : EditorWindow
 
         if (!ParseMeta(sections, data)) return null;
         ParseTrigger(sections, data);
+        ParsePlayCondition(sections, data);
         ParseOpeningChars(sections, data);
 
-        Dictionary<string, List<CharacterSlotEntry>> nodeChars       = BuildNodeCharsLookup(sections);
-        Dictionary<string, List<EpisodeChoice>>      nodeChoices     = BuildNodeChoicesLookup(sections);
-        Dictionary<string, List<NodeFlagBranch>>     nodeBranches    = BuildNodeBranchesLookup(sections);
-        Dictionary<string, List<NodeVarBranch>>      nodeVarBranches = BuildNodeVarBranchesLookup(sections);
-        ParseNodes(sections, data, nodeChars, nodeChoices, nodeBranches, nodeVarBranches);
+        Dictionary<string, List<CharacterSlotEntry>>  nodeChars           = BuildNodeCharsLookup(sections);
+        Dictionary<string, List<EpisodeChoice>>       nodeChoices         = BuildNodeChoicesLookup(sections);
+        Dictionary<string, List<NodeFlagBranch>>      nodeBranches        = BuildNodeBranchesLookup(sections);
+        Dictionary<string, List<NodeVarBranch>>       nodeVarBranches     = BuildNodeVarBranchesLookup(sections);
+        Dictionary<string, List<NodeEpisodeBranch>>   nodeEpisodeBranches = BuildNodeEpisodeBranchesLookup(sections);
+        ParseNodes(sections, data, nodeChars, nodeChoices, nodeBranches, nodeVarBranches, nodeEpisodeBranches);
 
         return data;
     }
@@ -157,9 +159,12 @@ public class EpisodeCsvImporter : EditorWindow
         }
 
         string[] row = rows[0];
-        data.episodeId    = Field(row, 0);
-        data.episodeTitle = Field(row, 1);
-        data.firstNodeId  = Field(row, 2);
+        data.episodeId     = Field(row, 0);
+        data.episodeTitle  = Field(row, 1);
+        data.firstNodeId   = Field(row, 2);
+        data.episodeType   = ParseEpisodeType(Field(row, 3));
+        data.mandatorySlot = ParseMandatorySlot(Field(row, 4));
+        data.chapterId     = Field(row, 5);
         return true;
     }
 
@@ -175,6 +180,22 @@ public class EpisodeCsvImporter : EditorWindow
         data.triggerCondition.blockedFlags             = SplitList(Field(row, 2));
         data.triggerCondition.prerequisiteEpisodeIds   = SplitList(Field(row, 3));
         data.triggerCondition.requiredVars             = ParseVarConditionList(Field(row, 4));
+        data.triggerCondition.requiredCustomerAppearances = ParseCustomerAppearanceList(Field(row, 5));
+    }
+
+    private static void ParsePlayCondition(Dictionary<string, List<string[]>> sections, EpisodeData data)
+    {
+        data.playCondition = new EpisodeTriggerCondition();
+
+        if (!sections.TryGetValue("PLAY_TRIGGER", out var rows) || rows.Count == 0) return;
+
+        string[] row = rows[0];
+        data.playCondition.minDay                  = int.TryParse(Field(row, 0), out int d) ? d : 0;
+        data.playCondition.requiredFlags            = SplitList(Field(row, 1));
+        data.playCondition.blockedFlags             = SplitList(Field(row, 2));
+        data.playCondition.prerequisiteEpisodeIds   = SplitList(Field(row, 3));
+        data.playCondition.requiredVars             = ParseVarConditionList(Field(row, 4));
+        data.playCondition.requiredCustomerAppearances = ParseCustomerAppearanceList(Field(row, 5));
     }
 
     private static void ParseOpeningChars(Dictionary<string, List<string[]>> sections, EpisodeData data)
@@ -283,13 +304,37 @@ public class EpisodeCsvImporter : EditorWindow
         return lookup;
     }
 
+    private static Dictionary<string, List<NodeEpisodeBranch>> BuildNodeEpisodeBranchesLookup(
+        Dictionary<string, List<string[]>> sections)
+    {
+        var lookup = new Dictionary<string, List<NodeEpisodeBranch>>();
+
+        if (!sections.TryGetValue("NODE_EPISODE_BRANCHES", out var rows)) return lookup;
+
+        foreach (string[] row in rows)
+        {
+            string nid = Field(row, 0);
+            if (!lookup.ContainsKey(nid))
+                lookup[nid] = new List<NodeEpisodeBranch>();
+
+            lookup[nid].Add(new NodeEpisodeBranch
+            {
+                requiredCompletedEpisodeId = Field(row, 1),
+                nextNodeId                 = Field(row, 2)
+            });
+        }
+
+        return lookup;
+    }
+
     private static void ParseNodes(
         Dictionary<string, List<string[]>> sections,
         EpisodeData data,
         Dictionary<string, List<CharacterSlotEntry>> nodeChars,
         Dictionary<string, List<EpisodeChoice>> nodeChoices,
         Dictionary<string, List<NodeFlagBranch>> nodeBranches,
-        Dictionary<string, List<NodeVarBranch>> nodeVarBranches)
+        Dictionary<string, List<NodeVarBranch>> nodeVarBranches,
+        Dictionary<string, List<NodeEpisodeBranch>> nodeEpisodeBranches)
     {
         data.nodes = new List<EpisodeNode>();
 
@@ -325,7 +370,9 @@ public class EpisodeCsvImporter : EditorWindow
                 flagBranches = nodeBranches.TryGetValue(nid, out var branches)
                     ? branches : new List<NodeFlagBranch>(),
                 varBranches = nodeVarBranches.TryGetValue(nid, out var varBr)
-                    ? varBr : new List<NodeVarBranch>()
+                    ? varBr : new List<NodeVarBranch>(),
+                episodeBranches = nodeEpisodeBranches.TryGetValue(nid, out var epBr)
+                    ? epBr : new List<NodeEpisodeBranch>()
             });
         }
     }
@@ -420,6 +467,39 @@ public class EpisodeCsvImporter : EditorWindow
         }
 
         return null;
+    }
+
+    private static List<CustomerAppearanceCondition> ParseCustomerAppearanceList(string value)
+    {
+        var result = new List<CustomerAppearanceCondition>();
+        if (string.IsNullOrWhiteSpace(value)) return result;
+
+        foreach (string item in value.Split('|'))
+        {
+            string t = item.Trim();
+            if (string.IsNullOrEmpty(t)) continue;
+
+            int idx = t.LastIndexOf(':');
+            if (idx <= 0) continue;
+
+            string name   = t.Substring(0, idx).Trim();
+            string numStr = t.Substring(idx + 1).Trim();
+            if (!int.TryParse(numStr, out int count)) continue;
+
+            result.Add(new CustomerAppearanceCondition { characterId = name, count = count });
+        }
+
+        return result;
+    }
+
+    private static EpisodeType ParseEpisodeType(string value)
+    {
+        return System.Enum.TryParse(value.Trim(), true, out EpisodeType result) ? result : EpisodeType.Default;
+    }
+
+    private static MandatorySlot ParseMandatorySlot(string value)
+    {
+        return System.Enum.TryParse(value.Trim(), true, out MandatorySlot result) ? result : MandatorySlot.None;
     }
 
     private static BgmCommand ParseBgmCommand(string value)

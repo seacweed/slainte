@@ -85,7 +85,7 @@ public class EpisodeInfoUI : MonoBehaviour
                 // 커스텀 텍스트가 있다면 하단에 일괄 표시 (단순 힌트용)
                 foreach (string customText in data.customConditionTexts)
                 {
-                    bool overallMet = EpisodeManager.Instance.CanStart(data, gp);
+                    bool overallMet = EpisodeManager.Instance.IsUnlocked(data, gp);
                     cText += (overallMet ? "<color=green>🔓</color>" : "<color=red>🔒</color>") + $" {customText}\n";
                 }
 

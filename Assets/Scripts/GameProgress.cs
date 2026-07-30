@@ -22,13 +22,34 @@ public class GameProgress : MonoSingleton<GameProgress>
     [SerializeField] private List<string> bottleAmountKeys   = new();
     [SerializeField] private List<float>  bottleAmountValues = new();
 
+    [Header("Customer Appearances")]
+    [SerializeField] private List<string> customerAppearanceKeys   = new();
+    [SerializeField] private List<int>    customerAppearanceValues = new();
+
+    [Header("Chapter")]
+    [SerializeField] private string currentChapterId = "";
+
+    [Header("Money")]
+    [SerializeField] private int currentMoney = 0;
+
+    [Header("Day Settlement (transient, resets each day)")]
+    [SerializeField] private int dayDrinkSalesCount = 0;
+    [SerializeField] private int dayDrinkRevenue     = 0;
+    [SerializeField] private int dayTotalIncome      = 0;
+
     private HashSet<string>           _flagSet;
     private HashSet<string>           _completedSet;
     private Dictionary<string, int>   _affinity;
     private Dictionary<string, int>   _boardSlots;
     private Dictionary<string, float> _bottleAmounts;
+    private Dictionary<string, int>   _customerAppearances;
 
-    public int CurrentDay => currentDay;
+    public int    CurrentDay        => currentDay;
+    public string CurrentChapterId  => currentChapterId;
+    public int    CurrentMoney      => currentMoney;
+    public int    DayDrinkSalesCount => dayDrinkSalesCount;
+    public int    DayDrinkRevenue    => dayDrinkRevenue;
+    public int    DayTotalIncome     => dayTotalIncome;
 
     protected override void Awake()
     {
@@ -56,6 +77,11 @@ public class GameProgress : MonoSingleton<GameProgress>
         int bottleCount = Mathf.Min(bottleAmountKeys.Count, bottleAmountValues.Count);
         for (int i = 0; i < bottleCount; i++)
             _bottleAmounts[bottleAmountKeys[i]] = bottleAmountValues[i];
+
+        _customerAppearances = new Dictionary<string, int>();
+        int appearanceCount = Mathf.Min(customerAppearanceKeys.Count, customerAppearanceValues.Count);
+        for (int i = 0; i < appearanceCount; i++)
+            _customerAppearances[customerAppearanceKeys[i]] = customerAppearanceValues[i];
     }
 
     public void LoadFrom(SaveData data)
@@ -71,6 +97,13 @@ public class GameProgress : MonoSingleton<GameProgress>
         boardSlotValues     = new List<int>(data.boardSlotValues ?? new List<int>());
         bottleAmountKeys    = new List<string>(data.bottleAmountKeys ?? new List<string>());
         bottleAmountValues  = new List<float>(data.bottleAmountValues ?? new List<float>());
+        customerAppearanceKeys   = new List<string>(data.customerAppearanceKeys ?? new List<string>());
+        customerAppearanceValues = new List<int>(data.customerAppearanceValues ?? new List<int>());
+        currentChapterId   = data.currentChapterId ?? "";
+        currentMoney        = data.currentMoney;
+        dayDrinkSalesCount  = data.dayDrinkSalesCount;
+        dayDrinkRevenue     = data.dayDrinkRevenue;
+        dayTotalIncome      = data.dayTotalIncome;
 
         RebuildRuntimeSets();
     }
@@ -83,6 +116,8 @@ public class GameProgress : MonoSingleton<GameProgress>
     public List<int>    GetBoardSlotValues()  => new List<int>(boardSlotValues);
     public List<string> GetBottleAmountKeys()   => new List<string>(bottleAmountKeys);
     public List<float>  GetBottleAmountValues() => new List<float>(bottleAmountValues);
+    public List<string> GetCustomerAppearanceKeys()   => new List<string>(customerAppearanceKeys);
+    public List<int>    GetCustomerAppearanceValues() => new List<int>(customerAppearanceValues);
 
     // ── Flags ──────────────────────────────────────────────────
 
@@ -121,6 +156,24 @@ public class GameProgress : MonoSingleton<GameProgress>
     public void SetCurrentDay(int day)
     {
         currentDay = Mathf.Max(0, day);
+    }
+
+    // Rest 씬에서 하루를 시작할 때(영업 시작/기본 에피소드 시작) 호출.
+    public void AdvanceDay()
+    {
+        currentDay++;
+    }
+
+    // ── Chapter ────────────────────────────────────────────────
+
+    // 챕터가 실제로 바뀌는 경우, 새 챕터의 Day 1부터 다시 시작하도록 currentDay를 리셋한다.
+    public void SetCurrentChapter(string chapterId)
+    {
+        chapterId ??= "";
+        if (chapterId == currentChapterId) return;
+
+        currentChapterId = chapterId;
+        currentDay = 1;
     }
 
     // ── Affinity Variables ─────────────────────────────────────
@@ -231,5 +284,63 @@ public class GameProgress : MonoSingleton<GameProgress>
             bottleAmountKeys.Add(bottleId);
             bottleAmountValues.Add(value);
         }
+    }
+
+    // ── Customer Appearances ───────────────────────────────────
+
+    public int GetCustomerAppearance(string characterId)
+    {
+        if (string.IsNullOrWhiteSpace(characterId)) return 0;
+        _customerAppearances.TryGetValue(characterId, out int value);
+        return value;
+    }
+
+    public void IncrementCustomerAppearance(string characterId)
+    {
+        if (string.IsNullOrWhiteSpace(characterId)) return;
+        _customerAppearances.TryGetValue(characterId, out int current);
+        int next = current + 1;
+        _customerAppearances[characterId] = next;
+        SyncCustomerAppearanceToLists(characterId, next);
+    }
+
+    private void SyncCustomerAppearanceToLists(string characterId, int value)
+    {
+        int idx = customerAppearanceKeys.IndexOf(characterId);
+        if (idx >= 0)
+            customerAppearanceValues[idx] = value;
+        else
+        {
+            customerAppearanceKeys.Add(characterId);
+            customerAppearanceValues.Add(value);
+        }
+    }
+
+    // ── Money ────────────────────────────────────────────────────
+
+    public void AddMoney(int delta)
+    {
+        currentMoney += delta;
+    }
+
+    // ── Day Settlement (transient) ─────────────────────────────
+
+    public void RecordDrinkSale(int revenue)
+    {
+        dayDrinkSalesCount += 1;
+        dayDrinkRevenue    += revenue;
+        dayTotalIncome     += revenue;
+    }
+
+    public void AddDayIncome(int amount)
+    {
+        dayTotalIncome += amount;
+    }
+
+    public void ResetDaySettlement()
+    {
+        dayDrinkSalesCount = 0;
+        dayDrinkRevenue    = 0;
+        dayTotalIncome     = 0;
     }
 }

@@ -27,9 +27,13 @@ namespace NarrativeFlow.Editor
             string path = $"{dir}/{source.episodeId}.asset";
 
             NarrativeGraphSO graph = ScriptableObject.CreateInstance<NarrativeGraphSO>();
-            graph.EpisodeId    = source.episodeId;
-            graph.EpisodeTitle = source.episodeTitle;
+            graph.EpisodeId     = source.episodeId;
+            graph.EpisodeTitle  = source.episodeTitle;
+            graph.ChapterId     = source.chapterId;
+            graph.EpisodeType   = source.episodeType;
+            graph.MandatorySlot = source.mandatorySlot;
             graph.TriggerCondition  = source.triggerCondition;
+            graph.PlayCondition     = source.playCondition;
             graph.OpeningCharacters = (source.openingCharacters ?? new List<CharacterSlotEntry>())
                 .Select(c => new CharacterSlotEntry { characterKey = c.characterKey, expressionKey = c.expressionKey, slotIndex = c.slotIndex })
                 .ToList();
@@ -94,10 +98,12 @@ namespace NarrativeFlow.Editor
                 }
                 else
                 {
-                    // Flag/var branches each get a port, nextNodeId gets the last port ("Next").
+                    // Flag/episode/var branches each get a port, nextNodeId gets the last port ("Next").
                     int port = 0;
                     foreach (var fb in rNode.flagBranches)
                         AddEdge(graph, srcEp, fb.nextNodeId, nodeViews, port++);
+                    foreach (var eb in rNode.episodeBranches)
+                        AddEdge(graph, srcEp, eb.nextNodeId, nodeViews, port++);
                     foreach (var vb in rNode.varBranches)
                         AddEdge(graph, srcEp, vb.nextNodeId, nodeViews, port++);
                     if (!string.IsNullOrEmpty(rNode.nextNodeId))
@@ -141,6 +147,7 @@ namespace NarrativeFlow.Editor
                 Enqueue(queue, node.nextNodeIdBad);
                 node.choices.ForEach(c => Enqueue(queue, c.nextNodeId));
                 node.flagBranches.ForEach(b => Enqueue(queue, b.nextNodeId));
+                node.episodeBranches.ForEach(b => Enqueue(queue, b.nextNodeId));
                 node.varBranches.ForEach(b => Enqueue(queue, b.nextNodeId));
             }
 
@@ -223,6 +230,8 @@ namespace NarrativeFlow.Editor
                 string key = fb.requiredAllFlags.Count > 0 ? fb.requiredAllFlags[0] : "flag";
                 branches.Add($"{key} == true");
             }
+            foreach (var eb in rNode.episodeBranches)
+                branches.Add(eb.requiredCompletedEpisodeId); // bare episode id, e.g. "StrangeCoin_0"
             foreach (var vb in rNode.varBranches)
                 branches.Add($"{vb.condition.varName} {CompareOpToString(vb.condition.op)} {vb.condition.threshold}");
             branches.Add("Next");

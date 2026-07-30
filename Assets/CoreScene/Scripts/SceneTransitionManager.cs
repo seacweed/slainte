@@ -51,17 +51,20 @@ public class SceneTransitionManager : MonoSingleton<SceneTransitionManager>
     }
 
     // 💡 2. 매개변수에 Action onComplete = null 추가
-    public void TransitionToSubScene(string sceneToLoad, Action onComplete = null)
+    // onFadeOutComplete: 화면이 완전히 검게 된 직후(씬 언로드 전) 호출. 이 시점 이후엔
+    // 화면이 안 보이므로 이전 씬의 UI를 감추거나 상태를 리셋해도 티가 나지 않는다.
+    public void TransitionToSubScene(string sceneToLoad, Action onComplete = null, Action onFadeOutComplete = null)
     {
-        StartCoroutine(TransitionRoutine(sceneToLoad, onComplete));
+        StartCoroutine(TransitionRoutine(sceneToLoad, onComplete, onFadeOutComplete));
     }
 
     // 💡 3. 매개변수에 Action onComplete 추가
-    private IEnumerator TransitionRoutine(string sceneToLoad, Action onComplete)
+    private IEnumerator TransitionRoutine(string sceneToLoad, Action onComplete, Action onFadeOutComplete)
     {
         Debug.Log($"[Transition] 1. 페이드 아웃 시작 (목표 씬: {sceneToLoad})");
         fadeCanvasGroup.blocksRaycasts = true;
         yield return Fade(1f);
+        onFadeOutComplete?.Invoke();
 
         Debug.Log("[Transition] 2. 기존 씬 언로드 확인");
         if (!string.IsNullOrEmpty(currentActiveScene))

@@ -5,6 +5,7 @@
 ## 반드시 지켜야 할 점
 
 - 코드 내에 한글 사용 금지(주석 제외)
+- 답변은 무조건 한국어로 할 것
 - 후에 다양한 기능이 추가될 수 있으므로 OOP 기반 설계, 확장성 고려한 코드 작성
 - 계획부터 말하고 승인 받은 후에 작업 진행
 - 요구사항이 명확하지 않거나 부족한 점이 있는 경우 반드시 질문 후 답변
@@ -15,17 +16,19 @@
 
 **Slainte**는 Unity 2023.3.5f2(URP)로 제작 중인 내러티브 바텐딩 게임입니다. 이름은 아일랜드어로 "건배"를 뜻합니다. 에피소드 기반의 비주얼 노벨식 스토리텔링과 드래그-드롭 바텐딩 메커니즘을 결합한 게임입니다.
 
-**게임 진행 흐름**: MainMenu → Episode(BusinessScene) → Rest(RestScene) → Episode → Rest → ...
+**게임 진행 흐름**: MainMenu → (Episode 또는 Business, BusinessScene) → Settlement(정산) → Rest(RestScene) → 다음 날 → ...
 
 ## 아키텍처 핵심
 
-- **싱글톤**: 전역 상태는 `MonoSingleton<T>`(DontDestroyOnLoad 유지, `GameProgress`, `EpisodeManager`, `DataManager`, `GameManager`, `AudioManager`, `SceneTransitionManager`), 씬 종속 UI 매니저는 `SceneSingleton<T>`(DontDestroyOnLoad 없음, `GameModeManager`, `NotificationManager`) — BusinessScene처럼 Additive로 매 에피소드 언로드/재로드되는 씬에서 씬 로컬 UI를 직접 참조하는 매니저가 전역 싱글톤이면 재로드 시 낡은 인스턴스를 참조하는 버그가 생기므로 분리
-- **런타임 상태 Source of Truth**: `GameProgress` (flags, completedEpisodeIds, affinityVars, boardSlots, currentDay)
-- **에피소드 데이터**: `EpisodeData` 단일 SO — `Resources/EpisodeData/`에 배치, `EpisodeManager`가 일괄 로드
+- **싱글톤**: 전역 상태는 `MonoSingleton<T>`(DontDestroyOnLoad 유지, `GameProgress`, `EpisodeManager`, `DataManager`, `GameManager`, `AudioManager`, `SceneTransitionManager`, `DayFlowController`, `SettlementManager`), 씬 종속 UI 매니저는 `SceneSingleton<T>`(DontDestroyOnLoad 없음, `GameModeManager`, `NotificationManager`) — BusinessScene처럼 Additive로 매 에피소드 언로드/재로드되는 씬에서 씬 로컬 UI를 직접 참조하는 매니저가 전역 싱글톤이면 재로드 시 낡은 인스턴스를 참조하는 버그가 생기므로 분리. `DontDestroyOnLoad`는 루트 GameObject에서만 유효하므로 모든 `MonoSingleton` 스크립트는 CoreScene의 단일 루트 오브젝트 `Managers`에 컴포넌트로 함께 부착(자식 오브젝트로 분리하지 않음)
+- **에피소드 해금/플레이 조건**: `EpisodeData.triggerCondition`(해금, 작전판 노출)과 `playCondition`(플레이, Play 버튼 활성화)이 분리되어 있음. `EpisodeManager.IsUnlocked()`/`IsPlayable()`가 각각 평가
+- **런타임 상태 Source of Truth**: `GameProgress` (flags, completedEpisodeIds, affinityVars, boardSlots, currentDay, currentChapterId, currentMoney, 당일 정산 집계, 손님 등장 횟수)
+- **Day/챕터**: `DayFlowController`의 Rest 진입점(`StartBusinessDay()`/`StartDefaultEpisode()`)에서 `GameProgress.AdvanceDay()`로 currentDay 증가. `GameProgress.SetCurrentChapter()`는 챕터가 실제로 바뀔 때만 currentDay를 1로 리셋. 최초 게임 시작 시 `MainMenuManager`가 currentChapterId가 비어있으면 `ChapterData.LoadFirst()`(chapterIndex 최솟값)로 첫 챕터를 설정 — 챕터 전환 트리거 자체는 아직 미구현(훅만 존재)
+- **에피소드 데이터**: `EpisodeData` 단일 SO — `Resources/EpisodeData/`에 배치, `EpisodeManager`가 일괄 로드. `episodeType`(Default/Mandatory)+`mandatorySlot`(Before/AfterBusiness)+`chapterId`로 하루 흐름에서의 역할 구분
 - **Canvas**: ScreenSpace-Overlay, Canvas Scaler Reference Resolution **2560×1440 (QHD)**. 1 canvas unit = 1px at QHD
-- **씬 전환**: `GameManager` + `SceneTransitionManager` (Additive, 페이드)
-- **게임 상태**: `GameState.None`(MainMenu 초기) / `GameState.Episode` / `GameState.Rest`
-- **에피소드 종료**: `EpisodeRunner.EndEncounter()` → `EpisodeManager.ClearEpisode()` → `GameManager.ChangeState(Rest)`
+- **씬 전환**: `GameManager` + `SceneTransitionManager` (Additive, 페이드). `TransitionToSubScene()`은 화면이 완전히 검게 된 직후(씬 언로드 전) 호출되는 `onFadeOutComplete` 콜백을 제공 — `SettlementManager`가 이를 이용해 정산 UI(셔터/모니터)를 페이드아웃 끝날 때까지 유지했다가 화면이 안 보이는 시점에 원위치로 리셋
+- **게임 상태**: `GameState.None`(MainMenu 초기) / `Episode` / `Business` / `Settlement` / `Rest` — 하루 진행 순서(필수 에피소드 큐, 영업 전/후, 정산)는 `DayFlowController`가 전담하며 각 씬/매니저는 `GameManager`를 직접 호출하지 않고 이 컨트롤러를 거침
+- **에피소드 종료**: `EpisodeRunner.EndEncounter()` → `EpisodeManager.ClearEpisode()` → `DayFlowController.OnEpisodeCompleted()` (다음 단계가 영업인지 정산인지는 필수 에피소드 큐 상태에 따라 결정)
 - **UI 패널 open/close**: `GameModeManager`가 단순 표시용 패널은 `CanvasGroup` 즉시 on-off로, 사용자 토글이 필요한 패널(주문서, 도감, 술장)은 `SetInteractable()`/`Open()` 호출만 하고 실제 슬라이드 애니메이션은 각 UI가 자체 관리
 - **카메라 이동**: `FrontCameraRig`가 `frontWorld` anchoredPosition으로 배경을 가로(에피소드 캐릭터 포커스)·세로(서랍 열기, S/W키)로 이동. 주문서/도감/술장 패널은 세로 이동만 따라가고 가로 팬에는 화면 고정 (`verticalFollowPanels`)
 - **술장**: `LiquorShelfUI` — 우측 슬라이드 토글(R키), 카테고리별 컨테이너 show/hide, `GameProgress` 해금 플래그로 슬롯 표시 제어. 버튼 이미지는 버튼이 아닌 패널 자체의 Image 컴포넌트(`panelImage`)를 교체하는 방식 (`RecipeBookUI`, `OrderTicketUI` 공통 적용). 병 잔여량은 `GameProgress`가 소스오브트루스, 호버 시 `LiquorBottleInfoCard`가 병 개수 기반 상태 표시
@@ -42,6 +45,7 @@
 | [docs/core/architecture.md](docs/core/architecture.md) | GameMode/패널 구조, 입력 처리, GameProgress, 데이터 패턴, 공용 UI 유틸리티 |
 | [docs/core/scene-structure.md](docs/core/scene-structure.md) | 씬 계층 구조 (Canvas, Panel, GameObject) |
 | [docs/core/corescene-systems.md](docs/core/corescene-systems.md) | CoreScene 매니저 구조, 게임 흐름, 저장/로드 |
+| [docs/core/game-flow-design.md](docs/core/game-flow-design.md) | Day 흐름 설계(영업/에피소드/정산), 필수 에피소드 큐, 챕터·해금 데이터 모델 |
 | [docs/core/unity-build.md](docs/core/unity-build.md) | Unity 버전, 빌드 방법, 개발 환경 |
 | **narrative** |||
 | [docs/narrative/episode-engine.md](docs/narrative/episode-engine.md) | 에피소드 오케스트레이션(EpisodeRunner, 분기, 제조 트리거), 오디오/BGM |

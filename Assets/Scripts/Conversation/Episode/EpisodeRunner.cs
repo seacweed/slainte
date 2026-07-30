@@ -227,6 +227,14 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
                     return branch.nextNodeId;
             }
 
+            for (int i = 0; i < node.episodeBranches.Count; i++)
+            {
+                NodeEpisodeBranch branch = node.episodeBranches[i];
+                if (!string.IsNullOrWhiteSpace(branch.nextNodeId)
+                    && Progress.IsEpisodeCompleted(branch.requiredCompletedEpisodeId))
+                    return branch.nextNodeId;
+            }
+
             for (int i = 0; i < node.varBranches.Count; i++)
             {
                 NodeVarBranch branch = node.varBranches[i];
@@ -406,6 +414,6 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         OnEncounterCompleted?.Invoke();
 
         EpisodeManager.Instance?.ClearEpisode(episodeId);
-        GameManager.Instance?.ChangeState(GameState.Rest);
+        DayFlowController.Instance?.OnEpisodeCompleted();
     }
 }

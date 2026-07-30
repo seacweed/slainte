@@ -13,17 +13,20 @@
 4. [섹션별 작성법](#4-섹션별-작성법)
    - [META — 에피소드 기본 정보](#meta--에피소드-기본-정보)
    - [TRIGGER — 에피소드 발동 조건](#trigger--에피소드-발동-조건)
+   - [PLAY_TRIGGER — 플레이 조건](#play_trigger--플레이-조건)
    - [OPENING_CHARS — 첫 등장 캐릭터](#opening_chars--첫-등장-캐릭터)
    - [NODES — 대사 노드](#nodes--대사-노드)
    - [NODE_CHARS — 노드별 표정](#node_chars--노드별-표정)
    - [CHOICES — 선택지](#choices--선택지)
    - [NODE_BRANCHES — 플래그 분기](#node_branches--플래그-분기)
    - [NODE_VAR_BRANCHES — 수치 분기](#node_var_branches--수치-분기)
+   - [NODE_EPISODE_BRANCHES — 에피소드 완료 분기](#node_episode_branches--에피소드-완료-분기)
 5. [흐름 유형별 작성 패턴](#5-흐름-유형별-작성-패턴)
    - [일반 대화 흐름](#일반-대화-흐름)
    - [플레이어 선택지](#플레이어-선택지)
    - [플래그 분기](#플래그-분기)
    - [호감도 분기](#호감도-분기)
+   - [다른 에피소드 클리어 여부에 따른 분기](#다른-에피소드-클리어-여부에-따른-분기)
    - [제조 판정](#제조-판정)
 6. [전체 예시](#6-전체-예시)
 7. [작업 후 게임 반영 방법](#7-작업-후-게임-반영-방법)
@@ -62,17 +65,19 @@
 
 ## 3. CSV 구조 한눈에 보기
 
-파일은 아래 8개 섹션으로 구성됩니다. **섹션 순서는 반드시 지켜야 합니다.**
+파일은 아래 10개 섹션으로 구성됩니다. **섹션 순서는 반드시 지켜야 합니다.**
 
 ```
-#META           ← 에피소드 ID·제목·시작 노드
-#TRIGGER        ← 이 에피소드가 언제 발동되는지
+#META           ← 에피소드 ID·제목·시작 노드·타입·챕터
+#TRIGGER        ← 이 에피소드가 작전판에 언제 해금(노출)되는지
+#PLAY_TRIGGER   ← 해금된 후 Play 버튼이 언제 활성화되는지 (생략 가능)
 #OPENING_CHARS  ← 에피소드 시작 시 무대에 서 있는 캐릭터
 #NODES          ← 대사 목록 (핵심 섹션)
 #NODE_CHARS     ← 각 대사에서 캐릭터 표정
 #CHOICES        ← 플레이어 선택지
 #NODE_BRANCHES  ← 플래그 기반 분기
 #NODE_VAR_BRANCHES ← 수치(호감도 등) 기반 분기
+#NODE_EPISODE_BRANCHES ← 다른 에피소드 완료 여부 기반 분기
 ```
 
 > 분기나 선택지가 없는 섹션은 **헤더 행만 남기고 데이터 없이 두면** 됩니다.
@@ -92,18 +97,23 @@
 | `episodeId` | 에피소드 고유 ID. 한 번 정하면 바꾸지 마세요 (에셋 파일명 기준) | `StrangeCoin_0` |
 | `episodeTitle` | 게임에 표시되는 에피소드 제목 | `이상한 동전 - 0` |
 | `firstNodeId` | 대화가 시작되는 첫 번째 노드 ID | `0` |
+| `episodeType` | `Default`(휴식 화면에서 플레이어가 직접 선택) 또는 `Mandatory`(필수, 튜토리얼처럼 영업 전/후 자동 진행). 비우면 `Default` | `Default` |
+| `mandatorySlot` | `episodeType=Mandatory`일 때만: `BeforeBusiness`(영업 전) / `AfterBusiness`(영업 후) | `BeforeBusiness` |
+| `chapterId` | 소속 챕터 ID (개발자가 알려주는 값 사용) | `chapter_1` |
 
 ```csv
 #META
-episodeId,episodeTitle,firstNodeId
-StrangeCoin_0,이상한 동전 - 0,0
+episodeId,episodeTitle,firstNodeId,episodeType,mandatorySlot,chapterId
+StrangeCoin_0,이상한 동전 - 0,0,Default,None,chapter_1
 ```
+
+> `episodeType`/`mandatorySlot`/`chapterId`는 일반 대사 에피소드라면 비워도 됩니다(자동으로 `Default`/`None`/빈 값 처리).
 
 ---
 
 ### TRIGGER — 에피소드 발동 조건
 
-이 에피소드가 게임 내에서 등장하는 조건입니다. **딱 1행**만 작성합니다.  
+이 에피소드가 **작전판(Rest 화면)에 해금(노출)**되는 조건입니다. **딱 1행**만 작성합니다.  
 조건이 없는 열은 **비워두면** 됩니다.
 
 | 열 | 설명 | 예시 |
@@ -113,13 +123,30 @@ StrangeCoin_0,이상한 동전 - 0,0
 | `blockedFlags` | 하나라도 켜져 있으면 **발동 안 함**. 여러 개는 `\|` 구분 | `flag_episode_ended` |
 | `prerequisiteEpisodeIds` | **모두 완료되어야** 발동. 여러 개는 `\|` 구분 | `Intro_0\|Intro_1` |
 | `requiredVars` | 수치 변수 조건. 여러 개는 `\|` 구분 | `sally_affinity>=10` |
+| `requiredCustomerAppearances` | 특정 손님이 **이 횟수 이상 등장해야** 발동. `캐릭터ID:횟수` 형식, 여러 개는 `\|` 구분 | `himiko:3` |
 
 **`requiredVars` 연산자**: `>=` `>` `==` `<` `<=`
 
 ```csv
 #TRIGGER
-minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars
-3,flag_met_customer,,Intro_0,sally_affinity>=5
+minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCustomerAppearances
+3,flag_met_customer,,Intro_0,sally_affinity>=5,himiko:3
+```
+
+---
+
+### PLAY_TRIGGER — 플레이 조건
+
+해금(위 `TRIGGER`)과는 별개로, **작전판에서 Play 버튼이 활성화**되려면 만족해야 하는 조건입니다.
+
+- 예: "이상한 동전 1부"는 해금 조건이 "0부 완료"이고 플레이 조건이 없으면, 0부를 깨는 순간 작전판에 뜨고 바로 플레이 가능. 만약 1부에 플레이 조건을 따로 걸면, 0부를 깨서 작전판엔 뜨지만 그 조건을 만족하기 전까진 눌러도 Play 버튼이 비활성 상태로 보임
+- 열 구성과 작성법은 `TRIGGER`와 완전히 동일합니다
+- **이 섹션 자체를 안 써도 됩니다** — 없으면 "플레이 조건 없음"(해금되면 바로 플레이 가능)으로 처리됩니다
+
+```csv
+#PLAY_TRIGGER
+minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCustomerAppearances
+0,,,,,
 ```
 
 ---
@@ -285,6 +312,25 @@ nodeId,varName,op,threshold,nextNodeId
 
 ---
 
+### NODE_EPISODE_BRANCHES — 에피소드 완료 분기
+
+다른 에피소드를 클리어했는지에 따라 다른 노드로 이동합니다. "A 에피소드를 끝낸 뒤 B 에피소드를 하면 대사가 달라진다" 같은, 챕터 안의 여러 에피소드가 서로 연결되는 경우에 씁니다.  
+분기가 없으면 **헤더 행만 남기고 비워두세요**.
+
+| 열 | 설명 | 예시 |
+|---|---|---|
+| `nodeId` | 분기 확인을 할 노드 ID | `5` |
+| `requiredCompletedEpisodeId` | 이 에피소드가 완료되어 있어야 분기 | `StrangeCoin_0` |
+| `nextNodeId` | 조건 충족 시 이동할 노드 ID | `5_after_coin` |
+
+```csv
+#NODE_EPISODE_BRANCHES
+nodeId,requiredCompletedEpisodeId,nextNodeId
+5,StrangeCoin_0,5_after_coin
+```
+
+---
+
 ## 5. 흐름 유형별 작성 패턴
 
 ### 일반 대화 흐름
@@ -370,6 +416,26 @@ nodeId,requiredAllFlags,requiredAnyFlags,nextNodeId
 
 ---
 
+### 다른 에피소드 클리어 여부에 따른 분기
+
+`#NODE_EPISODE_BRANCHES`를 사용합니다. 예: '이상한 동전 0부'를 클리어했으면 다른 대사로 시작.
+
+```
+노드 0 ─── StrangeCoin_0 완료 → 노드 0_after_coin
+        └── 조건 없음          → 노드 0_default (기본)
+```
+
+```csv
+#NODES
+0,f72,,,어서오세요.,0_default,false,,,,
+
+#NODE_EPISODE_BRANCHES
+nodeId,requiredCompletedEpisodeId,nextNodeId
+0,StrangeCoin_0,0_after_coin
+```
+
+---
+
 ### 제조 판정
 
 칵테일 제조 성공/실패에 따라 대화가 달라지는 노드입니다.
@@ -396,12 +462,12 @@ nodeId,requiredAllFlags,requiredAnyFlags,nextNodeId
 
 ```csv
 #META
-episodeId,episodeTitle,firstNodeId
-Example_0,예시 에피소드,0
+episodeId,episodeTitle,firstNodeId,episodeType,mandatorySlot,chapterId
+Example_0,예시 에피소드,0,Default,None,chapter_1
 
 #TRIGGER
-minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars
-0,,,,
+minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCustomerAppearances
+0,,,,,
 
 #OPENING_CHARS
 characterKey,expressionKey,slotIndex
@@ -434,6 +500,9 @@ nodeId,requiredAllFlags,requiredAnyFlags,nextNodeId
 
 #NODE_VAR_BRANCHES
 nodeId,varName,op,threshold,nextNodeId
+
+#NODE_EPISODE_BRANCHES
+nodeId,requiredCompletedEpisodeId,nextNodeId
 ```
 
 ---
@@ -460,5 +529,7 @@ nodeId,varName,op,threshold,nextNodeId
 | 표정이 바뀌지 않음 | `#NODE_CHARS`에 해당 노드 행이 없음 | 표정이 바뀌어야 하는 노드마다 `#NODE_CHARS` 행 추가 |
 | 대사 텍스트가 잘림 | 대사에 쉼표가 있는데 따옴표로 안 감쌈 | 해당 셀을 `"큰따옴표"` 로 감싸기 |
 | 분기가 동작하지 않음 | `varChanges` 형식 오류 | `varName+숫자` 또는 `varName-숫자` 형식 확인 |
-| 에피소드가 발동 안 됨 | `TRIGGER` 조건 미충족 | `requiredFlags`, `minDay`, `prerequisiteEpisodeIds` 재확인 |
+| 에피소드가 작전판에 안 뜸 | `TRIGGER`(해금 조건) 미충족 | `requiredFlags`, `minDay`, `prerequisiteEpisodeIds`, `requiredCustomerAppearances` 재확인 |
+| 작전판엔 떴는데 Play 버튼이 계속 비활성 | `PLAY_TRIGGER`(플레이 조건) 미충족 | `#PLAY_TRIGGER` 섹션 조건 재확인 (섹션이 없으면 항상 플레이 가능해야 정상) |
 | 한글이 깨짐 | 인코딩이 UTF-8이 아님 | 저장 시 인코딩을 **UTF-8** 로 지정 |
+| 필수 에피소드인데 휴식 화면에서 직접 선택됨 | `episodeType`을 `Mandatory`로 안 바꿈 | `#META`의 `episodeType`, `mandatorySlot` 확인 |

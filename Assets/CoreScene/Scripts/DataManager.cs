@@ -28,6 +28,13 @@ public class DataManager : MonoSingleton<DataManager>
             CurrentData.boardSlotValues     = gp.GetBoardSlotValues();
             CurrentData.bottleAmountKeys    = gp.GetBottleAmountKeys();
             CurrentData.bottleAmountValues  = gp.GetBottleAmountValues();
+            CurrentData.customerAppearanceKeys   = gp.GetCustomerAppearanceKeys();
+            CurrentData.customerAppearanceValues = gp.GetCustomerAppearanceValues();
+            CurrentData.currentChapterId    = gp.CurrentChapterId;
+            CurrentData.currentMoney        = gp.CurrentMoney;
+            CurrentData.dayDrinkSalesCount  = gp.DayDrinkSalesCount;
+            CurrentData.dayDrinkRevenue     = gp.DayDrinkRevenue;
+            CurrentData.dayTotalIncome      = gp.DayTotalIncome;
         }
 
         string json = JsonUtility.ToJson(CurrentData, true);

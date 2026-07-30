@@ -9,12 +9,14 @@
 - [섹션별 작성법](#섹션별-작성법)
   - [META](#meta)
   - [TRIGGER](#trigger)
+  - [PLAY_TRIGGER](#play_trigger)
   - [OPENING_CHARS](#opening_chars)
   - [NODES](#nodes)
   - [NODE_CHARS](#node_chars)
   - [CHOICES](#choices)
   - [NODE_BRANCHES](#node_branches)
   - [NODE_VAR_BRANCHES](#node_var_branches)
+  - [NODE_EPISODE_BRANCHES](#node_episode_branches)
 - [특수 표기법](#특수-표기법)
 - [작성 예시](#작성-예시)
 - [임포트 방법](#임포트-방법)
@@ -32,7 +34,7 @@
 
 ## 전체 구조
 
-파일은 `#섹션명` 으로 구분된 최대 8개 섹션으로 이루어집니다.  
+파일은 `#섹션명` 으로 구분된 최대 10개 섹션으로 이루어집니다.  
 각 섹션은 **헤더 행(열 이름)** → **데이터 행** 순서로 작성합니다.
 
 ```
@@ -41,6 +43,9 @@
 (데이터 행)
 
 #TRIGGER
+...
+
+#PLAY_TRIGGER
 ...
 
 #OPENING_CHARS
@@ -60,6 +65,9 @@
 
 #NODE_VAR_BRANCHES
 ...
+
+#NODE_EPISODE_BRANCHES
+...
 ```
 
 > 빈 행은 무시됩니다. 가독성을 위해 섹션 사이에 빈 행을 추가해도 됩니다.
@@ -77,18 +85,23 @@
 | `episodeId` | 에피소드 고유 ID (에셋 파일명에 사용됨) | `StrangeCoin_0` |
 | `episodeTitle` | 게임에 표시될 에피소드 제목 | `이상한 동전 - 0` |
 | `firstNodeId` | 대화가 시작될 첫 번째 노드 ID | `0` |
+| `episodeType` | `Default`(Rest 보드에서 직접 선택) / `Mandatory`(필수, 영업 전후 자동 삽입). 비우면 `Default` | `Default` |
+| `mandatorySlot` | `episodeType=Mandatory`일 때만 사용. `BeforeBusiness` / `AfterBusiness`. 비우면 `None` | `BeforeBusiness` |
+| `chapterId` | 소속 챕터 ID (`ChapterData.chapterId`와 매칭, 챕터 스코프 필수 에피소드 큐 조회에 사용) | `chapter_1` |
 
 ```csv
 #META
-episodeId,episodeTitle,firstNodeId
-StrangeCoin_0,이상한 동전 - 0,0
+episodeId,episodeTitle,firstNodeId,episodeType,mandatorySlot,chapterId
+StrangeCoin_0,이상한 동전 - 0,0,Default,None,chapter_1
 ```
+
+> `episodeType`/`mandatorySlot`/`chapterId` 열은 생략해도 됩니다(빈 값은 각각 `Default`/`None`/빈 문자열로 처리됨). 기존 CSV를 그대로 재임포트해도 문제없습니다.
 
 ---
 
 ### TRIGGER
 
-이 에피소드가 발동되는 조건입니다. **데이터 행은 반드시 1개** 작성합니다.
+이 에피소드가 작전판(Rest 화면)에 **해금(노출)**되는 조건입니다. **데이터 행은 반드시 1개** 작성합니다.
 
 | 열 | 설명 | 예시 |
 |---|---|---|
@@ -97,6 +110,7 @@ StrangeCoin_0,이상한 동전 - 0,0
 | `blockedFlags` | 이 플래그 중 **하나라도 켜져있으면** 발동 안 함 | `flag_ended` |
 | `prerequisiteEpisodeIds` | 이 에피소드들이 **모두 완료되어야** 발동 | `Intro_0\|Intro_1` |
 | `requiredVars` | 수치 변수 조건이 **모두 충족되어야** 발동 | `sally_affinity>=10` |
+| `requiredCustomerAppearances` | 손님이 **이 횟수 이상 등장해야** 발동 (`캐릭터ID:횟수`, `\|` 구분) | `himiko:3` |
 
 - 조건이 없는 열은 **비워두면** 됩니다.
 - 여러 값은 `|` 로 구분합니다.
@@ -104,8 +118,23 @@ StrangeCoin_0,이상한 동전 - 0,0
 
 ```csv
 #TRIGGER
-minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars
-3,flag_met_customer,,Intro_0,sally_affinity>=5
+minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCustomerAppearances
+3,flag_met_customer,,Intro_0,sally_affinity>=5,himiko:3
+```
+
+---
+
+### PLAY_TRIGGER
+
+`TRIGGER`(해금 조건)와 컬럼 구성이 완전히 동일하지만 의미가 다릅니다 — 이 조건을 만족해야 작전판에서 **Play 버튼이 활성화**됩니다. 해금은 됐지만 아직 플레이는 못 하는 상태(예: 사진은 작전판에 떴지만 눌러보면 버튼이 비활성)를 표현할 때 씁니다.
+
+- **생략 가능** — 섹션 자체를 안 쓰면 "플레이 조건 없음"(해금되면 바로 플레이 가능)으로 처리됩니다.
+- 열 구성과 문법은 `TRIGGER`와 동일합니다.
+
+```csv
+#PLAY_TRIGGER
+minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCustomerAppearances
+0,,,,,
 ```
 
 ---
@@ -155,7 +184,7 @@ f72,frust,-1
 
 **선택지 노드** 작성 시: `nextNodeId`는 비우고 `#CHOICES` 섹션에 선택지를 작성합니다.
 
-**분기 노드** 작성 시: `nextNodeId`는 조건이 모두 맞지 않을 때의 기본 이동 노드입니다. 조건 분기는 `#NODE_BRANCHES` / `#NODE_VAR_BRANCHES`에 작성합니다.
+**분기 노드** 작성 시: `nextNodeId`는 조건이 모두 맞지 않을 때의 기본 이동 노드입니다. 조건 분기는 `#NODE_BRANCHES` / `#NODE_EPISODE_BRANCHES` / `#NODE_VAR_BRANCHES`에 작성합니다.
 
 ```csv
 #NODES
@@ -231,7 +260,7 @@ nodeId,choiceIndex,buttonText,nextNodeId,setFlags,clearFlags,varChanges
 - `requiredAllFlags`와 `requiredAnyFlags` 중 하나만 사용합니다. 둘 다 값이 있으면 `requiredAllFlags`(AND)가 우선합니다.
 - 한 노드에 여러 조건을 쓰려면 **행을 여러 개** 작성합니다. 위에서 아래 순서로 확인하고, 처음으로 맞는 조건으로 이동합니다.
 - 어떤 조건도 맞지 않으면 `#NODES`의 `nextNodeId`로 이동합니다.
-- `NODE_BRANCHES`가 먼저 확인되고, 이후 `NODE_VAR_BRANCHES`가 확인됩니다.
+- 확인 순서: `NODE_BRANCHES` → `NODE_EPISODE_BRANCHES` → `NODE_VAR_BRANCHES` → `#NODES`의 기본 `nextNodeId`.
 
 ```csv
 #NODE_BRANCHES
@@ -266,6 +295,30 @@ nodeId,varName,op,threshold,nextNodeId
 ```
 
 > 위 예시는 `sally_affinity`가 10 이상이면 `5_high`, 5 이상이면 `5_mid`, 그 미만이면 `#NODES`의 기본 `nextNodeId`로 이동합니다.
+
+---
+
+### NODE_EPISODE_BRANCHES
+
+특정 에피소드의 완료 여부에 따라 다음 노드를 분기합니다. "A 에피소드를 클리어한 뒤 B 에피소드를 진행하면 내용이 달라진다" 같은 챕터 간 연동에 사용합니다.  
+분기가 없으면 이 섹션은 **헤더만 남기고 비워도** 됩니다.
+
+| 열 | 설명 | 예시 |
+|---|---|---|
+| `nodeId` | 분기가 적용될 노드 ID | `5` |
+| `requiredCompletedEpisodeId` | 이 에피소드가 완료되어 있어야 분기 | `StrangeCoin_0` |
+| `nextNodeId` | 조건 충족 시 이동할 노드 ID | `5_after_coin` |
+
+- 한 노드에 여러 조건을 쓰려면 **행을 여러 개** 작성합니다. 위에서 아래 순서로 확인하고, 처음으로 맞는 조건으로 이동합니다.
+- 어떤 조건도 맞지 않으면 `NODE_VAR_BRANCHES` → `#NODES`의 기본 `nextNodeId` 순으로 확인합니다.
+
+```csv
+#NODE_EPISODE_BRANCHES
+nodeId,requiredCompletedEpisodeId,nextNodeId
+5,StrangeCoin_0,5_after_coin
+```
+
+> 그래프 에디터에서는 이 조건을 별도 컬럼이 아니라 **엣지 라벨에 에피소드 ID를 그대로 적는 것**(예: `StrangeCoin_0`)으로 표현합니다. 자세한 내용은 [narrative-graph-guide.md](narrative-graph-guide.md) 참고.
 
 ---
 
@@ -306,12 +359,12 @@ flag_a|flag_b|flag_c
 
 ```csv
 #META
-episodeId,episodeTitle,firstNodeId
-Example_0,예시 에피소드,0
+episodeId,episodeTitle,firstNodeId,episodeType,mandatorySlot,chapterId
+Example_0,예시 에피소드,0,Default,None,chapter_1
 
 #TRIGGER
-minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars
-0,,,,
+minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCustomerAppearances
+0,,,,,
 
 #OPENING_CHARS
 characterKey,expressionKey,slotIndex
@@ -345,6 +398,9 @@ nodeId,requiredAllFlags,requiredAnyFlags,nextNodeId
 
 #NODE_VAR_BRANCHES
 nodeId,varName,op,threshold,nextNodeId
+
+#NODE_EPISODE_BRANCHES
+nodeId,requiredCompletedEpisodeId,nextNodeId
 ```
 
 ---
@@ -370,3 +426,5 @@ nodeId,varName,op,threshold,nextNodeId
 | 표정이 바뀌지 않음 | `#NODE_CHARS`에 해당 노드 행이 없음 | 표정이 바뀌는 노드마다 `#NODE_CHARS` 행 추가 |
 | 쉼표 이후 텍스트가 잘림 | 대사에 쉼표가 있는데 따옴표로 안 감쌈 | 해당 셀을 `"큰따옴표"` 로 감싸기 |
 | 분기가 동작하지 않음 | `varChanges` 형식 오류 | `varName+숫자` 또는 `varName-숫자` 형식 확인 |
+| 필수 에피소드인데 Rest 보드에서 선택 가능 | `episodeType`을 `Mandatory`로 안 바꿈 | `#META`의 `episodeType`, `mandatorySlot` 확인 |
+| 챕터별 필수 에피소드 큐 조회가 안 됨 | `chapterId`가 비어있거나 다른 챕터와 다름 | `#META`의 `chapterId`를 `ChapterData.chapterId`와 일치시키기 |

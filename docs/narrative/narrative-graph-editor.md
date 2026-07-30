@@ -43,7 +43,10 @@ Assets/
 ### NarrativeGraphSO
 ```
 EpisodeId, EpisodeTitle, StartNodeGuid    — 에피소드 식별 메타
-TriggerCondition: EpisodeTriggerCondition — 발동 조건
+ChapterId                                — 소속 챕터 ID (ChapterData.chapterId와 매칭)
+EpisodeType, MandatorySlot                — Default/Mandatory 구분, Mandatory인 경우 Before/AfterBusiness
+TriggerCondition: EpisodeTriggerCondition — 해금 조건 (작전판 노출 여부, requiredCustomerAppearances 포함)
+PlayCondition: EpisodeTriggerCondition    — 플레이 조건 (Play 버튼 활성화 여부, 없으면 해금 시 바로 플레이 가능)
 OpeningCharacters: List<CharacterSlotEntry>
 Nodes: List<NodeDataSO>                  — 서브에셋으로 AddObjectToAsset
 Edges: List<EdgeData>                    — { BaseNodeGuid, TargetNodeGuid, OutputPortIndex }
@@ -80,11 +83,11 @@ Conditions: List<GraphTriggerCondition>  — { Type, Key, Operator, Value }
 `Narrative > Compile Graph` 또는 Graph Settings 패널의 버튼.
 
 1. `graph.StartNodeGuid` 기준 BFS 순회
-2. `EpisodeNodeSO` → `EpisodeNode` 변환 (`BuildRuntimeNode`)
+2. `EpisodeNodeSO` → `EpisodeNode` 변환 (`BuildRuntimeNode`), `ChapterId`/`EpisodeType`/`MandatorySlot`은 그래프 메타에서 그대로 복사
 3. `TriggerNodeSO` 만나면 `InjectTriggerLogic` 호출 → 업스트림 노드의 flagBranches/varBranches에 인라인
-4. 출력 엣지 포트별로 `nextNodeId / nextNodeIdGood / nextNodeIdBad / choices[].nextNodeId` 연결
+4. 출력 엣지 포트별로 `nextNodeId / nextNodeIdGood / nextNodeIdBad / choices[].nextNodeId` 연결. 일반 분기 포트는 라벨을 파싱해 `flagBranches`(`key == true`) → `episodeBranches`(연산자 없는 순수 텍스트, 예: `StrangeCoin_0`) → `varBranches`(`var op threshold`) 순으로 판별
 5. `Assets/Resources/EpisodeData/EpisodeData_{id}.asset` 저장 (기존 파일은 CopySerialized로 덮어쓰기)
-6. CSV export: `ExportToCsv()` — `EpisodeCsvImporter`와 동일한 15컬럼 NODES 포맷 + 전체 섹션
+6. CSV export: `ExportToCsv()` — `EpisodeCsvImporter`와 동일한 포맷 + 전체 섹션 (`NODE_EPISODE_BRANCHES` 포함)
 
 ### 런타임 nodeId 결정
 컴파일 시 BFS 방문 순서대로 `{episodeId}_n{1,2,3,...}` 자동 부여.  
@@ -98,8 +101,9 @@ Conditions: List<GraphTriggerCondition>  — { Type, Key, Operator, Value }
 선택된 `EpisodeData` SO를 `NarrativeGraphSO`로 변환.
 
 - BFS 순회 → EpisodeNodeSO 1개/런타임 노드
+- `ChapterId`/`EpisodeType`/`MandatorySlot`을 그래프 메타로 복사
 - Choice 노드: SpeakerKey, Text, Choices 모두 복사
-- 엣지: flagBranches/varBranches → OutgoingBranches 레이블 (`{flag} == true`, `{var} >= {threshold}`) 자동 생성
+- 엣지: flagBranches/episodeBranches/varBranches → OutgoingBranches 레이블 (`{flag} == true`, `{requiredCompletedEpisodeId}`(그대로), `{var} >= {threshold}`) 자동 생성
 - Grid 배치: 5열 × 320px, 220px 간격
 
 ---
