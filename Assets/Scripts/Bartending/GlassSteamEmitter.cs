@@ -9,6 +9,7 @@ namespace Slainte.Bartending
         private const float SampleInterval = 0.1f;
         private const float MinimumParticleVolumeMl = 0.001f;
         private const float SurfaceBandWorldUnits = 0.18f;
+        private const float FullEmissionTemperatureC = 80f;
 
         [Header("품질 검증")]
         [SerializeField] private bool useDebugTemperature;
@@ -24,6 +25,8 @@ namespace Slainte.Bartending
         private float startTemperatureC = 55f;
         private float stopTemperatureC = 48f;
         private float emissionRate = 5f;
+        private float emissionHalfWidth = 0.5f;
+        private float emissionStrength;
         private float nextSampleTime;
         private float lastSampleTime;
         private float emissionAccumulator;
@@ -42,6 +45,7 @@ namespace Slainte.Bartending
             startTemperatureC = startTemperature;
             stopTemperatureC = Mathf.Min(stopTemperature, startTemperature - 0.1f);
             emissionRate = Mathf.Max(0f, particlesPerSecond);
+            emissionHalfWidth = Mathf.Max(0.05f, emissionWidth * 0.5f);
 
             EnsureParticleSystem(localTopY);
             SetEmission(false);
@@ -67,7 +71,7 @@ namespace Slainte.Bartending
             }
 
             SetEmission(true);
-            emissionAccumulator += emissionRate * elapsed;
+            emissionAccumulator += emissionRate * emissionStrength * elapsed;
             int emitCount = Mathf.Min(8, Mathf.FloorToInt(emissionAccumulator));
             if (emitCount <= 0)
                 return;
@@ -95,13 +99,13 @@ namespace Slainte.Bartending
         private void RefreshHotSurfaceParticles()
         {
             hotSurfaceParticles.Clear();
+            emissionStrength = 0f;
             IReadOnlyCollection<LiquidParticleData> particles = tracker.Particles;
-            float threshold = isEmitting ? stopTemperatureC : startTemperatureC;
             float highestY = float.NegativeInfinity;
 
             foreach (LiquidParticleData particle in particles)
             {
-                if (!IsHotLiquidParticle(particle, threshold))
+                if (!IsValidLiquidParticle(particle))
                     continue;
 
                 highestY = Mathf.Max(highestY, particle.transform.position.y);
@@ -111,30 +115,51 @@ namespace Slainte.Bartending
                 return;
 
             float minimumSurfaceY = highestY - SurfaceBandWorldUnits;
+            float threshold = isEmitting ? stopTemperatureC : startTemperatureC;
+            float weightedStrength = 0f;
+            float hotSurfaceVolumeMl = 0f;
             foreach (LiquidParticleData particle in particles)
             {
-                if (!IsHotLiquidParticle(particle, threshold)
-                    || particle.transform.position.y < minimumSurfaceY)
+                if (!IsValidLiquidParticle(particle)
+                    || particle.transform.position.y < minimumSurfaceY
+                    || GetTemperatureC(particle) < threshold)
                     continue;
 
                 hotSurfaceParticles.Add(particle);
+                float volumeMl = particle.payload.TotalVolumeMl;
+                weightedStrength += EvaluateEmissionStrength(GetTemperatureC(particle)) * volumeMl;
+                hotSurfaceVolumeMl += volumeMl;
             }
 
             if (hotSurfaceParticles.Count > 0)
+            {
+                emissionStrength = hotSurfaceVolumeMl > 0f
+                    ? weightedStrength / hotSurfaceVolumeMl
+                    : 0f;
                 ConfigureSmokeSprite(hotSurfaceParticles[0]);
+            }
         }
 
-        private bool IsHotLiquidParticle(LiquidParticleData particle, float threshold)
+        private static bool IsValidLiquidParticle(LiquidParticleData particle)
         {
-            if (particle == null
-                || particle.payload == null
-                || particle.payload.TotalVolumeMl <= MinimumParticleVolumeMl)
-                return false;
+            return particle != null
+                && particle.payload != null
+                && particle.payload.TotalVolumeMl > MinimumParticleVolumeMl;
+        }
 
-            float temperatureC = useDebugTemperature
+        private float GetTemperatureC(LiquidParticleData particle)
+        {
+            return useDebugTemperature
                 ? debugTemperatureC
                 : particle.payload.temperatureC;
-            return temperatureC >= threshold;
+        }
+
+        private float EvaluateEmissionStrength(float temperatureC)
+        {
+            float fullTemperatureC = Mathf.Max(
+                FullEmissionTemperatureC,
+                startTemperatureC + 0.1f);
+            return Mathf.InverseLerp(stopTemperatureC, fullTemperatureC, temperatureC);
         }
 
         private void EmitFromNextHotParticle()
@@ -142,14 +167,22 @@ namespace Slainte.Bartending
             if (hotSurfaceParticles.Count == 0)
                 return;
 
-            sourceCursor = (sourceCursor + 1) % hotSurfaceParticles.Count;
+            sourceCursor %= hotSurfaceParticles.Count;
             LiquidParticleData source = hotSurfaceParticles[sourceCursor];
+            sourceCursor = (sourceCursor + 1) % hotSurfaceParticles.Count;
             if (source == null)
                 return;
 
+            Vector3 localPosition = transform.InverseTransformPoint(source.transform.position);
+            float horizontalJitter = emissionHalfWidth * 0.06f;
+            localPosition.x = Mathf.Clamp(
+                localPosition.x + Random.Range(-horizontalJitter, horizontalJitter),
+                -emissionHalfWidth,
+                emissionHalfWidth);
+
             ParticleSystem.EmitParams emitParams = new ParticleSystem.EmitParams
             {
-                position = source.transform.position + Vector3.up * 0.03f,
+                position = transform.TransformPoint(localPosition) + Vector3.up * 0.03f,
                 applyShapeToPosition = false
             };
             steam.Emit(emitParams, 1);
@@ -284,17 +317,19 @@ namespace Slainte.Bartending
             if (steam == null)
                 return;
 
-            if (isEmitting == enabled)
-                return;
-
-            isEmitting = enabled;
             if (enabled)
             {
+                isEmitting = true;
                 if (!steam.isPlaying)
                     steam.Play(true);
             }
             else
             {
+                if (!isEmitting)
+                    return;
+
+                isEmitting = false;
+                emissionStrength = 0f;
                 emissionAccumulator = 0f;
                 steam.Stop(true, ParticleSystemStopBehavior.StopEmitting);
             }
