@@ -7,9 +7,17 @@ namespace Slainte.Bartending
     public sealed class CocktailComposition
     {
         private readonly Dictionary<ItemDef, float> volumes = new();
+        private float thermalVolumeMl;
+        private float weightedTemperature;
 
         public IReadOnlyDictionary<ItemDef, float> Volumes => volumes;
         public float TotalVolumeMl { get; private set; }
+        public float AverageTemperatureC => thermalVolumeMl > 0f
+            ? weightedTemperature / thermalVolumeMl
+            : 20f;
+        public string GlassId { get; private set; } = string.Empty;
+        public bool HasIce { get; private set; }
+        public CocktailTechnique Techniques { get; private set; } = CocktailTechnique.None;
 
         public void Add(ItemDef item, float volumeMl)
         {
@@ -29,6 +37,31 @@ namespace Slainte.Bartending
                 ? volumeMl
                 : 0f;
         }
+
+        public void AddThermalSample(float volumeMl, float temperatureC)
+        {
+            if (volumeMl <= 0f)
+                return;
+
+            thermalVolumeMl += volumeMl;
+            weightedTemperature += temperatureC * volumeMl;
+        }
+
+        public void RecordTechnique(CocktailTechnique technique)
+        {
+            Techniques |= technique;
+        }
+
+        public void SetServingStyle(string glassId, bool hasIce)
+        {
+            GlassId = glassId?.Trim() ?? string.Empty;
+            HasIce = hasIce;
+        }
+
+        public CocktailTechnique GetEffectiveTechniques()
+        {
+            return Techniques == CocktailTechnique.None ? CocktailTechnique.Build : Techniques;
+        }
     }
 
     [RequireComponent(typeof(Collider2D))]
@@ -40,6 +73,8 @@ namespace Slainte.Bartending
         private Collider2D[] colliders;
         private ContactFilter2D scanFilter;
         private GUIStyle debugBoxStyle;
+        private string servingGlassId = string.Empty;
+        private bool hasIce;
 
         [Header("Debug View")]
         [SerializeField] private bool drawDebugGizmos = true;
@@ -104,6 +139,7 @@ namespace Slainte.Bartending
             RefreshTrackedParticles();
 
             CocktailComposition composition = new CocktailComposition();
+            composition.SetServingStyle(servingGlassId, hasIce);
             foreach (LiquidParticleData particle in particles)
             {
                 if (particle == null || particle.payload == null)
@@ -114,9 +150,25 @@ namespace Slainte.Bartending
                     LiquidPortion portion = particle.payload.portions[i];
                     composition.Add(portion.sourceItem, portion.volumeMl);
                 }
+
+                composition.AddThermalSample(
+                    particle.payload.TotalVolumeMl,
+                    particle.payload.temperatureC);
+                composition.RecordTechnique(particle.payload.techniques);
             }
 
             return composition;
+        }
+
+        public void ConfigureServingStyle(string glassId, bool containsIce = false)
+        {
+            servingGlassId = glassId?.Trim() ?? string.Empty;
+            hasIce = containsIce;
+        }
+
+        public void SetHasIce(bool value)
+        {
+            hasIce = value;
         }
 
         public void TranslateTrackedParticles(Vector2 delta)
@@ -361,12 +413,18 @@ namespace Slainte.Bartending
         {
             debugTextBuilder.Clear();
             debugTextBuilder.Append(name);
-            debugTextBuilder.AppendLine(" tracker");
-            debugTextBuilder.Append("Particles: ");
+            debugTextBuilder.AppendLine(" 액체 추적기");
+            debugTextBuilder.Append("입자: ");
             debugTextBuilder.Append(particles.Count);
-            debugTextBuilder.Append("  Total: ");
+            debugTextBuilder.Append("  총량: ");
             debugTextBuilder.Append(composition.TotalVolumeMl.ToString("0.##"));
             debugTextBuilder.AppendLine(" ml");
+            debugTextBuilder.Append("온도: ");
+            debugTextBuilder.Append(composition.AverageTemperatureC.ToString("0.#"));
+            debugTextBuilder.Append(" C  잔: ");
+            debugTextBuilder.Append(GetGlassLabel(composition.GlassId));
+            debugTextBuilder.Append("  얼음: ");
+            debugTextBuilder.AppendLine(composition.HasIce ? "있음" : "없음");
 
             int lineCount = 0;
             foreach (KeyValuePair<ItemDef, float> pair in composition.Volumes)
@@ -391,15 +449,30 @@ namespace Slainte.Bartending
             }
 
             if (lineCount == 0)
-                debugTextBuilder.AppendLine("Empty");
+                debugTextBuilder.AppendLine("비어 있음");
 
             return debugTextBuilder.ToString();
+        }
+
+        private static string GetGlassLabel(string glassId)
+        {
+            if (string.IsNullOrWhiteSpace(glassId))
+                return "미지정";
+
+            return glassId.Trim().ToLowerInvariant() switch
+            {
+                "rock" => "락 글라스",
+                "highball" => "하이볼 글라스",
+                "hurricane" => "허리케인 글라스",
+                "martini" => "마티니 글라스",
+                _ => glassId
+            };
         }
 
         private static string GetItemLabel(ItemDef item)
         {
             if (item == null)
-                return "Unknown";
+                return "알 수 없음";
 
             if (!string.IsNullOrWhiteSpace(item.displayName))
                 return item.displayName;

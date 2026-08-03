@@ -281,8 +281,10 @@ namespace Slainte.Bartending
             if (!hasLinearMotion && !hasAngularMotion)
                 return;
 
-            if (other == null || !other.TryGetComponent(out LiquidParticleData _))
+            if (other == null || !other.TryGetComponent(out LiquidParticleData particle))
                 return;
+
+            particle.RecordTechnique(CocktailTechnique.Stir);
 
             Rigidbody2D otherRb = other.attachedRigidbody;
             if (otherRb == null)

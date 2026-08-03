@@ -18,24 +18,47 @@ namespace Slainte.Bartending
 
         public GeneratedCocktailOrder GenerateRecipeOrder(string requestedRecipeId = "")
         {
+            return GenerateOrder(CocktailOrderType.RecipeOrder, requestedRecipeId);
+        }
+
+        public GeneratedCocktailOrder GenerateOrder(
+            CocktailOrderType orderType,
+            string requestedRecipeId = "")
+        {
             CocktailRecipe recipe = ResolveRecipe(requestedRecipeId);
             if (recipe == null)
                 return null;
 
-            CocktailOrderTemplate template = PickTemplate(CocktailOrderType.RecipeOrder);
+            CocktailOrderTemplate template = PickTemplate(orderType);
             string lineTemplate = template != null
                 ? template.lineTemplate
                 : "{recipeName} 한 잔 부탁하네.";
 
-            return new GeneratedCocktailOrder
+            GeneratedCocktailOrder order = new GeneratedCocktailOrder
             {
                 id = CreateGeneratedId(recipe, template),
-                orderType = CocktailOrderType.RecipeOrder,
+                orderType = orderType,
                 line = FormatLine(lineTemplate, recipe),
                 requestedRecipeId = recipe.id,
                 requestedRecipe = recipe,
                 sourceTemplate = template
             };
+
+            if (orderType == CocktailOrderType.TasteOrder)
+                CopyTags(recipe.tasteTags, order.requiredTasteTags);
+            else if (orderType == CocktailOrderType.MoodOrder)
+                CopyTags(recipe.moodTags, order.requiredMoodTags);
+
+            return order;
+        }
+
+        private static void CopyTags(IEnumerable<string> source, HashSet<string> destination)
+        {
+            if (source == null || destination == null)
+                return;
+
+            foreach (string tag in source)
+                destination.Add(tag);
         }
 
         private CocktailRecipe ResolveRecipe(string requestedRecipeId)

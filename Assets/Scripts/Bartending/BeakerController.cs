@@ -109,7 +109,7 @@ namespace Slainte.Bartending
                 liquidTracker = gameObject.AddComponent<VesselLiquidTracker>();
 
             if (!liquidTracker.HasTriggerCollider())
-                Debug.LogWarning($"{name} needs a trigger Collider2D for VesselLiquidTracker.");
+                Debug.LogWarning($"{name}에 액체 추적용 트리거 Collider2D가 필요합니다.");
         }
 
         private void Reset()

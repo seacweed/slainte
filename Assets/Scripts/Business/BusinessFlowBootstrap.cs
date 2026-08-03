@@ -76,7 +76,7 @@ namespace Slainte.Business
             settings ??= Resources.Load<BusinessOrderFlowSettings>(SettingsResourcePath);
             if (settings == null)
             {
-                Debug.LogError("Business order flow settings could not be loaded from Resources.");
+                Debug.LogError("Resources에서 영업 주문 설정을 불러올 수 없습니다.");
                 return;
             }
 
@@ -91,7 +91,7 @@ namespace Slainte.Business
             if (modeManager == null || customerSpawner == null || dialogue == null
                 || ticketManager == null || bartending == null || canvasRoot == null)
             {
-                Debug.LogError("Business flow dependencies are incomplete in BusinessScene.");
+                Debug.LogError("BusinessScene의 영업 진행 필수 구성 요소가 부족합니다.");
                 return;
             }
 

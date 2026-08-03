@@ -45,13 +45,13 @@ namespace Slainte.Bartending
             string id = GetLookupId(item);
             if (string.IsNullOrWhiteSpace(id))
             {
-                Debug.LogWarning($"ItemDef '{item.name}' has no id and cannot be used by recipe CSV.");
+                Debug.LogWarning($"ItemDef '{item.name}'에 ID가 없어 레시피 CSV에서 사용할 수 없습니다.");
                 return;
             }
 
             if (itemsById.TryGetValue(id, out ItemDef existing) && existing != item)
             {
-                Debug.LogWarning($"Duplicate ItemDef id '{id}'. Keeping '{existing.name}', ignoring '{item.name}'.");
+                Debug.LogWarning($"ItemDef ID '{id}'가 중복되었습니다. '{existing.name}'을 유지하고 '{item.name}'은 무시합니다.");
                 return;
             }
 
@@ -63,7 +63,7 @@ namespace Slainte.Bartending
             if (!string.IsNullOrWhiteSpace(item.id))
                 return item.id.Trim();
 
-            Debug.LogWarning($"ItemDef '{item.name}' has an empty id. Falling back to asset name for CSV lookup.");
+            Debug.LogWarning($"ItemDef '{item.name}'의 ID가 비어 있어 CSV 검색에 에셋 이름을 대신 사용합니다.");
             return item.name;
         }
     }

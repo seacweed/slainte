@@ -32,25 +32,25 @@ namespace Slainte.Business
                 uiRoot,
                 new[]
                 {
-                    new ButtonDefinition("Accept", () => controller?.AcceptOrder()),
-                    new ButtonDefinition("Reject", () => controller?.RejectOrder())
+                    new ButtonDefinition("주문 수락", () => controller?.AcceptOrder()),
+                    new ButtonDefinition("주문 거절", () => controller?.RejectOrder())
                 });
             craftingGroup = CreateButtonGroup(
                 "CraftingControls",
                 uiRoot,
                 new[]
                 {
-                    new ButtonDefinition("Serve", () => controller?.SubmitOrder()),
-                    new ButtonDefinition("Discard", () => controller?.DiscardCocktail()),
-                    new ButtonDefinition("Abandon", ShowAbandonConfirmation)
+                    new ButtonDefinition("제출", () => controller?.SubmitOrder()),
+                    new ButtonDefinition("버리기", () => controller?.DiscardCocktail()),
+                    new ButtonDefinition("주문 포기", ShowAbandonConfirmation)
                 });
             abandonConfirmGroup = CreateButtonGroup(
                 "AbandonConfirmation",
                 uiRoot,
                 new[]
                 {
-                    new ButtonDefinition("Confirm Abandon", () => controller?.ConfirmAbandonOrder()),
-                    new ButtonDefinition("Cancel", HideAbandonConfirmation)
+                    new ButtonDefinition("포기 확정", () => controller?.ConfirmAbandonOrder()),
+                    new ButtonDefinition("돌아가기", HideAbandonConfirmation)
                 });
 
             ShowIdle();
@@ -58,45 +58,44 @@ namespace Slainte.Business
 
         public void ShowPresentingOrder(string customerOrderKey)
         {
-            SetStatus("Order: " + customerOrderKey);
+            SetStatus("손님이 주문하는 중입니다.");
             SetGroups(false, false, false);
         }
 
         public void ShowDecision(bool allowReject = true)
         {
-            SetStatus("Accept or reject the order.");
-            SetButtonVisible(decisionGroup, "RejectButton", allowReject);
+            SetStatus("주문을 수락하거나 거절하세요.");
+            SetButtonVisible(decisionGroup, "주문 거절Button", allowReject);
             SetGroups(true, false, false);
         }
 
         public void ShowCrafting(string recipeName, bool allowAbandon = true)
         {
-            SetStatus("Crafting: " + recipeName);
-            SetButtonVisible(craftingGroup, "AbandonButton", allowAbandon);
+            SetStatus("제조 중: " + recipeName);
+            SetButtonVisible(craftingGroup, "주문 포기Button", allowAbandon);
             SetGroups(false, true, false);
         }
 
         public void ShowEvaluating()
         {
-            SetStatus("Evaluating cocktail...");
-            SetGroups(false, false, false);
+            ShowIdle();
         }
 
         public void ShowFeedback(OrderEvaluationGrade grade, int moneyDelta, int reputationDelta)
         {
-            SetStatus($"Result: {grade} | Money {FormatDelta(moneyDelta)} | Reputation {FormatDelta(reputationDelta)}");
+            SetStatus($"결과: {GetGradeLabel(grade)} | 돈 {FormatDelta(moneyDelta)} | 명성 {FormatDelta(reputationDelta)}");
             SetGroups(false, false, false);
         }
 
         public void ShowSequenceProgress(int currentIndex, int totalCount)
         {
-            SetStatus($"Business sequence {currentIndex}/{totalCount}");
+            SetStatus($"영업 진행 {currentIndex}/{totalCount}");
             SetGroups(false, false, false);
         }
 
         public void ShowDayComplete()
         {
-            SetStatus("Business sequence complete. Progress saved.");
+            SetStatus("오늘 영업이 끝났습니다. 진행 상황을 저장했습니다.");
             SetGroups(false, false, false);
         }
 
@@ -114,7 +113,7 @@ namespace Slainte.Business
 
         private void ShowAbandonConfirmation()
         {
-            SetStatus("Abandon this order? Used ingredients will not be restored.");
+            SetStatus("이 주문을 포기할까요? 사용한 재료는 복구되지 않습니다.");
             SetGroups(false, false, true);
         }
 
@@ -154,6 +153,16 @@ namespace Slainte.Business
         private static string FormatDelta(int value)
         {
             return value > 0 ? "+" + value : value.ToString();
+        }
+
+        private static string GetGradeLabel(OrderEvaluationGrade grade)
+        {
+            return grade switch
+            {
+                OrderEvaluationGrade.Good => "좋음",
+                OrderEvaluationGrade.Mid => "보통",
+                _ => "나쁨"
+            };
         }
 
         private static TMP_Text CreateStatusText(RectTransform parent)

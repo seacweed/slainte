@@ -47,7 +47,7 @@ namespace Slainte.Business
             GameProgress progress = GameProgress.Instance;
             if (progress == null)
             {
-                ui?.ShowError("GameProgress is unavailable. Business sequence cannot start.");
+                ui?.ShowError("게임 진행 정보를 불러올 수 없어 영업을 시작할 수 없습니다.");
                 return;
             }
 
@@ -83,7 +83,7 @@ namespace Slainte.Business
                 return;
             }
 
-            Debug.LogWarning("[BusinessSequenceRunner] Unsupported sequence entry was skipped.");
+            Debug.LogWarning("[영업 진행] 지원하지 않는 진행 항목을 건너뛰었습니다.");
             AdvanceAndSave();
             ScheduleNextEntry();
         }

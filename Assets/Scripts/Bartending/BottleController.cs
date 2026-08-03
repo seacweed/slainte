@@ -92,7 +92,7 @@ namespace Slainte.Bartending
         {
             if (data == null || data.type != ItemType.Bottle)
             {
-                Debug.LogWarning("BottleController requires ItemDef with type Bottle.");
+                Debug.LogWarning("BottleController에는 종류가 Bottle인 ItemDef가 필요합니다.");
                 return;
             }
 

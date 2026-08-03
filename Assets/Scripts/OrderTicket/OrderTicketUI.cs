@@ -8,31 +8,31 @@ public class OrderTicketUI : MonoBehaviour
 {
     private enum TicketState { Closed, Open }
 
-    [Header("Sprites")]
+    [Header("그림")]
     [SerializeField] private Sprite spriteOpen;
     [SerializeField] private Sprite spriteClosed;
 
-    [Header("Scroll")]
+    [Header("스크롤")]
     [SerializeField] private ScrollRect    scrollRect;
     [SerializeField] private RectTransform contentRect;
 
-    [Header("Header")]
+    [Header("주문자")]
     [SerializeField] private TMP_Text customerNameText;
 
-    [Header("Items")]
+    [Header("숨길 상세 항목 영역")]
     [SerializeField] private Transform itemsContainer;
     [SerializeField] private ItemRowUI itemRowPrefab;
 
-    [Header("Memo")]
+    [Header("주문 대사")]
     [SerializeField] private TMP_Text memoText;
 
-    [Header("References")]
+    [Header("참조")]
     [SerializeField] private RectTransform ticketRect;
     [SerializeField] private CanvasGroup   canvasGroup;
     [SerializeField] private Button        toggleButton;
     [SerializeField] private Image         panelImage;
 
-    [Header("Slide")]
+    [Header("이동 연출")]
     [SerializeField] private float hideOffsetY   = 250f;
     [SerializeField] private float slideDuration = 0.25f;
 
@@ -48,6 +48,7 @@ public class OrderTicketUI : MonoBehaviour
         if (!canvasGroup) canvasGroup = GetComponent<CanvasGroup>();
 
         _visiblePos = ticketRect.anchoredPosition;
+        HideStructuredOrderDetails();
         ApplyClosedState();
         SetButtonInteractable(true);
     }
@@ -57,13 +58,7 @@ public class OrderTicketUI : MonoBehaviour
         if (customerNameText) customerNameText.text = data.customerName;
         if (memoText)         memoText.text         = data.memo ?? "";
 
-        ClearItems();
-        if (data.items != null)
-            foreach (var it in data.items)
-            {
-                var row = Instantiate(itemRowPrefab, itemsContainer);
-                row.Set(it.name, it.qty, it.price);
-            }
+        HideStructuredOrderDetails();
 
         Canvas.ForceUpdateCanvases();
         if (contentRect) LayoutRebuilder.ForceRebuildLayoutImmediate(contentRect);
@@ -147,6 +142,21 @@ public class OrderTicketUI : MonoBehaviour
         if (!itemsContainer) return;
         for (int i = itemsContainer.childCount - 1; i >= 0; i--)
             Destroy(itemsContainer.GetChild(i).gameObject);
+    }
+
+    private void HideStructuredOrderDetails()
+    {
+        if (!itemsContainer)
+            return;
+
+        ClearItems();
+        itemsContainer.gameObject.SetActive(false);
+
+        Transform header = itemsContainer.parent != null
+            ? itemsContainer.parent.Find("ItemsHeader")
+            : null;
+        if (header != null)
+            header.gameObject.SetActive(false);
     }
 
     private void Slide(Vector2 target, Action onComplete)

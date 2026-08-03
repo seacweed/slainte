@@ -4,12 +4,12 @@ namespace Slainte.Bartending
 {
     public sealed class CocktailEvaluationTester : MonoBehaviour
     {
-        [Header("Target")]
+        [Header("판정 대상")]
         [SerializeField] private GlassController targetGlass;
         [SerializeField] private VesselLiquidTracker targetTracker;
         [SerializeField] private bool autoFindTarget = true;
 
-        [Header("CSV")]
+        [Header("CSV 데이터")]
         [SerializeField] private string dataFolder = "Data";
         [SerializeField] private string recipesFileName = "recipes.csv";
         [SerializeField] private string recipeIngredientsFileName = "recipe_ingredients.csv";
@@ -17,12 +17,12 @@ namespace Slainte.Bartending
         [SerializeField] private string itemResourcesPath = "Items";
         [SerializeField] private ItemDef[] additionalItems;
 
-        [Header("Order")]
+        [Header("주문")]
         [SerializeField] private bool generateOrderOnReload = true;
         [SerializeField] private string fixedRecipeOrderId = "";
         [SerializeField] private KeyCode nextOrderKey = KeyCode.N;
 
-        [Header("Input")]
+        [Header("입력")]
         [SerializeField] private KeyCode submitKey = KeyCode.Return;
         [SerializeField] private bool drawResultOnGui = true;
 
@@ -32,7 +32,7 @@ namespace Slainte.Bartending
         private CocktailRecipeCatalog recipeCatalog;
         private CocktailOrderTemplateCatalog orderTemplateCatalog;
         private GeneratedCocktailOrder currentOrder;
-        private string lastResultText = "Press Enter to evaluate the target glass.";
+        private string lastResultText = "Enter 키를 눌러 대상 잔을 판정하세요.";
 
         private void Start()
         {
@@ -69,7 +69,7 @@ namespace Slainte.Bartending
                 return;
             }
 
-            lastResultText = $"Loaded {recipeCatalog.Count} recipe(s), {orderTemplateCatalog.Count} order template(s). Press {nextOrderKey} for an order.";
+            lastResultText = $"레시피 {recipeCatalog.Count}개와 주문 문장 {orderTemplateCatalog.Count}개를 불러왔습니다. {nextOrderKey} 키로 주문을 생성하세요.";
             Debug.Log($"[CocktailEvaluationTester] {lastResultText}");
         }
 
@@ -94,7 +94,7 @@ namespace Slainte.Bartending
             currentOrder = orderGenerator.GenerateRecipeOrder(fixedRecipeOrderId);
             if (currentOrder == null)
             {
-                lastResultText = $"Loaded {recipeCatalog.Count} recipe(s), {orderTemplateCatalog.Count} order template(s). No order generated.";
+                lastResultText = $"레시피 {recipeCatalog.Count}개와 주문 문장 {orderTemplateCatalog.Count}개를 불러왔지만 주문을 생성하지 못했습니다.";
                 Debug.LogWarning($"[CocktailEvaluationTester] {lastResultText}");
                 return;
             }
@@ -108,7 +108,7 @@ namespace Slainte.Bartending
             VesselLiquidTracker tracker = ResolveTargetTracker();
             if (tracker == null)
             {
-                lastResultText = "No VesselLiquidTracker target found.";
+                lastResultText = "판정할 잔의 액체 추적기를 찾을 수 없습니다.";
                 Debug.LogWarning($"[CocktailEvaluationTester] {lastResultText}");
                 return;
             }
@@ -140,13 +140,13 @@ namespace Slainte.Bartending
         private string BuildCurrentOrderText()
         {
             if (currentOrder == null)
-                return $"No active order. Press {nextOrderKey} for a new order.";
+                return $"진행 중인 주문이 없습니다. {nextOrderKey} 키로 새 주문을 생성하세요.";
 
-            return "Current Order\n"
+            return "현재 주문\n"
                 + currentOrder.line
-                + "\nRequested: "
+                + "\n요청 레시피: "
                 + currentOrder.RequestedRecipeName
-                + $"\nPress {submitKey} to submit. Press {nextOrderKey} for a new order.";
+                + $"\n제출: {submitKey} / 새 주문: {nextOrderKey}";
         }
 
         private VesselLiquidTracker ResolveTargetTracker()

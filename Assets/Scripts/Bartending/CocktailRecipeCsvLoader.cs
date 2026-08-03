@@ -29,13 +29,13 @@ namespace Slainte.Bartending
 
             if (!File.Exists(recipesPath))
             {
-                Debug.LogError($"Recipe CSV not found: {recipesPath}");
+                Debug.LogError($"레시피 CSV를 찾을 수 없습니다: {recipesPath}");
                 return catalog;
             }
 
             if (!File.Exists(recipeIngredientsPath))
             {
-                Debug.LogError($"Recipe ingredients CSV not found: {recipeIngredientsPath}");
+                Debug.LogError($"레시피 재료 CSV를 찾을 수 없습니다: {recipeIngredientsPath}");
                 return catalog;
             }
 
@@ -50,8 +50,14 @@ namespace Slainte.Bartending
                     minTotalMl = ParseFloat(row.Get("minTotalMl")),
                     maxTotalMl = ParseFloat(row.Get("maxTotalMl")),
                     toleranceMl = ParseFloat(row.Get("toleranceMl"), 5f),
-                    allowExtraIngredients = ParseBool(row.Get("allowExtraIngredients"))
+                    allowExtraIngredients = ParseBool(row.Get("allowExtraIngredients")),
+                    glassId = row.Get("glassId").Trim(),
+                    iceRequirement = ParseEnum(row.Get("iceRequirement"), IceRequirement.Any),
+                    requiredTechnique = ParseEnum(row.Get("technique"), CocktailTechnique.None)
                 };
+
+                AddTags(recipe.tasteTags, row.Get("tasteTags"));
+                AddTags(recipe.moodTags, row.Get("moodTags"));
 
                 if (string.IsNullOrWhiteSpace(recipe.displayName))
                     recipe.displayName = recipe.id;
@@ -66,14 +72,14 @@ namespace Slainte.Bartending
                 string recipeId = row.Get("recipeId");
                 if (!catalog.TryGet(recipeId, out CocktailRecipe recipe))
                 {
-                    Debug.LogWarning($"Recipe ingredient row references unknown recipe id '{recipeId}'.");
+                    Debug.LogWarning($"레시피 재료 행이 알 수 없는 레시피 ID '{recipeId}'를 참조합니다.");
                     continue;
                 }
 
                 string ingredientId = row.Get("ingredientId");
                 ItemDef item = null;
                 if (itemCatalog == null || !itemCatalog.TryGet(ingredientId, out item))
-                    Debug.LogWarning($"Recipe '{recipe.id}' references unknown ingredient id '{ingredientId}'.");
+                    Debug.LogWarning($"레시피 '{recipe.id}'가 알 수 없는 재료 ID '{ingredientId}'를 참조합니다.");
 
                 float toleranceMl = ParseFloat(row.Get("toleranceMl"), recipe.toleranceMl);
                 recipe.ingredients.Add(new CocktailRecipeIngredient
@@ -105,6 +111,28 @@ namespace Slainte.Bartending
                 || value.Equals("true", System.StringComparison.OrdinalIgnoreCase)
                 || value.Equals("yes", System.StringComparison.OrdinalIgnoreCase)
                 || value.Equals("y", System.StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static T ParseEnum<T>(string value, T fallback) where T : struct
+        {
+            return !string.IsNullOrWhiteSpace(value)
+                && System.Enum.TryParse(value.Trim(), true, out T parsed)
+                    ? parsed
+                    : fallback;
+        }
+
+        private static void AddTags(HashSet<string> target, string value)
+        {
+            if (target == null || string.IsNullOrWhiteSpace(value))
+                return;
+
+            string[] tags = value.Split('|');
+            for (int i = 0; i < tags.Length; i++)
+            {
+                string tag = tags[i].Trim();
+                if (!string.IsNullOrWhiteSpace(tag))
+                    target.Add(tag);
+            }
         }
     }
 }

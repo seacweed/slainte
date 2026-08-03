@@ -71,7 +71,7 @@ namespace Slainte.Bartending
                 Resources.Load<BusinessBartendingSettings>(SettingsResourcePath);
             if (settings == null)
             {
-                Debug.LogError("Business bartending settings could not be loaded from Resources.");
+                Debug.LogError("Resources에서 영업 제조 설정을 불러올 수 없습니다.");
                 return;
             }
 
@@ -89,7 +89,7 @@ namespace Slainte.Bartending
             modeManager = FindInScene<GameModeManager>(scene);
             if (modeManager == null)
             {
-                Debug.LogError("Business bartending needs GameModeManager to track CraftingMode.");
+                Debug.LogError("영업 제조 화면에서 제조 모드를 관리할 GameModeManager가 필요합니다.");
                 enabled = false;
                 return;
             }
@@ -131,7 +131,7 @@ namespace Slainte.Bartending
             RectTransform counter = FindNamedRectTransform(targetScene, "BarCounter");
             if (counter == null)
             {
-                Debug.LogError("Business bartending needs the BarCounter RectTransform.");
+                Debug.LogError("영업 제조 화면에 BarCounter RectTransform이 필요합니다.");
                 return;
             }
 
@@ -745,7 +745,7 @@ namespace Slainte.Bartending
         {
             if (prefab == null)
             {
-                Debug.LogWarning(instanceName + " prefab is not assigned in business bartending settings.");
+                Debug.LogWarning(instanceName + " 프리팹이 영업 제조 설정에 할당되지 않았습니다.");
                 return null;
             }
 
@@ -846,8 +846,8 @@ namespace Slainte.Bartending
             if (slotLayoutTemplate == null)
             {
                 Debug.LogWarning(
-                    "Business bartending could not find TableSlots. "
-                    + "The settings fallback positions will be used.");
+                    "영업 제조 화면에서 TableSlots를 찾을 수 없습니다. "
+                    + "설정에 저장된 기본 위치를 사용합니다.");
                 return;
             }
 

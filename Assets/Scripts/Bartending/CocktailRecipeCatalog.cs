@@ -1,7 +1,24 @@
+using System;
 using System.Collections.Generic;
 
 namespace Slainte.Bartending
 {
+    [Flags]
+    public enum CocktailTechnique
+    {
+        None = 0,
+        Build = 1 << 0,
+        Stir = 1 << 1,
+        Shake = 1 << 2
+    }
+
+    public enum IceRequirement
+    {
+        Any,
+        None,
+        Required
+    }
+
     public sealed class CocktailRecipeIngredient
     {
         public string ingredientId;
@@ -18,6 +35,11 @@ namespace Slainte.Bartending
         public float maxTotalMl;
         public float toleranceMl;
         public bool allowExtraIngredients;
+        public string glassId;
+        public IceRequirement iceRequirement = IceRequirement.Any;
+        public CocktailTechnique requiredTechnique = CocktailTechnique.None;
+        public readonly HashSet<string> tasteTags = new(StringComparer.OrdinalIgnoreCase);
+        public readonly HashSet<string> moodTags = new(StringComparer.OrdinalIgnoreCase);
         public readonly List<CocktailRecipeIngredient> ingredients = new();
     }
 

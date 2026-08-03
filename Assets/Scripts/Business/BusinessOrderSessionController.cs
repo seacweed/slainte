@@ -92,13 +92,15 @@ namespace Slainte.Business
 
             currentRequest = request;
             completionCallback = onCompleted;
-            currentOrder = orderGenerator?.GenerateRecipeOrder(currentRequest.requestedRecipeId);
+            currentOrder = orderGenerator?.GenerateOrder(
+                currentRequest.orderType,
+                currentRequest.requestedRecipeId);
             pendingResult = null;
             servingTarget = null;
 
             if (currentOrder == null)
             {
-                ui?.ShowError("The requested recipe could not be loaded: " + currentRequest.requestedRecipeId);
+                ui?.ShowError("요청한 레시피를 불러올 수 없습니다: " + currentRequest.requestedRecipeId);
                 CompleteCurrentOrder(new BusinessOrderSessionResult
                 {
                     outcome = OrderSessionOutcome.Failed,
@@ -122,7 +124,7 @@ namespace Slainte.Business
 
             if (customerSpawner == null || customerSpawner.CurrentOrderData == null)
             {
-                ui?.ShowError("Customer order data could not be loaded: " + currentRequest.customerOrderKey);
+                ui?.ShowError("손님 주문 데이터를 불러올 수 없습니다: " + currentRequest.customerOrderKey);
                 CompleteCurrentOrder(new BusinessOrderSessionResult
                 {
                     outcome = OrderSessionOutcome.Failed,
@@ -218,7 +220,7 @@ namespace Slainte.Business
                 : bartending != null ? bartending.CurrentTargetTracker : null;
             if (servingTarget == null)
             {
-                ui?.ShowError("No serving glass is available.");
+                ui?.ShowError("제출할 잔을 찾을 수 없습니다.");
                 return;
             }
 
@@ -240,12 +242,19 @@ namespace Slainte.Business
                 evaluation = evaluation
             };
 
-            Debug.Log("[BusinessOrderSession] " + (evaluation != null
+            Debug.Log("[주문 처리] " + (evaluation != null
                 ? evaluation.ToDebugString()
-                : "Evaluation service is unavailable."));
+                : "판정 기능을 사용할 수 없습니다."));
 
             modeManager?.RequestModeChange(GameMode.OrderMode);
             ticketManager?.ClearTicket();
+
+            if (currentRequest != null && !currentRequest.presentFeedback)
+            {
+                CompletePendingResult();
+                return;
+            }
+
             SetState(BusinessOrderSessionState.PresentingFeedback);
             ui?.ShowFeedback(grade, pendingResult.moneyDelta, pendingResult.reputationDelta);
 
@@ -334,6 +343,7 @@ namespace Slainte.Business
                 customerSpawner?.Clear();
             ticketManager?.ClearTicket();
             SetState(BusinessOrderSessionState.Completed);
+            ui?.ShowIdle();
 
             Action<BusinessOrderSessionResult> callback = completionCallback;
             completionCallback = null;

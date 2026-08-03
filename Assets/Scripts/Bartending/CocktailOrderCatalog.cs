@@ -29,6 +29,8 @@ namespace Slainte.Bartending
         public string requestedRecipeId;
         public CocktailRecipe requestedRecipe;
         public CocktailOrderTemplate sourceTemplate;
+        public readonly HashSet<string> requiredTasteTags = new(System.StringComparer.OrdinalIgnoreCase);
+        public readonly HashSet<string> requiredMoodTags = new(System.StringComparer.OrdinalIgnoreCase);
 
         public string RequestedRecipeName
         {

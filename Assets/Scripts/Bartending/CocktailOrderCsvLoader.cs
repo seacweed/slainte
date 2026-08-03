@@ -23,7 +23,7 @@ namespace Slainte.Bartending
 
             if (!File.Exists(orderTemplatesPath))
             {
-                Debug.LogError($"Order template CSV not found: {orderTemplatesPath}");
+                Debug.LogError($"주문 문장 CSV를 찾을 수 없습니다: {orderTemplatesPath}");
                 return catalog;
             }
 
@@ -34,13 +34,13 @@ namespace Slainte.Bartending
                 string id = row.Get("id");
                 if (string.IsNullOrWhiteSpace(id))
                 {
-                    Debug.LogWarning("Order template row skipped because id is empty.");
+                    Debug.LogWarning("ID가 비어 있어 주문 문장 행을 건너뛰었습니다.");
                     continue;
                 }
 
                 if (!TryParseOrderType(row.Get("orderType"), out CocktailOrderType orderType))
                 {
-                    Debug.LogWarning($"Order template '{id}' has unknown order type '{row.Get("orderType")}'.");
+                    Debug.LogWarning($"주문 문장 '{id}'에 알 수 없는 주문 유형 '{row.Get("orderType")}'이 설정되어 있습니다.");
                     continue;
                 }
 

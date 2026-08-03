@@ -15,6 +15,8 @@ namespace Slainte.Bartending
     public sealed class LiquidPayload
     {
         public List<LiquidPortion> portions = new();
+        public float temperatureC = 20f;
+        public CocktailTechnique techniques = CocktailTechnique.None;
 
         public float TotalVolumeMl
         {
@@ -30,6 +32,8 @@ namespace Slainte.Bartending
         public void SetSingle(ItemDef sourceItem, float volumeMl)
         {
             portions.Clear();
+            temperatureC = sourceItem != null ? sourceItem.servingTemperatureC : 20f;
+            techniques = CocktailTechnique.None;
 
             if (sourceItem == null || volumeMl <= 0f)
                 return;
@@ -96,6 +100,16 @@ namespace Slainte.Bartending
 
             strength = Mathf.Clamp01(strength);
 
+            float equilibriumTemperature =
+                (left.temperatureC * leftTotal + right.temperatureC * rightTotal)
+                / (leftTotal + rightTotal);
+            left.temperatureC = Mathf.Lerp(left.temperatureC, equilibriumTemperature, strength);
+            right.temperatureC = Mathf.Lerp(right.temperatureC, equilibriumTemperature, strength);
+
+            CocktailTechnique combinedTechniques = left.techniques | right.techniques;
+            left.techniques = combinedTechniques;
+            right.techniques = combinedTechniques;
+
             List<ItemDef> keys = new();
             AddKeys(left, keys);
             AddKeys(right, keys);
@@ -125,7 +139,7 @@ namespace Slainte.Bartending
             }
         }
 
-        public Color EvaluateColor(float minimumAlpha = 0.75f)
+        public Color EvaluateColor(float minimumAlpha = 1f)
         {
             float validTotal = 0f;
             for (int i = 0; i < portions.Count; i++)
@@ -170,6 +184,10 @@ namespace Slainte.Bartending
             if (other == null)
                 return TotalVolumeMl > tolerance;
 
+            if (Mathf.Abs(temperatureC - other.temperatureC) > 0.1f
+                || techniques != other.techniques)
+                return true;
+
             float myTotal = TotalVolumeMl;
             float otherTotal = other.TotalVolumeMl;
 
@@ -195,6 +213,14 @@ namespace Slainte.Bartending
 
             return false;
         }
+
+        public void CoolTowards(float ambientTemperatureC, float degreesPerSecond, float deltaTime)
+        {
+            temperatureC = Mathf.MoveTowards(
+                temperatureC,
+                ambientTemperatureC,
+                Mathf.Max(0f, degreesPerSecond) * Mathf.Max(0f, deltaTime));
+        }
     }
 
     public sealed class LiquidParticleData : MonoBehaviour
@@ -202,11 +228,20 @@ namespace Slainte.Bartending
         public LiquidPayload payload = new();
         public bool hasBeenCollected;
 
+        [Header("Thermal")]
+        [SerializeField] private float ambientTemperatureC = 20f;
+        [SerializeField, Min(0f)] private float coolingDegreesPerSecond = 0.35f;
+
         private SpriteRenderer spriteRenderer;
 
         private void Awake()
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
+        }
+
+        private void Update()
+        {
+            payload?.CoolTowards(ambientTemperatureC, coolingDegreesPerSecond, Time.deltaTime);
         }
 
         public void SetPayload(ItemDef sourceItem, float volumeMl)
@@ -222,6 +257,12 @@ namespace Slainte.Bartending
                 return;
 
             LiquidPayload.MixPair(payload, other.payload, strength);
+        }
+
+        public void RecordTechnique(CocktailTechnique technique)
+        {
+            if (payload != null)
+                payload.techniques |= technique;
         }
 
         public bool HasDifferentComposition(LiquidParticleData other, float tolerance = 0.001f)

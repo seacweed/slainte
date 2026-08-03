@@ -57,6 +57,8 @@ public class ItemDef : ScriptableObject
     public float capacityMl = 700f;
     public Color liquidColor = Color.white;
     public float density = 1f;
+    [Tooltip("새로 생성되는 액체 입자에 적용할 온도입니다.")]
+    public float servingTemperatureC = 20f;
 
     [Header("Rules")]
     [Tooltip("true면 원본이 이동하는 아이템으로 취급합니다. Bottle은 true 권장. false면 원본 유지 + 복사본 생성 방식으로 사용합니다.")]

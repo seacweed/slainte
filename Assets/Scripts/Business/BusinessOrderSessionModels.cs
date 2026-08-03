@@ -34,7 +34,9 @@ namespace Slainte.Business
         public string customerOrderKey;
         public string requestedRecipeId;
         public string ticketKey;
+        public CocktailOrderType orderType = CocktailOrderType.RecipeOrder;
         public bool presentOrder = true;
+        public bool presentFeedback = true;
         public bool allowReject = true;
         public bool allowAbandon = true;
         public bool applyProgressRewards = true;
@@ -52,7 +54,9 @@ namespace Slainte.Business
                 customerOrderKey = entry.entryId,
                 requestedRecipeId = entry.contentId,
                 ticketKey = entry.entryId,
+                orderType = CocktailOrderType.RecipeOrder,
                 presentOrder = true,
+                presentFeedback = true,
                 allowReject = true,
                 allowAbandon = true,
                 applyProgressRewards = true,

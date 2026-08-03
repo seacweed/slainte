@@ -14,15 +14,15 @@ namespace Slainte.Business
     [CreateAssetMenu(menuName = "Slainte/Business/Order Flow Settings", fileName = "BusinessOrderFlowSettings")]
     public sealed class BusinessOrderFlowSettings : ScriptableObject
     {
-        [Header("Sequence")]
+        [Header("영업 순서")]
         public bool autoStart = true;
         public List<FixedBusinessOrder> fixedOrders = new();
 
-        [Header("Evaluation")]
+        [Header("판정")]
         [Range(0f, 1f)] public float midScoreThreshold = 0.45f;
         [Range(0f, 1f)] public float goodScoreThreshold = 0.8f;
 
-        [Header("Rewards")]
+        [Header("보상")]
         public int goodMoneyReward = 100;
         public int midMoneyReward = 50;
         public int badMoneyReward;
@@ -31,7 +31,7 @@ namespace Slainte.Business
         public int badReputationReward = -1;
         public int abandonReputationReward = -2;
 
-        [Header("Fallback Feedback")]
+        [Header("기본 반응 대사")]
         public string feedbackSpeakerName = "손님";
         [TextArea(2, 4)] public string goodFeedbackText = "완벽해. 딱 원하던 맛이야.";
         [TextArea(2, 4)] public string midFeedbackText = "비슷하긴 한데, 뭔가 조금 아쉬워.";

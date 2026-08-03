@@ -42,12 +42,22 @@ namespace Slainte.Bartending
         [SerializeField] private AnimationCurve returnEase = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
         [SerializeField] private LayerMask slotLayer;
 
+        [Header("제출 조건")]
+        [SerializeField] private string glassId = "rock";
+
+        [Header("김 연출")]
+        [SerializeField] private float steamStartTemperatureC = 55f;
+        [SerializeField] private float steamStopTemperatureC = 48f;
+        [SerializeField] private float steamTopOffset = 0.08f;
+        [SerializeField] private float steamEmissionRate = 5f;
+
         [Header("물리 컴포넌트")]
         [SerializeField] private EdgeCollider2D edgeCollider;
 
         private GlassState currentState = GlassState.Idle;
         private Collider2D mainCollider; // 마우스 클릭용 터치 트리거 콜라이더
         private VesselLiquidTracker liquidTracker;
+        private GlassSteamEmitter steamEmitter;
         private Camera mainCamera;
         
         private float initialAngle;
@@ -98,8 +108,26 @@ namespace Slainte.Bartending
             if (liquidTracker == null)
                 liquidTracker = gameObject.AddComponent<VesselLiquidTracker>();
 
+            liquidTracker.ConfigureServingStyle(glassId);
+
+            steamEmitter = GetComponent<GlassSteamEmitter>();
+            if (steamEmitter == null)
+                steamEmitter = gameObject.AddComponent<GlassSteamEmitter>();
+            steamEmitter.Initialize(
+                liquidTracker,
+                colliderYOffset + height * 0.5f + steamTopOffset,
+                Mathf.Max(0.1f, topWidth * 0.65f),
+                steamStartTemperatureC,
+                steamStopTemperatureC,
+                steamEmissionRate);
+
             if (!liquidTracker.HasTriggerCollider())
-                Debug.LogWarning($"{name} needs a trigger Collider2D for VesselLiquidTracker.");
+                Debug.LogWarning($"{name}에 액체 추적용 트리거 Collider2D가 필요합니다.");
+        }
+
+        public void SetContainsIce(bool containsIce)
+        {
+            liquidTracker?.SetHasIce(containsIce);
         }
 
         private void Reset()
