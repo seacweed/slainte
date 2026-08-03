@@ -38,6 +38,7 @@
 
 | 문서 | 내용 |
 |---|---|
+| [docs/implementation-plan.md](docs/implementation-plan.md) | 회의록 반영 전체 구현 순서, 단계별 완료 조건, 선행 자료 |
 | **core** |||
 | [docs/core/architecture.md](docs/core/architecture.md) | GameMode/패널 구조, 입력 처리, GameProgress, 데이터 패턴, 공용 UI 유틸리티 |
 | [docs/core/scene-structure.md](docs/core/scene-structure.md) | 씬 계층 구조 (Canvas, Panel, GameObject) |
