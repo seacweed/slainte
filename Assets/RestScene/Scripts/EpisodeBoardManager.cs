@@ -232,6 +232,8 @@ public class EpisodeBoardManager : BaseUIManager
 
         if (PinnedPhoto != null)
         {
+            ApplySelectConditionFlag(PinnedPhoto);
+
             // 1. 하루 흐름 컨트롤러에 기본 에피소드 시작 요청 (완료 후 정산으로 이어짐)
             DayFlowController.Instance.StartDefaultEpisode(PinnedPhoto.episodeData.episodeId);
         }
@@ -243,6 +245,23 @@ public class EpisodeBoardManager : BaseUIManager
 
         // 2. 창 닫기
         CloseUI();
+    }
+
+    // 선택 조건 옵션들의 최종 on/off를 GameProgress 플래그에 반영 (에피소드 시작 직전에만 호출)
+    // 옵션 중 하나만 on이어야 정상이지만(ToggleGroup으로 강제), 방어적으로 전체를 순회해 반영한다.
+    private void ApplySelectConditionFlag(EpisodePhotoTrigger photo)
+    {
+        var selectConditions = photo.episodeData?.selectConditions;
+        if (selectConditions == null || GameProgress.Instance == null || photo.infoUI == null) return;
+
+        for (int i = 0; i < selectConditions.Count; i++)
+        {
+            string flag = selectConditions[i].flag;
+            if (string.IsNullOrEmpty(flag)) continue;
+
+            if (photo.infoUI.IsSelectOptionOn(i)) GameProgress.Instance.SetFlag(flag);
+            else GameProgress.Instance.ClearFlag(flag);
+        }
     }
 
     // 사진이 클릭되었을 때 호출됨 (EpisodePhotoTrigger에서 호출)

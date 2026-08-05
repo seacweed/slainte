@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: caafc8f1032927749928844f59b85deb, type: 3}
+  m_Name: LiquorStockLevel
+  m_EditorClassIdentifier: Assembly-CSharp::LiquorStockLevelPalette
+  emptySprite: {fileID: 1668826634403179741, guid: 1c5356b645e940a499d7543badf54129, type: 3}
+  intermediateSprites:
+  - {fileID: -3737271421296900551, guid: 5f361546fe270cc48b8af22ff013b3ec, type: 3}
+  - {fileID: -2160366804089381043, guid: 3130c845f55f59544887c6b8348c65af, type: 3}
+  - {fileID: 888341614622781983, guid: 3632dd52efa0a1d4eb23ca6e2e196dcc, type: 3}
+  - {fileID: 852864530212906592, guid: d770d56d3daaadc4cb323a646c0366e1, type: 3}
+  - {fileID: -7492691528201050629, guid: 2e99fce7a029fe74e8515f5b2cf56684, type: 3}
+  - {fileID: 1017303481941501535, guid: 810ff478627c7b74a9927ce645b288fa, type: 3}
+  - {fileID: 3279982229412696808, guid: 31f2a8d69dcf0524aa97de65049934f5, type: 3}
+  - {fileID: -7290596751935505764, guid: 19fa1935718ddd249b5553ec03f3060e, type: 3}
+  - {fileID: -2466884830431106768, guid: a514b6f41dc6a73489f44f86525b87ec, type: 3}
+  - {fileID: 4150733999655394382, guid: 72e8491e87575cc4aaefb1acbb142fad, type: 3}
+  fullSprite: {fileID: 8208236563503515625, guid: b68bf0d8b9c97a24cbd9e7b3ef03d90a, type: 3}

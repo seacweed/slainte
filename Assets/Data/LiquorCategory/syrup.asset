@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LiquorCategoryDef
   id: syrup
   displayName: "\uC2DC\uB7FD"
-  icon: {fileID: -1035724168546051410, guid: cdc47443b2f7518429e5ea73f61d6917, type: 3}
+  icon: {fileID: 7070898859007527560, guid: 8526083b308adb94bba80c9ad7902e5d, type: 3}

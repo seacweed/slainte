@@ -1,34 +1,98 @@
-using UnityEngine;
-using UnityEngine.UI;
+using System;
 using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class ItemSlotUI : MonoBehaviour
+public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [Header("UI Components")]
     public Image iconImage;
     public TextMeshProUGUI nameText;
+    public TextMeshProUGUI subCategoryText;
     public TextMeshProUGUI priceText;
     public Button buyButton;
+    [Tooltip("Shown instead of name/subCategory when the ingredient is locked.")]
+    public GameObject lockedLabel;
 
-    private ItemData _data;
+    public event Action OnPurchased;
 
-    public void Setup(ItemData data)
+    private LiquorBottleDef _def;
+    private RectTransform   _rectTransform;
+
+    void Awake()
     {
-        _data = data;
-        
-        // UI 갱신
-        iconImage.sprite = data.icon;
-        nameText.text = data.itemName;
-        priceText.text = $"{data.price:N0} G"; // 1,000 단위 쉼표 표시
-
-        // 버튼 초기화 (중복 리스너 방지)
-        buyButton.onClick.RemoveAllListeners();
-        buyButton.onClick.AddListener(OnBuyClick);
+        _rectTransform = GetComponent<RectTransform>();
     }
 
-    void OnBuyClick()
+    public void Setup(LiquorBottleDef def)
     {
-        Debug.Log($"[구매] {_data.itemName} ({_data.price}원)");
-        // 여기에 인벤토리 추가 또는 골드 차감 로직 연결
+        _def = def;
+
+        buyButton.onClick.RemoveAllListeners();
+        buyButton.onClick.AddListener(OnBuyClick);
+
+        Refresh();
+    }
+
+    public void Refresh()
+    {
+        if (_def == null) return;
+
+        bool unlocked = IsUnlocked();
+
+        if (iconImage != null)
+        {
+            iconImage.sprite = _def.sprite;
+            iconImage.color  = unlocked ? Color.white : Color.black;
+        }
+
+        if (nameText)        nameText.gameObject.SetActive(unlocked);
+        if (subCategoryText) subCategoryText.gameObject.SetActive(unlocked);
+        if (lockedLabel)      lockedLabel.SetActive(!unlocked);
+
+        if (unlocked)
+        {
+            if (nameText)        nameText.text        = _def.displayName;
+            if (subCategoryText) subCategoryText.text = _def.subCategory;
+        }
+
+        bool isFull = GameProgress.Instance.GetBottleAmount(_def.id, 0f) >= _def.MaxAmount;
+
+        if (priceText) priceText.text = unlocked ? $"{_def.price:N0} G" : "";
+        if (buyButton) buyButton.interactable = unlocked && !isFull;
+    }
+
+    private bool IsUnlocked()
+    {
+        return _def != null
+            && (string.IsNullOrEmpty(_def.unlockFlagKey)
+                || GameProgress.Instance.HasFlag(_def.unlockFlagKey));
+    }
+
+    private void OnBuyClick()
+    {
+        if (!IsUnlocked()) return;
+        if (!GameProgress.Instance.TrySpendMoney(_def.price)) return;
+
+        GameProgress.Instance.AddBottleAmount(_def.id, _def.unitVolume, _def.MaxAmount);
+        Refresh();
+        OnPurchased?.Invoke();
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (_def == null) return;
+
+        if (IsUnlocked())
+            LiquorBottleInfoCard.Instance?.Show(_def, GameProgress.Instance.GetBottleAmount(_def.id, 0f), _rectTransform);
+        else
+            IngredientUnlockTooltip.Instance?.Show(_def, _rectTransform);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        LiquorBottleInfoCard.Instance?.Hide();
+        IngredientUnlockTooltip.Instance?.Hide();
     }
 }

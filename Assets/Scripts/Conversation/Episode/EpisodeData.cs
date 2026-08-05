@@ -3,9 +3,47 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public struct EpisodeCharacter
+public struct CharacterDisplay
 {
-    public string characterName;
+    public bool isHidden;       // true면 초상화를 비공개(???)로 표시
+    public string characterName; // isHidden이 false일 때 사용
+}
+
+public enum SelectConditionType
+{
+    None,                // 조건 없음 — 항상 충족(토글이 항상 인터랙션 가능)
+    MinDay,              // 최소 일수
+    RequiredFlag,        // 이 플래그가 켜져 있어야 함
+    PrerequisiteEpisode, // 이 에피소드가 완료되어야 함
+    RequiredVar          // 수치 변수 조건
+}
+
+// 선택 조건 옵션 하나가 가질 수 있는 조건은 정확히 하나(자물쇠 아이콘 하나 + 설명 한 줄에 대응).
+// 여러 조건을 동시에 걸고 싶으면 옵션을 여러 개로 나눠서 표현한다.
+[Serializable]
+public class SelectSingleCondition
+{
+    public SelectConditionType type = SelectConditionType.None;
+    public int    minDay;
+    public string requiredFlag;
+    public string prerequisiteEpisodeId;
+    public string varName;
+    public CompareOp varOp = CompareOp.GreaterOrEqual;
+    public int    varThreshold;
+}
+
+// 선택 조건 옵션 하나. 여러 개를 리스트로 두되 동시에 하나만 on 가능(툴팁에서 라디오 버튼처럼 동작).
+// flag가 비어있으면 이 옵션엔 토글 UI를 만들지 않는다.
+[Serializable]
+public class SelectConditionEntry
+{
+    public SelectSingleCondition condition = new();
+    public string flag;
+    public string conditionText; // 커스텀 힌트 문구. 비어있으면 condition에서 자동 생성한 문구를 사용
+
+    // 이 옵션이 선택됐을 때 보여줄 초상화. EpisodeData.characters와 같은 순서/슬롯 수로 채우면 됨.
+    // 비어있으면(입력 안 하면) 기본 characters를 그대로 사용.
+    public List<CharacterDisplay> characterOverrides = new();
 }
 
 [CreateAssetMenu(menuName = "Slainte/Episode Data", fileName = "EpisodeData_")]
@@ -24,6 +62,9 @@ public class EpisodeData : ScriptableObject
     public EpisodeTriggerCondition triggerCondition; // 해금 조건 — 만족하면 작전판에 노출
     public EpisodeTriggerCondition playCondition;     // 플레이 조건 — 만족해야 Play 버튼 활성화 (Default 전용)
 
+    [Header("Select")]
+    public List<SelectConditionEntry> selectConditions = new(); // 선택 조건 목록 — 동시에 하나만 on 가능. Play 버튼 활성화에는 영향 없음
+
     [Header("Opening")]
     public List<CharacterSlotEntry> openingCharacters = new();
     public string firstNodeId;
@@ -35,8 +76,8 @@ public class EpisodeData : ScriptableObject
     [TextArea(3, 5)] public string episodeDescription;
     public string iconNameBoard;
     public string iconNameArchive;
-    public List<EpisodeCharacter> characters = new();
-    public List<string> customConditionTexts = new(); // UI에서 표시할 예시: "A에게 돈 10000원 지급"
+    public List<CharacterDisplay> characters = new(); // 선택 조건 미선택 시(기본) 보여줄 초상화
+    public List<string> triggerConditionTexts = new(); // 해금 조건 커스텀 힌트. 예: "A에게 돈 10000원 지급"
 
     public EpisodeNode FindNode(string nodeId)
     {

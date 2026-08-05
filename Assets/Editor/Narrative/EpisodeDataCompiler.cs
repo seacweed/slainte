@@ -34,6 +34,7 @@ namespace NarrativeFlow.Editor
             data.mandatorySlot = graph.MandatorySlot;
             data.triggerCondition  = graph.TriggerCondition ?? new EpisodeTriggerCondition();
             data.playCondition     = graph.PlayCondition ?? new EpisodeTriggerCondition();
+            data.selectConditions  = graph.SelectConditions ?? new List<SelectConditionEntry>();
             data.openingCharacters = (graph.OpeningCharacters ?? new List<CharacterSlotEntry>())
                 .Select(c => new CharacterSlotEntry { characterKey = c.characterKey, expressionKey = c.expressionKey, slotIndex = c.slotIndex })
                 .ToList();
@@ -379,6 +380,26 @@ namespace NarrativeFlow.Editor
                 string reqVars = string.Join("|", pc.requiredVars.Select(v => $"{v.varName}{CompareOpToString(v.op)}{v.threshold}"));
                 string reqAppearances = string.Join("|", pc.requiredCustomerAppearances.Select(a => $"{a.characterId}:{a.count}"));
                 sb.AppendLine($"{pc.minDay},{string.Join("|", pc.requiredFlags)},{string.Join("|", pc.blockedFlags)},{string.Join("|", pc.prerequisiteEpisodeIds)},{reqVars},{reqAppearances}");
+                sb.AppendLine();
+            }
+
+            if (data.selectConditions != null && data.selectConditions.Count > 0)
+            {
+                sb.AppendLine("#SELECT_TRIGGER");
+                sb.AppendLine("conditionType,conditionValue,selectFlag,selectText");
+                foreach (var sc in data.selectConditions)
+                {
+                    var cond = sc.condition ?? new SelectSingleCondition();
+                    string value = cond.type switch
+                    {
+                        SelectConditionType.MinDay => cond.minDay.ToString(),
+                        SelectConditionType.RequiredFlag => cond.requiredFlag,
+                        SelectConditionType.PrerequisiteEpisode => cond.prerequisiteEpisodeId,
+                        SelectConditionType.RequiredVar => $"{cond.varName}{CompareOpToString(cond.varOp)}{cond.varThreshold}",
+                        _ => ""
+                    };
+                    sb.AppendLine($"{cond.type},{value},{sc.flag},{Csv(sc.conditionText)}");
+                }
                 sb.AppendLine();
             }
 

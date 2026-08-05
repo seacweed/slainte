@@ -94,9 +94,27 @@ public class EpisodeManager : MonoSingleton<EpisodeManager>
         return EvaluateCondition(ep.playCondition, gp);
     }
 
-    private bool EvaluateCondition(EpisodeTriggerCondition cond, GameProgress gp)
+    // 선택 조건 옵션 하나(조건은 항상 하나)를 평가
+    public bool EvaluateSelectCondition(SelectSingleCondition cond, GameProgress gp)
+    {
+        if (cond == null || cond.type == SelectConditionType.None) return true;
+        if (gp == null) return false;
+
+        return cond.type switch
+        {
+            SelectConditionType.MinDay => gp.CurrentDay >= cond.minDay,
+            SelectConditionType.RequiredFlag => gp.HasFlag(cond.requiredFlag),
+            SelectConditionType.PrerequisiteEpisode => gp.IsEpisodeCompleted(cond.prerequisiteEpisodeId),
+            SelectConditionType.RequiredVar => new VarCondition { varName = cond.varName, op = cond.varOp, threshold = cond.varThreshold }.Evaluate(gp.GetAffinity(cond.varName)),
+            _ => true
+        };
+    }
+
+    // 해금/플레이 조건(여러 항목이 AND로 결합) 평가에 재사용
+    public bool EvaluateCondition(EpisodeTriggerCondition cond, GameProgress gp)
     {
         if (cond == null) return true;
+        if (gp == null) return false;
 
         if (gp.CurrentDay < cond.minDay) return false;
 

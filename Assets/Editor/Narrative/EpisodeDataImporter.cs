@@ -34,6 +34,7 @@ namespace NarrativeFlow.Editor
             graph.MandatorySlot = source.mandatorySlot;
             graph.TriggerCondition  = source.triggerCondition;
             graph.PlayCondition     = source.playCondition;
+            graph.SelectConditions  = source.selectConditions;
             graph.OpeningCharacters = (source.openingCharacters ?? new List<CharacterSlotEntry>())
                 .Select(c => new CharacterSlotEntry { characterKey = c.characterKey, expressionKey = c.expressionKey, slotIndex = c.slotIndex })
                 .ToList();

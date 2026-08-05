@@ -4,20 +4,22 @@ using UnityEngine.UI;
 
 public class LiquorBottleInfoCard : MonoBehaviour
 {
+    private const int FirstRowIconCount = 5;
+
     public static LiquorBottleInfoCard Instance { get; private set; }
 
     [Header("Content")]
     [SerializeField] private RectTransform     rect;
     [SerializeField] private TextMeshProUGUI   nameText;
     [SerializeField] private TextMeshProUGUI   subCategoryText;
-    [Tooltip("Bottle icons in display order (left to right).")]
+    [Tooltip("Bottle icons in display order (left to right, first row then second row).")]
     [SerializeField] private Image[]           stateImages;
+    [Tooltip("Second row container, shown only when bottleCount exceeds the first row's capacity.")]
+    [SerializeField] private GameObject        secondRowContainer;
     [SerializeField] private TextMeshProUGUI   amountText;
 
     [Header("State Sprites")]
-    [SerializeField] private Sprite fullSprite;
-    [SerializeField] private Sprite inUseSprite;
-    [SerializeField] private Sprite emptySprite;
+    [SerializeField] private LiquorStockLevelPalette stockLevelPalette;
 
     void Awake()
     {
@@ -40,6 +42,9 @@ public class LiquorBottleInfoCard : MonoBehaviour
         bool  hasInUse      = remainder > 0f && fullCount < def.bottleCount;
         int   inUseCount    = hasInUse ? 1 : 0;
 
+        if (secondRowContainer != null)
+            secondRowContainer.SetActive(def.bottleCount > FirstRowIconCount);
+
         for (int i = 0; i < stateImages.Length; i++)
         {
             Image img = stateImages[i];
@@ -49,9 +54,9 @@ public class LiquorBottleInfoCard : MonoBehaviour
             img.gameObject.SetActive(inRange);
             if (!inRange) continue;
 
-            Sprite stateSprite = i < fullCount ? fullSprite
-                                : i < fullCount + inUseCount ? inUseSprite
-                                : emptySprite;
+            Sprite stateSprite = i < fullCount ? stockLevelPalette.GetSprite(1f)
+                                : i < fullCount + inUseCount ? stockLevelPalette.GetSprite(remainder / def.unitVolume)
+                                : stockLevelPalette.GetSprite(0f);
             img.enabled = stateSprite != null;
             img.sprite  = stateSprite;
         }

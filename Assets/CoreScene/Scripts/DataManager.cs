@@ -30,6 +30,8 @@ public class DataManager : MonoSingleton<DataManager>
             CurrentData.bottleAmountValues  = gp.GetBottleAmountValues();
             CurrentData.customerAppearanceKeys   = gp.GetCustomerAppearanceKeys();
             CurrentData.customerAppearanceValues = gp.GetCustomerAppearanceValues();
+            CurrentData.upgradeKeys         = gp.GetUpgradeKeys();
+            CurrentData.upgradeValues       = gp.GetUpgradeValues();
             CurrentData.currentChapterId    = gp.CurrentChapterId;
             CurrentData.currentMoney        = gp.CurrentMoney;
             CurrentData.dayDrinkSalesCount  = gp.DayDrinkSalesCount;

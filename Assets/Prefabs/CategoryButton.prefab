@@ -67,7 +67,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1035724168546051410, guid: cdc47443b2f7518429e5ea73f61d6917, type: 3}
+  m_Sprite: {fileID: 7070898859007527560, guid: 8526083b308adb94bba80c9ad7902e5d, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -186,7 +186,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u3147"
+  m_text: "\uC220"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8be9d5407d167644e9540752364be580, type: 2}
   m_sharedMaterial: {fileID: 5949831891629912476, guid: 8be9d5407d167644e9540752364be580, type: 2}

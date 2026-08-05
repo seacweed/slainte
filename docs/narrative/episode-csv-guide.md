@@ -48,6 +48,9 @@
 #PLAY_TRIGGER
 ...
 
+#SELECT_TRIGGER
+...
+
 #OPENING_CHARS
 ...
 
@@ -135,6 +138,34 @@ minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCu
 #PLAY_TRIGGER
 minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCustomerAppearances
 0,,,,,
+```
+
+---
+
+### SELECT_TRIGGER
+
+작전판 툴팁에서 플레이어가 직접 on/off로 토글할 수 있는 조건입니다. `TRIGGER`/`PLAY_TRIGGER`와 달리 **Play 버튼 활성화 여부에 영향을 주지 않습니다** — 어떤 옵션도 미충족/미선택이어도 에피소드는 평소대로 플레이 가능합니다.
+
+- **행 하나 = 옵션 하나**입니다. 여러 옵션을 만들고 싶으면 행을 여러 개 작성하세요(`OPENING_CHARS`처럼 다중 행 섹션)
+- **옵션들은 서로 배타적**입니다 — 툴팁에서 하나를 켜면 나머지는 자동으로 꺼집니다(라디오 버튼처럼 동작)
+- **옵션 하나당 조건은 딱 하나**입니다(`TRIGGER`/`PLAY_TRIGGER`처럼 여러 조건을 AND로 걸 수 없음). 조건을 여러 개 걸고 싶으면 옵션(행)을 여러 개로 나눠서 작성하세요
+- 그 조건이 충족된 옵션만 토글 인터랙션이 가능(미충족이면 off로 고정, 비활성 표시)
+- 켜진 옵션의 on/off 값은 Play 버튼 클릭(에피소드 시작) 시점에 그 행의 `selectFlag` 열 플래그로 반영됨(켜진 옵션 → `SetFlag`, 나머지 옵션 → `ClearFlag`) — 에피소드 노드의 `flagBranches` 등에서 분기 조건으로 사용
+- 컬럼: `conditionType`(`None`/`MinDay`/`RequiredFlag`/`PrerequisiteEpisode`/`RequiredVar` 중 하나), `conditionValue`(타입에 따라 의미가 다름 — 아래 표), `selectFlag`(반영할 플래그 이름), `selectText`(이 옵션 조건 뒤에 표시할 커스텀 힌트 한 줄. 비우면 조건에서 문구를 자동 생성)
+
+| `conditionType` | `conditionValue` 형식 | 예시 |
+|---|---|---|
+| `None` | (비움) | 조건 없음 — 항상 토글 가능 |
+| `MinDay` | 숫자 | `3` |
+| `RequiredFlag` | 플래그 이름 | `flag_got_hint` |
+| `PrerequisiteEpisode` | 에피소드 ID | `Intro_0` |
+| `RequiredVar` | `varName연산자값`(`TRIGGER`의 `requiredVars` 문법과 동일) | `sally_affinity>=5` |
+
+```csv
+#SELECT_TRIGGER
+conditionType,conditionValue,selectFlag,selectText
+RequiredFlag,flag_got_hint,select_confront_f72,단도직입적으로 물어본다
+RequiredFlag,flag_got_hint,select_evade_f72,모르는 척 넘어간다
 ```
 
 ---

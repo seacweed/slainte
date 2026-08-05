@@ -20,6 +20,9 @@ namespace NarrativeFlow
         public EpisodeTriggerCondition TriggerCondition = new(); // 해금 조건
         public EpisodeTriggerCondition PlayCondition = new();    // 플레이 조건
 
+        [Header("Select")]
+        public List<SelectConditionEntry> SelectConditions = new(); // 선택 조건 목록 — 동시에 하나만 on 가능, Play 버튼 활성화와 무관
+
         [Header("Opening")]
         public List<CharacterSlotEntry> OpeningCharacters = new();
 

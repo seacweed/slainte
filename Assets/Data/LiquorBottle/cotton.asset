@@ -17,5 +17,10 @@ MonoBehaviour:
   sprite: {fileID: -6828235300387644391, guid: 91e6f03485dc77849adfd4ec5ea08650, type: 3}
   unlockFlagKey: 
   subCategory: "\uACAC\uACFC\uB958 \uB9AC\uD050\uB974"
-  bottleCount: 6
+  bottleCount: 5
   unitVolume: 700
+  category: {fileID: 11400000, guid: 4fa98afa4995af440adc4efbca8847c1, type: 2}
+  price: 2000
+  unlockHintType: 0
+  recipeBookIcon: {fileID: 0}
+  recipeBookName: 

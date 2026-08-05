@@ -71,6 +71,7 @@
 #META           ← 에피소드 ID·제목·시작 노드·타입·챕터
 #TRIGGER        ← 이 에피소드가 작전판에 언제 해금(노출)되는지
 #PLAY_TRIGGER   ← 해금된 후 Play 버튼이 언제 활성화되는지 (생략 가능)
+#SELECT_TRIGGER ← 작전판 툴팁에서 플레이어가 on/off 토글할 수 있는 선택 조건 (생략 가능, Play 버튼과 무관)
 #OPENING_CHARS  ← 에피소드 시작 시 무대에 서 있는 캐릭터
 #NODES          ← 대사 목록 (핵심 섹션)
 #NODE_CHARS     ← 각 대사에서 캐릭터 표정
@@ -147,6 +148,37 @@ minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCu
 #PLAY_TRIGGER
 minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCustomerAppearances
 0,,,,,
+```
+
+---
+
+### SELECT_TRIGGER — 선택 조건
+
+작전판 툴팁에서 플레이어가 직접 on/off로 **토글**할 수 있는 조건입니다. `TRIGGER`/`PLAY_TRIGGER`와 달리 **미충족이어도 에피소드 플레이 자체는 막지 않습니다** — Play 버튼 활성화 여부와 완전히 무관합니다.
+
+- **한 행이 옵션 하나**입니다. "단도직입적으로 묻는다" / "모르는 척 넘어간다"처럼 선택지를 여러 개 만들고 싶으면 행을 여러 개 작성하세요
+- **옵션들은 서로 배타적**입니다 — 툴팁에서 하나를 켜면 나머지는 자동으로 꺼집니다(라디오 버튼처럼 동작). 아무것도 안 골라도 됩니다
+- **옵션 하나에는 조건을 딱 하나만** 걸 수 있습니다(`TRIGGER`처럼 여러 조건을 동시에 걸 수 없음). 조건을 여러 개 걸고 싶으면 옵션(행)을 여러 개로 나눠서 작성하세요
+- 그 조건을 만족한 옵션만 토글을 켤 수 있습니다. 미충족이면 토글은 꺼진 채 비활성 상태로 보이고, 선택 없이도 평소처럼 플레이할 수 있습니다
+- 켜진 옵션의 on/off 값은 **Play 버튼을 눌러 에피소드를 시작하는 시점**에 그 행의 `selectFlag` 열에 적은 플래그로 반영됩니다(켜진 옵션 → 플래그 켜짐, 나머지 옵션들 → 플래그 꺼짐). 이 플래그를 에피소드 내 대사 분기 조건으로 사용하면 됩니다
+- 열 구성: `conditionType`(조건 종류) + `conditionValue`(그 종류에 맞는 값) + `selectFlag`(반영할 플래그 이름) + `selectText`(이 옵션 조건 뒤에 붙일 커스텀 힌트 한 줄, 비우면 조건에서 문구 자동 생성)
+
+| `conditionType` | `conditionValue` | 예시 |
+|---|---|---|
+| `None` | (비움) | 조건 없음 — 항상 토글 가능 |
+| `MinDay` | 숫자 | `3` |
+| `RequiredFlag` | 플래그 이름 | `flag_got_hint` |
+| `PrerequisiteEpisode` | 에피소드 ID | `Intro_0` |
+| `RequiredVar` | `varName연산자값` | `sally_affinity>=5` |
+
+- 옵션을 선택했을 때 보여줄 등장인물(교체/비공개)은 CSV가 아니라 `EpisodeData` 에셋에서 옵션별로 직접 입력합니다
+- **이 섹션 자체를 안 써도 됩니다** — 없으면 "선택 조건 없음"(툴팁에 선택 조건 섹션 자체가 안 뜸)으로 처리됩니다
+
+```csv
+#SELECT_TRIGGER
+conditionType,conditionValue,selectFlag,selectText
+RequiredFlag,flag_got_hint,select_confront_f72,단도직입적으로 물어본다
+RequiredFlag,flag_got_hint,select_evade_f72,모르는 척 넘어간다
 ```
 
 ---
@@ -531,5 +563,6 @@ nodeId,requiredCompletedEpisodeId,nextNodeId
 | 분기가 동작하지 않음 | `varChanges` 형식 오류 | `varName+숫자` 또는 `varName-숫자` 형식 확인 |
 | 에피소드가 작전판에 안 뜸 | `TRIGGER`(해금 조건) 미충족 | `requiredFlags`, `minDay`, `prerequisiteEpisodeIds`, `requiredCustomerAppearances` 재확인 |
 | 작전판엔 떴는데 Play 버튼이 계속 비활성 | `PLAY_TRIGGER`(플레이 조건) 미충족 | `#PLAY_TRIGGER` 섹션 조건 재확인 (섹션이 없으면 항상 플레이 가능해야 정상) |
+| 툴팁에 선택 조건 토글이 안 뜸/눌러지지 않음 | `selectFlag`가 비어있거나 `SELECT_TRIGGER` 조건 미충족 | `#SELECT_TRIGGER`의 `selectFlag` 값과 조건 재확인 (Play 버튼 활성화와는 무관하므로 플레이 자체는 가능해야 정상) |
 | 한글이 깨짐 | 인코딩이 UTF-8이 아님 | 저장 시 인코딩을 **UTF-8** 로 지정 |
 | 필수 에피소드인데 휴식 화면에서 직접 선택됨 | `episodeType`을 `Mandatory`로 안 바꿈 | `#META`의 `episodeType`, `mandatorySlot` 확인 |

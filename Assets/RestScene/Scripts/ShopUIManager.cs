@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using System.Linq;
 
 public class ShopUIManager : BaseUIManager
 {
@@ -12,20 +12,33 @@ public class ShopUIManager : BaseUIManager
     public float lineWidth = 0.02f;
 
     [Header("Fixed Header")]
-    public TMP_InputField searchInput;
+    public TextMeshProUGUI moneyText;
 
-    [Header("UI Objects")]
-    public TextMeshProUGUI categoryTitleText;
-    public GameObject categoryPanel;   
-    public GameObject itemScrollPanel; 
+    [Header("Screens")]
+    public GameObject homePanel;
+    public GameObject ingredientCategoryPanel;
+    public GameObject itemScrollPanel;
+    public GameObject upgradePanel;
 
-    [Header("List Components")]
+    [Header("Ingredient Categories")]
+    public Transform categoryButtonContent;
+    public LiquorCategoryButtonUI categoryButtonPrefab;
+    public LiquorCategoryDef[] ingredientCategories;
+
+    [Header("Ingredient List")]
+    [Tooltip("Shown inside itemScrollPanel only, set dynamically to the clicked category's name. Home/IngredientCategories/Upgrade titles are authored directly in each panel, not set from code.")]
+    public TextMeshProUGUI categoryNameText;
     public ScrollRect itemScrollView;
-    public Transform contentRoot;      
-    public GameObject slotPrefab;      
-    
-    [Header("Database")]
-    public List<ItemData> allItems;    
+    public Transform contentRoot;
+    public GameObject slotPrefab;
+    public List<LiquorBottleDef> allBottles;
+
+    [Header("Upgrades")]
+    public Transform upgradeContentRoot;
+    public UpgradeSlotUI upgradeSlotPrefab;
+    public List<UpgradeDef> allUpgrades;
+
+    private readonly List<UpgradeSlotUI> _upgradeSlots = new();
 
     // 부모 Awake 호출 필수
     protected override void Awake()
@@ -39,16 +52,15 @@ public class ShopUIManager : BaseUIManager
     protected override void OnOpen()
     {
         // 열릴 때마다 홈 화면으로 초기화
-        GoHome();
+        ShowHome();
+        RefreshMoneyText();
     }
 
     void Start()
     {
-        GoHome();
-        if(searchInput) searchInput.onValueChanged.AddListener(OnSearchValueChange);
-
-        var catButtons = categoryPanel.GetComponentsInChildren<CategoryButton>();
-        foreach (var btn in catButtons) btn.Init(this);
+        BuildCategoryButtons();
+        BuildUpgradeSlots();
+        ShowHome();
     }
 
     // ▼▼▼ [애니메이션] 가로선 -> 펼쳐짐 ▼▼▼
@@ -81,7 +93,7 @@ public class ShopUIManager : BaseUIManager
     protected override IEnumerator AnimateClose()
     {
         if(_canvasGroup) { _canvasGroup.interactable = false; _canvasGroup.blocksRaycasts = false; }
-        
+
         float timer = 0f;
         float halfDuration = animDuration * 0.5f;
 
@@ -101,65 +113,102 @@ public class ShopUIManager : BaseUIManager
             transform.localScale = new Vector3(Mathf.Lerp(1f, 0f, timer), lineWidth, 1);
             yield return null;
         }
-        
+
         gameObject.SetActive(false);
     }
 
-    // --- [기존 상점 로직들] ---
+    // --- [화면 전환] ---
+    // Home/재료 대분류/업그레이드 화면의 타이틀(텍스트+이미지)은 각 패널 안에 직접 배치되어
+    // 패널 활성화만으로 자연히 보임 — 코드에서 문자를 넣지 않음.
 
-    public void GoHome()
+    public void ShowHome()
     {
-        categoryPanel.SetActive(true);
-        itemScrollPanel.SetActive(false);
-        if(searchInput) searchInput.text = ""; 
+        SetScreen(homePanel);
     }
 
-    public void ShowListByCategory(ItemData.ItemType category)
+    public void OpenIngredients()
     {
-        categoryPanel.SetActive(false);
-        itemScrollPanel.SetActive(true);
-        if (categoryTitleText != null) categoryTitleText.text = GetCategoryName(category);
-        UpdateList(category, ""); 
-        itemScrollView.verticalNormalizedPosition = 1f;
+        SetScreen(ingredientCategoryPanel);
     }
 
-    public void OnSearchValueChange(string text)
+    public void OpenUpgrades()
     {
-        if (string.IsNullOrWhiteSpace(text)) { GoHome(); return; }
-        if (!itemScrollPanel.activeSelf) { categoryPanel.SetActive(false); itemScrollPanel.SetActive(true); }
-        if (categoryTitleText != null) categoryTitleText.text = $"'{text}' 검색 결과";
-        
-        UpdateList(null, text);
-        if (itemScrollView.verticalNormalizedPosition != 1f) itemScrollView.verticalNormalizedPosition = 1f;
+        SetScreen(upgradePanel);
+        foreach (var slot in _upgradeSlots) slot.Refresh();
     }
 
-    private void UpdateList(ItemData.ItemType? categoryFilter, string searchFilter)
+    // 레시피북 상점 화면은 기획 미정 — 클릭만 받고 아직 아무 동작도 하지 않는 스텁
+    public void OnRecipeBookClicked()
     {
-        foreach (Transform child in contentRoot) Destroy(child.gameObject);
+    }
 
-        var result = allItems.Where(item => 
-            (categoryFilter == null || item.category == categoryFilter) && 
-            (string.IsNullOrEmpty(searchFilter) || item.itemName.Contains(searchFilter))
-        ).ToList();
+    public void ShowListByCategory(LiquorCategoryDef category)
+    {
+        SetScreen(itemScrollPanel);
+        if (categoryNameText) categoryNameText.text = category != null ? category.displayName : "";
+        UpdateList(category);
+        if (itemScrollView) itemScrollView.verticalNormalizedPosition = 1f;
+    }
 
-        foreach (var item in result)
+    private void SetScreen(GameObject target)
+    {
+        if (homePanel)               homePanel.SetActive(target == homePanel);
+        if (ingredientCategoryPanel) ingredientCategoryPanel.SetActive(target == ingredientCategoryPanel);
+        if (itemScrollPanel)         itemScrollPanel.SetActive(target == itemScrollPanel);
+        if (upgradePanel)            upgradePanel.SetActive(target == upgradePanel);
+    }
+
+    // --- [재료] ---
+
+    private void BuildCategoryButtons()
+    {
+        if (categoryButtonContent == null || categoryButtonPrefab == null) return;
+
+        foreach (var category in ingredientCategories)
         {
-            GameObject slot = Instantiate(slotPrefab, contentRoot);
-            slot.GetComponent<ItemSlotUI>().Setup(item);
+            if (category == null) continue;
+            var btn = Instantiate(categoryButtonPrefab, categoryButtonContent);
+            btn.Bind(category, ShowListByCategory);
         }
     }
 
-    private string GetCategoryName(ItemData.ItemType type)
+    private void UpdateList(LiquorCategoryDef categoryFilter)
     {
-        return type switch
+        foreach (Transform child in contentRoot) Destroy(child.gameObject);
+
+        var result = allBottles.Where(bottle =>
+            bottle != null && (categoryFilter == null || bottle.category == categoryFilter)
+        ).ToList();
+
+        foreach (var bottle in result)
         {
-            ItemData.ItemType.Alcohol => "알코올",
-            ItemData.ItemType.Liqueur => "리큐르",
-            ItemData.ItemType.NonAlcohol => "논알콜",
-            ItemData.ItemType.Powder => "파우더",
-            ItemData.ItemType.Tool => "도구",
-            ItemData.ItemType.Glass => "잔",
-            _ => "검색 결과" // 기본값
-        };
+            GameObject slotObj = Instantiate(slotPrefab, contentRoot);
+            var slot = slotObj.GetComponent<ItemSlotUI>();
+            slot.Setup(bottle);
+            slot.OnPurchased += RefreshMoneyText;
+        }
+    }
+
+    // --- [업그레이드] ---
+
+    private void BuildUpgradeSlots()
+    {
+        if (upgradeContentRoot == null || upgradeSlotPrefab == null) return;
+
+        foreach (var def in allUpgrades)
+        {
+            if (def == null) continue;
+            var slot = Instantiate(upgradeSlotPrefab, upgradeContentRoot);
+            slot.Bind(def);
+            slot.OnPurchased += RefreshMoneyText;
+            _upgradeSlots.Add(slot);
+        }
+    }
+
+    // --- [소지금] ---
+
+    public void RefreshMoneyText()
+    {
+        if (moneyText) moneyText.text = $"{GameProgress.Instance.CurrentMoney:N0} G";
     }
 }
