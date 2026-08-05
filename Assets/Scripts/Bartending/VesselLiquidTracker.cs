@@ -67,19 +67,24 @@ namespace Slainte.Bartending
     [RequireComponent(typeof(Collider2D))]
     public sealed class VesselLiquidTracker : MonoBehaviour
     {
+        private static readonly HashSet<VesselLiquidTracker> activeVessels = new();
+        private static readonly HashSet<LiquidParticleData> activeParticles = new();
         private readonly HashSet<LiquidParticleData> particles = new();
+        private readonly HashSet<LiquidParticleData> ownedParticles = new();
         private readonly List<Collider2D> overlapResults = new();
+        private readonly List<LiquidParticleData> ownerReleaseBuffer = new();
         private readonly StringBuilder debugTextBuilder = new();
         private Collider2D[] colliders;
         private ContactFilter2D scanFilter;
         private GUIStyle debugBoxStyle;
         private string servingGlassId = string.Empty;
         private bool hasIce;
+        private int interactionPriority;
 
         [Header("Debug View")]
-        [SerializeField] private bool drawDebugGizmos = true;
+        [SerializeField] private bool drawDebugGizmos = false;
         [SerializeField] private bool drawOnlyWhenSelected = false;
-        [SerializeField] private bool drawRuntimeLabel = true;
+        [SerializeField] private bool drawRuntimeLabel = false;
         [SerializeField] private Color triggerDebugColor = new Color(0.15f, 0.85f, 1f, 0.8f);
         [SerializeField] private Color particleDebugColor = new Color(1f, 0.92f, 0.25f, 0.9f);
         [SerializeField] private Color connectionDebugColor = new Color(0.5f, 1f, 0.65f, 0.45f);
@@ -112,9 +117,41 @@ namespace Slainte.Bartending
             scanFilter.useTriggers = true;
         }
 
+        internal int InteractionPriority => interactionPriority;
+
+        internal void SetInteractionPriority(int priority)
+        {
+            interactionPriority = priority;
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetInteractionRegistry()
+        {
+            activeVessels.Clear();
+            activeParticles.Clear();
+        }
+
+        private void OnEnable()
+        {
+            RegisterVessel(this);
+        }
+
         private void OnDisable()
         {
+            ownerReleaseBuffer.Clear();
+            foreach (LiquidParticleData particle in ownedParticles)
+            {
+                if (particle != null)
+                    ownerReleaseBuffer.Add(particle);
+            }
+
+            for (int i = 0; i < ownerReleaseBuffer.Count; i++)
+                ownerReleaseBuffer[i].ReleaseVesselOwner(this);
+
+            ownerReleaseBuffer.Clear();
+            ownedParticles.Clear();
             particles.Clear();
+            UnregisterVessel(this);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -129,8 +166,19 @@ namespace Slainte.Bartending
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            if (other.TryGetComponent(out LiquidParticleData particle))
-                particles.Remove(particle);
+            if (!other.TryGetComponent(out LiquidParticleData particle))
+                return;
+
+            particles.Remove(particle);
+
+            // An owned particle must become transferable as soon as it has fully
+            // left this vessel. Keep ownership while it is still inside another
+            // trigger belonging to the same vessel.
+            if (particle.VesselOwner == this
+                && !ContainsTriggerPoint(particle.transform.position))
+            {
+                particle.ReleaseVesselOwner(this);
+            }
         }
 
         public CocktailComposition BuildComposition()
@@ -208,7 +256,62 @@ namespace Slainte.Bartending
             if (particle.hasBeenCollected)
                 return;
 
-            particles.Add(particle);
+            VesselLiquidTracker previousOwner = particle.VesselOwner;
+            if (previousOwner != null
+                && previousOwner != this
+                && !previousOwner.ContainsTriggerPoint(particle.transform.position))
+            {
+                particle.ReleaseVesselOwner(previousOwner);
+            }
+
+            if (particle.VesselOwner == null)
+                particle.TryAssignVesselOwner(FindPreferredOwner(particle.transform.position));
+
+            if (particle.VesselOwner == this)
+                particles.Add(particle);
+        }
+
+        private static VesselLiquidTracker FindPreferredOwner(Vector2 worldPoint)
+        {
+            VesselLiquidTracker preferred = null;
+            foreach (VesselLiquidTracker vessel in activeVessels)
+            {
+                if (vessel == null
+                    || !vessel.isActiveAndEnabled
+                    || !vessel.ContainsTriggerPoint(worldPoint))
+                {
+                    continue;
+                }
+
+                if (preferred == null
+                    || vessel.interactionPriority > preferred.interactionPriority
+                    || (vessel.interactionPriority == preferred.interactionPriority
+                        && vessel.GetInstanceID() > preferred.GetInstanceID()))
+                {
+                    preferred = vessel;
+                }
+            }
+
+            return preferred;
+        }
+
+        private bool ContainsTriggerPoint(Vector2 worldPoint)
+        {
+            CacheColliders();
+            for (int i = 0; i < colliders.Length; i++)
+            {
+                Collider2D trigger = colliders[i];
+                if (trigger != null
+                    && trigger.enabled
+                    && trigger.isTrigger
+                    && trigger.gameObject.activeInHierarchy
+                    && trigger.OverlapPoint(worldPoint))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void Cleanup()
@@ -235,6 +338,130 @@ namespace Slainte.Bartending
             }
 
             overlapResults.Clear();
+        }
+
+        internal void RegisterOwnedParticle(LiquidParticleData particle)
+        {
+            if (particle != null)
+                ownedParticles.Add(particle);
+        }
+
+        internal void UnregisterOwnedParticle(LiquidParticleData particle)
+        {
+            if (particle != null)
+                ownedParticles.Remove(particle);
+        }
+
+        internal static void RegisterParticle(LiquidParticleData particle)
+        {
+            if (particle == null || !activeParticles.Add(particle))
+                return;
+
+            RefreshParticleIsolation(particle);
+        }
+
+        internal static void UnregisterParticle(LiquidParticleData particle)
+        {
+            if (particle == null)
+                return;
+
+            Collider2D particleCollider = particle.ParticleCollider;
+            if (particleCollider != null)
+            {
+                foreach (LiquidParticleData other in activeParticles)
+                {
+                    if (other == null || other == particle || other.ParticleCollider == null)
+                        continue;
+
+                    Physics2D.IgnoreCollision(particleCollider, other.ParticleCollider, false);
+                }
+
+                foreach (VesselLiquidTracker vessel in activeVessels)
+                    SetParticleVesselCollision(particleCollider, vessel, false);
+            }
+
+            activeParticles.Remove(particle);
+        }
+
+        internal static void RefreshParticleIsolation(LiquidParticleData particle)
+        {
+            if (particle == null || !particle.isActiveAndEnabled)
+                return;
+
+            Collider2D particleCollider = particle.ParticleCollider;
+            if (particleCollider == null)
+                return;
+
+            foreach (VesselLiquidTracker vessel in activeVessels)
+            {
+                bool ignoreVessel = particle.VesselOwner != null
+                    && particle.VesselOwner != vessel;
+                SetParticleVesselCollision(particleCollider, vessel, ignoreVessel);
+            }
+
+            foreach (LiquidParticleData other in activeParticles)
+            {
+                if (other == null || other == particle || other.ParticleCollider == null)
+                    continue;
+
+                bool ignoreParticle = particle.VesselOwner != null
+                    && other.VesselOwner != null
+                    && particle.VesselOwner != other.VesselOwner;
+                Physics2D.IgnoreCollision(
+                    particleCollider,
+                    other.ParticleCollider,
+                    ignoreParticle);
+            }
+        }
+
+        private static void RegisterVessel(VesselLiquidTracker vessel)
+        {
+            if (vessel == null || !activeVessels.Add(vessel))
+                return;
+
+            vessel.CacheColliders();
+            foreach (LiquidParticleData particle in activeParticles)
+            {
+                if (particle == null || particle.ParticleCollider == null)
+                    continue;
+
+                bool ignoreVessel = particle.VesselOwner != null
+                    && particle.VesselOwner != vessel;
+                SetParticleVesselCollision(particle.ParticleCollider, vessel, ignoreVessel);
+            }
+        }
+
+        private static void UnregisterVessel(VesselLiquidTracker vessel)
+        {
+            if (vessel == null)
+                return;
+
+            foreach (LiquidParticleData particle in activeParticles)
+            {
+                if (particle != null && particle.ParticleCollider != null)
+                    SetParticleVesselCollision(particle.ParticleCollider, vessel, false);
+            }
+
+            activeVessels.Remove(vessel);
+        }
+
+        private static void SetParticleVesselCollision(
+            Collider2D particleCollider,
+            VesselLiquidTracker vessel,
+            bool ignore)
+        {
+            if (particleCollider == null || vessel == null)
+                return;
+
+            vessel.CacheColliders();
+            for (int i = 0; i < vessel.colliders.Length; i++)
+            {
+                Collider2D vesselCollider = vessel.colliders[i];
+                if (vesselCollider == null || vesselCollider.isTrigger)
+                    continue;
+
+                Physics2D.IgnoreCollision(particleCollider, vesselCollider, ignore);
+            }
         }
 
         private void CacheColliders()

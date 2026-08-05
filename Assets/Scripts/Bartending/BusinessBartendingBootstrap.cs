@@ -41,6 +41,7 @@ namespace Slainte.Bartending
         public int SessionBottleCount => sessionBottles.Count;
         public event Action<VesselLiquidTracker> SessionReady;
         public event Action SessionDestroyed;
+        public event Action<VesselLiquidTracker> ServeRequested;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void RegisterSceneHook()
@@ -166,6 +167,12 @@ namespace Slainte.Bartending
                 settings.beakerPrefab, world.transform, "Beaker", settings.beakerPosition, renderLayer, itemScale);
             IBartendingItem glass = CreateItem(
                 settings.glassPrefab, world.transform, "Glass", settings.glassPosition, renderLayer, itemScale);
+            if (glass is GlassController servingGlass)
+            {
+                float serveLineScreenY = Screen.height * Mathf.Clamp01(settings.serveLineScreenRatio);
+                servingGlass.ConfigureServeGesture(serveLineScreenY);
+                servingGlass.ServeRequested += HandleGlassServeRequested;
+            }
             startingTools.Add(beaker);
             startingTools.Add(glass);
             List<BottleController> selectedBottles = CreateSelectedBottles();
@@ -247,6 +254,15 @@ namespace Slainte.Bartending
             CurrentTargetTracker = glass != null ? glass.LiquidTracker : null;
             readyRoutine = null;
             SessionReady?.Invoke(CurrentTargetTracker);
+        }
+
+        private void HandleGlassServeRequested(GlassController glass)
+        {
+            VesselLiquidTracker tracker = glass != null ? glass.LiquidTracker : null;
+            if (tracker == null || tracker != CurrentTargetTracker)
+                return;
+
+            ServeRequested?.Invoke(tracker);
         }
 
         public void DiscardAndResetSession()
@@ -355,7 +371,7 @@ namespace Slainte.Bartending
                 return null;
 
             IBartendingItem bottleItem = CreateItem(
-                settings.orangeJuiceBottlePrefab,
+                settings.bottlePrefab,
                 sessionWorld,
                 string.IsNullOrWhiteSpace(item.displayName) ? item.id : item.displayName,
                 settings.bottlePosition,
@@ -433,7 +449,20 @@ namespace Slainte.Bartending
                 return;
 
             bottleReserveAmounts.TryGetValue(bottle, out float reserveAmount);
-            GameProgress.Instance.SetBottleAmount(item.id, reserveAmount + amount);
+            float activeAmount = Mathf.Max(0f, amount);
+            if (activeAmount <= Mathf.Epsilon && reserveAmount > Mathf.Epsilon)
+            {
+                float refillAmount = Mathf.Min(Mathf.Max(0f, item.capacityMl), reserveAmount);
+                if (refillAmount > Mathf.Epsilon)
+                {
+                    reserveAmount = Mathf.Max(0f, reserveAmount - refillAmount);
+                    bottleReserveAmounts[bottle] = reserveAmount;
+                    bottle.SetCurrentCapacity(refillAmount);
+                    activeAmount = refillAmount;
+                }
+            }
+
+            GameProgress.Instance.SetBottleAmount(item.id, reserveAmount + activeAmount);
         }
 
         private Camera CreateWorldCamera(Transform parent, BusinessBartendingSettings settings, int renderLayer)

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Slainte.Bartending
 {
@@ -8,7 +9,8 @@ namespace Slainte.Bartending
         [Header("Prefabs")]
         public GameObject beakerPrefab;
         public GameObject glassPrefab;
-        public GameObject orangeJuiceBottlePrefab;
+        [FormerlySerializedAs("orangeJuiceBottlePrefab")]
+        public GameObject bottlePrefab;
         public GameObject slotPrefab;
         public GameObject liquidParticlePrefab;
 
@@ -24,6 +26,9 @@ namespace Slainte.Bartending
         public Vector2Int renderTextureSize = new Vector2Int(2560, 1440);
         public float cameraOrthographicSize = 5.2f;
         [Range(8, 31)] public int renderLayer = 30;
+
+        [Header("Serving Gesture")]
+        [Range(0f, 1f)] public float serveLineScreenRatio = 0.3f;
 
         [Header("Initial Item Positions")]
         public Vector3 bottlePosition = new Vector3(-8f, -0.8f, 0f);

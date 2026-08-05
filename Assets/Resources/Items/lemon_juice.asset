@@ -24,5 +24,9 @@ MonoBehaviour:
   capacityMl: 300
   liquidColor: {r: 1, g: 0.44841516, b: 0.28627455, a: 0.5058824}
   density: 1.03
+  overrideBottleGeometry: 1
+  liquidSpawnNormalized: {x: 0.5, y: 0.9478528}
+  colliderCenterNormalized: {x: 0.5, y: 0.49624535}
+  colliderSizeNormalized: {x: 0.936352, y: 1.0581869}
   dragMovesObject: 1
   toolPlaceableOnTable: 0

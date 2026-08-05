@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -64,10 +65,21 @@ namespace Slainte.Bartending
         private float currentAngle = 0f;
         private Coroutine returnCoroutine;
         private Vector3 dragOffset;
-
+        private bool serveGestureEnabled;
+        private bool serveRequested;
+        private float serveLineScreenY;
+        private BartendingItemOrder interactionOrder;
         private SlotController currentSlot; // 현재 점유 중인 슬롯 레퍼런스
 
         public VesselLiquidTracker LiquidTracker => liquidTracker;
+        public event Action<GlassController> ServeRequested;
+
+        public void ConfigureServeGesture(float forwardLineScreenY)
+        {
+            serveGestureEnabled = true;
+            serveRequested = false;
+            serveLineScreenY = forwardLineScreenY;
+        }
 
         private void Start()
         {
@@ -99,6 +111,10 @@ namespace Slainte.Bartending
             if (Application.isPlaying)
             {
                 currentState = GlassState.Idle;
+                interactionOrder = BartendingItemOrder.Attach(
+                    gameObject,
+                    mainCollider,
+                    liquidTracker);
             }
         }
 
@@ -195,6 +211,7 @@ namespace Slainte.Bartending
         private void PickupGlass()
         {
             currentState = GlassState.PickedUp;
+            interactionOrder?.BringToFront();
             
             // 기존 슬롯 점유 해제 (독립)
             if (currentSlot != null)
@@ -220,6 +237,9 @@ namespace Slainte.Bartending
             }
 
             Vector3 targetPosition = mousePos + dragOffset;
+
+            if (TryRequestServe(targetPosition))
+                return;
             
             Rigidbody2D rb = GetComponent<Rigidbody2D>();
             if (rb != null)
@@ -231,6 +251,25 @@ namespace Slainte.Bartending
             {
                 transform.position = targetPosition;
             }
+        }
+
+        private bool TryRequestServe(Vector3 targetPosition)
+        {
+            Vector2 glassScreenPosition = BartendingViewport.GetPointerScreenPosition(
+                mainCamera,
+                targetPosition);
+            if (!serveGestureEnabled
+                || serveRequested
+                || !Input.GetMouseButton(0)
+                || glassScreenPosition.y < serveLineScreenY)
+            {
+                return false;
+            }
+
+            serveRequested = true;
+            currentState = GlassState.Idle;
+            ServeRequested?.Invoke(this);
+            return true;
         }
 
         private void CaptureDragOffset()
@@ -440,7 +479,9 @@ namespace Slainte.Bartending
             }
 
             // 다른 겹치는 오브젝트(액체 입자 등)에 방해받지 않는 단독 격리 판정
-            return mainCollider.OverlapPoint(mousePos);
+            return interactionOrder != null
+                ? interactionOrder.IsFrontmostAt(mousePos)
+                : mainCollider.OverlapPoint(mousePos);
         }
 
         private float GetPivotToBottomOffset()

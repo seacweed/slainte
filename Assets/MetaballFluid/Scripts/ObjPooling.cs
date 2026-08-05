@@ -1,75 +1,178 @@
 using System.Collections.Generic;
+using Slainte.Bartending;
 using UnityEngine;
 
 public class LiquidPool : MonoBehaviour
 {
     public static LiquidPool Instance;
     public GameObject particlePrefab;
-    public int poolSize = 900; // 입자 최대 개수 제한
+    [Min(0)] public int poolSize = 900;
+    [Min(1)] public int maxAutomaticReturnsPerFrame = 16;
 
+    private readonly Queue<GameObject> poolQueue = new Queue<GameObject>();
+    private readonly List<GameObject> activeParticles = new List<GameObject>();
+    private bool initialized;
+    private bool missingPrefabLogged;
 
+    public int ActiveParticleCount => activeParticles.Count;
+    public int AvailableParticleCount => poolQueue.Count;
+    public int TotalParticleCount => activeParticles.Count + poolQueue.Count;
 
-    private Queue<GameObject> poolQueue = new Queue<GameObject>();
-    private List<GameObject> activeParticles = new List<GameObject>();
-
-    void Awake()
+    private void Awake()
     {
         Instance = this;
-        InitializePool();
+        EnsureInitialized();
     }
 
-    void InitializePool()
+    private void EnsureInitialized()
     {
-        for (int i = 0; i < poolSize; i++)
+        if (initialized || particlePrefab == null)
         {
-            GameObject obj = Instantiate(particlePrefab, transform); // 깔끔하게 부모 밑으로 정리
-            obj.SetActive(false);
-            poolQueue.Enqueue(obj);
+            if (particlePrefab == null)
+                LogMissingPrefabOnce();
+            return;
+        }
+
+        initialized = true;
+        for (int i = 0; i < Mathf.Max(0, poolSize); i++)
+        {
+            GameObject particle = CreateParticle();
+            if (particle == null)
+                break;
+
+            poolQueue.Enqueue(particle);
         }
     }
 
     public GameObject GetParticle(Vector3 position)
     {
-        if (poolQueue.Count > 0)
+        return GetParticle(position, null, 0f);
+    }
+
+    public GameObject GetParticle(Vector3 position, ItemDef sourceItem, float volumeMl)
+    {
+        EnsureInitialized();
+
+        GameObject particle = GetAvailableParticle();
+        if (particle == null)
+            return null;
+
+        PrepareParticle(particle, position, sourceItem, volumeMl);
+        activeParticles.Add(particle);
+        return particle;
+    }
+
+    public bool ReturnParticle(GameObject particle)
+    {
+        if (particle == null || !activeParticles.Remove(particle))
+            return false;
+
+        particle.SetActive(false);
+        poolQueue.Enqueue(particle);
+        return true;
+    }
+
+    private GameObject GetAvailableParticle()
+    {
+        while (poolQueue.Count > 0)
         {
-            GameObject obj = poolQueue.Dequeue();
-            obj.transform.position = position;
-            obj.transform.rotation = Quaternion.identity;
-            obj.SetActive(true);
-            activeParticles.Add(obj);
-            return obj;
+            GameObject particle = poolQueue.Dequeue();
+            if (particle != null)
+                return particle;
         }
-        else
+
+        // The pool owns visual particles only. Running out of the initial cache must
+        // never be interpreted as one of the bottles running out of liquid.
+        return CreateParticle();
+    }
+
+    private GameObject CreateParticle()
+    {
+        if (particlePrefab == null)
         {
-            // 풀이 동났을 때: 가장 오래된 녀석을 재사용하거나, 그냥 무시(return null)
-            // 여기서는 성능을 위해 그냥 무시합니다.
+            LogMissingPrefabOnce();
             return null;
         }
+
+        GameObject particle = Instantiate(particlePrefab, transform);
+        SetLayerRecursively(particle, gameObject.layer);
+        particle.SetActive(false);
+        return particle;
     }
 
-    public void ReturnParticle(GameObject obj)
+    private static void PrepareParticle(
+        GameObject particle,
+        Vector3 position,
+        ItemDef sourceItem,
+        float volumeMl)
     {
-        obj.SetActive(false);
-        activeParticles.Remove(obj);
-        poolQueue.Enqueue(obj);
+        particle.transform.SetPositionAndRotation(position, Quaternion.identity);
+
+        if (particle.TryGetComponent(out LiquidParticleData particleData))
+            particleData.SetPayload(sourceItem, Mathf.Max(0f, volumeMl));
+
+        if (particle.TryGetComponent(out Rigidbody2D body))
+        {
+            body.position = position;
+            body.rotation = 0f;
+            body.linearVelocity = Vector2.zero;
+            body.angularVelocity = 0f;
+        }
+
+        particle.SetActive(true);
+
+        if (particle.TryGetComponent(out LiquidReaction reaction))
+            reaction.WakeUp();
+        else if (body != null && !body.IsAwake())
+            body.WakeUp();
     }
 
-    void Update()
+    private void LogMissingPrefabOnce()
     {
+        if (missingPrefabLogged)
+            return;
+
+        missingPrefabLogged = true;
+        Debug.LogError("[LiquidPool] Particle Prefab이 설정되지 않아 액체 입자를 생성할 수 없습니다.", this);
+    }
+
+    private static void SetLayerRecursively(GameObject root, int layer)
+    {
+        root.layer = layer;
+        for (int i = 0; i < root.transform.childCount; i++)
+            SetLayerRecursively(root.transform.GetChild(i).gameObject, layer);
+    }
+
+    private void Update()
+    {
+        int automaticReturns = 0;
+        int returnLimit = Mathf.Max(1, maxAutomaticReturnsPerFrame);
         for (int i = activeParticles.Count - 1; i >= 0; i--)
         {
-            GameObject obj = activeParticles[i];
-            
-            if (obj.TryGetComponent(out ReturnToPool rtp) && rtp.CheckOOB())
+            GameObject particle = activeParticles[i];
+            if (particle == null)
             {
-                ReturnParticle(obj);
+                activeParticles.RemoveAt(i);
                 continue;
             }
 
-            if (obj.TryGetComponent(out LiquidReaction reaction))
+            if (automaticReturns < returnLimit
+                && particle.TryGetComponent(out ReturnToPool returnToPool)
+                && returnToPool.CheckOOB())
             {
-                reaction.CheckSleepState(Time.deltaTime);
+                ReturnParticle(particle);
+                automaticReturns++;
+                continue;
             }
+
+            if (particle.TryGetComponent(out LiquidReaction reaction))
+                reaction.CheckSleepState(Time.deltaTime);
         }
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+            Instance = null;
     }
 }

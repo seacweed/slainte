@@ -56,6 +56,7 @@ namespace Slainte.Business
             {
                 bartending.SessionReady += HandleBartendingSessionReady;
                 bartending.SessionDestroyed += HandleBartendingSessionDestroyed;
+                bartending.ServeRequested += HandleServeRequested;
             }
 
             initialized = true;
@@ -69,6 +70,7 @@ namespace Slainte.Business
             {
                 bartending.SessionReady -= HandleBartendingSessionReady;
                 bartending.SessionDestroyed -= HandleBartendingSessionDestroyed;
+                bartending.ServeRequested -= HandleServeRequested;
             }
         }
 
@@ -156,7 +158,7 @@ namespace Slainte.Business
                 ticketManager?.Prepare(currentRequest.ticketKey);
 
             SetState(BusinessOrderSessionState.Crafting);
-            ui?.ShowCrafting(CurrentRecipeName, currentRequest.allowAbandon);
+            ui?.ShowCrafting(CurrentRecipeName);
             modeManager?.RequestModeChange(GameMode.CraftingMode);
             servingTarget = bartending != null ? bartending.CurrentTargetTracker : null;
         }
@@ -186,7 +188,7 @@ namespace Slainte.Business
 
             servingTarget = null;
             bartending?.DiscardAndResetSession();
-            ui?.ShowCrafting(CurrentRecipeName, CanAbandonCurrentOrder);
+            ui?.ShowCrafting(CurrentRecipeName);
         }
 
         public void ConfirmAbandonOrder()
@@ -293,8 +295,7 @@ namespace Slainte.Business
         {
             if (State == BusinessOrderSessionState.PresentingOrder)
             {
-                SetState(BusinessOrderSessionState.AwaitingDecision);
-                ui?.ShowDecision(currentRequest == null || currentRequest.allowReject);
+                BeginCrafting();
                 return;
             }
 
@@ -311,6 +312,15 @@ namespace Slainte.Business
         private void HandleBartendingSessionDestroyed()
         {
             servingTarget = null;
+        }
+
+        private void HandleServeRequested(VesselLiquidTracker tracker)
+        {
+            if (State != BusinessOrderSessionState.Crafting || tracker == null)
+                return;
+
+            servingTarget = tracker;
+            SubmitOrder();
         }
 
         private void CompletePendingResult()

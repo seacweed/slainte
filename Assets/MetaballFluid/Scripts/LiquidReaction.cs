@@ -114,7 +114,7 @@ public class LiquidReaction : MonoBehaviour
 
     bool HasMeaningfulMixTarget(LiquidReaction other)
     {
-        if (other == null)
+        if (other == null || !CanInteractWith(other))
             return false;
 
         if (particleData == null)
@@ -131,6 +131,22 @@ public class LiquidReaction : MonoBehaviour
         }
 
         return HasDifferentPhysicalAttributes(other);
+    }
+
+    bool CanInteractWith(LiquidReaction other)
+    {
+        if (other == null)
+            return false;
+
+        if (particleData == null)
+            particleData = GetComponent<LiquidParticleData>();
+
+        if (other.particleData == null)
+            other.particleData = other.GetComponent<LiquidParticleData>();
+
+        return particleData == null
+            || other.particleData == null
+            || particleData.CanInteractWith(other.particleData);
     }
 
     void MixPayloadAndVisuals(LiquidReaction other)

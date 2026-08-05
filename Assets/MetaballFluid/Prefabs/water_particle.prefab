@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4114187303655173092}
   - component: {fileID: -7268521361020896117}
   - component: {fileID: 5766191493085132373}
+  - component: {fileID: 8244921553432611665}
   m_Layer: 4
   m_Name: water_particle
   m_TagString: Untagged
@@ -204,3 +205,22 @@ MonoBehaviour:
   hasBeenCollected: 0
   ambientTemperatureC: 20
   coolingDegreesPerSecond: 0.35
+--- !u!114 &8244921553432611665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6191169969125092929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c53a43d0ddf2304ebf102addb0465ef, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::ReturnToPool
+  bottomLimit: -10
+  topLimit: 12
+  horizontalLimit: 14
+  recycleUncontainedParticles: 1
+  settledOutsideRecycleDelay: 5
+  maxOutsideVesselLifetime: 20
+  settledSpeedThreshold: 0.08

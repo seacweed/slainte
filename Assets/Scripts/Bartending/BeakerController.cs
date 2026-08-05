@@ -58,6 +58,7 @@ namespace Slainte.Bartending
         private SpriteRenderer[] childRenderers;
         private int[] originalSortingOrders;
         private const int PICKUP_SORTING_ORDER_BASE = 100;
+        private BartendingItemOrder interactionOrder;
 
         public VesselLiquidTracker LiquidTracker => liquidTracker;
 
@@ -99,6 +100,10 @@ namespace Slainte.Bartending
             if (Application.isPlaying)
             {
                 currentState = BeakerState.Idle;
+                interactionOrder = BartendingItemOrder.Attach(
+                    gameObject,
+                    mainCollider,
+                    liquidTracker);
             }
         }
 
@@ -177,6 +182,7 @@ namespace Slainte.Bartending
         private void PickupBeaker()
         {
             currentState = BeakerState.PickedUp;
+            interactionOrder?.BringToFront();
             
             // 기존 슬롯 점유 해제
             if (currentSlot != null)
@@ -440,7 +446,9 @@ namespace Slainte.Bartending
                 return false;
             }
 
-            return mainCollider.OverlapPoint(mousePos);
+            return interactionOrder != null
+                ? interactionOrder.IsFrontmostAt(mousePos)
+                : mainCollider.OverlapPoint(mousePos);
         }
 
         public void GenerateCurvedCollider()

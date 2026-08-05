@@ -120,9 +120,12 @@ namespace Slainte.Bartending
 
                 float leftRatio = left.GetVolume(item) / leftTotal;
                 float rightRatio = right.GetVolume(item) / rightTotal;
+                float equilibriumRatio =
+                    (left.GetVolume(item) + right.GetVolume(item))
+                    / (leftTotal + rightTotal);
 
-                float newLeftRatio = Mathf.Lerp(leftRatio, rightRatio, strength);
-                float newRightRatio = Mathf.Lerp(rightRatio, leftRatio, strength);
+                float newLeftRatio = Mathf.Lerp(leftRatio, equilibriumRatio, strength);
+                float newRightRatio = Mathf.Lerp(rightRatio, equilibriumRatio, strength);
 
                 left.SetVolume(item, newLeftRatio * leftTotal);
                 right.SetVolume(item, newRightRatio * rightTotal);
@@ -233,10 +236,34 @@ namespace Slainte.Bartending
         [SerializeField, Min(0f)] private float coolingDegreesPerSecond = 0.35f;
 
         private SpriteRenderer spriteRenderer;
+        private Collider2D particleCollider;
+
+        public VesselLiquidTracker VesselOwner { get; private set; }
+        internal Collider2D ParticleCollider
+        {
+            get
+            {
+                if (particleCollider == null)
+                    particleCollider = GetComponent<Collider2D>();
+                return particleCollider;
+            }
+        }
 
         private void Awake()
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
+            particleCollider = GetComponent<Collider2D>();
+        }
+
+        private void OnEnable()
+        {
+            VesselLiquidTracker.RegisterParticle(this);
+        }
+
+        private void OnDisable()
+        {
+            ClearVesselOwner();
+            VesselLiquidTracker.UnregisterParticle(this);
         }
 
         private void Update()
@@ -246,7 +273,9 @@ namespace Slainte.Bartending
 
         public void SetPayload(ItemDef sourceItem, float volumeMl)
         {
+            ClearVesselOwner();
             hasBeenCollected = false;
+            payload ??= new LiquidPayload();
             payload.SetSingle(sourceItem, volumeMl);
             ApplyVisualFromPayload();
         }
@@ -270,6 +299,47 @@ namespace Slainte.Bartending
             return other != null && payload.HasDifferentComposition(other.payload, tolerance);
         }
 
+        public bool CanInteractWith(LiquidParticleData other)
+        {
+            return other != null
+                && (VesselOwner == null
+                    || other.VesselOwner == null
+                    || VesselOwner == other.VesselOwner);
+        }
+
+        internal bool TryAssignVesselOwner(VesselLiquidTracker owner)
+        {
+            if (owner == null)
+                return false;
+
+            if (VesselOwner != null)
+                return VesselOwner == owner;
+
+            VesselOwner = owner;
+            owner.RegisterOwnedParticle(this);
+            VesselLiquidTracker.RefreshParticleIsolation(this);
+            return true;
+        }
+
+        internal void ReleaseVesselOwner(VesselLiquidTracker owner)
+        {
+            if (VesselOwner != owner)
+                return;
+
+            ClearVesselOwner();
+        }
+
+        internal void ClearVesselOwner()
+        {
+            VesselLiquidTracker previousOwner = VesselOwner;
+            if (previousOwner == null)
+                return;
+
+            VesselOwner = null;
+            previousOwner.UnregisterOwnedParticle(this);
+            VesselLiquidTracker.RefreshParticleIsolation(this);
+        }
+
         public void ApplyVisualFromPayload()
         {
             if (spriteRenderer == null)
@@ -278,7 +348,9 @@ namespace Slainte.Bartending
             if (spriteRenderer == null)
                 return;
 
-            spriteRenderer.color = payload.EvaluateColor();
+            spriteRenderer.color = payload != null
+                ? payload.EvaluateColor()
+                : Color.clear;
         }
     }
 }

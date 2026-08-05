@@ -25,7 +25,6 @@ namespace Slainte.Editor
         private enum SmokeScenario
         {
             SubmitBad,
-            Reject,
             DiscardAbandon,
             EpisodeResourceUse
         }
@@ -90,11 +89,6 @@ namespace Slainte.Editor
         public static void RunSmokeTestFromCommandLine()
         {
             StartSmokeTest(SmokeScenario.SubmitBad);
-        }
-
-        public static void RunRejectQaFromCommandLine()
-        {
-            StartSmokeTest(SmokeScenario.Reject);
         }
 
         public static void RunDiscardAbandonQaFromCommandLine()
@@ -461,18 +455,9 @@ namespace Slainte.Editor
                     {
                         AdvanceDialogue(dialogue);
                     }
-                    else if (session.State == BusinessOrderSessionState.AwaitingDecision)
+                    else if (session.State == BusinessOrderSessionState.Crafting)
                     {
-                        if (smokeScenario == SmokeScenario.Reject)
-                        {
-                            session.RejectOrder();
-                            smokePhase = SmokePhase.WaitingForCompletion;
-                        }
-                        else
-                        {
-                            session.AcceptOrder();
-                            smokePhase = SmokePhase.WaitingForCrafting;
-                        }
+                        smokePhase = SmokePhase.WaitingForCrafting;
                     }
                     break;
 

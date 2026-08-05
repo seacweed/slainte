@@ -36,6 +36,7 @@ public class GameProgress : MonoSingleton<GameProgress>
     public int CurrentDay => currentDay;
     public int Money => money;
     public int Reputation => reputation;
+    public event System.Action<string, float> BottleAmountChanged;
 
     protected override void Awake()
     {
@@ -229,8 +230,10 @@ public class GameProgress : MonoSingleton<GameProgress>
     public void SetBottleAmount(string bottleId, float value)
     {
         if (string.IsNullOrWhiteSpace(bottleId)) return;
-        _bottleAmounts[bottleId] = value;
-        SyncBottleAmountToLists(bottleId, value);
+        float safeValue = Mathf.Max(0f, value);
+        _bottleAmounts[bottleId] = safeValue;
+        SyncBottleAmountToLists(bottleId, safeValue);
+        BottleAmountChanged?.Invoke(bottleId, safeValue);
     }
 
     public void AddMoney(int amount)

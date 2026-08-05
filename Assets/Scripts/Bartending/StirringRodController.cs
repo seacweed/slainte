@@ -41,6 +41,7 @@ namespace Slainte.Bartending
         private SlotController currentSlot;
         private SpriteRenderer[] spriteRenderers;
         private int[] originalSortingOrders;
+        private BartendingItemOrder interactionOrder;
         private LineRenderer generatedVisual;
         private float currentAngle;
         private Vector2 previousPosition;
@@ -59,6 +60,7 @@ namespace Slainte.Bartending
             EnsureCollider();
             EnsureVisualFallback();
             CacheSortingOrders();
+            interactionOrder = BartendingItemOrder.Attach(gameObject, mainCollider);
 
             currentAngle = NormalizeAngle(transform.eulerAngles.z);
             previousPosition = rb != null ? rb.position : (Vector2)transform.position;
@@ -127,6 +129,7 @@ namespace Slainte.Bartending
             currentSlot?.Vacate();
             currentSlot = null;
             SetPickedSortingOrder();
+            interactionOrder?.BringToFront();
         }
 
         private void TryDropRod()
@@ -252,7 +255,9 @@ namespace Slainte.Bartending
             if (!BartendingViewport.TryGetPointerWorldPosition(mainCamera, Input.mousePosition, out Vector3 mousePosition))
                 return false;
 
-            return mainCollider.OverlapPoint(mousePosition);
+            return interactionOrder != null
+                ? interactionOrder.IsFrontmostAt(mousePosition)
+                : mainCollider.OverlapPoint(mousePosition);
         }
 
         private float GetBottomOffset()
