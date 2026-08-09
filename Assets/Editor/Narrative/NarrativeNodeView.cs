@@ -218,6 +218,10 @@ namespace NarrativeFlow.Editor
             }
         }
 
+        private static readonly Color GoodFlagColor = new(0.5f, 1f, 0.5f);
+        private static readonly Color MidFlagColor  = new(1f, 0.8f, 0.4f);
+        private static readonly Color BadFlagColor  = new(1f, 0.5f, 0.5f);
+
         private static void AddBusinessStartInfo(VisualElement card, EpisodeEvent ev)
         {
             var header = NarrativeUIHelper.CreateRow();
@@ -226,10 +230,19 @@ namespace NarrativeFlow.Editor
                 header.Add(NarrativeUIHelper.CreateLabel($"  {ev.CraftingTicketKey}", "info-label").With(l => l.style.color = new Color(0.9f, 0.9f, 0.9f)));
             card.Add(header);
 
-            if (!string.IsNullOrEmpty(ev.CraftingFlagGood))
-                card.Add(NarrativeUIHelper.CreateLabel($"[G] {ev.CraftingFlagGood}", "info-label").With(l => l.style.color = new Color(0.5f, 1f, 0.5f)));
-            if (!string.IsNullOrEmpty(ev.CraftingFlagBad))
-                card.Add(NarrativeUIHelper.CreateLabel($"[B] {ev.CraftingFlagBad}", "info-label").With(l => l.style.color = new Color(1f, 0.5f, 0.5f)));
+            foreach (var result in CraftingJobResultPorts.Order)
+            {
+                string flag = ev.GetCraftingFlag(result);
+                if (string.IsNullOrEmpty(flag)) continue;
+
+                Color color = result switch
+                {
+                    CraftingJobResult.Good => GoodFlagColor,
+                    CraftingJobResult.Bad  => BadFlagColor,
+                    _                       => MidFlagColor
+                };
+                card.Add(NarrativeUIHelper.CreateLabel($"[{CraftingJobResultPorts.Label(result)}] {flag}", "info-label").With(l => l.style.color = color));
+            }
         }
 
         private void DrawTrigger(TriggerNodeSO tr)

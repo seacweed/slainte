@@ -12,6 +12,7 @@
   - [PLAY_TRIGGER](#play_trigger)
   - [OPENING_CHARS](#opening_chars)
   - [NODES](#nodes)
+  - [NODE_CRAFTING_BRANCHES](#node_crafting_branches)
   - [NODE_CHARS](#node_chars)
   - [CHOICES](#choices)
   - [NODE_BRANCHES](#node_branches)
@@ -34,7 +35,7 @@
 
 ## 전체 구조
 
-파일은 `#섹션명` 으로 구분된 최대 10개 섹션으로 이루어집니다.  
+파일은 `#섹션명` 으로 구분된 최대 11개 섹션으로 이루어집니다.  
 각 섹션은 **헤더 행(열 이름)** → **데이터 행** 순서로 작성합니다.
 
 ```
@@ -48,10 +49,16 @@
 #PLAY_TRIGGER
 ...
 
+#SELECT_TRIGGER
+...
+
 #OPENING_CHARS
 ...
 
 #NODES
+...
+
+#NODE_CRAFTING_BRANCHES
 ...
 
 #NODE_CHARS
@@ -139,6 +146,34 @@ minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCu
 
 ---
 
+### SELECT_TRIGGER
+
+작전판 툴팁에서 플레이어가 직접 on/off로 토글할 수 있는 조건입니다. `TRIGGER`/`PLAY_TRIGGER`와 달리 **Play 버튼 활성화 여부에 영향을 주지 않습니다** — 어떤 옵션도 미충족/미선택이어도 에피소드는 평소대로 플레이 가능합니다.
+
+- **행 하나 = 옵션 하나**입니다. 여러 옵션을 만들고 싶으면 행을 여러 개 작성하세요(`OPENING_CHARS`처럼 다중 행 섹션)
+- **옵션들은 서로 배타적**입니다 — 툴팁에서 하나를 켜면 나머지는 자동으로 꺼집니다(라디오 버튼처럼 동작)
+- **옵션 하나당 조건은 딱 하나**입니다(`TRIGGER`/`PLAY_TRIGGER`처럼 여러 조건을 AND로 걸 수 없음). 조건을 여러 개 걸고 싶으면 옵션(행)을 여러 개로 나눠서 작성하세요
+- 그 조건이 충족된 옵션만 토글 인터랙션이 가능(미충족이면 off로 고정, 비활성 표시)
+- 켜진 옵션의 on/off 값은 Play 버튼 클릭(에피소드 시작) 시점에 그 행의 `selectFlag` 열 플래그로 반영됨(켜진 옵션 → `SetFlag`, 나머지 옵션 → `ClearFlag`) — 에피소드 노드의 `flagBranches` 등에서 분기 조건으로 사용
+- 컬럼: `conditionType`(`None`/`MinDay`/`RequiredFlag`/`PrerequisiteEpisode`/`RequiredVar` 중 하나), `conditionValue`(타입에 따라 의미가 다름 — 아래 표), `selectFlag`(반영할 플래그 이름), `selectText`(이 옵션 조건 뒤에 표시할 커스텀 힌트 한 줄. 비우면 조건에서 문구를 자동 생성)
+
+| `conditionType` | `conditionValue` 형식 | 예시 |
+|---|---|---|
+| `None` | (비움) | 조건 없음 — 항상 토글 가능 |
+| `MinDay` | 숫자 | `3` |
+| `RequiredFlag` | 플래그 이름 | `flag_got_hint` |
+| `PrerequisiteEpisode` | 에피소드 ID | `Intro_0` |
+| `RequiredVar` | `varName연산자값`(`TRIGGER`의 `requiredVars` 문법과 동일) | `sally_affinity>=5` |
+
+```csv
+#SELECT_TRIGGER
+conditionType,conditionValue,selectFlag,selectText
+RequiredFlag,flag_got_hint,select_confront_f72,단도직입적으로 물어본다
+RequiredFlag,flag_got_hint,select_evade_f72,모르는 척 넘어간다
+```
+
+---
+
 ### OPENING_CHARS
 
 에피소드 시작 시 무대에 배치되는 캐릭터 목록입니다.  
@@ -171,16 +206,10 @@ f72,frust,-1
 | `nextNodeId` | 다음에 이동할 노드 ID (비우면 에피소드 종료) | `1` |
 | `requiresCrafting` | 제조 판정 여부 (`true` / `false`) | `false` |
 | `craftingTicketKey` | 사용할 제조 티켓 ID (`requiresCrafting=true` 일 때만 작성) | `sc0_f72` |
-| `nextNodeIdGood` | 제조 성공 시 이동할 노드 ID | `5-1-1` |
-| `nextNodeIdBad` | 제조 실패 시 이동할 노드 ID | `5-2-1` |
 | `bgmCommand` | BGM 명령 (`none` / `play` / `stop`, 비우면 `none`) | `play` |
 | `bgmClipName` | 재생할 BGM 파일명 (`bgmCommand=play` 일 때만 작성, 확장자 제외) | `bgm_tension` |
-| `craftingFlagGood` | 제조 **성공** 시 설정할 플래그 | `sc0_crafted_good` |
-| `craftingFlagBad` | 제조 **실패** 시 설정할 플래그 | `sc0_crafted_bad` |
-| `craftingVarChangesGood` | 제조 **성공** 시 수치 변수 변경 (`\|` 구분, `+`/`-` 증감) | `sally_affinity+5` |
-| `craftingVarChangesBad` | 제조 **실패** 시 수치 변수 변경 (`\|` 구분, `+`/`-` 증감) | `sally_affinity-2` |
 
-**제조 판정 노드** 작성 시: `text`와 `nextNodeId`는 비우고, `requiresCrafting=true` + 성공/실패 노드 ID를 작성합니다.
+**제조 판정 노드** 작성 시: `text`와 `nextNodeId`는 비우고, `requiresCrafting=true` + `craftingTicketKey`만 작성합니다. 제조 결과별(goodjob/badjob/midjob 4종) 이동 노드·플래그·변수 변경은 `#NODE_CRAFTING_BRANCHES` 섹션에 작성합니다.
 
 **선택지 노드** 작성 시: `nextNodeId`는 비우고 `#CHOICES` 섹션에 선택지를 작성합니다.
 
@@ -188,13 +217,38 @@ f72,frust,-1
 
 ```csv
 #NODES
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad
-0,f72,???,흘..크흘…,1,false,,,,play,bgm_tension,,,,
-5,f72,???,,,true,sc0_f72,5-1-1,5-2-1,,,sc0_crafted_good,sc0_crafted_bad,sally_affinity+5,sally_affinity-2
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,bgmCommand,bgmClipName
+0,f72,???,흘..크흘…,1,false,,play,bgm_tension
+5,f72,???,,,true,sc0_f72,,
 ```
 
 > **주의**: 대사에 쉼표(`,`)가 포함된 경우 반드시 큰따옴표로 감싸야 합니다.  
 > 예: `"여기, 이거 드세요."`
+
+---
+
+### NODE_CRAFTING_BRANCHES
+
+제조 결과(`CraftingJobResult`: `Good`/`MidIce`/`MidGlass`/`MidIceGlass`/`MidWrongMenu`/`Bad`)별로 이동할 노드·설정할 플래그·수치 변수 변경을 지정합니다. `#NODE_BRANCHES`와 마찬가지로 **노드 하나가 여러 행을 가질 수 있는** 섹션이며, 실제로 사용하는 결과만큼만 행을 씁니다(6개를 다 채울 필요 없음).
+
+| 열 | 설명 | 예시 |
+|---|---|---|
+| `nodeId` | 제조 판정 노드 ID (`requiresCrafting=true`인 노드) | `5` |
+| `result` | 제조 결과 (`Good`/`MidIce`/`MidGlass`/`MidIceGlass`/`MidWrongMenu`/`Bad`) | `Good` |
+| `nextNodeId` | 해당 결과일 때 이동할 노드 ID | `5-1-1` |
+| `flag` | 해당 결과일 때 설정할 플래그 | `sc0_crafted_good` |
+| `varChanges` | 해당 결과일 때 수치 변수 변경 (`\|` 구분, `+`/`-` 증감) | `sally_affinity+5` |
+
+- 특정 결과에 대한 행이 없으면, 그 결과에서는 다음 노드로 넘어가지 않고 에피소드가 종료됩니다(`#NODES`의 `nextNodeId`도 비어있는 경우와 동일).
+- `midjob-ice`/`midjob-glass`/`midjob-ice_glass`/`midjob-wrongmenu`가 무엇을 뜻하는지는 기획 규칙에 따르며(예: 얼음 유무만 다르면 `MidIce`, 잔 종류만 다르면 `MidGlass`, 주문과 다른 레시피를 올바르게 만들면 `MidWrongMenu`), 실제 자동 판정 로직은 아직 없고 `CraftingJudgeUI`의 버튼으로 수동 판정합니다.
+
+```csv
+#NODE_CRAFTING_BRANCHES
+nodeId,result,nextNodeId,flag,varChanges
+5,Good,5-1-1,sc0_crafted_good,sally_affinity+5
+5,Bad,5-2-1,sc0_crafted_bad,sally_affinity-2
+5,MidIce,5-3-1,,
+```
 
 ---
 
@@ -371,13 +425,13 @@ characterKey,expressionKey,slotIndex
 f72,neutral,-1
 
 #NODES
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad
-0,f72,???,뭘 마시겠어?,1,false,,,,play,bgm_bar,,,,
-1,shaun,,추천해줘.,2,false,,,,none,,,,,
-2,f72,,그럼 선택해.,,false,,,,none,,,,,
-3a,f72,,좋은 선택이야.,4,false,,,,none,,,,,
-3b,f72,,그것도 나쁘지 않아.,4,false,,,,none,,,,,
-4,f72,,또 오게.,,false,,,,stop,,,,,
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,bgmCommand,bgmClipName
+0,f72,???,뭘 마시겠어?,1,false,,play,bgm_bar
+1,shaun,,추천해줘.,2,false,,none,
+2,f72,,그럼 선택해.,,false,,none,
+3a,f72,,좋은 선택이야.,4,false,,none,
+3b,f72,,그것도 나쁘지 않아.,4,false,,none,
+4,f72,,또 오게.,,false,,stop,
 
 #NODE_CHARS
 nodeId,characterKey,expressionKey,slotIndex

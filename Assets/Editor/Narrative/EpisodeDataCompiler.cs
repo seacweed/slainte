@@ -34,6 +34,7 @@ namespace NarrativeFlow.Editor
             data.mandatorySlot = graph.MandatorySlot;
             data.triggerCondition  = graph.TriggerCondition ?? new EpisodeTriggerCondition();
             data.playCondition     = graph.PlayCondition ?? new EpisodeTriggerCondition();
+            data.selectConditions  = graph.SelectConditions ?? new List<SelectConditionEntry>();
             data.openingCharacters = (graph.OpeningCharacters ?? new List<CharacterSlotEntry>())
                 .Select(c => new CharacterSlotEntry { characterKey = c.characterKey, expressionKey = c.expressionKey, slotIndex = c.slotIndex })
                 .ToList();
@@ -148,14 +149,18 @@ namespace NarrativeFlow.Editor
                     break;
 
                 case EpisodeEventType.BusinessStart:
-                    n.requiresCrafting       = true;
-                    n.craftingTicketKey      = ev.CraftingTicketKey;
-                    n.craftingFlagGood       = ev.CraftingFlagGood;
-                    n.craftingFlagBad        = ev.CraftingFlagBad;
-                    n.craftingVarChangesGood = ev.CraftingVarChangesGood
-                        .Select(v => new VarChange { varName = v.VarName, delta = v.Delta }).ToList();
-                    n.craftingVarChangesBad  = ev.CraftingVarChangesBad
-                        .Select(v => new VarChange { varName = v.VarName, delta = v.Delta }).ToList();
+                    n.requiresCrafting  = true;
+                    n.craftingTicketKey = ev.CraftingTicketKey;
+                    foreach (var result in CraftingJobResultPorts.Order)
+                    {
+                        string flag = ev.GetCraftingFlag(result);
+                        var varChanges = ev.GetCraftingVarChanges(result);
+                        if (string.IsNullOrEmpty(flag) && varChanges.Count == 0) continue;
+
+                        n.SetCraftingFlag(result, flag);
+                        n.SetCraftingVarChanges(result, varChanges
+                            .Select(v => new VarChange { varName = v.VarName, delta = v.Delta }).ToList());
+                    }
                     break;
 
                 case EpisodeEventType.Choice:
@@ -198,12 +203,13 @@ namespace NarrativeFlow.Editor
 
             if (ev.Type == EpisodeEventType.BusinessStart || rNode.requiresCrafting)
             {
-                var good = blockEdges.FirstOrDefault(e => e.OutputPortIndex == 0);
-                var bad  = blockEdges.FirstOrDefault(e => e.OutputPortIndex == 1);
-                if (!string.IsNullOrEmpty(good.BaseNodeGuid))
-                    rNode.nextNodeIdGood = ResolveNodeId(graph, good.TargetNodeGuid, nodeMapping, rNode);
-                if (!string.IsNullOrEmpty(bad.BaseNodeGuid))
-                    rNode.nextNodeIdBad  = ResolveNodeId(graph, bad.TargetNodeGuid,  nodeMapping, rNode);
+                var order = CraftingJobResultPorts.Order;
+                for (int i = 0; i < order.Length; i++)
+                {
+                    var edge = blockEdges.FirstOrDefault(e => e.OutputPortIndex == i);
+                    if (!string.IsNullOrEmpty(edge.BaseNodeGuid))
+                        rNode.SetNextNodeId(order[i], ResolveNodeId(graph, edge.TargetNodeGuid, nodeMapping, rNode));
+                }
                 return;
             }
 
@@ -382,6 +388,26 @@ namespace NarrativeFlow.Editor
                 sb.AppendLine();
             }
 
+            if (data.selectConditions != null && data.selectConditions.Count > 0)
+            {
+                sb.AppendLine("#SELECT_TRIGGER");
+                sb.AppendLine("conditionType,conditionValue,selectFlag,selectText");
+                foreach (var sc in data.selectConditions)
+                {
+                    var cond = sc.condition ?? new SelectSingleCondition();
+                    string value = cond.type switch
+                    {
+                        SelectConditionType.MinDay => cond.minDay.ToString(),
+                        SelectConditionType.RequiredFlag => cond.requiredFlag,
+                        SelectConditionType.PrerequisiteEpisode => cond.prerequisiteEpisodeId,
+                        SelectConditionType.RequiredVar => $"{cond.varName}{CompareOpToString(cond.varOp)}{cond.varThreshold}",
+                        _ => ""
+                    };
+                    sb.AppendLine($"{cond.type},{value},{sc.flag},{Csv(sc.conditionText)}");
+                }
+                sb.AppendLine();
+            }
+
             if (data.openingCharacters != null && data.openingCharacters.Count > 0)
             {
                 sb.AppendLine("#OPENING_CHARS");
@@ -392,14 +418,21 @@ namespace NarrativeFlow.Editor
             }
 
             sb.AppendLine("#NODES");
-            sb.AppendLine("nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad");
+            sb.AppendLine("nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,bgmCommand,bgmClipName");
             foreach (var n in data.nodes)
-            {
-                string varGood = VarChangesToCsv(n.craftingVarChangesGood);
-                string varBad  = VarChangesToCsv(n.craftingVarChangesBad);
-                sb.AppendLine($"{n.nodeId},{n.speakerKey},{n.overrideSpeakerName},{Csv(n.text)},{n.nextNodeId},{n.requiresCrafting.ToString().ToLower()},{n.craftingTicketKey},{n.nextNodeIdGood},{n.nextNodeIdBad},{n.bgmCommand},{n.bgmClipName},{n.craftingFlagGood},{n.craftingFlagBad},{varGood},{varBad}");
-            }
+                sb.AppendLine($"{n.nodeId},{n.speakerKey},{n.overrideSpeakerName},{Csv(n.text)},{n.nextNodeId},{n.requiresCrafting.ToString().ToLower()},{n.craftingTicketKey},{n.bgmCommand},{n.bgmClipName}");
             sb.AppendLine();
+
+            bool hasCraftingOutcomes = data.nodes.Any(n => n.craftingOutcomes.Count > 0);
+            if (hasCraftingOutcomes)
+            {
+                sb.AppendLine("#NODE_CRAFTING_BRANCHES");
+                sb.AppendLine("nodeId,result,nextNodeId,flag,varChanges");
+                foreach (var n in data.nodes)
+                    foreach (var o in n.craftingOutcomes)
+                        sb.AppendLine($"{n.nodeId},{o.result},{o.nextNodeId},{o.flag},{VarChangesToCsv(o.varChanges)}");
+                sb.AppendLine();
+            }
 
             bool hasChars = data.nodes.Any(n => n.characters.Count > 0);
             if (hasChars)

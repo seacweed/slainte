@@ -151,7 +151,6 @@ public class SaveData
 
 ## 미결 사항
 
-- `EpisodeData`에 조건 텍스트 필드 추가 예정 — `EpisodeInfoWindow.conditionsText` UI 연결 대기 중
 - 캐릭터 조우(등장) 횟수 저장소는 `GameProgress.GetCustomerAppearance`/`IncrementCustomerAppearance`로 구현됨 — 실제 증가 호출(영업 중 손님 등장 시점)은 영업 시스템(별도 담당자) 통합 대기 중
 - `currentChapterId` 전환 트리거 로직 미정 — 최초 게임 시작 시 `MainMenuManager`가 `ChapterData.LoadFirst()`로 첫 챕터를 설정하는 것까지만 구현됨. 게임 진행 중 챕터가 실제로 바뀌는 지점(특정 에피소드 완료 등)은 아직 없고, `SetCurrentChapter` 호출 시 Day 1 리셋 훅만 존재
 - `Business` 상태는 `BusinessStubUI` 스텁 — 실제 영업 시스템은 별도 담당자가 통합 예정

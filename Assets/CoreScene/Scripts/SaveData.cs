@@ -16,6 +16,8 @@ public class SaveData
     public List<float>  bottleAmountValues = new();
     public List<string> customerAppearanceKeys   = new();
     public List<int>    customerAppearanceValues = new();
+    public List<string> upgradeKeys   = new();
+    public List<int>    upgradeValues = new();
     public string currentChapterId  = "";
     public int    currentMoney      = 0;
     public int    dayDrinkSalesCount = 0;

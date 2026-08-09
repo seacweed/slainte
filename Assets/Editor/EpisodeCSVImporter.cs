@@ -69,7 +69,8 @@ public class EpisodeCsvImporter : EditorWindow
             data.iconNameBoard = existing.iconNameBoard;
             data.iconNameArchive = existing.iconNameArchive;
             data.characters = existing.characters;
-            data.customConditionTexts = existing.customConditionTexts;
+            data.triggerConditionTexts = existing.triggerConditionTexts;
+            RestoreCharacterOverrides(data, existing);
 
             EditorUtility.CopySerialized(data, existing);
             EditorUtility.SetDirty(existing);
@@ -86,6 +87,21 @@ public class EpisodeCsvImporter : EditorWindow
         Debug.Log($"[EpisodeCsvImporter] Imported: {assetPath}");
     }
 
+    // selectConditions는 CSV에서 매번 새로 만들어지므로, 인스펙터에서 직접 채워둔
+    // characterOverrides(초상화 변형)는 flag 이름으로 기존 자산에서 찾아 복원한다.
+    private static void RestoreCharacterOverrides(EpisodeData data, EpisodeData existing)
+    {
+        if (data.selectConditions == null || existing.selectConditions == null) return;
+
+        foreach (var entry in data.selectConditions)
+        {
+            if (string.IsNullOrEmpty(entry.flag)) continue;
+
+            var match = existing.selectConditions.Find(e => e.flag == entry.flag);
+            if (match != null) entry.characterOverrides = match.characterOverrides;
+        }
+    }
+
     // -------------------------------------------------------------------------
     // Parsing
     // -------------------------------------------------------------------------
@@ -99,6 +115,7 @@ public class EpisodeCsvImporter : EditorWindow
         if (!ParseMeta(sections, data)) return null;
         ParseTrigger(sections, data);
         ParsePlayCondition(sections, data);
+        ParseSelectCondition(sections, data);
         ParseOpeningChars(sections, data);
 
         Dictionary<string, List<CharacterSlotEntry>>  nodeChars           = BuildNodeCharsLookup(sections);
@@ -106,7 +123,8 @@ public class EpisodeCsvImporter : EditorWindow
         Dictionary<string, List<NodeFlagBranch>>      nodeBranches        = BuildNodeBranchesLookup(sections);
         Dictionary<string, List<NodeVarBranch>>       nodeVarBranches     = BuildNodeVarBranchesLookup(sections);
         Dictionary<string, List<NodeEpisodeBranch>>   nodeEpisodeBranches = BuildNodeEpisodeBranchesLookup(sections);
-        ParseNodes(sections, data, nodeChars, nodeChoices, nodeBranches, nodeVarBranches, nodeEpisodeBranches);
+        Dictionary<string, List<CraftingOutcome>>     nodeCraftingBranches = BuildNodeCraftingBranchesLookup(sections);
+        ParseNodes(sections, data, nodeChars, nodeChoices, nodeBranches, nodeVarBranches, nodeEpisodeBranches, nodeCraftingBranches);
 
         return data;
     }
@@ -196,6 +214,56 @@ public class EpisodeCsvImporter : EditorWindow
         data.playCondition.prerequisiteEpisodeIds   = SplitList(Field(row, 3));
         data.playCondition.requiredVars             = ParseVarConditionList(Field(row, 4));
         data.playCondition.requiredCustomerAppearances = ParseCustomerAppearanceList(Field(row, 5));
+    }
+
+    private static void ParseSelectCondition(Dictionary<string, List<string[]>> sections, EpisodeData data)
+    {
+        data.selectConditions = new List<SelectConditionEntry>();
+
+        if (!sections.TryGetValue("SELECT_TRIGGER", out var rows)) return;
+
+        foreach (string[] row in rows)
+        {
+            var entry = new SelectConditionEntry
+            {
+                condition     = ParseSingleCondition(Field(row, 0), Field(row, 1)),
+                flag          = Field(row, 2),
+                conditionText = Field(row, 3)
+            };
+            data.selectConditions.Add(entry);
+        }
+    }
+
+    // conditionType,conditionValue 두 열로 조건 하나(옵션당 하나)를 만든다.
+    private static SelectSingleCondition ParseSingleCondition(string typeStr, string value)
+    {
+        var cond = new SelectSingleCondition();
+        if (!System.Enum.TryParse(typeStr.Trim(), true, out SelectConditionType type)) return cond;
+        cond.type = type;
+
+        switch (type)
+        {
+            case SelectConditionType.MinDay:
+                cond.minDay = int.TryParse(value, out int d) ? d : 0;
+                break;
+            case SelectConditionType.RequiredFlag:
+                cond.requiredFlag = value.Trim();
+                break;
+            case SelectConditionType.PrerequisiteEpisode:
+                cond.prerequisiteEpisodeId = value.Trim();
+                break;
+            case SelectConditionType.RequiredVar:
+                VarCondition vc = TryParseVarCondition(value.Trim());
+                if (vc != null)
+                {
+                    cond.varName = vc.varName;
+                    cond.varOp = vc.op;
+                    cond.varThreshold = vc.threshold;
+                }
+                break;
+        }
+
+        return cond;
     }
 
     private static void ParseOpeningChars(Dictionary<string, List<string[]>> sections, EpisodeData data)
@@ -304,6 +372,33 @@ public class EpisodeCsvImporter : EditorWindow
         return lookup;
     }
 
+    private static Dictionary<string, List<CraftingOutcome>> BuildNodeCraftingBranchesLookup(
+        Dictionary<string, List<string[]>> sections)
+    {
+        var lookup = new Dictionary<string, List<CraftingOutcome>>();
+
+        if (!sections.TryGetValue("NODE_CRAFTING_BRANCHES", out var rows)) return lookup;
+
+        foreach (string[] row in rows)
+        {
+            string nid = Field(row, 0);
+            if (!lookup.ContainsKey(nid))
+                lookup[nid] = new List<CraftingOutcome>();
+
+            if (!System.Enum.TryParse(Field(row, 1), true, out CraftingJobResult result)) continue;
+
+            lookup[nid].Add(new CraftingOutcome
+            {
+                result     = result,
+                nextNodeId = Field(row, 2),
+                flag       = Field(row, 3),
+                varChanges = ParseVarChangeList(Field(row, 4))
+            });
+        }
+
+        return lookup;
+    }
+
     private static Dictionary<string, List<NodeEpisodeBranch>> BuildNodeEpisodeBranchesLookup(
         Dictionary<string, List<string[]>> sections)
     {
@@ -334,7 +429,8 @@ public class EpisodeCsvImporter : EditorWindow
         Dictionary<string, List<EpisodeChoice>> nodeChoices,
         Dictionary<string, List<NodeFlagBranch>> nodeBranches,
         Dictionary<string, List<NodeVarBranch>> nodeVarBranches,
-        Dictionary<string, List<NodeEpisodeBranch>> nodeEpisodeBranches)
+        Dictionary<string, List<NodeEpisodeBranch>> nodeEpisodeBranches,
+        Dictionary<string, List<CraftingOutcome>> nodeCraftingBranches)
     {
         data.nodes = new List<EpisodeNode>();
 
@@ -355,14 +451,10 @@ public class EpisodeCsvImporter : EditorWindow
                 nextNodeId          = Field(row, 4),
                 requiresCrafting    = crafting,
                 craftingTicketKey   = Field(row, 6),
-                nextNodeIdGood      = Field(row, 7),
-                nextNodeIdBad       = Field(row, 8),
-                bgmCommand          = ParseBgmCommand(Field(row, 9)),
-                bgmClipName         = Field(row, 10),
-                craftingFlagGood         = Field(row, 11),
-                craftingFlagBad          = Field(row, 12),
-                craftingVarChangesGood   = ParseVarChangeList(Field(row, 13)),
-                craftingVarChangesBad    = ParseVarChangeList(Field(row, 14)),
+                bgmCommand          = ParseBgmCommand(Field(row, 7)),
+                bgmClipName         = Field(row, 8),
+                craftingOutcomes = nodeCraftingBranches.TryGetValue(nid, out var craftBr)
+                    ? craftBr : new List<CraftingOutcome>(),
                 characters = nodeChars.TryGetValue(nid, out var chars)
                     ? chars : new List<CharacterSlotEntry>(),
                 choices = nodeChoices.TryGetValue(nid, out var choices)

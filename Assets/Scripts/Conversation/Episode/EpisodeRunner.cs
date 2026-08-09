@@ -180,26 +180,26 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
             yield return null;
     }
 
-    public void NotifyCraftingCompleted(bool isGood)
+    public void NotifyCraftingCompleted(CraftingJobResult result)
     {
         _waitingForCrafting = false;
         modeManager?.RequestModeChange(GameMode.EpisodeMode);
-        GoToNextFromCrafting(isGood);
+        GoToNextFromCrafting(result);
     }
 
-    private void GoToNextFromCrafting(bool isGood)
+    private void GoToNextFromCrafting(CraftingJobResult result)
     {
         if (_currentNode == null) { EndEncounter(); return; }
 
-        string flag = isGood ? _currentNode.craftingFlagGood : _currentNode.craftingFlagBad;
+        string flag = _currentNode.GetCraftingFlag(result);
         if (!string.IsNullOrWhiteSpace(flag))
             Progress?.SetFlag(flag);
 
-        var varChanges = isGood ? _currentNode.craftingVarChangesGood : _currentNode.craftingVarChangesBad;
+        var varChanges = _currentNode.GetCraftingVarChanges(result);
         for (int i = 0; i < varChanges.Count; i++)
             Progress?.AddAffinity(varChanges[i].varName, varChanges[i].delta);
 
-        string preferred = isGood ? _currentNode.nextNodeIdGood : _currentNode.nextNodeIdBad;
+        string preferred = _currentNode.GetNextNodeId(result);
         string nextId = string.IsNullOrWhiteSpace(preferred) ? _currentNode.nextNodeId : preferred;
 
         if (string.IsNullOrWhiteSpace(nextId)) { EndEncounter(); return; }

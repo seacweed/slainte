@@ -14,6 +14,7 @@
 | `LiquorBottleInfoCard` | ShelfPanel 직계 자식 (씬에 단 하나) | 호버한 병의 이름/소분류/병 단위 상태/잔여량 표시 |
 | `LiquorBottleDef` | ScriptableObject | 술 데이터 (id, sprite, unlockFlagKey, subCategory, bottleCount, unitVolume) |
 | `LiquorCategoryDef` | ScriptableObject | 카테고리 데이터 (id, displayName, icon) |
+| `LiquorStockLevelPalette` | ScriptableObject (공유 에셋 1개) | 병 잔여량 아이콘용 12단계 스프라이트(empty/intermediate×10/full) 팔레트, `GetSprite(ratio01)`로 조회 |
 
 ## 데이터 구조
 
@@ -25,6 +26,11 @@
 - `MaxAmount` (계산 프로퍼티): `bottleCount * unitVolume`
 
 **`LiquorCategoryDef`** (`Assets > Create > Bartending > Liquor Category`)
+
+**`LiquorStockLevelPalette`** (`Assets > Create > Bartending > Liquor Stock Level Palette`)
+- `emptySprite` / `intermediateSprites[10]` / `fullSprite` — 총 12개
+- `GetSprite(ratio01)`: `ratio01 <= 0` → empty, `>= 1` → full, 그 외엔 올림 기준 10% 단위 구간(`Mathf.CeilToInt(ratio01 * 10) - 1`)으로 `intermediateSprites` 선택
+- 씬에 에셋 1개만 만들어 `LiquorBottleInfoCard`가 공유 참조 (다른 UI가 같은 12단계를 재사용할 경우도 이 에셋 하나만 교체하면 됨)
 
 **`LiquorShelfUI.CategoryEntry`** (인스펙터 배열)
 - `def`: LiquorCategoryDef SO
@@ -49,6 +55,8 @@ LiquorShelfPanel  [LiquorShelfUI]  ← shelfPanelRect (우측 슬라이드 대�
 ├── LiquorBottleInfoCard  ← 반드시 LiquorShelfPanel의 직계 자식, 맨 마지막 순서 (Viewport Mask 밖 + 렌더링 최상단)
 └── ShelfCloseButton
 ```
+
+`LiquorShelf`(스크롤뷰) 바로 아래에는 `Viewport` / `CategoryButtons` / `ShelfCloseButton` 외에 장식용 `ShelfFrame`(캐비닛 프레임 이미지, 패널 전체를 덮는 크기)이 **마지막 자식**으로 존재 — Hierarchy 순서상 맨 위에 렌더링되므로 **Raycast Target을 반드시 꺼둬야** 함(아래 "알려진 함정" 참고).
 
 ## 슬라이드 위치 (QHD 2560×1440 기준)
 
@@ -84,8 +92,9 @@ LiquorShelfPanel  [LiquorShelfUI]  ← shelfPanelRect (우측 슬라이드 대�
 ## LiquorBottleInfoCard (호버 정보카드)
 
 - 씬에 단 하나만 존재, `Instance` 싱글턴 프로퍼티로 참조. 평소 `SetActive(false)`
-- 표시 내용: 이름 / 소분류 / 병 개수만큼의 상태 아이콘(`Image[] stateImages`, full·in-use·empty 3종 공통 스프라이트) / (사용 중인 병이 있을 때만) `"310/700ml"` 형식 잔여량 텍스트
-- 계산 예: `bottleCount=6, unitVolume=700`인 술이 2410ml 남으면 `fullCount=3`(2100ml), 나머지 310ml → in-use 1칸, empty 2칸, 텍스트 `"310/700ml"`
+- 표시 내용: 이름 / 소분류 / 병 개수만큼의 상태 아이콘(`Image[] stateImages`, `LiquorStockLevelPalette.GetSprite()`로 12단계 중 선택) / (사용 중인 병이 있을 때만) `"310/700ml"` 형식 잔여량 텍스트
+- 계산 예: `bottleCount=6, unitVolume=700`인 술이 2410ml 남으면 `fullCount=3`(2100ml, `GetSprite(1f)`), 나머지 310ml인 in-use 1칸(`GetSprite(310/700)`), empty 2칸(`GetSprite(0f)`), 텍스트 `"310/700ml"`
+- **아이콘 레이아웃**: `stateImages` 10칸 = 1번째 줄(고정 5개) + `secondRowContainer`(2번째 줄, `bottleCount > 5`일 때만 `SetActive(true)`). 개별 아이콘 활성화는 기존처럼 `i < bottleCount` 기준, 2번째 줄 컨테이너는 `VerticalLayoutGroup` + `ContentSizeFitter`(Vertical Fit = Preferred Size)로 감싸서 꺼졌을 때 카드 높이가 자동으로 줄어들게 함
 - 위치 계산은 `RestScene/Scripts/TooltipManager.UpdatePosition`(화면 밖 벗어나면 좌우 자동 전환)의 구조를 참고해 새로 작성 — world position 기반이라 부모가 어디든 계산엔 무관, 단 `Viewport`의 `Mask` 밖(= `LiquorShelfPanel` 직계 자식)에 둬야 렌더링이 잘리지 않음
 
 ## 상시 표시 잔여량 바
@@ -100,6 +109,8 @@ LiquorShelfPanel  [LiquorShelfUI]  ← shelfPanelRect (우측 슬라이드 대�
 | `BottleSlot1`에 `Image` 컴포넌트 누락 | 씬에 수동 배치된 슬롯 중 다수가 `Image` 컴포넌트 없이 `LiquorBottleSlotUI`만 붙어있어 스프라이트가 안 뜸. 여러 개 동시 선택 후 Add Component로 일괄 추가 가능 |
 | `unlockFlagKey` 미해금 | 테스트 데이터에 `unlockFlagKey`가 채워져 있고 `GameProgress.flags`가 비어있으면 스프라이트가 조용히 안 뜸(에러 없음). 테스트 시에는 비워두거나 `SetFlag()`로 미리 심어둘 것 |
 | 잔여량-바텐딩 연동 | 실제로 따를 때 잔여량이 줄어드는 로직은 DragandDrop/바텐딩 브랜치 정리 이후 별도 작업 (아직 미구현) |
+| `ShelfFrame`이 호버 이벤트 차단 | `LiquorShelf` 하위 마지막 자식인 `ShelfFrame`(장식용 캐비닛 프레임, 패널 전체 크기)의 `Image.Raycast Target`이 켜져 있으면, PNG 중앙이 투명해도 Unity 레이캐스트는 알파를 무시하고 사각형 전체를 히트박스로 잡아 그 아래 `Viewport`의 모든 `BottleSlot`이 호버를 못 받음(정보카드가 아예 안 뜸). `ShelfFrame`은 순수 장식용이므로 **Raycast Target을 반드시 꺼둘 것** |
+| 새 이미지 에셋 교체 시 씬/SO 참조 재연결 필요 | `order_ticket`/`recipe_book`처럼 기존 파일명 그대로 내용만 덮어쓰면 GUID가 유지돼 자동 반영되지만, `shelf`처럼 새 파일명으로 추가하면 GUID가 달라져 `LiquorBottleDef.sprite`/`LiquorCategoryDef.icon`/`LiquorShelfUI.categoryEntries[].backgroundSprite` 등 기존 참조가 예전 스프라이트를 계속 가리킴. `Awake()`/`ShowCategory()`가 이 값들로 런타임에 강제 재할당하므로, 에디터에서 Image를 직접 드래그해 바꿔도 Play 시 예전 이미지로 되돌아감 — 데이터 소스(SO 에셋/직렬화 필드) 쪽을 새 스프라이트로 재연결해야 함 |
 
 ## ContentHeightToBackground 세팅
 

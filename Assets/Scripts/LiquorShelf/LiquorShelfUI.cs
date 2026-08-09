@@ -58,7 +58,7 @@ public class LiquorShelfUI : MonoBehaviour
         {
             if (entry.def == null) continue;
             var btn = Instantiate(categoryButtonPrefab, categoryButtonContent);
-            btn.Bind(entry.def, this);
+            btn.Bind(entry.def, OpenCategory);
             _categoryButtons.Add(btn);
         }
     }

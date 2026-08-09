@@ -22,6 +22,10 @@ public class GameProgress : MonoSingleton<GameProgress>
     [SerializeField] private List<string> bottleAmountKeys   = new();
     [SerializeField] private List<float>  bottleAmountValues = new();
 
+    [Header("Upgrade Levels")]
+    [SerializeField] private List<string> upgradeKeys   = new();
+    [SerializeField] private List<int>    upgradeValues = new();
+
     [Header("Customer Appearances")]
     [SerializeField] private List<string> customerAppearanceKeys   = new();
     [SerializeField] private List<int>    customerAppearanceValues = new();
@@ -43,6 +47,7 @@ public class GameProgress : MonoSingleton<GameProgress>
     private Dictionary<string, int>   _boardSlots;
     private Dictionary<string, float> _bottleAmounts;
     private Dictionary<string, int>   _customerAppearances;
+    private Dictionary<string, int>   _upgradeLevels;
 
     public int    CurrentDay        => currentDay;
     public string CurrentChapterId  => currentChapterId;
@@ -82,6 +87,11 @@ public class GameProgress : MonoSingleton<GameProgress>
         int appearanceCount = Mathf.Min(customerAppearanceKeys.Count, customerAppearanceValues.Count);
         for (int i = 0; i < appearanceCount; i++)
             _customerAppearances[customerAppearanceKeys[i]] = customerAppearanceValues[i];
+
+        _upgradeLevels = new Dictionary<string, int>();
+        int upgradeCount = Mathf.Min(upgradeKeys.Count, upgradeValues.Count);
+        for (int i = 0; i < upgradeCount; i++)
+            _upgradeLevels[upgradeKeys[i]] = upgradeValues[i];
     }
 
     public void LoadFrom(SaveData data)
@@ -99,6 +109,8 @@ public class GameProgress : MonoSingleton<GameProgress>
         bottleAmountValues  = new List<float>(data.bottleAmountValues ?? new List<float>());
         customerAppearanceKeys   = new List<string>(data.customerAppearanceKeys ?? new List<string>());
         customerAppearanceValues = new List<int>(data.customerAppearanceValues ?? new List<int>());
+        upgradeKeys        = new List<string>(data.upgradeKeys ?? new List<string>());
+        upgradeValues       = new List<int>(data.upgradeValues ?? new List<int>());
         currentChapterId   = data.currentChapterId ?? "";
         currentMoney        = data.currentMoney;
         dayDrinkSalesCount  = data.dayDrinkSalesCount;
@@ -118,6 +130,8 @@ public class GameProgress : MonoSingleton<GameProgress>
     public List<float>  GetBottleAmountValues() => new List<float>(bottleAmountValues);
     public List<string> GetCustomerAppearanceKeys()   => new List<string>(customerAppearanceKeys);
     public List<int>    GetCustomerAppearanceValues() => new List<int>(customerAppearanceValues);
+    public List<string> GetUpgradeKeys()   => new List<string>(upgradeKeys);
+    public List<int>    GetUpgradeValues() => new List<int>(upgradeValues);
 
     // ── Flags ──────────────────────────────────────────────────
 
@@ -286,6 +300,14 @@ public class GameProgress : MonoSingleton<GameProgress>
         }
     }
 
+    // Adds delta to the current amount, clamped to [0, max]. Negative delta consumes stock.
+    public float AddBottleAmount(string bottleId, float delta, float max)
+    {
+        float next = Mathf.Clamp(GetBottleAmount(bottleId, 0f) + delta, 0f, max);
+        SetBottleAmount(bottleId, next);
+        return next;
+    }
+
     // ── Customer Appearances ───────────────────────────────────
 
     public int GetCustomerAppearance(string characterId)
@@ -321,6 +343,43 @@ public class GameProgress : MonoSingleton<GameProgress>
     public void AddMoney(int delta)
     {
         currentMoney += delta;
+    }
+
+    // Spends money only if the balance is sufficient. Returns false and does nothing otherwise.
+    public bool TrySpendMoney(int amount)
+    {
+        if (amount <= 0) return true;
+        if (currentMoney < amount) return false;
+        currentMoney -= amount;
+        return true;
+    }
+
+    // ── Upgrade Levels ──────────────────────────────────────────
+
+    public int GetUpgradeLevel(string upgradeId)
+    {
+        if (string.IsNullOrWhiteSpace(upgradeId)) return 0;
+        _upgradeLevels.TryGetValue(upgradeId, out int value);
+        return value;
+    }
+
+    public void SetUpgradeLevel(string upgradeId, int level)
+    {
+        if (string.IsNullOrWhiteSpace(upgradeId)) return;
+        _upgradeLevels[upgradeId] = level;
+        SyncUpgradeLevelToLists(upgradeId, level);
+    }
+
+    private void SyncUpgradeLevelToLists(string upgradeId, int level)
+    {
+        int idx = upgradeKeys.IndexOf(upgradeId);
+        if (idx >= 0)
+            upgradeValues[idx] = level;
+        else
+        {
+            upgradeKeys.Add(upgradeId);
+            upgradeValues.Add(level);
+        }
     }
 
     // ── Day Settlement (transient) ─────────────────────────────

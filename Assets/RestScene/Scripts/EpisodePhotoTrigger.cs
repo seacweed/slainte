@@ -22,6 +22,16 @@ public class EpisodePhotoTrigger : MonoBehaviour, IPointerEnterHandler, IPointer
         return !string.IsNullOrEmpty(baseName) && LoadBoardSprite(baseName, "idle") != null;
     }
 
+    // 툴팁(EpisodeInfoUI) 등 다른 UI에서 보드 사진과 동일한 이미지를 재사용할 때 사용
+    public static Sprite GetIdleSprite(EpisodeData data)
+    {
+        string baseName = GetBoardPhotoBaseName(data);
+        if (string.IsNullOrEmpty(baseName)) return null;
+
+        Sprite sprite = LoadBoardSprite(baseName, "idle");
+        return sprite != null ? sprite : Resources.Load<Sprite>(baseName + "-idle");
+    }
+
     public void SetEpisodeData(EpisodeData data, EpisodeBoardManager manager)
     {
         episodeData = data;

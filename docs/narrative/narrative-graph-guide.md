@@ -105,8 +105,10 @@ Sequence Editor 빈 공간 **우클릭** → 이벤트 타입 선택 후 배치 
 | 필드 | 설명 |
 |---|---|
 | Ticket | CraftingTicket 키 |
-| Flag (Good/Bad) | 제조 성공/실패 시 설정할 플래그 |
-| Var Changes (Good/Bad) | 제조 결과에 따른 변수 변화 |
+| Flag (Good/Bad/Mid-Ice/Mid-Glass/Mid-Ice+Glass/Mid-WrongMenu) | 제조 결과 6종(`CraftingJobResult`)별로 설정할 플래그 |
+| Var Changes (Good/Bad/Mid-Ice/Mid-Glass/Mid-Ice+Glass/Mid-WrongMenu) | 제조 결과 6종별 변수 변화 |
+
+출력 포트도 6개(Good/Bad/Mid-Ice/Mid-Glass/Mid-Ice+Glass/Mid-WrongMenu)로 고정 생성됩니다. midjob 4종은 재료·얼음·잔 비교 결과에 따른 분기이며(예: 얼음 유무만 다르면 Mid-Ice, 잔 종류만 다르면 Mid-Glass, 주문과 다른 레시피를 올바르게 만들면 Mid-WrongMenu), 판정 로직 자체는 아직 수동(`CraftingJudgeUI` 버튼)입니다.
 
 #### Branch Exit (분기 탈출)
 이 이벤트가 실행되면 시퀀스를 중단하고 선택된 출력 포트로 즉시 이동.  

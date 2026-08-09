@@ -29,7 +29,7 @@ BaseUIManager (추상)
 ObjectInteraction           — 씬 오브젝트 클릭 → BaseUIManager 토글
 ObjectInteractionBoard      — ObjectInteraction과 동일 (보드 전용)
 EpisodePhotoTrigger         — 에피소드 보드 내 개별 사진 슬롯
-EpisodeInfoWindow           — 사진 호버/클릭 시 표시되는 상세 정보 팝업
+EpisodeInfoUI               — 사진 호버/클릭 시 표시되는 상세 정보 팝업
 BoardBackground             — 보드 배경 클릭 → 선택 초기화
 
 TooltipManager              — 전역 싱글톤 툴팁 관리
@@ -137,22 +137,52 @@ public Color buttonInactiveColor;     // 미선택 시
 
 ---
 
-### EpisodeInfoWindow (`RestScene/Scripts/EpisodeInfoUI.cs`)
+### EpisodeInfoUI (`RestScene/Scripts/EpisodeInfoUI.cs`)
 
-사진 옆에 표시되는 에피소드 상세 정보 팝업. `BaseUIManager` 미상속, 독립 활성화.
+사진 옆에 표시되는 에피소드 상세 정보 팝업. `BaseUIManager` 미상속, 독립 활성화. 자체 `Canvas`를 `overrideSorting`으로 추가해 `sortingOrder`를 높여 항상 최상단에 렌더링. `LiquorBottleInfoCard`와 동일하게 **런타임 `Instantiate`/`Destroy` 없이** 에디터에서 미리 배치한 고정 슬롯 배열을 채우는 방식으로 구성(조건 행 개수·초상화 슬롯 개수는 에디터에 배치한 배열 길이만큼). 세로 길이는 `VerticalLayoutGroup`+`ContentSizeFitter`로 조건 개수에 따라 유동적으로 늘어남.
 
 | 메서드 | 설명 |
 |---|---|
-| `Show(data, targetPhoto)` | 제목/설명 표시, 캐릭터 초상화 동적 생성, 위치 계산 |
+| `Show(data, targetPhoto)` | 헤더/설명/조건 행/토글/초상화 갱신 후 위치 계산 |
 | `Hide()` | `gameObject.SetActive(false)` |
+
+**레이아웃 순서 (위 → 아래)**
+1. `boardImage`(작전판 사진과 동일한 idle 스프라이트, `EpisodePhotoTrigger.GetIdleSprite()` 재사용) + `episodeNameText`(제목) — 가로 배치
+2. `descriptionText` — `data.episodeDescription`
+3. **해금 조건** (`triggerSection` + `triggerConditionRows`) — `data.triggerCondition` 기준, 조건이 하나도 없으면 섹션 자체를 숨김
+4. **선택 조건** (`selectSection` + `selectConditionGroups`) — `data.selectConditions`(리스트) 기준. 아래 참고
+5. **초상화** (`portraitSlots`) — 선택된 옵션 유무에 따라 결정. 아래 참고
+
+**해금 조건 행 로직** (`ConditionRow { container, lockIcon, label }`, `triggerConditionRows`)
+- `data.triggerCondition`(여러 항목이 AND로 결합되는 다중 필드 타입)을 `BuildConditionEntries()`로 행 여러 개로 풀어서 표시
+- `minDay` → "N일차 이상" / `prerequisiteEpisodeIds` → "선행 에피소드 '제목'"(`EpisodeManager.GetEpisodeData()`로 제목 조회) / `requiredFlags` → 플래그명 그대로 / `requiredVars` → `varName 연산자 threshold`
+- **`requiredCustomerAppearances`(등장 조건)는 툴팁에 표시하지 않음**
+- 항목마다 충족 여부에 따라 `lockIcon.sprite`를 `unlockedSprite`/`lockedSprite`로 교체, `label.text`에 조건 설명 표시
+- 마지막에 작성자가 직접 입력한 커스텀 힌트 문구(`data.triggerConditionTexts`)가 추가로 붙음, 잠금 아이콘은 `EpisodeManager.IsUnlocked()`(전체 충족 여부)로 결정
+- 표시할 조건 개수보다 `triggerConditionRows` 배열이 길면 남는 행은 비활성화
+
+**선택 조건 (`data.selectConditions: List<SelectConditionEntry>`)**
+- `SelectConditionEntry { condition, flag, conditionText, characterOverrides }` — 옵션 하나 = 조건 **하나**(`SelectSingleCondition`) + 플래그 + 커스텀 힌트 한 줄 + 초상화 override. 해금 조건과 달리 옵션 하나에 여러 조건을 AND로 걸 수 없음 — 조건을 여러 개 걸고 싶으면 옵션을 여러 개로 나눠서 표현
+- `SelectSingleCondition { type, minDay, requiredFlag, prerequisiteEpisodeId, varName, varOp, varThreshold }` — `SelectConditionType`(`None`/`MinDay`/`RequiredFlag`/`PrerequisiteEpisode`/`RequiredVar`) 하나로 어떤 조건인지 결정, 나머지 필드 중 해당 타입에 대응하는 값만 사용
+- 옵션당 UI도 행 하나(`SelectConditionGroup.conditionRow: ConditionRow`, 배열이 아님) — 자물쇠 아이콘 하나 + 설명 한 줄 + 토글 하나로 고정. 텍스트는 `entry.conditionText`가 있으면 그걸, 없으면 `BuildSelectConditionText()`가 조건 타입에서 자동 생성("N일차 이상", 플래그명, "선행 에피소드 '제목'", `varName 연산자 threshold` 등)
+- `해금 조건`/`playCondition`과 완전히 독립 — **Play 버튼 활성화에는 전혀 영향을 주지 않음**. 어떤 옵션도 미충족/미선택이어도 에피소드는 평소대로 플레이 가능
+- **옵션끼리 상호 배타적** — `selectToggleGroup`(유니티 내장 `ToggleGroup`)에 모든 옵션의 `Toggle`을 묶어서, 하나를 켜면 나머지는 자동으로 꺼짐. `Awake()`에서 `group.toggle.group = selectToggleGroup`로 한 번만 연결
+- `EpisodeInfoUI.selectConditionGroups[i]`가 `data.selectConditions[i]`와 인덱스로 1:1 매칭(고정 슬롯, 배열 길이보다 옵션이 적으면 남는 슬롯은 컨테이너까지 비활성화)
+- 옵션마다 `EpisodeManager.EvaluateSelectCondition(entry.condition, gp)`로 개별 충족 여부 평가. 충족 시에만 그 옵션의 토글이 인터랙션 가능(미충족이면 off 고정, 비활성화). `entry.flag`가 비어있으면 그 옵션은 토글 UI 자체를 숨김(조건 행만 정보 표시용으로 남음)
+- 토글 초기값은 옵션별로 `GameProgress.HasFlag(entry.flag)`
+- 실제 `GameProgress.SetFlag()`/`ClearFlag()` 반영은 툴팁에서 즉시 일어나지 않고, **`EpisodeBoardManager.OnStartButtonClicked()`에서 Play 버튼을 누르는 시점**에 `EpisodeInfoUI.IsSelectOptionOn(i)`를 옵션별로 순회하며 적용(`ApplySelectConditionFlag()`)
+
+**초상화** (`portraitSlots`, `List<CharacterDisplay>` 기준)
+- 현재 켜져 있는 옵션(`GetSelectedIndex()`)이 있고 그 옵션의 `characterOverrides`가 채워져 있으면 그 리스트를, 아니면 옵션 미선택 시 기본값인 `data.characters`를 그대로 사용(`GetActiveCharacterList()`)
+- 즉 **옵션마다 서로 다른 등장인물 조합을 지정 가능** — 옵션 A는 캐릭터를 공개, 옵션 B는 비공개(???), 옵션 C는 다른 캐릭터로 교체 등 자유롭게 구성
+- `CharacterDisplay.isHidden`이면 `unknownPortrait`(???) 표시, 아니면 `Resources/Sprites/{characterName}` → `Resources/Portraits/{characterName}` 순으로 로드
+- 어떤 토글이든 값이 바뀔 때마다(`OnSelectToggleChanged`) 초상화만 즉시 갱신
 
 **위치 계산** (`UpdatePosition`)
 - `targetPhoto`의 월드 오른쪽 중앙 기준 오른쪽 10px에 배치
-- `LayoutRebuilder.ForceRebuildLayoutImmediate()` 후 위치 갱신
+- `LayoutRebuilder.ForceRebuildLayoutImmediate()` 후 위치 갱신, 캔버스 오른쪽 경계를 넘으면 왼쪽 배치로 자동 전환
 
-**미결 사항**
-- `conditionsText`는 항상 빈 문자열 — `EpisodeData`에 조건 텍스트 필드 추가 후 연결 필요
-- 초상화는 현재 `unknownPortrait`(물음표 이미지)로만 표시 — 캐릭터 조우 여부 추적 로직 추후 추가 예정
+**CSV/그래프 연동**: `data.selectConditions`는 CSV `#SELECT_TRIGGER` 섹션(옵션 하나당 한 행), `NarrativeGraphSO.SelectConditions`와 컴파일러/임포터로 왕복 가능. 자세한 CSV 문법은 [episode-csv-guide.md](../narrative/episode-csv-guide.md#select_trigger) 참고. 단 `characterOverrides`(옵션별 초상화)는 `characters`(기본 초상화)와 마찬가지로 CSV/그래프를 거치지 않고 `EpisodeData` 에셋에 직접 입력 — CSV 재임포트 시에도 `flag` 이름으로 기존 값을 찾아 보존됨(`EpisodeCsvImporter.RestoreCharacterOverrides()`).
 
 ---
 
@@ -180,20 +210,62 @@ public Color buttonInactiveColor;     // 미선택 시
 2. 세로 확장: `(1, lineWidth, 1)` → `(1, 1, 1)`
 - 닫을 때는 역순
 
-**화면 구성**
-- `categoryPanel`: 카테고리 선택 홈 화면
-- `itemScrollPanel`: 필터링된 아이템 목록 (ScrollRect)
+**화면 구조 (4단계, `SetScreen()`으로 하나만 활성화)**
+
+```
+homePanel (재료/업그레이드/레시피북 3버튼)
+ ├─ ingredientCategoryPanel — LiquorCategoryDef 대분류 버튼 그리드
+ │    └─ itemScrollPanel     — LiquorBottleDef 소분류 아이템 그리드(ScrollRect)
+ ├─ upgradePanel             — UpgradeDef 리스트(Vertical Layout Group + ScrollRect)
+ └─ 레시피북                  — 기획 미정, OnRecipeBookClicked() 클릭 스텁만 존재
+```
+
+**중요: 재료 마스터 데이터는 `ItemData`가 아니라 술장의 `LiquorBottleDef`/`LiquorCategoryDef`를 그대로 사용**. `Resources/Items/`의 `ItemData`는 임시 데이터라 상점이 참조하지 않음(아래 ItemData 섹션 참고). 상점에서 구매한 재료의 잔량(`GameProgress.bottleAmount`, id 키)이 술장(`LiquorShelfUI`/`LiquorBottleSlotUI`)에 표시되는 잔량과 완전히 같은 저장소를 공유하므로 두 화면이 자동으로 동기화된다.
 
 **핵심 메서드**
 
 | 메서드 | 설명 |
 |---|---|
-| `GoHome()` | `categoryPanel` 표시, `itemScrollPanel` 숨김, 검색 초기화 |
-| `ShowListByCategory(ItemType)` | 카테고리 필터 적용, `itemScrollPanel` 표시 |
-| `OnSearchValueChange(text)` | 비어있으면 `GoHome()`, 아니면 이름 기준 검색 |
-| `UpdateList(category?, search)` | 기존 슬롯 Destroy 후 필터 결과로 재생성 |
+| `ShowHome()` / `OpenIngredients()` / `OpenUpgrades()` | 화면 전환. 각 화면 타이틀(텍스트/이미지)은 코드가 아니라 해당 패널 안에 직접 배치 — 패널 활성화만으로 자동 노출됨 |
+| `ShowListByCategory(LiquorCategoryDef)` | `allBottles`를 카테고리로 필터링해 `slotPrefab`(`ItemSlotUI`) 재생성, `categoryNameText`에 카테고리 이름 표시(재료 소분류 화면에서만 필요한 유일한 동적 텍스트) |
+| `OnRecipeBookClicked()` | 빈 스텁 |
 
-### ItemData (`RestScene/Scripts/ItemData.cs`)
+검색 기능은 없음(제거됨).
+
+### LiquorBottleDef 상점용 확장 필드
+
+술장용 필드(`id`, `displayName`, `sprite`, `unlockFlagKey`, `subCategory`, `bottleCount`, `unitVolume`) 외에 상점을 위해 추가된 필드:
+
+| 필드 | 설명 |
+|---|---|
+| `category` | `LiquorCategoryDef` 참조. null이면 상점 어느 카테고리에도 노출되지 않음 |
+| `price` | 1병(`unitVolume`) 구매 가격 |
+| `unlockHintType` | `None`/`RecipeBook`/`Episode` — 잠금 툴팁에 표시할 힌트 종류(표시 전용, 실제 해금 여부는 기존 `unlockFlagKey`로 판정) |
+| `recipeBookIcon` / `recipeBookName` | `unlockHintType == RecipeBook`일 때 툴팁에 표시 |
+
+### ItemSlotUI (`RestScene/Scripts/ItemSlotUI.cs`)
+
+`LiquorBottleDef` 하나를 바인딩하는 그리드 슬롯. `IPointerEnterHandler`/`IPointerExitHandler` 구현.
+
+- **해금**: 아이콘 원색 표시, 이름/소분류 텍스트, 가격+구매버튼 활성화(재고가 가득 찼으면 버튼 비활성화)
+- **잠금**: 아이콘을 검정으로 틴트(`Image.color`만 변경, 별도 실루엣 아트 불필요), 이름/소분류 대신 `lockedLabel`("입고예정") 표시, 가격 텍스트 비움 + 구매버튼 비활성화
+- **호버**: 해금 시 `LiquorBottleInfoCard.Instance.Show()`(술장과 동일 컴포넌트) — 단 `LiquorBottleInfoCard`는 BusinessScene 전용으로 만들어져 있어 RestScene과 동시 로드되지 않으므로, RestScene에는 프리팹으로 추출한 별도 인스턴스를 배치(이름/소분류 텍스트는 슬롯에 이미 상시 표시되므로 이 인스턴스에서만 제거). 잠금 시 `IngredientUnlockTooltip.Instance.Show()`
+- **구매(`OnBuyClick`)**: `GameProgress.TrySpendMoney(price)` 성공 시 `GameProgress.AddBottleAmount(id, unitVolume, MaxAmount)`로 **1병 단위** 충전(가득 리필이 아님), `OnPurchased` 이벤트로 `ShopUIManager`의 소지금 텍스트 갱신을 트리거
+
+### IngredientUnlockTooltip (`RestScene/Scripts/IngredientUnlockTooltip.cs`)
+
+잠긴 재료 호버 시 표시. `LiquorBottleInfoCard`와 동일한 싱글톤/고정 슬롯 패턴(`Instance`, `Show()`/`Hide()`, `LayoutRebuilder` 기반 위치 계산).
+
+- `unlockHintType == RecipeBook`: 레시피북 아이콘/이름 + "레시피북 필요" 고정 텍스트
+- `unlockHintType == Episode`: 실루엣 placeholder + "???" 고정 텍스트(스포일러 방지)
+
+### 업그레이드 (`UpgradeDef.cs`, `UpgradeSlotUI.cs`)
+
+- `UpgradeDef`(SO): `id`, `icon`, `displayName`, `description`, `pricesPerLevel(int[])` — 배열 길이가 곧 최대 레벨(현재 기획상 4단계)
+- `UpgradeSlotUI`: `GameProgress.GetUpgradeLevel(id)`만큼 pip(`Image[]`, 색 토글)을 채워 표시, 다음 단계 가격을 구매버튼에 표시(만렙이면 비활성 + "MAX"), 구매 시 `TrySpendMoney` → `SetUpgradeLevel`
+- 레벨은 `GameProgress`(`upgradeKeys`/`upgradeValues`)에 저장되고 `SaveData`/`DataManager`로 저장·로드됨
+
+### ItemData (`RestScene/Scripts/ItemData.cs`) — 임시 데이터, 상점 미사용
 
 ```csharp
 [CreateAssetMenu(menuName = "Shop/Item Data")]
@@ -209,7 +281,7 @@ public class ItemData : ScriptableObject
 public enum ItemType { Alcohol, Liqueur, NonAlcohol, Powder, Tool, Glass }
 ```
 
-`Resources/ShopItem/` 경로에 배치. 현재 10개 에셋 존재.
+`Resources/Items/`에 187개 에셋 존재하지만 임시 데이터라 위 상점 구현은 참조하지 않음(위 "재료 마스터 데이터" 설명 참고). `Assets/Editor/ItemDataImporter.cs`(CSV 임포터)도 함께 미사용 상태로 남아있음.
 
 ---
 
@@ -256,7 +328,8 @@ public enum ItemType { Alcohol, Liqueur, NonAlcohol, Powder, Tool, Glass }
 
 | 항목 | 위치 | 설명 |
 |---|---|---|
-| `conditionsText` 연결 | `EpisodeInfoWindow` | `EpisodeData`에 조건 텍스트 필드 추가 대기 중 |
-| 캐릭터 초상화 | `EpisodeInfoWindow` | 조우 여부 추적 로직 추가 후 실제 이미지 표시 예정 |
 | 현황판 데이터 | `EpisodeUIManager` | `money`, `isBusinessOpen` → `GameProgress` 연동 필요 |
 | `ObjectInteraction` 중복 | `ObjectInteractionBoard` | 두 클래스 코드 동일, 하나로 통합 가능 |
+| 레시피북 화면 | `ShopUIManager.OnRecipeBookClicked` | 기획 미정, 클릭 스텁만 존재 |
+| 재료 소진 로직 | `GameProgress.AddBottleAmount` | 영업 중 사용에 따른 잔량 감소는 미구현(음수 delta로 재사용 가능하도록만 설계됨) |
+| `LiquorBottleDef` 상점 데이터 | `Assets/Data/LiquorBottle/*.asset` | `price`/`category`/`unlockFlagKey`/`unlockHintType` 값이 비어있으면 상점에 노출되지 않음 — 애셋별로 직접 입력 필요 |
