@@ -36,7 +36,7 @@
 - **상점**: `ShopUIManager`가 홈(재료/업그레이드/레시피북 3버튼) → 재료 대분류(`LiquorCategoryDef`) → 재료 소분류(`LiquorBottleDef`) 3단 구조로 동작. 재료 마스터 데이터는 임시 `ItemData`(`Resources/Items`)가 아니라 술장과 동일한 `LiquorBottleDef`/`LiquorCategoryDef`를 그대로 사용 — 상점에서 산 재료 잔량과 술장에 표시되는 잔량이 같은 `GameProgress` 저장소(id 키)를 공유해 자동 동기화됨. 구매는 1병(unitVolume) 단위 충전, 잠금 판정은 술장과 동일한 `unlockFlagKey` 재사용(표시용 해금 힌트만 레시피북/에피소드로 분리). 업그레이드는 별도 `UpgradeDef`(단계별 가격 배열)와 `GameProgress` 레벨 저장소로 관리
 - **알림 시스템**: `GameProgress.OnAffinityChanged` 이벤트 → `NotificationManager` 수신 → 화면 우상단 순차 표시. `AnimatedSpriteUI`(PNG 프레임 배열 코루틴 재생)로 방향 애니메이션 처리
 - **에피소드 그래프 편집**: `NarrativeGraphSO`(그래프 SO) → `EpisodeDataCompiler` → `EpisodeData`(런타임). 역방향: `EpisodeDataImporter`. 노드 ID 자동 할당: `NarrativeNodeIdAssigner`. CSV와 양방향 호환 유지
-- **메인메뉴 인트로**: `MainMenuIntroController`가 팀 로고 → 타이틀 로고(중앙, 깜박임) → 배경(레이어별 fade, 무한 스크롤 구름 `InfiniteHorizontalScroller`) → 펍 조명 깜박임 → 메뉴 순으로 순차 진행, 임의 입력으로 스킵 가능
+- **메인메뉴 인트로**: `MainMenuIntroController`가 팀 로고 → 타이틀 로고(중앙, 커스터마이즈 가능한 다단계 깜박임에 발광 레이어가 동기화되었다가 배경과 함께 독립적으로 페이드아웃) → 배경(레이어별 fade, 무한 스크롤 구름 `InfiniteHorizontalScroller`) → 펍 조명 깜박임 → 메뉴 순으로 순차 진행, 임의 입력으로 스킵 가능. `MainMenuCharacterSpawner`/`MainMenuCharacterWalker`는 이 시퀀스와 완전히 독립적으로 씬 로드 즉시 시작해 배경 위를 오가는 배경 캐릭터를 프리팹 없이 런타임 생성으로 상시 스폰
 
 ## 문서
 
@@ -62,7 +62,7 @@
 | [docs/ui/recipe-book-search.md](docs/ui/recipe-book-search.md) | 도감 검색 UI(RecipeSearchUI/RecipeSearchOptionButton), 화면 전환 흐름 |
 | [docs/ui/notification-system.md](docs/ui/notification-system.md) | 알림 시스템(NotificationManager/AffinityNotificationUI/AnimatedSpriteUI), 씬 설정 |
 | [docs/ui/liquor-shelf.md](docs/ui/liquor-shelf.md) | 술장 시스템 (LiquorShelfUI, 카테고리/슬롯 구조, 씬 세팅) |
-| [docs/ui/mainmenu-intro.md](docs/ui/mainmenu-intro.md) | 메인메뉴 인트로 연출(팀 로고/타이틀/배경 레이어), 씬 세팅 |
+| [docs/ui/mainmenu-intro.md](docs/ui/mainmenu-intro.md) | 메인메뉴 인트로 연출(팀 로고/타이틀 깜박임·발광/배경 레이어/캐릭터 스포너), 씬 세팅 |
 | **gameplay** |||
 | [docs/gameplay/character-presentation.md](docs/gameplay/character-presentation.md) | 캐릭터 표시(CharacterView/CharacterStage/CharacterData), 대화 렌더링 |
 | [docs/gameplay/bartending-systems.md](docs/gameplay/bartending-systems.md) | 바텐딩 도구(GlassController 등), MetaballFluid 액체 입자 시스템 |
