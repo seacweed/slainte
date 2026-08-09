@@ -48,7 +48,8 @@ namespace Slainte.EditorTools
             visit.condition = new EpisodeTriggerCondition();
             visit.maxDay = 0;
             visit.cooldownDays = 0;
-            visit.allowDuplicateInDay = false;
+            // 실제 손님 데이터가 들어오기 전에도 하루 방문 수를 반복 테스트할 수 있게 한다.
+            visit.allowDuplicateInDay = true;
             visit.members = new List<CustomerVisitMember>
             {
                 new CustomerVisitMember
@@ -101,8 +102,8 @@ namespace Slainte.EditorTools
 
             settings.sequenceMode = BusinessSequenceMode.CustomerPool;
             settings.customerVisitDatabase = visitDatabase;
-            settings.minVisitsPerDay = 1;
-            settings.maxVisitsPerDay = 1;
+            settings.minVisitsPerDay = 15;
+            settings.maxVisitsPerDay = 15;
             EditorUtility.SetDirty(settings);
 
             AssetDatabase.SaveAssets();
@@ -139,7 +140,10 @@ namespace Slainte.EditorTools
                 progress.LoadFrom(new SaveData { dayCount = 7 });
                 BusinessDaySnapshot first = BusinessSequencePlanner.Create(7, settings, progress);
                 BusinessDaySnapshot second = BusinessSequencePlanner.Create(7, settings, progress);
-                Require(first.entries.Count == 1, "샘플 손님을 하루 영업 목록에 넣지 못했습니다.");
+                int minimumVisits = Mathf.Max(0, settings.minVisitsPerDay);
+                int maximumVisits = Mathf.Max(minimumVisits, settings.maxVisitsPerDay);
+                Require(first.entries.Count >= minimumVisits && first.entries.Count <= maximumVisits,
+                    "샘플 손님 수가 설정한 하루 방문 수 범위를 벗어났습니다.");
                 Require(first.seed == second.seed
                     && first.entries[0].entryId == second.entries[0].entryId
                     && first.entries[0].visitKey == second.entries[0].visitKey,

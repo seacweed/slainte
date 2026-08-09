@@ -33,9 +33,9 @@ namespace Slainte.Business
         [InspectorName("손님 방문 데이터베이스")]
         public CustomerVisitDatabase customerVisitDatabase;
         [InspectorName("하루 최소 방문 수")]
-        [Min(0)] public int minVisitsPerDay = 3;
+        [Min(0)] public int minVisitsPerDay = 15;
         [InspectorName("하루 최대 방문 수")]
-        [Min(0)] public int maxVisitsPerDay = 3;
+        [Min(0)] public int maxVisitsPerDay = 15;
 
         [Header("판정")]
         [Range(0f, 1f)] public float midScoreThreshold = 0.45f;

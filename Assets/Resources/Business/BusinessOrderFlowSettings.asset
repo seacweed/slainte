@@ -18,8 +18,8 @@ MonoBehaviour:
   - customerOrderKey: vertical_slice_vodka_lemon
     requestedRecipeId: vodka_lemon
   customerVisitDatabase: {fileID: 11400000, guid: f5a61ed87b8042198be0337bde46a7eb, type: 2}
-  minVisitsPerDay: 1
-  maxVisitsPerDay: 1
+  minVisitsPerDay: 15
+  maxVisitsPerDay: 15
   midScoreThreshold: 0.45
   goodScoreThreshold: 0.8
   goodMoneyReward: 100
