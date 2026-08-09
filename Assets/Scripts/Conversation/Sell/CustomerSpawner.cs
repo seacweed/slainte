@@ -5,20 +5,44 @@ using UnityEngine;
 public class CustomerSpawner : MonoBehaviour
 {
     [SerializeField] private CustomerOrderDatabase customerDB;
+    [SerializeField] private CustomerVisitDatabase visitDB;
     [SerializeField] private CharacterStage        characterStage;
     [SerializeField] private DialogueController    dialogue;
     [SerializeField] private OrderTicketManager    ticketManager;
 
     private CustomerOrderData _currentOrderData;
+    private CustomerVisitData _currentVisitData;
 
     public CustomerOrderData CurrentOrderData => _currentOrderData;
+    public CustomerVisitData CurrentVisitData => _currentVisitData;
+
+    private void Awake()
+    {
+        if (visitDB == null)
+            visitDB = CustomerVisitDatabase.LoadDefault();
+    }
 
     public void ShowCustomers(IReadOnlyList<string> orderKeys)
     {
         if (orderKeys == null || orderKeys.Count == 0) return;
 
-        _currentOrderData = customerDB != null ? customerDB.FindByKey(orderKeys[0]) : null;
+        ShowVisit(string.Empty, orderKeys[0]);
+    }
+
+    public void ShowVisit(string visitKey, string orderKey)
+    {
+        _currentOrderData = customerDB != null ? customerDB.FindByKey(orderKey) : null;
+        _currentVisitData = visitDB != null ? visitDB.FindByKey(visitKey) : null;
         if (_currentOrderData == null) return;
+
+        List<CharacterSlotEntry> entries = BuildVisitEntries(_currentVisitData);
+        if (entries.Count > 0)
+        {
+            characterStage?.ShowCharacters(entries, () => OnCharactersShown(_currentOrderData));
+            if (characterStage == null)
+                OnCharactersShown(_currentOrderData);
+            return;
+        }
 
         if (!string.IsNullOrWhiteSpace(_currentOrderData.characterKey))
         {
@@ -27,24 +51,19 @@ public class CustomerSpawner : MonoBehaviour
                 characterKey  = _currentOrderData.characterKey,
                 expressionKey = _currentOrderData.expressionKeyMid
             };
-            characterStage?.ShowCharacters(new[] { entry }, () => OnCharactersShown(orderKeys));
+            characterStage?.ShowCharacters(new[] { entry }, () => OnCharactersShown(_currentOrderData));
+            if (characterStage == null)
+                OnCharactersShown(_currentOrderData);
         }
         else
         {
-            OnCharactersShown(orderKeys);
+            OnCharactersShown(_currentOrderData);
         }
     }
 
     public void ShowFeedbackExpression(bool isGood)
     {
-        if (_currentOrderData == null) return;
-        if (string.IsNullOrWhiteSpace(_currentOrderData.characterKey)) return;
-
-        string expressionKey = isGood
-            ? _currentOrderData.expressionKeyGood
-            : _currentOrderData.expressionKeyBad;
-
-        characterStage?.SwapExpression(_currentOrderData.characterKey, expressionKey);
+        ApplyFeedbackExpressions(isGood ? OrderEvaluationGrade.Good : OrderEvaluationGrade.Bad);
     }
 
     public bool ShowFeedback(OrderEvaluationGrade grade)
@@ -52,16 +71,7 @@ public class CustomerSpawner : MonoBehaviour
         if (_currentOrderData == null)
             return false;
 
-        if (!string.IsNullOrWhiteSpace(_currentOrderData.characterKey))
-        {
-            string expressionKey = grade switch
-            {
-                OrderEvaluationGrade.Good => _currentOrderData.expressionKeyGood,
-                OrderEvaluationGrade.Mid => _currentOrderData.expressionKeyMid,
-                _ => _currentOrderData.expressionKeyBad
-            };
-            characterStage?.SwapExpression(_currentOrderData.characterKey, expressionKey);
-        }
+        ApplyFeedbackExpressions(grade);
 
         List<DialogueLine> lines = grade switch
         {
@@ -80,14 +90,12 @@ public class CustomerSpawner : MonoBehaviour
     public void Clear()
     {
         _currentOrderData = null;
+        _currentVisitData = null;
         characterStage?.Clear();
     }
 
-    private void OnCharactersShown(IReadOnlyList<string> keys)
+    private void OnCharactersShown(CustomerOrderData data)
     {
-        if (keys == null || keys.Count == 0) return;
-
-        CustomerOrderData data = customerDB != null ? customerDB.FindByKey(keys[0]) : null;
         if (data == null) return;
 
         if (data.lines != null && data.lines.Count > 0)
@@ -99,5 +107,65 @@ public class CustomerSpawner : MonoBehaviour
         {
             dialogue?.HideImmediate();
         }
+    }
+
+    private void ApplyFeedbackExpressions(OrderEvaluationGrade grade)
+    {
+        if (_currentOrderData == null)
+            return;
+
+        if (_currentVisitData?.members != null && _currentVisitData.members.Count > 0)
+        {
+            for (int i = 0; i < _currentVisitData.members.Count; i++)
+            {
+                CustomerVisitMember member = _currentVisitData.members[i];
+                if (member == null || string.IsNullOrWhiteSpace(member.characterKey))
+                    continue;
+
+                string expressionKey = grade switch
+                {
+                    OrderEvaluationGrade.Good => member.expressionKeyGood,
+                    OrderEvaluationGrade.Mid => member.expressionKeyMid,
+                    _ => member.expressionKeyBad
+                };
+                if (!string.IsNullOrWhiteSpace(expressionKey))
+                    characterStage?.SwapExpression(member.characterKey, expressionKey);
+            }
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(_currentOrderData.characterKey))
+            return;
+
+        string legacyExpressionKey = grade switch
+        {
+            OrderEvaluationGrade.Good => _currentOrderData.expressionKeyGood,
+            OrderEvaluationGrade.Mid => _currentOrderData.expressionKeyMid,
+            _ => _currentOrderData.expressionKeyBad
+        };
+        characterStage?.SwapExpression(_currentOrderData.characterKey, legacyExpressionKey);
+    }
+
+    private static List<CharacterSlotEntry> BuildVisitEntries(CustomerVisitData visit)
+    {
+        List<CharacterSlotEntry> entries = new List<CharacterSlotEntry>();
+        if (visit?.members == null)
+            return entries;
+
+        for (int i = 0; i < visit.members.Count; i++)
+        {
+            CustomerVisitMember member = visit.members[i];
+            if (member == null || string.IsNullOrWhiteSpace(member.characterKey))
+                continue;
+
+            entries.Add(new CharacterSlotEntry
+            {
+                characterKey = member.characterKey,
+                expressionKey = member.expressionKeyMid,
+                slotIndex = member.slotIndex
+            });
+        }
+
+        return entries;
     }
 }

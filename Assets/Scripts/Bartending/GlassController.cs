@@ -258,9 +258,16 @@ namespace Slainte.Bartending
             Vector2 glassScreenPosition = BartendingViewport.GetPointerScreenPosition(
                 mainCamera,
                 targetPosition);
+            return TryRequestServeAtScreenPosition(
+                glassScreenPosition,
+                Input.GetMouseButton(0));
+        }
+
+        public bool TryRequestServeAtScreenPosition(Vector2 glassScreenPosition, bool isDragging)
+        {
             if (!serveGestureEnabled
                 || serveRequested
-                || !Input.GetMouseButton(0)
+                || !isDragging
                 || glassScreenPosition.y < serveLineScreenY)
             {
                 return false;

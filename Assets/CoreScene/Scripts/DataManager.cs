@@ -31,6 +31,7 @@ public class DataManager : MonoSingleton<DataManager>
             CurrentData.money               = gp.Money;
             CurrentData.reputation          = gp.Reputation;
             CurrentData.businessDay         = gp.GetBusinessDaySnapshot();
+            CurrentData.customerVisitHistory = gp.GetCustomerVisitHistory();
         }
 
         string json = JsonUtility.ToJson(CurrentData, true);

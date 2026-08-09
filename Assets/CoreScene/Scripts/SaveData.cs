@@ -17,6 +17,25 @@ public class SaveData
     public int money;
     public int reputation;
     public BusinessDaySnapshot businessDay = new();
+    public List<CustomerVisitHistorySnapshot> customerVisitHistory = new();
+}
+
+[Serializable]
+public sealed class CustomerVisitHistorySnapshot
+{
+    public string visitKey;
+    public int lastVisitedDay = -1;
+    public int totalVisits;
+
+    public CustomerVisitHistorySnapshot Clone()
+    {
+        return new CustomerVisitHistorySnapshot
+        {
+            visitKey = visitKey,
+            lastVisitedDay = lastVisitedDay,
+            totalVisits = totalVisits
+        };
+    }
 }
 
 [Serializable]
@@ -25,6 +44,8 @@ public sealed class BusinessSequenceEntrySnapshot
     public string entryType;
     public string entryId;
     public string contentId;
+    public string visitKey;
+    public int orderType;
 
     public BusinessSequenceEntrySnapshot Clone()
     {
@@ -32,7 +53,9 @@ public sealed class BusinessSequenceEntrySnapshot
         {
             entryType = entryType,
             entryId = entryId,
-            contentId = contentId
+            contentId = contentId,
+            visitKey = visitKey,
+            orderType = orderType
         };
     }
 }

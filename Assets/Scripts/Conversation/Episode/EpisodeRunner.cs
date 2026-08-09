@@ -206,8 +206,6 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
             orderType = CocktailOrderType.EpisodeOrder,
             presentOrder = false,
             presentFeedback = false,
-            allowReject = false,
-            allowAbandon = false,
             applyProgressRewards = false,
             clearCustomerOnComplete = false
         };

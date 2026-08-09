@@ -131,6 +131,29 @@ namespace Slainte.Bartending
             return EvaluateRecipe(recipe, composition);
         }
 
+        public CocktailEvaluationResult EvaluateRecipeFamily(string recipeId, CocktailComposition composition)
+        {
+            CocktailEvaluationResult requested = EvaluateRecipe(recipeId, composition);
+            if (requested.isSuccess || recipeCatalog == null)
+                return requested;
+
+            CocktailEvaluationResult best = requested;
+            foreach (CocktailRecipe candidate in recipeCatalog.Recipes)
+            {
+                if (candidate == null
+                    || !string.Equals(candidate.baseRecipeId, recipeId, System.StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                CocktailEvaluationResult result = EvaluateRecipe(candidate, composition);
+                if (result.isSuccess)
+                    return result;
+                if (best == null || result.score > best.score)
+                    best = result;
+            }
+
+            return best;
+        }
+
         private static CocktailEvaluationResult EvaluateRecipe(CocktailRecipe recipe, CocktailComposition composition)
         {
             CocktailEvaluationResult result = new CocktailEvaluationResult

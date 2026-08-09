@@ -19,6 +19,12 @@ namespace Slainte.Bartending
         Required
     }
 
+    public enum CocktailRecipeEvaluationGrade
+    {
+        Good,
+        Mid
+    }
+
     public sealed class CocktailRecipeIngredient
     {
         public string ingredientId;
@@ -31,6 +37,12 @@ namespace Slainte.Bartending
     {
         public string id;
         public string displayName;
+        public string englishName;
+        public bool isOrderable = true;
+        public bool appearsInRecipeBook = true;
+        public string baseRecipeId;
+        public CocktailRecipeEvaluationGrade evaluationGrade = CocktailRecipeEvaluationGrade.Good;
+        public float expectedAbvPercent;
         public float minTotalMl;
         public float maxTotalMl;
         public float toleranceMl;
@@ -38,6 +50,7 @@ namespace Slainte.Bartending
         public string glassId;
         public IceRequirement iceRequirement = IceRequirement.Any;
         public CocktailTechnique requiredTechnique = CocktailTechnique.None;
+        public readonly HashSet<string> ingredientPropertyTags = new(StringComparer.OrdinalIgnoreCase);
         public readonly HashSet<string> tasteTags = new(StringComparer.OrdinalIgnoreCase);
         public readonly HashSet<string> moodTags = new(StringComparer.OrdinalIgnoreCase);
         public readonly List<CocktailRecipeIngredient> ingredients = new();
@@ -50,7 +63,34 @@ namespace Slainte.Bartending
         public IReadOnlyDictionary<string, CocktailRecipe> RecipesById => recipesById;
         public IEnumerable<CocktailRecipe> Recipes => recipesById.Values;
 
+        public IEnumerable<CocktailRecipe> OrderableRecipes
+        {
+            get
+            {
+                foreach (CocktailRecipe recipe in recipesById.Values)
+                {
+                    if (recipe != null && recipe.isOrderable)
+                        yield return recipe;
+                }
+            }
+        }
+
         public int Count => recipesById.Count;
+
+        public int OrderableCount
+        {
+            get
+            {
+                int count = 0;
+                foreach (CocktailRecipe recipe in recipesById.Values)
+                {
+                    if (recipe != null && recipe.isOrderable)
+                        count++;
+                }
+
+                return count;
+            }
+        }
 
         public void Add(CocktailRecipe recipe)
         {

@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: CustomerOrder_vertical_slice_vodka_lemon
   m_EditorClassIdentifier: Assembly-CSharp::CustomerOrderData
   key: vertical_slice_vodka_lemon
+  requestedRecipeId: vodka_lemon
+  orderType: 0
   characterKey: yukari
   expressionKeyMid: mid
   expressionKeyGood: mid

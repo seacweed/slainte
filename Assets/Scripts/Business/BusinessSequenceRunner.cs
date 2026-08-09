@@ -54,7 +54,7 @@ namespace Slainte.Business
             snapshot = progress.GetBusinessDaySnapshot();
             if (!IsUsableSnapshot(snapshot, progress.CurrentDay))
             {
-                snapshot = BusinessSequencePlanner.CreateFixed(progress.CurrentDay, settings);
+                snapshot = BusinessSequencePlanner.Create(progress.CurrentDay, settings, progress);
                 progress.SetBusinessDaySnapshot(snapshot);
                 DataManager.Instance?.Save();
             }
@@ -92,6 +92,18 @@ namespace Slainte.Business
         {
             if (!started || result == null || result.owner != OrderSessionOwner.Business)
                 return;
+
+            GameProgress progress = GameProgress.Instance;
+            if (progress != null
+                && snapshot != null
+                && snapshot.entries != null
+                && snapshot.currentIndex >= 0
+                && snapshot.currentIndex < snapshot.entries.Count)
+            {
+                BusinessSequenceEntrySnapshot completedEntry = snapshot.entries[snapshot.currentIndex];
+                if (completedEntry != null && !string.IsNullOrWhiteSpace(completedEntry.visitKey))
+                    progress.RecordCustomerVisit(completedEntry.visitKey, progress.CurrentDay);
+            }
 
             AdvanceAndSave();
             ScheduleNextEntry();

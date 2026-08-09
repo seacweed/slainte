@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74a0294b73046024eb5dafa652c90c8b, type: 3}
+  m_Name: rec_1009
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.CocktailRecipeDef
+  id: rec_1009
+  displayName: "\uBE14\uB799 \uCEE4\uD53C"
+  englishName: Black Coffee
+  isOrderable: 0
+  appearsInRecipeBook: 1
+  baseRecipeId: 
+  evaluationGrade: 0
+  minTotalMl: 0
+  maxTotalMl: 0
+  toleranceMl: 5
+  allowExtraIngredients: 0
+  glassId: highball
+  iceRequirement: 1
+  requiredTechnique: 2
+  abvOverridePercent: -1
+  ingredientPropertyTags:
+  - "\uAE30\uD0C0"
+  tasteTags:
+  - "\uB2EC\uCF64\uD568"
+  moodTags:
+  - "\uD3EC\uADFC\uD55C"
+  - "\uAE54\uB054\uD55C"
+  ingredients: []

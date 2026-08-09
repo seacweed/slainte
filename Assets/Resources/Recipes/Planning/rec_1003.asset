@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74a0294b73046024eb5dafa652c90c8b, type: 3}
+  m_Name: rec_1003
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.CocktailRecipeDef
+  id: rec_1003
+  displayName: "\uAC13\uB808\uC774\uB514"
+  englishName: God Lady
+  isOrderable: 1
+  appearsInRecipeBook: 1
+  baseRecipeId: 
+  evaluationGrade: 0
+  minTotalMl: 55
+  maxTotalMl: 65
+  toleranceMl: 5
+  allowExtraIngredients: 0
+  glassId: rock
+  iceRequirement: 2
+  requiredTechnique: 2
+  abvOverridePercent: -1
+  ingredientPropertyTags:
+  - "\uACAC\uACFC\uB958 \uB9AC\uD050\uB974"
+  - "\uBCF4\uB4DC\uCE74"
+  tasteTags:
+  - "\uB2EC\uCF64\uD568"
+  moodTags:
+  - "\uACE0\uAE09\uC2A4\uB7EC\uC6B4"
+  ingredients:
+  - itemId: item_1008
+    targetMl: 30
+    toleranceMl: 5
+  - itemId: item_1011
+    targetMl: 30
+    toleranceMl: 5

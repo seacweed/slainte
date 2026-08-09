@@ -199,13 +199,17 @@ public static class BartendingSystemValidator
     private static void ValidateCsvData()
     {
         ItemDefCatalog items = ItemDefCatalog.LoadFromResources("Items", null);
-        CocktailRecipeCatalog recipes = CocktailRecipeCsvLoader.LoadFromStreamingAssets(items);
+        CocktailRecipeCatalog recipes = CocktailRecipeDataLoader.LoadDefault(items);
         Assert(recipes.TryGet("whiskey_neat", out CocktailRecipe whiskey),
             "recipes.csv에서 whiskey_neat 레시피를 불러오지 못했습니다.");
         Assert(whiskey.glassId == "rock"
             && whiskey.iceRequirement == IceRequirement.None
             && whiskey.requiredTechnique == CocktailTechnique.Build,
             "recipes.csv에서 잔·얼음·제조법 조건을 불러오지 못했습니다.");
+        Assert(recipes.TryGet("rec_1001", out CocktailRecipe burnhamSour)
+            && burnhamSour.isOrderable
+            && burnhamSour.ingredients.Count == 4,
+            "기획 CSV에서 가져온 번햄 사워 레시피 에셋이 올바르지 않습니다.");
 
         CocktailOrderTemplateCatalog templates =
             CocktailOrderCsvLoader.LoadTemplatesFromStreamingAssets();

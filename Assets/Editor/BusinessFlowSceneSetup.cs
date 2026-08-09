@@ -5,7 +5,6 @@ using Slainte.Business;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -17,7 +16,6 @@ namespace Slainte.Editor
         {
             WaitingForOrder,
             WaitingForCrafting,
-            WaitingForDiscardReset,
             WaitingForFeedback,
             WaitingForCompletion
         }
@@ -25,7 +23,8 @@ namespace Slainte.Editor
         private enum SmokeScenario
         {
             SubmitBad,
-            DiscardAbandon,
+            ServeWithInventory,
+            SequentialGrades,
             EpisodeResourceUse
         }
 
@@ -54,7 +53,8 @@ namespace Slainte.Editor
         private static int smokeBaselineBusinessIndex;
         private static int smokeBaselineBusinessCount;
         private static bool smokeBaselineBusinessCompleted;
-        private static int smokeOriginalBottleInstanceId;
+        private static readonly List<BusinessOrderSessionResult> smokeOrderResults = new();
+        private static BusinessOrderSessionController smokeObservedSession;
         private static float smokeExpectedVodkaCapacity;
         private static float smokeExpectedVodkaInventoryAmount;
         private static bool episodeOrderRequested;
@@ -91,9 +91,14 @@ namespace Slainte.Editor
             StartSmokeTest(SmokeScenario.SubmitBad);
         }
 
-        public static void RunDiscardAbandonQaFromCommandLine()
+        public static void RunServeGestureInventoryQaFromCommandLine()
         {
-            StartSmokeTest(SmokeScenario.DiscardAbandon);
+            StartSmokeTest(SmokeScenario.ServeWithInventory);
+        }
+
+        public static void RunSequentialGradeQaFromCommandLine()
+        {
+            StartSmokeTest(SmokeScenario.SequentialGrades);
         }
 
         public static void RunEpisodeResourceQaFromCommandLine()
@@ -127,12 +132,12 @@ namespace Slainte.Editor
             episodeOrderRequested = false;
             episodeOrderCompleted = false;
             episodeOrderResult = null;
-            smokeOriginalBottleInstanceId = 0;
+            smokeOrderResults.Clear();
+            smokeObservedSession = null;
             smokeExpectedVodkaCapacity = 0f;
             smokeExpectedVodkaInventoryAmount = 0f;
             smokeAutoStartOverridden = false;
-            if (scenario == SmokeScenario.EpisodeResourceUse)
-                OverrideAutoStartForEpisodeQa();
+            OverrideAutoStartForSmoke();
             PrepareSmokeAutosaveBackup();
             previousEnterPlayModeOptionsEnabled = EditorSettings.enterPlayModeOptionsEnabled;
             previousEnterPlayModeOptions = EditorSettings.enterPlayModeOptions;
@@ -400,7 +405,7 @@ namespace Slainte.Editor
 
             EditorSettings.enterPlayModeOptionsEnabled = previousEnterPlayModeOptionsEnabled;
             EditorSettings.enterPlayModeOptions = previousEnterPlayModeOptions;
-            RestoreAutoStartAfterEpisodeQa();
+            RestoreAutoStartAfterSmoke();
             if (!RestoreSmokeAutosave())
                 smokeExitCode = 1;
             AssetDatabase.SaveAssets();
@@ -414,17 +419,29 @@ namespace Slainte.Editor
             if (!EditorApplication.isPlaying)
                 return;
 
-            if (EditorApplication.timeSinceStartup - smokeStartedAt > 20d)
+            BusinessOrderSessionController session =
+                Object.FindFirstObjectByType<BusinessOrderSessionController>();
+            double timeoutSeconds = smokeScenario == SmokeScenario.SequentialGrades ? 45d : 20d;
+            if (EditorApplication.timeSinceStartup - smokeStartedAt > timeoutSeconds)
             {
-                FinishSmokeTest(false, "Business flow smoke test timed out.");
+                string sessionState = session != null ? session.State.ToString() : "missing";
+                FinishSmokeTest(false,
+                    $"Business flow smoke test timed out. Scenario={smokeScenario}, "
+                    + $"Phase={smokePhase}, SessionState={sessionState}.");
                 return;
             }
 
-            BusinessOrderSessionController session =
-                Object.FindFirstObjectByType<BusinessOrderSessionController>();
             DialogueController dialogue = Object.FindFirstObjectByType<DialogueController>();
             if (session == null || dialogue == null)
                 return;
+
+            if (smokeObservedSession != session)
+            {
+                if (smokeObservedSession != null)
+                    smokeObservedSession.OrderCompleted -= HandleSmokeOrderCompleted;
+                smokeObservedSession = session;
+                smokeObservedSession.OrderCompleted += HandleSmokeOrderCompleted;
+            }
 
             if (!smokeBaselinesCaptured)
             {
@@ -451,7 +468,14 @@ namespace Slainte.Editor
                         break;
                     }
 
-                    if (session.State == BusinessOrderSessionState.PresentingOrder)
+                    if (session.State == BusinessOrderSessionState.Idle)
+                    {
+                        BusinessFlowBootstrap bootstrap =
+                            Object.FindFirstObjectByType<BusinessFlowBootstrap>();
+                        if (bootstrap != null && bootstrap.IsRuntimeReady)
+                            bootstrap.StartBusinessSequence();
+                    }
+                    else if (session.State == BusinessOrderSessionState.PresentingOrder)
                     {
                         AdvanceDialogue(dialogue);
                     }
@@ -468,6 +492,17 @@ namespace Slainte.Editor
                             Object.FindFirstObjectByType<BusinessBartendingBootstrap>();
                         if (bartending != null && bartending.CurrentTargetTracker != null)
                         {
+                            if (SessionButtonExists("수락Button")
+                                || SessionButtonExists("거절Button")
+                                || SessionButtonExists("주문 포기Button")
+                                || SessionButtonExists("제출Button")
+                                || SessionButtonExists("버리기Button"))
+                            {
+                                FinishSmokeTest(false,
+                                    "An order action button was exposed during gesture-only crafting.");
+                                break;
+                            }
+
                             if (smokeScenario == SmokeScenario.EpisodeResourceUse)
                             {
                                 if (!PrepareEpisodeResourceUse(bartending, out string failure))
@@ -476,12 +511,43 @@ namespace Slainte.Editor
                                     break;
                                 }
 
-                                session.SubmitOrder();
+                                if (!DragGlassForward(bartending, out string serveFailure))
+                                {
+                                    FinishSmokeTest(false, serveFailure);
+                                    break;
+                                }
+
+                                smokePhase = SmokePhase.WaitingForFeedback;
+                            }
+                            else if (smokeScenario == SmokeScenario.SequentialGrades)
+                            {
+                                OrderEvaluationGrade expectedGrade = GetSequentialExpectedGrade(
+                                    smokeOrderResults.Count);
+                                if (!PopulateSampleGlass(
+                                        bartending.CurrentTargetTracker,
+                                        expectedGrade,
+                                        out string populationFailure))
+                                {
+                                    FinishSmokeTest(false, populationFailure);
+                                    break;
+                                }
+
+                                if (!DragGlassForward(bartending, out string gradeServeFailure))
+                                {
+                                    FinishSmokeTest(false, gradeServeFailure);
+                                    break;
+                                }
+
                                 smokePhase = SmokePhase.WaitingForFeedback;
                             }
                             else if (smokeScenario == SmokeScenario.SubmitBad)
                             {
-                                session.SubmitOrder();
+                                if (!DragGlassForward(bartending, out string submissionFailure))
+                                {
+                                    FinishSmokeTest(false, submissionFailure);
+                                    break;
+                                }
+
                                 smokePhase = SmokePhase.WaitingForFeedback;
                             }
                             else
@@ -498,22 +564,20 @@ namespace Slainte.Editor
 
                                     bool vodkaSelected =
                                         ClickShelfBottle("breeze_vodka", out string vodkaFailure);
-                                    bool lemonSelected =
-                                        ClickShelfBottle("lemon_juice", out string lemonFailure);
-                                    if (!vodkaSelected || !lemonSelected)
+                                    if (!vodkaSelected)
                                     {
                                         FinishSmokeTest(false,
-                                            "Liquor shelf click failed: " + vodkaFailure + lemonFailure);
+                                            "Liquor shelf click failed: " + vodkaFailure);
                                         break;
                                     }
 
                                     vodkaBottle = FindBottle("breeze_vodka");
                                 }
 
-                                if (vodkaBottle == null || bartending.SessionBottleCount != 2)
+                                if (vodkaBottle == null || bartending.SessionBottleCount != 1)
                                 {
                                     FinishSmokeTest(false,
-                                        "Liquor shelf selections did not create both recipe bottles.");
+                                        "Liquor shelf selection did not create the vodka bottle.");
                                     break;
                                 }
 
@@ -525,52 +589,19 @@ namespace Slainte.Editor
                                 float inventoryAmount = GameProgress.Instance.GetBottleAmount(
                                     "breeze_vodka",
                                     defaultInventoryAmount);
-                                smokeOriginalBottleInstanceId = vodkaBottle.GetInstanceID();
                                 smokeExpectedVodkaCapacity = Mathf.Max(0f, vodkaBottle.CurrentCapacity - 10f);
                                 smokeExpectedVodkaInventoryAmount = Mathf.Max(0f, inventoryAmount - 10f);
                                 vodkaBottle.SetCurrentCapacity(smokeExpectedVodkaCapacity, true);
-                                session.DiscardCocktail();
-                                smokePhase = SmokePhase.WaitingForDiscardReset;
+                                if (!DragGlassForward(bartending, out string serveFailure))
+                                {
+                                    FinishSmokeTest(false, serveFailure);
+                                    break;
+                                }
+
+                                smokePhase = SmokePhase.WaitingForFeedback;
                             }
                         }
                     }
-                    break;
-
-                case SmokePhase.WaitingForDiscardReset:
-                    BusinessBartendingBootstrap resetBartending =
-                        Object.FindFirstObjectByType<BusinessBartendingBootstrap>();
-                    if (resetBartending == null || resetBartending.CurrentTargetTracker == null)
-                        break;
-
-                    BottleController recreatedBottle = FindBottle("breeze_vodka");
-                    if (recreatedBottle == null
-                        || recreatedBottle.GetInstanceID() == smokeOriginalBottleInstanceId)
-                    {
-                        break;
-                    }
-
-                    if (!Mathf.Approximately(recreatedBottle.CurrentCapacity, smokeExpectedVodkaCapacity))
-                    {
-                        FinishSmokeTest(false,
-                            $"Discard reset changed bottle capacity: expected {smokeExpectedVodkaCapacity}, "
-                            + $"actual {recreatedBottle.CurrentCapacity}.");
-                        break;
-                    }
-
-                    float savedBottleAmount = GameProgress.Instance.GetBottleAmount(
-                        "breeze_vodka",
-                        -1f);
-                    if (!Mathf.Approximately(savedBottleAmount, smokeExpectedVodkaInventoryAmount))
-                    {
-                        FinishSmokeTest(false,
-                            $"Bottle inventory was not retained in GameProgress: expected "
-                            + $"{smokeExpectedVodkaInventoryAmount}, "
-                            + $"actual {savedBottleAmount}.");
-                        break;
-                    }
-
-                    session.ConfirmAbandonOrder();
-                    smokePhase = SmokePhase.WaitingForCompletion;
                     break;
 
                 case SmokePhase.WaitingForFeedback:
@@ -578,9 +609,18 @@ namespace Slainte.Editor
                     {
                         AdvanceDialogue(dialogue);
                     }
+                    else if (smokeScenario == SmokeScenario.SequentialGrades
+                        && (session.State == BusinessOrderSessionState.PresentingOrder
+                            || session.State == BusinessOrderSessionState.Crafting))
+                    {
+                        smokePhase = SmokePhase.WaitingForOrder;
+                    }
                     else if (session.State == BusinessOrderSessionState.Completed)
                     {
-                        smokePhase = SmokePhase.WaitingForCompletion;
+                        smokePhase = smokeScenario == SmokeScenario.SequentialGrades
+                            && smokeOrderResults.Count < 3
+                                ? SmokePhase.WaitingForOrder
+                                : SmokePhase.WaitingForCompletion;
                     }
                     break;
 
@@ -628,8 +668,6 @@ namespace Slainte.Editor
                 requestedRecipeId = "vodka_lemon",
                 ticketKey = VerticalOrderKey,
                 presentOrder = false,
-                allowReject = false,
-                allowAbandon = false,
                 applyProgressRewards = false,
                 clearCustomerOnComplete = false
             };
@@ -761,6 +799,152 @@ namespace Slainte.Editor
             return null;
         }
 
+        private static bool DragGlassForward(
+            BusinessBartendingBootstrap bartending,
+            out string failure)
+        {
+            VesselLiquidTracker tracker = bartending != null ? bartending.CurrentTargetTracker : null;
+            GlassController glass = tracker != null ? tracker.GetComponent<GlassController>() : null;
+            if (glass == null)
+            {
+                failure = "The serving glass could not be found. ";
+                return false;
+            }
+
+            Vector2 forwardPosition = new Vector2(Screen.width * 0.5f, Screen.height + 1f);
+            if (glass.TryRequestServeAtScreenPosition(forwardPosition, false))
+            {
+                failure = "The glass was served without an active drag gesture. ";
+                return false;
+            }
+
+            if (!glass.TryRequestServeAtScreenPosition(forwardPosition, true))
+            {
+                failure = "Dragging the glass forward did not request serving. ";
+                return false;
+            }
+
+            failure = string.Empty;
+            return true;
+        }
+
+        private static OrderEvaluationGrade GetSequentialExpectedGrade(int orderIndex)
+        {
+            return orderIndex switch
+            {
+                0 => OrderEvaluationGrade.Good,
+                1 => OrderEvaluationGrade.Mid,
+                _ => OrderEvaluationGrade.Bad
+            };
+        }
+
+        private static bool PopulateSampleGlass(
+            VesselLiquidTracker tracker,
+            OrderEvaluationGrade expectedGrade,
+            out string failure)
+        {
+            failure = string.Empty;
+            if (tracker == null)
+            {
+                failure = "The serving glass tracker is missing. ";
+                return false;
+            }
+
+            ItemDefCatalog itemCatalog = ItemDefCatalog.LoadFromResources("Items", null);
+            if (!itemCatalog.TryGet("breeze_vodka", out ItemDef vodka)
+                || !itemCatalog.TryGet("lemon_juice", out ItemDef lemon))
+            {
+                failure = "The sample Vodka Lemon ingredients could not be loaded. ";
+                return false;
+            }
+
+            if (expectedGrade == OrderEvaluationGrade.Good)
+            {
+                if (!CreateQaLiquidParticle(tracker, vodka, 50f, -0.02f, out failure)
+                    || !CreateQaLiquidParticle(tracker, lemon, 30f, 0.02f, out failure))
+                {
+                    return false;
+                }
+            }
+            else if (expectedGrade == OrderEvaluationGrade.Mid)
+            {
+                if (!CreateQaLiquidParticle(tracker, vodka, 50f, -0.02f, out failure)
+                    || !CreateQaLiquidParticle(tracker, lemon, 50f, 0.02f, out failure))
+                {
+                    return false;
+                }
+            }
+
+            Physics2D.SyncTransforms();
+            CocktailComposition composition = tracker.BuildComposition();
+            CocktailRecipeCatalog recipeCatalog = CocktailRecipeCsvLoader.LoadFromStreamingAssets(
+                itemCatalog,
+                "Data",
+                "recipes.csv",
+                "recipe_ingredients.csv");
+            GeneratedCocktailOrder order =
+                new CocktailOrderGenerator(recipeCatalog, null).GenerateRecipeOrder("vodka_lemon");
+            CocktailOrderEvaluationResult evaluation =
+                new CocktailOrderEvaluator(new CocktailEvaluator(recipeCatalog)).Evaluate(order, composition);
+            BusinessOrderFlowSettings flowSettings =
+                AssetDatabase.LoadAssetAtPath<BusinessOrderFlowSettings>(SettingsPath);
+            OrderEvaluationGrade actualGrade = OrderEvaluationGrader.Resolve(evaluation, flowSettings);
+            if (actualGrade != expectedGrade)
+            {
+                failure = $"Sample glass grade mismatch: expected {expectedGrade}, actual {actualGrade}. ";
+                return false;
+            }
+
+            return true;
+        }
+
+        private static bool CreateQaLiquidParticle(
+            VesselLiquidTracker tracker,
+            ItemDef item,
+            float volumeMl,
+            float horizontalOffset,
+            out string failure)
+        {
+            Collider2D[] vesselColliders = tracker.GetComponentsInChildren<Collider2D>();
+            Collider2D trigger = System.Array.Find(
+                vesselColliders,
+                collider => collider != null && collider.isTrigger);
+            if (trigger == null)
+            {
+                failure = "The serving glass has no liquid tracking trigger. ";
+                return false;
+            }
+
+            GameObject particleObject = new GameObject("QA_Liquid_" + item.id);
+            particleObject.transform.SetParent(tracker.transform.parent, true);
+            particleObject.transform.position = trigger.bounds.center + new Vector3(horizontalOffset, 0f, 0f);
+            particleObject.layer = tracker.gameObject.layer;
+
+            Rigidbody2D body = particleObject.AddComponent<Rigidbody2D>();
+            body.bodyType = RigidbodyType2D.Kinematic;
+            body.gravityScale = 0f;
+            CircleCollider2D particleCollider = particleObject.AddComponent<CircleCollider2D>();
+            particleCollider.radius = 0.01f;
+            LiquidParticleData particle = particleObject.AddComponent<LiquidParticleData>();
+            particle.SetPayload(item, volumeMl);
+
+            failure = string.Empty;
+            return true;
+        }
+
+        private static bool SessionButtonExists(string objectName)
+        {
+            Button[] buttons =
+                Object.FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                if (buttons[i] != null && buttons[i].gameObject.name == objectName)
+                    return true;
+            }
+
+            return false;
+        }
+
         private static LiquorBottleSlotUI FindShelfBottleSlot(string itemId)
         {
             LiquorBottleSlotUI[] slots =
@@ -787,10 +971,20 @@ namespace Slainte.Editor
                 return false;
             }
 
-            shelfSlot.OnPointerClick(new PointerEventData(EventSystem.current)
+            BusinessBartendingBootstrap bartending =
+                Object.FindFirstObjectByType<BusinessBartendingBootstrap>();
+            if (bartending == null)
             {
-                button = PointerEventData.InputButton.Left
-            });
+                failure = "Bartending session is missing. ";
+                return false;
+            }
+
+            if (!bartending.TryPlaceBottleFromShelf(shelfSlot.Definition, out string placementFailure))
+            {
+                failure = itemId + " could not be selected from the liquor shelf: "
+                    + placementFailure + " ";
+                return false;
+            }
 
             if (FindBottle(itemId) == null)
             {
@@ -843,16 +1037,59 @@ namespace Slainte.Editor
                 return false;
             }
 
+            int expectedResultCount = smokeScenario == SmokeScenario.SequentialGrades ? 3 : 1;
+            if (smokeOrderResults.Count != expectedResultCount)
+            {
+                failure = $"Completed order result count mismatch: expected {expectedResultCount}, "
+                    + $"actual {smokeOrderResults.Count}.";
+                return false;
+            }
+
+            for (int i = 0; i < smokeOrderResults.Count; i++)
+            {
+                BusinessOrderSessionResult result = smokeOrderResults[i];
+                OrderEvaluationGrade expectedGrade = smokeScenario == SmokeScenario.SequentialGrades
+                    ? GetSequentialExpectedGrade(i)
+                    : OrderEvaluationGrade.Bad;
+                if (result == null
+                    || result.owner != OrderSessionOwner.Business
+                    || result.outcome != OrderSessionOutcome.Served
+                    || !result.accepted
+                    || result.grade != expectedGrade)
+                {
+                    failure = $"Order result {i + 1} did not match the expected served "
+                        + $"{expectedGrade} result.";
+                    return false;
+                }
+
+                int expectedResultMoney = settings.GetMoneyReward(expectedGrade);
+                int expectedResultReputation = settings.GetReputationReward(expectedGrade);
+                if (result.moneyDelta != expectedResultMoney
+                    || result.reputationDelta != expectedResultReputation)
+                {
+                    failure = $"Order result {i + 1} reward mismatch: expected "
+                        + $"{expectedResultMoney}/{expectedResultReputation}, actual "
+                        + $"{result.moneyDelta}/{result.reputationDelta}.";
+                    return false;
+                }
+            }
+
             int expectedMoney = smokeBaselineMoney;
             int expectedReputation = smokeBaselineReputation;
-            if (smokeScenario == SmokeScenario.SubmitBad)
+            if (smokeScenario == SmokeScenario.SequentialGrades)
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    OrderEvaluationGrade grade = GetSequentialExpectedGrade(i);
+                    expectedMoney = Mathf.Max(0, expectedMoney + settings.GetMoneyReward(grade));
+                    expectedReputation += settings.GetReputationReward(grade);
+                }
+            }
+            else if (smokeScenario == SmokeScenario.SubmitBad
+                || smokeScenario == SmokeScenario.ServeWithInventory)
             {
                 expectedMoney = Mathf.Max(0, expectedMoney + settings.badMoneyReward);
                 expectedReputation += settings.badReputationReward;
-            }
-            else if (smokeScenario == SmokeScenario.DiscardAbandon)
-            {
-                expectedReputation += settings.abandonReputationReward;
             }
 
             if (progress.Money != expectedMoney || progress.Reputation != expectedReputation)
@@ -862,12 +1099,12 @@ namespace Slainte.Editor
                 return false;
             }
 
-            if (smokeScenario == SmokeScenario.DiscardAbandon
+            if (smokeScenario == SmokeScenario.ServeWithInventory
                 && !Mathf.Approximately(
                     progress.GetBottleAmount("breeze_vodka", -1f),
                     smokeExpectedVodkaInventoryAmount))
             {
-                failure = "Abandon completion did not retain the discarded session's bottle amount.";
+                failure = "Forward glass serving did not retain the consumed bottle amount.";
                 return false;
             }
 
@@ -902,6 +1139,12 @@ namespace Slainte.Editor
                 dialogue.Advance();
         }
 
+        private static void HandleSmokeOrderCompleted(BusinessOrderSessionResult result)
+        {
+            if (result != null && result.owner == OrderSessionOwner.Business)
+                smokeOrderResults.Add(result);
+        }
+
         private static void FinishSmokeTest(bool success, string message)
         {
             smokeExitCode = success ? 0 : 1;
@@ -910,11 +1153,14 @@ namespace Slainte.Editor
             else
                 Debug.LogError("[BusinessFlowSmokeTest] " + message);
 
+            if (smokeObservedSession != null)
+                smokeObservedSession.OrderCompleted -= HandleSmokeOrderCompleted;
+            smokeObservedSession = null;
             EditorApplication.update -= TickSmokeTest;
             EditorApplication.ExitPlaymode();
         }
 
-        private static void OverrideAutoStartForEpisodeQa()
+        private static void OverrideAutoStartForSmoke()
         {
             BusinessOrderFlowSettings settings =
                 AssetDatabase.LoadAssetAtPath<BusinessOrderFlowSettings>(SettingsPath);
@@ -924,11 +1170,9 @@ namespace Slainte.Editor
             smokeOriginalAutoStart = settings.autoStart;
             settings.autoStart = false;
             smokeAutoStartOverridden = true;
-            EditorUtility.SetDirty(settings);
-            AssetDatabase.SaveAssets();
         }
 
-        private static void RestoreAutoStartAfterEpisodeQa()
+        private static void RestoreAutoStartAfterSmoke()
         {
             if (!smokeAutoStartOverridden)
                 return;
@@ -936,10 +1180,7 @@ namespace Slainte.Editor
             BusinessOrderFlowSettings settings =
                 AssetDatabase.LoadAssetAtPath<BusinessOrderFlowSettings>(SettingsPath);
             if (settings != null)
-            {
                 settings.autoStart = smokeOriginalAutoStart;
-                EditorUtility.SetDirty(settings);
-            }
 
             smokeAutoStartOverridden = false;
         }
@@ -962,9 +1203,31 @@ namespace Slainte.Editor
             string autosaveDirectory = Path.GetDirectoryName(smokeAutosavePath);
             if (!string.IsNullOrWhiteSpace(autosaveDirectory))
                 Directory.CreateDirectory(autosaveDirectory);
+
+            SaveData smokeSave = new SaveData { dayCount = 1 };
+            if (smokeScenario == SmokeScenario.SequentialGrades)
+            {
+                smokeSave.businessDay = new BusinessDaySnapshot
+                {
+                    day = 1,
+                    seed = 0x51A17E,
+                    currentIndex = 0,
+                    isCompleted = false
+                };
+                for (int i = 0; i < 3; i++)
+                {
+                    smokeSave.businessDay.entries.Add(new BusinessSequenceEntrySnapshot
+                    {
+                        entryType = BusinessSequencePlanner.OrderEntryType,
+                        entryId = VerticalOrderKey,
+                        contentId = "vodka_lemon"
+                    });
+                }
+            }
+
             File.WriteAllText(
                 smokeAutosavePath,
-                JsonUtility.ToJson(new SaveData { dayCount = 1 }, true));
+                JsonUtility.ToJson(smokeSave, true));
         }
 
         private static bool RestoreSmokeAutosave()

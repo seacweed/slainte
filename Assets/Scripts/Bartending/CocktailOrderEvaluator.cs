@@ -171,7 +171,7 @@ namespace Slainte.Bartending
             CocktailEvaluationResult detectedRecipeResult)
         {
             CocktailEvaluationResult requestedRecipeResult = cocktailEvaluator != null
-                ? cocktailEvaluator.EvaluateRecipe(order.requestedRecipeId, composition)
+                ? cocktailEvaluator.EvaluateRecipeFamily(order.requestedRecipeId, composition)
                 : null;
 
             bool success = requestedRecipeResult != null && requestedRecipeResult.isSuccess;

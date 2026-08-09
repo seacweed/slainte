@@ -24,7 +24,6 @@ namespace Slainte.Business
 
         public BusinessOrderSessionState State { get; private set; } = BusinessOrderSessionState.Idle;
         public string CurrentRecipeName => currentOrder?.RequestedRecipeName ?? string.Empty;
-        public bool CanAbandonCurrentOrder => currentRequest != null && currentRequest.allowAbandon;
 
         public event Action<BusinessOrderSessionState, BusinessOrderSessionState> StateChanged;
         public event Action<BusinessOrderSessionResult> OrderCompleted;
@@ -122,7 +121,9 @@ namespace Slainte.Business
 
             SetState(BusinessOrderSessionState.PresentingOrder);
             ui?.ShowPresentingOrder(currentRequest.customerOrderKey);
-            customerSpawner?.ShowCustomers(new[] { currentRequest.customerOrderKey });
+            customerSpawner?.ShowVisit(
+                currentRequest.customerVisitKey,
+                currentRequest.customerOrderKey);
 
             if (customerSpawner == null || customerSpawner.CurrentOrderData == null)
             {
@@ -141,14 +142,6 @@ namespace Slainte.Business
             return true;
         }
 
-        public void AcceptOrder()
-        {
-            if (State != BusinessOrderSessionState.AwaitingDecision)
-                return;
-
-            BeginCrafting();
-        }
-
         private void BeginCrafting()
         {
             if (currentRequest == null)
@@ -163,56 +156,7 @@ namespace Slainte.Business
             servingTarget = bartending != null ? bartending.CurrentTargetTracker : null;
         }
 
-        public void RejectOrder()
-        {
-            if (State != BusinessOrderSessionState.AwaitingDecision
-                || currentRequest == null
-                || !currentRequest.allowReject)
-                return;
-
-            ticketManager?.ClearTicket();
-            CompleteCurrentOrder(new BusinessOrderSessionResult
-            {
-                outcome = OrderSessionOutcome.Rejected,
-                customerOrderKey = currentRequest.customerOrderKey,
-                requestedRecipeId = currentRequest.requestedRecipeId,
-                accepted = false,
-                grade = OrderEvaluationGrade.Bad
-            });
-        }
-
-        public void DiscardCocktail()
-        {
-            if (State != BusinessOrderSessionState.Crafting)
-                return;
-
-            servingTarget = null;
-            bartending?.DiscardAndResetSession();
-            ui?.ShowCrafting(CurrentRecipeName);
-        }
-
-        public void ConfirmAbandonOrder()
-        {
-            if (State != BusinessOrderSessionState.Crafting
-                || currentRequest == null
-                || !currentRequest.allowAbandon)
-                return;
-
-            modeManager?.RequestModeChange(GameMode.OrderMode);
-            ticketManager?.ClearTicket();
-            CompleteCurrentOrder(new BusinessOrderSessionResult
-            {
-                outcome = OrderSessionOutcome.Abandoned,
-                customerOrderKey = currentRequest.customerOrderKey,
-                requestedRecipeId = currentRequest.requestedRecipeId,
-                accepted = true,
-                abandoned = true,
-                grade = OrderEvaluationGrade.Bad,
-                reputationDelta = settings != null ? settings.abandonReputationReward : 0
-            });
-        }
-
-        public void SubmitOrder()
+        private void SubmitOrder()
         {
             if (State != BusinessOrderSessionState.Crafting)
                 return;
@@ -278,11 +222,7 @@ namespace Slainte.Business
         private void BuildEvaluationServices()
         {
             ItemDefCatalog itemCatalog = ItemDefCatalog.LoadFromResources("Items", null);
-            CocktailRecipeCatalog recipeCatalog = CocktailRecipeCsvLoader.LoadFromStreamingAssets(
-                itemCatalog,
-                "Data",
-                "recipes.csv",
-                "recipe_ingredients.csv");
+            CocktailRecipeCatalog recipeCatalog = CocktailRecipeDataLoader.LoadDefault(itemCatalog);
             CocktailOrderTemplateCatalog templateCatalog = CocktailOrderCsvLoader.LoadTemplatesFromStreamingAssets(
                 "Data",
                 "order_templates.csv");

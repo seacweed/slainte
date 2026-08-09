@@ -68,6 +68,7 @@ namespace Slainte.Bartending
 
             if (!string.IsNullOrWhiteSpace(requestedRecipeId))
                 return recipeCatalog.TryGet(requestedRecipeId, out CocktailRecipe requestedRecipe)
+                    && requestedRecipe.isOrderable
                     ? requestedRecipe
                     : null;
 
@@ -76,9 +77,12 @@ namespace Slainte.Bartending
 
         private CocktailRecipe PickRecipe()
         {
-            int targetIndex = Random.Range(0, recipeCatalog.Count);
+            if (recipeCatalog.OrderableCount <= 0)
+                return null;
+
+            int targetIndex = Random.Range(0, recipeCatalog.OrderableCount);
             int index = 0;
-            foreach (CocktailRecipe recipe in recipeCatalog.Recipes)
+            foreach (CocktailRecipe recipe in recipeCatalog.OrderableRecipes)
             {
                 if (index == targetIndex)
                     return recipe;

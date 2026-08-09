@@ -1,6 +1,6 @@
 # CoreScene 시스템
 
-CoreScene은 게임 전체에서 DontDestroyOnLoad로 유지되는 매니저들이 배치된 씬입니다.
+CoreScene은 게임 전체에서 유지되는 매니저와 화면 전환 페이드를 보관합니다. 일부 `MonoSingleton`은 씬에 없을 때 첫 `Instance` 접근으로 생성됩니다.
 
 ## 게임 진행 흐름
 
@@ -64,8 +64,7 @@ public enum GameState { None, Episode, Business, Rest }
 
 - `LoadAllEpisodes()` — `Resources.LoadAll<EpisodeData>("EpisodeData")`로 Awake 시 일괄 로드
 - `GetAvailableEpisodes()` — `GameProgress`로 완료 여부 및 `CanStart()` 조건 체크 후 목록 반환
-- `CanStart(EpisodeData, GameProgress)` — `EpisodeTriggerCondition` 기반 조건 검사
-  - `minDay`, `requiredFlags`, `blockedFlags`, `prerequisiteEpisodeIds`, `requiredVars` 순서로 검사
+- `CanStart(EpisodeData, GameProgress)` — `ProgressConditionEvaluator`에 `EpisodeTriggerCondition` 평가 위임
 - `StartEpisode(id)` — `CurrentPlayingEpisodeID` 설정 → 저장 → `GameState.Episode` 전환
 - `ClearEpisode(id)` — `GameProgress.MarkEpisodeCompleted()` → 현재 에피소드 ID 초기화 → 저장
 - `GetEpisodeData(id)` — id로 EpisodeData 검색
@@ -80,20 +79,26 @@ public enum GameState { None, Episode, Business, Rest }
 | `GetFlagList()` / `GetCompletedList()` | DataManager.Save() 직전 데이터 수거용 |
 | `GetAffinityKeys()` / `GetAffinityValues()` | 호감도 변수 직렬화용 수거 |
 | `GetBoardSlotKeys()` / `GetBoardSlotValues()` | 보드 슬롯 위치 직렬화용 수거 |
+| `GetBottleAmountKeys()` / `GetBottleAmountValues()` | 병 재고 직렬화용 수거 |
 | `HasFlag` / `SetFlag` / `ClearFlag` | 스토리 플래그 관리 |
 | `IsEpisodeCompleted` / `MarkEpisodeCompleted` | 에피소드 완료 기록 |
 | `GetAffinity` / `SetAffinity` / `AddAffinity` | 호감도 정수 변수 — CSV `varName` 필드와 연결 |
 | `GetBoardSlot` / `SetBoardSlot` / `ClearBoardSlot` | 에피소드 보드 슬롯 위치 (affinity와 저장소 분리) |
+| `GetBottleAmount` / `SetBottleAmount` | 병 ID별 남은 전체 재고 |
 | `SetCurrentDay` / `CurrentDay` | 게임 내 일수 |
 | `GetBusinessDaySnapshot` / `SetBusinessDaySnapshot` | 진행 중인 영업 순서 저장/복원 |
 | `AdvanceBusinessSequence` | 영업 주문 순서 진행 |
+| `GetCustomerVisitHistory` / `RecordCustomerVisit` | 마지막 방문 날짜와 누적 방문 횟수 |
+| `AddMoney` / `AddReputation` | 영업 보상 반영 |
 
 ## DataManager (`CoreScene/Scripts/DataManager.cs`)
 
 `MonoSingleton<DataManager>`. JSON 저장/로드를 담당합니다.
 
-- `Save()` — `GameProgress.Instance`에서 데이터 수거 → `JsonUtility.ToJson(SaveData)` → 파일 기록
+- `Save()` — `GameProgress.Instance`에서 데이터 수거 → `JsonUtility.ToJson(SaveData)` → `autosave.json` 직접 기록
 - `Load()` — 파일 읽기 → `GameProgress.Instance.LoadFrom(CurrentData)` 호출
+
+현재 저장은 임시 파일 교체나 백업 없이 본 파일에 직접 쓰며, 진행 중인 에피소드 노드와 `GameState`는 저장하지 않습니다.
 
 ## SaveData (`CoreScene/Scripts/SaveData.cs`)
 
@@ -110,12 +115,19 @@ public class SaveData
     public List<int>    affinityValues;
     public List<string> boardSlotKeys;   // 에피소드 보드 슬롯 위치
     public List<int>    boardSlotValues;
+    public List<string> bottleAmountKeys;
+    public List<float>  bottleAmountValues;
+    public int money;
+    public int reputation;
+    public BusinessDaySnapshot businessDay;
+    public List<CustomerVisitHistorySnapshot> customerVisitHistory;
 }
 ```
 
-> **주의**: 필드명 변경(`varKeys`→`affinityKeys`)으로 이전 세이브 파일과 호환되지 않음.
+`BusinessSequenceEntrySnapshot`은 주문 키, 레시피 ID, 방문 키, 주문 유형을 저장합니다. `CustomerVisitHistorySnapshot`은 방문 키, 마지막 방문 날짜, 누적 방문 횟수를 저장합니다.
 
 ## 미결 사항
 
 - `EpisodeData`에 조건 텍스트 필드 추가 예정 — `EpisodeInfoWindow.conditionsText` UI 연결 대기 중
 - 캐릭터 조우 여부 추적 — `EpisodeInfoWindow.unknownPortrait` 로직 보존됨, 추후 `GameProgress` 구조 추가 검토
+- 저장 원자성, 손상 복구, 실행 중인 상태·노드 이어하기 정책 필요

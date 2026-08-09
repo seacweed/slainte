@@ -11,8 +11,6 @@ namespace Slainte.Business
     public enum OrderSessionOutcome
     {
         Served,
-        Rejected,
-        Abandoned,
         Failed
     }
 
@@ -20,7 +18,6 @@ namespace Slainte.Business
     {
         Idle,
         PresentingOrder,
-        AwaitingDecision,
         Crafting,
         Evaluating,
         PresentingFeedback,
@@ -32,13 +29,12 @@ namespace Slainte.Business
         public string sessionId;
         public OrderSessionOwner owner;
         public string customerOrderKey;
+        public string customerVisitKey;
         public string requestedRecipeId;
         public string ticketKey;
         public CocktailOrderType orderType = CocktailOrderType.RecipeOrder;
         public bool presentOrder = true;
         public bool presentFeedback = true;
-        public bool allowReject = true;
-        public bool allowAbandon = true;
         public bool applyProgressRewards = true;
         public bool clearCustomerOnComplete = true;
 
@@ -52,13 +48,14 @@ namespace Slainte.Business
                 sessionId = entry.entryId,
                 owner = OrderSessionOwner.Business,
                 customerOrderKey = entry.entryId,
+                customerVisitKey = entry.visitKey,
                 requestedRecipeId = entry.contentId,
                 ticketKey = entry.entryId,
-                orderType = CocktailOrderType.RecipeOrder,
+                orderType = System.Enum.IsDefined(typeof(CocktailOrderType), entry.orderType)
+                    ? (CocktailOrderType)entry.orderType
+                    : CocktailOrderType.RecipeOrder,
                 presentOrder = true,
                 presentFeedback = true,
-                allowReject = true,
-                allowAbandon = true,
                 applyProgressRewards = true,
                 clearCustomerOnComplete = true
             };
@@ -84,6 +81,13 @@ namespace Slainte.Business
             float goodThreshold = settings != null ? settings.goodScoreThreshold : 0.8f;
             float midThreshold = settings != null ? settings.midScoreThreshold : 0.45f;
 
+            if (result != null
+                && result.isSuccess
+                && result.requestedRecipeResult?.matchedRecipe != null
+                && result.requestedRecipeResult.matchedRecipe.evaluationGrade
+                    == CocktailRecipeEvaluationGrade.Mid)
+                return OrderEvaluationGrade.Mid;
+
             if (result != null && result.isSuccess && score >= goodThreshold)
                 return OrderEvaluationGrade.Good;
 
@@ -99,7 +103,6 @@ namespace Slainte.Business
         public string customerOrderKey;
         public string requestedRecipeId;
         public bool accepted;
-        public bool abandoned;
         public OrderEvaluationGrade grade;
         public int moneyDelta;
         public int reputationDelta;

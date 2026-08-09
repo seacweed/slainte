@@ -8,6 +8,8 @@ namespace Slainte.Bartending
     {
         [Header("Prefabs")]
         public GameObject beakerPrefab;
+        [Tooltip("스트레이너가 뚜껑에 결합된 코블러 셰이커 프리팹입니다.")]
+        public GameObject cobblerShakerPrefab;
         public GameObject glassPrefab;
         [FormerlySerializedAs("orangeJuiceBottlePrefab")]
         public GameObject bottlePrefab;
@@ -33,6 +35,7 @@ namespace Slainte.Bartending
         [Header("Initial Item Positions")]
         public Vector3 bottlePosition = new Vector3(-8f, -0.8f, 0f);
         public Vector3 beakerPosition = new Vector3(-1.6f, -1f, 0f);
+        public Vector3 cobblerShakerPosition = new Vector3(1.6f, -1f, 0f);
         public Vector3 glassPosition = new Vector3(4.8f, -1f, 0f);
         public Vector3[] slotPositions =
         {

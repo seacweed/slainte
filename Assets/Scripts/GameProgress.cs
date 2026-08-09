@@ -26,12 +26,14 @@ public class GameProgress : MonoSingleton<GameProgress>
     [SerializeField] private int money;
     [SerializeField] private int reputation;
     [SerializeField] private BusinessDaySnapshot businessDay = new();
+    [SerializeField] private List<CustomerVisitHistorySnapshot> customerVisitHistory = new();
 
     private HashSet<string>           _flagSet;
     private HashSet<string>           _completedSet;
     private Dictionary<string, int>   _affinity;
     private Dictionary<string, int>   _boardSlots;
     private Dictionary<string, float> _bottleAmounts;
+    private Dictionary<string, CustomerVisitHistorySnapshot> _customerVisitHistory;
 
     public int CurrentDay => currentDay;
     public int Money => money;
@@ -64,6 +66,16 @@ public class GameProgress : MonoSingleton<GameProgress>
         int bottleCount = Mathf.Min(bottleAmountKeys.Count, bottleAmountValues.Count);
         for (int i = 0; i < bottleCount; i++)
             _bottleAmounts[bottleAmountKeys[i]] = bottleAmountValues[i];
+
+        _customerVisitHistory = new Dictionary<string, CustomerVisitHistorySnapshot>(
+            StringComparer.OrdinalIgnoreCase);
+        customerVisitHistory ??= new List<CustomerVisitHistorySnapshot>();
+        for (int i = 0; i < customerVisitHistory.Count; i++)
+        {
+            CustomerVisitHistorySnapshot history = customerVisitHistory[i];
+            if (history != null && !string.IsNullOrWhiteSpace(history.visitKey))
+                _customerVisitHistory[history.visitKey] = history;
+        }
     }
 
     public void LoadFrom(SaveData data)
@@ -82,6 +94,7 @@ public class GameProgress : MonoSingleton<GameProgress>
         money                = data.money;
         reputation           = data.reputation;
         businessDay          = data.businessDay != null ? data.businessDay.Clone() : new BusinessDaySnapshot();
+        customerVisitHistory = CloneVisitHistory(data.customerVisitHistory);
 
         RebuildRuntimeSets();
     }
@@ -96,6 +109,38 @@ public class GameProgress : MonoSingleton<GameProgress>
     public List<float>  GetBottleAmountValues() => new List<float>(bottleAmountValues);
     public BusinessDaySnapshot GetBusinessDaySnapshot() =>
         businessDay != null ? businessDay.Clone() : new BusinessDaySnapshot();
+    public List<CustomerVisitHistorySnapshot> GetCustomerVisitHistory() =>
+        CloneVisitHistory(customerVisitHistory);
+
+    public int GetLastCustomerVisitDay(string visitKey)
+    {
+        if (string.IsNullOrWhiteSpace(visitKey) || _customerVisitHistory == null)
+            return -1;
+
+        return _customerVisitHistory.TryGetValue(visitKey, out CustomerVisitHistorySnapshot history)
+            ? history.lastVisitedDay
+            : -1;
+    }
+
+    public void RecordCustomerVisit(string visitKey, int day)
+    {
+        if (string.IsNullOrWhiteSpace(visitKey))
+            return;
+
+        _customerVisitHistory ??= new Dictionary<string, CustomerVisitHistorySnapshot>(
+            StringComparer.OrdinalIgnoreCase);
+        customerVisitHistory ??= new List<CustomerVisitHistorySnapshot>();
+        string normalizedKey = visitKey.Trim();
+        if (!_customerVisitHistory.TryGetValue(normalizedKey, out CustomerVisitHistorySnapshot history))
+        {
+            history = new CustomerVisitHistorySnapshot { visitKey = normalizedKey };
+            _customerVisitHistory[normalizedKey] = history;
+            customerVisitHistory.Add(history);
+        }
+
+        history.lastVisitedDay = day;
+        history.totalVisits++;
+    }
 
     // ── Flags ──────────────────────────────────────────────────
 
@@ -266,6 +311,22 @@ public class GameProgress : MonoSingleton<GameProgress>
     public void ClearBusinessDaySnapshot()
     {
         businessDay = new BusinessDaySnapshot();
+    }
+
+    private static List<CustomerVisitHistorySnapshot> CloneVisitHistory(
+        List<CustomerVisitHistorySnapshot> source)
+    {
+        List<CustomerVisitHistorySnapshot> clone = new();
+        if (source == null)
+            return clone;
+
+        for (int i = 0; i < source.Count; i++)
+        {
+            if (source[i] != null)
+                clone.Add(source[i].Clone());
+        }
+
+        return clone;
     }
 
     private void SyncBottleAmountToLists(string bottleId, float value)

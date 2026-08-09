@@ -7,6 +7,26 @@ Unity 에디터에서 사용할 수 있는 커스텀 툴 목록입니다.
 |---|---|---|
 | 에피소드 CSV 임포터 | `EpisodeCsvImporter.cs` | Tools > Slainte > Import Episode CSV |
 | 아이템 데이터 임포터 | `ItemDataImporter.cs` | Tools > Import Item Data (CSV) |
+| 기획 CSV 에셋 임포터 | `PlanningCsvAssetImporter.cs` | Slainte > 데이터 > 기획 CSV 임포트 |
+| 기획 CSV 자동 검증 | `PlanningCsvAssetImporter.cs` | Slainte > 품질 검증 > 기획 CSV 에셋 검증 |
+| 코블러 셰이커 설정 | `CobblerShakerSetup.cs` | Slainte > Business > 코블러 셰이커 설정 적용 |
+| 손님 풀 샘플 설정 | `CustomerPoolSetup.cs` | Slainte > Business > 손님 풀 샘플 설정 적용 |
+| 손님 풀 자동 검증 | `CustomerPoolSetup.cs` | Slainte > 품질 검증 > 손님 풀 검증 |
+
+---
+
+## 기획 CSV 에셋 임포터
+
+아이템 CSV, 레시피 CSV, PDF에서 옮긴 배합 CSV를 읽어 실제 바텐딩 런타임이 사용하는 에셋을 생성한다.
+
+- 아이템 한 행에서 `ItemDef`와 `LiquorBottleDef`를 함께 갱신한다.
+- 레시피 한 행에서 `CocktailRecipeDef`를 갱신하고 배합 CSV의 재료·용량을 연결한다.
+- 15개 기본 레시피에서 숨은 Mid 판정 레시피 87개를 자동 생성한다.
+- 도수 칸이 비어 있으면 재료별 도수와 용량으로 완성 음료 도수를 계산한다.
+- 아이리시 커피, 블랙 커피, 핫 테디처럼 배합이 없는 레시피는 주문 대상에서 자동 제외한다.
+- 재임포트는 ID 기준 갱신 방식이므로 중복 에셋을 만들지 않는다.
+
+자동 검증은 에셋 수, 재료 참조, 번햄 사워 계산 도수, 정확 제조 Good, 잔 변형 Mid를 확인한다.
 
 ---
 

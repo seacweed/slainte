@@ -4,6 +4,14 @@ using UnityEngine;
 
 namespace Slainte.Business
 {
+    public enum BusinessSequenceMode
+    {
+        [InspectorName("고정 주문")]
+        Fixed,
+        [InspectorName("손님 풀")]
+        CustomerPool
+    }
+
     [Serializable]
     public sealed class FixedBusinessOrder
     {
@@ -16,7 +24,18 @@ namespace Slainte.Business
     {
         [Header("영업 순서")]
         public bool autoStart = true;
+        [InspectorName("진행 방식")]
+        public BusinessSequenceMode sequenceMode = BusinessSequenceMode.Fixed;
+        [InspectorName("고정 주문 목록")]
         public List<FixedBusinessOrder> fixedOrders = new();
+
+        [Header("손님 풀")]
+        [InspectorName("손님 방문 데이터베이스")]
+        public CustomerVisitDatabase customerVisitDatabase;
+        [InspectorName("하루 최소 방문 수")]
+        [Min(0)] public int minVisitsPerDay = 3;
+        [InspectorName("하루 최대 방문 수")]
+        [Min(0)] public int maxVisitsPerDay = 3;
 
         [Header("판정")]
         [Range(0f, 1f)] public float midScoreThreshold = 0.45f;
@@ -29,7 +48,6 @@ namespace Slainte.Business
         public int goodReputationReward = 2;
         public int midReputationReward;
         public int badReputationReward = -1;
-        public int abandonReputationReward = -2;
 
         [Header("기본 반응 대사")]
         public string feedbackSpeakerName = "손님";

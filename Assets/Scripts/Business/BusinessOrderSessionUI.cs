@@ -7,6 +7,7 @@ namespace Slainte.Business
     public sealed class BusinessOrderSessionUI : MonoBehaviour
     {
         private RectTransform uiRoot;
+        private RectTransform statusPanel;
         private TMP_Text statusText;
 
         public void Initialize(RectTransform canvasRoot, BusinessOrderSessionController sessionController)
@@ -38,7 +39,7 @@ namespace Slainte.Business
 
         public void ShowEvaluating()
         {
-            ShowIdle();
+            SetStatus(string.Empty);
         }
 
         public void ShowFeedback(OrderEvaluationGrade grade, int moneyDelta, int reputationDelta)
@@ -68,8 +69,8 @@ namespace Slainte.Business
 
         private void SetStatus(string message)
         {
-            if (uiRoot != null)
-                uiRoot.gameObject.SetActive(!string.IsNullOrWhiteSpace(message));
+            if (statusPanel != null)
+                statusPanel.gameObject.SetActive(!string.IsNullOrWhiteSpace(message));
             if (statusText != null)
                 statusText.text = message ?? string.Empty;
         }
@@ -89,20 +90,20 @@ namespace Slainte.Business
             };
         }
 
-        private static TMP_Text CreateStatusText(RectTransform parent)
+        private TMP_Text CreateStatusText(RectTransform parent)
         {
-            RectTransform panel = CreateRect("BusinessStatus", parent);
-            panel.anchorMin = new Vector2(0.5f, 1f);
-            panel.anchorMax = new Vector2(0.5f, 1f);
-            panel.pivot = new Vector2(0.5f, 1f);
-            panel.anchoredPosition = new Vector2(0f, -32f);
-            panel.sizeDelta = new Vector2(920f, 64f);
+            statusPanel = CreateRect("BusinessStatus", parent);
+            statusPanel.anchorMin = new Vector2(0.5f, 1f);
+            statusPanel.anchorMax = new Vector2(0.5f, 1f);
+            statusPanel.pivot = new Vector2(0.5f, 1f);
+            statusPanel.anchoredPosition = new Vector2(0f, -32f);
+            statusPanel.sizeDelta = new Vector2(920f, 64f);
 
-            Image background = panel.gameObject.AddComponent<Image>();
+            Image background = statusPanel.gameObject.AddComponent<Image>();
             background.color = new Color(0.05f, 0.04f, 0.035f, 0.86f);
             background.raycastTarget = false;
 
-            RectTransform textRect = CreateRect("StatusText", panel);
+            RectTransform textRect = CreateRect("StatusText", statusPanel);
             textRect.anchorMin = Vector2.zero;
             textRect.anchorMax = Vector2.one;
             textRect.offsetMin = new Vector2(18f, 8f);

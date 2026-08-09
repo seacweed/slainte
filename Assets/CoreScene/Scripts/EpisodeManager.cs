@@ -61,28 +61,7 @@ public class EpisodeManager : MonoSingleton<EpisodeManager>
     public bool CanStart(EpisodeData ep, GameProgress gp)
     {
         if (ep == null || gp == null) return false;
-
-        EpisodeTriggerCondition cond = ep.triggerCondition;
-        if (cond == null) return true;
-
-        if (gp.CurrentDay < cond.minDay) return false;
-
-        for (int i = 0; i < cond.requiredFlags.Count; i++)
-            if (!gp.HasFlag(cond.requiredFlags[i])) return false;
-
-        for (int i = 0; i < cond.blockedFlags.Count; i++)
-            if (gp.HasFlag(cond.blockedFlags[i])) return false;
-
-        for (int i = 0; i < cond.prerequisiteEpisodeIds.Count; i++)
-            if (!gp.IsEpisodeCompleted(cond.prerequisiteEpisodeIds[i])) return false;
-
-        for (int i = 0; i < cond.requiredVars.Count; i++)
-        {
-            VarCondition vc = cond.requiredVars[i];
-            if (!vc.Evaluate(gp.GetAffinity(vc.varName))) return false;
-        }
-
-        return true;
+        return ProgressConditionEvaluator.IsMet(ep.triggerCondition, gp);
     }
 
     public EpisodeData GetEpisodeData(string id)

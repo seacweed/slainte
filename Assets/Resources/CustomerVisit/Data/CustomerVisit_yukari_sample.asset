@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac17f86c00d94b55aa7b8895fa1d91f1, type: 3}
+  m_Name: CustomerVisit_yukari_sample
+  m_EditorClassIdentifier: Assembly-CSharp::CustomerVisitData
+  visitKey: yukari_sample_visit
+  tags:
+  - sample
+  members:
+  - characterKey: yukari
+    slotIndex: 0
+    expressionKeyMid: mid
+    expressionKeyGood: mid
+    expressionKeyBad: mid
+  weight: 1
+  condition:
+    minDay: 0
+    requiredFlags: []
+    blockedFlags: []
+    prerequisiteEpisodeIds: []
+    requiredVars: []
+  maxDay: 0
+  cooldownDays: 0
+  allowDuplicateInDay: 0
+  orders:
+  - order: {fileID: 11400000, guid: 976afdcf79473bf4cb536372ea1fe3b2, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []

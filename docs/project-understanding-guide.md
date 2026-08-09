@@ -1,17 +1,17 @@
 # Slainte 프로젝트 코드 이해 가이드
 
-> 기준: 2026-08-08, `mergeDummy` 브랜치, 커밋 `28a3ec3`, Unity `6000.3.5f2`
+> 기준: 2026-08-09 현재 작업 공간, Unity `6000.3.5f2`
 >
-> 규모: C# 154개, 약 18,303행(물리 행 기준), 런타임 130개와 Editor 24개. 별도 `.asmdef`와 자동화 테스트 어셈블리는 없다.
+> 규모: C# 163개, 약 20,425행(물리 행 기준), 런타임 136개와 Editor 27개. 별도 `.asmdef`와 자동화 테스트 어셈블리는 없다.
 
-이 문서는 154개 파일을 사전처럼 나열하지 않는다. 대신 게임이 시작되어 하루가 끝날 때까지 실제 호출 경로를 중심으로 시스템 경계와 데이터의 출처를 설명한다. 코드를 처음 읽을 때는 아래 순서대로 보면 된다.
+이 문서는 163개 파일을 사전처럼 나열하지 않는다. 대신 게임이 시작되어 하루가 끝날 때까지 실제 호출 경로를 중심으로 시스템 경계와 데이터의 출처를 설명한다. 코드를 처음 읽을 때는 아래 순서대로 보면 된다.
 
 1. 이 문서의 **큰 그림**, **네 가지 상태**, **하루 실행 흐름**을 읽는다.
 2. `CoreScene`의 전역 서비스와 `BusinessScene`의 씬 전용 시스템을 구분한다.
 3. 관심 기능에 맞춰 에피소드, 영업 주문, 바텐딩, 휴식 씬 중 하나의 호출 체인을 따라간다.
 4. 실제 수정 전에는 **무엇을 바꾸려면 어디를 볼까**와 **현재 경로/구형 경로 구분**을 확인한다.
 
-결함과 수정 우선순위는 [전체 코드 리뷰](code-review-2026-08-05.md)를 별도로 참고한다. 이 문서는 “어떻게 동작하는가”, 코드 리뷰는 “무엇이 잘못되어 있는가”에 초점을 둔다.
+결함과 수정 우선순위는 [현재 코드 리뷰](code-review-2026-08-09.md)를 별도로 참고한다. 2026-08-05 문서는 당시 상태를 보존한 이력이며, 이 문서는 “어떻게 동작하는가”, 현재 코드 리뷰는 “무엇을 다시 확인해야 하는가”에 초점을 둔다.
 
 ## 1. 30초 큰 그림
 
@@ -53,7 +53,7 @@ flowchart LR
 
 예를 들어 `GameState.Episode`인 동안에도 제조 노드에 들어가면 `GameMode`는 잠시 `CraftingMode`가 된다. 이때 병 하나는 동시에 `BottleState.Tilting`일 수 있다. 서로 다른 축이므로 모순이 아니다.
 
-현재 주문 상태 선언에는 `AwaitingDecision`이 있지만, 실제 Controller는 주문 대사가 닫히면 `PresentingOrder`에서 바로 제작을 시작한다. `AcceptOrder()`와 `RejectOrder()`는 `AwaitingDecision`만 허용하므로 현재 기본 호출 경로에서는 도달하지 않는 분기다.
+주문은 수락·거절 상태를 두지 않는다. 주문 대사가 닫히면 `PresentingOrder`에서 바로 `Crafting`으로 이동하며, 제출은 버튼이 아니라 잔을 전방 기준선 너머로 끄는 동작으로 발생한다.
 
 ## 3. 애플리케이션 시작과 객체 수명
 
@@ -192,13 +192,15 @@ flowchart LR
 
 ### 7.2 영업 하루
 
-[`BusinessSequencePlanner`](../Assets/Scripts/Business/BusinessSequencePlanner.cs)는 [`BusinessOrderFlowSettings.asset`](../Assets/Resources/Business/BusinessOrderFlowSettings.asset)의 `fixedOrders`를 `BusinessDaySnapshot`으로 만든다. 현재 기본 설정은 `vertical_slice_vodka_lemon` 손님 주문 한 건과 `vodka_lemon` 레시피다.
+[`BusinessSequencePlanner`](../Assets/Scripts/Business/BusinessSequencePlanner.cs)는 [`BusinessOrderFlowSettings.asset`](../Assets/Resources/Business/BusinessOrderFlowSettings.asset)의 모드에 따라 고정 주문 또는 손님 풀에서 `BusinessDaySnapshot`을 만든다. 현재 기본 설정은 `CustomerPool`이며, `yukari_sample_visit` 방문에서 `vertical_slice_vodka_lemon` 주문과 `vodka_lemon` 판정 레시피를 선택한다.
+
+손님 풀은 `CustomerVisitData`를 방문 단위로 사용한다. `members` 목록이 등장 인원을 표현하므로 개인·커플·단체 전용 열거형이 없다. 방문 조건과 주문 조건은 `ProgressConditionEvaluator`를 통해 에피소드와 같은 날짜·플래그·선행 에피소드·수치 조건을 평가한다. 방문과 주문은 각각 가중치로 선택하며, 날짜 기반 시드로 같은 상태에서 같은 결과를 재현한다.
 
 [`BusinessSequenceRunner`](../Assets/Scripts/Business/BusinessSequenceRunner.cs)는 다음을 반복한다.
 
 1. 저장된 현재 날짜의 snapshot이 유효하면 이어 쓰고, 아니면 새 목록을 만든다.
 2. 현재 entry를 `BusinessOrderSessionController.BeginOrder()`에 넘긴다.
-3. `OrderCompleted` 이벤트를 받으면 index를 증가시키고 저장한다.
+3. `OrderCompleted` 이벤트를 받으면 방문 이력과 index를 갱신하고 저장한다.
 4. 모든 entry가 끝나면 `BusinessDayCompleted`를 발생시킨다.
 
 ### 7.3 에피소드 제조와 일반 영업이 만나는 지점
@@ -228,7 +230,7 @@ flowchart TB
 | owner | `Business` | `Episode` |
 | 손님 주문 연출 | 표시 | 생략 |
 | 피드백 연출 | 표시 | 생략 |
-| 거절/포기 | 허용 | 금지 |
+| 수락·거절·포기 | 제공하지 않음 | 제공하지 않음 |
 | 돈/명성 보상 | 적용 | 적용하지 않음 |
 | 완료 처리 | 다음 영업 entry | Good/Bad 노드 분기 |
 
@@ -312,6 +314,7 @@ flowchart LR
 | bottle amounts | `Dictionary<string,float>` + Lists | 병별 남은 ml |
 | money/reputation | `int` | 영업 보상과 현황 UI |
 | business snapshot | `BusinessDaySnapshot` | 현재 날짜의 주문 목록과 index |
+| customer visit history | key→`CustomerVisitHistorySnapshot` | 마지막 방문 날짜, 누적 방문 횟수, 재등장 대기 |
 
 Unity `JsonUtility`가 Dictionary를 직접 다루지 못하므로 Dictionary/HashSet은 조회용이고, 병렬 List가 직렬화용이다. 새로운 저장 필드를 추가할 때 두 표현의 동기화를 빠뜨리면 안 된다.
 
@@ -337,9 +340,10 @@ flowchart LR
 | 에피소드 작성 원본 | `Assets/Data/EpisodeData/*.csv` 또는 `NarrativeGraphSO` | `EpisodeCsvImporter`, `EpisodeDataCompiler` |
 | 캐릭터 | `CharacterData`와 `CharacterDatabase` | `CharacterStage`, `EpisodeRunner` |
 | 손님 주문/대사 | `CustomerOrderData`, `CustomerOrderDatabase` | `CustomerSpawner` |
+| 손님 방문 풀 | `Resources/CustomerVisit`, `CustomerVisitDatabase` | `BusinessSequencePlanner`, `CustomerSpawner` |
 | 주문표 | `OrderTicketData`, `OrderTicketDatabase` | `OrderTicketManager` |
 | 제작 재료 | `Resources/Items` 중 타입이 `ItemDef`인 에셋 | `ItemDefCatalog` |
-| 레시피 | `StreamingAssets/Data/recipes.csv`, `recipe_ingredients.csv` | `CocktailRecipeCsvLoader` |
+| 레시피 | `StreamingAssets/Data` CSV + `Resources/Recipes` 에셋 | `CocktailRecipeDataLoader` |
 | 주문 문장 | `StreamingAssets/Data/order_templates.csv` | `CocktailOrderCsvLoader` |
 | 일반 영업 목록/보상 | `Resources/Business/BusinessOrderFlowSettings.asset` | `BusinessFlowBootstrap`, 주문 세션 |
 | 제작 Prefab/배치 | `Resources/Bartending/BusinessBartendingSettings.asset` | `BusinessBartendingBootstrap` |
@@ -364,6 +368,7 @@ flowchart LR
 - `nodeId`: 한 EpisodeData 안에서 다음 노드/분기의 목적지
 - `speakerKey`: `CharacterDatabase`의 캐릭터 key
 - `customerOrderKey`: `CustomerOrderDatabase`의 손님 주문 key
+- `visitKey`: `CustomerVisitDatabase`의 방문 key
 - `ticketKey`: `OrderTicketDatabase`의 주문표 key
 - `recipeId`: `recipes.csv.id`
 - `ingredientId`: `recipe_ingredients.csv`와 `ItemDef.id`
@@ -377,17 +382,17 @@ flowchart LR
 |---|---:|---|
 | `Assets/CoreScene/Scripts` | 9 / 580 | 부팅, Singleton, 저장, 에피소드 목록, 씬/하루 전환 |
 | `Assets/Scripts/Conversation/Episode` | 16 / 704 | 현재 사용되는 에피소드 데이터와 실행기 |
-| `Assets/Scripts/Business` | 7 / 948 | 일반 영업과 공용 주문 세션 |
-| `Assets/Scripts/Bartending` | 23 / 5,953 | 제작 월드, 도구, 액체 payload, 레시피/주문 판정 |
+| `Assets/Scripts/Business` | 7 | 일반 영업, 손님 풀 추첨, 공용 주문 세션 |
+| `Assets/Scripts/Bartending` | 26 | 제작 월드, 도구, 온도·김, 액체 payload, 레시피/주문 판정 |
 | `Assets/MetaballFluid/Scripts` | 6 / 580 | 액체 입자 풀, 충돌 혼합, 화면 표현 |
 | `Assets/Scripts/Presentation` | 3 / 483 | 캐릭터 배치와 연출 |
-| `Assets/Scripts/Conversation`, `Sell` | 5 / 382 | 공용 대화와 손님 주문 연출 |
+| `Assets/Scripts/Conversation`, `Sell` | 7 | 공용 대화, 손님 방문 구성과 주문 연출 |
 | `Assets/Scripts/Input`, `Core`, `CameraMove` | 6 / 281 | BusinessScene 모드, 입력, 화면 이동 |
 | `Assets/Scripts/OrderTicket`, `LiquorShelf`, `RecipeBook` | 14 / 926 | 제작 보조 UI |
 | `Assets/RestScene/Scripts` | 17 / 1,192 | 보드, 상점, 현황, Tooltip |
 | `Assets/Scripts/Narrative` | 9 / 303 | 그래프 데이터 모델과 구형 baked JSON 런타임 |
 | `Assets/Editor/Narrative` | 16 / 2,515 | 그래프 편집, 변환, compile/bake |
-| `Assets/Editor` | 8 / 2,548 | CSV/아이템 import, 검증, 테스트 씬 도구 |
+| `Assets/Editor` | 27개 전체 | CSV/아이템 import, 손님 풀, 검증, 그래프와 테스트 씬 도구 |
 
 ## 12. 무엇을 바꾸려면 어디를 볼까
 
@@ -396,7 +401,7 @@ flowchart LR
 | 새 에피소드 추가 | `Assets/Data/EpisodeData` | `EpisodeCsvImporter` → `Resources/EpisodeData` 에셋 → 보드 Sprite |
 | 대사/선택/분기 수정 | `EpisodeData` 원본 CSV 또는 Graph | `EpisodeNode`, `EpisodeChoice`, `GameProgress` flag/affinity |
 | 캐릭터 연출 수정 | `CharacterStage` | `CharacterData`, `CharacterView`, `FrontCameraRig` |
-| 일반 영업 주문 추가 | `BusinessOrderFlowSettings.asset` | customer key, ticket key, recipe ID가 각 DB/CSV에 존재하는지 확인 |
+| 일반 영업 손님 추가 | `CustomerVisitData` | members, 방문 조건·가중치, 주문 후보, customer order와 recipe ID 확인 |
 | 새 칵테일 추가 | `recipes.csv` | `recipe_ingredients.csv`, 각 `ItemDef.id`, 주문 노드의 recipe ID |
 | 제작 가능한 병 추가 | `ItemDef` | 같은 ID의 `LiquorBottleDef`, 술장 Category/Slot, Sprite, 초기 재고 |
 | 주문 판정 규칙 수정 | `CocktailEvaluator` | `CocktailOrderEvaluator`, score threshold 설정 |
@@ -417,7 +422,7 @@ flowchart LR
 | 에피소드가 시작되지 않음 | `DayFlowManager.StartEpisode()` | ID, 현재 GameState, trigger condition, Resources asset |
 | 대사/선택지가 멈춤 | `EpisodeRunner` | `_waitingForChoice`, `_waitingForCrafting`, `_waitingForCharacterAnim`, `_isTransitioning` |
 | 제조 노드가 바로 실패함 | `EpisodeRunner.HandleCraftingNode()` | `craftingRecipeId`, `BusinessFlowBootstrap.IsRuntimeReady` |
-| 손님/주문표가 안 나옴 | `CustomerSpawner`, `OrderTicketManager` | customer key와 ticket key의 Database 조회 결과 |
+| 손님/주문표가 안 나옴 | `BusinessSequencePlanner`, `CustomerSpawner`, `OrderTicketManager` | visit key, members, customer key, recipe ID, ticket key와 조건 통과 여부 |
 | 병이 술장에서 선택되지 않음 | `LiquorBottleSlotUI` | 해금 flag, `LiquorBottleDef.id == ItemDef.id`, 남은 재고, 빈 슬롯 |
 | 액체는 보이는데 판정량이 0임 | `VesselLiquidTracker` | Trigger collider, particle owner, `BuildComposition()` 디버그 표시 |
 | 예상과 다른 레시피 점수 | `CocktailEvaluator` | 재료별 ml, 총량, 잔 ID, 얼음, 기법, extra ingredient |
@@ -432,6 +437,7 @@ flowchart LR
 - **현재 작성 도구:** CSV Importer 또는 `NarrativeGraphSO` → `EpisodeDataCompiler` → `EpisodeData`
 - **별도 구형 런타임:** [`NarrativeManager`](../Assets/Scripts/Narrative/Runtime/NarrativeManager.cs)가 `StreamingAssets/NarrativeData` JSON을 읽는 경로는 현재 씬/Prefab에서 참조되지 않는다.
 - **구형 판정 UI:** `CraftingJudgeUI`는 `BusinessFlowBootstrap`이 런타임에서 숨기고 공용 주문 세션 UI를 사용한다.
+- **구형 손님 표시 필드:** `CustomerOrderData.characterKey`와 표정 필드는 이전 에셋 호환용이며 새 방문은 `CustomerVisitData.members`를 사용한다.
 - **개발/QA 도구:** `BottlePivotTestPanel`, `CocktailEvaluationTester`, `SetupTestSceneMenu`, `Sample_Scene`은 제품의 하루 흐름이 아니라 조작·판정 확인용이다.
 - **상점과 제작 아이템:** `ItemData`와 `ItemDef`는 이름이 비슷해도 자동 연동되지 않는다.
 - **술장 선택 경로:** 현재는 `LiquorShelfUI`/`LiquorBottleSlotUI`가 `BusinessBartendingBootstrap`에 병 생성을 요청한다. `DragandDrop/ShelfUI`, `DrawerUI`는 더 오래된 UI 드래그 계층이므로 실제 Scene/Prefab 참조를 확인한 뒤 수정한다.
@@ -482,7 +488,7 @@ flowchart LR
 - Bootstrap이 런타임 객체를 많이 만들므로, Scene YAML과 Edit Mode Hierarchy만 보면 실제 실행 구조의 일부가 빠져 보인다.
 - 문자열 ID와 Inspector 참조가 시스템 사이 계약이다. 컴파일 성공만으로 콘텐츠 연결이 검증되지 않는다.
 - 저장은 현재 진행 데이터의 snapshot이지 실행 스택 복원이 아니다. 앱 재시작 후 정확히 같은 에피소드 노드나 주문 중간 상태로 돌아가는 구조는 아니다.
-- 현재 알려진 릴리스 차단 이슈와 상세 근거는 [전체 코드 리뷰](code-review-2026-08-05.md)에 정리되어 있다. 특히 에피소드 제조 데이터, 액체 혼합 정확성, 상점 구매, 저장 안정성을 먼저 확인한다.
+- 현재 알려진 릴리스 차단 이슈와 상세 근거는 [현재 코드 리뷰](code-review-2026-08-09.md)에 정리되어 있다. 특히 에피소드 제조 데이터, 상점 구매, 저장·씬 전환 안정성을 먼저 확인한다.
 
 ## 17. 더 깊이 읽을 문서
 

@@ -31,7 +31,6 @@ namespace Slainte.Bartending
         private int sessionRenderLayer;
         private float sessionItemScale = 1f;
         private Coroutine snapRoutine;
-        private Coroutine resetRoutine;
         private Coroutine readyRoutine;
         private Camera sourceCamera;
         private int sourceCameraMask;
@@ -165,6 +164,13 @@ namespace Slainte.Bartending
             List<IBartendingItem> startingTools = new List<IBartendingItem>();
             IBartendingItem beaker = CreateItem(
                 settings.beakerPrefab, world.transform, "Beaker", settings.beakerPosition, renderLayer, itemScale);
+            IBartendingItem cobblerShaker = CreateItem(
+                settings.cobblerShakerPrefab,
+                world.transform,
+                "CobblerShaker",
+                settings.cobblerShakerPosition,
+                renderLayer,
+                itemScale);
             IBartendingItem glass = CreateItem(
                 settings.glassPrefab, world.transform, "Glass", settings.glassPosition, renderLayer, itemScale);
             if (glass is GlassController servingGlass)
@@ -174,6 +180,7 @@ namespace Slainte.Bartending
                 servingGlass.ServeRequested += HandleGlassServeRequested;
             }
             startingTools.Add(beaker);
+            startingTools.Add(cobblerShaker);
             startingTools.Add(glass);
             List<BottleController> selectedBottles = CreateSelectedBottles();
             sessionLiquidPool = CreateLiquidPool(world.transform, settings, renderLayer, itemScale);
@@ -263,24 +270,6 @@ namespace Slainte.Bartending
                 return;
 
             ServeRequested?.Invoke(tracker);
-        }
-
-        public void DiscardAndResetSession()
-        {
-            if (modeManager == null || modeManager.CurrentMode != GameMode.CraftingMode)
-                return;
-
-            if (resetRoutine == null)
-                resetRoutine = StartCoroutine(ResetSessionRoutine());
-        }
-
-        private IEnumerator ResetSessionRoutine()
-        {
-            DestroySession(clearBottleSelections: false);
-            yield return null;
-            if (modeManager != null && modeManager.CurrentMode == GameMode.CraftingMode)
-                CreateSession();
-            resetRoutine = null;
         }
 
         public bool TryPlaceBottleFromShelf(LiquorBottleDef shelfDefinition, out string failure)
