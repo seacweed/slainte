@@ -66,7 +66,7 @@ OutgoingBranches: List<string>  — 출력 포트 레이블 (포트 인덱스 = 
 |---|---|
 | Dialogue | SpeakerKey, OverrideSpeakerName, Text, CharacterAppearances, BgmCommand/BgmClipName |
 | Choice | SpeakerKey, Text (선택지 전 대사), Choices[].ButtonText/SetFlags/ClearFlags/VarChanges |
-| BusinessStart | CraftingTicketKey, CraftingFlagGood/Bad, CraftingVarChangesGood/Bad |
+| BusinessStart | CraftingTicketKey, `CraftingOutcomes: List<CraftingOutcomeData>`(결과별 Flag/VarChanges, `Get/SetCraftingFlag(result)` 등 접근자로 조회) |
 | BusinessEnd | (포트만 사용) |
 | BranchExit | ExitBranchName |
 
@@ -85,7 +85,7 @@ Conditions: List<GraphTriggerCondition>  — { Type, Key, Operator, Value }
 1. `graph.StartNodeGuid` 기준 BFS 순회
 2. `EpisodeNodeSO` → `EpisodeNode` 변환 (`BuildRuntimeNode`), `ChapterId`/`EpisodeType`/`MandatorySlot`은 그래프 메타에서 그대로 복사
 3. `TriggerNodeSO` 만나면 `InjectTriggerLogic` 호출 → 업스트림 노드의 flagBranches/varBranches에 인라인
-4. 출력 엣지 포트별로 `nextNodeId / nextNodeIdGood / nextNodeIdBad / choices[].nextNodeId` 연결. 일반 분기 포트는 라벨을 파싱해 `flagBranches`(`key == true`) → `episodeBranches`(연산자 없는 순수 텍스트, 예: `StrangeCoin_0`) → `varBranches`(`var op threshold`) 순으로 판별
+4. 출력 엣지 포트별로 `nextNodeId / choices[].nextNodeId` 또는 (제조 노드의 경우) `craftingOutcomes[result].nextNodeId` 연결. 일반 분기 포트는 라벨을 파싱해 `flagBranches`(`key == true`) → `episodeBranches`(연산자 없는 순수 텍스트, 예: `StrangeCoin_0`) → `varBranches`(`var op threshold`) 순으로 판별. 제조(BusinessStart) 노드는 `CraftingJobResultPorts.Order`(`Good=0, Bad=1, MidIce=2, MidGlass=3, MidIceGlass=4, MidWrongMenu=5`)로 포트 인덱스가 고정 — Good/Bad를 0/1에 유지한 건 기존 그래프 에셋에 저장된 edge와의 호환성 때문
 5. `Assets/Resources/EpisodeData/EpisodeData_{id}.asset` 저장 (기존 파일은 CopySerialized로 덮어쓰기)
 6. CSV export: `ExportToCsv()` — `EpisodeCsvImporter`와 동일한 포맷 + 전체 섹션 (`NODE_EPISODE_BRANCHES` 포함)
 

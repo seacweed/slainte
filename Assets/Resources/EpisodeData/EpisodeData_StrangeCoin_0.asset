@@ -10,20 +10,32 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ada6baddb75540a4ba25d31b476b855a, type: 3}
-  m_Name: EpisodeData_StrangeCoin_0
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EpisodeData
   episodeId: StrangeCoin_0
   episodeTitle: "\uC774\uC0C1\uD55C \uB3D9\uC804 - 0"
+  chapterId: 
+  episodeType: 0
+  mandatorySlot: 0
   triggerCondition:
     minDay: 0
     requiredFlags: []
     blockedFlags: []
     prerequisiteEpisodeIds: []
     requiredVars: []
+    requiredCustomerAppearances: []
+  playCondition:
+    minDay: 0
+    requiredFlags: []
+    blockedFlags: []
+    prerequisiteEpisodeIds: []
+    requiredVars: []
+    requiredCustomerAppearances: []
+  selectConditions: []
   openingCharacters:
   - characterKey: f72
     expressionKey: frust
-    slotIndex: -1
+    slotIndex: 0
   - characterKey: 
     expressionKey: 
     slotIndex: -1
@@ -37,18 +49,14 @@ MonoBehaviour:
     choices: []
     flagBranches: []
     varBranches: []
+    episodeBranches: []
     characters:
     - characterKey: f72
       expressionKey: annoy
-      slotIndex: -1
+      slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
+    craftingOutcomes: []
     bgmCommand: 1
     bgmClipName: Ep_main_0
   - nodeId: 1
@@ -60,18 +68,14 @@ MonoBehaviour:
     choices: []
     flagBranches: []
     varBranches: []
+    episodeBranches: []
     characters:
     - characterKey: f72
       expressionKey: mid
-      slotIndex: -1
+      slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
+    craftingOutcomes: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 2
@@ -83,18 +87,14 @@ MonoBehaviour:
     choices: []
     flagBranches: []
     varBranches: []
+    episodeBranches: []
     characters:
     - characterKey: f72
       expressionKey: mid
-      slotIndex: -1
+      slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
+    craftingOutcomes: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 3
@@ -106,18 +106,14 @@ MonoBehaviour:
     choices: []
     flagBranches: []
     varBranches: []
+    episodeBranches: []
     characters:
     - characterKey: f72
       expressionKey: annoy
-      slotIndex: -1
+      slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
+    craftingOutcomes: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 4
@@ -129,18 +125,14 @@ MonoBehaviour:
     choices: []
     flagBranches: []
     varBranches: []
+    episodeBranches: []
     characters:
     - characterKey: f72
       expressionKey: annoy
-      slotIndex: -1
+      slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
+    craftingOutcomes: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 5
@@ -151,18 +143,38 @@ MonoBehaviour:
     choices: []
     flagBranches: []
     varBranches: []
+    episodeBranches: []
     characters:
     - characterKey: f72
       expressionKey: annoy
-      slotIndex: -1
+      slotIndex: 0
     requiresCrafting: 1
     craftingTicketKey: sc0_f72
-    nextNodeIdGood: 5_1_1
-    nextNodeIdBad: 5_2_1
-    craftingFlagGood: sc0_true
-    craftingFlagBad: sc0_false
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
+    craftingOutcomes:
+    - result: 0
+      nextNodeId: 5_1_1
+      flag: sc0_true
+      varChanges: []
+    - result: 5
+      nextNodeId: 5_2_1
+      flag: sc0_false
+      varChanges: []
+    - result: 1
+      nextNodeId: 5_3_1
+      flag: sc0_false
+      varChanges: []
+    - result: 2
+      nextNodeId: 5_4_1
+      flag: sc0_false
+      varChanges: []
+    - result: 3
+      nextNodeId: 5_5_1
+      flag: sc0_false
+      varChanges: []
+    - result: 4
+      nextNodeId: 5_6_1
+      flag: sc0_false
+      varChanges: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 5_1_1
@@ -173,18 +185,14 @@ MonoBehaviour:
     choices: []
     flagBranches: []
     varBranches: []
+    episodeBranches: []
     characters:
     - characterKey: f72
       expressionKey: smile
-      slotIndex: -1
+      slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
+    craftingOutcomes: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 5_1_2
@@ -196,18 +204,14 @@ MonoBehaviour:
     choices: []
     flagBranches: []
     varBranches: []
+    episodeBranches: []
     characters:
     - characterKey: f72
       expressionKey: smile
-      slotIndex: -1
+      slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
+    craftingOutcomes: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 5_1_3
@@ -218,18 +222,14 @@ MonoBehaviour:
     choices: []
     flagBranches: []
     varBranches: []
+    episodeBranches: []
     characters:
     - characterKey: f72
       expressionKey: frust
-      slotIndex: -1
+      slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
+    craftingOutcomes: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 5_1_4
@@ -240,18 +240,14 @@ MonoBehaviour:
     choices: []
     flagBranches: []
     varBranches: []
+    episodeBranches: []
     characters:
     - characterKey: f72
       expressionKey: mid
-      slotIndex: -1
+      slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
+    craftingOutcomes: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 5_2_1
@@ -262,18 +258,14 @@ MonoBehaviour:
     choices: []
     flagBranches: []
     varBranches: []
+    episodeBranches: []
     characters:
     - characterKey: f72
       expressionKey: devas
-      slotIndex: -1
+      slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
+    craftingOutcomes: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 5_2_2
@@ -285,18 +277,14 @@ MonoBehaviour:
     choices: []
     flagBranches: []
     varBranches: []
+    episodeBranches: []
     characters:
     - characterKey: f72
       expressionKey: devas
-      slotIndex: -1
+      slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
+    craftingOutcomes: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 5_2_3
@@ -307,18 +295,14 @@ MonoBehaviour:
     choices: []
     flagBranches: []
     varBranches: []
+    episodeBranches: []
     characters:
     - characterKey: f72
       expressionKey: frust
-      slotIndex: -1
+      slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
+    craftingOutcomes: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 5_2_4
@@ -329,18 +313,321 @@ MonoBehaviour:
     choices: []
     flagBranches: []
     varBranches: []
+    episodeBranches: []
     characters:
     - characterKey: f72
       expressionKey: annoy
-      slotIndex: -1
+      slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
+    craftingOutcomes: []
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 5_3_1
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC774\uAC70\u2026 \uC6D0\uB798 \uC5BC\uC74C \uC5C6\uC774 \uB098\uC624\uB358\uAC00?"
+    nextNodeId: 5_3_2
+    choices: []
+    flagBranches: []
+    varBranches: []
+    episodeBranches: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+      slotIndex: 0
+    requiresCrafting: 0
+    craftingTicketKey: 
+    craftingOutcomes: []
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 5_3_2
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uCCC7, <b>5\uBC88\uAC00</b>\uB791 \uADF8\uB2E5 \uB2E4\uB97C\uAC8C \uC5C6\uAD70."
+    nextNodeId: 5_3_3
+    choices: []
+    flagBranches: []
+    varBranches: []
+    episodeBranches: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+      slotIndex: 0
+    requiresCrafting: 0
+    craftingTicketKey: 
+    craftingOutcomes: []
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 5_3_3
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC544."
+    nextNodeId: 5_3_4
+    choices: []
+    flagBranches: []
+    varBranches: []
+    episodeBranches: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+      slotIndex: 0
+    requiresCrafting: 0
+    craftingTicketKey: 
+    craftingOutcomes: []
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 5_3_4
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uBC29\uAE08 \uC774\uC57C\uAE30\uB294 \uC78A\uC5B4!"
+    nextNodeId: 
+    choices: []
+    flagBranches: []
+    varBranches: []
+    episodeBranches: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+      slotIndex: 0
+    requiresCrafting: 0
+    craftingTicketKey: 
+    craftingOutcomes: []
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 5_4_1
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC774\uBD10, \uC794\uC774 \uC774\uAC83\uBC16\uC5D0 \uC5C6\uC5C8\uB098?"
+    nextNodeId: 5_4_2
+    choices: []
+    flagBranches: []
+    varBranches: []
+    episodeBranches: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+      slotIndex: 0
+    requiresCrafting: 0
+    craftingTicketKey: 
+    craftingOutcomes: []
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 5_4_2
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uCCC7, <b>5\uBC88\uAC00</b>\uB791 \uADF8\uB2E5 \uB2E4\uB97C\uAC8C \uC5C6\uAD70."
+    nextNodeId: 5_4_3
+    choices: []
+    flagBranches: []
+    varBranches: []
+    episodeBranches: []
+    characters:
+    - characterKey: f72
+      expressionKey: annoy
+      slotIndex: 0
+    requiresCrafting: 0
+    craftingTicketKey: 
+    craftingOutcomes: []
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 5_4_3
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC544."
+    nextNodeId: 5_4_4
+    choices: []
+    flagBranches: []
+    varBranches: []
+    episodeBranches: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+      slotIndex: 0
+    requiresCrafting: 0
+    craftingTicketKey: 
+    craftingOutcomes: []
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 5_4_4
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uBC29\uAE08 \uC774\uC57C\uAE30\uB294 \uC78A\uC5B4!"
+    nextNodeId: 
+    choices: []
+    flagBranches: []
+    varBranches: []
+    episodeBranches: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+      slotIndex: 0
+    requiresCrafting: 0
+    craftingTicketKey: 
+    craftingOutcomes: []
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 5_5_1
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC774\uAC70\u2026 \uC6D0\uB798 \uC5BC\uC74C \uC5C6\uC774 \uB098\uC624\uB358\uAC00?"
+    nextNodeId: 5_5_2
+    choices: []
+    flagBranches: []
+    varBranches: []
+    episodeBranches: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+      slotIndex: 0
+    requiresCrafting: 0
+    craftingTicketKey: 
+    craftingOutcomes: []
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 5_5_2
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uAC8C\uB2E4\uAC00 \uC794 \uC120\uD0DD\uB3C4 \uC5C9\uB9DD\uC774\uC796\uC544."
+    nextNodeId: 5_5_3
+    choices: []
+    flagBranches: []
+    varBranches: []
+    episodeBranches: []
+    characters:
+    - characterKey: f72
+      expressionKey: annoy
+      slotIndex: 0
+    requiresCrafting: 0
+    craftingTicketKey: 
+    craftingOutcomes: []
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 5_5_3
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uCCC7, <b>5\uBC88\uAC00</b>\uB791 \uADF8\uB2E5 \uB2E4\uB97C\uAC8C \uC5C6\uAD70."
+    nextNodeId: 5_5_4
+    choices: []
+    flagBranches: []
+    varBranches: []
+    episodeBranches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: 0
+    requiresCrafting: 0
+    craftingTicketKey: 
+    craftingOutcomes: []
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 5_5_4
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC544."
+    nextNodeId: 5_5_5
+    choices: []
+    flagBranches: []
+    varBranches: []
+    episodeBranches: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+      slotIndex: 0
+    requiresCrafting: 0
+    craftingTicketKey: 
+    craftingOutcomes: []
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 5_5_5
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uBC29\uAE08 \uC774\uC57C\uAE30\uB294 \uC78A\uC5B4!"
+    nextNodeId: 
+    choices: []
+    flagBranches: []
+    varBranches: []
+    episodeBranches: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+      slotIndex: 0
+    requiresCrafting: 0
+    craftingTicketKey: 
+    craftingOutcomes: []
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 5_6_1
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC774\uBD10. \uC774\uAC70 \uB0B4\uAC00 \uC8FC\uBB38\uD55C\uAC70 \uB9DE\uC544?"
+    nextNodeId: 5_6_2
+    choices: []
+    flagBranches: []
+    varBranches: []
+    episodeBranches: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+      slotIndex: 0
+    requiresCrafting: 0
+    craftingTicketKey: 
+    craftingOutcomes: []
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 5_6_2
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC5EC\uAE30\uB77C\uACE0 <b>5\uBC88\uAC00</b>\uB791 \uB2E4\uB97C\uAC8C
+      \uC5C6\uAD70."
+    nextNodeId: 5_6_3
+    choices: []
+    flagBranches: []
+    varBranches: []
+    episodeBranches: []
+    characters:
+    - characterKey: f72
+      expressionKey: devas
+      slotIndex: 0
+    requiresCrafting: 0
+    craftingTicketKey: 
+    craftingOutcomes: []
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 5_6_3
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC544."
+    nextNodeId: 5_6_4
+    choices: []
+    flagBranches: []
+    varBranches: []
+    episodeBranches: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+      slotIndex: 0
+    requiresCrafting: 0
+    craftingTicketKey: 
+    craftingOutcomes: []
+    bgmCommand: 0
+    bgmClipName: 
+  - nodeId: 5_6_4
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uBC29\uAE08 \uC774\uC57C\uAE30\uB294 \uC78A\uC5B4!"
+    nextNodeId: 
+    choices: []
+    flagBranches: []
+    varBranches: []
+    episodeBranches: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+      slotIndex: 0
+    requiresCrafting: 0
+    craftingTicketKey: 
+    craftingOutcomes: []
     bgmCommand: 0
     bgmClipName: 
   - nodeId: 
@@ -359,22 +646,18 @@ MonoBehaviour:
       requiredAnyFlags: []
       nextNodeId: 
     varBranches: []
+    episodeBranches: []
     characters:
     - characterKey: 
       expressionKey: 
       slotIndex: -1
     requiresCrafting: 0
     craftingTicketKey: 
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
+    craftingOutcomes: []
     bgmCommand: 0
     bgmClipName: 
   episodeDescription: 
   iconNameBoard: 
   iconNameArchive: 
   characters: []
-  customConditionTexts: []
+  triggerConditionTexts: []

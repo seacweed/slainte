@@ -46,7 +46,7 @@
     *   **Event Editor**: 선택한 이벤트의 세부 속성(화자, 텍스트, 애니메이션 등) 편집.
 *   **영업 시퀀스 통합**:
     *   블록 내에 `Business Start` 이벤트가 포함되면, 해당 지점에서 게임이 중단되고 제조 화면으로 전환된다.
-    *   `Business End` 이벤트는 제조 성공(`nextNodeIdGood`)과 실패(`nextNodeIdBad`) 포트를 시각적으로 제공한다.
+    *   `Business Start` 이벤트는 제조 결과 6종(`CraftingJobResult`: Good/Mid-Ice/Mid-Glass/Mid-Ice+Glass/Mid-WrongMenu/Bad)에 대응하는 포트를 시각적으로 제공한다.
 
 ---
 
@@ -60,7 +60,7 @@
     *   블록의 마지막 이벤트는 그래프상에서 연결된 다음 노드(또는 트리거)를 가리킨다.
 3.  **영업 로직 매핑**:
     *   `Business Start` 지점의 노드는 `requiresCrafting = true` 속성을 가진다.
-    *   성공/실패 포트에 연결된 경로는 각각 `nextNodeIdGood`과 `nextNodeIdBad` 필드에 매핑된다.
+    *   6개 포트(Good/Bad/Mid-Ice/Mid-Glass/Mid-Ice+Glass/Mid-WrongMenu)에 연결된 경로는 `EpisodeNode.craftingOutcomes`(`List<CraftingOutcome>`, 결과별 `nextNodeId`/`flag`/`varChanges`를 담는 항목) 에 매핑된다. 포트 인덱스는 `CraftingJobResultPorts.Order`(`Good=0, Bad=1, MidIce=2, MidGlass=3, MidIceGlass=4, MidWrongMenu=5`)로 고정.
 4.  **멀티 포맷 내보내기**:
     *   **ScriptableObject**: 유니티 엔진 내에서 즉시 사용 가능한 바이너리 에셋.
     *   **CSV**: 기존 워크플로우와의 호환성 및 대량 편집용 포맷.

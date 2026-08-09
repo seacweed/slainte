@@ -16,6 +16,7 @@
    - [PLAY_TRIGGER — 플레이 조건](#play_trigger--플레이-조건)
    - [OPENING_CHARS — 첫 등장 캐릭터](#opening_chars--첫-등장-캐릭터)
    - [NODES — 대사 노드](#nodes--대사-노드)
+   - [NODE_CRAFTING_BRANCHES — 제조 결과 분기](#node_crafting_branches--제조-결과-분기)
    - [NODE_CHARS — 노드별 표정](#node_chars--노드별-표정)
    - [CHOICES — 선택지](#choices--선택지)
    - [NODE_BRANCHES — 플래그 분기](#node_branches--플래그-분기)
@@ -65,7 +66,7 @@
 
 ## 3. CSV 구조 한눈에 보기
 
-파일은 아래 10개 섹션으로 구성됩니다. **섹션 순서는 반드시 지켜야 합니다.**
+파일은 아래 11개 섹션으로 구성됩니다. **섹션 순서는 반드시 지켜야 합니다.**
 
 ```
 #META           ← 에피소드 ID·제목·시작 노드·타입·챕터
@@ -74,6 +75,7 @@
 #SELECT_TRIGGER ← 작전판 툴팁에서 플레이어가 on/off 토글할 수 있는 선택 조건 (생략 가능, Play 버튼과 무관)
 #OPENING_CHARS  ← 에피소드 시작 시 무대에 서 있는 캐릭터
 #NODES          ← 대사 목록 (핵심 섹션)
+#NODE_CRAFTING_BRANCHES ← 제조 결과(goodjob/badjob/midjob 4종)별 분기
 #NODE_CHARS     ← 각 대사에서 캐릭터 표정
 #CHOICES        ← 플레이어 선택지
 #NODE_BRANCHES  ← 플래그 기반 분기
@@ -224,8 +226,6 @@ f72,frust,-1
 | `nextNodeId` | 다음 노드 ID. 비우면 에피소드 종료 | `1` |
 | `requiresCrafting` | 제조 판정 여부 | `false` |
 | `craftingTicketKey` | 제조 티켓 ID (판정 있을 때만) | `sc0_f72` |
-| `nextNodeIdGood` | 제조 성공 시 이동 노드 | `5-1-1` |
-| `nextNodeIdBad` | 제조 실패 시 이동 노드 | `5-2-1` |
 | `bgmCommand` | BGM 명령 (`play` / `stop` / `none` 또는 빈 칸) | `play` |
 | `bgmClipName` | BGM 파일명 (확장자 제외, `play` 일 때만) | `bgm_tension` |
 
@@ -237,14 +237,38 @@ f72,frust,-1
 | 마지막 대사 (에피소드 종료) | **비워두기** | — |
 | 선택지 노드 | **비워두기** | `#CHOICES`에 선택지 작성 |
 | 분기 노드 | 기본값 (조건 불일치 시 이동) | `#NODE_BRANCHES`에 분기 작성 |
-| 제조 판정 노드 | **비워두기** | `text`도 비움, 성공/실패 노드 입력 |
+| 제조 판정 노드 | **비워두기** | `text`도 비움, goodjob/badjob/midjob(4종) 결과는 `#NODE_CRAFTING_BRANCHES`에 작성 |
 
 ```csv
 #NODES
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad
-0,f72,???,흘..크흘…,1,false,,,,play,bgm_tension,,,,
-1,shaun,,뭔가 원하는 게 있나요?,2,false,,,,,,,,
-2,f72,,,,true,sc0_f72,3a,3b,,,sc0_good,sc0_bad,sally_affinity+5,sally_affinity-2
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,bgmCommand,bgmClipName
+0,f72,???,흘..크흘…,1,false,,play,bgm_tension
+1,shaun,,뭔가 원하는 게 있나요?,2,false,,,
+2,f72,,,,true,sc0_f72,,
+```
+
+---
+
+### NODE_CRAFTING_BRANCHES — 제조 결과 분기
+
+제조 판정 노드(`requiresCrafting=true`)의 결과별 분기를 작성합니다. goodjob/badjob과 midjob 4종(ice/glass/ice_glass/wrongmenu), 총 6가지 중 실제로 대사가 갈리는 결과만 행을 씁니다.
+
+| 열 | 설명 | 예시 |
+|---|---|---|
+| `nodeId` | 제조 판정 노드 ID | `2` |
+| `result` | 제조 결과: `Good`/`Bad`/`MidIce`/`MidGlass`/`MidIceGlass`/`MidWrongMenu` | `Good` |
+| `nextNodeId` | 해당 결과일 때 이동 노드 | `3a` |
+| `flag` | 해당 결과일 때 설정할 플래그 (선택) | `sc0_good` |
+| `varChanges` | 해당 결과일 때 수치 변수 변경 (선택, `\|` 구분) | `sally_affinity+5` |
+
+- `result` 행이 없는 결과는 그 결과가 나와도 다음 노드로 넘어가지 않고 에피소드가 종료됩니다.
+- 재료·얼음·잔을 비교해 6가지 결과 중 무엇인지 자동으로 판정하는 기능은 아직 없어서, 지금은 제조 화면에서 버튼 6개로 사람이 직접 결과를 선택합니다.
+
+```csv
+#NODE_CRAFTING_BRANCHES
+nodeId,result,nextNodeId,flag,varChanges
+2,Good,3a,sc0_good,sally_affinity+5
+2,Bad,3b,sc0_bad,sally_affinity-2
 ```
 
 ---
@@ -470,21 +494,44 @@ nodeId,requiredCompletedEpisodeId,nextNodeId
 
 ### 제조 판정
 
-칵테일 제조 성공/실패에 따라 대화가 달라지는 노드입니다.
+칵테일 제조 결과에 따라 대화가 달라지는 노드입니다. 결과는 goodjob/badjob과 4종의 midjob으로 총 6가지입니다.
+
+- **goodjob**: 주문한 레시피를 재료·얼음·잔까지 정확히 제조
+- **midjob-ice**: 재료·잔은 맞지만 얼음 유무만 다름
+- **midjob-glass**: 재료·얼음은 맞지만 잔 종류만 다름
+- **midjob-ice_glass**: 재료는 맞지만 얼음·잔이 모두 다름
+- **midjob-wrongmenu**: 주문한 레시피가 아닌 다른 레시피를 올바르게 제조
+- **badjob**: 그 외 전부
 
 1. 해당 노드의 `text`와 `nextNodeId`는 **비워둡니다**.
 2. `requiresCrafting`을 `true`로 설정합니다.
-3. `craftingTicketKey`, `nextNodeIdGood`, `nextNodeIdBad`를 채웁니다.
+3. `craftingTicketKey`를 채웁니다.
+4. `#NODE_CRAFTING_BRANCHES`에 `nodeId`를 맞춰 결과별 행을 추가합니다. 대사가 갈리는 결과만 채우면 되고, 나머지는 행을 생략하면 그 결과에서는 대사 없이 에피소드가 종료됩니다.
 
 ```
-노드 5 (제조 판정) ─── 성공 → 노드 5-1-1
-                   └── 실패 → 노드 5-2-1
+노드 5 (제조 판정) ─── goodjob        → 노드 5-1-1
+                   ├── midjob-ice     → 노드 5-3-1
+                   ├── midjob-glass   → 노드 5-4-1
+                   ├── midjob-ice_glass → 노드 5-5-1
+                   ├── midjob-wrongmenu → 노드 5-6-1
+                   └── badjob         → 노드 5-2-1
 ```
 
 ```csv
 #NODES
-5,,,,,true,sc0_f72,5-1-1,5-2-1,,
+5,,,,,true,sc0_f72,,
+
+#NODE_CRAFTING_BRANCHES
+nodeId,result,nextNodeId,flag,varChanges
+5,Good,5-1-1,,
+5,Bad,5-2-1,,
+5,MidIce,5-3-1,,
+5,MidGlass,5-4-1,,
+5,MidIceGlass,5-5-1,,
+5,MidWrongMenu,5-6-1,,
 ```
+
+> 현재 제조 판정은 재료·얼음·잔을 자동으로 비교하는 로직이 아직 없어 `CraftingJudgeUI`의 버튼 6개(Good/Mid-Ice/Mid-Glass/Mid-Ice+Glass/Mid-WrongMenu/Bad)로 수동 판정합니다.
 
 ---
 
@@ -506,13 +553,13 @@ characterKey,expressionKey,slotIndex
 f72,neutral,-1
 
 #NODES
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad,bgmCommand,bgmClipName,craftingFlagGood,craftingFlagBad,craftingVarChangesGood,craftingVarChangesBad
-0,f72,???,뭘 마시겠어?,1,false,,,,play,bgm_bar,,,,
-1,shaun,,추천해줘.,2,false,,,,,,,,
-2,f72,,그럼 선택해.,,false,,,,,,,,
-3a,f72,,좋은 선택이야.,4,false,,,,,,,,
-3b,f72,,그것도 나쁘지 않아.,4,false,,,,,,,,
-4,f72,,또 오게.,,false,,,,stop,,,,,
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,bgmCommand,bgmClipName
+0,f72,???,뭘 마시겠어?,1,false,,play,bgm_bar
+1,shaun,,추천해줘.,2,false,,,
+2,f72,,그럼 선택해.,,false,,,
+3a,f72,,좋은 선택이야.,4,false,,,
+3b,f72,,그것도 나쁘지 않아.,4,false,,,
+4,f72,,또 오게.,,false,,stop,
 
 #NODE_CHARS
 nodeId,characterKey,expressionKey,slotIndex

@@ -89,8 +89,9 @@ namespace NarrativeFlow.Editor
 
                 if (rNode.requiresCrafting)
                 {
-                    AddEdge(graph, srcEp, rNode.nextNodeIdGood, nodeViews, 0);
-                    AddEdge(graph, srcEp, rNode.nextNodeIdBad,  nodeViews, 1);
+                    var order = CraftingJobResultPorts.Order;
+                    for (int i = 0; i < order.Length; i++)
+                        AddEdge(graph, srcEp, rNode.GetNextNodeId(order[i]), nodeViews, i);
                 }
                 else if (rNode.choices.Count > 0)
                 {
@@ -144,8 +145,8 @@ namespace NarrativeFlow.Editor
                 result.Add(node);
 
                 Enqueue(queue, node.nextNodeId);
-                Enqueue(queue, node.nextNodeIdGood);
-                Enqueue(queue, node.nextNodeIdBad);
+                foreach (var craftingResult in CraftingJobResultPorts.Order)
+                    Enqueue(queue, node.GetNextNodeId(craftingResult));
                 node.choices.ForEach(c => Enqueue(queue, c.nextNodeId));
                 node.flagBranches.ForEach(b => Enqueue(queue, b.nextNodeId));
                 node.episodeBranches.ForEach(b => Enqueue(queue, b.nextNodeId));
@@ -178,14 +179,19 @@ namespace NarrativeFlow.Editor
 
             if (rNode.requiresCrafting)
             {
-                ev.Type               = EpisodeEventType.BusinessStart;
-                ev.CraftingTicketKey  = rNode.craftingTicketKey;
-                ev.CraftingFlagGood   = rNode.craftingFlagGood;
-                ev.CraftingFlagBad    = rNode.craftingFlagBad;
-                ev.CraftingVarChangesGood = rNode.craftingVarChangesGood
-                    .Select(v => new VarChangeData { VarName = v.varName, Delta = v.delta }).ToList();
-                ev.CraftingVarChangesBad  = rNode.craftingVarChangesBad
-                    .Select(v => new VarChangeData { VarName = v.varName, Delta = v.delta }).ToList();
+                ev.Type              = EpisodeEventType.BusinessStart;
+                ev.CraftingTicketKey = rNode.craftingTicketKey;
+
+                foreach (var result in CraftingJobResultPorts.Order)
+                {
+                    string flag = rNode.GetCraftingFlag(result);
+                    var varChanges = rNode.GetCraftingVarChanges(result);
+                    if (string.IsNullOrEmpty(flag) && varChanges.Count == 0) continue;
+
+                    ev.SetCraftingFlag(result, flag);
+                    ev.SetCraftingVarChanges(result, varChanges
+                        .Select(v => new VarChangeData { VarName = v.varName, Delta = v.delta }).ToList());
+                }
             }
             else if (rNode.choices.Count > 0)
             {
@@ -220,7 +226,7 @@ namespace NarrativeFlow.Editor
         private static List<string> BuildBranches(EpisodeNode rNode)
         {
             if (rNode.requiresCrafting)
-                return new List<string> { "Good", "Bad" };
+                return CraftingJobResultPorts.Order.Select(CraftingJobResultPorts.Label).ToList();
 
             if (rNode.choices.Count > 0)
                 return rNode.choices.Select(c => !string.IsNullOrEmpty(c.buttonText) ? c.buttonText : "Choice").ToList();

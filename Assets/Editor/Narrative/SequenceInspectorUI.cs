@@ -47,10 +47,16 @@ namespace NarrativeFlow.Editor
                 case EpisodeEventType.BusinessStart:
                     container.Add(CreateField("Ticket", ev.CraftingTicketKey, "none", nodeView, v => ev.CraftingTicketKey = v, graph));
                     container.Add(NarrativeUIHelper.CreateDivider());
-                    container.Add(CreateField("Flag (Good)", ev.CraftingFlagGood, "none", nodeView, v => ev.CraftingFlagGood = v, graph));
-                    container.Add(CreateField("Flag (Bad)",  ev.CraftingFlagBad,  "none", nodeView, v => ev.CraftingFlagBad  = v, graph));
-                    DrawVarChangeList(container, "Var Changes (Good)", ev.CraftingVarChangesGood, nodeView, epNode, graph);
-                    DrawVarChangeList(container, "Var Changes (Bad)",  ev.CraftingVarChangesBad,  nodeView, epNode, graph);
+                    foreach (var result in CraftingJobResultPorts.Order)
+                    {
+                        string label = CraftingJobResultPorts.Label(result);
+                        container.Add(CreateField($"Flag ({label})", ev.GetCraftingFlag(result), "none", nodeView, v => ev.SetCraftingFlag(result, v), graph));
+                    }
+                    foreach (var result in CraftingJobResultPorts.Order)
+                    {
+                        string label = CraftingJobResultPorts.Label(result);
+                        DrawVarChangeList(container, $"Var Changes ({label})", ev.GetCraftingVarChanges(result), nodeView, epNode, graph);
+                    }
                     break;
                 case EpisodeEventType.BranchExit:
                     container.Add(NarrativeUIHelper.CreateLabel("Select Output Branch", "field-label"));

@@ -178,7 +178,7 @@ flowchart TB
     Mode -->|"CraftingMode 진입"| Bootstrap["BusinessBartendingBootstrap"]
     Bootstrap --> Viewport["BartendingViewport + RenderTexture"]
     Bootstrap --> Physics["Bottle / Beaker / Glass / Slot / LiquidPool"]
-    Judge["CraftingJudgeUI"] -->|"Good / Bad"| Runner
+    Judge["CraftingJudgeUI"] -->|"CraftingJobResult (6종)"| Runner
 ```
 
 ### 내부 모드

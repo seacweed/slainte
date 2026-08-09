@@ -1,8 +1,20 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class MainMenuIntroController : MonoBehaviour
 {
+    [Serializable]
+    public class TitleBlinkStep
+    {
+        public float fadeOutDuration = 0.2f;
+        public float targetAlpha = 0.2f;
+        public float holdDuration = 0.1f;
+        public float fadeInDuration = 0.2f;
+        public float intervalBefore = 0.15f;
+    }
+
     [Header("Team Logo")]
     [SerializeField] private CanvasGroup teamLogoGroup;
     [SerializeField] private float teamLogoFadeInDuration = 1f;
@@ -12,10 +24,18 @@ public class MainMenuIntroController : MonoBehaviour
     [Header("Title Logo")]
     [SerializeField] private CanvasGroup titleGroup;
     [SerializeField] private float titleFadeInDuration = 0.8f;
-    [SerializeField] private int titleBlinkCount = 2;
-    [SerializeField] private float titleBlinkDuration = 0.4f;
-    [SerializeField] private float titleBlinkMinAlpha = 0.2f;
+    [SerializeField]
+    private List<TitleBlinkStep> titleBlinkSteps = new List<TitleBlinkStep>
+    {
+        new TitleBlinkStep(),
+        new TitleBlinkStep(),
+        new TitleBlinkStep(),
+    };
     [SerializeField] private Vector2 titleTopPosition = new Vector2(0f, 600f);
+
+    [Header("Title Glow")]
+    [SerializeField] private CanvasGroup titleGlowGroup;
+    [SerializeField] private float titleGlowFadeOutDuration = 2f;
 
     [Header("Background")]
     [SerializeField] private CanvasGroup backgroundGroup;
@@ -49,6 +69,8 @@ public class MainMenuIntroController : MonoBehaviour
 
         SetGroupState(teamLogoGroup, 0f, false);
         SetGroupState(titleGroup, 0f, false);
+        if (titleGlowGroup != null)
+            SetGroupState(titleGlowGroup, 0f, false);
         SetGroupState(backgroundGroup, 1f, false);
         SetGroupState(backgroundDimmerGroup, 1f, false);
         SetGroupState(pubLightingGroup, 0f, false);
@@ -79,10 +101,12 @@ public class MainMenuIntroController : MonoBehaviour
         yield return new WaitForSeconds(teamLogoHoldDuration);
         yield return FadeCanvasGroup(teamLogoGroup, 1f, 0f, teamLogoFadeOutDuration);
 
-        yield return FadeCanvasGroup(titleGroup, 0f, 1f, titleFadeInDuration);
-        yield return BlinkCanvasGroup(titleGroup, titleBlinkCount, titleBlinkDuration, titleBlinkMinAlpha);
+        yield return FadeCanvasGroups(0f, 1f, titleFadeInDuration, titleGroup, titleGlowGroup);
+        yield return BlinkCanvasGroups(titleBlinkSteps, titleGroup, titleGlowGroup);
 
         StartCoroutine(FadeCanvasGroup(backgroundDimmerGroup, 1f, 0f, backgroundFadeInDuration));
+        if (titleGlowGroup != null)
+            StartCoroutine(FadeCanvasGroup(titleGlowGroup, 1f, 0f, titleGlowFadeOutDuration));
         yield return new WaitForSeconds(moveStartDelay);
         yield return MoveRectTransforms(
             titleRect, titleCenterPosition, titleTopPosition,
@@ -101,6 +125,8 @@ public class MainMenuIntroController : MonoBehaviour
     {
         SetGroupState(teamLogoGroup, 0f, false);
         SetGroupState(titleGroup, 1f, false);
+        if (titleGlowGroup != null)
+            SetGroupState(titleGlowGroup, 0f, false);
         SetGroupState(backgroundGroup, 1f, false);
         SetGroupState(backgroundDimmerGroup, 0f, false);
         SetGroupState(pubLightingGroup, 1f, false);
@@ -129,14 +155,46 @@ public class MainMenuIntroController : MonoBehaviour
         group.alpha = to;
     }
 
-    private static IEnumerator BlinkCanvasGroup(CanvasGroup group, int count, float blinkDuration, float minAlpha)
+    private static IEnumerator BlinkCanvasGroups(List<TitleBlinkStep> steps, params CanvasGroup[] groups)
     {
-        float halfDuration = blinkDuration * 0.5f;
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < steps.Count; i++)
         {
-            yield return FadeCanvasGroup(group, 1f, minAlpha, halfDuration);
-            yield return FadeCanvasGroup(group, minAlpha, 1f, halfDuration);
+            TitleBlinkStep step = steps[i];
+            if (step.intervalBefore > 0f)
+                yield return new WaitForSeconds(step.intervalBefore);
+            yield return FadeCanvasGroups(1f, step.targetAlpha, step.fadeOutDuration, groups);
+            if (step.holdDuration > 0f)
+                yield return new WaitForSeconds(step.holdDuration);
+            yield return FadeCanvasGroups(step.targetAlpha, 1f, step.fadeInDuration, groups);
         }
+    }
+
+    private static IEnumerator FadeCanvasGroups(float from, float to, float duration, params CanvasGroup[] groups)
+    {
+        if (duration <= 0f)
+        {
+            foreach (CanvasGroup group in groups)
+                if (group != null)
+                    group.alpha = to;
+            yield break;
+        }
+
+        float elapsed = 0f;
+        foreach (CanvasGroup group in groups)
+            if (group != null)
+                group.alpha = from;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float alpha = Mathf.Lerp(from, to, elapsed / duration);
+            foreach (CanvasGroup group in groups)
+                if (group != null)
+                    group.alpha = alpha;
+            yield return null;
+        }
+        foreach (CanvasGroup group in groups)
+            if (group != null)
+                group.alpha = to;
     }
 
     private static IEnumerator FlickerCanvasGroupOn(CanvasGroup group, int flickerCount, float flickerDuration)

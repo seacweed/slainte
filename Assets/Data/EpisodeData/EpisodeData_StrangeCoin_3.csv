@@ -10,8 +10,8 @@ minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,,,,
 characterKey,expressionKey,slotIndex,,,,,,
 sally,blood_tired,-1,,,,,,
 ,,,,,,,,
-#NODES,,,,,,,,
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,nextNodeIdGood,nextNodeIdBad
+#NODES
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,bgmCommand,bgmClipName
 0,sally,,... 바텐더... 도와줘!,1,FALSE,,,
 1,shaun,,셀리씨?! 이게 무슨... 온몸이 피투성이잖아요!,2,FALSE,,,
 2,sally,,걱정마 내 피는 아니니까.,3,FALSE,,,
@@ -40,7 +40,7 @@ nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingT
 20,shaun,,셀리씨? 이제 나오셔도 될것 같은데요…,21,FALSE,,,
 21,sally,,으.. 허리야,22,FALSE,,,
 22,sally,,술장이라 그런지 술 냄새가 진동하는군,23,FALSE,,,
-23,sally,,... ,24,FALSE,,,
+23,sally,,...,24,FALSE,,,
 24,sally,,뭐야 이거. 고작 그거에 쓰러진거야?,,FALSE,,,
 25_1_1,shaun,,셀리씨! 장난하지 마시고 어떻게좀 해주세요!,25_1_2,FALSE,,,
 25_1_2,sally,,"하, 알았다고.",25_1_3,FALSE,,,
@@ -53,7 +53,7 @@ nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingT
 26,shaun,,술로 뭘 어떻게 하시려고요?,27,FALSE,,,
 27,sally,,소독하고 지혈이라도 해야지. 이대로 뒀다간 진짜 죽을지도 몰라.,28,FALSE,,,
 28,sally,,따끔하게 정신도 좀 차리게 할겸.,29,FALSE,,,
-29,,,,,TRUE,sc3_sally,30_1_1,30_2_1
+29,,,,,TRUE,sc3_sally,,
 30_1_1,sally,,좋아. 알콜 향이 진동하는군.,30_1_2,FALSE,,,
 30_1_2,sally,,이정도면 되겠어.,31,FALSE,,,
 30_2_1,sally,,부족해. 더 쌘걸로 다시줘.,31,FALSE,,,
@@ -126,7 +126,7 @@ nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingT
 82,sally,,"젠장, <b>대가리 꽃밭</b>이랑 머리가 지끈거려서 못 참겠군. 위로조차 교과서를 읇네.",83,FALSE,,,
 83,sally,,"바텐더, 시원하고 차가운걸로 하나 부탁할게.",84,FALSE,,,
 84,shaun,,기다리던 바입니다. 바로 대령해 드리죠.,85,FALSE,,,
-85,,,,,TRUE,sc3_sally_1,85_1_1,85_2_1
+85,,,,,TRUE,sc3_sally_1,,
 85_1_1,sally,,하아.. 좀 살겠군.,85_1_2,FALSE,,,
 85_1_2,sally,,올 때마다 시끄러운 곳이지만 술맛은 최고라니까.,86,FALSE,,,
 85_2_1,sally,,…저번엔 맛이 더 괜찮았던것 같은데.,85_2_2,FALSE,,,
@@ -138,7 +138,7 @@ nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingT
 90,e12,,흠흠. 잘 보십시오!,91,FALSE,,,
 91,e12,,"<b>바텐더, 네그로니 하나 부탁할게요.</b>",92,FALSE,,,
 92,shaun,,저번에 못드린 <b>네그로니</b>. 이번에는 제대로 만들어 드리겠습니다.,93,FALSE,,,
-93,,,,,TRUE,sc3_e12,93_1_1,93_2_1
+93,,,,,TRUE,sc3_e12,,
 93_1_1,e12,,윽.. 바텐더… 이거 원래.. 이런 맛입니까?,93_1_2,FALSE,,,
 93_1_2,sally,,왜? 괜찮아 보이는데?,93_1_3,FALSE,,,
 93_1_3,shaun,,"앗, 맛에 문제라도 있나요?",93_1_4,FALSE,,,
@@ -203,6 +203,15 @@ nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingT
 145,e12,,다음에 봅시다. 그때는 칵테일만 마시러 오겠습니다.,146,FALSE,,,
 146,shaun,,"네, 슬런챠의 문은 언제나 열려있습니다.",,FALSE,,,
 ,,,,,,,,
+#NODE_CRAFTING_BRANCHES
+nodeId,result,nextNodeId,flag,varChanges
+29,Good,30_1_1,,
+29,Bad,30_2_1,,
+85,Good,85_1_1,,
+85,Bad,85_2_1,,
+93,Good,93_1_1,,
+93,Bad,93_2_1,,
+
 #NODE_CHARS,,,,,,,,
 nodeId,characterKey,expressionKey,slotIndex,,,,,
 0,sally,blood_tired,1,,,,,

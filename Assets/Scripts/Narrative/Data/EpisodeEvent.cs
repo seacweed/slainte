@@ -38,13 +38,35 @@ namespace NarrativeFlow
 
         // Business Fields
         public string CraftingTicketKey;
-        public string CraftingFlagGood;
-        public string CraftingFlagBad;
-        public List<VarChangeData> CraftingVarChangesGood = new();
-        public List<VarChangeData> CraftingVarChangesBad  = new();
+        public List<CraftingOutcomeData> CraftingOutcomes = new();
 
         // Branch Exit
         public string ExitBranchName;
+
+        private CraftingOutcomeData GetOrAddCraftingOutcome(CraftingJobResult result)
+        {
+            var outcome = CraftingOutcomes.Find(o => o.Result == result);
+            if (outcome == null)
+            {
+                outcome = new CraftingOutcomeData { Result = result };
+                CraftingOutcomes.Add(outcome);
+            }
+            return outcome;
+        }
+
+        public string GetCraftingFlag(CraftingJobResult result) => CraftingOutcomes.Find(o => o.Result == result)?.Flag;
+        public void   SetCraftingFlag(CraftingJobResult result, string flag) => GetOrAddCraftingOutcome(result).Flag = flag;
+
+        public List<VarChangeData> GetCraftingVarChanges(CraftingJobResult result) => CraftingOutcomes.Find(o => o.Result == result)?.VarChanges ?? new();
+        public void                 SetCraftingVarChanges(CraftingJobResult result, List<VarChangeData> list) => GetOrAddCraftingOutcome(result).VarChanges = list;
+    }
+
+    [Serializable]
+    public class CraftingOutcomeData
+    {
+        public CraftingJobResult Result;
+        public string Flag;
+        public List<VarChangeData> VarChanges = new();
     }
 
     [Serializable]

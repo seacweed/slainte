@@ -2,11 +2,9 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
-public class LiquorBottleInfoCard : MonoBehaviour
+public class LiquorBottleInfoCard : SceneSingleton<LiquorBottleInfoCard>
 {
     private const int FirstRowIconCount = 5;
-
-    public static LiquorBottleInfoCard Instance { get; private set; }
 
     [Header("Content")]
     [SerializeField] private RectTransform     rect;
@@ -21,9 +19,9 @@ public class LiquorBottleInfoCard : MonoBehaviour
     [Header("State Sprites")]
     [SerializeField] private LiquorStockLevelPalette stockLevelPalette;
 
-    void Awake()
+    protected override void Awake()
     {
-        Instance = this;
+        base.Awake();
         gameObject.SetActive(false);
     }
 

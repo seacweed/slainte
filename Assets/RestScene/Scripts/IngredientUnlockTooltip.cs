@@ -4,10 +4,8 @@ using UnityEngine.UI;
 
 // Shown on hover over a locked ingredient in the shop. Explains how to unlock it.
 // Mirrors LiquorBottleInfoCard's singleton/fixed-slot pattern.
-public class IngredientUnlockTooltip : MonoBehaviour
+public class IngredientUnlockTooltip : SceneSingleton<IngredientUnlockTooltip>
 {
-    public static IngredientUnlockTooltip Instance { get; private set; }
-
     [Header("Content")]
     [SerializeField] private RectTransform rect;
 
@@ -19,9 +17,9 @@ public class IngredientUnlockTooltip : MonoBehaviour
     [Header("Episode Hint (silhouette + '???' are static in-prefab)")]
     [SerializeField] private GameObject episodeGroup;
 
-    void Awake()
+    protected override void Awake()
     {
-        Instance = this;
+        base.Awake();
         gameObject.SetActive(false);
     }
 

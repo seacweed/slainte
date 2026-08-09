@@ -1058,6 +1058,7 @@ RectTransform:
   - {fileID: 653240954}
   - {fileID: 714543095}
   - {fileID: 739511322}
+  - {fileID: 1992440800}
   - {fileID: 462619403}
   m_Father: {fileID: 1575641884}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1345,6 +1346,71 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 784481503}
   m_CullTransparentMesh: 1
+--- !u!1 &861557324
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 861557325}
+  - component: {fileID: 861557326}
+  m_Layer: 5
+  m_Name: CharacterSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &861557325
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 861557324}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1575641884}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &861557326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 861557324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc2e9e3a5eca2fa4daf761d05631ce35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MainMenuCharacterSpawner
+  spawnArea: {fileID: 1992440800}
+  baselineY: -80
+  characterSprites:
+  - {fileID: -2769423896466324367, guid: 0608f3bb6c4d65e499123d8f687486b9, type: 3}
+  - {fileID: -7499337640001138003, guid: bdc861dde6db2734c8dd685e8e33d07b, type: 3}
+  - {fileID: -6765133886556760437, guid: 7c6920100827f834382bc4f96359dd87, type: 3}
+  - {fileID: 2098887190743768781, guid: 1e3212fddc4b66946953b6b3163cd509, type: 3}
+  - {fileID: 475604623947432330, guid: ae1674a4d540d4c41b4ded95e87af090, type: 3}
+  - {fileID: 876292597224873609, guid: c1de54730e0cb8649b24d4320c39431f, type: 3}
+  - {fileID: -8478994159259911358, guid: d480fd4e432d7c24e96ad1b7b4092918, type: 3}
+  - {fileID: -859723074011273000, guid: 72a6567a0e03f0549890070c1362afed, type: 3}
+  spriteFacesRight: 0
+  maxConcurrentCharacters: 10
+  spawnIntervalRange: {x: 3, y: 6}
+  moveSpeedRange: {x: 40, y: 70}
+  bobbingAmplitudeRange: {x: 3, y: 5}
+  bobbingFrequencyRange: {x: 1.2, y: 1.7}
 --- !u!1 &1141215796
 GameObject:
   m_ObjectHideFlags: 0
@@ -1399,6 +1465,54 @@ MonoBehaviour:
   - {fileID: 595815751}
   - {fileID: 606912774}
   scrollSpeed: 80
+--- !u!1 &1187923675
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1187923676}
+  - component: {fileID: 1187923677}
+  m_Layer: 5
+  m_Name: TitleGlow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1187923676
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1187923675}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1575641884}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &1187923677
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1187923675}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1315526422
 GameObject:
   m_ObjectHideFlags: 0
@@ -1607,10 +1721,12 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 618683319}
+  - {fileID: 1187923676}
   - {fileID: 477561812}
   - {fileID: 1315526426}
   - {fileID: 562610027}
   - {fileID: 2134091168}
+  - {fileID: 861557325}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1910,6 +2026,41 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1840335368}
   m_CullTransparentMesh: 1
+--- !u!1 &1992440799
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1992440800}
+  m_Layer: 5
+  m_Name: CharacterSpawnArea
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1992440800
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1992440799}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 618683319}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: 0, y: -350}
+  m_SizeDelta: {x: 0, y: 200}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2134091167
 GameObject:
   m_ObjectHideFlags: 0
@@ -1964,10 +2115,25 @@ MonoBehaviour:
   teamLogoFadeOutDuration: 0.8
   titleGroup: {fileID: 477561809}
   titleFadeInDuration: 0.8
-  titleBlinkCount: 2
-  titleBlinkDuration: 0.4
-  titleBlinkMinAlpha: 0.2
+  titleBlinkSteps:
+  - fadeOutDuration: 0.1
+    targetAlpha: 0.2
+    holdDuration: 0.1
+    fadeInDuration: 0.1
+    intervalBefore: 0.8
+  - fadeOutDuration: 0.1
+    targetAlpha: 0
+    holdDuration: 0.1
+    fadeInDuration: 0.1
+    intervalBefore: 0.1
+  - fadeOutDuration: 0.1
+    targetAlpha: 0.5
+    holdDuration: 0.1
+    fadeInDuration: 0.1
+    intervalBefore: 0.1
   titleTopPosition: {x: 0, y: 500}
+  titleGlowGroup: {fileID: 0}
+  titleGlowFadeOutDuration: 2
   backgroundGroup: {fileID: 618683318}
   backgroundDimmerGroup: {fileID: 462619400}
   backgroundFadeInDuration: 7

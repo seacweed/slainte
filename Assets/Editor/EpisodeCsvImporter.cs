@@ -123,7 +123,8 @@ public class EpisodeCsvImporter : EditorWindow
         Dictionary<string, List<NodeFlagBranch>>      nodeBranches        = BuildNodeBranchesLookup(sections);
         Dictionary<string, List<NodeVarBranch>>       nodeVarBranches     = BuildNodeVarBranchesLookup(sections);
         Dictionary<string, List<NodeEpisodeBranch>>   nodeEpisodeBranches = BuildNodeEpisodeBranchesLookup(sections);
-        ParseNodes(sections, data, nodeChars, nodeChoices, nodeBranches, nodeVarBranches, nodeEpisodeBranches);
+        Dictionary<string, List<CraftingOutcome>>     nodeCraftingBranches = BuildNodeCraftingBranchesLookup(sections);
+        ParseNodes(sections, data, nodeChars, nodeChoices, nodeBranches, nodeVarBranches, nodeEpisodeBranches, nodeCraftingBranches);
 
         return data;
     }
@@ -371,6 +372,33 @@ public class EpisodeCsvImporter : EditorWindow
         return lookup;
     }
 
+    private static Dictionary<string, List<CraftingOutcome>> BuildNodeCraftingBranchesLookup(
+        Dictionary<string, List<string[]>> sections)
+    {
+        var lookup = new Dictionary<string, List<CraftingOutcome>>();
+
+        if (!sections.TryGetValue("NODE_CRAFTING_BRANCHES", out var rows)) return lookup;
+
+        foreach (string[] row in rows)
+        {
+            string nid = Field(row, 0);
+            if (!lookup.ContainsKey(nid))
+                lookup[nid] = new List<CraftingOutcome>();
+
+            if (!System.Enum.TryParse(Field(row, 1), true, out CraftingJobResult result)) continue;
+
+            lookup[nid].Add(new CraftingOutcome
+            {
+                result     = result,
+                nextNodeId = Field(row, 2),
+                flag       = Field(row, 3),
+                varChanges = ParseVarChangeList(Field(row, 4))
+            });
+        }
+
+        return lookup;
+    }
+
     private static Dictionary<string, List<NodeEpisodeBranch>> BuildNodeEpisodeBranchesLookup(
         Dictionary<string, List<string[]>> sections)
     {
@@ -401,7 +429,8 @@ public class EpisodeCsvImporter : EditorWindow
         Dictionary<string, List<EpisodeChoice>> nodeChoices,
         Dictionary<string, List<NodeFlagBranch>> nodeBranches,
         Dictionary<string, List<NodeVarBranch>> nodeVarBranches,
-        Dictionary<string, List<NodeEpisodeBranch>> nodeEpisodeBranches)
+        Dictionary<string, List<NodeEpisodeBranch>> nodeEpisodeBranches,
+        Dictionary<string, List<CraftingOutcome>> nodeCraftingBranches)
     {
         data.nodes = new List<EpisodeNode>();
 
@@ -422,14 +451,10 @@ public class EpisodeCsvImporter : EditorWindow
                 nextNodeId          = Field(row, 4),
                 requiresCrafting    = crafting,
                 craftingTicketKey   = Field(row, 6),
-                nextNodeIdGood      = Field(row, 7),
-                nextNodeIdBad       = Field(row, 8),
-                bgmCommand          = ParseBgmCommand(Field(row, 9)),
-                bgmClipName         = Field(row, 10),
-                craftingFlagGood         = Field(row, 11),
-                craftingFlagBad          = Field(row, 12),
-                craftingVarChangesGood   = ParseVarChangeList(Field(row, 13)),
-                craftingVarChangesBad    = ParseVarChangeList(Field(row, 14)),
+                bgmCommand          = ParseBgmCommand(Field(row, 7)),
+                bgmClipName         = Field(row, 8),
+                craftingOutcomes = nodeCraftingBranches.TryGetValue(nid, out var craftBr)
+                    ? craftBr : new List<CraftingOutcome>(),
                 characters = nodeChars.TryGetValue(nid, out var chars)
                     ? chars : new List<CharacterSlotEntry>(),
                 choices = nodeChoices.TryGetValue(nid, out var choices)

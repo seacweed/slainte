@@ -27,7 +27,7 @@
 `EpisodeNode.characters: List<CharacterSlotEntry>` — 해당 노드에서 표시할 캐릭터+표정. 비어 있으면 스테이지 변경 없음.
 `EpisodeNode` 제조 관련 필드:
 - `requiresCrafting: bool` + `craftingTicketKey: string` — 노드 진입 시 `CraftingMode`로 전환
-- `nextNodeIdGood: string` / `nextNodeIdBad: string` — 제조 결과에 따른 분기 노드 (비어 있으면 `nextNodeId` 사용)
+- `craftingOutcomes: List<CraftingOutcome>` — 제조 결과(`CraftingJobResult`: `Good` / `MidIce` / `MidGlass` / `MidIceGlass` / `MidWrongMenu` / `Bad`)별 분기 노드/플래그/변수 변경(`NodeFlagBranch` 등과 동일하게 결과가 있는 것만 항목으로 존재, sparse). `EpisodeNode.GetNextNodeId(result)` / `GetCraftingFlag(result)` / `GetCraftingVarChanges(result)` 접근자로 조회(비어 있으면 `nextNodeId` 사용)
 
 `EpisodeNode` 분기 필드:
 - `flagBranches: List<NodeFlagBranch>` — 플래그 조건 분기. `{ requiredFlag, nextNodeId }` 목록을 순서대로 확인해 처음 맞는 노드로 이동
@@ -41,7 +41,7 @@
 `EpisodeTriggerCondition` 필드:
 - `requiredVars: List<VarCondition>` — 수치 변수 조건이 모두 충족되어야 에피소드 발동. `VarCondition`은 `varName`, `op`(`CompareOp` 열거형), `threshold` 보유
 
-제조 완료는 `EpisodeRunner.NotifyCraftingCompleted(bool isGood)` 호출로 처리합니다. 현재는 `CraftingJudgeUI`의 GoodJob/BadJob 버튼으로 수동 판정합니다 (실제 제조 판정 미구현 상태의 임시 구현).
+제조 완료는 `EpisodeRunner.NotifyCraftingCompleted(CraftingJobResult result)` 호출로 처리합니다. 현재는 `CraftingJudgeUI`의 6개 버튼(Good/Mid-Ice/Mid-Glass/Mid-Ice+Glass/Mid-WrongMenu/Bad)으로 수동 판정합니다 (실제 제조 판정 미구현 상태의 임시 구현 — 재료·얼음·잔을 비교해 자동으로 `CraftingJobResult`를 계산하는 로직은 별도 작업 예정).
 
 ## 오디오 (`Assets/Scripts/Audio/`)
 
