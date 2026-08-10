@@ -10,7 +10,7 @@
 |---|---|---|
 | `LiquorShelfUI` | ShelfPanel | 메인 컨트롤러 — 슬라이드, 카테고리 전환, EpisodeMode 대응 |
 | `LiquorCategoryButtonUI` | 카테고리 버튼 프리팹 | 클릭 시 `LiquorShelfUI.OpenCategory()` 호출 |
-| `LiquorBottleSlotUI` | 개별 슬롯 오브젝트 | 해금 플래그 확인 후 이미지 on/off, 호버 시 정보카드 표시, 상시 잔여량 바 갱신 |
+| `LiquorBottleSlotUI` | 개별 슬롯 오브젝트 | 해금 플래그 확인, 호버 정보 표시, 잔여량 갱신, 제작 중 좌클릭 선택 |
 | `LiquorBottleInfoCard` | ShelfPanel 직계 자식 (씬에 단 하나) | 호버한 병의 이름/소분류/병 단위 상태/잔여량 표시 |
 | `LiquorBottleDef` | ScriptableObject | 술 데이터 (id, sprite, unlockFlagKey, subCategory, bottleCount, unitVolume) |
 | `LiquorCategoryDef` | ScriptableObject | 카테고리 데이터 (id, displayName, icon) |
@@ -66,6 +66,7 @@ LiquorShelfPanel  [LiquorShelfUI]  ← shelfPanelRect (우측 슬라이드 대�
 ## 입력
 
 - **R키**: `LiquorShelfUI.Toggle()` — 열려있으면 닫기, 닫혀있으면 마지막 카테고리(없으면 첫 번째)로 열기
+- **술병 좌클릭**: CraftingMode에서 해당 병을 테이블 오른쪽 빈 슬롯부터 즉시 배치
 - OrderMode / CraftingMode에서만 동작, EpisodeMode에서는 무시
 
 ## GameModeManager 연동
@@ -79,6 +80,9 @@ LiquorShelfPanel  [LiquorShelfUI]  ← shelfPanelRect (우측 슬라이드 대�
 - `Awake`에서 `Refresh()` 자동 호출
 - `unlockFlagKey`가 비어있거나 `GameProgress.HasFlag(unlockFlagKey)`이면 이미지 표시
 - `IPointerEnterHandler`/`IPointerExitHandler` 구현 → 호버 시 `LiquorBottleInfoCard.Instance.Show(def, amount, rect)` / `Hide()`
+- `IPointerClickHandler` 구현 → 좌클릭 시 `BusinessBartendingBootstrap.TryPlaceBottleFromShelf()` 호출
+- 같은 종류의 병이 이미 테이블에 있거나 재고가 0이거나 빈 슬롯이 없으면 배치하지 않음
+- `LiquorBottleDef.id`와 `Resources/Items` 아래 제작용 `ItemDef.id`가 같아야 실제 병을 생성할 수 있음
 - `amountFillImage`(선택, `Image` Type=Filled/Horizontal)가 연결돼 있으면 `Refresh()`마다 `fillAmount = amount / def.MaxAmount`로 상시 갱신 (호버 무관, 잠금 시 자동 숨김)
 
 ## 잔여량 저장 (GameProgress)

@@ -1,0 +1,580 @@
+@startuml Slainte_Current_Architecture
+
+title Slainte 핵심 클래스 구조 - 2026-08-09
+
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty members
+
+class MonoBehaviour <<Unity>>
+class ScriptableObject <<Unity>>
+class EditorWindow <<Unity Editor>>
+
+package "Core / Progress" {
+  class "MonoSingleton<T>" as MonoSingleton {
+    {static} Instance : T
+  }
+
+  class "SceneSingleton<T>" as SceneSingleton {
+    {static} Instance : T
+  }
+
+  enum GameState {
+    None
+    Episode
+    Business
+    Rest
+  }
+
+  class CoreSceneAutoLoader <<static>>
+
+  class DayFlowManager {
+    + StartInitialEpisode(id) : bool
+    + StartEpisodeFromRest(id) : bool
+    + CompleteEpisode(id)
+    + CompleteBusinessDay()
+  }
+
+  class GameManager {
+    + CurrentState : GameState
+    + ChangeState(state)
+  }
+
+  class SceneTransitionManager {
+    + TransitionToSubScene(scene, callback)
+  }
+
+  class EpisodeManager {
+    + CurrentPlayingEpisodeID : string
+    + GetBoardEpisodes()
+    + GetAvailableEpisodes()
+    + CanStart(episode, progress) : bool
+    + StartEpisode(id)
+    + ClearEpisode(id)
+  }
+
+  class ProgressConditionEvaluator <<static>> {
+    + IsMet(condition, progress, maxDay) : bool
+  }
+
+  class GameProgress {
+    + CurrentDay : int
+    + Money : int
+    + Reputation : int
+    + HasFlag(key) : bool
+    + GetAffinity(key) : int
+    + GetBottleAmount(id, default) : float
+    + RecordCustomerVisit(visitKey, day)
+    + GetBusinessDaySnapshot()
+  }
+
+  class DataManager {
+    + CurrentData : SaveData
+    + Save()
+    + Load()
+  }
+
+  class SaveData <<Serializable>> {
+    + dayCount : int
+    + flags : List<string>
+    + completedEpisodeIds : List<string>
+    + money : int
+    + reputation : int
+    + businessDay : BusinessDaySnapshot
+    + customerVisitHistory : List<CustomerVisitHistorySnapshot>
+  }
+
+  class BusinessDaySnapshot <<Serializable>> {
+    + day : int
+    + seed : int
+    + currentIndex : int
+    + isCompleted : bool
+    + entries : List<BusinessSequenceEntrySnapshot>
+  }
+
+  class BusinessSequenceEntrySnapshot <<Serializable>> {
+    + entryId : string
+    + contentId : string
+    + visitKey : string
+    + orderType : int
+  }
+
+  class CustomerVisitHistorySnapshot <<Serializable>> {
+    + visitKey : string
+    + lastVisitedDay : int
+    + totalVisits : int
+  }
+}
+
+MonoBehaviour <|-- MonoSingleton
+MonoBehaviour <|-- SceneSingleton
+MonoSingleton <|-- DayFlowManager
+MonoSingleton <|-- GameManager
+MonoSingleton <|-- SceneTransitionManager
+MonoSingleton <|-- EpisodeManager
+MonoSingleton <|-- GameProgress
+MonoSingleton <|-- DataManager
+GameManager --> GameState
+DayFlowManager --> EpisodeManager
+DayFlowManager --> GameManager
+DayFlowManager --> GameProgress
+GameManager --> SceneTransitionManager
+EpisodeManager --> ProgressConditionEvaluator
+EpisodeManager --> GameProgress
+DataManager --> GameProgress
+DataManager --> SaveData
+SaveData *-- BusinessDaySnapshot
+SaveData o-- CustomerVisitHistorySnapshot
+BusinessDaySnapshot o-- BusinessSequenceEntrySnapshot
+
+package "Episode Runtime" {
+  class EpisodeData {
+    + episodeId : string
+    + firstNodeId : string
+    + triggerCondition : EpisodeTriggerCondition
+    + nodes : List<EpisodeNode>
+  }
+
+  class EpisodeNode <<Serializable>> {
+    + nodeId : string
+    + lines : List<DialogueLine>
+    + choices : List<EpisodeChoice>
+    + requiresCrafting : bool
+    + craftingRecipeId : string
+    + nextNodeIdGood : string
+    + nextNodeIdBad : string
+  }
+
+  class EpisodeChoice <<Serializable>> {
+    + text : string
+    + nextNodeId : string
+    + setFlags : List<string>
+    + clearFlags : List<string>
+  }
+
+  class EpisodeTriggerCondition <<Serializable>> {
+    + minDay : int
+    + requiredFlags : List<string>
+    + blockedFlags : List<string>
+    + prerequisiteEpisodeIds : List<string>
+    + requiredVars : List<VarCondition>
+  }
+
+  class EpisodeRunner {
+    + Begin(episode)
+    + OnAdvanceInput()
+  }
+
+  class DialogueController {
+    + DialogueClosed : event
+    + StartDialogue(lines)
+    + Advance()
+  }
+
+  class CharacterData {
+    + key : string
+    + GetSprite(expressionKey)
+    + GetBlinkSprite(expressionKey)
+  }
+
+  class CharacterDatabase {
+    + FindByKey(key) : CharacterData
+  }
+
+  class CharacterSlotEntry <<Serializable>> {
+    + characterKey : string
+    + expressionKey : string
+    + slotIndex : int
+  }
+
+  class CharacterStage {
+    + ShowCharacters(entries, callback)
+    + SwapExpression(characterKey, expressionKey)
+    + Clear()
+  }
+
+  class CharacterView {
+    + Setup(...)
+    + SwapSprite(...)
+    + PlayAppearAnimation(callback)
+    + PlayDisappearAnimation(callback)
+  }
+}
+
+ScriptableObject <|-- EpisodeData
+ScriptableObject <|-- CharacterData
+ScriptableObject <|-- CharacterDatabase
+MonoBehaviour <|-- EpisodeRunner
+MonoBehaviour <|-- DialogueController
+MonoBehaviour <|-- CharacterStage
+MonoBehaviour <|-- CharacterView
+EpisodeData *-- EpisodeTriggerCondition
+EpisodeData o-- EpisodeNode
+EpisodeNode o-- EpisodeChoice
+EpisodeRunner --> EpisodeData
+EpisodeRunner --> DialogueController
+EpisodeRunner --> CharacterStage
+EpisodeRunner --> GameProgress
+EpisodeRunner --> DayFlowManager
+CharacterDatabase o-- CharacterData
+CharacterStage --> CharacterDatabase
+CharacterStage --> CharacterView
+CharacterStage --> CharacterSlotEntry
+
+package "Business / Customer Pool" {
+  enum BusinessSequenceMode {
+    Fixed
+    CustomerPool
+  }
+
+  class BusinessOrderFlowSettings {
+    + sequenceMode : BusinessSequenceMode
+    + customerVisitDatabase : CustomerVisitDatabase
+    + minVisitsPerDay : int
+    + maxVisitsPerDay : int
+    + midScoreThreshold : float
+    + goodScoreThreshold : float
+  }
+
+  class BusinessFlowBootstrap {
+    + StartBusinessSequence()
+    + StartEpisodeOrder(request, callback) : bool
+  }
+
+  class BusinessSequencePlanner <<static>> {
+    + Create(day, settings, progress) : BusinessDaySnapshot
+    + CreateFromPool(day, settings, database, progress)
+  }
+
+  class BusinessSequenceRunner {
+    + StartSequence()
+    + BusinessDayCompleted : event
+  }
+
+  enum OrderSessionOwner {
+    Business
+    Episode
+  }
+
+  enum BusinessOrderSessionState {
+    Idle
+    PresentingOrder
+    Crafting
+    Evaluating
+    PresentingFeedback
+    Completed
+  }
+
+  class OrderSessionRequest {
+    + owner : OrderSessionOwner
+    + customerOrderKey : string
+    + customerVisitKey : string
+    + requestedRecipeId : string
+    + presentOrder : bool
+    + presentFeedback : bool
+    + applyProgressRewards : bool
+  }
+
+  class BusinessOrderSessionController {
+    + State : BusinessOrderSessionState
+    + BeginOrder(request, callback) : bool
+    + OrderCompleted : event
+  }
+
+  class BusinessOrderSessionResult {
+    + owner : OrderSessionOwner
+    + grade : OrderEvaluationGrade
+    + moneyDelta : int
+    + reputationDelta : int
+  }
+
+  enum OrderEvaluationGrade {
+    Bad
+    Mid
+    Good
+  }
+
+  class CustomerVisitMember <<Serializable>> {
+    + characterKey : string
+    + slotIndex : int
+    + expressionKeyMid : string
+    + expressionKeyGood : string
+    + expressionKeyBad : string
+  }
+
+  class CustomerVisitOrderOption <<Serializable>> {
+    + order : CustomerOrderData
+    + weight : float
+    + condition : EpisodeTriggerCondition
+  }
+
+  class CustomerVisitData {
+    + visitKey : string
+    + tags : List<string>
+    + members : List<CustomerVisitMember>
+    + weight : float
+    + condition : EpisodeTriggerCondition
+    + maxDay : int
+    + cooldownDays : int
+    + orders : List<CustomerVisitOrderOption>
+  }
+
+  class CustomerVisitDatabase {
+    + visits : List<CustomerVisitData>
+    + FindByKey(key) : CustomerVisitData
+  }
+
+  class CustomerOrderData {
+    + key : string
+    + requestedRecipeId : string
+    + orderType : CocktailOrderType
+    + lines : List<DialogueLine>
+    + feedbackLinesGood : List<DialogueLine>
+    + feedbackLinesMid : List<DialogueLine>
+    + feedbackLinesBad : List<DialogueLine>
+  }
+
+  class CustomerOrderDatabase {
+    + FindByKey(key) : CustomerOrderData
+  }
+
+  class CustomerSpawner {
+    + ShowVisit(visitKey, orderKey)
+    + ShowFeedback(grade) : bool
+    + Clear()
+  }
+}
+
+ScriptableObject <|-- BusinessOrderFlowSettings
+ScriptableObject <|-- CustomerVisitData
+ScriptableObject <|-- CustomerVisitDatabase
+ScriptableObject <|-- CustomerOrderData
+ScriptableObject <|-- CustomerOrderDatabase
+MonoBehaviour <|-- BusinessFlowBootstrap
+MonoBehaviour <|-- BusinessSequenceRunner
+MonoBehaviour <|-- BusinessOrderSessionController
+MonoBehaviour <|-- CustomerSpawner
+BusinessOrderFlowSettings --> BusinessSequenceMode
+BusinessOrderFlowSettings --> CustomerVisitDatabase
+BusinessFlowBootstrap --> BusinessSequenceRunner
+BusinessFlowBootstrap --> BusinessOrderSessionController
+BusinessSequencePlanner --> BusinessOrderFlowSettings
+BusinessSequencePlanner --> CustomerVisitDatabase
+BusinessSequencePlanner --> ProgressConditionEvaluator
+BusinessSequencePlanner --> BusinessDaySnapshot
+BusinessSequenceRunner --> BusinessSequencePlanner
+BusinessSequenceRunner --> BusinessOrderSessionController
+BusinessSequenceRunner --> GameProgress
+BusinessOrderSessionController --> OrderSessionRequest
+BusinessOrderSessionController --> BusinessOrderSessionResult
+BusinessOrderSessionController --> CustomerSpawner
+BusinessOrderSessionResult --> OrderEvaluationGrade
+CustomerVisitDatabase o-- CustomerVisitData
+CustomerVisitData o-- CustomerVisitMember
+CustomerVisitData o-- CustomerVisitOrderOption
+CustomerVisitData *-- EpisodeTriggerCondition
+CustomerVisitOrderOption --> CustomerOrderData
+CustomerVisitOrderOption *-- EpisodeTriggerCondition
+CustomerOrderDatabase o-- CustomerOrderData
+CustomerSpawner --> CustomerVisitDatabase
+CustomerSpawner --> CustomerOrderDatabase
+CustomerSpawner --> CharacterStage
+CustomerSpawner --> DialogueController
+
+package "Bartending / Evaluation" {
+  enum CocktailOrderType {
+    RecipeOrder
+    RecipeModifierOrder
+    TasteOrder
+    MoodOrder
+    VariantRecipeOrder
+    CustomRecipeOrder
+    EpisodeOrder
+  }
+
+  enum CocktailTechnique {
+    Build
+    Stir
+    Shake
+  }
+
+  interface IBartendingItem
+
+  class BusinessBartendingSettings
+
+  class BusinessBartendingBootstrap {
+    + SessionReady : event
+    + ServeRequested : event
+  }
+
+  class BartendingItemOrder {
+    + Rank : int
+    + IsFrontmostAt(point) : bool
+  }
+
+  class BottleController
+  class BeakerController
+  class GlassController
+  class StirringRodController
+  class CobblerShakerTechniqueController
+  class SlotController
+
+  class LiquidPayload <<Serializable>> {
+    + portions : List<LiquidPortion>
+    + temperatureC : float
+    + techniques : CocktailTechnique
+    + MixPair(left, right, strength)
+  }
+
+  class LiquidParticleData {
+    + payload : LiquidPayload
+    + VesselOwner : VesselLiquidTracker
+    + RecordTechnique(technique)
+  }
+
+  class VesselLiquidTracker {
+    + Particles
+    + BuildComposition() : CocktailComposition
+  }
+
+  class CocktailComposition {
+    + TotalVolumeMl : float
+    + AverageTemperatureC : float
+    + GlassId : string
+    + HasIce : bool
+    + Techniques : CocktailTechnique
+  }
+
+  class GlassSteamEmitter
+
+  class CocktailRecipeDef
+  class CocktailRecipeDataLoader <<static>>
+  class CocktailOrderGenerator
+  class CocktailEvaluator
+  class CocktailOrderEvaluator
+  class ItemDefCatalog
+
+  class ItemDef {
+    + id : string
+    + abvPercent : float
+    + capacityMl : float
+    + liquidColor : Color
+    + servingTemperatureC : float
+  }
+
+  class LiquidPool
+  class LiquidReaction
+  class ReturnToPool
+  class FullScreenQuad
+}
+
+ScriptableObject <|-- BusinessBartendingSettings
+ScriptableObject <|-- CocktailRecipeDef
+ScriptableObject <|-- ItemDef
+MonoBehaviour <|-- BusinessBartendingBootstrap
+MonoBehaviour <|-- BottleController
+MonoBehaviour <|-- BeakerController
+MonoBehaviour <|-- GlassController
+MonoBehaviour <|-- StirringRodController
+MonoBehaviour <|-- CobblerShakerTechniqueController
+MonoBehaviour <|-- SlotController
+MonoBehaviour <|-- BartendingItemOrder
+MonoBehaviour <|-- LiquidParticleData
+MonoBehaviour <|-- VesselLiquidTracker
+MonoBehaviour <|-- GlassSteamEmitter
+MonoBehaviour <|-- LiquidPool
+MonoBehaviour <|-- LiquidReaction
+MonoBehaviour <|-- ReturnToPool
+MonoBehaviour <|-- FullScreenQuad
+BottleController ..|> IBartendingItem
+BeakerController ..|> IBartendingItem
+GlassController ..|> IBartendingItem
+StirringRodController ..|> IBartendingItem
+BusinessOrderSessionController --> BusinessBartendingBootstrap
+BusinessBartendingBootstrap --> BusinessBartendingSettings
+BusinessBartendingBootstrap --> LiquidPool
+BusinessBartendingBootstrap --> IBartendingItem
+BottleController --> ItemDef
+BottleController --> LiquidParticleData
+LiquidParticleData *-- LiquidPayload
+LiquidParticleData --> VesselLiquidTracker
+LiquidPayload --> CocktailTechnique
+VesselLiquidTracker --> CocktailComposition
+GlassController --> VesselLiquidTracker
+GlassController --> GlassSteamEmitter
+GlassSteamEmitter --> LiquidParticleData
+CocktailOrderGenerator --> CocktailRecipeDataLoader
+CocktailOrderEvaluator --> CocktailEvaluator
+CocktailEvaluator --> CocktailRecipeDef
+CocktailEvaluator --> CocktailComposition
+ItemDefCatalog o-- ItemDef
+LiquidPool o-- LiquidParticleData
+LiquidReaction --> LiquidParticleData
+
+package "RestScene" {
+  abstract class BaseUIManager
+  class EpisodeBoardManager
+  class EpisodePhotoTrigger
+  class EpisodeInfoUI
+  class ShopUIManager
+  class ItemSlotUI
+  class ItemData
+  class EpisodeUIManager
+  class TooltipManager
+}
+
+MonoBehaviour <|-- BaseUIManager
+BaseUIManager <|-- EpisodeBoardManager
+BaseUIManager <|-- ShopUIManager
+BaseUIManager <|-- EpisodeUIManager
+MonoBehaviour <|-- EpisodePhotoTrigger
+MonoBehaviour <|-- EpisodeInfoUI
+MonoBehaviour <|-- ItemSlotUI
+MonoBehaviour <|-- TooltipManager
+ScriptableObject <|-- ItemData
+EpisodeBoardManager --> EpisodeManager
+EpisodeBoardManager --> GameProgress
+EpisodeBoardManager --> EpisodePhotoTrigger
+EpisodePhotoTrigger --> EpisodeData
+EpisodePhotoTrigger --> EpisodeInfoUI
+ShopUIManager o-- ItemData
+ShopUIManager --> ItemSlotUI
+
+package "Editor Data Pipeline" {
+  class EpisodeCsvImporter
+  class PlanningCsvAssetImporter
+  class CustomerPoolSetup
+  class BusinessFlowSceneSetup
+  class BartendingSystemValidator
+  class CobblerShakerSetup
+  class NarrativeGraphEditor
+}
+
+EditorWindow <|-- EpisodeCsvImporter
+EditorWindow <|-- NarrativeGraphEditor
+EpisodeCsvImporter --> EpisodeData
+PlanningCsvAssetImporter --> ItemDef
+PlanningCsvAssetImporter --> CocktailRecipeDef
+CustomerPoolSetup --> CustomerVisitData
+CustomerPoolSetup --> CustomerOrderData
+BusinessFlowSceneSetup --> BusinessOrderFlowSettings
+BartendingSystemValidator --> BusinessBartendingSettings
+CobblerShakerSetup --> BusinessBartendingSettings
+
+note bottom of CustomerVisitData
+  개인·커플·단체 전용 타입은 없다.
+  members 목록으로 모든 방문을 표현한다.
+end note
+
+note bottom of BusinessOrderSessionController
+  영업과 에피소드가 제조·판정을 공유한다.
+  수락·거절·포기·제출 버튼은 사용하지 않는다.
+end note
+
+note bottom of EpisodeRunner
+  현재 제품 에피소드 런타임의 기준이다.
+  NarrativeManager JSON 경로는 별도로 존재한다.
+end note
+
+@enduml

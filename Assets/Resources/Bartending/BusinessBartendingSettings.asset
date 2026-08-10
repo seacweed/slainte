@@ -13,15 +13,22 @@ MonoBehaviour:
   m_Name: BusinessBartendingSettings
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.BusinessBartendingSettings
   beakerPrefab: {fileID: 8706099201883949432, guid: ead121c425b1bdf48942d7144b694817, type: 3}
+  cobblerShakerPrefab: {fileID: 4054720568392477730, guid: 4fcdbed02cfffa24cbe7caa594c1b2ea, type: 3}
   glassPrefab: {fileID: 2243653413097636618, guid: 0f545fa15c57b314184f5dc08a58782b, type: 3}
-  orangeJuiceBottlePrefab: {fileID: 6053965625356669504, guid: 5454dd416eb9f0147b2a3e044e81cc11, type: 3}
+  bottlePrefab: {fileID: 6694566925379074692, guid: e5555af92399ef7408c7b909cbc4ff38, type: 3}
   slotPrefab: {fileID: 7156230922021510026, guid: 7f969d5eb98ddb54f8d6e44e1a901c44, type: 3}
   liquidParticlePrefab: {fileID: 6191169969125092929, guid: 44387e2fc656fda41b517e3cbf2b992c, type: 3}
+  initialBottleItems: []
+  bottlePositions:
+  - {x: -8, y: -0.8, z: 0}
+  - {x: -4.8, y: -0.8, z: 0}
   renderTextureSize: {x: 2560, y: 1440}
   cameraOrthographicSize: 5.2
   renderLayer: 30
+  serveLineScreenRatio: 0.3
   bottlePosition: {x: -8, y: -0.8, z: 0}
   beakerPosition: {x: -1.6, y: -1, z: 0}
+  cobblerShakerPosition: {x: 1.6, y: -1, z: 0}
   glassPosition: {x: 4.8, y: -1, z: 0}
   slotPositions:
   - {x: -8, y: -2.5, z: 0}

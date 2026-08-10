@@ -284,8 +284,58 @@ public class GameProgress : MonoSingleton<GameProgress>
     public void SetBottleAmount(string bottleId, float value)
     {
         if (string.IsNullOrWhiteSpace(bottleId)) return;
-        _bottleAmounts[bottleId] = value;
-        SyncBottleAmountToLists(bottleId, value);
+        float safeValue = Mathf.Max(0f, value);
+        _bottleAmounts[bottleId] = safeValue;
+        SyncBottleAmountToLists(bottleId, safeValue);
+        BottleAmountChanged?.Invoke(bottleId, safeValue);
+    }
+
+    public void AddMoney(int amount)
+    {
+        money = Mathf.Max(0, money + amount);
+    }
+
+    public void AddReputation(int amount)
+    {
+        reputation += amount;
+    }
+
+    public void SetBusinessDaySnapshot(BusinessDaySnapshot snapshot)
+    {
+        businessDay = snapshot != null ? snapshot.Clone() : new BusinessDaySnapshot();
+    }
+
+    public void AdvanceBusinessSequence()
+    {
+        if (businessDay == null)
+            businessDay = new BusinessDaySnapshot();
+
+        businessDay.currentIndex = Mathf.Min(
+            businessDay.currentIndex + 1,
+            businessDay.entries != null ? businessDay.entries.Count : 0);
+        businessDay.isCompleted = businessDay.entries == null
+            || businessDay.currentIndex >= businessDay.entries.Count;
+    }
+
+    public void ClearBusinessDaySnapshot()
+    {
+        businessDay = new BusinessDaySnapshot();
+    }
+
+    private static List<CustomerVisitHistorySnapshot> CloneVisitHistory(
+        List<CustomerVisitHistorySnapshot> source)
+    {
+        List<CustomerVisitHistorySnapshot> clone = new();
+        if (source == null)
+            return clone;
+
+        for (int i = 0; i < source.Count; i++)
+        {
+            if (source[i] != null)
+                clone.Add(source[i].Clone());
+        }
+
+        return clone;
     }
 
     private void SyncBottleAmountToLists(string bottleId, float value)

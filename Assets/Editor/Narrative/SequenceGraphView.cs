@@ -67,6 +67,19 @@ namespace NarrativeFlow.Editor
                         }
                     }
                 }
+                else if (ev.Type == EpisodeEventType.BusinessStart)
+                {
+                    if (string.IsNullOrWhiteSpace(ev.CraftingTicketKey))
+                    {
+                        errors.Add("Crafting Ticket Missing");
+                        fieldErrors["ticket"] = "Required";
+                    }
+                    if (string.IsNullOrWhiteSpace(ev.CraftingRecipeId))
+                    {
+                        errors.Add("Crafting Recipe Missing");
+                        fieldErrors["recipe"] = "Required";
+                    }
+                }
                 else if (ev.Type == EpisodeEventType.BranchExit)
                 {
                     if (string.IsNullOrEmpty(ev.ExitBranchName)) { errors.Add("Branch Not Selected"); fieldErrors["exit"] = "Required"; }

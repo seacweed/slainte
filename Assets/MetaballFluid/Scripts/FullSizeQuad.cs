@@ -67,4 +67,5 @@ public class FullScreenQuad : MonoBehaviour
         // 일반 3D Mesh Quad 등의 경우 기본 스케일 그대로 적용
         transform.localScale = new Vector3(width, height, 1.0f);
     }
+
 }

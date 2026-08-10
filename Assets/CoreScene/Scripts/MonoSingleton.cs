@@ -1,5 +1,21 @@
 using UnityEngine;
 
+internal static class MonoSingletonLifecycle
+{
+    public static bool IsQuitting { get; private set; }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void Reset()
+    {
+        IsQuitting = false;
+    }
+
+    public static void MarkQuitting()
+    {
+        IsQuitting = true;
+    }
+}
+
 public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
 {
     private static T _instance;
@@ -8,6 +24,9 @@ public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
     {
         get
         {
+            if (MonoSingletonLifecycle.IsQuitting)
+                return null;
+
             if (_instance == null)
             {
                 // 씬에 이미 존재하는지 확인
@@ -36,5 +55,16 @@ public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
         // 인스턴스가 자기 자신이라면 유지
         _instance = this as T;
         DontDestroyOnLoad(this.gameObject);
+    }
+
+    protected virtual void OnApplicationQuit()
+    {
+        MonoSingletonLifecycle.MarkQuitting();
+    }
+
+    protected virtual void OnDestroy()
+    {
+        if (_instance == this)
+            _instance = null;
     }
 }

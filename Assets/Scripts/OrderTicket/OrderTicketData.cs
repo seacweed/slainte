@@ -4,10 +4,10 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "Slainte/Order Ticket Data", fileName = "OrderTicketData_")]
 public class OrderTicketData : ScriptableObject
 {
-    [Header("Identity")]
+    [Header("식별 정보")]
     public string key;
 
-    [Header("Data")]
+    [Header("표시 데이터")]
     public string customerName;
 
     [TextArea(2, 6)]

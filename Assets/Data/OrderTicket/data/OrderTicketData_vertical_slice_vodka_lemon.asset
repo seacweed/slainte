@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b074092a6424ed548be557aa3efb3794, type: 3}
+  m_Name: OrderTicketData_vertical_slice_vodka_lemon
+  m_EditorClassIdentifier: Assembly-CSharp::OrderTicketData
+  key: vertical_slice_vodka_lemon
+  customerName: "\uC720\uCE74\uB9AC"
+  memo: "\uC88B\uC740 \uC800\uB141\uC774\uC57C, \uBC14\uD150\uB354.\n\uC624\uB298\uC740
+    \uBCF4\uB4DC\uCE74 \uB808\uBAAC\uC73C\uB85C \uBD80\uD0C1\uD574."
+  items:
+  - name: "\uBE0C\uB9AC\uC988 \uBCF4\uB4DC\uCE74"
+    qty: 50
+    price: 0
+  - name: "\uB808\uBAAC \uC8FC\uC2A4"
+    qty: 30
+    price: 0

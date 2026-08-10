@@ -26,6 +26,12 @@ public class OrderTicketManager : MonoBehaviour
         _pendingTicketKey = ticketKey;
     }
 
+    public void ClearTicket()
+    {
+        _pendingTicketKey = null;
+        ticketUI?.HideAnimated();
+    }
+
     // Ignored when no ticket has been prepared yet, so an empty ticket can't be toggled into view.
     public void ToggleTicket()
     {

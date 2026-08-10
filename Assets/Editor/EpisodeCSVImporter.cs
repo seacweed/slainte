@@ -441,6 +441,12 @@ public class EpisodeCsvImporter : EditorWindow
             string nid = Field(row, 0);
             bool crafting = string.Equals(Field(row, 5), "true", StringComparison.OrdinalIgnoreCase)
                          || Field(row, 5) == "1";
+            string craftingRecipeId = Field(row, 15);
+            if (crafting && string.IsNullOrWhiteSpace(craftingRecipeId))
+            {
+                Debug.LogError(
+                    $"[EpisodeCsvImporter] Crafting node '{nid}' is missing craftingRecipeId.");
+            }
 
             data.nodes.Add(new EpisodeNode
             {

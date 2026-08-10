@@ -1,0 +1,146 @@
+@startuml Slainte_Current_Usecases
+
+title Slainte 사용 사례 - 2026-08-09
+
+left to right direction
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+actor "플레이어" as Player
+actor "기획·콘텐츠 작업자" as Designer
+actor "개발·QA" as QA
+actor "파일 시스템" as FileSystem
+
+rectangle "게임 런타임" {
+  package "하루 흐름" {
+    usecase "새 게임 시작" as Start
+    usecase "에피소드 진행" as Episode
+    usecase "영업 진행" as Business
+    usecase "휴식 화면 이용" as Rest
+    usecase "게임 저장·불러오기" as SaveLoad
+  }
+
+  package "에피소드" {
+    usecase "대사 진행" as Dialogue
+    usecase "선택지 선택" as Choice
+    usecase "캐릭터·표정 보기" as Character
+    usecase "플래그·호감도 변경" as StoryProgress
+    usecase "에피소드 제조 분기" as EpisodeCraft
+  }
+
+  package "영업 주문" {
+    usecase "조건 기반 손님 등장" as Visit
+    usecase "주문 대사 확인" as OrderDialogue
+    usecase "주문 자동 수락" as AutoAccept
+    usecase "Good·Mid·Bad 반응" as Feedback
+    usecase "돈·명성 획득" as Reward
+  }
+
+  package "칵테일 제조" {
+    usecase "술병 선택·배치" as SelectBottle
+    usecase "재료 따르기" as Pour
+    usecase "막대로 젓기" as Stir
+    usecase "코블러 셰이커 흔들기" as Shake
+    usecase "잔을 전방으로 끌어 제출" as Serve
+    usecase "레시피 판정" as Evaluate
+    usecase "뜨거운 액체의 김 보기" as Steam
+  }
+
+  package "휴식" {
+    usecase "에피소드 보드 확인" as Board
+    usecase "다음 에피소드 선택" as SelectEpisode
+    usecase "상점 분류·검색" as ShopBrowse
+    usecase "구매 버튼 누르기" as ShopBuy
+    usecase "현황 확인" as Status
+  }
+}
+
+rectangle "Unity Editor 도구" {
+  usecase "에피소드 CSV 임포트" as ImportEpisode
+  usecase "기획 아이템·레시피 CSV 임포트" as ImportPlanning
+  usecase "손님 방문·주문 에셋 작성" as EditCustomer
+  usecase "그래프 내러티브 편집·컴파일" as EditGraph
+  usecase "바텐딩 설정·프리팹 구성" as SetupBar
+  usecase "기획 데이터 자동 검증" as ValidatePlanning
+  usecase "손님 풀 자동 검증" as ValidatePool
+  usecase "Unity 플레이 QA" as PlayQA
+}
+
+Player --> Start
+Player --> Dialogue
+Player --> Choice
+Player --> OrderDialogue
+Player --> SelectBottle
+Player --> Pour
+Player --> Stir
+Player --> Shake
+Player --> Serve
+Player --> Board
+Player --> SelectEpisode
+Player --> ShopBrowse
+Player --> ShopBuy
+Player --> Status
+
+Start .> Episode : <<include>>
+Episode .> Dialogue : <<include>>
+Episode .> Character : <<include>>
+Choice .> StoryProgress : <<include>>
+EpisodeCraft .> Evaluate : <<include>>
+Episode .> Business : <<include>>
+Business .> Visit : <<include>>
+Visit .> OrderDialogue : <<include>>
+OrderDialogue .> AutoAccept : <<include>>
+AutoAccept .> SelectBottle : <<include>>
+Pour .> SelectBottle : <<include>>
+Stir .> SelectBottle : <<extend>>
+Shake .> SelectBottle : <<extend>>
+Serve .> Evaluate : <<include>>
+Evaluate .> Feedback : <<extend>>
+Feedback .> Reward : <<include>>
+Pour .> Steam : <<extend>>
+Business .> Rest : <<include>>
+Rest .> Board : <<include>>
+SelectEpisode .> Episode : <<include>>
+Start .> SaveLoad : <<include>>
+Episode .> SaveLoad : <<include>>
+Business .> SaveLoad : <<include>>
+
+Designer --> ImportEpisode
+Designer --> ImportPlanning
+Designer --> EditCustomer
+Designer --> EditGraph
+QA --> SetupBar
+QA --> ValidatePlanning
+QA --> ValidatePool
+QA --> PlayQA
+FileSystem --> SaveLoad
+FileSystem --> ImportEpisode
+FileSystem --> ImportPlanning
+
+ImportEpisode .> ValidatePlanning : <<extend>>
+ImportPlanning .> ValidatePlanning : <<include>>
+EditCustomer .> ValidatePool : <<include>>
+SetupBar .> PlayQA : <<include>>
+
+note right of AutoAccept
+  수락·거절 버튼은 없다.
+  주문 대사 종료 후 제조로 전환한다.
+end note
+
+note right of Serve
+  제출 버튼은 없다.
+  잔 드래그 위치가 제출 입력이다.
+end note
+
+note right of ShopBuy
+  현재 로그만 출력한다.
+  돈·재고·저장과 연결되지 않았다.
+end note
+
+note bottom of Evaluate
+  영업과 에피소드가 같은 주문 세션과
+  CocktailOrderEvaluator를 사용한다.
+end note
+
+@enduml

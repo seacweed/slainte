@@ -272,6 +272,11 @@ MonoBehaviour:
   slotLayer:
     serializedVersion: 2
     m_Bits: 1
+  glassId: rock
+  steamStartTemperatureC: 55
+  steamStopTemperatureC: 48
+  steamTopOffset: 0.08
+  steamEmissionRate: 5
   edgeCollider: {fileID: 2785245466929294876}
 --- !u!1 &5332131679312758586
 GameObject:

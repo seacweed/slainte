@@ -1,86 +1,192 @@
-# 아키텍처 개요
+# Slainte 아키텍처
 
-## 업데이트 규칙
-architecture.md 업데이트 시 관련 문서에 입력할 사항들은 해당 문서에 작성. 필요시 새로운 문서 생성하고 관련 문서에 링크 추가.
+기준일: 2026-08-09
 
-## 핵심 시스템
+## 1. 설계 요약
 
-**1. 게임 모드 관리 (`Assets/Scripts/Core/`)**
+Slainte는 다음 네 경계로 구성된다.
 
-`GameMode` 열거형으로 씬 상태를 구분합니다:
+1. `CoreScene`: 씬과 무관하게 유지되는 진행·저장·전환 서비스
+2. `BusinessScene`: 에피소드, 영업 주문, 칵테일 제조를 공유하는 플레이 공간
+3. `RestScene`: 다음 에피소드 선택, 상점, 현황 UI
+4. 콘텐츠 데이터: ScriptableObject, CSV, Resources, StreamingAssets
 
-| 모드 | 설명 | 활성 패널 |
+런타임 상태의 원본은 `GameProgress`다. UI와 씬 오브젝트는 상태를 표시하거나 변경을 요청할 뿐, 독자적인 진행 원본이 되어서는 안 된다.
+
+## 2. 객체 수명
+
+| 기반 | 수명 | 대표 클래스 |
 |---|---|---|
-| `OrderMode` | 기본 영업 상태 (초기 모드) | FrontWorldPanel + DialoguePanel + OrderTicketPanel(open) + RecipeBookPanel(open) |
-| `EpisodeMode` | 에피소드 실행 중 | FrontWorldPanel + DialoguePanel (OrderTicketPanel/RecipeBookPanel 토글 잠금·슬라이드 닫힘) |
-| `CraftingMode` | 에피소드 중 칵테일 제조 | FrontWorldPanel + DialoguePanel + OrderTicketPanel(open) + RecipeBookPanel(open) + CraftingJudgePanel |
+| `MonoSingleton<T>` | 앱 수명, `DontDestroyOnLoad` | `GameManager`, `DayFlowManager`, `EpisodeManager`, `DataManager`, `GameProgress`, `AudioManager` |
+| `SceneSingleton<T>` | 현재 씬 수명 | `GameModeManager`, 씬 참조를 보유한 관리자 |
+| 일반 `MonoBehaviour` | 소유 씬·세션 수명 | `EpisodeRunner`, `CustomerSpawner`, 도구 Controller |
+| 런타임 생성 객체 | 주문 제조 세션 수명 | 바텐딩 카메라, RenderTexture, 슬롯, 도구, 액체 풀 |
 
-`GameModeManager`가 `RequestModeChange(GameMode)`를 통해 모드 전환을 처리하고 `OnModeChanged` 이벤트를 발행합니다. **씬 전환은 없습니다.** 패널 제어는 두 방식으로 나뉩니다:
-- `FrontWorldPanel` / `DialoguePanel` / `ChoiceContainer` / `CraftingJudgePanel` — `CanvasGroup` alpha/interactable 즉시 on-off
-- `OrderTicketPanel` / `RecipeBookPanel` — 자체 슬라이드 애니메이션으로 open/close. `GameModeManager`는 `SetInteractable(bool)`(EpisodeMode 잠금)과 `Open()`(OrderMode/CraftingMode 진입 시 강제 open)만 호출
+전역 서비스는 씬의 UI 오브젝트를 장기 참조하지 않는다. 씬 로컬 참조는 `BusinessFlowBootstrap`처럼 씬이 로드될 때 다시 탐색하고 연결한다.
 
-**2. 입력 처리 (`Assets/Scripts/Input/`)**
+## 3. 상태 머신
 
-`InputRouter` 단 하나가 모든 `Update()` 입력을 수신해 현재 `GameMode`에 따라 라우팅합니다:
+### 게임 전체
 
-| 키 | OrderMode | EpisodeMode | CraftingMode |
-|---|---|---|---|
-| Space / LMB | `DialogueController.Advance()` | `EpisodeRunner.OnAdvanceInput()` | `EpisodeRunner.OnAdvanceInput()` |
-| S / W | `FrontCameraRig` 서랍 열기/닫기 (대화 중 불가) | — | `FrontCameraRig` 서랍 열기/닫기 |
-| Tab | `RecipeBookUI.Toggle()` | — | `RecipeBookUI.Toggle()` |
-| E | `OrderTicketManager.ToggleTicket()` | — | `OrderTicketManager.ToggleTicket()` |
-| 1 (테스트) | `CustomerSpawner.ShowCustomers("yukari")` | — | — |
-| 2 (테스트) | `testEpisode` 조건 없이 즉시 실행 | — | — |
+```text
+None
+→ Episode
+→ Business
+→ Rest
+→ Episode ...
+```
 
-수신자 인터페이스:
-- `IDialogueAdvanceHandler` — `CanReceiveAdvanceInput`, `OnAdvanceInput()`
-- `ICameraInputHandler` — `IsAnimating`, `OnCameraInput(CameraDirection)`
+`DayFlowManager`가 순서를 결정하고 `GameManager`가 상태에 맞는 씬 전환 또는 시작 콜백을 실행한다.
 
-`CameraDirection` 열거형: `DrawerOpen` / `DrawerClose` (S/W 키). 술장(Shelf) 제거로 `ShelfOpen` / `ShelfClose` 삭제됨.
-`FrontCameraRig` 수평 이동은 캐릭터 포커스 전용 `PanToWorldCenterX()` / `ResetPan()`만 남음.
+### BusinessScene 내부
 
-**3. 게임 진행 관리 (`Assets/Scripts/GameProgress.cs`)**
+| 모드 | 의미 |
+|---|---|
+| `OrderMode` | 영업 손님과 주문 대사 |
+| `EpisodeMode` | 에피소드 대사·선택 |
+| `CraftingMode` | 영업·에피소드 공용 제조 |
 
-`MonoSingleton<GameProgress>`. 씬 전환과 무관하게 유지됩니다:
-- 스토리 플래그: `SetFlag` / `HasFlag` / `ClearFlag`
-- 수치 변수: `GetVar` / `SetVar` / `AddVar` — 호감도 등 정수형 전역 변수 관리
-- 에피소드 완료 기록: `MarkEpisodeCompleted` / `IsEpisodeCompleted`
-- 현재 게임 내 일 진행: `SetCurrentDay` / `CurrentDay`
+`GameModeManager`는 패널과 입력 가능 상태만 관리한다. 하루 진행과 저장을 관리하지 않는다.
 
-## 데이터 패턴
+### 주문 세션
 
-모든 컨텐츠는 `Assets/Data/`에 ScriptableObject 데이터베이스로 저장됩니다. 런타임에 string key로 조회합니다. 새 컨텐츠를 추가하려면 ScriptableObject 에셋을 만들고 해당 Database 에셋의 리스트에 등록하세요.
+```text
+Idle
+→ PresentingOrder
+→ Crafting
+→ Evaluating
+→ PresentingFeedback
+→ Completed
+```
 
-| 데이터 | 파일 | 로드 방식 |
+에피소드 주문은 주문 제시와 피드백 단계를 설정으로 생략한다. 수락·거절·포기 상태는 없다.
+
+## 4. 의존 방향
+
+```mermaid
+flowchart LR
+    Content["콘텐츠 데이터"] --> Runner["실행기"]
+    Runner --> Domain["판정·진행 로직"]
+    Domain --> Progress["GameProgress"]
+    Progress --> Save["DataManager / SaveData"]
+    Runner --> View["UI·캐릭터·도구 표시"]
+```
+
+권장 규칙:
+
+- 데이터 에셋은 씬 오브젝트를 참조하지 않는다.
+- 판정 로직은 UI 텍스트나 버튼에 의존하지 않는다.
+- 저장 필드는 `GameProgress`, `SaveData`, `DataManager.Save()`, `GameProgress.LoadFrom()`을 함께 변경한다.
+- 에피소드와 손님 조건은 `ProgressConditionEvaluator`를 공유한다.
+- 영업과 에피소드 제조는 `BusinessOrderSessionController`를 공유한다.
+- UI에 표시할 주문 대사와 내부 판정 레시피 ID를 분리한다.
+
+## 5. 데이터 패턴
+
+### ScriptableObject 데이터베이스
+
+| 영역 | 단일 에셋 | 데이터베이스·로더 |
 |---|---|---|
-| 캐릭터 | `CharacterData` | `CharacterDatabase` (string key 조회) |
-| 에피소드 | `EpisodeData` | `Resources.LoadAll<EpisodeData>("EpisodeData")` — `EpisodeManager`가 시작 시 일괄 로드 |
-| 손님 주문 | `CustomerOrderData` | `CustomerOrderDatabase` |
-| 주문표 | `OrderTicketData` | `OrderTicketDatabase` |
-| 아이템 | `ItemDef` | `ShelfUI.items` / `DrawerUI.items` 배열 |
+| 캐릭터 | `CharacterData` | `CharacterDatabase` |
+| 주문 | `CustomerOrderData` | `CustomerOrderDatabase` |
+| 방문 | `CustomerVisitData` | `CustomerVisitDatabase` |
+| 주문서 | `OrderTicketData` | `OrderTicketDatabase` |
+| 제조 아이템 | `ItemDef` | `ItemDefCatalog` |
+| 술장 | `LiquorBottleDef` | `LiquorShelfUI` 직렬화 목록 |
+| 레시피 | `CocktailRecipeDef` | `CocktailRecipeDataLoader` |
+| 에피소드 | `EpisodeData` | `EpisodeManager` |
 
-## 공용 UI 유틸리티 (`Assets/Scripts/Tools/`)
+문자열 키가 시스템 간 외래 키 역할을 한다. 키 참조는 컴파일러가 보장하지 않으므로 Editor 검증을 함께 유지한다.
 
-특정 기능에 묶이지 않는 범용 UI 컴포넌트는 `Assets/Scripts/Tools/`에 둡니다.
+### 손님 방문과 주문 분리
 
-| 컴포넌트 | 역할 |
+```text
+CharacterData
+  └─ 스프라이트·표정·눈 깜박임
+
+CustomerVisitData
+  ├─ members[]
+  ├─ 방문 조건·가중치·재등장 대기
+  └─ orders[]
+
+CustomerOrderData
+  └─ 주문 대사·결과 대사·내부 레시피 ID
+```
+
+개인·커플·단체는 `members` 개수로 표현한다. 관계 유형별 런타임 분기를 만들지 않는다.
+
+### 레시피 데이터
+
+`CocktailRecipeDataLoader`는 StreamingAssets의 호환 CSV와 `Resources/Recipes`의 에셋을 합친다. 기본 레시피는 Good 판정, 숨은 변형은 Mid 판정에 사용한다.
+
+## 6. 공용 주문 경계
+
+`OrderSessionRequest`가 호출자별 정책을 전달한다.
+
+| 정책 | 영업 | 에피소드 |
+|---|---|---|
+| 손님 주문 제시 | 사용 | 생략 |
+| 결과 대사 | 사용 | 생략 |
+| 진행 보상 | 돈·명성 적용 | 미적용 |
+| 캐릭터 정리 | 주문 종료 후 | 에피소드가 관리 |
+| 완료 후 | 다음 영업 entry | 노드 분기 |
+
+판정 입력은 `VesselLiquidTracker.BuildComposition()`이며, 화면 버튼이나 주문서 표시 데이터가 아니다.
+
+## 7. 액체와 제조 경계
+
+```text
+ItemDef
+→ BottleController
+→ LiquidParticleData / LiquidPayload
+→ LiquidReaction
+→ VesselLiquidTracker
+→ CocktailComposition
+→ CocktailEvaluator
+→ CocktailOrderEvaluator
+```
+
+- `LiquidPayload`: 재료별 ml, 온도, 제조법
+- `LiquidParticleData`: payload와 용기 소유권, 색상 표현
+- `VesselLiquidTracker`: 용기 내부 입자를 합산
+- `GlassSteamEmitter`: 뜨거운 표면 입자를 시각 효과로 변환
+- `LiquidPool`: 시각 입자 재사용과 화면 밖 반환
+
+제조 물리와 판정 데이터는 연결되어 있지만 역할은 다르다. 셰이더·ParticleSystem 변경이 레시피 판정값을 직접 바꾸지 않도록 유지한다.
+
+## 8. 이벤트 연결
+
+주요 이벤트:
+
+- `DialogueController.DialogueClosed`
+- `GameModeManager.OnModeChanged`
+- `BusinessOrderSessionController.StateChanged`
+- `BusinessOrderSessionController.OrderCompleted`
+- `BusinessSequenceRunner.BusinessDayCompleted`
+- `BusinessBartendingBootstrap.ServeRequested`
+- `GameProgress.BottleAmountChanged`
+
+이벤트 구독 클래스는 `OnDestroy` 또는 세션 정리에서 반드시 구독을 해제한다.
+
+## 9. 현재 병존하는 경로
+
+| 현재 제품 경로 | 이전·별도 경로 |
 |---|---|
-| `ContentHeightToBackground` | ScrollView Content 높이를 배경 이미지(AspectRatioFitter) 높이에 맞춤 |
-| `HollowRectangle` | 크기(RectTransform)와 테두리 두께(`Thickness`)를 독립적으로 조절 가능한 속이 빈 사각형. 상/하/좌/우 4개의 `Image`를 자동 생성해 테두리만 그리는 방식(배경에 의존하지 않음) |
+| `EpisodeData → EpisodeRunner` | 베이크 JSON `NarrativeManager` |
+| `CustomerVisitData.members` | `CustomerOrderData.characterKey` 호환 필드 |
+| 공용 주문 세션 | `CraftingJudgeUI` 수동 Good/Bad |
+| `LiquorShelfUI` 병 선택 | `DragandDrop/ShelfUI`, `DrawerUI` |
+| 기획 CSV 임포터 | 이전 `ItemDataImporter` 상점 전용 임포터 |
 
-## 주요 설계 패턴
+리뷰 시 클래스가 존재한다는 이유만으로 현재 플레이 경로라고 판단하지 않는다. 씬·Prefab 참조와 Bootstrap 호출 체인을 함께 확인한다.
 
-- **씬 분리 + GameState 상태머신**: `GameManager.ChangeState()`가 `SceneTransitionManager`를 통해 씬 전환 처리. BusinessScene(에피소드) ↔ RestScene 전환
-- **씬 내 GameMode 상태머신**: `GameModeManager`가 패널 활성/비활성으로 씬 내 모드 전환 (씬 전환 없음)
-- **MonoSingleton<T>**: `GameProgress`, `GameModeManager`, `EpisodeManager`, `DataManager`, `GameManager`, `AudioManager` 모두 통일
-- **이벤트 기반 연결**: `DialogueController.DialogueClosed`, `GameModeManager.OnModeChanged`
-- **ScriptableObject 데이터베이스**: 모든 게임 컨텐츠를 에디터에서 구성, 하드코딩 없음
-- **인터페이스 기반 입력**: `IDialogueAdvanceHandler`, `ICameraInputHandler` — 수신자가 InputRouter에 의존하지 않음
+## 10. 알려진 구조적 부채
 
-## 관련 문서
+- 자동 테스트와 `.asmdef` 경계가 없다.
+- 저장이 비원자적이고 정확한 실행 위치를 저장하지 않는다.
+- 제조용 `ItemDef`, 술장용 `LiquorBottleDef`, 상점용 `ItemData`가 분리되어 있다.
+- 다수 시스템이 문자열 키와 `Resources.Load`에 의존한다.
+- 일부 에피소드 제조 노드의 레시피 ID가 비어 있다.
+- 휴식 상점 구매가 진행도와 연결되지 않았다.
 
-| 문서 | 내용 |
-|---|---|
-| [../gameplay/character-presentation.md](../gameplay/character-presentation.md) | 캐릭터 표시(`CharacterView`/`CharacterStage`/`CharacterData`), 대화 렌더링(`DialogueController`) |
-| [../narrative/episode-engine.md](../narrative/episode-engine.md) | 에피소드 오케스트레이션(`EpisodeRunner`, 분기, 제조 트리거), 오디오/BGM(`AudioManager`) |
-| [../gameplay/business-interactions.md](../gameplay/business-interactions.md) | 영업 씬 손님&주문(`CustomerSpawner`/`OrderTicketManager`/`OrderTicketUI`), 드래그-드롭 바텐딩(`ItemDef`/`DragManager`/`FrontCameraRig`) |
+우선순위와 재현 경로는 [현재 코드 리뷰](../code-review-2026-08-09.md)를 참고한다.

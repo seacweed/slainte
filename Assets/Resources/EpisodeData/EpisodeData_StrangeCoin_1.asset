@@ -267,6 +267,7 @@ MonoBehaviour:
     characters: []
     requiresCrafting: 1
     craftingTicketKey: sc1_f54
+    craftingRecipeId: whiskey_neat
     nextNodeIdGood: 465d6dca-aea1-4d4a-8a1d-afa96de6351c_0
     nextNodeIdBad: b0cd8d57-51dd-4236-b664-fec6b238d31d_0
     craftingFlagGood: 
@@ -2504,6 +2505,7 @@ MonoBehaviour:
     characters: []
     requiresCrafting: 1
     craftingTicketKey: sc1_f72
+    craftingRecipeId: vodka_lemon
     nextNodeIdGood: 14ca7747-8646-4062-a1c5-41ca4971739c_0
     nextNodeIdBad: 8f30984b-6898-4ea2-b32f-0c0ee8c0313d_0
     craftingFlagGood: 

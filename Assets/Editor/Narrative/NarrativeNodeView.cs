@@ -228,6 +228,8 @@ namespace NarrativeFlow.Editor
             header.Add(NarrativeUIHelper.CreateLabel("CRAFTING", "field-label").With(l => l.style.color = new Color(1f, 0.6f, 0.4f)));
             if (!string.IsNullOrEmpty(ev.CraftingTicketKey))
                 header.Add(NarrativeUIHelper.CreateLabel($"  {ev.CraftingTicketKey}", "info-label").With(l => l.style.color = new Color(0.9f, 0.9f, 0.9f)));
+            if (!string.IsNullOrEmpty(ev.CraftingRecipeId))
+                header.Add(NarrativeUIHelper.CreateLabel($" / {ev.CraftingRecipeId}", "info-label").With(l => l.style.color = new Color(0.9f, 0.9f, 0.9f)));
             card.Add(header);
 
             foreach (var result in CraftingJobResultPorts.Order)

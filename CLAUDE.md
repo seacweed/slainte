@@ -14,7 +14,7 @@
 
 ## 프로젝트 개요
 
-**Slainte**는 Unity 2023.3.5f2(URP)로 제작 중인 내러티브 바텐딩 게임입니다. 이름은 아일랜드어로 "건배"를 뜻합니다. 에피소드 기반의 비주얼 노벨식 스토리텔링과 드래그-드롭 바텐딩 메커니즘을 결합한 게임입니다.
+**Slainte**는 Unity 6000.3.5f2(URP)로 제작 중인 내러티브 바텐딩 게임입니다. 이름은 아일랜드어로 "건배"를 뜻합니다. 에피소드 기반의 비주얼 노벨식 스토리텔링과 드래그-드롭 바텐딩 메커니즘을 결합한 게임입니다.
 
 **게임 진행 흐름**: MainMenu → (Episode 또는 Business, BusinessScene) → Settlement(정산) → Rest(RestScene) → 다음 날 → ...
 
@@ -44,6 +44,7 @@
 
 | 문서 | 내용 |
 |---|---|
+| [docs/implementation-plan.md](docs/implementation-plan.md) | 회의록 반영 전체 구현 순서, 단계별 완료 조건, 선행 자료 |
 | **core** |||
 | [docs/core/architecture.md](docs/core/architecture.md) | GameMode/패널 구조, 입력 처리, GameProgress, 데이터 패턴, 공용 UI 유틸리티 |
 | [docs/core/scene-structure.md](docs/core/scene-structure.md) | 씬 계층 구조 (Canvas, Panel, GameObject) |
@@ -67,5 +68,6 @@
 | [docs/gameplay/character-presentation.md](docs/gameplay/character-presentation.md) | 캐릭터 표시(CharacterView/CharacterStage/CharacterData), 대화 렌더링 |
 | [docs/gameplay/bartending-systems.md](docs/gameplay/bartending-systems.md) | 바텐딩 도구(GlassController 등), MetaballFluid 액체 입자 시스템 |
 | [docs/gameplay/business-interactions.md](docs/gameplay/business-interactions.md) | 영업 씬 손님&주문, 드래그-드롭 바텐딩 |
+| [docs/gameplay/item-data-table-guide.md](docs/gameplay/item-data-table-guide.md) | 기획자용 상점 아이템 CSV 컬럼 정의와 작성 규칙 |
 | **tools** |||
 | [docs/tools/editor-tools.md](docs/tools/editor-tools.md) | 에디터 툴 목록 및 사용법 |

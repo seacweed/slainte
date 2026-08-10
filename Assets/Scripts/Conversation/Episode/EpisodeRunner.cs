@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Slainte.Bartending;
+using Slainte.Business;
 using UnityEngine;
 
 public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
@@ -56,7 +58,7 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
     {
         if (episode == null)
         {
-            Debug.LogWarning("[EpisodeRunner] Begin called with null episode.");
+            Debug.LogWarning("[에피소드 진행] 비어 있는 에피소드로 시작을 요청했습니다.");
             return;
         }
 
@@ -121,7 +123,7 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         _currentNode = _episode.FindNode(nodeId);
         if (_currentNode == null)
         {
-            Debug.LogWarning($"[EpisodeRunner] Node not found: {nodeId}");
+            Debug.LogWarning($"[에피소드 진행] 노드를 찾을 수 없습니다: {nodeId}");
             EndEncounter();
             yield break;
         }
@@ -171,13 +173,61 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
     {
         _waitingForCrafting = true;
 
-        if (!string.IsNullOrWhiteSpace(node.craftingTicketKey))
-            ticketManager?.Prepare(node.craftingTicketKey);
+        if (string.IsNullOrWhiteSpace(node.craftingRecipeId))
+        {
+            Debug.LogError(
+                $"[에피소드 진행] 제조 노드 '{node.nodeId}'에 레시피 ID가 없습니다. "
+                + "실패 분기로 진행합니다.");
+            CompleteCraftingNode(false);
+            yield break;
+        }
 
-        modeManager?.RequestModeChange(GameMode.CraftingMode);
+        const float bootstrapTimeout = 5f;
+        float timeoutAt = Time.realtimeSinceStartup + bootstrapTimeout;
+        BusinessFlowBootstrap bootstrap = null;
+        while (bootstrap == null || !bootstrap.IsRuntimeReady)
+        {
+            bootstrap = FindFirstObjectByType<BusinessFlowBootstrap>();
+            if (Time.realtimeSinceStartup >= timeoutAt)
+            {
+                Debug.LogError("[에피소드 진행] 공용 주문 처리를 기다리다 제한 시간을 초과했습니다.");
+                CompleteCraftingNode(false);
+                yield break;
+            }
+            yield return null;
+        }
+
+        var request = new OrderSessionRequest
+        {
+            sessionId = $"{_episode.episodeId}:{node.nodeId}",
+            owner = OrderSessionOwner.Episode,
+            requestedRecipeId = node.craftingRecipeId,
+            ticketKey = node.craftingTicketKey,
+            orderType = CocktailOrderType.EpisodeOrder,
+            presentOrder = false,
+            presentFeedback = false,
+            applyProgressRewards = false,
+            clearCustomerOnComplete = false
+        };
+
+        if (!bootstrap.StartEpisodeOrder(request, HandleEpisodeOrderCompleted))
+        {
+            Debug.LogError(
+                $"[에피소드 진행] 노드 '{node.nodeId}'의 공용 주문 처리를 시작하지 못했습니다.");
+            CompleteCraftingNode(false);
+            yield break;
+        }
 
         while (_waitingForCrafting)
             yield return null;
+    }
+
+    private void HandleEpisodeOrderCompleted(BusinessOrderSessionResult result)
+    {
+        bool isGood = result != null
+            && result.outcome == OrderSessionOutcome.Served
+            && result.grade == OrderEvaluationGrade.Good;
+        CompleteCraftingNode(isGood);
     }
 
     public void NotifyCraftingCompleted(CraftingJobResult result)
@@ -201,6 +251,8 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 
         string preferred = _currentNode.GetNextNodeId(result);
         string nextId = string.IsNullOrWhiteSpace(preferred) ? _currentNode.nextNodeId : preferred;
+
+        DataManager.Instance?.Save();
 
         if (string.IsNullOrWhiteSpace(nextId)) { EndEncounter(); return; }
         EnterNode(nextId);
@@ -411,6 +463,7 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         AudioManager.Instance?.StopBgm();
 
         string episodeId = _episode?.episodeId;
+        _episode = null;
         OnEncounterCompleted?.Invoke();
 
         EpisodeManager.Instance?.ClearEpisode(episodeId);

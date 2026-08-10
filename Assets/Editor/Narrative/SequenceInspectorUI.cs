@@ -45,7 +45,8 @@ namespace NarrativeFlow.Editor
                     DrawChoices(container, ev, nodeView, epNode, graph);
                     break;
                 case EpisodeEventType.BusinessStart:
-                    container.Add(CreateField("Ticket", ev.CraftingTicketKey, "none", nodeView, v => ev.CraftingTicketKey = v, graph));
+                    container.Add(CreateField("Ticket", ev.CraftingTicketKey, "ticket", nodeView, v => ev.CraftingTicketKey = v, graph));
+                    container.Add(CreateField("Recipe", ev.CraftingRecipeId, "recipe", nodeView, v => ev.CraftingRecipeId = v, graph));
                     container.Add(NarrativeUIHelper.CreateDivider());
                     foreach (var result in CraftingJobResultPorts.Order)
                     {

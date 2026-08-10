@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LiquorBottleDef
   id: breeze_vodka
   displayName: "\uBE0C\uB9AC\uC988 \uBCF4\uB4DC\uCE74"
-  sprite: {fileID: -2174827668884051896, guid: 493584a1deb49db438cec56aa0f577ea, type: 3}
+  sprite: {fileID: -6828235300387644391, guid: 91e6f03485dc77849adfd4ec5ea08650, type: 3}
   unlockFlagKey: 
   subCategory: "\uBCF4\uB4DC\uCE74"
   bottleCount: 5

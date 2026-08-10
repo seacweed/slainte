@@ -55,7 +55,15 @@ public class SceneTransitionManager : MonoSingleton<SceneTransitionManager>
     // 화면이 안 보이므로 이전 씬의 UI를 감추거나 상태를 리셋해도 티가 나지 않는다.
     public void TransitionToSubScene(string sceneToLoad, Action onComplete = null, Action onFadeOutComplete = null)
     {
-        StartCoroutine(TransitionRoutine(sceneToLoad, onComplete, onFadeOutComplete));
+        Scene loadedScene = SceneManager.GetSceneByName(sceneToLoad);
+        if (currentActiveScene == sceneToLoad && loadedScene.IsValid() && loadedScene.isLoaded)
+        {
+            SceneManager.SetActiveScene(loadedScene);
+            onComplete?.Invoke();
+            return;
+        }
+
+        StartCoroutine(TransitionRoutine(sceneToLoad, onComplete));
     }
 
     // 💡 3. 매개변수에 Action onComplete 추가

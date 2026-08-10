@@ -27,6 +27,7 @@ interface IBartendingItem
 |---|---|---|
 | `GlassController` | 칵테일 잔 | `GlassState` (Idle / PickedUp / Tilting / Returning) |
 | `BeakerController` | 비커 (셰이커) | `BeakerState` (Idle / PickedUp / Tilting / Returning) |
+| `CobblerShakerTechniqueController` | 스트레이너 일체형 코블러 셰이커의 흔들기 감지와 `Shake` 기록 | `BeakerController` 상태 사용 |
 | `BottleController` | 술병 | — |
 
 세 컨트롤러 모두 `[ExecuteInEditMode]` + `[RequireComponent(EdgeCollider2D, Collider2D)]` 선언.
@@ -76,7 +77,23 @@ LayerMask slotLayer;     // 빈 값이면 "Slot" 레이어를 자동 탐색
 |---|---|
 | `Glass.prefab` | GlassController 부착 |
 | `Beaker.prefab` | BeakerController 부착 |
+| `CobblerShaker.prefab` | BeakerController + CobblerShakerTechniqueController 부착, 스트레이너 일체형 |
 | `Bottle.prefab` | BottleController 부착 |
+
+코블러 셰이커는 집어 든 상태에서 빠른 왕복 이동의 방향 전환을 감지한다. 기준 횟수를 넘으면 내부 액체 입자에 `CocktailTechnique.Shake`를 기록한다. 스트레이너는 코블러 뚜껑에 일체형인 것으로 취급하므로 별도 스트레이너 도구를 제조 화면에 추가하지 않는다. 현재 얼음은 입자 오브젝트가 아니라 잔의 상태 값이므로 실제 얼음 걸러내기 물리는 얼음 시스템 확정 후 연결한다.
+
+---
+
+## 레시피 에셋과 판정
+
+`CocktailRecipeDataLoader`는 기존 샘플 CSV와 `Resources/Recipes`의 `CocktailRecipeDef`를 합쳐 읽는다. 기존 QA 주문을 유지하면서 기획 CSV로 가져온 레시피를 추가하기 위한 호환 계층이다.
+
+- 기본 레시피 18종 중 배합이 있는 15종만 주문 가능
+- 기본 정답은 `Good`
+- 레시피북에서 숨긴 잔·얼음·제조법·재료 변형 87종은 `Mid`
+- 레시피 도수는 명시 값이 없을 때 `Σ(재료 용량 × 재료 ABV) / 총 용량`으로 계산
+- 무작위 주문은 `isOrderable` 레시피만 선택
+- 기본 레시피 주문 판정 시 같은 `baseRecipeId`의 숨은 변형까지 비교
 
 ---
 

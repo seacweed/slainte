@@ -15,10 +15,10 @@ MonoBehaviour:
   Guid: cff67a37-1945-4f84-922e-e3876aa883ee
   Position:
     serializedVersion: 2
-    x: 583.1998
-    y: -24.800003
-    width: 108
-    height: 136
+    x: 576
+    y: 14
+    width: 107
+    height: 137
   CustomFields:
   - FieldName: Title
     FieldValue: New Block
@@ -173,7 +173,18 @@ MonoBehaviour:
   - FieldName: Title
     FieldValue: aas
   StartEventGuid: 
-  Events: []
+  Events:
+  - Guid: 9fd115d1-0953-45cf-baab-6d3f70acd13e
+    Position: {x: 114.880005, y: 150.92}
+    NextEventGuids: []
+    Type: 0
+    SpeakerKey: 
+    OverrideSpeakerName: 
+    Text: 
+    CharacterAppearances: []
+    Choices: []
+    CraftingTicketKey: 
+    ExitBranchName: 
   OutgoingBranches:
   - Next
   - New
