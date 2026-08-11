@@ -34,6 +34,7 @@ public class DataManager : MonoSingleton<DataManager>
             CurrentData.upgradeValues       = gp.GetUpgradeValues();
             CurrentData.currentChapterId    = gp.CurrentChapterId;
             CurrentData.currentMoney        = gp.CurrentMoney;
+            CurrentData.reputation          = gp.Reputation;
             CurrentData.dayDrinkSalesCount  = gp.DayDrinkSalesCount;
             CurrentData.dayDrinkRevenue     = gp.DayDrinkRevenue;
             CurrentData.dayTotalIncome      = gp.DayTotalIncome;

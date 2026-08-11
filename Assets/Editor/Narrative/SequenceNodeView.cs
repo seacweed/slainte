@@ -112,7 +112,7 @@ namespace NarrativeFlow.Editor
             _summary.text = eventData.Type switch {
                 EpisodeEventType.Dialogue => $"<b>{eventData.SpeakerKey}</b>\n{(eventData.Text?.Length > 40 ? eventData.Text.Substring(0, 37) + "..." : eventData.Text)}",
                 EpisodeEventType.Choice => $"{eventData.Choices.Count} Options",
-                EpisodeEventType.BusinessStart => $"Ticket: {eventData.CraftingTicketKey}\nRecipe: {eventData.CraftingRecipeId}",
+                EpisodeEventType.BusinessStart => $"Ticket: {eventData.CraftingTicketKey}",
                 EpisodeEventType.BranchExit => $"EXIT -> <b>{eventData.ExitBranchName}</b>",
                 _ => "Point"
             };

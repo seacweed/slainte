@@ -36,6 +36,9 @@ public class GameProgress : MonoSingleton<GameProgress>
     [Header("Money")]
     [SerializeField] private int currentMoney = 0;
 
+    [Header("Reputation")]
+    [SerializeField] private int reputation = 0;
+
     [Header("Day Settlement (transient, resets each day)")]
     [SerializeField] private int dayDrinkSalesCount = 0;
     [SerializeField] private int dayDrinkRevenue     = 0;
@@ -52,6 +55,7 @@ public class GameProgress : MonoSingleton<GameProgress>
     public int    CurrentDay        => currentDay;
     public string CurrentChapterId  => currentChapterId;
     public int    CurrentMoney      => currentMoney;
+    public int    Reputation        => reputation;
     public int    DayDrinkSalesCount => dayDrinkSalesCount;
     public int    DayDrinkRevenue    => dayDrinkRevenue;
     public int    DayTotalIncome     => dayTotalIncome;
@@ -113,6 +117,7 @@ public class GameProgress : MonoSingleton<GameProgress>
         upgradeValues       = new List<int>(data.upgradeValues ?? new List<int>());
         currentChapterId   = data.currentChapterId ?? "";
         currentMoney        = data.currentMoney;
+        reputation          = data.reputation;
         dayDrinkSalesCount  = data.dayDrinkSalesCount;
         dayDrinkRevenue     = data.dayDrinkRevenue;
         dayTotalIncome      = data.dayTotalIncome;
@@ -287,55 +292,6 @@ public class GameProgress : MonoSingleton<GameProgress>
         float safeValue = Mathf.Max(0f, value);
         _bottleAmounts[bottleId] = safeValue;
         SyncBottleAmountToLists(bottleId, safeValue);
-        BottleAmountChanged?.Invoke(bottleId, safeValue);
-    }
-
-    public void AddMoney(int amount)
-    {
-        money = Mathf.Max(0, money + amount);
-    }
-
-    public void AddReputation(int amount)
-    {
-        reputation += amount;
-    }
-
-    public void SetBusinessDaySnapshot(BusinessDaySnapshot snapshot)
-    {
-        businessDay = snapshot != null ? snapshot.Clone() : new BusinessDaySnapshot();
-    }
-
-    public void AdvanceBusinessSequence()
-    {
-        if (businessDay == null)
-            businessDay = new BusinessDaySnapshot();
-
-        businessDay.currentIndex = Mathf.Min(
-            businessDay.currentIndex + 1,
-            businessDay.entries != null ? businessDay.entries.Count : 0);
-        businessDay.isCompleted = businessDay.entries == null
-            || businessDay.currentIndex >= businessDay.entries.Count;
-    }
-
-    public void ClearBusinessDaySnapshot()
-    {
-        businessDay = new BusinessDaySnapshot();
-    }
-
-    private static List<CustomerVisitHistorySnapshot> CloneVisitHistory(
-        List<CustomerVisitHistorySnapshot> source)
-    {
-        List<CustomerVisitHistorySnapshot> clone = new();
-        if (source == null)
-            return clone;
-
-        for (int i = 0; i < source.Count; i++)
-        {
-            if (source[i] != null)
-                clone.Add(source[i].Clone());
-        }
-
-        return clone;
     }
 
     private void SyncBottleAmountToLists(string bottleId, float value)
@@ -402,6 +358,13 @@ public class GameProgress : MonoSingleton<GameProgress>
         if (currentMoney < amount) return false;
         currentMoney -= amount;
         return true;
+    }
+
+    // ── Reputation ───────────────────────────────────────────────
+
+    public void AddReputation(int delta)
+    {
+        reputation += delta;
     }
 
     // ── Upgrade Levels ──────────────────────────────────────────

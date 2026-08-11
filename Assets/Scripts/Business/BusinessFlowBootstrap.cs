@@ -13,7 +13,6 @@ namespace Slainte.Business
         [SerializeField] private BusinessOrderFlowSettings settings;
 
         private BusinessOrderSessionController orderSession;
-        private BusinessSequenceRunner sequenceRunner;
         private BusinessOrderSessionUI sessionUi;
         private CraftingJudgeUI legacyCraftingJudge;
         private GameModeManager modeManager;
@@ -66,8 +65,6 @@ namespace Slainte.Business
         {
             if (orderSession != null)
                 orderSession.StateChanged -= HandleOrderSessionStateChanged;
-            if (sequenceRunner != null)
-                sequenceRunner.BusinessDayCompleted -= HandleBusinessDayCompleted;
         }
 
         private void InitializeRuntime()
@@ -104,10 +101,6 @@ namespace Slainte.Business
                 sessionUi = gameObject.AddComponent<BusinessOrderSessionUI>();
             sessionUi.Initialize(canvasRoot, orderSession);
 
-            sequenceRunner = GetComponent<BusinessSequenceRunner>();
-            if (sequenceRunner == null)
-                sequenceRunner = gameObject.AddComponent<BusinessSequenceRunner>();
-
             orderSession.Initialize(
                 modeManager,
                 customerSpawner,
@@ -116,9 +109,7 @@ namespace Slainte.Business
                 bartending,
                 sessionUi,
                 settings);
-            sequenceRunner.Initialize(orderSession, sessionUi, settings);
             orderSession.StateChanged += HandleOrderSessionStateChanged;
-            sequenceRunner.BusinessDayCompleted += HandleBusinessDayCompleted;
             runtimeInitialized = true;
             if (legacyCraftingJudge != null)
                 legacyCraftingJudge.gameObject.SetActive(false);
@@ -130,7 +121,7 @@ namespace Slainte.Business
         public void StartBusinessSequence()
         {
             businessStartRequested = true;
-            if (!runtimeInitialized || sequenceRunner == null || episodeOrderActive)
+            if (!runtimeInitialized || episodeOrderActive)
                 return;
 
             businessStartRequested = false;
@@ -138,7 +129,6 @@ namespace Slainte.Business
             modeManager?.RequestModeChange(GameMode.OrderMode);
             if (legacyCraftingJudge != null)
                 legacyCraftingJudge.gameObject.SetActive(false);
-            sequenceRunner.StartSequence();
         }
 
         public bool StartEpisodeOrder(
@@ -175,7 +165,7 @@ namespace Slainte.Business
         private void HandleBusinessDayCompleted()
         {
             businessSequenceActive = false;
-            DayFlowManager.Instance.CompleteBusinessDay();
+            //DayFlowManager.Instance.CompleteBusinessDay();
         }
 
         private void HandleOrderSessionStateChanged(

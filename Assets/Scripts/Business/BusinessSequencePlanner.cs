@@ -8,109 +8,6 @@ namespace Slainte.Business
     {
         public const string OrderEntryType = "order";
 
-        public static BusinessDaySnapshot Create(
-            int day,
-            BusinessOrderFlowSettings settings,
-            GameProgress progress)
-        {
-            if (settings == null || settings.sequenceMode == BusinessSequenceMode.Fixed)
-                return CreateFixed(day, settings);
-
-            CustomerVisitDatabase database = settings.customerVisitDatabase != null
-                ? settings.customerVisitDatabase
-                : CustomerVisitDatabase.LoadDefault();
-            return CreateFromPool(day, settings, database, progress);
-        }
-
-        public static BusinessDaySnapshot CreateFixed(
-            int day,
-            BusinessOrderFlowSettings settings)
-        {
-            BusinessDaySnapshot snapshot = new BusinessDaySnapshot
-            {
-                day = day,
-                seed = CreateSeed(day),
-                currentIndex = 0,
-                isCompleted = false
-            };
-
-            if (settings?.fixedOrders == null)
-                return snapshot;
-
-            for (int i = 0; i < settings.fixedOrders.Count; i++)
-            {
-                FixedBusinessOrder order = settings.fixedOrders[i];
-                if (order == null || string.IsNullOrWhiteSpace(order.customerOrderKey))
-                    continue;
-
-                snapshot.entries.Add(new BusinessSequenceEntrySnapshot
-                {
-                    entryType = OrderEntryType,
-                    entryId = order.customerOrderKey.Trim(),
-                    contentId = order.requestedRecipeId?.Trim() ?? string.Empty
-                });
-            }
-
-            snapshot.isCompleted = snapshot.entries.Count == 0;
-            return snapshot;
-        }
-
-        public static BusinessDaySnapshot CreateFromPool(
-            int day,
-            BusinessOrderFlowSettings settings,
-            CustomerVisitDatabase database,
-            GameProgress progress)
-        {
-            BusinessDaySnapshot snapshot = new BusinessDaySnapshot
-            {
-                day = day,
-                seed = CreateSeed(day),
-                currentIndex = 0,
-                isCompleted = false
-            };
-
-            if (settings == null || database == null || database.visits == null || progress == null)
-            {
-                snapshot.isCompleted = true;
-                return snapshot;
-            }
-
-            List<VisitCandidate> candidates = BuildCandidates(day, database, progress);
-            int minimum = Mathf.Max(0, settings.minVisitsPerDay);
-            int maximum = Mathf.Max(minimum, settings.maxVisitsPerDay);
-            System.Random random = new System.Random(snapshot.seed);
-            int targetCount = maximum > minimum
-                ? random.Next(minimum, maximum + 1)
-                : minimum;
-
-            while (snapshot.entries.Count < targetCount && candidates.Count > 0)
-            {
-                VisitCandidate visit = PickWeightedVisit(candidates, random);
-                if (visit == null)
-                    break;
-
-                CustomerVisitOrderOption orderOption = PickWeightedOrder(visit.orders, random);
-                CustomerOrderData order = orderOption?.order;
-                if (order != null)
-                {
-                    snapshot.entries.Add(new BusinessSequenceEntrySnapshot
-                    {
-                        entryType = OrderEntryType,
-                        entryId = order.key.Trim(),
-                        contentId = order.requestedRecipeId.Trim(),
-                        visitKey = visit.visit.visitKey.Trim(),
-                        orderType = (int)order.orderType
-                    });
-                }
-
-                if (!visit.visit.allowDuplicateInDay)
-                    candidates.Remove(visit);
-            }
-
-            snapshot.isCompleted = snapshot.entries.Count == 0;
-            return snapshot;
-        }
-
         private static List<VisitCandidate> BuildCandidates(
             int day,
             CustomerVisitDatabase database,
@@ -125,8 +22,7 @@ namespace Slainte.Business
                     || visit.weight <= 0f
                     || visit.members == null
                     || visit.members.Count == 0
-                    || !ProgressConditionEvaluator.IsMet(visit.condition, progress, visit.maxDay)
-                    || IsOnCooldown(visit, day, progress))
+                    || !ProgressConditionEvaluator.IsMet(visit.condition, progress, visit.maxDay))
                     continue;
 
                 List<CustomerVisitOrderOption> orders = new List<CustomerVisitOrderOption>();
@@ -153,15 +49,6 @@ namespace Slainte.Business
             }
 
             return result;
-        }
-
-        private static bool IsOnCooldown(CustomerVisitData visit, int day, GameProgress progress)
-        {
-            if (visit.cooldownDays <= 0)
-                return false;
-
-            int lastVisitedDay = progress.GetLastCustomerVisitDay(visit.visitKey);
-            return lastVisitedDay >= 0 && day - lastVisitedDay <= visit.cooldownDays;
         }
 
         private static VisitCandidate PickWeightedVisit(

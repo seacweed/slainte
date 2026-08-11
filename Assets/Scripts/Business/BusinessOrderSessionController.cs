@@ -73,11 +73,6 @@ namespace Slainte.Business
             }
         }
 
-        public bool BeginOrder(BusinessSequenceEntrySnapshot entry)
-        {
-            return BeginOrder(OrderSessionRequest.ForBusiness(entry), null);
-        }
-
         public bool BeginOrder(
             OrderSessionRequest request,
             Action<BusinessOrderSessionResult> onCompleted)

@@ -5,26 +5,23 @@
 통합 주문 흐름은 `Assets/Scripts/Business/`에 구현되어 있습니다.
 
 - `BusinessFlowBootstrap`는 씬 안의 의존성을 연결하고, 진행 중인 에피소드가 없으면 저장된 영업 순서를 시작합니다.
-- `BusinessSequencePlanner`는 고정 주문 또는 조건 기반 손님 풀에서 하루 영업 목록을 결정적으로 생성합니다. `BusinessSequenceRunner`는 주문 경계에서 진행 위치와 방문 이력을 저장합니다.
 - `BusinessOrderSessionController`는 주문 제시, 자동 제조 진입, 판정, 반응 대사, 보상, 정리, 완료 처리를 담당합니다.
 - `BusinessOrderSessionUI`는 조작 없는 상태·결과 문구만 표시하며 주문 행동 버튼을 만들지 않습니다.
-- `BusinessOrderFlowSettings`에는 진행 방식, 손님 풀, 하루 방문 수, Good·Mid·Bad 판정 기준, 보상, 기본 반응 대사가 있습니다.
+- `BusinessOrderFlowSettings`에는 진행 방식, 손님 풀, 하루 방문 수, Good·Mid·Bad 판정 기준, 보상(돈·명성), 기본 반응 대사가 있습니다.
 - `BusinessBartendingBootstrap`는 도구만 놓인 상태로 시작합니다. `LiquorBottleSlotUI`를 왼쪽 클릭하면 같은 ID의 `ItemDef`를 찾아 가장 오른쪽의 빈 테이블 슬롯부터 술병을 배치합니다.
 - 씬의 `TableSlots`는 숨겨진 배치 틀입니다. 제조 중에만 화면상 테이블 영역에 맞춘 임시 배치와 월드 충돌 슬롯을 만들고, 제조가 끝나면 함께 제거합니다.
 - `GlassController`는 플레이어가 잔을 끌어 전방 기준선을 넘겼을 때만 제출을 요청합니다. 주문 대사가 끝나면 바로 제조로 진입하며 거절, 포기, 버리기, 제출 버튼은 제공하지 않습니다.
 - 술병 오브젝트는 현재 병의 잔량을 추적하고 `GameProgress`는 전체 재고를 저장합니다. 제출해도 사용한 양은 복구되지 않습니다.
-- `BusinessFlowSceneSetup`은 Unity 에디터 API로 설정·샘플 에셋을 만들고 `BusinessFlowBootstrap`을 `BusinessScene`에 연결합니다.
 
-현재 샘플은 `yukari_sample_visit` 방문에서 `vertical_slice_vodka_lemon` 주문을 선택하며, 판정 레시피는 `vodka_lemon`입니다.
+### ⚠️ 손님 순번 진행 로직 미구현
 
-## 에피소드 제조 연동
+`BusinessOrderFlowSettings.sequenceMode`(고정 주문/손님 풀)를 소비해서 하루치 손님을 순서대로 진행시키던 `BusinessSequenceRunner`와 그 생성 API(`BusinessSequencePlanner.Create`/`CreateFixed`/`CreateFromPool`)가 삭제되어, `BusinessSequencePlanner.cs`엔 아무도 호출하지 않는 private 후보 추첨 로직(`BuildCandidates`/`PickWeightedVisit`/`PickWeightedOrder`)만 남아 있습니다. `BusinessFlowBootstrap.StartBusinessSequence()`는 `GameMode`를 `OrderMode`로 바꿀 뿐 손님을 큐에서 꺼내지 않으므로, 지금 상태로는 영업을 시작해도 주문이 뜨지 않습니다(재구현 보류 중). 샘플 손님 풀 데이터(`Assets/Resources/CustomerVisit/Data/CustomerVisit_yukari_sample.asset`)는 남아 있지만 현재는 아무도 읽지 않습니다. 씬·샘플 데이터 자동 세팅용 에디터 툴(`BusinessFlowSceneSetup`, `CustomerPoolSetup`)도 삭제된 상태입니다.
 
-- 에피소드 제조 노드는 영업과 같은 `BusinessOrderSessionController`를 호출합니다.
-- `craftingTicketKey`는 표시할 주문서를, `craftingRecipeId`는 `recipes.csv`에서 판정할 레시피를 선택합니다.
-- 에피소드 주문은 영업용 손님 주문 제시를 생략하고 결과를 `EpisodeRunner`에 반환합니다.
-- 술병 용량 변화는 공용 `GameProgress` 재고에 반영됩니다. 사용한 양은 유지되며, 주문 결과를 반영한 뒤 에피소드를 저장합니다.
-- 에피소드 주문은 영업 진행 위치나 날짜를 바꾸지 않고 영업용 돈·명성 보상도 지급하지 않습니다.
-- `Good`은 성공 분기, `Mid`와 `Bad`는 실패 분기로 돌아갑니다.
+## 에피소드 제조 노드 (현재: 수동 판정)
+
+- 에피소드 제조 노드는 `EpisodeRunner.HandleCraftingStart()`에서 처리되며, 기존 방식대로 `OrderTicketManager.Prepare(node.craftingTicketKey)` + `GameModeManager.RequestModeChange(GameMode.CraftingMode)`로 진입해 `CraftingJudgeUI`의 버튼 6개로 수동 판정합니다.
+- 영업과 같은 `BusinessOrderSessionController`(레시피 기반 자동 판정, `BusinessFlowBootstrap.StartEpisodeOrder()` 경유)로 연동해서 수동 판정을 대체하려던 시도가 있었으나(그래프 노드에 `craftingRecipeId` 컬럼과 `CraftingRecipeId` 필드 추가) 컴파일 문제로 되돌려졌습니다. 재통합 예정입니다.
+- 그 흔적으로 `StrangeCoin_0.asset`/`StrangeCoin_1.asset` 그래프에는 `CraftingRecipeId: vodka_lemon`/`whiskey_neat` 값이 여전히 남아 있고, `EpisodeCsvImporter.cs`도 CSV의 `craftingRecipeId` 컬럼을 계속 파싱합니다. 하지만 `EpisodeNode`/`EpisodeEventData` 클래스엔 이 필드가 없어서 지금은 그래프를 저장할 때마다 버려지는 고아 값입니다. 재통합 시 `EpisodeNode.craftingRecipeId` 필드부터 다시 추가해야 합니다.
 
 ## 영업 씬 손님 & 주문 (`Assets/Scripts/Conversation/Sell/`, `Assets/Scripts/OrderTicket/`)
 
@@ -57,7 +54,7 @@ CustomerOrderData
 
 커플과 단체는 별도 유형으로 나누지 않습니다. `members`가 한 명이면 1인 방문, 두 명이면 커플이나 2인 방문, 세 명 이상이면 단체 방문으로 자연스럽게 표현됩니다. 런타임은 인원 유형이 아니라 구성원 목록만 처리합니다.
 
-같은 날짜와 진행 상태에서는 같은 방문·주문 목록이 생성됩니다. 방문을 마치면 마지막 방문 날짜와 누적 방문 횟수를 저장해 `cooldownDays` 동안 후보에서 제외합니다.
+(설계상) 같은 날짜와 진행 상태에서는 같은 방문·주문 목록이 결정적으로 생성되고, 방문을 마치면 마지막 방문 날짜와 누적 방문 횟수를 저장해 `cooldownDays` 동안 후보에서 제외하도록 되어 있습니다. 다만 이 추첨 로직(`BusinessSequencePlanner`의 private 메서드들)을 호출하는 진입점이 현재 없어 실제로는 동작하지 않습니다 — 위 "손님 순번 진행 로직 미구현" 참고.
 
 ## 드래그-드롭 바텐딩 (`Assets/Scripts/DragandDrop/`)
 
