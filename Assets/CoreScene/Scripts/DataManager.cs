@@ -3,8 +3,28 @@ using System.IO;
 
 public class DataManager : MonoSingleton<DataManager>
 {
+    private static int saveSuppressionDepth;
+
     public SaveData CurrentData { get; private set; } = new SaveData();
     private string savePath;
+
+    public static bool AreDiskWritesSuppressed => saveSuppressionDepth > 0;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetSaveSuppression()
+    {
+        saveSuppressionDepth = 0;
+    }
+
+    public static void PushSaveSuppression()
+    {
+        saveSuppressionDepth++;
+    }
+
+    public static void PopSaveSuppression()
+    {
+        saveSuppressionDepth = Mathf.Max(0, saveSuppressionDepth - 1);
+    }
 
     protected override void Awake()
     {
@@ -16,6 +36,12 @@ public class DataManager : MonoSingleton<DataManager>
     [ContextMenu("Save Game")]
     public void Save()
     {
+        if (AreDiskWritesSuppressed)
+        {
+            Debug.Log("[DataManager] Playtest isolation is active; disk save skipped.");
+            return;
+        }
+
         GameProgress gp = GameProgress.Instance;
         if (gp != null)
         {

@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Slainte.Bartending
 {
@@ -46,11 +45,24 @@ namespace Slainte.Bartending
         private Collider2D mainCollider; // 부모 드래그 터치 감지용 트리거 콜라이더
         private VesselLiquidTracker liquidTracker;
         private Camera mainCamera;
+        private Rigidbody2D body;
         
         private float initialAngle;
         private float currentAngle = 0f;
         private Coroutine returnCoroutine;
-        private Vector3 dragOffset;
+        private const int PointerSyncFrameBudget = 6;
+        private bool pointerSyncPending;
+        private bool completeReturnAfterPointerSync;
+        private int pointerSyncFramesRemaining;
+        private Vector2 pointerSyncScreenPosition;
+        private Vector3 pointerSyncPivotWorld;
+        private Vector3 pointerPivotOffset;
+        private bool positionTargetPending;
+        private Vector2 pendingPositionTarget;
+        private bool rotationTargetPending;
+        private float pendingRotationTarget;
+        private float rotationHorizontalSensitivity = 1f;
+        private float rotationHorizontalScreenPadding = 12f;
 
         private SlotController currentSlot; // 현재 점유 중인 슬롯 레퍼런스
         private Vector3 dragVelocity = Vector3.zero;
@@ -62,6 +74,12 @@ namespace Slainte.Bartending
 
         public VesselLiquidTracker LiquidTracker => liquidTracker;
 
+        public void ConfigureHorizontalRotationMovement(float sensitivity, float screenPadding)
+        {
+            rotationHorizontalSensitivity = Mathf.Max(0f, sensitivity);
+            rotationHorizontalScreenPadding = Mathf.Max(0f, screenPadding);
+        }
+
         private void Start()
         {
             mainCollider = GetComponent<Collider2D>();
@@ -72,13 +90,13 @@ namespace Slainte.Bartending
                 // 1. Rigidbody2D 키네마틱 물리 셋업 강제 보장 (2D 물리 트리거 상호작용 완벽 복구)
                 EnsureLiquidTracker();
 
-                Rigidbody2D rb = GetComponent<Rigidbody2D>();
-                if (rb == null)
+                body = GetComponent<Rigidbody2D>();
+                if (body == null)
                 {
-                    rb = gameObject.AddComponent<Rigidbody2D>();
+                    body = gameObject.AddComponent<Rigidbody2D>();
                 }
-                rb.bodyType = RigidbodyType2D.Kinematic;
-                rb.useFullKinematicContacts = true;
+                body.bodyType = RigidbodyType2D.Kinematic;
+                body.useFullKinematicContacts = true;
 
                 // 2. slotLayer가 빈 값이거나 Nothing일 시 스마트 자동 보정
                 if (slotLayer.value == 0)
@@ -132,7 +150,23 @@ namespace Slainte.Bartending
         {
             if (!Application.isPlaying) return;
 
-            HandleInput();
+            if (!UpdatePointerSynchronization())
+                HandleInput();
+        }
+
+        private void FixedUpdate()
+        {
+            if (!Application.isPlaying)
+                return;
+
+            ApplyPendingPhysicsMotion();
+        }
+
+        private void OnDisable()
+        {
+            CancelPendingPhysicsMotion();
+            CancelPointerSynchronization();
+            BartendingPointerAnchor.Release(this);
         }
 
         private void HandleInput()
@@ -144,14 +178,17 @@ namespace Slainte.Bartending
                 {
                     PickupBeaker();
                 }
-                else if (currentState == BeakerState.PickedUp || currentState == BeakerState.Returning)
+                else if (currentState == BeakerState.PickedUp)
                 {
                     TryDropBeaker();
                 }
             }
 
+            if (pointerSyncPending)
+                return;
+
             // Follow Mouse
-            if (currentState == BeakerState.PickedUp || currentState == BeakerState.Returning)
+            if (currentState == BeakerState.PickedUp)
             {
                 FollowMousePosition();
             }
@@ -159,7 +196,7 @@ namespace Slainte.Bartending
             // Right Click (Tilt / Return)
             if (Input.GetMouseButtonDown(1))
             {
-                if (currentState == BeakerState.PickedUp || currentState == BeakerState.Returning)
+                if (currentState == BeakerState.PickedUp)
                 {
                     StartTilting();
                 }
@@ -177,10 +214,14 @@ namespace Slainte.Bartending
             {
                 PerformTilting();
             }
+
+            if (currentState == BeakerState.Tilting || currentState == BeakerState.Returning)
+                PerformHorizontalRotationMovement();
         }
 
         private void PickupBeaker()
         {
+            CancelPendingPhysicsMotion();
             currentState = BeakerState.PickedUp;
             interactionOrder?.BringToFront();
             
@@ -197,7 +238,10 @@ namespace Slainte.Bartending
                 returnCoroutine = null;
             }
 
-            CaptureDragOffset();
+            BeginPointerSynchronization(
+                transform.position,
+                unlockCursor: false,
+                completeReturn: false);
         }
 
         private void FollowMousePosition()
@@ -207,30 +251,12 @@ namespace Slainte.Bartending
                 return;
             }
 
-            Vector3 targetPosition = mousePos + dragOffset;
-            
-            Rigidbody2D rb = GetComponent<Rigidbody2D>();
-            if (rb != null)
-            {
-                // 댐핑을 걷어내고 0초 즉각 1:1 마우스 매핑 + 연속 물리(Sweep) 충돌 보장
-                rb.MovePosition(targetPosition);
-            }
-            else
-            {
-                transform.position = targetPosition;
-            }
-        }
-
-        private void CaptureDragOffset()
-        {
-            if (!BartendingViewport.TryGetPointerWorldPosition(mainCamera, Input.mousePosition, out Vector3 mousePos))
-            {
-                dragOffset = Vector3.zero;
-                return;
-            }
-
-            dragOffset = transform.position - mousePos;
-            dragOffset.z = 0f;
+            Vector3 targetPivot = mousePos + pointerPivotOffset;
+            Vector3 targetPosition = BartendingPointerAnchor.CalculateRootPosition(
+                transform.position,
+                transform.position,
+                targetPivot);
+            QueuePositionTarget(targetPosition);
         }
 
         private float GetPivotToBottomOffset()
@@ -278,8 +304,7 @@ namespace Slainte.Bartending
                         // 슬롯 스냅 안착 (바닥면 Y 오프셋 칼각 정렬!)
                         float bottomOffset = GetPivotToBottomOffset();
                         MoveVesselAndContents(new Vector3(hit.transform.position.x, hit.transform.position.y + bottomOffset, 0f));
-                        transform.rotation = Quaternion.identity;
-                        currentAngle = 0f;
+                        SetRotationImmediately(0f);
                         
                         ReleaseBeaker();
                         return;
@@ -290,8 +315,7 @@ namespace Slainte.Bartending
                     // 슬롯 스냅 안착 (하위 호환용)
                     float bottomOffset = GetPivotToBottomOffset();
                     MoveVesselAndContents(new Vector3(hit.transform.position.x, hit.transform.position.y + bottomOffset, 0f));
-                    transform.rotation = Quaternion.identity;
-                    currentAngle = 0f;
+                    SetRotationImmediately(0f);
                     
                     ReleaseBeaker();
                     return;
@@ -308,20 +332,22 @@ namespace Slainte.Bartending
             currentSlot = slot;
             float bottomOffset = GetPivotToBottomOffset();
             MoveVesselAndContents(new Vector3(slotTransform.position.x, slotTransform.position.y + bottomOffset, 0f));
-            transform.rotation = Quaternion.identity;
-            currentAngle = 0f;
+            SetRotationImmediately(0f);
             ReleaseBeaker();
         }
 
         private void MoveVesselAndContents(Vector3 targetPosition)
         {
+            CancelPendingPhysicsMotion();
             targetPosition.z = 0f;
-            Vector2 delta = targetPosition - transform.position;
+            Vector2 currentPosition = body != null
+                ? body.position
+                : (Vector2)transform.position;
+            Vector2 delta = (Vector2)targetPosition - currentPosition;
             liquidTracker?.TranslateTrackedParticles(delta);
 
-            Rigidbody2D rb = GetComponent<Rigidbody2D>();
-            if (rb != null)
-                rb.position = targetPosition;
+            if (body != null)
+                body.position = targetPosition;
             else
                 transform.position = targetPosition;
         }
@@ -339,6 +365,9 @@ namespace Slainte.Bartending
         private void ReleaseBeaker()
         {
             currentState = BeakerState.Idle;
+            CancelPendingPhysicsMotion();
+            CancelPointerSynchronization();
+            BartendingPointerAnchor.Release(this);
             
             if (returnCoroutine != null)
             {
@@ -349,11 +378,12 @@ namespace Slainte.Bartending
 
         private void StartTilting()
         {
+            if (!BartendingPointerAnchor.TryLock(this))
+                return;
+
+            CancelPendingPhysicsMotion();
             currentState = BeakerState.Tilting;
             initialAngle = currentAngle;
-
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
 
             if (returnCoroutine != null)
             {
@@ -367,33 +397,38 @@ namespace Slainte.Bartending
             float deltaY = Input.GetAxis("Mouse Y");
             currentAngle += deltaY * tiltSensitivity * 10f;
             currentAngle = Mathf.Clamp(currentAngle, -maxTiltAngle, maxTiltAngle);
-            
-            Rigidbody2D rb = GetComponent<Rigidbody2D>();
-            if (rb != null)
+            QueueRotationTarget(currentAngle);
+        }
+
+        private void PerformHorizontalRotationMovement()
+        {
+            Bounds bounds = mainCollider != null
+                ? mainCollider.bounds
+                : new Bounds(transform.position, Vector3.one);
+            if (body != null && positionTargetPending)
+                bounds.center += (Vector3)(pendingPositionTarget - body.position);
+
+            if (!BartendingPointerAnchor.TryGetHorizontalWorldDelta(
+                    mainCamera,
+                    bounds,
+                    rotationHorizontalSensitivity,
+                    rotationHorizontalScreenPadding,
+                    out float worldDeltaX))
             {
-                rb.MoveRotation(currentAngle);
+                return;
             }
-            else
-            {
-                transform.rotation = Quaternion.Euler(0f, 0f, currentAngle);
-            }
+
+            Vector2 currentPosition = positionTargetPending
+                ? pendingPositionTarget
+                : body != null
+                    ? body.position
+                    : (Vector2)transform.position;
+            QueuePositionTarget(currentPosition + new Vector2(worldDeltaX, 0f));
         }
 
         private void StartReturning()
         {
             currentState = BeakerState.Returning;
-
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-
-            if (Mouse.current != null && mainCamera != null)
-            {
-                Vector2 screenPos = BartendingViewport.GetPointerScreenPosition(mainCamera, transform.position);
-                Mouse.current.WarpCursorPosition(screenPos);
-            }
-
-            dragOffset = Vector3.zero;
-
             returnCoroutine = StartCoroutine(ReturnToUprightRoutine());
         }
 
@@ -402,8 +437,6 @@ namespace Slainte.Bartending
             float startAngle = currentAngle;
             float timeElapsed = 0f;
 
-            Rigidbody2D rb = GetComponent<Rigidbody2D>();
-
             while (timeElapsed < returnSpeed)
             {
                 timeElapsed += Time.deltaTime;
@@ -411,30 +444,182 @@ namespace Slainte.Bartending
                 float curveValue = returnEase.Evaluate(normalizedTime);
                 
                 currentAngle = Mathf.Lerp(startAngle, 0f, curveValue);
-                if (rb != null)
-                {
-                    rb.MoveRotation(currentAngle);
-                }
-                else
-                {
-                    transform.rotation = Quaternion.Euler(0f, 0f, currentAngle);
-                }
+                QueueRotationTarget(currentAngle);
                 
                 yield return null;
             }
 
             currentAngle = 0f;
-            if (rb != null)
+            QueueRotationTarget(0f);
+
+            while (body != null
+                && (rotationTargetPending
+                    || Mathf.Abs(Mathf.DeltaAngle(body.rotation, 0f)) > 0.05f))
             {
-                rb.MoveRotation(0f);
+                yield return new WaitForFixedUpdate();
             }
-            else
-            {
-                transform.rotation = Quaternion.identity;
-            }
-            
-            currentState = BeakerState.PickedUp;
+
+            yield return null;
+
             returnCoroutine = null;
+            BeginPointerSynchronization(
+                transform.position,
+                unlockCursor: true,
+                completeReturn: true);
+        }
+
+        private void QueuePositionTarget(Vector3 targetPosition)
+        {
+            targetPosition.z = 0f;
+            if (body == null)
+            {
+                Vector2 delta = (Vector2)targetPosition - (Vector2)transform.position;
+                liquidTracker?.TranslateTrackedParticles(delta);
+                transform.position = targetPosition;
+                return;
+            }
+
+            pendingPositionTarget = targetPosition;
+            positionTargetPending = true;
+        }
+
+        private void QueueRotationTarget(float targetAngle)
+        {
+            if (body == null)
+            {
+                transform.rotation = Quaternion.Euler(0f, 0f, targetAngle);
+                return;
+            }
+
+            pendingRotationTarget = targetAngle;
+            rotationTargetPending = true;
+        }
+
+        private void ApplyPendingPhysicsMotion()
+        {
+            if (body == null)
+            {
+                CancelPendingPhysicsMotion();
+                return;
+            }
+
+            if (positionTargetPending)
+            {
+                Vector2 delta = pendingPositionTarget - body.position;
+                liquidTracker?.TranslateTrackedParticles(delta);
+                body.MovePosition(pendingPositionTarget);
+                positionTargetPending = false;
+            }
+
+            if (rotationTargetPending)
+            {
+                body.MoveRotation(pendingRotationTarget);
+                rotationTargetPending = false;
+            }
+        }
+
+        private void SetRotationImmediately(float targetAngle)
+        {
+            rotationTargetPending = false;
+            currentAngle = targetAngle;
+            if (body != null)
+                body.rotation = targetAngle;
+            else
+                transform.rotation = Quaternion.Euler(0f, 0f, targetAngle);
+        }
+
+        private void CancelPendingPhysicsMotion()
+        {
+            positionTargetPending = false;
+            rotationTargetPending = false;
+        }
+
+        private void BeginPointerSynchronization(
+            Vector3 pivotWorld,
+            bool unlockCursor,
+            bool completeReturn)
+        {
+            pointerSyncPivotWorld = pivotWorld;
+            pointerPivotOffset = Vector3.zero;
+            completeReturnAfterPointerSync = completeReturn;
+
+            bool requested = unlockCursor
+                ? BartendingPointerAnchor.UnlockAndWarp(
+                    this,
+                    mainCamera,
+                    pivotWorld,
+                    out pointerSyncScreenPosition)
+                : BartendingPointerAnchor.TryWarpToWorld(
+                    mainCamera,
+                    pivotWorld,
+                    out pointerSyncScreenPosition);
+
+            if (!requested)
+            {
+                CompletePointerSynchronization(false);
+                return;
+            }
+
+            pointerSyncFramesRemaining = PointerSyncFrameBudget;
+            pointerSyncPending = true;
+        }
+
+        private bool UpdatePointerSynchronization()
+        {
+            if (!pointerSyncPending)
+                return false;
+
+            if (BartendingPointerAnchor.IsPointerAt(pointerSyncScreenPosition))
+            {
+                CompletePointerSynchronization(true);
+                return true;
+            }
+
+            pointerSyncFramesRemaining--;
+            if (pointerSyncFramesRemaining > 0)
+            {
+                BartendingPointerAnchor.TryWarpToWorld(
+                    mainCamera,
+                    pointerSyncPivotWorld,
+                    out pointerSyncScreenPosition);
+                return true;
+            }
+
+            CompletePointerSynchronization(false);
+            return true;
+        }
+
+        private void CompletePointerSynchronization(bool success)
+        {
+            pointerSyncPending = false;
+            if (!success
+                && BartendingViewport.TryGetPointerWorldPosition(
+                    mainCamera,
+                    Input.mousePosition,
+                    out Vector3 pointerWorld))
+            {
+                pointerPivotOffset = pointerSyncPivotWorld - pointerWorld;
+                pointerPivotOffset.z = 0f;
+                Debug.LogWarning(
+                    $"[{name}] Cursor warp was not confirmed; preserving the current grab offset.");
+            }
+            else if (success)
+            {
+                pointerPivotOffset = Vector3.zero;
+            }
+
+            if (completeReturnAfterPointerSync)
+                currentState = BeakerState.PickedUp;
+
+            completeReturnAfterPointerSync = false;
+        }
+
+        private void CancelPointerSynchronization()
+        {
+            pointerSyncPending = false;
+            completeReturnAfterPointerSync = false;
+            pointerSyncFramesRemaining = 0;
+            pointerPivotOffset = Vector3.zero;
         }
 
         private bool IsMouseOverBeaker()

@@ -1,5 +1,6 @@
 public enum EpisodeType
 {
     Default,
-    Mandatory
+    Mandatory,
+    Encounter
 }

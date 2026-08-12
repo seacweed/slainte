@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Slainte.Bartending;
 using UnityEngine;
 
@@ -20,7 +21,12 @@ namespace Slainte.Business
         private VesselLiquidTracker servingTarget;
         private BusinessOrderSessionResult pendingResult;
         private Action<BusinessOrderSessionResult> completionCallback;
+        private Coroutine craftingPreparationRoutine;
         private bool initialized;
+        private bool completionDispatched;
+
+        [SerializeField, Min(0.1f)]
+        private float craftingPrepareTimeoutSeconds = 5f;
 
         public BusinessOrderSessionState State { get; private set; } = BusinessOrderSessionState.Idle;
         public string CurrentRecipeName => currentOrder?.RequestedRecipeName ?? string.Empty;
@@ -88,6 +94,7 @@ namespace Slainte.Business
 
             currentRequest = request;
             completionCallback = onCompleted;
+            completionDispatched = false;
             currentOrder = orderGenerator?.GenerateOrder(
                 currentRequest.orderType,
                 currentRequest.requestedRecipeId);
@@ -103,7 +110,9 @@ namespace Slainte.Business
                     customerOrderKey = currentRequest.customerOrderKey,
                     requestedRecipeId = currentRequest.requestedRecipeId,
                     accepted = false,
-                    grade = OrderEvaluationGrade.Bad
+                    grade = OrderEvaluationGrade.Bad,
+                    technicalFailure = true,
+                    failureReason = "요청한 레시피를 불러올 수 없습니다."
                 });
                 return true;
             }
@@ -147,8 +156,17 @@ namespace Slainte.Business
 
             SetState(BusinessOrderSessionState.Crafting);
             ui?.ShowCrafting(CurrentRecipeName);
+            if (bartending == null)
+            {
+                AbortForTechnicalFailure("영업 제조 런타임을 찾을 수 없습니다.");
+                return;
+            }
+
             modeManager?.RequestModeChange(GameMode.CraftingMode);
             servingTarget = bartending != null ? bartending.CurrentTargetTracker : null;
+            StopCraftingPreparationTimeout();
+            if (servingTarget == null)
+                craftingPreparationRoutine = StartCoroutine(WaitForCraftingPreparation());
         }
 
         private void SubmitOrder()
@@ -165,11 +183,18 @@ namespace Slainte.Business
                 return;
             }
 
+            StopCraftingPreparationTimeout();
             SetState(BusinessOrderSessionState.Evaluating);
             ui?.ShowEvaluating();
 
             CocktailComposition composition = servingTarget.BuildComposition();
             CocktailOrderEvaluationResult evaluation = orderEvaluator?.Evaluate(currentOrder, composition);
+            if (evaluation == null)
+            {
+                AbortForTechnicalFailure("제조 결과 판정기를 사용할 수 없습니다.");
+                return;
+            }
+
             OrderEvaluationGrade grade = OrderEvaluationGrader.Resolve(evaluation, settings);
             pendingResult = new BusinessOrderSessionResult
             {
@@ -240,13 +265,24 @@ namespace Slainte.Business
 
         private void HandleBartendingSessionReady(VesselLiquidTracker tracker)
         {
-            if (State == BusinessOrderSessionState.Crafting)
-                servingTarget = tracker;
+            if (State != BusinessOrderSessionState.Crafting)
+                return;
+
+            if (tracker == null)
+            {
+                AbortForTechnicalFailure("제조용 잔 또는 액체 추적기를 만들지 못했습니다.");
+                return;
+            }
+
+            servingTarget = tracker;
+            StopCraftingPreparationTimeout();
         }
 
         private void HandleBartendingSessionDestroyed()
         {
             servingTarget = null;
+            if (State == BusinessOrderSessionState.Crafting)
+                AbortForTechnicalFailure("제조가 완료되기 전에 제조 세션이 종료됐습니다.");
         }
 
         private void HandleServeRequested(VesselLiquidTracker tracker)
@@ -270,9 +306,11 @@ namespace Slainte.Business
 
         private void CompleteCurrentOrder(BusinessOrderSessionResult result)
         {
-            if (result == null)
+            if (result == null || completionDispatched)
                 return;
 
+            completionDispatched = true;
+            StopCraftingPreparationTimeout();
             OrderSessionRequest completedRequest = currentRequest;
             result.sessionId = completedRequest?.sessionId ?? result.sessionId;
             result.owner = completedRequest?.owner ?? result.owner;
@@ -294,8 +332,64 @@ namespace Slainte.Business
             completionCallback = null;
             currentRequest = null;
             currentOrder = null;
+            pendingResult = null;
+            servingTarget = null;
             OrderCompleted?.Invoke(result);
             callback?.Invoke(result);
+        }
+
+        private IEnumerator WaitForCraftingPreparation()
+        {
+            float elapsed = 0f;
+            while (State == BusinessOrderSessionState.Crafting && servingTarget == null)
+            {
+                if (Time.timeScale > 0f)
+                    elapsed += Mathf.Max(0f, Time.unscaledDeltaTime);
+
+                if (elapsed >= craftingPrepareTimeoutSeconds)
+                {
+                    craftingPreparationRoutine = null;
+                    AbortForTechnicalFailure("제조 화면 준비 시간이 초과됐습니다.");
+                    yield break;
+                }
+
+                yield return null;
+            }
+
+            craftingPreparationRoutine = null;
+        }
+
+        private void AbortForTechnicalFailure(string reason)
+        {
+            if (currentRequest == null
+                || State == BusinessOrderSessionState.Idle
+                || State == BusinessOrderSessionState.Completed)
+                return;
+
+            StopCraftingPreparationTimeout();
+            SetState(BusinessOrderSessionState.Evaluating);
+            Debug.LogError($"[BusinessOrderSession] {reason}");
+            ui?.ShowError(reason);
+            modeManager?.RequestModeChange(GameMode.OrderMode);
+            CompleteCurrentOrder(new BusinessOrderSessionResult
+            {
+                outcome = OrderSessionOutcome.Failed,
+                customerOrderKey = currentRequest.customerOrderKey,
+                requestedRecipeId = currentRequest.requestedRecipeId,
+                accepted = false,
+                grade = OrderEvaluationGrade.Bad,
+                technicalFailure = true,
+                failureReason = reason
+            });
+        }
+
+        private void StopCraftingPreparationTimeout()
+        {
+            if (craftingPreparationRoutine == null)
+                return;
+
+            StopCoroutine(craftingPreparationRoutine);
+            craftingPreparationRoutine = null;
         }
 
         private void SetState(BusinessOrderSessionState nextState)

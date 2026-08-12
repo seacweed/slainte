@@ -13,6 +13,12 @@ public static class CoreSceneAutoLoader
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     private static void LoadCoreSceneAutomatically()
     {
+        // Keep the development-only bartending sandbox isolated from game services.
+        if (SceneManager.GetActiveScene().name == "BartendingSandbox")
+        {
+            return;
+        }
+
         // 1. 이미 CoreScene이 열려있는지 (테스트 중이거나 빌드 환경인지) 확인
         int loadedSceneCount = SceneManager.sceneCount;
         for (int i = 0; i < loadedSceneCount; i++)

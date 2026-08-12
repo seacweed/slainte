@@ -3,7 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using Slainte.Bartending;
 
-public class LiquorBottleSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class LiquorBottleSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     private static ItemDefCatalog cachedItemCatalog;
 
@@ -64,5 +64,36 @@ public class LiquorBottleSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (LiquorBottleInfoCard.Instance == null) return;
         LiquorBottleInfoCard.Instance.Hide();
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData == null
+            || eventData.button != PointerEventData.InputButton.Left
+            || !IsUnlocked())
+        {
+            return;
+        }
+
+        BusinessBartendingBootstrap bartending =
+            FindFirstObjectByType<BusinessBartendingBootstrap>();
+        if (bartending == null)
+        {
+            Debug.LogWarning("[LiquorShelf] 제작 세션을 찾을 수 없습니다.");
+            return;
+        }
+
+        if (!bartending.TryPlaceBottleFromShelf(def, out string failure))
+        {
+            Debug.LogWarning("[LiquorShelf] " + failure);
+            return;
+        }
+
+        Refresh();
+        if (LiquorBottleInfoCard.Instance != null)
+        {
+            float amount = GameProgress.Instance.GetBottleAmount(def.id, def.MaxAmount);
+            LiquorBottleInfoCard.Instance.Show(def, amount, rectTransform);
+        }
     }
 }

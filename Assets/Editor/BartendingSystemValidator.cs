@@ -39,6 +39,59 @@ public static class BartendingSystemValidator
         }
     }
 
+    [MenuItem("Slainte/Bartending/Validate Core Without Planning Content")]
+    public static void RunCore()
+    {
+        ItemDef spirit = ScriptableObject.CreateInstance<ItemDef>();
+        spirit.id = "qa_core_spirit";
+        spirit.displayName = "Core Validation Spirit";
+        spirit.liquidColor = new Color(0.25f, 0.5f, 0.75f, 0.2f);
+        spirit.servingTemperatureC = 80f;
+
+        try
+        {
+            ValidateLiquidPayload(spirit);
+            ValidateLiquidPoolIsolation();
+            ValidateVesselLiquidTransfer();
+            ValidateBottleGeometryProfile();
+            ValidatePointerAnchorMath();
+            ValidateOrderEvaluation(spirit);
+            ValidateCsvData();
+            ValidateSteamSetup();
+            Debug.Log(
+                "[BartendingCoreValidator] PASS: liquid, transfer, runtime bottle geometry, "
+                + "recipe evaluation, CSV and steam");
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(spirit);
+        }
+    }
+
+    [MenuItem("Slainte/Bartending/Validate Planning Content Links")]
+    public static void RunContent()
+    {
+        ValidateBusinessBottleData();
+        Debug.Log("[BartendingContentValidator] PASS: shelf and ItemDef content links");
+    }
+
+    private static void ValidatePointerAnchorMath()
+    {
+        Vector3 root = new Vector3(2f, -1f, 0f);
+        Vector3 pivot = new Vector3(3.25f, 4f, 0f);
+        Vector3 pointer = new Vector3(-5f, 6.5f, 0f);
+        Vector3 targetRoot = BartendingPointerAnchor.CalculateRootPosition(
+            root,
+            pivot,
+            pointer);
+        Vector3 translatedPivot = pivot + targetRoot - root;
+        if (Vector3.Distance(translatedPivot, pointer) > 0.0001f)
+        {
+            throw new InvalidOperationException(
+                $"Pointer anchor calculation drifted: {translatedPivot} != {pointer}");
+        }
+    }
+
     private static void ValidateBottleGeometryProfile()
     {
         GameObject bottleObject = new GameObject("검증용 병");

@@ -83,6 +83,8 @@ namespace Slainte.Business
         public OrderEvaluationGrade grade;
         public int moneyDelta;
         public int reputationDelta;
+        public bool technicalFailure;
+        public string failureReason;
         public CocktailOrderEvaluationResult evaluation;
     }
 }

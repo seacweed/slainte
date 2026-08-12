@@ -18,6 +18,8 @@ MonoBehaviour:
   bottlePrefab: {fileID: 6694566925379074692, guid: e5555af92399ef7408c7b909cbc4ff38, type: 3}
   slotPrefab: {fileID: 7156230922021510026, guid: 7f969d5eb98ddb54f8d6e44e1a901c44, type: 3}
   liquidParticlePrefab: {fileID: 6191169969125092929, guid: 44387e2fc656fda41b517e3cbf2b992c, type: 3}
+  iceBinPrefab: {fileID: 0}
+  iceCubePrefab: {fileID: 7326439204632901001, guid: d14061638eb44e368c6d117e2afd7582, type: 3}
   initialBottleItems: []
   bottlePositions:
   - {x: -8, y: -0.8, z: 0}
@@ -26,10 +28,25 @@ MonoBehaviour:
   cameraOrthographicSize: 5.2
   renderLayer: 30
   serveLineScreenRatio: 0.3
+  serveTargetFillColor: {r: 0.12, g: 0.75, b: 1, a: 0.18}
+  serveTargetOutlineColor: {r: 0.3, g: 0.9, b: 1, a: 0.7}
+  serveTargetOutlineWidth: 3
+  serveTargetPaddingPixels: 0
+  sandboxServeTargetNormalized: {x: 0.35, y: 0.48, z: 0.3, w: 0.42}
+  contentsLabelBackgroundColor: {r: 0.04, g: 0.05, b: 0.06, a: 0.82}
+  contentsLabelTextColor: {r: 1, g: 1, b: 1, a: 1}
+  contentsLabelSizePixels: {x: 220, y: 150}
+  contentsLabelOffsetPixels: {x: 28, y: 45}
+  contentsLabelFontSize: 18
+  contentsRefreshInterval: 0.1
+  contentsMinimumVisibleMl: 0.05
+  rotationHorizontalSensitivity: 1
+  rotationHorizontalScreenPadding: 12
   bottlePosition: {x: -8, y: -0.8, z: 0}
   beakerPosition: {x: -1.6, y: -1, z: 0}
   cobblerShakerPosition: {x: 1.6, y: -1, z: 0}
   glassPosition: {x: 4.8, y: -1, z: 0}
+  iceBinPosition: {x: 7.8, y: 1.3, z: 0}
   slotPositions:
   - {x: -8, y: -2.5, z: 0}
   - {x: -4.8, y: -2.5, z: 0}
@@ -38,3 +55,9 @@ MonoBehaviour:
   - {x: 4.8, y: -2.5, z: 0}
   - {x: 8, y: -2.5, z: 0}
   liquidPoolSize: 300
+  iceBinWidth: 2.2
+  iceBinHeight: 1.2
+  iceCubeSize: 0.42
+  iceGravityScale: 1
+  iceDragThreshold: 0.08
+  iceCleanupY: -8

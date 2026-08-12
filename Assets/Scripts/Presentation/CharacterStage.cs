@@ -161,6 +161,33 @@ public class CharacterStage : MonoBehaviour
         return minX == float.MaxValue ? Screen.width * 0.5f : (minX + maxX) * 0.5f;
     }
 
+    public bool TryGetActiveGroupScreenRect(out Rect screenRect)
+    {
+        screenRect = default;
+        bool hasBounds = false;
+
+        foreach (CharacterView view in _activeViews.Values)
+        {
+            if (view == null || !view.TryGetVisualScreenRect(out Rect viewRect))
+                continue;
+
+            if (!hasBounds)
+            {
+                screenRect = viewRect;
+                hasBounds = true;
+                continue;
+            }
+
+            screenRect = Rect.MinMaxRect(
+                Mathf.Min(screenRect.xMin, viewRect.xMin),
+                Mathf.Min(screenRect.yMin, viewRect.yMin),
+                Mathf.Max(screenRect.xMax, viewRect.xMax),
+                Mathf.Max(screenRect.yMax, viewRect.yMax));
+        }
+
+        return hasBounds;
+    }
+
     private static Queue<int> RemoveFromQueue(Queue<int> queue, int value)
     {
         var result = new Queue<int>(queue.Count);

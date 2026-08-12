@@ -173,6 +173,42 @@ public class CharacterView : MonoBehaviour
         }
     }
 
+    public bool TryGetVisualScreenRect(out Rect screenRect)
+    {
+        screenRect = default;
+        if (_visualRT == null
+            || !_visualRT.gameObject.activeInHierarchy
+            || _image == null
+            || !_image.enabled)
+        {
+            return false;
+        }
+
+        var corners = new Vector3[4];
+        _visualRT.GetWorldCorners(corners);
+        Canvas canvas = _visualRT.GetComponentInParent<Canvas>();
+        Camera canvasCamera = canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay
+            ? null
+            : canvas.worldCamera;
+
+        Vector2 first = RectTransformUtility.WorldToScreenPoint(canvasCamera, corners[0]);
+        float xMin = first.x;
+        float xMax = first.x;
+        float yMin = first.y;
+        float yMax = first.y;
+        for (int i = 1; i < corners.Length; i++)
+        {
+            Vector2 point = RectTransformUtility.WorldToScreenPoint(canvasCamera, corners[i]);
+            xMin = Mathf.Min(xMin, point.x);
+            xMax = Mathf.Max(xMax, point.x);
+            yMin = Mathf.Min(yMin, point.y);
+            yMax = Mathf.Max(yMax, point.y);
+        }
+
+        screenRect = Rect.MinMaxRect(xMin, yMin, xMax, yMax);
+        return screenRect.width > Mathf.Epsilon && screenRect.height > Mathf.Epsilon;
+    }
+
     private void ApplyRootLayout(RectTransform rt)
     {
         rt.anchorMin = new Vector2(0.5f, 0f);

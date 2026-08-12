@@ -19,6 +19,7 @@ namespace Slainte.Bartending
         private int previousDirection;
         private int directionChanges;
         private float lastDirectionChangeTime;
+        private bool iceRetentionConfigured;
 
         public bool HasIntegratedStrainer => integratedStrainer;
 
@@ -38,6 +39,12 @@ namespace Slainte.Bartending
         {
             if (shaker == null)
                 shaker = GetComponent<BeakerController>();
+
+            if (!iceRetentionConfigured && shaker != null && shaker.LiquidTracker != null)
+            {
+                shaker.LiquidTracker.ConfigureIceRetention(integratedStrainer);
+                iceRetentionConfigured = true;
+            }
 
             Vector3 currentPosition = transform.position;
             float deltaTime = Mathf.Max(Time.unscaledDeltaTime, 0.0001f);

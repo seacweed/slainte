@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Slainte.Bartending
@@ -17,6 +18,7 @@ namespace Slainte.Bartending
 
         public bool IsOccupied => isOccupied;
         public IBartendingItem OccupiedItem => occupiedItem;
+        public event Action<SlotController, IBartendingItem> OccupancyChanged;
 
         private void Start()
         {
@@ -37,13 +39,17 @@ namespace Slainte.Bartending
             occupiedItem = item;
             isOccupied = true;
             ResetVisual();
+            OccupancyChanged?.Invoke(this, occupiedItem);
         }
 
         public void Vacate()
         {
+            bool changed = isOccupied || occupiedItem != null;
             occupiedItem = null;
             isOccupied = false;
             ResetVisual();
+            if (changed)
+                OccupancyChanged?.Invoke(this, null);
         }
 
         private void ResetVisual()

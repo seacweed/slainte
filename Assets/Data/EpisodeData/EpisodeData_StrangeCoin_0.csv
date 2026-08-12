@@ -1,6 +1,6 @@
 #META,,,,,,,,
-episodeId,episodeTitle,firstNodeId,,,,,,
-StrangeCoin_0,이상한 동전 - 0,0,,,,,,
+episodeId,episodeTitle,firstNodeId,episodeType,mandatorySlot,chapterId,,,
+StrangeCoin_0,이상한 동전 - 0,0,Encounter,None,,,,
 ,,,,,,,,
 #TRIGGER,,,,,,,,
 minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,,,,

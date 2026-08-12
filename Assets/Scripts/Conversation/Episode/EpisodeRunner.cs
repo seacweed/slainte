@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Slainte.Business;
 using UnityEngine;
 
 public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
@@ -37,11 +38,16 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
     private bool _waitingForCrafting;
     private bool _waitingForCharacterAnim;
     private bool _isTransitioning;
+    private bool _isBusinessEncounter;
+    private bool _isUsingManualCrafting;
+    private Action _businessEncounterCompleted;
+    private EpisodeCraftingBridge _craftingBridge;
 
     private readonly List<EpisodeChoiceButtonUI> _choiceButtons = new();
     private Coroutine _panCoroutine;
 
     public bool IsRunning => _isRunning;
+    public bool IsUsingManualCrafting => _isUsingManualCrafting;
 
     public bool CanReceiveAdvanceInput =>
         _isRunning && !_waitingForChoice && !_waitingForCrafting && !_waitingForCharacterAnim && !_isTransitioning;
@@ -54,27 +60,55 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 
     public void Begin(EpisodeData episode)
     {
+        BeginInternal(episode, isBusinessEncounter: false, onBusinessCompleted: null);
+    }
+
+    public bool BeginBusinessEncounter(EpisodeData episode, Action onCompleted)
+    {
+        return BeginInternal(episode, isBusinessEncounter: true, onCompleted);
+    }
+
+    public void SetCraftingBridge(EpisodeCraftingBridge bridge)
+    {
+        _craftingBridge = bridge;
+    }
+
+    private bool BeginInternal(
+        EpisodeData episode,
+        bool isBusinessEncounter,
+        Action onBusinessCompleted)
+    {
         if (episode == null)
         {
             Debug.LogWarning("[EpisodeRunner] Begin called with null episode.");
-            return;
+            return false;
+        }
+
+        if (_isRunning)
+        {
+            Debug.LogWarning("[EpisodeRunner] An episode is already running.");
+            return false;
         }
 
         _episode = episode;
-        _isRunning          = false;
+        _isBusinessEncounter = isBusinessEncounter;
+        _businessEncounterCompleted = onBusinessCompleted;
+        _isRunning          = true;
         _waitingForChoice   = false;
         _waitingForCrafting = false;
+        _waitingForCharacterAnim = false;
+        _isTransitioning = false;
+        _isUsingManualCrafting = false;
 
         modeManager?.RequestModeChange(GameMode.EpisodeMode);
         ClearChoices();
         dialogue?.HideImmediate();
-        StartCoroutine(BeginRoutine());
+        _runRoutine = StartCoroutine(BeginRoutine());
+        return true;
     }
 
     private IEnumerator BeginRoutine()
     {
-        _isRunning = true;
-
         if (startDelay > 0f)
             yield return new WaitForSeconds(startDelay);
 
@@ -170,19 +204,65 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
     private IEnumerator HandleCraftingNode(EpisodeNode node)
     {
         _waitingForCrafting = true;
+        _isUsingManualCrafting = false;
 
-        if (!string.IsNullOrWhiteSpace(node.craftingTicketKey))
-            ticketManager?.Prepare(node.craftingTicketKey);
+        if (!string.IsNullOrWhiteSpace(node.craftingRecipeId) && _craftingBridge != null)
+        {
+            bool fallbackRequested = false;
+            string fallbackReason = string.Empty;
+            bool started = _craftingBridge.TryStart(
+                node,
+                NotifyCraftingCompleted,
+                reason =>
+                {
+                    fallbackReason = reason;
+                    fallbackRequested = true;
+                });
 
-        modeManager?.RequestModeChange(GameMode.CraftingMode);
+            if (started)
+            {
+                while (_waitingForCrafting && !fallbackRequested)
+                    yield return null;
+
+                if (!_waitingForCrafting)
+                    yield break;
+
+                Debug.LogError(
+                    $"[EpisodeRunner] 실제 제조를 시작하지 못해 수동 판정으로 전환합니다: "
+                    + $"{node.nodeId}/{fallbackReason}");
+                BeginManualCrafting(node);
+                while (_waitingForCrafting)
+                    yield return null;
+                yield break;
+            }
+
+            Debug.LogWarning(
+                $"[EpisodeRunner] 제조 브리지를 사용할 수 없어 수동 판정으로 전환합니다: {node.nodeId}");
+        }
+
+        BeginManualCrafting(node);
 
         while (_waitingForCrafting)
             yield return null;
     }
 
+    private void BeginManualCrafting(EpisodeNode node)
+    {
+        _isUsingManualCrafting = true;
+
+        if (!string.IsNullOrWhiteSpace(node.craftingTicketKey))
+            ticketManager?.Prepare(node.craftingTicketKey);
+
+        modeManager?.RequestModeChange(GameMode.CraftingMode);
+    }
+
     public void NotifyCraftingCompleted(CraftingJobResult result)
     {
+        if (!_waitingForCrafting)
+            return;
+
         _waitingForCrafting = false;
+        _isUsingManualCrafting = false;
         modeManager?.RequestModeChange(GameMode.EpisodeMode);
         GoToNextFromCrafting(result);
     }
@@ -404,6 +484,7 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
     private void EndEncounter()
     {
         _isRunning = false;
+        _runRoutine = null;
         ClearChoices();
         dialogue?.HideImmediate();
         characterStage?.Clear();
@@ -411,7 +492,21 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         AudioManager.Instance?.StopBgm();
 
         string episodeId = _episode?.episodeId;
+        bool wasBusinessEncounter = _isBusinessEncounter;
+        Action businessCompleted = _businessEncounterCompleted;
+        _episode = null;
+        _currentNode = null;
+        _isBusinessEncounter = false;
+        _isUsingManualCrafting = false;
+        _businessEncounterCompleted = null;
         OnEncounterCompleted?.Invoke();
+
+        if (wasBusinessEncounter)
+        {
+            modeManager?.RequestModeChange(GameMode.OrderMode);
+            businessCompleted?.Invoke();
+            return;
+        }
 
         EpisodeManager.Instance?.ClearEpisode(episodeId);
         DayFlowController.Instance?.OnEpisodeCompleted();

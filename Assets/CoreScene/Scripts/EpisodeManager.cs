@@ -1,10 +1,13 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class EpisodeManager : MonoSingleton<EpisodeManager>
 {
     private List<EpisodeData> allEpisodes = new();
+    private Action businessEncounterCompleted;
     public string CurrentPlayingEpisodeID { get; private set; }
+    public bool IsBusinessEncounterActive { get; private set; }
 
     protected override void Awake()
     {
@@ -157,12 +160,68 @@ public class EpisodeManager : MonoSingleton<EpisodeManager>
         GameManager.Instance?.ChangeState(GameState.Episode);
     }
 
+    public bool TryStartBusinessEncounter(string episodeId, Action onCompleted)
+    {
+        if (string.IsNullOrWhiteSpace(episodeId)
+            || IsBusinessEncounterActive
+            || !string.IsNullOrWhiteSpace(CurrentPlayingEpisodeID))
+            return false;
+
+        EpisodeData episode = GetEpisodeData(episodeId);
+        EpisodeRunner runner = UnityEngine.Object.FindFirstObjectByType<EpisodeRunner>();
+        if (episode == null || runner == null)
+        {
+            Debug.LogError($"[EpisodeManager] 영업 인카운터를 찾거나 실행할 수 없습니다: {episodeId}");
+            return false;
+        }
+
+        GameState state = GameManager.Instance != null
+            ? GameManager.Instance.CurrentState
+            : GameState.None;
+        if (state != GameState.None && state != GameState.Business)
+        {
+            Debug.LogWarning($"[EpisodeManager] Business 상태가 아니어서 영업 인카운터를 시작하지 않습니다: {state}");
+            return false;
+        }
+
+        CurrentPlayingEpisodeID = episodeId;
+        IsBusinessEncounterActive = true;
+        businessEncounterCompleted = onCompleted;
+
+        bool started = runner.BeginBusinessEncounter(
+            episode,
+            () => CompleteBusinessEncounter(episodeId));
+        if (started)
+            return true;
+
+        CurrentPlayingEpisodeID = null;
+        IsBusinessEncounterActive = false;
+        businessEncounterCompleted = null;
+        return false;
+    }
+
+    private void CompleteBusinessEncounter(string episodeId)
+    {
+        ClearEpisode(episodeId, saveImmediately: false);
+        IsBusinessEncounterActive = false;
+
+        Action callback = businessEncounterCompleted;
+        businessEncounterCompleted = null;
+        callback?.Invoke();
+    }
+
     public void ClearEpisode(string episodeId)
+    {
+        ClearEpisode(episodeId, saveImmediately: true);
+    }
+
+    private void ClearEpisode(string episodeId, bool saveImmediately)
     {
         GameProgress.Instance?.MarkEpisodeCompleted(episodeId);
         if (CurrentPlayingEpisodeID == episodeId)
             CurrentPlayingEpisodeID = null;
-        DataManager.Instance?.Save();
+        if (saveImmediately)
+            DataManager.Instance?.Save();
         Debug.Log($"[EpisodeManager] Episode cleared: {episodeId}");
     }
 }

@@ -15,7 +15,7 @@ MonoBehaviour:
   episodeId: StrangeCoin_0
   episodeTitle: "\uC774\uC0C1\uD55C \uB3D9\uC804 - 0"
   chapterId: 
-  episodeType: 0
+  episodeType: 2
   mandatorySlot: 0
   triggerCondition:
     minDay: 0

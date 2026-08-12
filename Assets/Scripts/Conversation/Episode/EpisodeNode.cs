@@ -35,17 +35,27 @@ public class EpisodeNode
     [Header("Crafting (optional)")]
     public bool   requiresCrafting = false;
     public string craftingTicketKey;
+    [HideInInspector]
+    public string craftingRecipeId;
     public List<CraftingOutcome> craftingOutcomes = new();
+
+    [HideInInspector, SerializeField] private string nextNodeIdGood;
+    [HideInInspector, SerializeField] private string nextNodeIdBad;
+    [HideInInspector, SerializeField] private string craftingFlagGood;
+    [HideInInspector, SerializeField] private string craftingFlagBad;
+    [HideInInspector, SerializeField] private List<VarChange> craftingVarChangesGood = new();
+    [HideInInspector, SerializeField] private List<VarChange> craftingVarChangesBad = new();
 
     [Header("BGM (optional)")]
     public BgmCommand bgmCommand = BgmCommand.None;
     public string bgmClipName;
 
     public CraftingOutcome GetCraftingOutcome(CraftingJobResult result) =>
-        craftingOutcomes.Find(o => o.result == result);
+        craftingOutcomes?.Find(o => o.result == result);
 
     private CraftingOutcome GetOrAddCraftingOutcome(CraftingJobResult result)
     {
+        craftingOutcomes ??= new List<CraftingOutcome>();
         var outcome = GetCraftingOutcome(result);
         if (outcome == null)
         {
@@ -55,12 +65,47 @@ public class EpisodeNode
         return outcome;
     }
 
-    public string GetNextNodeId(CraftingJobResult result) => GetCraftingOutcome(result)?.nextNodeId;
+    public string GetNextNodeId(CraftingJobResult result)
+    {
+        CraftingOutcome outcome = GetResolvedCraftingOutcome(result);
+        if (outcome != null)
+            return outcome.nextNodeId;
+
+        return result == CraftingJobResult.Good ? nextNodeIdGood : nextNodeIdBad;
+    }
     public void   SetNextNodeId(CraftingJobResult result, string nodeId) => GetOrAddCraftingOutcome(result).nextNodeId = nodeId;
 
-    public string GetCraftingFlag(CraftingJobResult result) => GetCraftingOutcome(result)?.flag;
+    public string GetCraftingFlag(CraftingJobResult result)
+    {
+        CraftingOutcome outcome = GetResolvedCraftingOutcome(result);
+        if (outcome != null)
+            return outcome.flag;
+
+        return result == CraftingJobResult.Good ? craftingFlagGood : craftingFlagBad;
+    }
     public void   SetCraftingFlag(CraftingJobResult result, string flag) => GetOrAddCraftingOutcome(result).flag = flag;
 
-    public List<VarChange> GetCraftingVarChanges(CraftingJobResult result) => GetCraftingOutcome(result)?.varChanges ?? new();
+    public List<VarChange> GetCraftingVarChanges(CraftingJobResult result)
+    {
+        CraftingOutcome outcome = GetResolvedCraftingOutcome(result);
+        if (outcome != null)
+            return outcome.varChanges ?? new List<VarChange>();
+
+        List<VarChange> legacy = result == CraftingJobResult.Good
+            ? craftingVarChangesGood
+            : craftingVarChangesBad;
+        return legacy ?? new List<VarChange>();
+    }
     public void             SetCraftingVarChanges(CraftingJobResult result, List<VarChange> list) => GetOrAddCraftingOutcome(result).varChanges = list;
+
+    private CraftingOutcome GetResolvedCraftingOutcome(CraftingJobResult result)
+    {
+        CraftingOutcome exact = GetCraftingOutcome(result);
+        if (exact != null)
+            return exact;
+
+        return result != CraftingJobResult.Good
+            ? GetCraftingOutcome(CraftingJobResult.Bad)
+            : null;
+    }
 }
