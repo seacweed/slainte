@@ -26,8 +26,12 @@ namespace Slainte.Bartending.EditorTools
         private static LiquidParticleData testParticle;
         private static IceCubeController testCube;
         private static GlassController returningGlass;
-        private static float expectedReturnX;
+        private static Vector2 expectedReturnPosition;
         private static BartendingInteractionOverlay oldOverlay;
+        private static BeakerController snappingBeaker;
+        private static Vector2 expectedSnapPosition;
+        private static double snapStartedAt;
+        private static GameObject snapSlotObject;
 
         [MenuItem("Slainte/Bartending/Validate Interaction UI And Rotation")]
         public static void RunFromMenu()
@@ -104,13 +108,16 @@ namespace Slainte.Bartending.EditorTools
                         ValidateContentsAndTransport();
                         break;
                     case 3:
-                        ValidateAllControllerHorizontalMovement();
+                        ValidateAllControllerMovement();
                         break;
                     case 4:
                         ValidateReturnCompletionAndResetSession();
                         break;
                     case 5:
                         ValidateSessionRecreation();
+                        break;
+                    case 6:
+                        ValidatePhysicalSlotSnap();
                         break;
                 }
             }
@@ -201,24 +208,22 @@ namespace Slainte.Bartending.EditorTools
             Require(text.Contains("합계 37.5 ml", StringComparison.Ordinal),
                 "Beaker contents label does not show the total volume: " + text);
 
-            Vector2 particleBefore = GetPosition(testParticle.gameObject);
-            Vector2 cubeBefore = GetPosition(testCube.gameObject);
-            Vector2 transportDelta = new Vector2(0.1f, 0.05f);
-            beaker.LiquidTracker.TranslateTrackedParticles(transportDelta);
-            RequireVector(particleBefore + transportDelta, GetPosition(testParticle.gameObject), 0.001f,
-                "Tracked liquid did not use the vessel transport rule.");
-            RequireVector(cubeBefore + transportDelta, GetPosition(testCube.gameObject), 0.001f,
-                "Tracked ice did not use the same vessel transport rule as liquid.");
-            beaker.LiquidTracker.TranslateTrackedParticles(-transportDelta);
-            RequireVector(particleBefore, GetPosition(testParticle.gameObject), 0.001f,
-                "Tracked liquid did not return after transport verification.");
-            RequireVector(cubeBefore, GetPosition(testCube.gameObject), 0.001f,
-                "Tracked ice did not return after transport verification.");
+            Require(testParticle.VesselOwner == beaker.LiquidTracker,
+                "Tracked liquid lost its vessel ownership.");
+            Require(testCube.VesselOwner == beaker.LiquidTracker,
+                "Tracked ice did not use the same ownership rule as liquid.");
+
+            Rigidbody2D beakerBody = beaker.GetComponent<Rigidbody2D>();
+            Require(beakerBody != null
+                    && beakerBody.bodyType == RigidbodyType2D.Kinematic
+                    && beakerBody.collisionDetectionMode == CollisionDetectionMode2D.Continuous
+                    && beakerBody.interpolation == RigidbodyInterpolation2D.Interpolate,
+                "Beaker is not configured for continuous interpolated kinematic transport.");
 
             AdvancePhase(3);
         }
 
-        private static void ValidateAllControllerHorizontalMovement()
+        private static void ValidateAllControllerMovement()
         {
             BartendingSessionInstance session = GetSession();
             if (session == null || phaseFrames < 2)
@@ -235,26 +240,27 @@ namespace Slainte.Bartending.EditorTools
 
             Vector2 particleBefore = GetPosition(testParticle.gameObject);
             Vector2 cubeBefore = GetPosition(testCube.gameObject);
-            float beakerBefore = GetPosition(beaker.gameObject).x;
-            float beakerDelta = ValidateControllerTiltAndReturnMovement(
+            Vector2 beakerBefore = GetPosition(beaker.gameObject);
+            Vector2 beakerDelta = ValidateControllerTiltAndReturnMovement(
                 beaker,
                 "StartTilting",
                 "StartReturning",
                 "PerformHorizontalRotationMovement",
                 "ApplyPendingPhysicsMotion",
                 "ReleaseBeaker");
-            RequireApproximately(
-                beakerDelta,
-                GetPosition(testParticle.gameObject).x - particleBefore.x,
-                0.01f,
-                "Liquid did not match beaker horizontal movement.");
-            RequireApproximately(
-                beakerDelta,
-                GetPosition(testCube.gameObject).x - cubeBefore.x,
-                0.01f,
-                "Ice did not match beaker horizontal movement.");
-            Require(Mathf.Abs(GetPosition(beaker.gameObject).x - beakerBefore) > 0.001f,
-                "Beaker did not move horizontally.");
+            RequireVector(
+                particleBefore,
+                GetPosition(testParticle.gameObject),
+                0.02f,
+                "Liquid was translated directly instead of remaining under world physics.");
+            RequireVector(
+                cubeBefore,
+                GetPosition(testCube.gameObject),
+                0.02f,
+                "Ice was translated directly instead of remaining under world physics.");
+            Require(beakerDelta.sqrMagnitude > 0.000001f
+                    && Vector2.Distance(GetPosition(beaker.gameObject), beakerBefore) > 0.001f,
+                "Beaker did not move during tilt and return validation.");
 
             ValidateControllerTiltAndReturnMovement(
                 shaker,
@@ -280,12 +286,14 @@ namespace Slainte.Bartending.EditorTools
                 "PerformHorizontalRotationMovement",
                 "ApplyPendingPhysicsMotion");
             InvokeNonPublic(glass, "StartReturning");
-            ApplyInjectedHorizontalMovement(
+            Require(Cursor.lockState == CursorLockMode.None,
+                "Glass did not unlock the cursor when return started.");
+            InvokeNonPublic(glass, "CancelPointerSynchronization");
+            ApplyInjectedReturnMovement(
                 glass,
-                "PerformHorizontalRotationMovement",
                 "ApplyPendingPhysicsMotion");
             returningGlass = glass;
-            expectedReturnX = GetPosition(glass.gameObject).x;
+            expectedReturnPosition = GetPosition(glass.gameObject);
             AdvancePhase(4);
         }
 
@@ -300,8 +308,8 @@ namespace Slainte.Bartending.EditorTools
 
             Require(state == GlassState.PickedUp.ToString(),
                 "Glass did not return to PickedUp after its return animation: " + state);
-            RequireApproximately(expectedReturnX, GetPosition(returningGlass.gameObject).x, 0.02f,
-                "Glass snapped horizontally when return animation completed.");
+            RequireVector(expectedReturnPosition, GetPosition(returningGlass.gameObject), 0.02f,
+                "Glass snapped when return animation completed.");
             RequireApproximately(0f, returningGlass.transform.eulerAngles.z, 0.1f,
                 "Glass did not return to its upright rotation.");
             Require(Cursor.lockState == CursorLockMode.None,
@@ -338,13 +346,57 @@ namespace Slainte.Bartending.EditorTools
                     && targetRect.height > 0f,
                 "Recreated session did not restore its serving target.");
 
-            Finish(true,
-                "serving boundary, one-shot click, logical target, glass/beaker/shaker labels, "
-                + "liquid and ice transport, bottle/glass/beaker/shaker horizontal tilt and return, "
-                + "cursor unlock, and session recreation passed.");
+            snappingBeaker = session.Beaker as BeakerController;
+            Require(snappingBeaker != null, "Recreated session has no beaker for slot snap validation.");
+            snappingBeaker.OnPickedUp();
+            InvokeNonPublic(snappingBeaker, "CancelPointerSynchronization");
+
+            snapSlotObject = new GameObject("InteractionValidationSnapSlot");
+            snapSlotObject.transform.SetParent(session.World, false);
+            snapSlotObject.transform.position = snappingBeaker.transform.position + new Vector3(0.6f, 0.2f, 0f);
+            snapSlotObject.AddComponent<BoxCollider2D>().isTrigger = true;
+            snapSlotObject.AddComponent<SpriteRenderer>();
+            SlotController snapSlot = snapSlotObject.AddComponent<SlotController>();
+            snappingBeaker.SnapToSlot(snapSlotObject.transform, snapSlot);
+
+            Require(GetPrivateState(snappingBeaker, "currentState") == BeakerState.Snapping.ToString(),
+                "Runtime slot placement did not enter the physical snapping state.");
+            Require(snapSlot.IsOccupied && ReferenceEquals(snapSlot.OccupiedItem, snappingBeaker),
+                "Physical slot snap did not reserve its destination slot.");
+            expectedSnapPosition = GetPrivateField<Vector2>(
+                snappingBeaker,
+                "slotSnapTargetPosition");
+            snapStartedAt = EditorApplication.timeSinceStartup;
+            AdvancePhase(6);
         }
 
-        private static float ValidateControllerTiltAndReturnMovement(
+        private static void ValidatePhysicalSlotSnap()
+        {
+            Require(snappingBeaker != null, "Snapping beaker reference was lost.");
+            string state = GetPrivateState(snappingBeaker, "currentState");
+            if (state == BeakerState.Snapping.ToString())
+                return;
+
+            Require(state == BeakerState.Idle.ToString(),
+                "Beaker did not return to Idle after its physical slot snap: " + state);
+            Require(EditorApplication.timeSinceStartup - snapStartedAt >= 0.07d,
+                "Runtime slot placement completed as an immediate teleport.");
+            RequireVector(expectedSnapPosition, GetPosition(snappingBeaker.gameObject), 0.03f,
+                "Physical slot snap did not finish at the requested position.");
+
+            if (snapSlotObject != null)
+                UnityEngine.Object.Destroy(snapSlotObject);
+            snapSlotObject = null;
+            snappingBeaker = null;
+
+            Finish(true,
+                "serving boundary, one-shot click, logical target, glass/beaker/shaker labels, "
+                + "world-physics liquid and ice ownership, horizontal tilt, two-axis return movement, "
+                + "bottle/glass/beaker/shaker return behavior, "
+                + "cursor unlock, 0.1-second physical slot snap, and session recreation passed.");
+        }
+
+        private static Vector2 ValidateControllerTiltAndReturnMovement(
             IBartendingItem item,
             string startTiltMethod,
             string startReturnMethod,
@@ -357,24 +409,64 @@ namespace Slainte.Bartending.EditorTools
 
             item.OnPickedUp();
             InvokeNonPublic(controller, "CancelPointerSynchronization");
-            float startX = GetPosition(controller.gameObject).x;
+            Vector2 startPosition = GetPosition(controller.gameObject);
             InvokeNonPublic(controller, startTiltMethod);
             ApplyInjectedHorizontalMovement(controller, horizontalMethod, applyPhysicsMethod);
-            float afterTiltX = GetPosition(controller.gameObject).x;
-            Require(Mathf.Abs(afterTiltX - startX) > 0.001f,
+            Vector2 afterTiltPosition = GetPosition(controller.gameObject);
+            Require(Mathf.Abs(afterTiltPosition.x - startPosition.x) > 0.001f,
                 controller.name + " did not move horizontally while tilting.");
+            RequireApproximately(startPosition.y, afterTiltPosition.y, 0.001f,
+                controller.name + " moved vertically while tilting.");
 
             InvokeNonPublic(controller, startReturnMethod);
             Require(GetPrivateState(controller, "currentState").Contains("Returning",
                     StringComparison.Ordinal),
                 controller.name + " did not enter Returning state.");
-            ApplyInjectedHorizontalMovement(controller, horizontalMethod, applyPhysicsMethod);
-            float afterReturnMoveX = GetPosition(controller.gameObject).x;
-            Require(Mathf.Abs(afterReturnMoveX - afterTiltX) > 0.001f,
-                controller.name + " did not move horizontally while returning.");
+            Require(Cursor.lockState == CursorLockMode.None,
+                controller.name + " did not unlock the cursor when return started.");
+            InvokeNonPublic(controller, "CancelPointerSynchronization");
+            Vector2 returnDelta = ApplyInjectedReturnMovement(controller, applyPhysicsMethod);
+            Require(Mathf.Abs(returnDelta.x) > 0.001f && Mathf.Abs(returnDelta.y) > 0.001f,
+                controller.name + " did not move on both axes while returning.");
 
             InvokeNonPublic(controller, releaseMethod);
-            return afterReturnMoveX - startX;
+            return GetPosition(controller.gameObject) - startPosition;
+        }
+
+        private static Vector2 ApplyInjectedReturnMovement(
+            Component controller,
+            string applyPhysicsMethod)
+        {
+            Vector2 startPosition = GetPosition(controller.gameObject);
+            Vector3 pointerAnchor = controller is BottleController bottle
+                ? bottle.RotationPivotWorldPosition
+                : (Vector3)startPosition;
+            Vector2 screenPosition = BartendingViewport.GetPointerScreenPosition(
+                Camera.main,
+                pointerAnchor);
+            Require(BartendingViewport.TryGetInputScreenRect(out Rect viewportRect),
+                "Bartending viewport screen rect could not be resolved.");
+            float directionX = screenPosition.x <= viewportRect.center.x ? 1f : -1f;
+            float directionY = screenPosition.y <= viewportRect.center.y ? 1f : -1f;
+            Vector3 targetPointer = pointerAnchor + new Vector3(
+                directionX * 0.18f,
+                directionY * 0.14f,
+                0f);
+
+            InvokeNonPublic(controller, "MoveToPointerPosition", targetPointer);
+            if (!string.IsNullOrEmpty(applyPhysicsMethod))
+                ApplyQueuedPhysicsPosition(controller, applyPhysicsMethod, "two-axis return");
+            InvokeNonPublic(
+                controller,
+                "BeginPointerSynchronization",
+                targetPointer,
+                false,
+                false);
+
+            Vector2 delta = GetPosition(controller.gameObject) - startPosition;
+            Require(Mathf.Abs(delta.x) > 0.001f && Mathf.Abs(delta.y) > 0.001f,
+                controller.name + " did not apply the injected two-axis return movement.");
+            return delta;
         }
 
         private static void ApplyInjectedHorizontalMovement(
@@ -410,28 +502,34 @@ namespace Slainte.Bartending.EditorTools
                 + $"worldBounds={collider.bounds}");
             InvokeNonPublic(controller, horizontalMethod);
             if (!string.IsNullOrEmpty(applyPhysicsMethod))
-            {
-                FieldInfo pendingField = controller.GetType().GetField(
-                    "positionTargetPending",
-                    BindingFlags.Instance | BindingFlags.NonPublic);
-                Require(pendingField != null && (bool)pendingField.GetValue(controller),
-                    controller.name + " did not queue a horizontal position target.");
-                Vector2 pendingTarget = GetPrivateField<Vector2>(
-                    controller,
-                    "pendingPositionTarget");
-                Rigidbody2D body = controller.GetComponent<Rigidbody2D>();
-                Require(body != null, controller.name + " has no Rigidbody2D.");
-                Require(Mathf.Abs(pendingTarget.x - body.position.x) > 0.0001f,
-                    controller.name + " queued a zero-distance position target.");
+                ApplyQueuedPhysicsPosition(controller, applyPhysicsMethod, "horizontal tilt");
+        }
 
-                InvokeNonPublic(controller, applyPhysicsMethod);
-                body.position = pendingTarget;
-                Vector3 settledPosition = controller.transform.position;
-                settledPosition.x = pendingTarget.x;
-                settledPosition.y = pendingTarget.y;
-                controller.transform.position = settledPosition;
-                Physics2D.SyncTransforms();
-            }
+        private static void ApplyQueuedPhysicsPosition(
+            Component controller,
+            string applyPhysicsMethod,
+            string movementLabel)
+        {
+            FieldInfo pendingField = controller.GetType().GetField(
+                "positionTargetPending",
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Require(pendingField != null && (bool)pendingField.GetValue(controller),
+                $"{controller.name} did not queue a {movementLabel} position target.");
+            Vector2 pendingTarget = GetPrivateField<Vector2>(
+                controller,
+                "pendingPositionTarget");
+            Rigidbody2D body = controller.GetComponent<Rigidbody2D>();
+            Require(body != null, controller.name + " has no Rigidbody2D.");
+            Require(Vector2.Distance(pendingTarget, body.position) > 0.0001f,
+                $"{controller.name} queued a zero-distance {movementLabel} position target.");
+
+            InvokeNonPublic(controller, applyPhysicsMethod);
+            body.position = pendingTarget;
+            Vector3 settledPosition = controller.transform.position;
+            settledPosition.x = pendingTarget.x;
+            settledPosition.y = pendingTarget.y;
+            controller.transform.position = settledPosition;
+            Physics2D.SyncTransforms();
         }
 
         private static void CreateTrackedContents(BartendingSessionInstance session)
@@ -557,6 +655,8 @@ namespace Slainte.Bartending.EditorTools
                 texture,
                 new Rect(0f, 0f, 4f, 4f),
                 new Vector2(0.5f, 0.5f));
+            BusinessBartendingSettings settings =
+                ScriptableObject.CreateInstance<BusinessBartendingSettings>();
             try
             {
                 Canvas canvas = canvasObject.GetComponent<Canvas>();
@@ -597,13 +697,100 @@ namespace Slainte.Bartending.EditorTools
                     union.xMax,
                     0.01f,
                     "Logical customer union right edge is incorrect.");
+
+                RectTransform lowerBoundary = CreateServingLowerBoundary(
+                    canvasRect,
+                    union.yMin + 40f);
+                GameObject viewportObject = new GameObject(
+                    "ServingHighlightContractViewport",
+                    typeof(RectTransform),
+                    typeof(CanvasRenderer),
+                    typeof(RawImage),
+                    typeof(BartendingViewport));
+                viewportObject.transform.SetParent(canvasRect, false);
+                BartendingInteractionOverlay overlay =
+                    BartendingInteractionOverlay.Create(
+                        viewportObject.GetComponent<BartendingViewport>(),
+                        null,
+                        null,
+                        null,
+                        settings);
+                Require(overlay != null, "Serving highlight contract overlay was not created.");
+                ValidateServingTargetRectangle(overlay, settings);
+                overlay.ConfigureServingTarget(
+                    stage,
+                    lowerBoundary,
+                    allowFallbackTarget: false);
+                Canvas.ForceUpdateCanvases();
+
+                Require(overlay.TryGetServeTargetScreenRect(out Rect clampedTarget),
+                    "Table-clamped logical customer target was not resolved.");
+                Vector3[] boundaryCorners = new Vector3[4];
+                lowerBoundary.GetWorldCorners(boundaryCorners);
+                float tableTop = RectTransformUtility.WorldToScreenPoint(
+                    null,
+                    boundaryCorners[1]).y;
+                RequireApproximately(tableTop, clampedTarget.yMin, 0.01f,
+                    "Serving target lower edge was not clamped to the bar table top.");
+                Require(clampedTarget.yMin > union.yMin,
+                    "Bar table top did not reduce the serving target from below.");
+                RequireApproximately(union.yMax, clampedTarget.yMax, 0.01f,
+                    "Bar table clamp changed the serving target upper edge.");
             }
             finally
             {
                 UnityEngine.Object.DestroyImmediate(canvasObject);
+                UnityEngine.Object.DestroyImmediate(settings);
                 UnityEngine.Object.DestroyImmediate(sprite);
                 UnityEngine.Object.DestroyImmediate(texture);
             }
+        }
+
+        private static RectTransform CreateServingLowerBoundary(
+            RectTransform canvasRect,
+            float targetTopScreenY)
+        {
+            GameObject boundaryObject = new GameObject(
+                "ServingLowerBoundary",
+                typeof(RectTransform));
+            RectTransform boundary = boundaryObject.GetComponent<RectTransform>();
+            boundary.SetParent(canvasRect, false);
+            boundary.anchorMin = new Vector2(0.5f, 0.5f);
+            boundary.anchorMax = new Vector2(0.5f, 0.5f);
+            boundary.pivot = new Vector2(0.5f, 1f);
+            boundary.sizeDelta = new Vector2(1200f, 120f);
+            RectTransformUtility.ScreenPointToLocalPointInRectangle(
+                canvasRect,
+                new Vector2(Screen.width * 0.5f, targetTopScreenY),
+                null,
+                out Vector2 localTop);
+            boundary.anchoredPosition = localTop;
+            return boundary;
+        }
+
+        private static void ValidateServingTargetRectangle(
+            BartendingInteractionOverlay overlay,
+            BusinessBartendingSettings settings)
+        {
+            Require(overlay.ServingTargetBorderCount == 4,
+                "Serving target did not create four rectangular border edges.");
+            Image[] images = overlay.GetComponentsInChildren<Image>(true);
+            int borderCount = 0;
+            for (int i = 0; i < images.Length; i++)
+            {
+                Image image = images[i];
+                if (image == null || !image.name.StartsWith("Border", StringComparison.Ordinal))
+                    continue;
+
+                borderCount++;
+                Require(image.color == settings.serveTargetOutlineColor,
+                    $"Serving target border '{image.name}' has the wrong color.");
+                Require(!image.raycastTarget,
+                    $"Serving target border '{image.name}' blocks pointer input.");
+            }
+
+            Require(borderCount == 4,
+                $"Serving target rectangular border image count is incorrect: {borderCount}");
         }
 
         private static CharacterView CreateCharacterView(
@@ -628,6 +815,7 @@ namespace Slainte.Bartending.EditorTools
             RectTransform visualRect = visual.GetComponent<RectTransform>();
             visualRect.SetParent(rootRect, false);
             visualRect.sizeDelta = rootRect.sizeDelta;
+
             CharacterView view = root.AddComponent<CharacterView>();
             InvokeNonPublic(view, "Awake");
             view.Setup(sprite);

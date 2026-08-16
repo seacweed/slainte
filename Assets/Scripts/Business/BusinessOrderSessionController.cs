@@ -146,6 +146,31 @@ namespace Slainte.Business
             return true;
         }
 
+#if UNITY_EDITOR
+        public bool TryCompleteCurrentOrderForPlaytest()
+        {
+            if (currentRequest == null
+                || completionDispatched
+                || State == BusinessOrderSessionState.Idle
+                || State == BusinessOrderSessionState.Completed)
+            {
+                return false;
+            }
+
+            dialogue?.HideImmediate();
+            modeManager?.RequestModeChange(GameMode.OrderMode);
+            CompleteCurrentOrder(new BusinessOrderSessionResult
+            {
+                outcome = OrderSessionOutcome.Served,
+                customerOrderKey = currentRequest.customerOrderKey,
+                requestedRecipeId = currentRequest.requestedRecipeId,
+                accepted = true,
+                grade = OrderEvaluationGrade.Good
+            });
+            return true;
+        }
+#endif
+
         private void BeginCrafting()
         {
             if (currentRequest == null)

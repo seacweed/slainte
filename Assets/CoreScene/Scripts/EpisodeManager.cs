@@ -169,9 +169,14 @@ public class EpisodeManager : MonoSingleton<EpisodeManager>
 
         EpisodeData episode = GetEpisodeData(episodeId);
         EpisodeRunner runner = UnityEngine.Object.FindFirstObjectByType<EpisodeRunner>();
-        if (episode == null || runner == null)
+        GameProgress progress = GameProgress.Instance;
+        if (episode == null
+            || episode.episodeType != EpisodeType.Encounter
+            || (progress != null && progress.IsEpisodeCompleted(episodeId))
+            || runner == null)
         {
-            Debug.LogError($"[EpisodeManager] 영업 인카운터를 찾거나 실행할 수 없습니다: {episodeId}");
+            Debug.LogError(
+                $"[EpisodeManager] 미완료 Encounter 에피소드를 찾거나 실행할 수 없습니다: {episodeId}");
             return false;
         }
 

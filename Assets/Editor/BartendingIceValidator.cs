@@ -122,6 +122,12 @@ namespace Slainte.Bartending.EditorTools
                     case 2:
                         ValidateTransferAndStrainer();
                         break;
+                    case 3:
+                        ValidatePhysicalStrainerAndMoveOutside();
+                        break;
+                    case 4:
+                        ValidateNoTeleportRetention();
+                        break;
                 }
             }
             catch (Exception exception)
@@ -211,11 +217,77 @@ namespace Slainte.Bartending.EditorTools
             Require(!glassTracker.BuildComposition().HasIce,
                 "Ice in the shaker incorrectly satisfied serving-glass HasIce.");
 
-            testCube.transform.position = shakerTracker.transform.position + Vector3.up * 4f;
+            IceOnlyVesselBarrier barrier =
+                shakerTracker.GetComponentInChildren<IceOnlyVesselBarrier>();
+            Require(barrier != null, "The cobbler shaker has no physical ice strainer.");
+            Collider2D barrierCollider = barrier.GetComponent<Collider2D>();
+            Collider2D cubeCollider = testCube.GetComponent<Collider2D>();
+            Require(barrierCollider != null && cubeCollider != null,
+                "The physical strainer or ice cube collider is missing.");
+            Require(!Physics2D.GetIgnoreCollision(cubeCollider, barrierCollider),
+                "Owned ice is configured to ignore its shaker strainer.");
+
+            Rigidbody2D body = testCube.GetComponent<Rigidbody2D>();
+            Vector2 launchPoint = new Vector2(
+                barrierCollider.bounds.center.x,
+                barrierCollider.bounds.min.y - cubeCollider.bounds.extents.y - 0.03f);
+            if (body != null)
+            {
+                body.position = launchPoint;
+                body.linearVelocity = Vector2.up * 5f;
+            }
+            else
+            {
+                testCube.transform.position = launchPoint;
+            }
             Physics2D.SyncTransforms();
+            phase = 3;
+            phaseFrames = 0;
+        }
+
+        private static void ValidatePhysicalStrainerAndMoveOutside()
+        {
+            if (phaseFrames < 12)
+                return;
+
             Require(shakerTracker.IceCount == 1,
-                "The integrated strainer failed to retain its owned ice.");
-            Finish(true, "Sandbox creation, ice ownership, serving judgement, transfer, and strainer passed.");
+                "The integrated physical strainer failed to retain its owned ice.");
+
+            Rigidbody2D body = testCube.GetComponent<Rigidbody2D>();
+            Vector2 outsidePosition = (Vector2)shakerTracker.transform.position + Vector2.up * 4f;
+            if (body != null)
+            {
+                body.position = outsidePosition;
+                body.linearVelocity = Vector2.zero;
+            }
+            else
+            {
+                testCube.transform.position = outsidePosition;
+            }
+
+            Physics2D.SyncTransforms();
+            _ = shakerTracker.IceCount;
+            phase = 4;
+            phaseFrames = 0;
+        }
+
+        private static void ValidateNoTeleportRetention()
+        {
+            if (phaseFrames < 4)
+                return;
+
+            Require(testCube.VesselOwner == null,
+                "Ice ownership was not released after the cube left the shaker.");
+            Require(shakerTracker.IceCount == 0,
+                "The shaker kept stale ice after it physically left the vessel.");
+            Rigidbody2D body = testCube.GetComponent<Rigidbody2D>();
+            Vector2 cubePosition = body != null
+                ? body.position
+                : (Vector2)testCube.transform.position;
+            Require(Vector2.Distance(cubePosition, shakerTracker.transform.position) > 2f,
+                "Ice was teleported back into the shaker instead of remaining under world physics.");
+            Finish(true,
+                "Sandbox creation, shared ownership, physical strainer, and no-teleport world physics passed.");
         }
 
         private static void ValidateIceRequirement(

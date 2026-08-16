@@ -345,8 +345,10 @@ namespace Slainte.Bartending
                 PerformTilting();
             }
 
-            if (currentState == BottleState.Tilting || currentState == BottleState.Returning)
+            if (currentState == BottleState.Tilting)
                 PerformHorizontalRotationMovement();
+            else if (currentState == BottleState.Returning && !pointerSyncPending)
+                FollowPointerWhileReturning();
         }
 
         private void PickupBottle()
@@ -543,6 +545,26 @@ namespace Slainte.Bartending
             ApplyRotationAroundConfiguredPivot(currentAngle);
         }
 
+        private void FollowPointerWhileReturning()
+        {
+            if (!BartendingViewport.TryGetPointerWorldPosition(
+                    mainCamera,
+                    Input.mousePosition,
+                    out Vector3 pointerWorld))
+            {
+                return;
+            }
+
+            MoveToPointerPosition(pointerWorld);
+        }
+
+        private void MoveToPointerPosition(Vector3 pointerWorld)
+        {
+            rotationPivotAnchorWorld = pointerWorld + pointerPivotOffset;
+            rotationPivotAnchorWorld.z = 0f;
+            ApplyRotationAroundConfiguredPivot(currentAngle);
+        }
+
         private void TryDropBottle()
         {
             if (!BartendingViewport.TryGetPointerWorldPosition(mainCamera, Input.mousePosition, out Vector3 mousePos))
@@ -659,6 +681,10 @@ namespace Slainte.Bartending
         private void StartReturning()
         {
             currentState = BottleState.Returning;
+            BeginPointerSynchronization(
+                rotationPivotAnchorWorld,
+                unlockCursor: true,
+                completeReturn: false);
             returnCoroutine = StartCoroutine(ReturnToUprightRoutine());
         }
 
@@ -681,10 +707,8 @@ namespace Slainte.Bartending
 
             ApplyRotationAroundConfiguredPivot(0f);
             returnCoroutine = null;
-            BeginPointerSynchronization(
-                GetConfiguredRotationPivotWorldPosition(),
-                unlockCursor: true,
-                completeReturn: true);
+            currentState = BottleState.PickedUp;
+            hasRotationPivotAnchor = false;
         }
 
         private void BeginPointerSynchronization(

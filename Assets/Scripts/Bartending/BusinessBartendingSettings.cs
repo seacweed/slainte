@@ -35,9 +35,9 @@ namespace Slainte.Bartending
 
         [Header("Serving Target")]
         [HideInInspector, Range(0f, 1f)] public float serveLineScreenRatio = 0.3f;
-        public Color serveTargetFillColor = new Color(0.12f, 0.75f, 1f, 0.18f);
-        public Color serveTargetOutlineColor = new Color(0.3f, 0.9f, 1f, 0.7f);
-        [Min(0f)] public float serveTargetOutlineWidth = 3f;
+        public Color serveTargetFillColor = new Color(1f, 1f, 1f, 0f);
+        public Color serveTargetOutlineColor = new Color(1f, 0.82f, 0.05f, 0.8f);
+        [Min(0f)] public float serveTargetOutlineWidth = 4f;
         [Min(0f)] public float serveTargetPaddingPixels = 0f;
         [Tooltip("Sandbox fallback target as normalized x, y, width, height.")]
         public Vector4 sandboxServeTargetNormalized = new Vector4(0.35f, 0.48f, 0.3f, 0.42f);

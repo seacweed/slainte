@@ -72,8 +72,10 @@ namespace Slainte.Bartending
         private static readonly HashSet<IceCubeController> activeIceCubes = new();
         private readonly HashSet<LiquidParticleData> particles = new();
         private readonly HashSet<LiquidParticleData> ownedParticles = new();
+        private readonly HashSet<LiquidParticleData> pendingParticleReleases = new();
         private readonly HashSet<IceCubeController> iceCubes = new();
         private readonly HashSet<IceCubeController> ownedIceCubes = new();
+        private readonly HashSet<IceCubeController> pendingIceReleases = new();
         private readonly List<Collider2D> overlapResults = new();
         private readonly List<LiquidParticleData> ownerReleaseBuffer = new();
         private readonly List<IceCubeController> iceReleaseBuffer = new();
@@ -83,7 +85,6 @@ namespace Slainte.Bartending
         private GUIStyle debugBoxStyle;
         private string servingGlassId = string.Empty;
         private bool hasIce;
-        private bool retainsIce;
         private int interactionPriority;
 
         [Header("Debug View")]
@@ -177,6 +178,7 @@ namespace Slainte.Bartending
             ownerReleaseBuffer.Clear();
             ownedParticles.Clear();
             particles.Clear();
+            pendingParticleReleases.Clear();
 
             iceReleaseBuffer.Clear();
             foreach (IceCubeController iceCube in ownedIceCubes)
@@ -191,7 +193,13 @@ namespace Slainte.Bartending
             iceReleaseBuffer.Clear();
             ownedIceCubes.Clear();
             iceCubes.Clear();
+            pendingIceReleases.Clear();
             UnregisterVessel(this);
+        }
+
+        private void FixedUpdate()
+        {
+            ProcessPendingOwnerReleases();
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -209,15 +217,8 @@ namespace Slainte.Bartending
             if (other.TryGetComponent(out LiquidParticleData particle))
             {
                 particles.Remove(particle);
-
-                // An owned particle must become transferable as soon as it has fully
-                // left this vessel. Keep ownership while it is still inside another
-                // trigger belonging to the same vessel.
-                if (particle.VesselOwner == this
-                    && !ContainsTriggerPoint(particle.transform.position))
-                {
-                    particle.ReleaseVesselOwner(this);
-                }
+                if (particle.VesselOwner == this)
+                    pendingParticleReleases.Add(particle);
             }
 
             IceCubeController iceCube = other.GetComponentInParent<IceCubeController>();
@@ -225,19 +226,8 @@ namespace Slainte.Bartending
                 return;
 
             iceCubes.Remove(iceCube);
-            if (iceCube.VesselOwner == this
-                && !ContainsTriggerPoint(iceCube.PhysicsPosition))
-            {
-                if (retainsIce && !iceCube.IsDragging)
-                {
-                    iceCube.ReturnToVessel(GetIceReturnPoint());
-                    iceCubes.Add(iceCube);
-                }
-                else
-                {
-                    iceCube.ReleaseVesselOwner(this);
-                }
-            }
+            if (iceCube.VesselOwner == this)
+                pendingIceReleases.Add(iceCube);
         }
 
         public CocktailComposition BuildComposition()
@@ -279,50 +269,6 @@ namespace Slainte.Bartending
             hasIce = value;
         }
 
-        public void ConfigureIceRetention(bool shouldRetainIce)
-        {
-            retainsIce = shouldRetainIce;
-        }
-
-        public void TranslateTrackedParticles(Vector2 delta)
-        {
-            if (delta.sqrMagnitude <= 0.000001f)
-                return;
-
-            Cleanup();
-            RefreshTrackedParticles();
-
-            foreach (LiquidParticleData particle in particles)
-            {
-                if (particle == null)
-                    continue;
-
-                Rigidbody2D particleBody = particle.GetComponent<Rigidbody2D>();
-                if (particleBody != null)
-                {
-                    particleBody.position += delta;
-                    particleBody.WakeUp();
-                }
-                else
-                {
-                    particle.transform.position += (Vector3)delta;
-                }
-            }
-
-            TranslateTrackedIceCubes(delta);
-        }
-
-        public void TranslateTrackedIceCubes(Vector2 delta)
-        {
-            if (delta.sqrMagnitude <= 0.000001f)
-                return;
-
-            Cleanup();
-            RefreshTrackedIceCubes();
-            foreach (IceCubeController iceCube in iceCubes)
-                iceCube?.Translate(delta);
-        }
-
         private void Track(Collider2D other)
         {
             if (other == null)
@@ -344,6 +290,8 @@ namespace Slainte.Bartending
             if (particle.hasBeenCollected)
                 return;
 
+            pendingParticleReleases.Remove(particle);
+
             VesselLiquidTracker previousOwner = particle.VesselOwner;
             if (previousOwner != null
                 && previousOwner != this
@@ -363,6 +311,8 @@ namespace Slainte.Bartending
         {
             if (iceCube == null || iceCube.IsDragging || !iceCube.gameObject.activeInHierarchy)
                 return;
+
+            pendingIceReleases.Remove(iceCube);
 
             VesselLiquidTracker previousOwner = iceCube.VesselOwner;
             if (previousOwner != null
@@ -425,8 +375,58 @@ namespace Slainte.Bartending
         private void Cleanup()
         {
             particles.RemoveWhere(IsInvalidParticle);
+            ownedParticles.RemoveWhere(IsInvalidParticle);
+            pendingParticleReleases.RemoveWhere(
+                particle => IsInvalidParticle(particle) || particle.VesselOwner != this);
             iceCubes.RemoveWhere(IsInvalidIceCube);
             ownedIceCubes.RemoveWhere(IsInvalidIceCube);
+            pendingIceReleases.RemoveWhere(
+                iceCube => IsInvalidIceCube(iceCube) || iceCube.VesselOwner != this);
+        }
+
+        private void ProcessPendingOwnerReleases()
+        {
+            Cleanup();
+
+            ownerReleaseBuffer.Clear();
+            foreach (LiquidParticleData particle in pendingParticleReleases)
+            {
+                if (particle.VesselOwner != this
+                    || ContainsTriggerPoint(particle.transform.position))
+                {
+                    continue;
+                }
+
+                ownerReleaseBuffer.Add(particle);
+            }
+
+            for (int i = 0; i < ownerReleaseBuffer.Count; i++)
+            {
+                LiquidParticleData particle = ownerReleaseBuffer[i];
+                pendingParticleReleases.Remove(particle);
+                particle.ReleaseVesselOwner(this);
+            }
+            ownerReleaseBuffer.Clear();
+
+            iceReleaseBuffer.Clear();
+            foreach (IceCubeController iceCube in pendingIceReleases)
+            {
+                if (iceCube.VesselOwner != this
+                    || ContainsTriggerPoint(iceCube.PhysicsPosition))
+                {
+                    continue;
+                }
+
+                iceReleaseBuffer.Add(iceCube);
+            }
+
+            for (int i = 0; i < iceReleaseBuffer.Count; i++)
+            {
+                IceCubeController iceCube = iceReleaseBuffer[i];
+                pendingIceReleases.Remove(iceCube);
+                iceCube.ReleaseVesselOwner(this);
+            }
+            iceReleaseBuffer.Clear();
         }
 
         private void RefreshTrackedParticles()
@@ -453,35 +453,21 @@ namespace Slainte.Bartending
         private void RefreshTrackedIceCubes()
         {
             iceCubes.Clear();
-            iceReleaseBuffer.Clear();
 
             foreach (IceCubeController ownedIce in ownedIceCubes)
             {
                 if (ownedIce == null || ownedIce.IsDragging)
-                {
-                    if (ownedIce != null)
-                        iceReleaseBuffer.Add(ownedIce);
                     continue;
-                }
 
                 if (ContainsTriggerPoint(ownedIce.PhysicsPosition))
                 {
                     iceCubes.Add(ownedIce);
                 }
-                else if (retainsIce)
-                {
-                    ownedIce.ReturnToVessel(GetIceReturnPoint());
-                    iceCubes.Add(ownedIce);
-                }
                 else
                 {
-                    iceReleaseBuffer.Add(ownedIce);
+                    pendingIceReleases.Add(ownedIce);
                 }
             }
-
-            for (int i = 0; i < iceReleaseBuffer.Count; i++)
-                iceReleaseBuffer[i].ReleaseVesselOwner(this);
-            iceReleaseBuffer.Clear();
 
             foreach (IceCubeController iceCube in activeIceCubes)
             {
@@ -503,7 +489,11 @@ namespace Slainte.Bartending
         internal void UnregisterOwnedParticle(LiquidParticleData particle)
         {
             if (particle != null)
+            {
                 ownedParticles.Remove(particle);
+                particles.Remove(particle);
+                pendingParticleReleases.Remove(particle);
+            }
         }
 
         internal void RegisterOwnedIceCube(IceCubeController iceCube)
@@ -518,18 +508,44 @@ namespace Slainte.Bartending
                 return;
             ownedIceCubes.Remove(iceCube);
             iceCubes.Remove(iceCube);
+            pendingIceReleases.Remove(iceCube);
         }
 
         internal static void RegisterIceCube(IceCubeController iceCube)
         {
-            if (iceCube != null)
-                activeIceCubes.Add(iceCube);
+            if (iceCube == null || !activeIceCubes.Add(iceCube))
+                return;
+
+            RefreshIceIsolation(iceCube);
         }
 
         internal static void UnregisterIceCube(IceCubeController iceCube)
         {
-            if (iceCube != null)
-                activeIceCubes.Remove(iceCube);
+            if (iceCube == null)
+                return;
+
+            Collider2D iceCollider = iceCube.PhysicsCollider;
+            if (iceCollider != null)
+            {
+                foreach (IceCubeController otherIce in activeIceCubes)
+                {
+                    if (otherIce == null || otherIce == iceCube || otherIce.PhysicsCollider == null)
+                        continue;
+
+                    Physics2D.IgnoreCollision(iceCollider, otherIce.PhysicsCollider, false);
+                }
+
+                foreach (LiquidParticleData particle in activeParticles)
+                {
+                    if (particle != null && particle.ParticleCollider != null)
+                        Physics2D.IgnoreCollision(iceCollider, particle.ParticleCollider, false);
+                }
+
+                foreach (VesselLiquidTracker vessel in activeVessels)
+                    SetIceVesselCollision(iceCollider, vessel, false);
+            }
+
+            activeIceCubes.Remove(iceCube);
         }
 
         internal static void RegisterParticle(LiquidParticleData particle)
@@ -558,6 +574,12 @@ namespace Slainte.Bartending
 
                 foreach (VesselLiquidTracker vessel in activeVessels)
                     SetParticleVesselCollision(particleCollider, vessel, false);
+
+                foreach (IceCubeController iceCube in activeIceCubes)
+                {
+                    if (iceCube != null && iceCube.PhysicsCollider != null)
+                        Physics2D.IgnoreCollision(particleCollider, iceCube.PhysicsCollider, false);
+                }
             }
 
             activeParticles.Remove(particle);
@@ -592,6 +614,59 @@ namespace Slainte.Bartending
                     other.ParticleCollider,
                     ignoreParticle);
             }
+
+            foreach (IceCubeController iceCube in activeIceCubes)
+            {
+                if (iceCube == null || iceCube.PhysicsCollider == null)
+                    continue;
+
+                bool ignoreIce = particle.VesselOwner != null
+                    && iceCube.VesselOwner != null
+                    && particle.VesselOwner != iceCube.VesselOwner;
+                Physics2D.IgnoreCollision(
+                    particleCollider,
+                    iceCube.PhysicsCollider,
+                    ignoreIce);
+            }
+        }
+
+        internal static void RefreshIceIsolation(IceCubeController iceCube)
+        {
+            if (iceCube == null || !iceCube.isActiveAndEnabled)
+                return;
+
+            Collider2D iceCollider = iceCube.PhysicsCollider;
+            if (iceCollider == null)
+                return;
+
+            foreach (VesselLiquidTracker vessel in activeVessels)
+            {
+                bool ignoreVessel = iceCube.VesselOwner != null
+                    && iceCube.VesselOwner != vessel;
+                SetIceVesselCollision(iceCollider, vessel, ignoreVessel);
+            }
+
+            foreach (IceCubeController otherIce in activeIceCubes)
+            {
+                if (otherIce == null || otherIce == iceCube || otherIce.PhysicsCollider == null)
+                    continue;
+
+                bool ignoreIce = iceCube.VesselOwner != null
+                    && otherIce.VesselOwner != null
+                    && iceCube.VesselOwner != otherIce.VesselOwner;
+                Physics2D.IgnoreCollision(iceCollider, otherIce.PhysicsCollider, ignoreIce);
+            }
+
+            foreach (LiquidParticleData particle in activeParticles)
+            {
+                if (particle == null || particle.ParticleCollider == null)
+                    continue;
+
+                bool ignoreParticle = iceCube.VesselOwner != null
+                    && particle.VesselOwner != null
+                    && iceCube.VesselOwner != particle.VesselOwner;
+                Physics2D.IgnoreCollision(iceCollider, particle.ParticleCollider, ignoreParticle);
+            }
         }
 
         private static void RegisterVessel(VesselLiquidTracker vessel)
@@ -609,6 +684,16 @@ namespace Slainte.Bartending
                     && particle.VesselOwner != vessel;
                 SetParticleVesselCollision(particle.ParticleCollider, vessel, ignoreVessel);
             }
+
+            foreach (IceCubeController iceCube in activeIceCubes)
+            {
+                if (iceCube == null || iceCube.PhysicsCollider == null)
+                    continue;
+
+                bool ignoreVessel = iceCube.VesselOwner != null
+                    && iceCube.VesselOwner != vessel;
+                SetIceVesselCollision(iceCube.PhysicsCollider, vessel, ignoreVessel);
+            }
         }
 
         private static void UnregisterVessel(VesselLiquidTracker vessel)
@@ -620,6 +705,12 @@ namespace Slainte.Bartending
             {
                 if (particle != null && particle.ParticleCollider != null)
                     SetParticleVesselCollision(particle.ParticleCollider, vessel, false);
+            }
+
+            foreach (IceCubeController iceCube in activeIceCubes)
+            {
+                if (iceCube != null && iceCube.PhysicsCollider != null)
+                    SetIceVesselCollision(iceCube.PhysicsCollider, vessel, false);
             }
 
             activeVessels.Remove(vessel);
@@ -640,8 +731,42 @@ namespace Slainte.Bartending
                 if (vesselCollider == null || vesselCollider.isTrigger)
                     continue;
 
-                Physics2D.IgnoreCollision(particleCollider, vesselCollider, ignore);
+                bool iceOnlyBarrier = vesselCollider.GetComponent<IceOnlyVesselBarrier>() != null;
+                Physics2D.IgnoreCollision(
+                    particleCollider,
+                    vesselCollider,
+                    ignore || iceOnlyBarrier);
             }
+        }
+
+        private static void SetIceVesselCollision(
+            Collider2D iceCollider,
+            VesselLiquidTracker vessel,
+            bool ignore)
+        {
+            if (iceCollider == null || vessel == null)
+                return;
+
+            vessel.CacheColliders();
+            for (int i = 0; i < vessel.colliders.Length; i++)
+            {
+                Collider2D vesselCollider = vessel.colliders[i];
+                if (vesselCollider == null || vesselCollider.isTrigger)
+                    continue;
+
+                Physics2D.IgnoreCollision(iceCollider, vesselCollider, ignore);
+            }
+        }
+
+        internal void RefreshCollisionGeometry()
+        {
+            CacheColliders();
+
+            foreach (LiquidParticleData particle in activeParticles)
+                RefreshParticleIsolation(particle);
+
+            foreach (IceCubeController iceCube in activeIceCubes)
+                RefreshIceIsolation(iceCube);
         }
 
         private void CacheColliders()
@@ -659,31 +784,6 @@ namespace Slainte.Bartending
         private static bool IsInvalidIceCube(IceCubeController iceCube)
         {
             return iceCube == null || !iceCube.gameObject.activeInHierarchy;
-        }
-
-        private Vector2 GetIceReturnPoint()
-        {
-            CacheColliders();
-            bool hasBounds = false;
-            Bounds combined = default;
-            for (int i = 0; i < colliders.Length; i++)
-            {
-                Collider2D trigger = colliders[i];
-                if (trigger == null || !trigger.enabled || !trigger.isTrigger)
-                    continue;
-
-                if (!hasBounds)
-                {
-                    combined = trigger.bounds;
-                    hasBounds = true;
-                }
-                else
-                {
-                    combined.Encapsulate(trigger.bounds);
-                }
-            }
-
-            return hasBounds ? combined.center : transform.position;
         }
 
         public bool HasTriggerCollider()

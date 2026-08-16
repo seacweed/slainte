@@ -23,6 +23,14 @@ namespace Slainte.Bartending
         internal Vector2 PhysicsPosition => body != null
             ? body.position
             : (Vector2)transform.position;
+        internal Collider2D PhysicsCollider
+        {
+            get
+            {
+                EnsureComponents();
+                return cubeCollider;
+            }
+        }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetRegistry()
@@ -94,6 +102,7 @@ namespace Slainte.Bartending
 
             vesselOwner = owner;
             owner.RegisterOwnedIceCube(this);
+            VesselLiquidTracker.RefreshIceIsolation(this);
             return true;
         }
 
@@ -105,37 +114,7 @@ namespace Slainte.Bartending
             VesselLiquidTracker previous = vesselOwner;
             vesselOwner = null;
             previous.UnregisterOwnedIceCube(this);
-        }
-
-        internal void ReturnToVessel(Vector2 worldPosition)
-        {
-            EnsureComponents();
-            if (body != null)
-            {
-                body.position = worldPosition;
-                body.linearVelocity = Vector2.zero;
-                body.angularVelocity = 0f;
-                body.WakeUp();
-            }
-            else
-            {
-                transform.position = worldPosition;
-            }
-        }
-
-        internal void Translate(Vector2 delta)
-        {
-            if (isDragging || delta.sqrMagnitude <= 0.000001f)
-                return;
-
-            EnsureComponents();
-            if (body != null)
-            {
-                body.position += delta;
-                body.WakeUp();
-            }
-            else
-                transform.position += (Vector3)delta;
+            VesselLiquidTracker.RefreshIceIsolation(this);
         }
 
         private void Initialize(float gravityScale, float destroyBelowY, bool previewOnly)

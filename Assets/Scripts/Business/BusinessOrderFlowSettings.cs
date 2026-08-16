@@ -36,8 +36,6 @@ namespace Slainte.Business
         public BusinessRequiredActionTiming timing = BusinessRequiredActionTiming.BeforeFirstCustomer;
         public CustomerVisitData customerVisit;
         public EpisodeData encounterEpisode;
-        [Tooltip("완료 처리된 에피소드도 다시 인카운터로 실행할 수 있게 합니다.")]
-        public bool allowCompletedEpisode;
 
         public string TargetKey
         {
@@ -55,6 +53,19 @@ namespace Slainte.Business
         }
     }
 
+    [Serializable]
+    public sealed class BusinessRandomEncounterEntry
+    {
+        [Tooltip("EpisodeType이 Encounter인 에피소드만 등록할 수 있습니다.")]
+        public EpisodeData episode;
+        [Tooltip("일반 손님과 함께 추첨할 때 사용하는 상대 가중치입니다.")]
+        [Min(0f)] public float weight = 1f;
+
+        public string TargetKey => episode != null && !string.IsNullOrWhiteSpace(episode.episodeId)
+            ? "episode:" + episode.episodeId
+            : string.Empty;
+    }
+
     [CreateAssetMenu(menuName = "Slainte/Business/Order Flow Settings", fileName = "BusinessOrderFlowSettings")]
     public sealed class BusinessOrderFlowSettings : ScriptableObject
     {
@@ -66,6 +77,10 @@ namespace Slainte.Business
         [Header("손님 풀")]
         [InspectorName("손님 방문 데이터베이스")]
         public CustomerVisitDatabase customerVisitDatabase;
+
+        [Header("랜덤 인카운터 풀")]
+        [Tooltip("조건을 만족한 미완료 Encounter 에피소드만 손님과 함께 가중치 추첨합니다. 각 에피소드 ID는 영업일당 최대 1회입니다.")]
+        public List<BusinessRandomEncounterEntry> randomEncounters = new();
 
         [Header("필수 영업 액션")]
         public List<BusinessRequiredActionRule> requiredActions = new();

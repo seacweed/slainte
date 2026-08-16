@@ -113,6 +113,7 @@ namespace Slainte.Business
             runtimeSettings.hideFlags = HideFlags.DontSave;
             runtimeSettings.autoStart = false;
             runtimeSettings.shiftDurationSeconds = Mathf.Max(1f, shiftDurationSeconds);
+            runtimeSettings.randomEncounters = new List<BusinessRandomEncounterEntry>();
             if (suppressRequiredActions)
                 runtimeSettings.requiredActions = new List<BusinessRequiredActionRule>();
 

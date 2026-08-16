@@ -20,6 +20,7 @@
   - [NODE_EPISODE_BRANCHES](#node_episode_branches)
 - [특수 표기법](#특수-표기법)
 - [작성 예시](#작성-예시)
+- [영업 인카운터 풀에 연결](#영업-인카운터-풀에-연결)
 - [임포트 방법](#임포트-방법)
 - [자주 하는 실수](#자주-하는-실수)
 
@@ -92,17 +93,19 @@
 | `episodeId` | 에피소드 고유 ID (에셋 파일명에 사용됨) | `StrangeCoin_0` |
 | `episodeTitle` | 게임에 표시될 에피소드 제목 | `이상한 동전 - 0` |
 | `firstNodeId` | 대화가 시작될 첫 번째 노드 ID | `0` |
-| `episodeType` | `Default`(Rest 보드에서 직접 선택) / `Mandatory`(필수, 영업 전후 자동 삽입). 비우면 `Default` | `Default` |
+| `episodeType` | `Default`(Rest 보드에서 직접 선택) / `Mandatory`(영업 전후 자동 삽입) / `Encounter`(영업 중 인카운터). 비우면 `Default` | `Encounter` |
 | `mandatorySlot` | `episodeType=Mandatory`일 때만 사용. `BeforeBusiness` / `AfterBusiness`. 비우면 `None` | `BeforeBusiness` |
 | `chapterId` | 소속 챕터 ID (`ChapterData.chapterId`와 매칭, 챕터 스코프 필수 에피소드 큐 조회에 사용) | `chapter_1` |
 
 ```csv
 #META
 episodeId,episodeTitle,firstNodeId,episodeType,mandatorySlot,chapterId
-StrangeCoin_0,이상한 동전 - 0,0,Default,None,chapter_1
+StrangeCoin_0,이상한 동전 - 0,0,Encounter,None,chapter_1
 ```
 
 > `episodeType`/`mandatorySlot`/`chapterId` 열은 생략해도 됩니다(빈 값은 각각 `Default`/`None`/빈 문자열로 처리됨). 기존 CSV를 그대로 재임포트해도 문제없습니다.
+>
+> `Encounter`는 Rest 보드와 필수 에피소드 큐에 나타나지 않습니다. 실제 영업에서 실행하려면 `BusinessOrderFlowSettings.requiredActions` 또는 개발용 통합 테스트 설정에 해당 에피소드를 `EncounterEpisode` 액션으로 등록해야 합니다.
 
 ---
 
@@ -456,6 +459,20 @@ nodeId,varName,op,threshold,nextNodeId
 #NODE_EPISODE_BRANCHES
 nodeId,requiredCompletedEpisodeId,nextNodeId
 ```
+
+---
+
+## 영업 인카운터 풀에 연결
+
+CSV의 `#META` 행에서 `episodeType`을 `Encounter`로 작성한 뒤 임포트합니다. 임포트된 `EpisodeData` 에셋을 `BusinessOrderFlowSettings` 에셋의 `Random Encounters` 목록에 등록하고 상대 가중치를 설정합니다.
+
+- `triggerCondition`을 만족하고 아직 완료하지 않은 인카운터만 영업 시작 풀에 들어옵니다.
+- 일반 손님과 랜덤 인카운터는 하나의 가중치 후보군에서 추첨됩니다.
+- 인카운터에는 시간 쿨다운이 없으며, 각 `episodeId`는 하나의 영업일에 최대 1회만 시작됩니다.
+- 완료한 인카운터는 이후 영업일에도 다시 풀에 들어오지 않습니다.
+- 같은 날의 `Required Actions`에 필수 인카운터로 등록된 에피소드는 지정된 타이밍을 보장하기 위해 그날의 랜덤 풀에서 제외됩니다.
+
+CSV 임포트는 에피소드 에셋만 만듭니다. `Random Encounters`에 등록하는 단계는 자동으로 실행되지 않습니다.
 
 ---
 

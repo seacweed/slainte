@@ -174,6 +174,7 @@ namespace Slainte.Bartending
                 CharacterStage characterStage = FindInScene<CharacterStage>(targetScene);
                 builtSession.InteractionOverlay?.ConfigureServingTarget(
                     characterStage,
+                    counter,
                     allowFallbackTarget: false);
                 servingGlass.ConfigureServeGesture(builtSession.InteractionOverlay);
                 servingGlass.ServeRequested += HandleGlassServeRequested;

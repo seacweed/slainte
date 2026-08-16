@@ -114,6 +114,7 @@ namespace Slainte.Bartending
         private GlassController servingGlass;
         private BusinessBartendingSettings settings;
         private CharacterStage characterStage;
+        private RectTransform servingTargetLowerBoundary;
         private Image servingTargetImage;
         private bool useFallbackServingTarget;
         private bool missingTargetWarningShown;
@@ -122,6 +123,7 @@ namespace Slainte.Bartending
         public int VisibleVesselLabelCount => labels.Count;
         public bool IsServingTargetVisible =>
             servingTargetImage != null && servingTargetImage.gameObject.activeSelf;
+        public int ServingTargetBorderCount { get; private set; }
 
         public bool TryGetVesselContentsText(IBartendingItem item, out string text)
         {
@@ -171,7 +173,16 @@ namespace Slainte.Bartending
 
         public void ConfigureServingTarget(CharacterStage stage, bool allowFallbackTarget)
         {
+            ConfigureServingTarget(stage, null, allowFallbackTarget);
+        }
+
+        public void ConfigureServingTarget(
+            CharacterStage stage,
+            RectTransform lowerBoundary,
+            bool allowFallbackTarget)
+        {
             characterStage = stage;
+            servingTargetLowerBoundary = lowerBoundary;
             useFallbackServingTarget = allowFallbackTarget;
             missingTargetWarningShown = false;
         }
@@ -182,7 +193,15 @@ namespace Slainte.Bartending
                 && characterStage.TryGetActiveGroupScreenRect(out screenRect))
             {
                 screenRect = ExpandRect(screenRect, settings.serveTargetPaddingPixels);
-                return true;
+                if (TryGetRectTransformScreenRect(
+                        servingTargetLowerBoundary,
+                        out Rect lowerBoundaryRect))
+                {
+                    screenRect.yMin = Mathf.Max(screenRect.yMin, lowerBoundaryRect.yMax);
+                }
+
+                return screenRect.width > Mathf.Epsilon
+                    && screenRect.height > Mathf.Epsilon;
             }
 
             if (useFallbackServingTarget)
@@ -233,8 +252,7 @@ namespace Slainte.Bartending
                 "ServingTarget",
                 typeof(RectTransform),
                 typeof(CanvasRenderer),
-                typeof(Image),
-                typeof(Outline));
+                typeof(Image));
             RectTransform targetRect = (RectTransform)targetObject.transform;
             targetRect.SetParent(rootRect, false);
             targetRect.anchorMin = new Vector2(0.5f, 0.5f);
@@ -245,14 +263,45 @@ namespace Slainte.Bartending
             image.color = settings.serveTargetFillColor;
             image.raycastTarget = false;
 
-            Outline outline = targetObject.GetComponent<Outline>();
-            outline.effectColor = settings.serveTargetOutlineColor;
             float width = Mathf.Max(0f, settings.serveTargetOutlineWidth);
-            outline.effectDistance = new Vector2(width, -width);
-            outline.useGraphicAlpha = false;
+            CreateServingTargetBorder(targetRect, "Top", settings.serveTargetOutlineColor,
+                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, width));
+            CreateServingTargetBorder(targetRect, "Bottom", settings.serveTargetOutlineColor,
+                new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, width));
+            CreateServingTargetBorder(targetRect, "Left", settings.serveTargetOutlineColor,
+                new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(width, 0f));
+            CreateServingTargetBorder(targetRect, "Right", settings.serveTargetOutlineColor,
+                new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(width, 0f));
 
             targetObject.SetActive(false);
             return image;
+        }
+
+        private void CreateServingTargetBorder(
+            RectTransform parent,
+            string edgeName,
+            Color color,
+            Vector2 anchorMin,
+            Vector2 anchorMax,
+            Vector2 sizeDelta)
+        {
+            GameObject edgeObject = new GameObject(
+                "Border" + edgeName,
+                typeof(RectTransform),
+                typeof(CanvasRenderer),
+                typeof(Image));
+            RectTransform edgeRect = (RectTransform)edgeObject.transform;
+            edgeRect.SetParent(parent, false);
+            edgeRect.anchorMin = anchorMin;
+            edgeRect.anchorMax = anchorMax;
+            edgeRect.pivot = new Vector2(0.5f, 0.5f);
+            edgeRect.anchoredPosition = Vector2.zero;
+            edgeRect.sizeDelta = sizeDelta;
+
+            Image edge = edgeObject.GetComponent<Image>();
+            edge.color = color;
+            edge.raycastTarget = false;
+            ServingTargetBorderCount++;
         }
 
         private void LateUpdate()
@@ -277,6 +326,7 @@ namespace Slainte.Bartending
             bool shouldShow = servingGlass != null
                 && servingGlass.IsPickedUp
                 && TryGetServeTargetScreenRect(out targetRect);
+
             servingTargetImage.gameObject.SetActive(shouldShow);
 
             if (shouldShow)
@@ -557,6 +607,39 @@ namespace Slainte.Bartending
                 rect.yMin - safePadding,
                 rect.xMax + safePadding,
                 rect.yMax + safePadding);
+        }
+
+        private static bool TryGetRectTransformScreenRect(
+            RectTransform rectTransform,
+            out Rect screenRect)
+        {
+            screenRect = default;
+            if (rectTransform == null || !rectTransform.gameObject.activeInHierarchy)
+                return false;
+
+            Vector3[] corners = new Vector3[4];
+            rectTransform.GetWorldCorners(corners);
+            Canvas canvas = rectTransform.GetComponentInParent<Canvas>();
+            Camera canvasCamera = canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay
+                ? null
+                : canvas.worldCamera;
+
+            Vector2 first = RectTransformUtility.WorldToScreenPoint(canvasCamera, corners[0]);
+            float xMin = first.x;
+            float xMax = first.x;
+            float yMin = first.y;
+            float yMax = first.y;
+            for (int i = 1; i < corners.Length; i++)
+            {
+                Vector2 point = RectTransformUtility.WorldToScreenPoint(canvasCamera, corners[i]);
+                xMin = Mathf.Min(xMin, point.x);
+                xMax = Mathf.Max(xMax, point.x);
+                yMin = Mathf.Min(yMin, point.y);
+                yMax = Mathf.Max(yMax, point.y);
+            }
+
+            screenRect = Rect.MinMaxRect(xMin, yMin, xMax, yMax);
+            return screenRect.width > Mathf.Epsilon && screenRect.height > Mathf.Epsilon;
         }
 
         private static Camera GetCanvasCamera(RectTransform rectTransform)

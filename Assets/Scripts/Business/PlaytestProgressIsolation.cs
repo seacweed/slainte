@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -49,6 +50,30 @@ namespace Slainte.Business
 
             capturedProgress.LoadFrom(snapshot);
             Debug.Log("[PlaytestIsolation] Progress restored from the pre-playtest snapshot.");
+        }
+
+        public bool PrepareIncompleteEpisode(string episodeId)
+        {
+            if (!IsReady
+                || capturedProgress == null
+                || string.IsNullOrWhiteSpace(episodeId))
+            {
+                return false;
+            }
+
+            SaveData isolatedData = Capture(capturedProgress);
+            int removedCount = isolatedData.completedEpisodeIds.RemoveAll(
+                completedId => string.Equals(
+                    completedId,
+                    episodeId,
+                    StringComparison.OrdinalIgnoreCase));
+            if (removedCount <= 0)
+                return true;
+
+            capturedProgress.LoadFrom(isolatedData);
+            Debug.Log(
+                $"[PlaytestIsolation] 테스트를 위해 완료 상태를 임시 해제했습니다: {episodeId}");
+            return true;
         }
 
         private void OnDestroy()

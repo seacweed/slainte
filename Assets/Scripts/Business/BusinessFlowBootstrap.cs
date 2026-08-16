@@ -206,7 +206,6 @@ namespace Slainte.Business
             if (!businessSequenceActive)
                 return;
 
-            modeManager?.RequestModeChange(GameMode.OrderMode);
             RefreshLegacyCraftingJudge();
         }
 

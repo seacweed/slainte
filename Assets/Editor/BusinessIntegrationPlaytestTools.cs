@@ -14,10 +14,15 @@ namespace Slainte.EditorTools
             "Assets/Scenes/Dev/BusinessFlowIntegrationPlaytest.unity";
         private const string RunningKey =
             "Slainte.BusinessIntegrationPlaytest.Validator.Running";
+        private const string AfterFirstOrderRunningKey =
+            "Slainte.BusinessIntegrationPlaytest.AfterFirstOrderValidator.Running";
 
         private static int validationPhase;
         private static double phaseStartedAt;
         private static float encounterRemaining;
+        private static int afterFirstOrderValidationPhase;
+        private static double afterFirstOrderPhaseStartedAt;
+        private static float afterFirstOrderEncounterRemaining;
 
         [MenuItem("Slainte/Business/Create or Open Integration Playtest")]
         public static void CreateOrOpenPlaytestScene()
@@ -92,6 +97,17 @@ namespace Slainte.EditorTools
             BeginPlayModeValidation(true);
         }
 
+        [MenuItem("Slainte/Business/Validate Encounter After First Order Play Mode")]
+        public static void ValidateEncounterAfterFirstOrderFromMenu()
+        {
+            BeginEncounterAfterFirstOrderValidation(false);
+        }
+
+        public static void ValidateEncounterAfterFirstOrderFromCommandLine()
+        {
+            BeginEncounterAfterFirstOrderValidation(true);
+        }
+
         private static void BeginPlayModeValidation(bool commandLine)
         {
             if (AssetDatabase.LoadAssetAtPath<SceneAsset>(PlaytestScenePath) == null)
@@ -104,15 +120,34 @@ namespace Slainte.EditorTools
             EditorApplication.isPlaying = true;
         }
 
+        private static void BeginEncounterAfterFirstOrderValidation(bool commandLine)
+        {
+            if (AssetDatabase.LoadAssetAtPath<SceneAsset>(PlaytestScenePath) == null)
+                CreateOrOpenPlaytestScene();
+
+            SessionState.SetBool(AfterFirstOrderRunningKey, true);
+            SessionState.SetBool(AfterFirstOrderRunningKey + ".CommandLine", commandLine);
+            afterFirstOrderValidationPhase = 0;
+            EditorSceneManager.OpenScene(PlaytestScenePath, OpenSceneMode.Single);
+            EditorApplication.isPlaying = true;
+        }
+
         [InitializeOnLoadMethod]
         private static void ResumeAfterReload()
         {
-            if (!SessionState.GetBool(RunningKey, false))
-                return;
+            if (SessionState.GetBool(RunningKey, false))
+            {
+                EditorApplication.update -= ValidateOnUpdate;
+                EditorApplication.update += ValidateOnUpdate;
+                phaseStartedAt = EditorApplication.timeSinceStartup;
+            }
 
-            EditorApplication.update -= ValidateOnUpdate;
-            EditorApplication.update += ValidateOnUpdate;
-            phaseStartedAt = EditorApplication.timeSinceStartup;
+            if (SessionState.GetBool(AfterFirstOrderRunningKey, false))
+            {
+                EditorApplication.update -= ValidateEncounterAfterFirstOrderOnUpdate;
+                EditorApplication.update += ValidateEncounterAfterFirstOrderOnUpdate;
+                afterFirstOrderPhaseStartedAt = EditorApplication.timeSinceStartup;
+            }
         }
 
         private static void ValidateOnUpdate()
@@ -134,9 +169,14 @@ namespace Slainte.EditorTools
                 BusinessFlowBootstrap flow =
                     UnityEngine.Object.FindFirstObjectByType<BusinessFlowBootstrap>();
                 BusinessShiftController shift = flow != null ? flow.ShiftController : null;
+                GameModeManager modeManager =
+                    UnityEngine.Object.FindFirstObjectByType<GameModeManager>();
+                EpisodeRunner episodeRunner =
+                    UnityEngine.Object.FindFirstObjectByType<EpisodeRunner>();
 
                 if (bootstrap == null || flow == null || !flow.IsRuntimeReady
-                    || !bootstrap.IsReady || shift == null)
+                    || !bootstrap.IsReady || shift == null || modeManager == null
+                    || episodeRunner == null)
                 {
                     return;
                 }
@@ -155,6 +195,11 @@ namespace Slainte.EditorTools
                     case 1:
                         if (shift.State != BusinessShiftState.EncounterActive)
                             return;
+                        Require(modeManager.CurrentMode == GameMode.EpisodeMode,
+                            $"영업 시작 직후 인카운터 모드가 덮어쓰여졌습니다: "
+                            + modeManager.CurrentMode);
+                        Require(episodeRunner.IsRunning,
+                            "EncounterActive 상태인데 EpisodeRunner가 실행 중이 아닙니다.");
                         encounterRemaining = shift.RemainingSeconds;
                         validationPhase = 2;
                         phaseStartedAt = EditorApplication.timeSinceStartup;
@@ -164,6 +209,11 @@ namespace Slainte.EditorTools
                             return;
                         Require(shift.State == BusinessShiftState.EncounterActive,
                             "타이머 검증 도중 인카운터가 예기치 않게 종료됐습니다.");
+                        Require(modeManager.CurrentMode == GameMode.EpisodeMode,
+                            $"진행 중인 인카운터가 EpisodeMode를 유지하지 못했습니다: "
+                            + modeManager.CurrentMode);
+                        Require(episodeRunner.IsRunning,
+                            "타이머 검증 도중 EpisodeRunner가 중단됐습니다.");
                         Require(encounterRemaining - shift.RemainingSeconds >= 0.25f,
                             $"인카운터 중 영업 타이머가 감소하지 않았습니다: "
                             + $"{encounterRemaining:0.000} -> {shift.RemainingSeconds:0.000}");
@@ -208,6 +258,141 @@ namespace Slainte.EditorTools
                 Debug.Log("[BusinessIntegrationPlayValidator] PASS: " + message);
             else
                 Debug.LogError("[BusinessIntegrationPlayValidator] FAIL: " + message);
+
+            if (commandLine)
+                EditorApplication.Exit(success ? 0 : 1);
+            else
+                EditorApplication.isPlaying = false;
+        }
+
+        private static void ValidateEncounterAfterFirstOrderOnUpdate()
+        {
+            if (!EditorApplication.isPlaying)
+                return;
+
+            if (EditorApplication.timeSinceStartup - afterFirstOrderPhaseStartedAt > 40d)
+            {
+                FinishEncounterAfterFirstOrder(
+                    false,
+                    "첫 주문 이후 인카운터 검증 시간이 초과되었습니다.");
+                return;
+            }
+
+            try
+            {
+                BusinessIntegrationPlaytestBootstrap bootstrap =
+                    UnityEngine.Object.FindFirstObjectByType<
+                        BusinessIntegrationPlaytestBootstrap>();
+                BusinessFlowBootstrap flow =
+                    UnityEngine.Object.FindFirstObjectByType<BusinessFlowBootstrap>();
+                BusinessShiftController shift = flow != null ? flow.ShiftController : null;
+                BusinessOrderSessionController orderSession =
+                    flow != null ? flow.OrderSessionController : null;
+                GameModeManager modeManager =
+                    UnityEngine.Object.FindFirstObjectByType<GameModeManager>();
+                EpisodeRunner episodeRunner =
+                    UnityEngine.Object.FindFirstObjectByType<EpisodeRunner>();
+
+                if (bootstrap == null || flow == null || !flow.IsRuntimeReady
+                    || !bootstrap.IsReady || shift == null || orderSession == null
+                    || modeManager == null || episodeRunner == null)
+                {
+                    return;
+                }
+
+                switch (afterFirstOrderValidationPhase)
+                {
+                    case 0:
+                        Require(DataManager.AreDiskWritesSuppressed,
+                            "통합 테스트 씬에서 디스크 저장이 차단되지 않았습니다.");
+                        Require(bootstrap.TryStartScenario(
+                                BusinessPlaytestScenario.EncounterAfterFirstOrder),
+                            "첫 주문 이후 인카운터 시나리오를 시작하지 못했습니다.");
+                        afterFirstOrderValidationPhase = 1;
+                        afterFirstOrderPhaseStartedAt = EditorApplication.timeSinceStartup;
+                        break;
+                    case 1:
+                        if (shift.State != BusinessShiftState.OrderActive)
+                            return;
+                        Require(shift.TotalStartedCustomerCount == 1,
+                            $"첫 선택이 손님 1명이 아닙니다: {shift.TotalStartedCustomerCount}");
+                        Require(shift.TotalStartedEncounterCount == 0,
+                            "첫 주문을 완료하기 전에 인카운터가 시작됐습니다.");
+                        Require(shift.LastSelectedVisitKey == "integration_visit_00",
+                            $"첫 손님이 integration_visit_00이 아닙니다: "
+                            + shift.LastSelectedVisitKey);
+                        Require(orderSession.TryCompleteCurrentOrderForPlaytest(),
+                            "첫 주문을 테스트용 완료 처리하지 못했습니다.");
+                        afterFirstOrderValidationPhase = 2;
+                        afterFirstOrderPhaseStartedAt = EditorApplication.timeSinceStartup;
+                        break;
+                    case 2:
+                        if (shift.State != BusinessShiftState.EncounterActive)
+                            return;
+                        Require(shift.CompletedOrderCount == 1,
+                            $"인카운터 시작 전 완료 주문 수가 1이 아닙니다: "
+                            + shift.CompletedOrderCount);
+                        Require(shift.TotalStartedEncounterCount == 1,
+                            $"두 번째 선택에서 인카운터가 정확히 한 번 시작되지 않았습니다: "
+                            + shift.TotalStartedEncounterCount);
+                        Require(EpisodeManager.Instance != null
+                                && EpisodeManager.Instance.CurrentPlayingEpisodeID
+                                == "StrangeCoin_0",
+                            "두 번째 선택이 StrangeCoin_0이 아닙니다.");
+                        Require(modeManager.CurrentMode == GameMode.EpisodeMode,
+                            $"두 번째 선택 인카운터가 EpisodeMode가 아닙니다: "
+                            + modeManager.CurrentMode);
+                        Require(episodeRunner.IsRunning,
+                            "두 번째 선택 인카운터의 EpisodeRunner가 실행 중이 아닙니다.");
+                        afterFirstOrderEncounterRemaining = shift.RemainingSeconds;
+                        afterFirstOrderValidationPhase = 3;
+                        afterFirstOrderPhaseStartedAt = EditorApplication.timeSinceStartup;
+                        break;
+                    case 3:
+                        if (EditorApplication.timeSinceStartup
+                            - afterFirstOrderPhaseStartedAt < 1.2d)
+                        {
+                            return;
+                        }
+
+                        Require(shift.State == BusinessShiftState.EncounterActive,
+                            "두 번째 선택 인카운터가 검증 도중 종료됐습니다.");
+                        Require(modeManager.CurrentMode == GameMode.EpisodeMode,
+                            "두 번째 선택 인카운터가 EpisodeMode를 유지하지 못했습니다.");
+                        Require(episodeRunner.IsRunning,
+                            "두 번째 선택 인카운터의 EpisodeRunner가 중단됐습니다.");
+                        Require(afterFirstOrderEncounterRemaining - shift.RemainingSeconds >= 0.25f,
+                            $"두 번째 선택 인카운터 중 타이머가 감소하지 않았습니다: "
+                            + $"{afterFirstOrderEncounterRemaining:0.000} -> "
+                            + $"{shift.RemainingSeconds:0.000}");
+                        FinishEncounterAfterFirstOrder(
+                            true,
+                            $"firstCustomer={shift.LastSelectedVisitKey}, "
+                            + $"completedOrders={shift.CompletedOrderCount}, "
+                            + $"secondEncounter={EpisodeManager.Instance.CurrentPlayingEpisodeID}, "
+                            + "mode=EpisodeMode");
+                        break;
+                }
+            }
+            catch (Exception exception)
+            {
+                FinishEncounterAfterFirstOrder(false, exception.ToString());
+            }
+        }
+
+        private static void FinishEncounterAfterFirstOrder(bool success, string message)
+        {
+            EditorApplication.update -= ValidateEncounterAfterFirstOrderOnUpdate;
+            SessionState.EraseBool(AfterFirstOrderRunningKey);
+            bool commandLine = SessionState.GetBool(
+                AfterFirstOrderRunningKey + ".CommandLine",
+                false);
+            SessionState.EraseBool(AfterFirstOrderRunningKey + ".CommandLine");
+
+            if (success)
+                Debug.Log("[BusinessEncounterAfterFirstOrderValidator] PASS: " + message);
+            else
+                Debug.LogError("[BusinessEncounterAfterFirstOrderValidator] FAIL: " + message);
 
             if (commandLine)
                 EditorApplication.Exit(success ? 0 : 1);

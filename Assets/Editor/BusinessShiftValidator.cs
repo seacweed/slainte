@@ -33,7 +33,7 @@ namespace Slainte.EditorTools
             ValidatePlannerRules();
             ValidateEpisodeCraftingCompatibility();
             ValidateTechnicalFailureContract();
-            Debug.Log("[BusinessShiftValidator] 통과: 180초 설정, 손님 풀, 쿨다운 우선·대체 선택, 필수 액션, 에피소드 실제 제조 결과·구형 분기 호환, BusinessScene 구성");
+            Debug.Log("[BusinessShiftValidator] 통과: 180초 설정, 손님·인카운터 통합 풀, 손님 쿨다운, 인카운터 ID별 일일 1회·완료 제외, 필수 액션, 에피소드 실제 제조 결과·구형 분기 호환, BusinessScene 구성");
         }
 
         private static void ValidateSettingsAndScene()
@@ -47,6 +47,17 @@ namespace Slainte.EditorTools
             Require(settings.customerVisitDatabase.visits != null
                     && settings.customerVisitDatabase.visits.Count > 0,
                 "손님 데이터베이스가 비어 있습니다.");
+            Require(settings.randomEncounters != null && settings.randomEncounters.Count > 0,
+                "랜덤 인카운터 풀이 비어 있습니다.");
+
+            for (int i = 0; i < settings.randomEncounters.Count; i++)
+            {
+                BusinessRandomEncounterEntry entry = settings.randomEncounters[i];
+                Require(entry?.episode != null
+                        && entry.episode.episodeType == EpisodeType.Encounter
+                        && entry.weight > 0f,
+                    $"랜덤 인카운터 {i}번이 잘못 설정되었습니다.");
+            }
 
             for (int i = 0; i < settings.customerVisitDatabase.visits.Count; i++)
             {
@@ -76,6 +87,7 @@ namespace Slainte.EditorTools
             CustomerVisitData readyVisit = ScriptableObject.CreateInstance<CustomerVisitData>();
             CustomerOrderData order = ScriptableObject.CreateInstance<CustomerOrderData>();
             EpisodeData episode = ScriptableObject.CreateInstance<EpisodeData>();
+            EpisodeData secondEpisode = ScriptableObject.CreateInstance<EpisodeData>();
 
             try
             {
@@ -144,6 +156,93 @@ namespace Slainte.EditorTools
                 Require(atCooldown?.Visit == visit, "100초 쿨다운 경계에서 손님이 복귀하지 않았습니다.");
 
                 episode.episodeId = "validator_episode";
+                episode.episodeType = EpisodeType.Encounter;
+                episode.triggerCondition = new EpisodeTriggerCondition();
+                secondEpisode.episodeId = "validator_second_episode";
+                secondEpisode.episodeType = EpisodeType.Encounter;
+                secondEpisode.triggerCondition = new EpisodeTriggerCondition();
+                BusinessRandomEncounterEntry encounterEntry = new()
+                {
+                    episode = episode,
+                    weight = 1f
+                };
+                BusinessRandomEncounterEntry secondEncounterEntry = new()
+                {
+                    episode = secondEpisode,
+                    weight = 1f
+                };
+                List<BusinessRandomEncounterEntry> encounterPool =
+                    BusinessSequencePlanner.BuildEligibleRandomEncounterPool(
+                        new List<BusinessRandomEncounterEntry>
+                        {
+                            encounterEntry,
+                            secondEncounterEntry
+                        },
+                        progress);
+                Require(encounterPool.Count == 2,
+                    "조건을 만족한 랜덤 인카운터가 풀에 들어오지 않았습니다.");
+
+                BusinessSequenceSelection encounterBeforeCoolingCustomer =
+                    BusinessSequencePlanner.PickWeightedSequence(
+                        pool,
+                        encounterPool,
+                        null,
+                        progress,
+                        cooldowns,
+                        null,
+                        null,
+                        99.999f,
+                        new System.Random(1));
+                Require(encounterBeforeCoolingCustomer?.IsEncounter == true,
+                    "실행 가능한 인카운터보다 쿨다운 중인 손님을 먼저 선택했습니다.");
+
+                HashSet<string> startedEncounterIds = new(StringComparer.OrdinalIgnoreCase)
+                {
+                    episode.episodeId
+                };
+                BusinessSequenceSelection differentEncounterSameDay =
+                    BusinessSequencePlanner.PickWeightedSequence(
+                        pool,
+                        encounterPool,
+                        startedEncounterIds,
+                        progress,
+                        cooldowns,
+                        null,
+                        null,
+                        99.999f,
+                        new System.Random(1));
+                Require(differentEncounterSameDay?.Encounter?.episode == secondEpisode,
+                    "하나의 인카운터 실행이 다른 종류의 당일 등장까지 막았습니다.");
+
+                startedEncounterIds.Add(secondEpisode.episodeId);
+                BusinessSequenceSelection noRepeatedEncounter =
+                    BusinessSequencePlanner.PickWeightedSequence(
+                        pool,
+                        encounterPool,
+                        startedEncounterIds,
+                        progress,
+                        cooldowns,
+                        null,
+                        null,
+                        99.999f,
+                        new System.Random(1));
+                Require(noRepeatedEncounter?.Visit == visit
+                        && noRepeatedEncounter.UsedCooldownFallback,
+                    "당일에 실행한 인카운터 ID가 다시 선택되었습니다.");
+
+                HashSet<string> reservedTargets = new(StringComparer.OrdinalIgnoreCase)
+                {
+                    encounterEntry.TargetKey
+                };
+                List<BusinessRandomEncounterEntry> unreservedPool =
+                    BusinessSequencePlanner.BuildEligibleRandomEncounterPool(
+                        encounterPool,
+                        progress,
+                        reservedTargets);
+                Require(unreservedPool.Count == 1
+                        && unreservedPool[0].episode == secondEpisode,
+                    "필수 인카운터를 랜덤 풀에서 예약하지 못했습니다.");
+
                 BusinessRequiredActionRule lowerPriority = new()
                 {
                     ruleId = "validator_customer_rule",
@@ -174,6 +273,13 @@ namespace Slainte.EditorTools
                 Require(selected == higherPriority, "필수 액션의 높은 priority가 먼저 선택되지 않았습니다.");
 
                 progress.MarkEpisodeCompleted(episode.episodeId);
+                List<BusinessRandomEncounterEntry> afterCompletionPool =
+                    BusinessSequencePlanner.BuildEligibleRandomEncounterPool(
+                        encounterPool,
+                        progress);
+                Require(afterCompletionPool.Count == 1
+                        && afterCompletionPool[0].episode == secondEpisode,
+                    "완료한 인카운터가 이후 영업일의 풀에 다시 들어왔습니다.");
                 selected = BusinessSequencePlanner.PickNextRequiredAction(
                     rules,
                     progress,
@@ -218,6 +324,7 @@ namespace Slainte.EditorTools
             }
             finally
             {
+                UnityEngine.Object.DestroyImmediate(secondEpisode);
                 UnityEngine.Object.DestroyImmediate(episode);
                 UnityEngine.Object.DestroyImmediate(order);
                 UnityEngine.Object.DestroyImmediate(readyVisit);

@@ -42,11 +42,16 @@ namespace Slainte.Business
             new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> invalidVisitKeys =
             new(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> invalidEncounterIds =
+            new(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<string> startedEncounterIds =
+            new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> executedTargetKeys =
             new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> executedRuleIds =
             new(StringComparer.OrdinalIgnoreCase);
         private readonly List<CustomerVisitData> frozenCustomerPool = new();
+        private readonly List<BusinessRandomEncounterEntry> frozenEncounterPool = new();
 
         private BusinessOrderSessionController orderSession;
         private BusinessOrderSessionUI sessionUi;
@@ -72,8 +77,10 @@ namespace Slainte.Business
         public float RemainingSeconds => remainingSeconds;
         public float ActiveBusinessSeconds => activeBusinessSeconds;
         public int FrozenCustomerPoolCount => frozenCustomerPool.Count;
+        public int FrozenEncounterPoolCount => frozenEncounterPool.Count;
         public int CompletedOrderCount => completedOrderCount;
         public int TotalStartedCustomerCount { get; private set; }
+        public int TotalStartedEncounterCount { get; private set; }
         public int CooldownFallbackSelectionCount { get; private set; }
         public string LastSelectedVisitKey { get; private set; } = string.Empty;
         public int CoolingDownCustomerCount
@@ -127,6 +134,11 @@ namespace Slainte.Business
 
             frozenCustomerPool.AddRange(
                 BusinessSequencePlanner.BuildEligibleVisitPool(database, progress));
+            frozenEncounterPool.AddRange(
+                BusinessSequencePlanner.BuildEligibleRandomEncounterPool(
+                    settings.randomEncounters,
+                    progress,
+                    BuildReservedEncounterTargetKeys(progress)));
 
             int day = progress != null ? progress.CurrentDay : 0;
             random = new System.Random(unchecked(Environment.TickCount ^ day * 397 ^ GetInstanceID()));
@@ -138,10 +150,10 @@ namespace Slainte.Business
 
             ValidateRequiredRules();
 
-            if (frozenCustomerPool.Count == 0)
+            if (frozenCustomerPool.Count == 0 && frozenEncounterPool.Count == 0)
             {
                 Debug.LogError(
-                    "[BusinessShift] 영업 시작 시 조건을 만족하는 일반 손님이 없습니다. "
+                    "[BusinessShift] 영업 시작 시 조건을 만족하는 일반 손님과 랜덤 인카운터가 없습니다. "
                     + "필수 액션만 처리한 뒤 정산으로 이동합니다.");
                 remainingSeconds = 0f;
             }
@@ -247,15 +259,24 @@ namespace Slainte.Business
                 }
             }
 
-            BusinessVisitSelection selection = BusinessSequencePlanner.PickWeightedVisit(
+            BusinessSequenceSelection selection = BusinessSequencePlanner.PickWeightedSequence(
                 frozenCustomerPool,
+                frozenEncounterPool,
+                startedEncounterIds,
                 progress,
                 cooldownUntilByVisit,
                 invalidVisitKeys,
+                invalidEncounterIds,
                 activeBusinessSeconds,
                 random);
             if (selection != null)
             {
+                if (selection.IsEncounter)
+                {
+                    StartBusinessEncounter(selection.Encounter, isRandomSelection: true);
+                    return;
+                }
+
                 StartCustomerOrder(
                     selection.Visit,
                     selection.OrderOption,
@@ -305,7 +326,7 @@ namespace Slainte.Business
                 return;
             }
 
-            StartBusinessEncounter(rule);
+            StartBusinessEncounter(rule.encounterEpisode, rule.ruleId, isRandomSelection: false);
         }
 
         private void StartCustomerOrder(
@@ -403,22 +424,56 @@ namespace Slainte.Business
             salePayoutPolicy?.Apply(result, progress);
         }
 
-        private void StartBusinessEncounter(BusinessRequiredActionRule rule)
+        private void StartBusinessEncounter(
+            BusinessRandomEncounterEntry entry,
+            bool isRandomSelection)
         {
-            EpisodeData episode = rule.encounterEpisode;
+            StartBusinessEncounter(
+                entry?.episode,
+                entry?.TargetKey,
+                isRandomSelection);
+        }
+
+        private void StartBusinessEncounter(
+            EpisodeData episode,
+            string sourceKey,
+            bool isRandomSelection)
+        {
+            string episodeId = episode?.episodeId;
+            GameProgress progress = GameProgress.Instance;
+            if (episode == null
+                || string.IsNullOrWhiteSpace(episodeId)
+                || episode.episodeType != EpisodeType.Encounter
+                || (progress != null && progress.IsEpisodeCompleted(episodeId))
+                || startedEncounterIds.Contains(episodeId))
+            {
+                if (isRandomSelection && !string.IsNullOrWhiteSpace(episodeId))
+                    invalidEncounterIds.Add(episodeId);
+                Debug.LogError(
+                    $"[BusinessShift] 인카운터를 시작할 수 없는 상태입니다: {sourceKey}/{episodeId}");
+                return;
+            }
+
             encounterActive = true;
             SetState(BusinessShiftState.EncounterActive);
 
             bool started = EpisodeManager.Instance != null
                 && EpisodeManager.Instance.TryStartBusinessEncounter(
-                    episode.episodeId,
+                    episodeId,
                     HandleBusinessEncounterCompleted);
             if (started)
+            {
+                startedEncounterIds.Add(episodeId);
+                executedTargetKeys.Add("episode:" + episodeId);
+                TotalStartedEncounterCount++;
                 return;
+            }
 
             encounterActive = false;
+            if (isRandomSelection)
+                invalidEncounterIds.Add(episodeId);
             Debug.LogError(
-                $"[BusinessShift] 필수 인카운터를 시작하지 못했습니다: {rule.ruleId}/{episode.episodeId}");
+                $"[BusinessShift] 인카운터를 시작하지 못했습니다: {sourceKey}/{episodeId}");
             SetState(remainingSeconds <= 0f
                 ? BusinessShiftState.CompletingRequiredActions
                 : BusinessShiftState.Running);
@@ -466,9 +521,12 @@ namespace Slainte.Business
         {
             cooldownUntilByVisit.Clear();
             invalidVisitKeys.Clear();
+            invalidEncounterIds.Clear();
+            startedEncounterIds.Clear();
             executedTargetKeys.Clear();
             executedRuleIds.Clear();
             frozenCustomerPool.Clear();
+            frozenEncounterPool.Clear();
             orderActive = false;
             encounterActive = false;
             explicitlyPaused = false;
@@ -477,6 +535,7 @@ namespace Slainte.Business
             orderSequence = 0;
             completedOrderCount = 0;
             TotalStartedCustomerCount = 0;
+            TotalStartedEncounterCount = 0;
             CooldownFallbackSelectionCount = 0;
             LastSelectedVisitKey = string.Empty;
             remainingSeconds = 0f;
@@ -507,6 +566,30 @@ namespace Slainte.Business
                 if (string.IsNullOrWhiteSpace(rule.TargetKey))
                     Debug.LogError($"[BusinessShift] 필수 액션 '{rule.ruleId}'의 대상이 비어 있습니다.");
             }
+        }
+
+        private HashSet<string> BuildReservedEncounterTargetKeys(GameProgress progress)
+        {
+            HashSet<string> result = new(StringComparer.OrdinalIgnoreCase);
+            if (settings.requiredActions == null || progress == null)
+                return result;
+
+            for (int i = 0; i < settings.requiredActions.Count; i++)
+            {
+                BusinessRequiredActionRule rule = settings.requiredActions[i];
+                if (rule == null
+                    || rule.actionType != BusinessRequiredActionType.EncounterEpisode
+                    || (rule.exactDay > 0 && rule.exactDay != progress.CurrentDay)
+                    || !ProgressConditionEvaluator.IsMet(rule.condition, progress)
+                    || rule.encounterEpisode == null
+                    || progress.IsEpisodeCompleted(rule.encounterEpisode.episodeId)
+                    || string.IsNullOrWhiteSpace(rule.TargetKey))
+                    continue;
+
+                result.Add(rule.TargetKey);
+            }
+
+            return result;
         }
 
         private bool IsBusinessClockPaused()

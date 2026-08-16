@@ -9,7 +9,8 @@ namespace Slainte.Bartending
         Idle,
         PickedUp,
         Tilting,
-        Returning
+        Returning,
+        Snapping
     }
 
     [ExecuteInEditMode]
@@ -36,6 +37,7 @@ namespace Slainte.Bartending
         [SerializeField] private float tiltSensitivity = 0.5f;
         [SerializeField] private float returnSpeed = 0.8f;
         [SerializeField] private AnimationCurve returnEase = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+        [SerializeField, Min(0f)] private float slotSnapDuration = 0.1f;
         [SerializeField] private LayerMask slotLayer;
 
         [Header("물리 컴포넌트")]
@@ -61,6 +63,11 @@ namespace Slainte.Bartending
         private Vector2 pendingPositionTarget;
         private bool rotationTargetPending;
         private float pendingRotationTarget;
+        private bool slotSnapActive;
+        private Vector2 slotSnapStartPosition;
+        private Vector2 slotSnapTargetPosition;
+        private float slotSnapStartAngle;
+        private float slotSnapElapsed;
         private float rotationHorizontalSensitivity = 1f;
         private float rotationHorizontalScreenPadding = 12f;
 
@@ -97,6 +104,8 @@ namespace Slainte.Bartending
                 }
                 body.bodyType = RigidbodyType2D.Kinematic;
                 body.useFullKinematicContacts = true;
+                body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+                body.interpolation = RigidbodyInterpolation2D.Interpolate;
 
                 // 2. slotLayer가 빈 값이거나 Nothing일 시 스마트 자동 보정
                 if (slotLayer.value == 0)
@@ -159,12 +168,16 @@ namespace Slainte.Bartending
             if (!Application.isPlaying)
                 return;
 
-            ApplyPendingPhysicsMotion();
+            if (slotSnapActive)
+                ApplySlotSnapStep();
+            else
+                ApplyPendingPhysicsMotion();
         }
 
         private void OnDisable()
         {
             CancelPendingPhysicsMotion();
+            slotSnapActive = false;
             CancelPointerSynchronization();
             BartendingPointerAnchor.Release(this);
         }
@@ -215,8 +228,10 @@ namespace Slainte.Bartending
                 PerformTilting();
             }
 
-            if (currentState == BeakerState.Tilting || currentState == BeakerState.Returning)
+            if (currentState == BeakerState.Tilting)
                 PerformHorizontalRotationMovement();
+            else if (currentState == BeakerState.Returning && !pointerSyncPending)
+                FollowMousePosition();
         }
 
         private void PickupBeaker()
@@ -251,7 +266,12 @@ namespace Slainte.Bartending
                 return;
             }
 
-            Vector3 targetPivot = mousePos + pointerPivotOffset;
+            MoveToPointerPosition(mousePos);
+        }
+
+        private void MoveToPointerPosition(Vector3 pointerWorld)
+        {
+            Vector3 targetPivot = pointerWorld + pointerPivotOffset;
             Vector3 targetPosition = BartendingPointerAnchor.CalculateRootPosition(
                 transform.position,
                 transform.position,
@@ -298,15 +318,11 @@ namespace Slainte.Bartending
                     // 슬롯이 비어있는 경우에만 안착 허용
                     if (!slot.IsOccupied)
                     {
-                        currentSlot = slot;
-                        slot.Occupy(this);
-
                         // 슬롯 스냅 안착 (바닥면 Y 오프셋 칼각 정렬!)
                         float bottomOffset = GetPivotToBottomOffset();
-                        MoveVesselAndContents(new Vector3(hit.transform.position.x, hit.transform.position.y + bottomOffset, 0f));
-                        SetRotationImmediately(0f);
-                        
-                        ReleaseBeaker();
+                        BeginSlotSnap(
+                            new Vector3(hit.transform.position.x, hit.transform.position.y + bottomOffset, 0f),
+                            slot);
                         return;
                     }
                 }
@@ -314,10 +330,9 @@ namespace Slainte.Bartending
                 {
                     // 슬롯 스냅 안착 (하위 호환용)
                     float bottomOffset = GetPivotToBottomOffset();
-                    MoveVesselAndContents(new Vector3(hit.transform.position.x, hit.transform.position.y + bottomOffset, 0f));
-                    SetRotationImmediately(0f);
-                    
-                    ReleaseBeaker();
+                    BeginSlotSnap(
+                        new Vector3(hit.transform.position.x, hit.transform.position.y + bottomOffset, 0f),
+                        null);
                     return;
                 }
             }
@@ -329,27 +344,71 @@ namespace Slainte.Bartending
 
         public void SnapToSlot(Transform slotTransform, SlotController slot)
         {
-            currentSlot = slot;
             float bottomOffset = GetPivotToBottomOffset();
-            MoveVesselAndContents(new Vector3(slotTransform.position.x, slotTransform.position.y + bottomOffset, 0f));
-            SetRotationImmediately(0f);
-            ReleaseBeaker();
+            BeginSlotSnap(
+                new Vector3(slotTransform.position.x, slotTransform.position.y + bottomOffset, 0f),
+                slot);
         }
 
-        private void MoveVesselAndContents(Vector3 targetPosition)
+        private void BeginSlotSnap(Vector3 targetPosition, SlotController slot)
         {
             CancelPendingPhysicsMotion();
-            targetPosition.z = 0f;
-            Vector2 currentPosition = body != null
-                ? body.position
-                : (Vector2)transform.position;
-            Vector2 delta = (Vector2)targetPosition - currentPosition;
-            liquidTracker?.TranslateTrackedParticles(delta);
+            CancelPointerSynchronization();
+            BartendingPointerAnchor.Release(this);
 
-            if (body != null)
-                body.position = targetPosition;
-            else
+            if (returnCoroutine != null)
+            {
+                StopCoroutine(returnCoroutine);
+                returnCoroutine = null;
+            }
+
+            if (currentSlot != null && currentSlot != slot)
+                currentSlot.Vacate();
+
+            currentSlot = slot;
+            if (slot != null && !ReferenceEquals(slot.OccupiedItem, this))
+                slot.Occupy(this);
+
+            targetPosition.z = 0f;
+            if (!Application.isPlaying || body == null || slotSnapDuration <= Mathf.Epsilon)
+            {
+                slotSnapActive = false;
                 transform.position = targetPosition;
+                SetRotationImmediately(0f);
+                currentState = BeakerState.Idle;
+                return;
+            }
+
+            slotSnapStartPosition = body.position;
+            slotSnapTargetPosition = targetPosition;
+            slotSnapStartAngle = body.rotation;
+            slotSnapElapsed = 0f;
+            slotSnapActive = true;
+            currentState = BeakerState.Snapping;
+        }
+
+        private void ApplySlotSnapStep()
+        {
+            if (body == null)
+            {
+                slotSnapActive = false;
+                currentState = BeakerState.Idle;
+                return;
+            }
+
+            slotSnapElapsed += Time.fixedDeltaTime;
+            float normalizedTime = Mathf.Clamp01(slotSnapElapsed / Mathf.Max(slotSnapDuration, Mathf.Epsilon));
+            float easedTime = normalizedTime * normalizedTime * (3f - 2f * normalizedTime);
+            body.MovePosition(Vector2.Lerp(slotSnapStartPosition, slotSnapTargetPosition, easedTime));
+            currentAngle = Mathf.LerpAngle(slotSnapStartAngle, 0f, easedTime);
+            body.MoveRotation(currentAngle);
+
+            if (normalizedTime >= 1f)
+            {
+                currentAngle = 0f;
+                slotSnapActive = false;
+                currentState = BeakerState.Idle;
+            }
         }
 
         public void OnPickedUp()
@@ -365,6 +424,7 @@ namespace Slainte.Bartending
         private void ReleaseBeaker()
         {
             currentState = BeakerState.Idle;
+            slotSnapActive = false;
             CancelPendingPhysicsMotion();
             CancelPointerSynchronization();
             BartendingPointerAnchor.Release(this);
@@ -429,6 +489,15 @@ namespace Slainte.Bartending
         private void StartReturning()
         {
             currentState = BeakerState.Returning;
+            Vector3 pointerAnchor = positionTargetPending
+                ? (Vector3)pendingPositionTarget
+                : body != null
+                    ? (Vector3)body.position
+                    : transform.position;
+            BeginPointerSynchronization(
+                pointerAnchor,
+                unlockCursor: true,
+                completeReturn: false);
             returnCoroutine = StartCoroutine(ReturnToUprightRoutine());
         }
 
@@ -462,10 +531,7 @@ namespace Slainte.Bartending
             yield return null;
 
             returnCoroutine = null;
-            BeginPointerSynchronization(
-                transform.position,
-                unlockCursor: true,
-                completeReturn: true);
+            currentState = BeakerState.PickedUp;
         }
 
         private void QueuePositionTarget(Vector3 targetPosition)
@@ -473,8 +539,6 @@ namespace Slainte.Bartending
             targetPosition.z = 0f;
             if (body == null)
             {
-                Vector2 delta = (Vector2)targetPosition - (Vector2)transform.position;
-                liquidTracker?.TranslateTrackedParticles(delta);
                 transform.position = targetPosition;
                 return;
             }
@@ -505,8 +569,6 @@ namespace Slainte.Bartending
 
             if (positionTargetPending)
             {
-                Vector2 delta = pendingPositionTarget - body.position;
-                liquidTracker?.TranslateTrackedParticles(delta);
                 body.MovePosition(pendingPositionTarget);
                 positionTargetPending = false;
             }

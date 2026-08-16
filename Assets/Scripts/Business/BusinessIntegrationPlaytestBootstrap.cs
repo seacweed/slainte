@@ -15,7 +15,9 @@ namespace Slainte.Business
         EncounterTimerRuns,
         RequiredQueue,
         EncounterWithCrafting,
-        Settlement
+        Settlement,
+        RandomEncounterPool,
+        EncounterAfterFirstOrder
     }
 
     [DefaultExecutionOrder(-1000)]
@@ -24,7 +26,7 @@ namespace Slainte.Business
     {
         private const string SettingsResourcePath = "Business/BusinessOrderFlowSettings";
         private const string SimpleEncounterId = "StrangeCoin_0";
-        private const string CraftingEncounterId = "StrangeCoin_1";
+        private const string CraftingEncounterId = "StrangeCoin_0";
 
         [Header("Runtime Pool")]
         [SerializeField, Min(1)] private int customerCount = 12;
@@ -141,6 +143,7 @@ namespace Slainte.Business
                 return false;
 
             runtimeSettings.requiredActions = new List<BusinessRequiredActionRule>();
+            runtimeSettings.randomEncounters = new List<BusinessRandomEncounterEntry>();
             ActiveScenario = scenario;
             maximumEncounterTimerDecrease = 0f;
             encounterCount = 0;
@@ -208,6 +211,23 @@ namespace Slainte.Business
                 case BusinessPlaytestScenario.Settlement:
                     runtimeSettings.shiftDurationSeconds = 15f;
                     break;
+                case BusinessPlaytestScenario.RandomEncounterPool:
+                    runtimeSettings.shiftDurationSeconds = 90f;
+                    if (!TryAddRandomEncounter(SimpleEncounterId, 100000f))
+                        return false;
+                    break;
+                case BusinessPlaytestScenario.EncounterAfterFirstOrder:
+                    runtimeSettings.shiftDurationSeconds = 90f;
+                    runtimeSettings.requiredActions.Add(CreateRequiredCustomerRule(
+                        "playtest_customer_before_random_encounter",
+                        runtimeVisits[0],
+                        100,
+                        BusinessRequiredActionTiming.BeforeFirstCustomer));
+                    for (int i = 0; i < runtimeVisits.Count; i++)
+                        runtimeVisits[i].weight = 0f;
+                    if (!TryAddRandomEncounter(SimpleEncounterId, 1f))
+                        return false;
+                    break;
             }
 
             scenarioStarted = true;
@@ -241,6 +261,7 @@ namespace Slainte.Business
             runtimeSettings.hideFlags = HideFlags.DontSave;
             runtimeSettings.autoStart = false;
             runtimeSettings.requiredActions = new List<BusinessRequiredActionRule>();
+            runtimeSettings.randomEncounters = new List<BusinessRandomEncounterEntry>();
 
             runtimeDatabase = ScriptableObject.CreateInstance<CustomerVisitDatabase>();
             runtimeDatabase.name = "CustomerVisitDatabase_IntegrationPlaytest";
@@ -276,8 +297,14 @@ namespace Slainte.Business
             int priority,
             BusinessRequiredActionTiming timing)
         {
+            if (isolation == null || !isolation.PrepareIncompleteEpisode(episodeId))
+            {
+                status = "ERROR: Encounter progress could not be isolated: " + episodeId;
+                return false;
+            }
+
             EpisodeData episode = FindEpisode(episodeId);
-            if (episode == null)
+            if (episode == null || episode.episodeType != EpisodeType.Encounter)
             {
                 status = "ERROR: Encounter episode was not found: " + episodeId;
                 return false;
@@ -290,8 +317,30 @@ namespace Slainte.Business
                 priority = priority,
                 timing = timing,
                 condition = new EpisodeTriggerCondition(),
-                encounterEpisode = episode,
-                allowCompletedEpisode = true
+                encounterEpisode = episode
+            });
+            return true;
+        }
+
+        private bool TryAddRandomEncounter(string episodeId, float weight)
+        {
+            if (isolation == null || !isolation.PrepareIncompleteEpisode(episodeId))
+            {
+                status = "ERROR: Random encounter progress could not be isolated: " + episodeId;
+                return false;
+            }
+
+            EpisodeData episode = FindEpisode(episodeId);
+            if (episode == null || episode.episodeType != EpisodeType.Encounter)
+            {
+                status = "ERROR: Random encounter episode was not found: " + episodeId;
+                return false;
+            }
+
+            runtimeSettings.randomEncounters.Add(new BusinessRandomEncounterEntry
+            {
+                episode = episode,
+                weight = Mathf.Max(0f, weight)
             });
             return true;
         }
@@ -393,6 +442,10 @@ namespace Slainte.Business
                 BusinessPlaytestScenario.EncounterWithCrafting);
             DrawScenarioButton(32f, 388f, "7. Settlement (15s)",
                 BusinessPlaytestScenario.Settlement);
+            DrawScenarioButton(392f, 388f, "8. Random encounter pool",
+                BusinessPlaytestScenario.RandomEncounterPool);
+            DrawScenarioButton(32f, 440f, "9. Encounter after first order",
+                BusinessPlaytestScenario.EncounterAfterFirstOrder);
         }
 
         private void DrawScenarioButton(
@@ -419,7 +472,7 @@ namespace Slainte.Business
             if (!scenarioStarted)
             {
                 panel.AppendLine("Choose one scenario below. Stop Play to select another scenario.");
-                panel.AppendLine("Recommended order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7");
+                panel.AppendLine("Recommended order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9");
                 panel.AppendLine();
                 panel.AppendLine("Controls after starting:");
                 panel.AppendLine("  Dialogue: click / Space    Crafting: existing mouse controls");
@@ -440,7 +493,8 @@ namespace Slainte.Business
                     ? shift.ActiveBusinessSeconds.ToString("0.00")
                     : "-")
                 .AppendLine("s");
-            panel.Append("Pool: ").Append(shift?.FrozenCustomerPoolCount ?? 0)
+            panel.Append("Customer pool: ").Append(shift?.FrozenCustomerPoolCount ?? 0)
+                .Append(" | Encounter pool: ").Append(shift?.FrozenEncounterPoolCount ?? 0)
                 .Append(" | Started: ").Append(shift?.TotalStartedCustomerCount ?? 0)
                 .Append(" | Completed: ").Append(shift?.CompletedOrderCount ?? 0)
                 .Append(" | Cooling: ").Append(shift?.CoolingDownCustomerCount ?? 0)
@@ -507,6 +561,16 @@ namespace Slainte.Business
                 case BusinessPlaytestScenario.Settlement:
                     panel.AppendLine("  - Complete at least one sale before the 15-second timer expires.");
                     panel.AppendLine("  - Money must not rise on sale; it rises once on settlement.");
+                    break;
+                case BusinessPlaytestScenario.RandomEncounterPool:
+                    panel.AppendLine("  - StrangeCoin_0 must be selected from the weighted random pool.");
+                    panel.AppendLine("  - The same encounter ID must not be selected twice in this shift.");
+                    panel.AppendLine("  - After completion it must remain excluded on later days.");
+                    break;
+                case BusinessPlaytestScenario.EncounterAfterFirstOrder:
+                    panel.AppendLine("  - integration_visit_00 must run first as a required customer.");
+                    panel.AppendLine("  - After that order completes, StrangeCoin_0 must be second.");
+                    panel.AppendLine("  - The encounter must run in EpisodeMode while the timer decreases.");
                     break;
             }
         }
