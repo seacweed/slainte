@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Slainte.Bartending
 {
@@ -81,12 +80,27 @@ namespace Slainte.Bartending
         private float currentAngle = 0f;
         private Coroutine returnCoroutine;
         private bool hasRotationPivotAnchor;
+        private float rotationHorizontalSensitivity = 1f;
+        private float rotationHorizontalScreenPadding = 12f;
         private Vector3 rotationPivotAnchorWorld;
         private Vector3 rootOffsetFromPivotAtTiltStart;
         private float angleAtPivotCapture;
+        private const int PointerSyncFrameBudget = 6;
+        private bool pointerSyncPending;
+        private bool completeReturnAfterPointerSync;
+        private int pointerSyncFramesRemaining;
+        private Vector2 pointerSyncScreenPosition;
+        private Vector3 pointerSyncPivotWorld;
+        private Vector3 pointerPivotOffset;
 
         private SlotController currentSlot; // 현재 안착되어 있는 슬롯 레퍼런스
         private Vector3 dragVelocity = Vector3.zero;
+
+        public void ConfigureHorizontalRotationMovement(float sensitivity, float screenPadding)
+        {
+            rotationHorizontalSensitivity = Mathf.Max(0f, sensitivity);
+            rotationHorizontalScreenPadding = Mathf.Max(0f, screenPadding);
+        }
 
         private void Start()
         {
@@ -232,8 +246,16 @@ namespace Slainte.Bartending
 
         private void Update()
         {
-            HandleInput();
+            bool synchronizingPointer = UpdatePointerSynchronization();
+            if (!synchronizingPointer)
+                HandleInput();
             HandlePouring();
+        }
+
+        private void OnDisable()
+        {
+            CancelPointerSynchronization();
+            BartendingPointerAnchor.Release(this);
         }
 
         private void HandlePouring()
@@ -287,16 +309,16 @@ namespace Slainte.Bartending
                 {
                     PickupBottle();
                 }
-                else if (currentState == BottleState.PickedUp || currentState == BottleState.Returning)
+                else if (currentState == BottleState.PickedUp)
                 {
                     TryDropBottle();
                 }
             }
 
-            // A virtual pivot changes the root position during the return animation.
-            // Keeping the mouse follow active at the same time would fight that motion.
-            if (currentState == BottleState.PickedUp ||
-                (currentState == BottleState.Returning && rotationPivotMode == BottleRotationPivotMode.TransformOrigin))
+            if (pointerSyncPending)
+                return;
+
+            if (currentState == BottleState.PickedUp)
             {
                 FollowMousePosition();
             }
@@ -304,7 +326,7 @@ namespace Slainte.Bartending
             // Right Click (Tilt / Return)
             if (Input.GetMouseButtonDown(1))
             {
-                if (currentState == BottleState.PickedUp || currentState == BottleState.Returning)
+                if (currentState == BottleState.PickedUp)
                 {
                     StartTilting();
                 }
@@ -322,6 +344,11 @@ namespace Slainte.Bartending
             {
                 PerformTilting();
             }
+
+            if (currentState == BottleState.Tilting)
+                PerformHorizontalRotationMovement();
+            else if (currentState == BottleState.Returning && !pointerSyncPending)
+                FollowPointerWhileReturning();
         }
 
         private void PickupBottle()
@@ -343,6 +370,11 @@ namespace Slainte.Bartending
                 StopCoroutine(returnCoroutine);
                 returnCoroutine = null;
             }
+
+            BeginPointerSynchronization(
+                GetConfiguredRotationPivotWorldPosition(),
+                unlockCursor: false,
+                completeReturn: false);
         }
 
         private void FollowMousePosition()
@@ -352,15 +384,21 @@ namespace Slainte.Bartending
                 return;
             }
             
+            Vector3 targetPivot = mousePos + pointerPivotOffset;
+            Vector3 targetPosition = BartendingPointerAnchor.CalculateRootPosition(
+                transform.position,
+                GetConfiguredRotationPivotWorldPosition(),
+                targetPivot);
+
             Rigidbody2D rb = GetComponent<Rigidbody2D>();
             if (rb != null)
             {
                 // 댐핑을 걷어내고 0초 즉각 1:1 마우스 매핑 + 연속 물리(Sweep) 충돌 보장
-                rb.MovePosition(mousePos);
+                rb.MovePosition(targetPosition);
             }
             else
             {
-                transform.position = mousePos;
+                transform.position = targetPosition;
             }
         }
 
@@ -488,6 +526,45 @@ namespace Slainte.Bartending
             currentAngle = targetAngle;
         }
 
+        private void PerformHorizontalRotationMovement()
+        {
+            Bounds bounds = col != null
+                ? col.bounds
+                : new Bounds(transform.position, Vector3.one);
+            if (!BartendingPointerAnchor.TryGetHorizontalWorldDelta(
+                    mainCamera,
+                    bounds,
+                    rotationHorizontalSensitivity,
+                    rotationHorizontalScreenPadding,
+                    out float worldDeltaX))
+            {
+                return;
+            }
+
+            rotationPivotAnchorWorld.x += worldDeltaX;
+            ApplyRotationAroundConfiguredPivot(currentAngle);
+        }
+
+        private void FollowPointerWhileReturning()
+        {
+            if (!BartendingViewport.TryGetPointerWorldPosition(
+                    mainCamera,
+                    Input.mousePosition,
+                    out Vector3 pointerWorld))
+            {
+                return;
+            }
+
+            MoveToPointerPosition(pointerWorld);
+        }
+
+        private void MoveToPointerPosition(Vector3 pointerWorld)
+        {
+            rotationPivotAnchorWorld = pointerWorld + pointerPivotOffset;
+            rotationPivotAnchorWorld.z = 0f;
+            ApplyRotationAroundConfiguredPivot(currentAngle);
+        }
+
         private void TryDropBottle()
         {
             if (!BartendingViewport.TryGetPointerWorldPosition(mainCamera, Input.mousePosition, out Vector3 mousePos))
@@ -563,6 +640,8 @@ namespace Slainte.Bartending
         {
             currentState = BottleState.Idle;
             hasRotationPivotAnchor = false;
+            CancelPointerSynchronization();
+            BartendingPointerAnchor.Release(this);
             
             if (returnCoroutine != null)
             {
@@ -573,13 +652,12 @@ namespace Slainte.Bartending
 
         private void StartTilting()
         {
+            if (!BartendingPointerAnchor.TryLock(this))
+                return;
+
             currentState = BottleState.Tilting;
             initialAngle = currentAngle;
             CaptureRotationPivotAnchor();
-            
-            // Lock and hide the cursor so it stays fixed relative to the bottle
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
             
             if (returnCoroutine != null)
             {
@@ -603,18 +681,10 @@ namespace Slainte.Bartending
         private void StartReturning()
         {
             currentState = BottleState.Returning;
-            
-            // Unlock and show the cursor when tilting stops
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            
-            // Warp the cursor back to the bottle's position
-            if (Mouse.current != null && mainCamera != null)
-            {
-                Vector2 screenPos = BartendingViewport.GetPointerScreenPosition(mainCamera, transform.position);
-                Mouse.current.WarpCursorPosition(screenPos);
-            }
-            
+            BeginPointerSynchronization(
+                rotationPivotAnchorWorld,
+                unlockCursor: true,
+                completeReturn: false);
             returnCoroutine = StartCoroutine(ReturnToUprightRoutine());
         }
 
@@ -636,18 +706,100 @@ namespace Slainte.Bartending
             }
 
             ApplyRotationAroundConfiguredPivot(0f);
-
-            if (rotationPivotMode != BottleRotationPivotMode.TransformOrigin &&
-                Mouse.current != null && mainCamera != null)
-            {
-                Vector2 screenPos = BartendingViewport.GetPointerScreenPosition(mainCamera, transform.position);
-                Mouse.current.WarpCursorPosition(screenPos);
-            }
-            
-            // Transition back to PickedUp state so they can move it or drop it again
+            returnCoroutine = null;
             currentState = BottleState.PickedUp;
             hasRotationPivotAnchor = false;
-            returnCoroutine = null;
+        }
+
+        private void BeginPointerSynchronization(
+            Vector3 pivotWorld,
+            bool unlockCursor,
+            bool completeReturn)
+        {
+            pointerSyncPivotWorld = pivotWorld;
+            pointerPivotOffset = Vector3.zero;
+            completeReturnAfterPointerSync = completeReturn;
+
+            bool requested = unlockCursor
+                ? BartendingPointerAnchor.UnlockAndWarp(
+                    this,
+                    mainCamera,
+                    pivotWorld,
+                    out pointerSyncScreenPosition)
+                : BartendingPointerAnchor.TryWarpToWorld(
+                    mainCamera,
+                    pivotWorld,
+                    out pointerSyncScreenPosition);
+
+            if (!requested)
+            {
+                CompletePointerSynchronization(false);
+                return;
+            }
+
+            pointerSyncFramesRemaining = PointerSyncFrameBudget;
+            pointerSyncPending = true;
+        }
+
+        private bool UpdatePointerSynchronization()
+        {
+            if (!pointerSyncPending)
+                return false;
+
+            if (BartendingPointerAnchor.IsPointerAt(pointerSyncScreenPosition))
+            {
+                CompletePointerSynchronization(true);
+                return true;
+            }
+
+            pointerSyncFramesRemaining--;
+            if (pointerSyncFramesRemaining > 0)
+            {
+                BartendingPointerAnchor.TryWarpToWorld(
+                    mainCamera,
+                    pointerSyncPivotWorld,
+                    out pointerSyncScreenPosition);
+                return true;
+            }
+
+            CompletePointerSynchronization(false);
+            return true;
+        }
+
+        private void CompletePointerSynchronization(bool success)
+        {
+            pointerSyncPending = false;
+            if (!success
+                && BartendingViewport.TryGetPointerWorldPosition(
+                    mainCamera,
+                    Input.mousePosition,
+                    out Vector3 pointerWorld))
+            {
+                pointerPivotOffset = pointerSyncPivotWorld - pointerWorld;
+                pointerPivotOffset.z = 0f;
+                Debug.LogWarning(
+                    $"[{name}] Cursor warp was not confirmed; preserving the current grab offset.");
+            }
+            else if (success)
+            {
+                pointerPivotOffset = Vector3.zero;
+            }
+
+            if (completeReturnAfterPointerSync)
+            {
+                currentState = BottleState.PickedUp;
+                hasRotationPivotAnchor = false;
+            }
+
+            completeReturnAfterPointerSync = false;
+        }
+
+        private void CancelPointerSynchronization()
+        {
+            pointerSyncPending = false;
+            completeReturnAfterPointerSync = false;
+            pointerSyncFramesRemaining = 0;
+            pointerPivotOffset = Vector3.zero;
         }
 
         private bool IsMouseOverBottle()

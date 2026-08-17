@@ -49,10 +49,9 @@ public sealed class CustomerVisitData : ScriptableObject
     [InspectorName("최대 등장 날짜")]
     [Tooltip("0이면 최대 날짜 제한이 없습니다.")]
     [Min(0)] public int maxDay;
-    [InspectorName("재등장 대기 일수")]
-    [Min(0)] public int cooldownDays = 1;
-    [InspectorName("하루 중복 등장 허용")]
-    public bool allowDuplicateInDay;
+    [InspectorName("재등장 대기 시간(초)")]
+    [Tooltip("주문 결과 처리가 끝난 뒤 이 손님이 일반 손님 풀에 다시 들어오기까지의 유효 영업시간입니다.")]
+    [Min(0f)] public float cooldownSeconds = 100f;
 
     [Header("주문 후보")]
     [InspectorName("주문 목록")]

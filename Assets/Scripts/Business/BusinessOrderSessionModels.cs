@@ -37,29 +37,6 @@ namespace Slainte.Business
         public bool presentFeedback = true;
         public bool applyProgressRewards = true;
         public bool clearCustomerOnComplete = true;
-
-        public static OrderSessionRequest ForBusiness(BusinessSequenceEntrySnapshot entry)
-        {
-            if (entry == null)
-                return null;
-
-            return new OrderSessionRequest
-            {
-                sessionId = entry.entryId,
-                owner = OrderSessionOwner.Business,
-                customerOrderKey = entry.entryId,
-                customerVisitKey = entry.visitKey,
-                requestedRecipeId = entry.contentId,
-                ticketKey = entry.entryId,
-                orderType = System.Enum.IsDefined(typeof(CocktailOrderType), entry.orderType)
-                    ? (CocktailOrderType)entry.orderType
-                    : CocktailOrderType.RecipeOrder,
-                presentOrder = true,
-                presentFeedback = true,
-                applyProgressRewards = true,
-                clearCustomerOnComplete = true
-            };
-        }
     }
 
     public enum OrderEvaluationGrade
@@ -106,6 +83,8 @@ namespace Slainte.Business
         public OrderEvaluationGrade grade;
         public int moneyDelta;
         public int reputationDelta;
+        public bool technicalFailure;
+        public string failureReason;
         public CocktailOrderEvaluationResult evaluation;
     }
 }

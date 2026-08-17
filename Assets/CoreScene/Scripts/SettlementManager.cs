@@ -7,6 +7,7 @@ public class SettlementManager : MonoSingleton<SettlementManager>
     [SerializeField] private SettlementUI settlementUI;
 
     private readonly List<ChapterData> _chapters = new();
+    private bool settlementActive;
 
     protected override void Awake()
     {
@@ -16,8 +17,15 @@ public class SettlementManager : MonoSingleton<SettlementManager>
 
     public void BeginSettlement()
     {
+        if (settlementActive)
+        {
+            Debug.LogWarning("[Settlement] Settlement is already active; duplicate payout skipped.");
+            return;
+        }
+
         GameProgress gp = GameProgress.Instance;
         if (gp == null) return;
+        settlementActive = true;
 
         SettlementData data = new SettlementData
         {
@@ -29,13 +37,23 @@ public class SettlementManager : MonoSingleton<SettlementManager>
             drinkSales      = BuildDrinkSalesPlaceholder(gp)
         };
 
-        gp.AddMoney(gp.DayTotalIncome);
+        ApplyRecordedIncome(gp);
         data.currentMoney = gp.CurrentMoney;
 
         if (settlementUI != null)
             settlementUI.Show(data, OnSettlementClosed);
         else
             OnSettlementClosed();
+    }
+
+    public static int ApplyRecordedIncome(GameProgress progress)
+    {
+        if (progress == null)
+            return 0;
+
+        int income = progress.DayTotalIncome;
+        progress.AddMoney(income);
+        return income;
     }
 
     // 영업 시스템이 아직 음료 종류별 판매를 기록하지 않아, 집계값을 한 줄짜리 placeholder로 노출.
@@ -65,6 +83,10 @@ public class SettlementManager : MonoSingleton<SettlementManager>
 
     private void OnSettlementClosed()
     {
+        if (!settlementActive)
+            return;
+
+        settlementActive = false;
         GameProgress.Instance?.ResetDaySettlement();
         DataManager.Instance?.Save();
         GameManager.Instance?.ChangeState(GameState.Rest);

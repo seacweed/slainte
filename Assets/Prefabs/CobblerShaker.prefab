@@ -118,6 +118,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.CobblerShakerTechniqueController
   integratedStrainer: 1
+  strainerWidthRatio: 0.9
+  strainerThickness: 0.08
   minimumSpeed: 3.5
   requiredDirectionChanges: 4
   gestureTimeout: 0.8

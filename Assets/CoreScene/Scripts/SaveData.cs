@@ -20,6 +20,7 @@ public class SaveData
     public List<int>    upgradeValues = new();
     public string currentChapterId  = "";
     public int    currentMoney      = 0;
+    public int    reputation        = 0;
     public int    dayDrinkSalesCount = 0;
     public int    dayDrinkRevenue    = 0;
     public int    dayTotalIncome     = 0;

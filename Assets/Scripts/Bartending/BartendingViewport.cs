@@ -12,13 +12,15 @@ namespace Slainte.Bartending
         [SerializeField] private Camera worldCamera;
         [SerializeField] private RawImage outputImage;
         [SerializeField] private Vector2Int renderSize = new Vector2Int(1700, 650);
+        [SerializeField] private bool registerForInput = true;
 
         private RenderTexture targetTexture;
 
-        public void Initialize(Camera camera, Vector2Int size)
+        public void Initialize(Camera camera, Vector2Int size, bool enableInputRegistration = true)
         {
             worldCamera = camera;
             renderSize = size;
+            registerForInput = enableInputRegistration;
             outputImage = GetComponent<RawImage>();
 
             if (isActiveAndEnabled)
@@ -29,7 +31,8 @@ namespace Slainte.Bartending
 
         private void OnEnable()
         {
-            Active = this;
+            if (Application.isPlaying && registerForInput)
+                Active = this;
             if (worldCamera != null)
             {
                 BuildTargetTexture();
@@ -111,7 +114,10 @@ namespace Slainte.Bartending
             }
 
             targetTexture.Release();
-            Destroy(targetTexture);
+            if (Application.isPlaying)
+                Destroy(targetTexture);
+            else
+                DestroyImmediate(targetTexture);
             targetTexture = null;
         }
 
@@ -143,6 +149,86 @@ namespace Slainte.Bartending
             return fallbackCamera != null
                 ? (Vector2)fallbackCamera.WorldToScreenPoint(worldPosition)
                 : Vector2.zero;
+        }
+
+        public static bool TryGetInputScreenRect(out Rect screenRect)
+        {
+            if (Active != null && Active.TryGetScreenRect(out screenRect))
+                return true;
+
+            screenRect = new Rect(0f, 0f, Screen.width, Screen.height);
+            return Screen.width > 0 && Screen.height > 0;
+        }
+
+        public static bool TryConvertClampedHorizontalScreenDelta(
+            Camera fallbackCamera,
+            Bounds worldBounds,
+            float requestedScreenDeltaX,
+            float screenPadding,
+            out float worldDeltaX)
+        {
+            worldDeltaX = 0f;
+            if (Mathf.Abs(requestedScreenDeltaX) <= Mathf.Epsilon)
+                return false;
+
+            if (Active != null && Active.worldCamera != null
+                && Active.TryGetScreenRect(out Rect activeScreenRect))
+            {
+                Vector2 left = Active.MapWorldToPointer(new Vector3(
+                    worldBounds.min.x,
+                    worldBounds.center.y,
+                    worldBounds.center.z));
+                Vector2 right = Active.MapWorldToPointer(new Vector3(
+                    worldBounds.max.x,
+                    worldBounds.center.y,
+                    worldBounds.center.z));
+                float clampedDelta = ClampHorizontalScreenDelta(
+                    requestedScreenDeltaX,
+                    Mathf.Min(left.x, right.x),
+                    Mathf.Max(left.x, right.x),
+                    activeScreenRect,
+                    screenPadding);
+                if (Mathf.Abs(clampedDelta) <= Mathf.Epsilon)
+                    return false;
+
+                float normalizedDelta = clampedDelta / Mathf.Max(1f, activeScreenRect.width);
+                if (Active.worldCamera.orthographic)
+                {
+                    float worldWidth = Active.worldCamera.orthographicSize
+                        * 2f
+                        * Active.worldCamera.aspect;
+                    worldDeltaX = normalizedDelta * worldWidth;
+                    return Mathf.Abs(worldDeltaX) > Mathf.Epsilon;
+                }
+            }
+
+            if (fallbackCamera == null || Screen.width <= 0)
+                return false;
+
+            Vector2 fallbackLeft = fallbackCamera.WorldToScreenPoint(new Vector3(
+                worldBounds.min.x,
+                worldBounds.center.y,
+                worldBounds.center.z));
+            Vector2 fallbackRight = fallbackCamera.WorldToScreenPoint(new Vector3(
+                worldBounds.max.x,
+                worldBounds.center.y,
+                worldBounds.center.z));
+            Rect fallbackRect = new Rect(0f, 0f, Screen.width, Screen.height);
+            float fallbackDelta = ClampHorizontalScreenDelta(
+                requestedScreenDeltaX,
+                Mathf.Min(fallbackLeft.x, fallbackRight.x),
+                Mathf.Max(fallbackLeft.x, fallbackRight.x),
+                fallbackRect,
+                screenPadding);
+            if (Mathf.Abs(fallbackDelta) <= Mathf.Epsilon)
+                return false;
+
+            Vector3 centerScreen = fallbackCamera.WorldToScreenPoint(worldBounds.center);
+            Vector3 shiftedScreen = centerScreen + new Vector3(fallbackDelta, 0f, 0f);
+            Vector3 centerWorld = fallbackCamera.ScreenToWorldPoint(centerScreen);
+            Vector3 shiftedWorld = fallbackCamera.ScreenToWorldPoint(shiftedScreen);
+            worldDeltaX = shiftedWorld.x - centerWorld.x;
+            return Mathf.Abs(worldDeltaX) > Mathf.Epsilon;
         }
 
         public bool TryMapRectToWorld(RectTransform sourceRect, out Vector3 center, out Vector2 size)
@@ -224,6 +310,48 @@ namespace Slainte.Bartending
 
             return RectTransformUtility.WorldToScreenPoint(
                 GetCanvasCamera(), rectTransform.TransformPoint(localPosition));
+        }
+
+        private bool TryGetScreenRect(out Rect screenRect)
+        {
+            screenRect = default;
+            RectTransform rectTransform = transform as RectTransform;
+            if (rectTransform == null)
+                return false;
+
+            Vector3[] corners = new Vector3[4];
+            rectTransform.GetWorldCorners(corners);
+            Vector2 first = RectTransformUtility.WorldToScreenPoint(GetCanvasCamera(), corners[0]);
+            float xMin = first.x;
+            float xMax = first.x;
+            float yMin = first.y;
+            float yMax = first.y;
+            for (int i = 1; i < corners.Length; i++)
+            {
+                Vector2 point = RectTransformUtility.WorldToScreenPoint(GetCanvasCamera(), corners[i]);
+                xMin = Mathf.Min(xMin, point.x);
+                xMax = Mathf.Max(xMax, point.x);
+                yMin = Mathf.Min(yMin, point.y);
+                yMax = Mathf.Max(yMax, point.y);
+            }
+
+            screenRect = Rect.MinMaxRect(xMin, yMin, xMax, yMax);
+            return screenRect.width > Mathf.Epsilon && screenRect.height > Mathf.Epsilon;
+        }
+
+        private static float ClampHorizontalScreenDelta(
+            float requestedDelta,
+            float currentLeft,
+            float currentRight,
+            Rect screenRect,
+            float padding)
+        {
+            float safePadding = Mathf.Max(0f, padding);
+            float minimumDelta = screenRect.xMin + safePadding - currentLeft;
+            float maximumDelta = screenRect.xMax - safePadding - currentRight;
+            if (minimumDelta > maximumDelta)
+                return 0f;
+            return Mathf.Clamp(requestedDelta, minimumDelta, maximumDelta);
         }
 
         private static Camera GetCanvasCamera(RectTransform rectTransform)

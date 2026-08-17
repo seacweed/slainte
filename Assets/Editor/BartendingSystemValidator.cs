@@ -39,6 +39,59 @@ public static class BartendingSystemValidator
         }
     }
 
+    [MenuItem("Slainte/Bartending/Validate Core Without Planning Content")]
+    public static void RunCore()
+    {
+        ItemDef spirit = ScriptableObject.CreateInstance<ItemDef>();
+        spirit.id = "qa_core_spirit";
+        spirit.displayName = "Core Validation Spirit";
+        spirit.liquidColor = new Color(0.25f, 0.5f, 0.75f, 0.2f);
+        spirit.servingTemperatureC = 80f;
+
+        try
+        {
+            ValidateLiquidPayload(spirit);
+            ValidateLiquidPoolIsolation();
+            ValidateVesselLiquidTransfer();
+            ValidateBottleGeometryProfile();
+            ValidatePointerAnchorMath();
+            ValidateOrderEvaluation(spirit);
+            ValidateCsvData();
+            ValidateSteamSetup();
+            Debug.Log(
+                "[BartendingCoreValidator] PASS: liquid, transfer, runtime bottle geometry, "
+                + "recipe evaluation, CSV and steam");
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(spirit);
+        }
+    }
+
+    [MenuItem("Slainte/Bartending/Validate Planning Content Links")]
+    public static void RunContent()
+    {
+        ValidateBusinessBottleData();
+        Debug.Log("[BartendingContentValidator] PASS: shelf and ItemDef content links");
+    }
+
+    private static void ValidatePointerAnchorMath()
+    {
+        Vector3 root = new Vector3(2f, -1f, 0f);
+        Vector3 pivot = new Vector3(3.25f, 4f, 0f);
+        Vector3 pointer = new Vector3(-5f, 6.5f, 0f);
+        Vector3 targetRoot = BartendingPointerAnchor.CalculateRootPosition(
+            root,
+            pivot,
+            pointer);
+        Vector3 translatedPivot = pivot + targetRoot - root;
+        if (Vector3.Distance(translatedPivot, pointer) > 0.0001f)
+        {
+            throw new InvalidOperationException(
+                $"Pointer anchor calculation drifted: {translatedPivot} != {pointer}");
+        }
+    }
+
     private static void ValidateBottleGeometryProfile()
     {
         GameObject bottleObject = new GameObject("검증용 병");
@@ -349,44 +402,86 @@ public static class BartendingSystemValidator
         GameObject sourceObject = new GameObject("검증용 원본 용기");
         GameObject targetObject = new GameObject("검증용 대상 용기");
         GameObject particleObject = new GameObject("검증용 이동 액체");
+        GameObject iceObject = new GameObject("검증용 이동 얼음");
+        GameObject sourceBarrierObject = new GameObject("검증용 얼음 전용 스트레이너");
         VesselLiquidTracker sourceTracker = null;
         VesselLiquidTracker targetTracker = null;
+        IceCubeController iceCube = null;
 
         try
         {
             BoxCollider2D sourceTrigger = sourceObject.AddComponent<BoxCollider2D>();
             sourceTrigger.isTrigger = true;
             sourceTrigger.size = Vector2.one * 2f;
+            BoxCollider2D sourceSolid = sourceObject.AddComponent<BoxCollider2D>();
+            sourceSolid.isTrigger = false;
+            sourceSolid.size = Vector2.one * 2.5f;
+            sourceBarrierObject.transform.SetParent(sourceObject.transform, false);
+            BoxCollider2D sourceBarrier = sourceBarrierObject.AddComponent<BoxCollider2D>();
+            sourceBarrier.isTrigger = false;
+            sourceBarrier.size = new Vector2(1.5f, 0.1f);
+            sourceBarrierObject.AddComponent<IceOnlyVesselBarrier>();
             sourceTracker = sourceObject.AddComponent<VesselLiquidTracker>();
 
             targetObject.transform.position = Vector3.right * 4f;
             BoxCollider2D targetTrigger = targetObject.AddComponent<BoxCollider2D>();
             targetTrigger.isTrigger = true;
             targetTrigger.size = Vector2.one * 2f;
+            BoxCollider2D targetSolid = targetObject.AddComponent<BoxCollider2D>();
+            targetSolid.isTrigger = false;
+            targetSolid.size = Vector2.one * 2.5f;
             targetTracker = targetObject.AddComponent<VesselLiquidTracker>();
 
             CircleCollider2D particleCollider = particleObject.AddComponent<CircleCollider2D>();
             LiquidParticleData particle = particleObject.AddComponent<LiquidParticleData>();
 
+            iceObject.transform.position = targetObject.transform.position;
+            BoxCollider2D iceCollider = iceObject.AddComponent<BoxCollider2D>();
+            iceObject.AddComponent<Rigidbody2D>();
+            iceCube = iceObject.AddComponent<IceCubeController>();
+
             InvokeNonPublic(sourceTracker, "Awake");
             InvokeNonPublic(targetTracker, "Awake");
             InvokeNonPublic(sourceTracker, "OnEnable");
             InvokeNonPublic(targetTracker, "OnEnable");
+            InvokeNonPublic(particle, "Awake");
+            InvokeNonPublic(particle, "OnEnable");
+            InvokeNonPublic(iceCube, "Awake");
+            InvokeNonPublic(iceCube, "Initialize", 1f, -8f, false);
+            InvokeNonPublic(iceCube, "OnEnable");
 
             Physics2D.SyncTransforms();
             InvokeNonPublic(sourceTracker, "OnTriggerEnter2D", particleCollider);
             Assert(particle.VesselOwner == sourceTracker,
                 "액체 입자가 처음 들어간 용기의 소유권을 얻지 못했습니다.");
+            InvokeNonPublic(targetTracker, "OnTriggerEnter2D", iceCollider);
+            Assert(iceCube.VesselOwner == targetTracker,
+                "얼음이 대상 용기의 소유권을 얻지 못했습니다.");
+            Assert(!Physics2D.GetIgnoreCollision(particleCollider, sourceSolid),
+                "액체가 자기 용기의 벽 충돌을 무시합니다.");
+            Assert(Physics2D.GetIgnoreCollision(particleCollider, targetSolid),
+                "액체가 다른 용기의 벽 충돌과 격리되지 않았습니다.");
+            Assert(Physics2D.GetIgnoreCollision(particleCollider, sourceBarrier),
+                "액체가 얼음 전용 스트레이너를 통과하도록 설정되지 않았습니다.");
+            Assert(Physics2D.GetIgnoreCollision(particleCollider, iceCollider),
+                "서로 다른 용기에 속한 액체와 얼음이 충돌 격리되지 않았습니다.");
+            Assert(!Physics2D.GetIgnoreCollision(iceCollider, targetSolid),
+                "얼음이 자기 용기의 벽 충돌을 무시합니다.");
+            Assert(Physics2D.GetIgnoreCollision(iceCollider, sourceSolid),
+                "얼음이 다른 용기의 벽 충돌과 격리되지 않았습니다.");
 
             particleObject.transform.position = targetObject.transform.position;
             Physics2D.SyncTransforms();
             InvokeNonPublic(sourceTracker, "OnTriggerExit2D", particleCollider);
+            InvokeNonPublic(sourceTracker, "FixedUpdate");
             Assert(particle.VesselOwner == null,
                 "액체 입자가 원래 용기를 빠져나온 뒤 소유권이 해제되지 않았습니다.");
 
             InvokeNonPublic(targetTracker, "OnTriggerEnter2D", particleCollider);
             Assert(particle.VesselOwner == targetTracker,
                 "액체 입자가 새 용기로 소유권을 이전하지 못했습니다.");
+            Assert(!Physics2D.GetIgnoreCollision(particleCollider, iceCollider),
+                "같은 용기로 이전된 액체와 얼음의 충돌이 복원되지 않았습니다.");
 
             // Verify the reverse direction even when the new vessel's enter callback
             // arrives before the previous vessel's exit callback.
@@ -395,15 +490,33 @@ public static class BartendingSystemValidator
             InvokeNonPublic(sourceTracker, "OnTriggerEnter2D", particleCollider);
             Assert(particle.VesselOwner == sourceTracker,
                 "콜백 순서가 바뀌었을 때 액체 입자가 원래 방향으로 재이전되지 못했습니다.");
+            Assert(Physics2D.GetIgnoreCollision(particleCollider, iceCollider),
+                "다시 서로 다른 용기에 속한 액체와 얼음이 충돌 격리되지 않았습니다.");
+
+            iceObject.transform.position = sourceObject.transform.position;
+            Physics2D.SyncTransforms();
+            InvokeNonPublic(sourceTracker, "OnTriggerEnter2D", iceCollider);
+            Assert(iceCube.VesselOwner == sourceTracker,
+                "얼음이 원본 용기로 소유권을 이전하지 못했습니다.");
+            Assert(!Physics2D.GetIgnoreCollision(iceCollider, sourceBarrier),
+                "얼음이 자기 용기의 물리 스트레이너를 무시합니다.");
+            Assert(!Physics2D.GetIgnoreCollision(particleCollider, iceCollider),
+                "같은 용기에 속한 액체와 얼음의 충돌이 복원되지 않았습니다.");
         }
         finally
         {
+            LiquidParticleData particle = particleObject.GetComponent<LiquidParticleData>();
+            if (particle != null)
+                InvokeNonPublic(particle, "OnDisable");
+            if (iceCube != null)
+                InvokeNonPublic(iceCube, "OnDisable");
             if (targetTracker != null)
                 InvokeNonPublic(targetTracker, "OnDisable");
             if (sourceTracker != null)
                 InvokeNonPublic(sourceTracker, "OnDisable");
 
             UnityEngine.Object.DestroyImmediate(particleObject);
+            UnityEngine.Object.DestroyImmediate(iceObject);
             UnityEngine.Object.DestroyImmediate(targetObject);
             UnityEngine.Object.DestroyImmediate(sourceObject);
         }

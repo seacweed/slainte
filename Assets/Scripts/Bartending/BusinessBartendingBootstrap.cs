@@ -28,6 +28,7 @@ namespace Slainte.Bartending
         private RectTransform slotLayoutTemplate;
         private RectTransform sessionSlotLayout;
         private LiquidPool sessionLiquidPool;
+        private BartendingSessionInstance builtSession;
         private int sessionRenderLayer;
         private float sessionItemScale = 1f;
         private Coroutine snapRoutine;
@@ -62,23 +63,35 @@ namespace Slainte.Bartending
 
         private static void InstallIfNeeded(Scene scene)
         {
-            if (!scene.IsValid() || scene.name != SceneName || FindInScene<BusinessBartendingBootstrap>(scene) != null)
-            {
+            if (!scene.IsValid() || scene.name != SceneName)
                 return;
-            }
+
+            EnsureInstalledForScene(scene);
+        }
+
+        public static BusinessBartendingBootstrap EnsureInstalledForScene(Scene scene)
+        {
+            if (!scene.IsValid())
+                return null;
+
+            BusinessBartendingBootstrap existing =
+                FindInScene<BusinessBartendingBootstrap>(scene);
+            if (existing != null)
+                return existing;
 
             BusinessBartendingSettings settings =
                 Resources.Load<BusinessBartendingSettings>(SettingsResourcePath);
             if (settings == null)
             {
                 Debug.LogError("Resources에서 영업 제조 설정을 불러올 수 없습니다.");
-                return;
+                return null;
             }
 
             GameObject host = new GameObject("BusinessBartendingRuntime");
             SceneManager.MoveGameObjectToScene(host, scene);
             BusinessBartendingBootstrap bootstrap = host.AddComponent<BusinessBartendingBootstrap>();
             bootstrap.Initialize(scene, settings);
+            return bootstrap;
         }
 
         private void Initialize(Scene scene, BusinessBartendingSettings sessionSettings)
@@ -135,64 +148,47 @@ namespace Slainte.Bartending
                 return;
             }
 
-            int renderLayer = Mathf.Clamp(settings.renderLayer, 8, 31);
-            sessionRenderLayer = renderLayer;
-            sessionRoot = new GameObject("BartendingSession");
-            sessionRoot.transform.SetParent(transform, false);
-            GameObject world = new GameObject("BartendingWorld");
-            world.transform.SetParent(sessionRoot.transform, false);
-            sessionWorld = world.transform;
-
-            Camera camera = CreateWorldCamera(world.transform, settings, renderLayer);
-            sessionViewport = CreateViewport(counter, camera, settings);
-            Canvas.ForceUpdateCanvases();
-            sessionSlotLayout = CreateSessionSlotLayout(
+            builtSession = BartendingSessionBuilder.Build(
+                transform,
+                counter,
                 slotLayoutTemplate,
-                sessionViewport != null ? sessionViewport.transform as RectTransform : null,
-                counter);
-            Canvas.ForceUpdateCanvases();
-
-            GetSlotLayout(
-                sessionSlotLayout,
-                sessionViewport,
                 settings,
-                out List<Vector3> slotPositions,
-                out float itemScale);
-            sessionItemScale = itemScale;
-            sessionSlots.Clear();
-            sessionSlots.AddRange(CreateSlots(world.transform, settings, slotPositions, itemScale));
-            List<IBartendingItem> startingTools = new List<IBartendingItem>();
-            IBartendingItem beaker = CreateItem(
-                settings.beakerPrefab, world.transform, "Beaker", settings.beakerPosition, renderLayer, itemScale);
-            IBartendingItem cobblerShaker = CreateItem(
-                settings.cobblerShakerPrefab,
-                world.transform,
-                "CobblerShaker",
-                settings.cobblerShakerPosition,
-                renderLayer,
-                itemScale);
-            IBartendingItem glass = CreateItem(
-                settings.glassPrefab, world.transform, "Glass", settings.glassPosition, renderLayer, itemScale);
-            if (glass is GlassController servingGlass)
+                BartendingSessionBuildMode.Runtime);
+            if (builtSession == null)
             {
-                float serveLineScreenY = Screen.height * Mathf.Clamp01(settings.serveLineScreenRatio);
-                servingGlass.ConfigureServeGesture(serveLineScreenY);
+                Debug.LogError("영업 제조 세션을 생성하지 못했습니다.");
+                return;
+            }
+
+            sessionRenderLayer = builtSession.RenderLayer;
+            sessionRoot = builtSession.Root;
+            sessionWorld = builtSession.World;
+            sessionViewport = builtSession.Viewport;
+            sessionSlotLayout = builtSession.SlotLayout;
+            sessionLiquidPool = builtSession.LiquidPool;
+            sessionItemScale = builtSession.ItemScale;
+            sessionSlots.Clear();
+            sessionSlots.AddRange(builtSession.Slots);
+            if (builtSession.ServingGlass is GlassController servingGlass)
+            {
+                CharacterStage characterStage = FindInScene<CharacterStage>(targetScene);
+                builtSession.InteractionOverlay?.ConfigureServingTarget(
+                    characterStage,
+                    counter,
+                    allowFallbackTarget: false);
+                servingGlass.ConfigureServeGesture(builtSession.InteractionOverlay);
                 servingGlass.ServeRequested += HandleGlassServeRequested;
             }
-            startingTools.Add(beaker);
-            startingTools.Add(cobblerShaker);
-            startingTools.Add(glass);
             List<BottleController> selectedBottles = CreateSelectedBottles();
-            sessionLiquidPool = CreateLiquidPool(world.transform, settings, renderLayer, itemScale);
-            snapRoutine = StartCoroutine(SnapStartingItems(startingTools, selectedBottles));
+            snapRoutine = StartCoroutine(SnapStartingItems(builtSession.StartingTools, selectedBottles));
 
-            readyRoutine = StartCoroutine(CaptureTargetTracker(glass as GlassController));
+            readyRoutine = StartCoroutine(CaptureTargetTracker(builtSession.ServingGlass));
 
             sourceCamera = Camera.main;
-            if (sourceCamera != null && sourceCamera != camera)
+            if (sourceCamera != null && sourceCamera != builtSession.WorldCamera)
             {
                 sourceCameraMask = sourceCamera.cullingMask;
-                sourceCamera.cullingMask &= ~(1 << renderLayer);
+                sourceCamera.cullingMask &= ~(1 << sessionRenderLayer);
             }
         }
 
@@ -203,26 +199,6 @@ namespace Slainte.Bartending
                 StopCoroutine(snapRoutine);
                 snapRoutine = null;
             }
-
-            if (sessionViewport != null)
-            {
-                sessionViewport.gameObject.SetActive(false);
-                Destroy(sessionViewport.gameObject);
-                sessionViewport = null;
-            }
-
-            if (sessionSlotLayout != null)
-            {
-                sessionSlotLayout.gameObject.SetActive(false);
-                Destroy(sessionSlotLayout.gameObject);
-                sessionSlotLayout = null;
-            }
-
-            if (sessionLiquidPool != null && LiquidPool.Instance == sessionLiquidPool)
-            {
-                LiquidPool.Instance = null;
-            }
-            sessionLiquidPool = null;
 
             for (int i = 0; i < sessionBottles.Count; i++)
             {
@@ -239,13 +215,21 @@ namespace Slainte.Bartending
             bottleReserveAmounts.Clear();
             sessionSlots.Clear();
 
-            if (sessionRoot != null)
+            if (builtSession != null)
+            {
+                builtSession.Destroy();
+                builtSession = null;
+            }
+            else if (sessionRoot != null)
             {
                 sessionRoot.SetActive(false);
                 Destroy(sessionRoot);
-                sessionRoot = null;
             }
+            sessionRoot = null;
             sessionWorld = null;
+            sessionViewport = null;
+            sessionSlotLayout = null;
+            sessionLiquidPool = null;
 
             if (clearBottleSelections)
                 selectedBottleDefinitions.Clear();
@@ -359,13 +343,14 @@ namespace Slainte.Bartending
             if (item == null || sessionWorld == null)
                 return null;
 
-            IBartendingItem bottleItem = CreateItem(
+            IBartendingItem bottleItem = BartendingSessionBuilder.CreateItem(
                 settings.bottlePrefab,
                 sessionWorld,
                 string.IsNullOrWhiteSpace(item.displayName) ? item.id : item.displayName,
                 settings.bottlePosition,
                 sessionRenderLayer,
                 sessionItemScale);
+            BartendingSessionBuilder.ConfigureRotatingMovement(bottleItem, settings);
             if (bottleItem is not BottleController bottle)
             {
                 if (bottleItem != null)

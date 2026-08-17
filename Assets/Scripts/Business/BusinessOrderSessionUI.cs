@@ -9,6 +9,8 @@ namespace Slainte.Business
         private RectTransform uiRoot;
         private RectTransform statusPanel;
         private TMP_Text statusText;
+        private RectTransform timerPanel;
+        private TMP_Text timerText;
 
         public void Initialize(RectTransform canvasRoot, BusinessOrderSessionController sessionController)
         {
@@ -23,8 +25,30 @@ namespace Slainte.Business
             uiRoot.SetAsLastSibling();
 
             statusText = CreateStatusText(uiRoot);
+            timerText = CreateTimerText(uiRoot);
 
             ShowIdle();
+        }
+
+        public void SetShiftTime(float remainingSeconds, bool paused)
+        {
+            if (timerPanel != null)
+                timerPanel.gameObject.SetActive(true);
+            if (timerText == null)
+                return;
+
+            int totalSeconds = Mathf.Max(0, Mathf.CeilToInt(remainingSeconds));
+            int minutes = totalSeconds / 60;
+            int seconds = totalSeconds % 60;
+            timerText.text = $"{minutes:00}:{seconds:00}";
+            timerText.color = paused
+                ? new Color(0.72f, 0.78f, 0.88f, 1f)
+                : new Color(1f, 0.9f, 0.72f, 1f);
+        }
+
+        public void ShowWaitingForCustomer()
+        {
+            SetStatus("다음 손님을 기다리는 중입니다.");
         }
 
         public void ShowPresentingOrder(string customerOrderKey)
@@ -112,6 +136,35 @@ namespace Slainte.Business
             TextMeshProUGUI text = textRect.gameObject.AddComponent<TextMeshProUGUI>();
             text.font = TMP_Settings.defaultFontAsset;
             text.fontSize = 27f;
+            text.alignment = TextAlignmentOptions.Center;
+            text.color = new Color(1f, 0.9f, 0.72f, 1f);
+            text.raycastTarget = false;
+            return text;
+        }
+
+        private TMP_Text CreateTimerText(RectTransform parent)
+        {
+            timerPanel = CreateRect("BusinessTimer", parent);
+            timerPanel.anchorMin = new Vector2(1f, 1f);
+            timerPanel.anchorMax = new Vector2(1f, 1f);
+            timerPanel.pivot = new Vector2(1f, 1f);
+            timerPanel.anchoredPosition = new Vector2(-32f, -32f);
+            timerPanel.sizeDelta = new Vector2(180f, 64f);
+
+            Image background = timerPanel.gameObject.AddComponent<Image>();
+            background.color = new Color(0.05f, 0.04f, 0.035f, 0.86f);
+            background.raycastTarget = false;
+
+            RectTransform textRect = CreateRect("TimerText", timerPanel);
+            textRect.anchorMin = Vector2.zero;
+            textRect.anchorMax = Vector2.one;
+            textRect.offsetMin = new Vector2(12f, 6f);
+            textRect.offsetMax = new Vector2(-12f, -6f);
+
+            TextMeshProUGUI text = textRect.gameObject.AddComponent<TextMeshProUGUI>();
+            text.font = TMP_Settings.defaultFontAsset;
+            text.fontSize = 32f;
+            text.fontStyle = FontStyles.Bold;
             text.alignment = TextAlignmentOptions.Center;
             text.color = new Color(1f, 0.9f, 0.72f, 1f);
             text.raycastTarget = false;

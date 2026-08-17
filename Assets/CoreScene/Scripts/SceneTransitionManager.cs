@@ -63,7 +63,7 @@ public class SceneTransitionManager : MonoSingleton<SceneTransitionManager>
             return;
         }
 
-        StartCoroutine(TransitionRoutine(sceneToLoad, onComplete));
+        StartCoroutine(TransitionRoutine(sceneToLoad, onComplete, onFadeOutComplete));
     }
 
     // 💡 3. 매개변수에 Action onComplete 추가

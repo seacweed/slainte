@@ -59,6 +59,17 @@ public static class ProgressConditionEvaluator
             }
         }
 
+        if (condition.requiredCustomerAppearances != null)
+        {
+            for (int i = 0; i < condition.requiredCustomerAppearances.Count; i++)
+            {
+                CustomerAppearanceCondition appearance = condition.requiredCustomerAppearances[i];
+                if (appearance != null
+                    && progress.GetCustomerAppearance(appearance.characterId) < appearance.count)
+                    return false;
+            }
+        }
+
         return true;
     }
 }

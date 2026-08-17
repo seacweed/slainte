@@ -8,6 +8,8 @@ namespace Slainte.Bartending
     {
         [Header("Cobbler")]
         [SerializeField] private bool integratedStrainer = true;
+        [SerializeField, Range(0.5f, 1f)] private float strainerWidthRatio = 0.9f;
+        [SerializeField, Min(0.02f)] private float strainerThickness = 0.08f;
 
         [Header("Shake Gesture")]
         [SerializeField, Min(0.1f)] private float minimumSpeed = 3.5f;
@@ -19,6 +21,8 @@ namespace Slainte.Bartending
         private int previousDirection;
         private int directionChanges;
         private float lastDirectionChangeTime;
+        private bool strainerConfigured;
+        private IceOnlyVesselBarrier strainerBarrier;
 
         public bool HasIntegratedStrainer => integratedStrainer;
 
@@ -31,6 +35,7 @@ namespace Slainte.Bartending
         private void OnEnable()
         {
             previousPosition = transform.position;
+            strainerConfigured = false;
             ResetGesture();
         }
 
@@ -38,6 +43,12 @@ namespace Slainte.Bartending
         {
             if (shaker == null)
                 shaker = GetComponent<BeakerController>();
+
+            if (!strainerConfigured && shaker != null && shaker.LiquidTracker != null)
+            {
+                ConfigurePhysicalStrainer();
+                strainerConfigured = true;
+            }
 
             Vector3 currentPosition = transform.position;
             float deltaTime = Mathf.Max(Time.unscaledDeltaTime, 0.0001f);
@@ -84,6 +95,46 @@ namespace Slainte.Bartending
 
             foreach (LiquidParticleData particle in tracker.Particles)
                 particle?.RecordTechnique(CocktailTechnique.Shake);
+        }
+
+        private void ConfigurePhysicalStrainer()
+        {
+            strainerBarrier = GetComponentInChildren<IceOnlyVesselBarrier>(true);
+            if (!integratedStrainer)
+            {
+                if (strainerBarrier != null)
+                    strainerBarrier.gameObject.SetActive(false);
+
+                shaker.LiquidTracker.RefreshCollisionGeometry();
+                return;
+            }
+
+            if (strainerBarrier == null)
+            {
+                GameObject barrierObject = new GameObject("__IntegratedStrainerBarrier");
+                barrierObject.transform.SetParent(transform, false);
+                barrierObject.layer = gameObject.layer;
+                strainerBarrier = barrierObject.AddComponent<IceOnlyVesselBarrier>();
+                barrierObject.AddComponent<BoxCollider2D>();
+            }
+
+            GameObject barrier = strainerBarrier.gameObject;
+            barrier.SetActive(true);
+            barrier.layer = gameObject.layer;
+            barrier.transform.localPosition = new Vector3(
+                0f,
+                shaker.colliderYOffset + shaker.height * 0.5f - strainerThickness * 0.5f,
+                0f);
+            barrier.transform.localRotation = Quaternion.identity;
+            barrier.transform.localScale = Vector3.one;
+
+            BoxCollider2D collider = barrier.GetComponent<BoxCollider2D>();
+            collider.isTrigger = false;
+            collider.size = new Vector2(
+                Mathf.Max(0.1f, shaker.topWidth * strainerWidthRatio),
+                Mathf.Max(0.02f, strainerThickness));
+
+            shaker.LiquidTracker.RefreshCollisionGeometry();
         }
 
         private void ResetGesture()

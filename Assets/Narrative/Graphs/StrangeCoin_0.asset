@@ -393,6 +393,8 @@ MonoBehaviour:
   EpisodeId: StrangeCoin_0
   EpisodeTitle: "\uC774\uC0C1\uD55C \uB3D9\uC804 - 0"
   StartNodeGuid: 16d10591-a858-4ffa-9bb1-15173d3d95ad
+  EpisodeType: 2
+  MandatorySlot: 0
   TriggerCondition:
     minDay: 0
     requiredFlags: []

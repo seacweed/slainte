@@ -4,27 +4,29 @@
 
 통합 주문 흐름은 `Assets/Scripts/Business/`에 구현되어 있습니다.
 
-- `BusinessFlowBootstrap`는 씬 안의 의존성을 연결하고, 진행 중인 에피소드가 없으면 저장된 영업 순서를 시작합니다.
-- `BusinessSequencePlanner`는 고정 주문 또는 조건 기반 손님 풀에서 하루 영업 목록을 결정적으로 생성합니다. `BusinessSequenceRunner`는 주문 경계에서 진행 위치와 방문 이력을 저장합니다.
+- `BusinessFlowBootstrap`는 씬 안의 의존성을 연결하고, 진행 중인 에피소드가 없으면 시간 기반 영업을 시작합니다.
+- `BusinessShiftController`는 기본 180초의 남은 영업시간, 손님별 쿨다운, 필수 손님·인카운터, 정산 진입을 관리합니다. 주문 중에는 시간이 흐르고 영업 인카운터 중에는 영업시간과 쿨다운이 함께 멈춥니다.
 - `BusinessOrderSessionController`는 주문 제시, 자동 제조 진입, 판정, 반응 대사, 보상, 정리, 완료 처리를 담당합니다.
 - `BusinessOrderSessionUI`는 조작 없는 상태·결과 문구만 표시하며 주문 행동 버튼을 만들지 않습니다.
-- `BusinessOrderFlowSettings`에는 진행 방식, 손님 풀, 하루 방문 수, Good·Mid·Bad 판정 기준, 보상, 기본 반응 대사가 있습니다.
+- `BusinessOrderFlowSettings`에는 영업 제한시간, 손님 풀, 필수 영업 액션, Good·Mid·Bad 판정 기준, 보상(돈·명성), 기본 반응 대사가 있습니다.
 - `BusinessBartendingBootstrap`는 도구만 놓인 상태로 시작합니다. `LiquorBottleSlotUI`를 왼쪽 클릭하면 같은 ID의 `ItemDef`를 찾아 가장 오른쪽의 빈 테이블 슬롯부터 술병을 배치합니다.
 - 씬의 `TableSlots`는 숨겨진 배치 틀입니다. 제조 중에만 화면상 테이블 영역에 맞춘 임시 배치와 월드 충돌 슬롯을 만들고, 제조가 끝나면 함께 제거합니다.
 - `GlassController`는 플레이어가 잔을 끌어 전방 기준선을 넘겼을 때만 제출을 요청합니다. 주문 대사가 끝나면 바로 제조로 진입하며 거절, 포기, 버리기, 제출 버튼은 제공하지 않습니다.
 - 술병 오브젝트는 현재 병의 잔량을 추적하고 `GameProgress`는 전체 재고를 저장합니다. 제출해도 사용한 양은 복구되지 않습니다.
-- `BusinessFlowSceneSetup`은 Unity 에디터 API로 설정·샘플 에셋을 만들고 `BusinessFlowBootstrap`을 `BusinessScene`에 연결합니다.
 
-현재 샘플은 `yukari_sample_visit` 방문에서 `vertical_slice_vodka_lemon` 주문을 선택하며, 판정 레시피는 `vodka_lemon`입니다.
+### 시간 기반 손님 진행
 
-## 에피소드 제조 연동
+`BusinessShiftController`는 영업 시작 시 진행 조건을 통과한 일반 손님 풀을 고정하고, 주문 사이마다 쿨다운이 끝난 손님 중 하나를 가중치로 추첨합니다. 모든 유효 손님이 쿨다운 중이면 영업이 멈추지 않도록 쿨다운을 이번 추첨에만 무시하고 전체 유효 후보 중 하나를 같은 가중치 방식으로 선택합니다. 손님 수 제한은 없으며 제한시간 동안 주문이 계속 이어집니다. 필수 손님과 필수 인카운터는 `BusinessOrderFlowSettings.requiredActions`에서 일차·진행 조건과 `priority`를 지정합니다. 제한시간이 끝나면 일반 손님은 더 생성하지 않지만 진행 중인 주문과 남은 필수 액션은 모두 마친 뒤 정산합니다.
 
-- 에피소드 제조 노드는 영업과 같은 `BusinessOrderSessionController`를 호출합니다.
-- `craftingTicketKey`는 표시할 주문서를, `craftingRecipeId`는 `recipes.csv`에서 판정할 레시피를 선택합니다.
-- 에피소드 주문은 영업용 손님 주문 제시를 생략하고 결과를 `EpisodeRunner`에 반환합니다.
-- 술병 용량 변화는 공용 `GameProgress` 재고에 반영됩니다. 사용한 양은 유지되며, 주문 결과를 반영한 뒤 에피소드를 저장합니다.
-- 에피소드 주문은 영업 진행 위치나 날짜를 바꾸지 않고 영업용 돈·명성 보상도 지급하지 않습니다.
-- `Good`은 성공 분기, `Mid`와 `Bad`는 실패 분기로 돌아갑니다.
+영업 인카운터는 `EpisodeRunner`를 같은 `BusinessScene` 안에서 실행합니다. 시작 전에 주문 세션이 끝난 상태임을 보장하고, 완료 시 일반 `DayFlowController.OnEpisodeCompleted()` 경로를 타지 않고 남아 있는 영업시간으로 복귀합니다.
+
+에피소드 제조 노드에 직렬화된 `craftingRecipeId`가 있으면 `EpisodeCraftingBridge`가 일반 영업과 같은 실제 제조·판정 세션을 실행합니다. 실제 제조 중에는 기존 수동 `CraftingJudgeUI`를 숨기며, 레시피·제조 화면·잔 추적기 등 기술적인 초기화가 실패한 경우에만 같은 노드의 수동 판정으로 폴백합니다. `craftingRecipeId`가 없는 기존 제조 노드는 처음부터 수동 판정 경로를 유지합니다. 상세 Mid 분기가 없으면 기존 Bad 분기를 사용하며, 에피소드 제조는 판매 수익이나 손님 쿨다운에 포함되지 않습니다.
+
+## 에피소드 제조 노드 (현재: 수동 판정)
+
+- 에피소드 제조 노드는 `EpisodeRunner.HandleCraftingStart()`에서 처리되며, 기존 방식대로 `OrderTicketManager.Prepare(node.craftingTicketKey)` + `GameModeManager.RequestModeChange(GameMode.CraftingMode)`로 진입해 `CraftingJudgeUI`의 버튼 6개로 수동 판정합니다.
+- 영업과 같은 `BusinessOrderSessionController`(레시피 기반 자동 판정, `BusinessFlowBootstrap.StartEpisodeOrder()` 경유)로 연동해서 수동 판정을 대체하려던 시도가 있었으나(그래프 노드에 `craftingRecipeId` 컬럼과 `CraftingRecipeId` 필드 추가) 컴파일 문제로 되돌려졌습니다. 재통합 예정입니다.
+- 그 흔적으로 `StrangeCoin_0.asset`/`StrangeCoin_1.asset` 그래프에는 `CraftingRecipeId: vodka_lemon`/`whiskey_neat` 값이 여전히 남아 있고, `EpisodeCsvImporter.cs`도 CSV의 `craftingRecipeId` 컬럼을 계속 파싱합니다. 하지만 `EpisodeNode`/`EpisodeEventData` 클래스엔 이 필드가 없어서 지금은 그래프를 저장할 때마다 버려지는 고아 값입니다. 재통합 시 `EpisodeNode.craftingRecipeId` 필드부터 다시 추가해야 합니다.
 
 ## 영업 씬 손님 & 주문 (`Assets/Scripts/Conversation/Sell/`, `Assets/Scripts/OrderTicket/`)
 
@@ -41,8 +43,7 @@ CustomerVisitData
  ├── weight               (방문 추첨 가중치)
  ├── condition            (날짜·플래그·변수·완료 에피소드 조건)
  ├── maxDay
- ├── cooldownDays
- ├── allowDuplicateInDay
+ ├── cooldownSeconds       (주문 완료 뒤 재등장까지의 유효 영업시간, 기본 100초)
  └── orders[]             (주문 데이터, 가중치, 조건)
 
 CustomerOrderData
@@ -57,7 +58,7 @@ CustomerOrderData
 
 커플과 단체는 별도 유형으로 나누지 않습니다. `members`가 한 명이면 1인 방문, 두 명이면 커플이나 2인 방문, 세 명 이상이면 단체 방문으로 자연스럽게 표현됩니다. 런타임은 인원 유형이 아니라 구성원 목록만 처리합니다.
 
-같은 날짜와 진행 상태에서는 같은 방문·주문 목록이 생성됩니다. 방문을 마치면 마지막 방문 날짜와 누적 방문 횟수를 저장해 `cooldownDays` 동안 후보에서 제외합니다.
+일반 손님 풀의 진행 조건은 영업 시작 시 평가합니다. 주문이 끝나면 해당 방문에 `cooldownSeconds`를 적용하고, 쿨다운은 인카운터와 게임 일시정지 중에는 흐르지 않습니다. 주문 후보 조건과 필수 액션 조건은 주문 사이의 안전 구간에서 다시 평가하므로 인카운터가 설정한 플래그나 완료 에피소드로 같은 날 후속 필수 액션을 열 수 있습니다.
 
 ## 드래그-드롭 바텐딩 (`Assets/Scripts/DragandDrop/`)
 
