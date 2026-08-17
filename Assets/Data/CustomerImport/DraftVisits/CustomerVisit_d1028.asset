@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac17f86c00d94b55aa7b8895fa1d91f1, type: 3}
+  m_Name: CustomerVisit_d1028
+  m_EditorClassIdentifier: Assembly-CSharp::CustomerVisitData
+  sourceCustomerId: D1028
+  visitKey: d1028
+  customerAttributeKey: N8
+  speechStyleKey: N8
+  tags:
+  - customer_attribute:N8
+  members:
+  - characterKey: n8
+    slotIndex: -1
+    expressionKeyMid: mid
+    expressionKeyGood: good
+    expressionKeyBad: bad
+  weight: 1
+  condition:
+    minDay: 0
+    requiredFlags: []
+    blockedFlags: []
+    prerequisiteEpisodeIds: []
+    requiredVars: []
+    requiredCustomerAppearances: []
+  maxDay: 0
+  cooldownSeconds: 100
+  cooldownGroupKey: n8
+  plannedOrderNames:
+  - "\uBE14\uB799 \uCEE4\uD53C"
+  - "\uB808\uBAAC \uD53C\uC988"
+  - "\uD55C\uC5EC\uB984\uC758 \uC8FC\uC2A4"
+  orders:
+  - order: {fileID: 11400000, guid: c8187900a515d484da7d7bb549d86e12, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []

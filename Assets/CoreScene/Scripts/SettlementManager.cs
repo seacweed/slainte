@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Slainte.Business;
 using UnityEngine;
 
 // 정산 화면(셔터+모니터) 진행을 담당. GameManager.ChangeState(GameState.Settlement)에서 호출됨.
@@ -32,9 +33,12 @@ public class SettlementManager : MonoSingleton<SettlementManager>
             chapterName     = ResolveChapterName(gp.CurrentChapterId),
             day             = gp.CurrentDay,
             drinkSalesCount = gp.DayDrinkSalesCount,
+            drinkBaseRevenue = gp.DayDrinkBaseRevenue,
+            tipRevenue      = gp.DayDrinkTipRevenue,
             drinkRevenue    = gp.DayDrinkRevenue,
+            reputationDelta = gp.DayReputationDelta,
             totalIncome     = gp.DayTotalIncome,
-            drinkSales      = BuildDrinkSalesPlaceholder(gp)
+            drinkSales      = BuildDrinkSales(gp)
         };
 
         ApplyRecordedIncome(gp);
@@ -56,20 +60,59 @@ public class SettlementManager : MonoSingleton<SettlementManager>
         return income;
     }
 
-    // 영업 시스템이 아직 음료 종류별 판매를 기록하지 않아, 집계값을 한 줄짜리 placeholder로 노출.
-    // 종류별 데이터가 생기면 이 메서드만 교체하면 됨 (SettlementUI는 그대로 사용 가능).
-    private List<DrinkSaleEntry> BuildDrinkSalesPlaceholder(GameProgress gp)
+    private List<DrinkSaleEntry> BuildDrinkSales(GameProgress gp)
     {
         List<DrinkSaleEntry> entries = new();
-        if (gp.DayDrinkSalesCount > 0)
+        List<BusinessSaleRecord> records = gp.GetDayDrinkSales();
+        Dictionary<string, int> indexByDrink = new(System.StringComparer.OrdinalIgnoreCase);
+        for (int i = 0; i < records.Count; i++)
+        {
+            BusinessSaleRecord record = records[i];
+            if (record == null)
+                continue;
+
+            string drinkName = !string.IsNullOrWhiteSpace(record.requestedRecipeId)
+                ? record.requestedRecipeId
+                : !string.IsNullOrWhiteSpace(record.customerOrderKey)
+                    ? record.customerOrderKey
+                    : "음료 판매";
+
+            if (indexByDrink.TryGetValue(drinkName, out int entryIndex))
+            {
+                DrinkSaleEntry entry = entries[entryIndex];
+                entry.count += 1;
+                entry.baseRevenue += record.baseRevenue;
+                entry.tipAmount += record.tipAmount;
+                entry.revenue += record.totalRevenue;
+                entries[entryIndex] = entry;
+                continue;
+            }
+
+            indexByDrink.Add(drinkName, entries.Count);
+            entries.Add(new DrinkSaleEntry
+            {
+                drinkName = drinkName,
+                count = 1,
+                baseRevenue = record.baseRevenue,
+                tipAmount = record.tipAmount,
+                revenue = record.totalRevenue
+            });
+        }
+
+        if (entries.Count == 0 && gp.DayDrinkSalesCount > 0)
         {
             entries.Add(new DrinkSaleEntry
             {
                 drinkName = "음료 판매",
-                count     = gp.DayDrinkSalesCount,
-                revenue   = gp.DayDrinkRevenue
+                count = gp.DayDrinkSalesCount,
+                baseRevenue = gp.DayDrinkBaseRevenue != 0
+                    ? gp.DayDrinkBaseRevenue
+                    : gp.DayDrinkRevenue,
+                tipAmount = gp.DayDrinkTipRevenue,
+                revenue = gp.DayDrinkRevenue
             });
         }
+
         return entries;
     }
 

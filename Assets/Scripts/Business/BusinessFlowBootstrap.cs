@@ -1,5 +1,6 @@
 using System.Collections;
 using Slainte.Bartending;
+using Slainte.TV;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -19,6 +20,8 @@ namespace Slainte.Business
         private CraftingJudgeUI legacyCraftingJudge;
         private EpisodeRunner episodeRunner;
         private GameModeManager modeManager;
+        private LiquorShelfUI liquorShelf;
+        private TVBroadcastDatabase tvBroadcastDatabase;
         private bool runtimeInitialized;
         private bool businessStartRequested;
         private bool businessSequenceActive;
@@ -112,6 +115,8 @@ namespace Slainte.Business
             }
 
             modeManager = FindInScene<GameModeManager>(scene);
+            liquorShelf = FindInScene<LiquorShelfUI>(scene);
+            tvBroadcastDatabase = TVBroadcastDatabase.LoadDefault();
             CustomerSpawner customerSpawner = FindInScene<CustomerSpawner>(scene);
             DialogueController dialogue = FindInScene<DialogueController>(scene);
             OrderTicketManager ticketManager = FindInScene<OrderTicketManager>(scene);
@@ -192,6 +197,8 @@ namespace Slainte.Business
                 return;
             }
 
+            ActivateTVBroadcastForBusiness();
+
             bool started = shiftController.BeginShift();
             businessSequenceActive = started && shiftController.IsActive;
             if (!started)
@@ -207,6 +214,21 @@ namespace Slainte.Business
                 return;
 
             RefreshLegacyCraftingJudge();
+        }
+
+        private void ActivateTVBroadcastForBusiness()
+        {
+            GameProgress progress = GameProgress.Instance;
+            TVBroadcastEntry active = TVBroadcastRuntime.ActivateForecastForBusiness(
+                progress,
+                tvBroadcastDatabase);
+            bool deliveryDisabled = active != null
+                && active.effectType == TVBroadcastEffectType.DisableDelivery;
+            liquorShelf?.SetDeliveryAvailable(
+                !deliveryDisabled,
+                deliveryDisabled ? active.restrictionReason : string.Empty);
+            if (active != null)
+                DataManager.Instance?.Save();
         }
 
         public bool StartEpisodeOrder(

@@ -141,15 +141,27 @@ public class SettlementUI : MonoBehaviour
             foreach (DrinkSaleEntry entry in data.drinkSales)
             {
                 DrinkSaleEntry e = entry;
-                steps.Add(() => InstantiateLine($"{e.drinkName} x {e.count}", $"+{e.revenue:N0}"));
+                steps.Add(() => InstantiateLine(
+                    $"{e.drinkName} x {e.count}",
+                    FormatSigned(e.baseRevenue)));
             }
         }
+
+        if (data.tipRevenue != 0)
+            steps.Add(() => InstantiateLine("팁", FormatSigned(data.tipRevenue)));
+        if (data.reputationDelta != 0)
+            steps.Add(() => InstantiateLine("명성 변화", FormatSigned(data.reputationDelta)));
 
         steps.Add(() => SetLineView(totalIncomeLine, "총 소득", $"{data.totalIncome:N0}"));
         steps.Add(() => SetLine(dividerText, DividerLine));
         steps.Add(() => SetLineView(currentMoneyLine, "보유 자산", $"{data.currentMoney:N0}"));
 
         return steps;
+    }
+
+    private static string FormatSigned(int value)
+    {
+        return value > 0 ? $"+{value:N0}" : value.ToString("N0");
     }
 
     private IEnumerator RevealSteps(List<Action> steps)

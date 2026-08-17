@@ -62,8 +62,16 @@ public class DataManager : MonoSingleton<DataManager>
             CurrentData.currentMoney        = gp.CurrentMoney;
             CurrentData.reputation          = gp.Reputation;
             CurrentData.dayDrinkSalesCount  = gp.DayDrinkSalesCount;
+            CurrentData.dayDrinkBaseRevenue = gp.DayDrinkBaseRevenue;
+            CurrentData.dayDrinkTipRevenue  = gp.DayDrinkTipRevenue;
             CurrentData.dayDrinkRevenue     = gp.DayDrinkRevenue;
             CurrentData.dayTotalIncome      = gp.DayTotalIncome;
+            CurrentData.dayReputationDelta  = gp.DayReputationDelta;
+            CurrentData.dayDrinkSales       = gp.GetDayDrinkSales();
+            CurrentData.tvForecastBroadcastId = gp.TVForecastBroadcastId;
+            CurrentData.tvForecastRevealed = gp.TVForecastRevealed;
+            CurrentData.tvActiveBroadcastId = gp.TVActiveBroadcastId;
+            CurrentData.tvActiveBusinessDay = gp.TVActiveBusinessDay;
         }
 
         string json = JsonUtility.ToJson(CurrentData, true);

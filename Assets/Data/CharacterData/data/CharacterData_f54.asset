@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
   key: f54
   displayName: F54
+  englishName: F54
   nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
   defaultSprite: {fileID: 0}
   defaultOverlaySprite: {fileID: 0}

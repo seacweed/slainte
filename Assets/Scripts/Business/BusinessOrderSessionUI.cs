@@ -66,9 +66,17 @@ namespace Slainte.Business
             SetStatus(string.Empty);
         }
 
-        public void ShowFeedback(OrderEvaluationGrade grade, int moneyDelta, int reputationDelta)
+        public void ShowFeedback(BusinessOrderSessionResult result)
         {
-            SetStatus($"결과: {GetGradeLabel(grade)} | 돈 {FormatDelta(moneyDelta)} | 명성 {FormatDelta(reputationDelta)}");
+            if (result == null)
+            {
+                SetStatus(string.Empty);
+                return;
+            }
+
+            SetStatus(
+                $"{GetMoodLabel(result.customerMood)} | 판매금 {result.baseRevenue:N0}"
+                + $" | 팁 {FormatDelta(result.tipAmount)} | 명성 {FormatDelta(result.reputationDelta)}");
         }
 
         public void ShowSequenceProgress(int currentIndex, int totalCount)
@@ -104,16 +112,6 @@ namespace Slainte.Business
             return value > 0 ? "+" + value : value.ToString();
         }
 
-        private static string GetGradeLabel(OrderEvaluationGrade grade)
-        {
-            return grade switch
-            {
-                OrderEvaluationGrade.Good => "좋음",
-                OrderEvaluationGrade.Mid => "보통",
-                _ => "나쁨"
-            };
-        }
-
         private TMP_Text CreateStatusText(RectTransform parent)
         {
             statusPanel = CreateRect("BusinessStatus", parent);
@@ -140,6 +138,17 @@ namespace Slainte.Business
             text.color = new Color(1f, 0.9f, 0.72f, 1f);
             text.raycastTarget = false;
             return text;
+        }
+
+        private static string GetMoodLabel(CustomerMood mood)
+        {
+            return mood switch
+            {
+                CustomerMood.Satisfied => "만족",
+                CustomerMood.Neutral => "보통",
+                CustomerMood.Dissatisfied => "불만족",
+                _ => "결과 없음"
+            };
         }
 
         private TMP_Text CreateTimerText(RectTransform parent)

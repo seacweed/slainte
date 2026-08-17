@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a71cdafabaa4d9e44a88c2c34f0fa33d, type: 3}
+  m_Name: CharacterData_f49
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  key: f49
+  displayName: F49
+  englishName: F49
+  nameColor: {r: 1, g: 1, b: 1, a: 1}
+  defaultSprite: {fileID: 21300000, guid: b5a80b67aeb7c0a479e62d07909e123a, type: 3}
+  defaultOverlaySprite: {fileID: 0}
+  defaultBlinkSprite: {fileID: 0}
+  defaultBlinkOverlaySprite: {fileID: 0}
+  expressions:
+  - key: mid
+    sprite: {fileID: 21300000, guid: b5a80b67aeb7c0a479e62d07909e123a, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
+  - key: good
+    sprite: {fileID: 21300000, guid: 5091bbb22ad144e4eadb0733dcdce63d, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
+  - key: bad
+    sprite: {fileID: 21300000, guid: f06c3aec4d0a4ee44b5f31ec8902fd9e, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}

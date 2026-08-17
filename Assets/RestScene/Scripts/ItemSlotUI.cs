@@ -19,6 +19,13 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     private LiquorBottleDef _def;
     private RectTransform   _rectTransform;
+    private float           _priceMultiplier = 1f;
+    private Func<int, bool> _trySpendMoney;
+    private float           _defaultInventoryAmount;
+
+    public LiquorBottleDef Definition => _def;
+    public float PriceMultiplier => _priceMultiplier;
+    public int CurrentPrice => CalculatePrice(_def != null ? _def.price : 0, _priceMultiplier);
 
     void Awake()
     {
@@ -27,10 +34,25 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public void Setup(LiquorBottleDef def)
     {
-        _def = def;
+        Setup(def, 1f, null, 0f);
+    }
 
-        buyButton.onClick.RemoveAllListeners();
-        buyButton.onClick.AddListener(OnBuyClick);
+    public void Setup(
+        LiquorBottleDef def,
+        float priceMultiplier,
+        Func<int, bool> trySpendMoney = null,
+        float defaultInventoryAmount = 0f)
+    {
+        _def = def;
+        _priceMultiplier = Mathf.Max(0f, priceMultiplier);
+        _trySpendMoney = trySpendMoney;
+        _defaultInventoryAmount = Mathf.Max(0f, defaultInventoryAmount);
+
+        if (buyButton != null)
+        {
+            buyButton.onClick.RemoveAllListeners();
+            buyButton.onClick.AddListener(OnBuyClick);
+        }
 
         Refresh();
     }
@@ -57,9 +79,11 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (subCategoryText) subCategoryText.text = _def.subCategory;
         }
 
-        bool isFull = GameProgress.Instance.GetBottleAmount(_def.id, 0f) >= _def.MaxAmount;
+        GameProgress progress = GameProgress.Instance;
+        bool isFull = progress == null
+            || progress.GetBottleAmount(_def.id, _defaultInventoryAmount) >= _def.MaxAmount;
 
-        if (priceText) priceText.text = unlocked ? $"{_def.price:N0} G" : "";
+        if (priceText) priceText.text = unlocked ? $"{CurrentPrice:N0} G" : "";
         if (buyButton) buyButton.interactable = unlocked && !isFull;
     }
 
@@ -72,12 +96,29 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     private void OnBuyClick()
     {
-        if (!IsUnlocked()) return;
-        if (!GameProgress.Instance.TrySpendMoney(_def.price)) return;
+        TryPurchase();
+    }
 
-        GameProgress.Instance.AddBottleAmount(_def.id, _def.unitVolume, _def.MaxAmount);
+    public bool TryPurchase()
+    {
+        GameProgress progress = GameProgress.Instance;
+        if (!IsUnlocked() || progress == null) return false;
+        if (progress.GetBottleAmount(_def.id, _defaultInventoryAmount) >= _def.MaxAmount) return false;
+
+        Func<int, bool> spend = _trySpendMoney ?? progress.TrySpendMoney;
+        if (!spend(CurrentPrice)) return false;
+
+        progress.AddBottleAmount(_def.id, _def.unitVolume, _def.MaxAmount);
         Refresh();
         OnPurchased?.Invoke();
+        return true;
+    }
+
+    public static int CalculatePrice(int basePrice, float multiplier)
+    {
+        return Mathf.Max(
+            0,
+            Mathf.CeilToInt(Mathf.Max(0, basePrice) * Mathf.Max(0f, multiplier)));
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -85,7 +126,10 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         if (_def == null) return;
 
         if (IsUnlocked())
-            LiquorBottleInfoCard.Instance?.Show(_def, GameProgress.Instance.GetBottleAmount(_def.id, 0f), _rectTransform);
+            LiquorBottleInfoCard.Instance?.Show(
+                _def,
+                GameProgress.Instance.GetBottleAmount(_def.id, _defaultInventoryAmount),
+                _rectTransform);
         else
             IngredientUnlockTooltip.Instance?.Show(_def, _rectTransform);
     }

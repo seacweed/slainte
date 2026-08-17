@@ -518,6 +518,8 @@ namespace Slainte.Business
                 .Append(" (start ").Append(startReputation).Append(")")
                 .AppendLine();
             panel.Append("Recorded sales: ").Append(progress?.DayDrinkSalesCount ?? 0)
+                .Append(" | Base: ").Append(progress?.DayDrinkBaseRevenue ?? 0)
+                .Append(" | Tip: ").Append(progress?.DayDrinkTipRevenue ?? 0)
                 .Append(" | Revenue pending settlement: ")
                 .Append(progress?.DayDrinkRevenue ?? 0)
                 .Append(" | Total pending: ").Append(progress?.DayTotalIncome ?? 0)

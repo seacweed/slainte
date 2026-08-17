@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a71cdafabaa4d9e44a88c2c34f0fa33d, type: 3}
+  m_Name: CharacterData_vygor
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  key: vygor
+  displayName: "\uBC14\uC774\uAC70"
+  englishName: Vygor
+  nameColor: {r: 1, g: 1, b: 1, a: 1}
+  defaultSprite: {fileID: 21300000, guid: bd68c9ccfdca2c646877c2be07e0ad2e, type: 3}
+  defaultOverlaySprite: {fileID: 0}
+  defaultBlinkSprite: {fileID: 0}
+  defaultBlinkOverlaySprite: {fileID: 0}
+  expressions:
+  - key: mid
+    sprite: {fileID: 21300000, guid: bd68c9ccfdca2c646877c2be07e0ad2e, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 31d5d4ef5626b6f42a4d8c37a2970e04, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: good
+    sprite: {fileID: 21300000, guid: 2bef4a774c012324d8b0e82417425cd6, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
+  - key: bad
+    sprite: {fileID: 21300000, guid: 19189ccba40508a4d8d0ded93b97fa9a, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}

@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac17f86c00d94b55aa7b8895fa1d91f1, type: 3}
+  m_Name: CustomerVisit_d1014
+  m_EditorClassIdentifier: Assembly-CSharp::CustomerVisitData
+  sourceCustomerId: D1014
+  visitKey: d1014
+  customerAttributeKey: "\uADFC\uB85C\uC790\uB4E4"
+  speechStyleKey: "\uADFC\uB85C\uC790\uB4E4_\uACFC\uBB35\uD55C\uB0A8\uC131"
+  tags:
+  - "customer_attribute:\uADFC\uB85C\uC790\uB4E4"
+  members:
+  - characterKey: batoo
+    slotIndex: -1
+    expressionKeyMid: mid
+    expressionKeyGood: good
+    expressionKeyBad: bad
+  weight: 1
+  condition:
+    minDay: 0
+    requiredFlags: []
+    blockedFlags: []
+    prerequisiteEpisodeIds: []
+    requiredVars: []
+    requiredCustomerAppearances: []
+  maxDay: 0
+  cooldownSeconds: 100
+  cooldownGroupKey: batoo
+  plannedOrderNames:
+  - "\uBC88\uD584 \uBC84\uBC88 \uB2C8\uD2B8"
+  - "\uAC13\uB85C\uB4DC"
+  - "\uBC88\uD584 \uC0AC\uC6CC"
+  - "\uBE14\uB799 \uCEE4\uD53C"
+  - "\uC544\uC774\uB9AC\uC2DC \uCEE4\uD53C"
+  orders:
+  - order: {fileID: 11400000, guid: 5fea1bc210f74994c8329a58dc352de7, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: 608c7a84e91420c4295a1ca84c8d0f71, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: cc58022a279c3044eb76e78abee83454, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []

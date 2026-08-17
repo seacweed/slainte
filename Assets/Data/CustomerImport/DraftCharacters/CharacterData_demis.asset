@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a71cdafabaa4d9e44a88c2c34f0fa33d, type: 3}
+  m_Name: CharacterData_demis
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  key: demis
+  displayName: "\uB370\uBBF8\uC2A4"
+  englishName: Demis
+  nameColor: {r: 1, g: 1, b: 1, a: 1}
+  defaultSprite: {fileID: 21300000, guid: 5cb055c8c0e199447aec4610c66909e1, type: 3}
+  defaultOverlaySprite: {fileID: 0}
+  defaultBlinkSprite: {fileID: 0}
+  defaultBlinkOverlaySprite: {fileID: 0}
+  expressions:
+  - key: mid
+    sprite: {fileID: 21300000, guid: 5cb055c8c0e199447aec4610c66909e1, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: e6953dc87824e4f479d9643d56118e2d, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: good
+    sprite: {fileID: 21300000, guid: 9ecb1a6eb52acfe49a4e1a354ea4126f, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
+  - key: bad
+    sprite: {fileID: 21300000, guid: d107f44bce0a9544aaff5a26f1af5359, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}

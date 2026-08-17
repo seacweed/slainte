@@ -12,7 +12,7 @@ namespace Slainte.Business
             if (result == null || progress == null)
                 return;
 
-            progress.RecordDrinkSale(result.moneyDelta);
+            progress.RecordDrinkSale(result.ToSaleRecord());
             progress.AddReputation(result.reputationDelta);
         }
     }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Slainte.TV;
 using UnityEngine;
 
 namespace Slainte.Business
@@ -134,6 +135,16 @@ namespace Slainte.Business
 
             frozenCustomerPool.AddRange(
                 BusinessSequencePlanner.BuildEligibleVisitPool(database, progress));
+            if (!BusinessSequencePlanner.HasEligibleTargetForActiveTVEffect(
+                    frozenCustomerPool,
+                    progress))
+            {
+                TVBroadcastEntry active = TVBroadcastRuntime.GetActiveBroadcast(
+                    progress,
+                    TVBroadcastDatabase.LoadDefault());
+                Debug.LogWarning(
+                    $"[TV] 오늘 조건을 만족하는 방송 대상이 없어 효과만 생략합니다: {active?.id}");
+            }
             frozenEncounterPool.AddRange(
                 BusinessSequencePlanner.BuildEligibleRandomEncounterPool(
                     settings.randomEncounters,
@@ -401,7 +412,7 @@ namespace Slainte.Business
             }
             else if (visit != null && !string.IsNullOrWhiteSpace(visit.visitKey))
             {
-                cooldownUntilByVisit[visit.visitKey] =
+                cooldownUntilByVisit[visit.GetCooldownKey()] =
                     activeBusinessSeconds + Mathf.Max(0f, visit.cooldownSeconds);
             }
 

@@ -13,6 +13,8 @@ public class CustomerOrderData : ScriptableObject
     public string requestedRecipeId;
     [InspectorName("주문 유형")]
     public CocktailOrderType orderType = CocktailOrderType.RecipeOrder;
+    [InspectorName("주문 태그")]
+    public List<string> tags = new();
 
     [Header("캐릭터 (이전 데이터 호환용)")]
     public string characterKey;

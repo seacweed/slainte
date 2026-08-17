@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a71cdafabaa4d9e44a88c2c34f0fa33d, type: 3}
+  m_Name: CharacterData_rusta
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  key: rusta
+  displayName: "\uB8E8\uC2A4\uD0C0"
+  englishName: Rusta
+  nameColor: {r: 1, g: 1, b: 1, a: 1}
+  defaultSprite: {fileID: 21300000, guid: d06c0b773e92a464e8467ac28601a798, type: 3}
+  defaultOverlaySprite: {fileID: 0}
+  defaultBlinkSprite: {fileID: 0}
+  defaultBlinkOverlaySprite: {fileID: 0}
+  expressions:
+  - key: mid
+    sprite: {fileID: 21300000, guid: d06c0b773e92a464e8467ac28601a798, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: d586917674e4c0b4f934a397bb68ddc6, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: good
+    sprite: {fileID: 21300000, guid: 397b77a43ff92c548a8788cd62df21c5, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
+  - key: bad
+    sprite: {fileID: 21300000, guid: 9ea1391232a0c08498c6edc4ae078fbb, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}

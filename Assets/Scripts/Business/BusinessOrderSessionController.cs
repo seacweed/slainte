@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Slainte.Bartending;
+using Slainte.TV;
 using UnityEngine;
 
 namespace Slainte.Business
@@ -16,6 +17,7 @@ namespace Slainte.Business
         private BusinessOrderFlowSettings settings;
         private CocktailOrderGenerator orderGenerator;
         private CocktailOrderEvaluator orderEvaluator;
+        private TVBroadcastDatabase tvBroadcastDatabase;
         private GeneratedCocktailOrder currentOrder;
         private OrderSessionRequest currentRequest;
         private VesselLiquidTracker servingTarget;
@@ -53,6 +55,7 @@ namespace Slainte.Business
             bartending = bartendingBootstrap;
             ui = sessionUi;
             settings = flowSettings;
+            tvBroadcastDatabase = TVBroadcastDatabase.LoadDefault();
             BuildEvaluationServices();
 
             if (dialogue != null)
@@ -159,13 +162,25 @@ namespace Slainte.Business
 
             dialogue?.HideImmediate();
             modeManager?.RequestModeChange(GameMode.OrderMode);
+            BusinessOrderReward reward = BusinessOrderRewardCalculator.Calculate(
+                OrderEvaluationGrade.Good,
+                settings,
+                TVBroadcastRuntime.GetTipMultiplier(
+                    GameProgress.Instance,
+                    tvBroadcastDatabase));
             CompleteCurrentOrder(new BusinessOrderSessionResult
             {
                 outcome = OrderSessionOutcome.Served,
                 customerOrderKey = currentRequest.customerOrderKey,
+                customerVisitKey = currentRequest.customerVisitKey,
                 requestedRecipeId = currentRequest.requestedRecipeId,
                 accepted = true,
-                grade = OrderEvaluationGrade.Good
+                grade = OrderEvaluationGrade.Good,
+                customerMood = reward.Mood,
+                baseRevenue = reward.BaseRevenue,
+                tipAmount = reward.TipAmount,
+                moneyDelta = reward.TotalRevenue,
+                reputationDelta = reward.ReputationDelta
             });
             return true;
         }
@@ -221,15 +236,25 @@ namespace Slainte.Business
             }
 
             OrderEvaluationGrade grade = OrderEvaluationGrader.Resolve(evaluation, settings);
+            BusinessOrderReward reward = BusinessOrderRewardCalculator.Calculate(
+                grade,
+                settings,
+                TVBroadcastRuntime.GetTipMultiplier(
+                    GameProgress.Instance,
+                    tvBroadcastDatabase));
             pendingResult = new BusinessOrderSessionResult
             {
                 outcome = OrderSessionOutcome.Served,
                 customerOrderKey = currentRequest.customerOrderKey,
+                customerVisitKey = currentRequest.customerVisitKey,
                 requestedRecipeId = currentRequest.requestedRecipeId,
                 accepted = true,
                 grade = grade,
-                moneyDelta = settings != null ? settings.GetMoneyReward(grade) : 0,
-                reputationDelta = settings != null ? settings.GetReputationReward(grade) : 0,
+                customerMood = reward.Mood,
+                baseRevenue = reward.BaseRevenue,
+                tipAmount = reward.TipAmount,
+                moneyDelta = reward.TotalRevenue,
+                reputationDelta = reward.ReputationDelta,
                 evaluation = evaluation
             };
 
@@ -247,7 +272,7 @@ namespace Slainte.Business
             }
 
             SetState(BusinessOrderSessionState.PresentingFeedback);
-            ui?.ShowFeedback(grade, pendingResult.moneyDelta, pendingResult.reputationDelta);
+            ui?.ShowFeedback(pendingResult);
 
             bool feedbackStarted = customerSpawner != null && customerSpawner.ShowFeedback(grade);
             if (!feedbackStarted && dialogue != null && settings != null)
@@ -339,6 +364,7 @@ namespace Slainte.Business
             OrderSessionRequest completedRequest = currentRequest;
             result.sessionId = completedRequest?.sessionId ?? result.sessionId;
             result.owner = completedRequest?.owner ?? result.owner;
+            result.customerVisitKey = completedRequest?.customerVisitKey ?? result.customerVisitKey;
 
             GameProgress progress = GameProgress.Instance;
             if (progress != null && completedRequest != null && completedRequest.applyProgressRewards)

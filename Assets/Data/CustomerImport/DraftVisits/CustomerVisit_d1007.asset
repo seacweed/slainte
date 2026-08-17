@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac17f86c00d94b55aa7b8895fa1d91f1, type: 3}
+  m_Name: CustomerVisit_d1007
+  m_EditorClassIdentifier: Assembly-CSharp::CustomerVisitData
+  sourceCustomerId: D1007
+  visitKey: d1007
+  customerAttributeKey: "\uADFC\uB85C\uC790\uB4E4"
+  speechStyleKey: "\uADFC\uB85C\uC790\uB4E4_\uC0AC\uBC14\uC628"
+  tags:
+  - "customer_attribute:\uADFC\uB85C\uC790\uB4E4"
+  members:
+  - characterKey: saba_on
+    slotIndex: -1
+    expressionKeyMid: mid
+    expressionKeyGood: good
+    expressionKeyBad: bad
+  weight: 1
+  condition:
+    minDay: 0
+    requiredFlags: []
+    blockedFlags: []
+    prerequisiteEpisodeIds: []
+    requiredVars: []
+    requiredCustomerAppearances: []
+  maxDay: 0
+  cooldownSeconds: 100
+  cooldownGroupKey: saba_on
+  plannedOrderNames:
+  - "\uBC14\uD558 \uB2C8\uD2B8"
+  - "\uC170\uC774\uB514"
+  - "\uD56B \uD14C\uB514"
+  orders:
+  - order: {fileID: 11400000, guid: 9841f1ee7b561374b8f268c86146e945, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: b3e140a9583b5b34ead1da4f6ea9d6a0, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Slainte.TV;
 using UnityEngine;
 
 namespace Slainte.Business
@@ -114,14 +115,15 @@ namespace Slainte.Business
                 if (orders.Count == 0)
                     continue;
 
-                VisitCandidate candidate = new(visit, orders);
+                float visitWeight = GetVisitWeight(visit, orders, progress);
+                VisitCandidate candidate = new(visit, orders, visitWeight);
                 cooldownFallbackCandidates.Add(candidate);
-                cooldownFallbackTotalWeight += visit.weight;
+                cooldownFallbackTotalWeight += visitWeight;
 
-                if (!IsCoolingDown(visit.visitKey, cooldownUntilByVisit, activeBusinessSeconds))
+                if (!IsCoolingDown(visit.GetCooldownKey(), cooldownUntilByVisit, activeBusinessSeconds))
                 {
                     readyCandidates.Add(candidate);
-                    readyTotalWeight += visit.weight;
+                    readyTotalWeight += visitWeight;
                 }
             }
 
@@ -141,7 +143,7 @@ namespace Slainte.Business
             VisitCandidate selected = candidates[candidates.Count - 1];
             for (int i = 0; i < candidates.Count; i++)
             {
-                cursor += candidates[i].Visit.weight;
+                cursor += candidates[i].Weight;
                 if (roll <= cursor)
                 {
                     selected = candidates[i];
@@ -149,7 +151,11 @@ namespace Slainte.Business
                 }
             }
 
-            CustomerVisitOrderOption order = PickWeightedOrder(selected.Orders, random);
+            CustomerVisitOrderOption order = PickWeightedOrder(
+                selected.Orders,
+                random,
+                progress,
+                applyTVModifiers: true);
             return order != null
                 ? new BusinessVisitSelection(selected.Visit, order, usedCooldownFallback)
                 : null;
@@ -217,13 +223,14 @@ namespace Slainte.Business
                     if (orders.Count == 0)
                         continue;
 
-                    SequenceCandidate candidate = new(visit, orders);
+                    float visitWeight = GetVisitWeight(visit, orders, progress);
+                    SequenceCandidate candidate = new(visit, orders, visitWeight);
                     cooldownFallbackCandidates.Add(candidate);
-                    cooldownFallbackTotalWeight += visit.weight;
-                    if (!IsCoolingDown(visit.visitKey, cooldownUntilByVisit, activeBusinessSeconds))
+                    cooldownFallbackTotalWeight += visitWeight;
+                    if (!IsCoolingDown(visit.GetCooldownKey(), cooldownUntilByVisit, activeBusinessSeconds))
                     {
                         readyCandidates.Add(candidate);
-                        readyTotalWeight += visit.weight;
+                        readyTotalWeight += visitWeight;
                     }
                 }
             }
@@ -278,7 +285,11 @@ namespace Slainte.Business
             if (selected.Encounter != null)
                 return BusinessSequenceSelection.ForEncounter(selected.Encounter);
 
-            CustomerVisitOrderOption order = PickWeightedOrder(selected.Orders, random);
+            CustomerVisitOrderOption order = PickWeightedOrder(
+                selected.Orders,
+                random,
+                progress,
+                applyTVModifiers: true);
             return order != null
                 ? BusinessSequenceSelection.ForVisit(
                     selected.Visit,
@@ -295,7 +306,11 @@ namespace Slainte.Business
             if (!IsStructurallyValidVisit(visit) || progress == null)
                 return null;
 
-            return PickWeightedOrder(BuildEligibleOrders(visit, progress), random ?? new System.Random());
+            return PickWeightedOrder(
+                BuildEligibleOrders(visit, progress),
+                random ?? new System.Random(),
+                progress,
+                applyTVModifiers: false);
         }
 
         public static BusinessRequiredActionRule PickNextRequiredAction(
@@ -405,14 +420,16 @@ namespace Slainte.Business
 
         private static CustomerVisitOrderOption PickWeightedOrder(
             IReadOnlyList<CustomerVisitOrderOption> orders,
-            System.Random random)
+            System.Random random,
+            GameProgress progress,
+            bool applyTVModifiers)
         {
             if (orders == null || orders.Count == 0)
                 return null;
 
             float totalWeight = 0f;
             for (int i = 0; i < orders.Count; i++)
-                totalWeight += Mathf.Max(0f, orders[i].weight);
+                totalWeight += GetOrderWeight(orders[i], progress, applyTVModifiers);
 
             if (totalWeight <= 0f)
                 return null;
@@ -421,12 +438,105 @@ namespace Slainte.Business
             float cursor = 0f;
             for (int i = 0; i < orders.Count; i++)
             {
-                cursor += Mathf.Max(0f, orders[i].weight);
+                cursor += GetOrderWeight(orders[i], progress, applyTVModifiers);
                 if (roll <= cursor)
                     return orders[i];
             }
 
             return orders[orders.Count - 1];
+        }
+
+        public static bool HasEligibleTargetForActiveTVEffect(
+            IReadOnlyList<CustomerVisitData> visits,
+            GameProgress progress)
+        {
+            TVBroadcastDatabase database = TVBroadcastDatabase.LoadDefault();
+            TVBroadcastEntry active = TVBroadcastRuntime.GetActiveBroadcast(progress, database);
+            if (active == null
+                || (active.effectType != TVBroadcastEffectType.BoostCustomerTagWeight
+                    && active.effectType != TVBroadcastEffectType.BoostOrderTagWeight))
+            {
+                return true;
+            }
+
+            if (visits == null)
+                return false;
+
+            for (int i = 0; i < visits.Count; i++)
+            {
+                CustomerVisitData visit = visits[i];
+                if (active.effectType == TVBroadcastEffectType.BoostCustomerTagWeight)
+                {
+                    if (TVBroadcastRuntime.CustomerMatchesActiveBoost(
+                            progress,
+                            database,
+                            visit?.tags))
+                    {
+                        return true;
+                    }
+
+                    continue;
+                }
+
+                List<CustomerVisitOrderOption> orders = BuildEligibleOrders(visit, progress);
+                for (int orderIndex = 0; orderIndex < orders.Count; orderIndex++)
+                {
+                    if (TVBroadcastRuntime.OrderMatchesActiveBoost(
+                            progress,
+                            database,
+                            orders[orderIndex]?.order))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static float GetVisitWeight(
+            CustomerVisitData visit,
+            IReadOnlyList<CustomerVisitOrderOption> eligibleOrders,
+            GameProgress progress)
+        {
+            float multiplier = TVBroadcastRuntime.GetTaggedWeightMultiplier(
+                progress,
+                TVBroadcastDatabase.LoadDefault(),
+                TVBroadcastEffectType.BoostCustomerTagWeight,
+                visit?.tags);
+            float baseOrderWeight = 0f;
+            float boostedOrderWeight = 0f;
+            if (eligibleOrders != null)
+            {
+                for (int i = 0; i < eligibleOrders.Count; i++)
+                {
+                    CustomerVisitOrderOption option = eligibleOrders[i];
+                    baseOrderWeight += Mathf.Max(0f, option?.weight ?? 0f);
+                    boostedOrderWeight += GetOrderWeight(
+                        option,
+                        progress,
+                        applyTVModifiers: true);
+                }
+            }
+
+            if (baseOrderWeight > 0f)
+                multiplier *= boostedOrderWeight / baseOrderWeight;
+
+            return Mathf.Max(0f, visit != null ? visit.weight * multiplier : 0f);
+        }
+
+        private static float GetOrderWeight(
+            CustomerVisitOrderOption option,
+            GameProgress progress,
+            bool applyTVModifiers)
+        {
+            float multiplier = applyTVModifiers
+                ? TVBroadcastRuntime.GetOrderWeightMultiplier(
+                    progress,
+                    TVBroadcastDatabase.LoadDefault(),
+                    option?.order)
+                : 1f;
+            return Mathf.Max(0f, option != null ? option.weight * multiplier : 0f);
         }
 
         private static bool IsCoolingDown(
@@ -458,37 +568,41 @@ namespace Slainte.Business
         {
             public VisitCandidate(
                 CustomerVisitData visit,
-                List<CustomerVisitOrderOption> orders)
+                List<CustomerVisitOrderOption> orders,
+                float weight)
             {
                 Visit = visit;
                 Orders = orders;
+                Weight = weight;
             }
 
             public CustomerVisitData Visit { get; }
             public List<CustomerVisitOrderOption> Orders { get; }
+            public float Weight { get; }
         }
 
         private sealed class SequenceCandidate
         {
             public SequenceCandidate(
                 CustomerVisitData visit,
-                List<CustomerVisitOrderOption> orders)
+                List<CustomerVisitOrderOption> orders,
+                float weight)
             {
                 Visit = visit;
                 Orders = orders;
+                Weight = weight;
             }
 
             public SequenceCandidate(BusinessRandomEncounterEntry encounter)
             {
                 Encounter = encounter;
+                Weight = encounter != null ? encounter.weight : 0f;
             }
 
             public CustomerVisitData Visit { get; }
             public List<CustomerVisitOrderOption> Orders { get; }
             public BusinessRandomEncounterEntry Encounter { get; }
-            public float Weight => Encounter != null
-                ? Encounter.weight
-                : Visit != null ? Visit.weight : 0f;
+            public float Weight { get; }
         }
     }
 }

@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac17f86c00d94b55aa7b8895fa1d91f1, type: 3}
+  m_Name: CustomerVisit_d1037
+  m_EditorClassIdentifier: Assembly-CSharp::CustomerVisitData
+  sourceCustomerId: D1037
+  visitKey: d1037
+  customerAttributeKey: "\uC57C\uAC04\uC21C\uCC30"
+  speechStyleKey: "\uC57C\uAC04\uC21C\uCC30_F54"
+  tags:
+  - "customer_attribute:\uC57C\uAC04\uC21C\uCC30"
+  members:
+  - characterKey: f54
+    slotIndex: -1
+    expressionKeyMid: mid
+    expressionKeyGood: good
+    expressionKeyBad: bad
+  weight: 1
+  condition:
+    minDay: 0
+    requiredFlags: []
+    blockedFlags: []
+    prerequisiteEpisodeIds: []
+    requiredVars: []
+    requiredCustomerAppearances: []
+  maxDay: 0
+  cooldownSeconds: 100
+  cooldownGroupKey: f54
+  plannedOrderNames:
+  - "\uBC14\uD558 \uC628\uB354\uB77D"
+  - "\uBC14\uD558 \uB2C8\uD2B8"
+  - "\uAC13 \uB808\uC774\uB514"
+  - "\uBE14\uB799 \uCEE4\uD53C"
+  orders:
+  - order: {fileID: 11400000, guid: bbf2abc0981a82c4eb7625c8f72c3ffe, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: 5440de245a3348744adcccae6a5968c9, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: d78ca7d7f4801294ebc1f745660f62f7, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []

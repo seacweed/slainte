@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a71cdafabaa4d9e44a88c2c34f0fa33d, type: 3}
+  m_Name: CharacterData_varis
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterData
+  key: varis
+  displayName: "\uBC14\uB9AC\uC2A4"
+  englishName: Varis
+  nameColor: {r: 1, g: 1, b: 1, a: 1}
+  defaultSprite: {fileID: 21300000, guid: a8b74685a5f10364a87d8ab3198193ca, type: 3}
+  defaultOverlaySprite: {fileID: 0}
+  defaultBlinkSprite: {fileID: 0}
+  defaultBlinkOverlaySprite: {fileID: 0}
+  expressions:
+  - key: mid
+    sprite: {fileID: 21300000, guid: a8b74685a5f10364a87d8ab3198193ca, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
+  - key: good
+    sprite: {fileID: 21300000, guid: 560360764801e214893921dd8248cbc3, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
+  - key: bad
+    sprite: {fileID: 21300000, guid: 99cd59190827ab84d99870886bb7429d, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}

@@ -17,6 +17,7 @@ public class CharacterData : ScriptableObject
 
     public string key;
     public string displayName;
+    public string englishName;
     public Color nameColor = Color.white;
     public Sprite defaultSprite;
     public Sprite defaultOverlaySprite;

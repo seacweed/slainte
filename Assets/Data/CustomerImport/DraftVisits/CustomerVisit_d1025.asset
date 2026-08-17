@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac17f86c00d94b55aa7b8895fa1d91f1, type: 3}
+  m_Name: CustomerVisit_d1025
+  m_EditorClassIdentifier: Assembly-CSharp::CustomerVisitData
+  sourceCustomerId: D1025
+  visitKey: d1025
+  customerAttributeKey: "\uC57C\uAC04\uC21C\uCC30"
+  speechStyleKey: "\uC57C\uAC04\uC21C\uCC30_\uB0B4\uD5A5\uC801"
+  tags:
+  - "customer_attribute:\uC57C\uAC04\uC21C\uCC30"
+  members:
+  - characterKey: f03
+    slotIndex: -1
+    expressionKeyMid: mid
+    expressionKeyGood: good
+    expressionKeyBad: bad
+  weight: 1
+  condition:
+    minDay: 0
+    requiredFlags: []
+    blockedFlags: []
+    prerequisiteEpisodeIds: []
+    requiredVars: []
+    requiredCustomerAppearances: []
+  maxDay: 0
+  cooldownSeconds: 100
+  cooldownGroupKey: f03
+  plannedOrderNames:
+  - "\uC870\uB2C8 \uB3C5\uC2A4 \uB2C8\uD2B8"
+  - "\uC870\uB2C8 \uB3C5\uC2A4 \uC628\uB354\uB77D"
+  - "\uAC13\uB85C\uB4DC"
+  - "\uBE14\uB799 \uCEE4\uD53C"
+  orders:
+  - order: {fileID: 11400000, guid: c87460ff7d84ecd4aac8480585553611, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: 0188a182c5c37774e98ce5969ea1d334, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: 0313131e300f9424b9b318682b6b90f8, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []

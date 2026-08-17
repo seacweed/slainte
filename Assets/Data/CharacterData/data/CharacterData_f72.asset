@@ -14,25 +14,40 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
   key: f72
   displayName: F72
+  englishName: F72
   nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
   defaultSprite: {fileID: 0}
   defaultOverlaySprite: {fileID: 0}
+  defaultBlinkSprite: {fileID: 0}
+  defaultBlinkOverlaySprite: {fileID: 0}
   expressions:
   - key: mid
     sprite: {fileID: -7963430592884048618, guid: 1f3256da7257a764497a343154377fde, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
   - key: annoy
     sprite: {fileID: -8467697942248868568, guid: 5bc86edc36b05624db0ccfeff561f4ef, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
   - key: devas
     sprite: {fileID: 8241148920889052328, guid: cf20f5940e18fb741a3ffb81e54b726f, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
   - key: frust
     sprite: {fileID: -9110267390277040692, guid: 7a915b476fd5726439f6a620c2717738, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
   - key: laugh
     sprite: {fileID: 3329039666740383113, guid: eaded416ad282084384d76f8637cd5ee, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
   - key: smile
     sprite: {fileID: 8580352971482666360, guid: a7daee908fc43d74382b2909f5552ba7, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
