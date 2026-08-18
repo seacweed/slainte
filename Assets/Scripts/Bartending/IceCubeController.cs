@@ -117,6 +117,23 @@ namespace Slainte.Bartending
             VesselLiquidTracker.RefreshIceIsolation(this);
         }
 
+        internal void Translate(Vector2 delta)
+        {
+            if (isDragging || delta.sqrMagnitude <= 0.000001f)
+                return;
+
+            EnsureComponents();
+            if (body != null)
+            {
+                body.position += delta;
+                body.WakeUp();
+            }
+            else
+            {
+                transform.position += (Vector3)delta;
+            }
+        }
+
         private void Initialize(float gravityScale, float destroyBelowY, bool previewOnly)
         {
             configuredGravityScale = Mathf.Max(0f, gravityScale);

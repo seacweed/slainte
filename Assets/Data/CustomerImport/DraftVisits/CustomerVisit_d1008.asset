@@ -16,6 +16,8 @@ MonoBehaviour:
   visitKey: d1008
   customerAttributeKey: "\uADFC\uB85C\uC790\uB4E4"
   speechStyleKey: "\uADFC\uB85C\uC790\uB4E4_\uC694\uB9AD"
+  preferredTasteKey: "\uB2EC\uCF64\uD568_Sweetness"
+  preferredAtmosphereKey: "\uCCAD\uB7C9\uD55C"
   tags:
   - "customer_attribute:\uADFC\uB85C\uC790\uB4E4"
   members:
@@ -24,7 +26,7 @@ MonoBehaviour:
     expressionKeyMid: mid
     expressionKeyGood: good
     expressionKeyBad: bad
-  weight: 1
+  weight: 5
   condition:
     minDay: 0
     requiredFlags: []
@@ -32,13 +34,15 @@ MonoBehaviour:
     prerequisiteEpisodeIds: []
     requiredVars: []
     requiredCustomerAppearances: []
+  initiallyAvailable: 1
+  availabilityTransitions: []
   maxDay: 0
-  cooldownSeconds: 100
-  cooldownGroupKey: jorik
+  reappearanceGroupKey: jorik
   plannedOrderNames:
   - "\uAC13\uB85C\uB4DC"
   - "\uBC88\uD584 \uC0AC\uC6CC"
   - "\uBC88\uD584 \uBC84\uBC88 \uC628\uB354\uB77D"
+  - "\uC870\uB2C8 \uB3C5\uC2A4 \uC628\uB354\uB77D"
   orders:
   - order: {fileID: 11400000, guid: 5917ac2b2a897bb419e9a4d5c74d4aac, type: 2}
     weight: 1
@@ -59,6 +63,15 @@ MonoBehaviour:
       requiredVars: []
       requiredCustomerAppearances: []
   - order: {fileID: 11400000, guid: 41da6b5768f90b54a954a0035a4e2de3, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: bc907980887a0a5419948954ad679fd4, type: 2}
     weight: 1
     condition:
       minDay: 0

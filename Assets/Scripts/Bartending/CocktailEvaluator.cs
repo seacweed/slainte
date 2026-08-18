@@ -25,6 +25,7 @@ namespace Slainte.Bartending
         public bool isSuccess;
         public float score;
         public float actualTotalMl;
+        public Color finalColor = Color.clear;
         public string failureReason;
         public bool glassValid = true;
         public bool iceValid = true;
@@ -43,6 +44,17 @@ namespace Slainte.Bartending
             builder.Append("% | 총량 ");
             builder.Append(actualTotalMl.ToString("0.##"));
             builder.AppendLine(" ml");
+            builder.Append("최종 색상: #");
+            builder.Append(ColorUtility.ToHtmlStringRGBA(finalColor));
+            builder.Append(" | RGBA(");
+            builder.Append(finalColor.r.ToString("0.###"));
+            builder.Append(", ");
+            builder.Append(finalColor.g.ToString("0.###"));
+            builder.Append(", ");
+            builder.Append(finalColor.b.ToString("0.###"));
+            builder.Append(", ");
+            builder.Append(finalColor.a.ToString("0.###"));
+            builder.AppendLine(")");
 
             if (!string.IsNullOrWhiteSpace(failureReason))
                 builder.AppendLine(failureReason);
@@ -159,7 +171,8 @@ namespace Slainte.Bartending
             CocktailEvaluationResult result = new CocktailEvaluationResult
             {
                 matchedRecipe = recipe,
-                actualTotalMl = composition != null ? composition.TotalVolumeMl : 0f
+                actualTotalMl = composition != null ? composition.TotalVolumeMl : 0f,
+                finalColor = composition != null ? composition.EvaluateFinalColor() : Color.clear
             };
 
             HashSet<ItemDef> recipeItems = new HashSet<ItemDef>();
@@ -376,6 +389,7 @@ namespace Slainte.Bartending
                 isSuccess = false,
                 score = 0f,
                 actualTotalMl = composition != null ? composition.TotalVolumeMl : 0f,
+                finalColor = composition != null ? composition.EvaluateFinalColor() : Color.clear,
                 failureReason = reason
             };
         }

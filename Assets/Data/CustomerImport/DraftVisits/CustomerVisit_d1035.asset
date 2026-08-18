@@ -16,6 +16,8 @@ MonoBehaviour:
   visitKey: d1035
   customerAttributeKey: E12
   speechStyleKey: E12
+  preferredTasteKey: 
+  preferredAtmosphereKey: "\uAE54\uB054\uD55C"
   tags:
   - customer_attribute:E12
   members:
@@ -24,7 +26,7 @@ MonoBehaviour:
     expressionKeyMid: mid
     expressionKeyGood: good
     expressionKeyBad: bad
-  weight: 1
+  weight: 3
   condition:
     minDay: 0
     requiredFlags: []
@@ -32,9 +34,19 @@ MonoBehaviour:
     prerequisiteEpisodeIds: []
     requiredVars: []
     requiredCustomerAppearances: []
+  initiallyAvailable: 0
+  availabilityTransitions:
+  - enabled: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds:
+      - StrangeCoin_3
+      requiredVars: []
+      requiredCustomerAppearances: []
   maxDay: 0
-  cooldownSeconds: 100
-  cooldownGroupKey: e12
+  reappearanceGroupKey: e12
   plannedOrderNames:
   - "\uC170\uC774\uB514"
   - "\uBE14\uB799 \uCEE4\uD53C"

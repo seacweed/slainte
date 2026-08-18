@@ -16,6 +16,8 @@ MonoBehaviour:
   visitKey: d1029
   customerAttributeKey: "\uADFC\uB85C\uC790\uB4E4"
   speechStyleKey: "\uC5D0\uB9AD"
+  preferredTasteKey: "\uC0C8\uD07C\uD568_Sourness"
+  preferredAtmosphereKey: 
   tags:
   - "customer_attribute:\uADFC\uB85C\uC790\uB4E4"
   members:
@@ -24,7 +26,7 @@ MonoBehaviour:
     expressionKeyMid: mid
     expressionKeyGood: good
     expressionKeyBad: bad
-  weight: 1
+  weight: 3
   condition:
     minDay: 0
     requiredFlags: []
@@ -32,9 +34,10 @@ MonoBehaviour:
     prerequisiteEpisodeIds: []
     requiredVars: []
     requiredCustomerAppearances: []
+  initiallyAvailable: 0
+  availabilityTransitions: []
   maxDay: 0
-  cooldownSeconds: 100
-  cooldownGroupKey: eric
+  reappearanceGroupKey: eric
   plannedOrderNames:
   - "\uBC14\uD558 \uB2C8\uD2B8"
   - "\uC870\uB2C8 \uB3C5\uC2A4 \uB2C8\uD2B8"

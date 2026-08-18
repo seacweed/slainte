@@ -76,6 +76,17 @@ public static class DeliverySystemValidator
                 return;
             }
 
+            BusinessFlowBootstrap flowBootstrap =
+                UnityEngine.Object.FindFirstObjectByType<BusinessFlowBootstrap>();
+            BusinessShiftController shiftController =
+                UnityEngine.Object.FindFirstObjectByType<BusinessShiftController>();
+            if (flowBootstrap != null)
+            {
+                flowBootstrap.StopAllCoroutines();
+                flowBootstrap.enabled = false;
+            }
+            if (shiftController != null) shiftController.enabled = false;
+
             if (modeManager.CurrentMode != GameMode.CraftingMode)
             {
                 modeManager.RequestModeChange(GameMode.CraftingMode);
@@ -92,29 +103,45 @@ public static class DeliverySystemValidator
 
             if (stage == 1)
             {
-                if (shelf.BlocksRecipeBook)
-                {
-                    if (EditorApplication.timeSinceStartup - stageStartedAt > 3d)
-                        throw new InvalidOperationException(
-                            "Recipe book input remained blocked after the delivery character exited.");
-                    return;
-                }
-
                 DeliveryCharacterPresenter presenter =
                     UnityEngine.Object.FindFirstObjectByType<DeliveryCharacterPresenter>(
                         FindObjectsInactive.Include);
+                if (presenter != null && presenter.gameObject.activeSelf)
+                {
+                    if (EditorApplication.timeSinceStartup - stageStartedAt > 5d)
+                        throw new InvalidOperationException(
+                            "Delivery character remained visible after the purchase presentation.");
+                    return;
+                }
+
                 RecipeBookUI recipeBook =
                     UnityEngine.Object.FindFirstObjectByType<RecipeBookUI>(FindObjectsInactive.Include);
                 Require(presenter != null && !presenter.gameObject.activeSelf,
                     "Delivery character remained visible after the exit slide.");
+                Require(shelf.IsDeliveryOpen,
+                    "Delivery panel closed when the purchase presentation ended.");
+                Require(shelf.BlocksRecipeBook,
+                    "Delivery session ended when only the purchase presentation should end.");
+                Require(recipeBook == null || recipeBook.IsTemporarilyBlocked,
+                    "Recipe-book controls were restored while delivery remained open.");
+
+                shelf.SetDeliveryAvailable(false, "검증용 배송 금지");
+                Require(!shelf.IsDeliveryOpen, "Disabled delivery panel remained open.");
+                Require(!shelf.DeliveryTabButton.interactable,
+                    "Disabled delivery tab remained interactable.");
+                Require(Mathf.Approximately(shelf.DeliveryTabAlpha, 0.42f),
+                    "Disabled delivery tab did not become gray/translucent.");
+                Require(!shelf.TryOpenDelivery(), "Disabled delivery tab reopened the panel.");
+                Require(!shelf.BlocksRecipeBook,
+                    "Recipe-book input remained blocked after the hidden character session ended.");
                 Require(recipeBook == null || !recipeBook.IsTemporarilyBlocked,
-                    "Recipe-book controls remained disabled after the character exited.");
+                    "Recipe-book controls remained disabled after delivery closed.");
 
                 shelf.SetDeliveryAvailable(true);
                 Require(shelf.DeliveryTabButton.interactable,
                     "Re-enabled delivery tab did not become interactable.");
                 Finish(true,
-                    "customer coexistence, behind-counter layer, copied shop prefab, slides, recipe-book lock, purchase, timer, and disabled state passed.");
+                    "customer coexistence, behind-counter layer, copied shop prefab, success-only purchase presentation, rapid purchases, timer, recipe-book lock, and disabled state passed.");
             }
         }
         catch (Exception exception)
@@ -189,19 +216,13 @@ public static class DeliverySystemValidator
         DeliveryCharacterPresenter presenter =
             UnityEngine.Object.FindFirstObjectByType<DeliveryCharacterPresenter>(
                 FindObjectsInactive.Include);
-        Require(presenter != null && presenter.gameObject.activeSelf && presenter.IsShown,
-            "Delivery character did not start sliding in from the left.");
-        Require(presenter.IsTransitioning,
-            "Delivery character entrance slide was not started.");
+        Require(presenter != null && !presenter.gameObject.activeSelf && !presenter.IsShown,
+            "Opening delivery showed the character before a purchase succeeded.");
         Require(presenter.HiddenAnchoredX < presenter.VisibleAnchoredX,
             "Delivery character hidden position is not left of its visible position.");
         Require(presenter.VisibleAnchoredX - presenter.HiddenAnchoredX
                 > ((RectTransform)presenter.transform).rect.width,
             "Delivery character hidden position is not fully outside the left screen edge.");
-        Require(Mathf.Approximately(
-                presenter.TargetAnchoredX,
-                presenter.VisibleAnchoredX),
-            "Delivery character entrance is not targeting the visible position to the right.");
         Require(presenter.transform.parent == characterStage.transform,
             "Delivery character is not in the customer back-layer container.");
         Transform barCounter = characterStage.transform.parent != null
@@ -216,39 +237,43 @@ public static class DeliverySystemValidator
         ItemSlotUI[] slots = panel.GetComponentsInChildren<ItemSlotUI>(true);
         Require(slots.Length > 0 && shelf.DeliveryVisibleItemCount > 0,
             "Delivery panel did not reuse the shop item slots.");
-        ItemSlotUI slot = slots[0];
+        ItemSlotUI slot = Array.Find(slots, candidate =>
+            candidate != null
+            && candidate.Definition != null
+            && candidate.Definition.MaxAmount >= candidate.Definition.unitVolume * 2f);
+        Require(slot != null,
+            "Delivery test could not find an item with room for two rapid purchases.");
         LiquorBottleDef definition = slot.Definition;
         Require(definition != null, "Delivery item slot has no product definition.");
 
-        progress.AddMoney(1000000);
+        progress.AddMoney(-progress.CurrentMoney);
         progress.SetBottleAmount(definition.id, 0f);
         slot.Refresh();
+        Require(!slot.TryPurchase(),
+            "Delivery purchase succeeded without sufficient funds.");
+        Require(!presenter.gameObject.activeSelf && !presenter.IsShown,
+            "Failed delivery purchase showed the character.");
+
+        progress.AddMoney(1000000);
         int beforeMoney = progress.CurrentMoney;
         int expectedPrice = definition.price * 2;
         Require(slot.CurrentPrice == expectedPrice, "Displayed delivery price is not 2x.");
         Require(slot.TryPurchase(), "Delivery purchase was rejected despite sufficient funds.");
-        Require(progress.CurrentMoney == beforeMoney - expectedPrice,
-            "Delivery purchase deducted the wrong amount.");
+        Require(presenter.gameObject.activeSelf && presenter.IsShown && presenter.IsTransitioning,
+            "Successful delivery purchase did not start the character entrance.");
+        Require(slot.TryPurchase(), "Rapid second delivery purchase was rejected.");
+        Require(progress.CurrentMoney == beforeMoney - expectedPrice * 2,
+            "Rapid delivery purchases deducted the wrong amount.");
         Require(Mathf.Approximately(
                 progress.GetBottleAmount(definition.id, 0f),
-                definition.unitVolume),
-            "Delivery purchase did not add one bottle unit.");
-
-        shelf.SetDeliveryAvailable(false, "검증용 배송 금지");
-        Require(!shelf.IsDeliveryOpen, "Disabled delivery panel remained open.");
-        Require(!shelf.DeliveryTabButton.interactable,
-            "Disabled delivery tab remained interactable.");
-        Require(Mathf.Approximately(shelf.DeliveryTabAlpha, 0.42f),
-            "Disabled delivery tab did not become gray/translucent.");
-        Require(!shelf.TryOpenDelivery(), "Disabled delivery tab reopened the panel.");
-        Require(shelf.BlocksRecipeBook,
-            "Recipe-book input was restored before the character exit slide completed.");
-        Require(presenter.IsTransitioning,
-            "Delivery character exit slide was not started.");
+                definition.unitVolume * 2f),
+            "Rapid delivery purchases did not add two bottle units.");
+        Require(presenter.gameObject.activeSelf && presenter.IsShown && presenter.IsTransitioning,
+            "Rapid delivery purchase left the character presentation in an invalid state.");
         Require(Mathf.Approximately(
                 presenter.TargetAnchoredX,
-                presenter.HiddenAnchoredX),
-            "Delivery character exit is not targeting the hidden position to the left.");
+                presenter.VisibleAnchoredX),
+            "Rapid delivery purchase is not targeting the visible position.");
     }
 
     private static void Require(bool condition, string message)

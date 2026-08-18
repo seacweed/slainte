@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -34,17 +35,22 @@ namespace Slainte.Bartending
         [Range(8, 31)] public int renderLayer = 30;
 
         [Header("Serving Target")]
+        [Tooltip("Optional serving-area art. It is centered inside the existing serving target.")]
+        public Sprite serveTargetSprite;
         [HideInInspector, Range(0f, 1f)] public float serveLineScreenRatio = 0.3f;
         public Color serveTargetFillColor = new Color(1f, 1f, 1f, 0f);
         public Color serveTargetOutlineColor = new Color(1f, 0.82f, 0.05f, 0.8f);
         [Min(0f)] public float serveTargetOutlineWidth = 4f;
         [Min(0f)] public float serveTargetPaddingPixels = 0f;
-        [Tooltip("Sandbox fallback target as normalized x, y, width, height.")]
-        public Vector4 sandboxServeTargetNormalized = new Vector4(0.35f, 0.48f, 0.3f, 0.42f);
+        [Min(0f)] public float serveTargetFadeDuration = 0.2f;
+        [FormerlySerializedAs("sandboxServeTargetNormalized")]
+        [Tooltip("Fixed serving target as normalized x, y, width, height at every resolution.")]
+        public Vector4 serveTargetNormalized = new Vector4(0.35f, 0.48f, 0.3f, 0.42f);
 
         [Header("Vessel Contents UI")]
         public Color contentsLabelBackgroundColor = new Color(0.04f, 0.05f, 0.06f, 0.82f);
-        public Color contentsLabelTextColor = Color.white;
+        public TMP_FontAsset contentsLabelFont;
+        public Color contentsLabelTextColor = new Color(1f, 0.82f, 0.05f, 1f);
         public Vector2 contentsLabelSizePixels = new Vector2(220f, 150f);
         public Vector2 contentsLabelOffsetPixels = new Vector2(28f, 45f);
         [Min(8)] public int contentsLabelFontSize = 18;
@@ -64,10 +70,12 @@ namespace Slainte.Bartending
         public Vector3[] slotPositions =
         {
             new Vector3(-8f, -2.5f, 0f),
-            new Vector3(-4.8f, -2.5f, 0f),
-            new Vector3(-1.6f, -2.5f, 0f),
-            new Vector3(1.6f, -2.5f, 0f),
-            new Vector3(4.8f, -2.5f, 0f),
+            new Vector3(-5.714f, -2.5f, 0f),
+            new Vector3(-3.429f, -2.5f, 0f),
+            new Vector3(-1.143f, -2.5f, 0f),
+            new Vector3(1.143f, -2.5f, 0f),
+            new Vector3(3.429f, -2.5f, 0f),
+            new Vector3(5.714f, -2.5f, 0f),
             new Vector3(8f, -2.5f, 0f)
         };
 

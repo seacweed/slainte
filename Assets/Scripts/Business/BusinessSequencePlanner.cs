@@ -9,17 +9,14 @@ namespace Slainte.Business
     {
         public BusinessVisitSelection(
             CustomerVisitData visit,
-            CustomerVisitOrderOption orderOption,
-            bool usedCooldownFallback = false)
+            CustomerVisitOrderOption orderOption)
         {
             Visit = visit;
             OrderOption = orderOption;
-            UsedCooldownFallback = usedCooldownFallback;
         }
 
         public CustomerVisitData Visit { get; }
         public CustomerVisitOrderOption OrderOption { get; }
-        public bool UsedCooldownFallback { get; }
     }
 
     public sealed class BusinessSequenceSelection
@@ -27,37 +24,32 @@ namespace Slainte.Business
         private BusinessSequenceSelection(
             CustomerVisitData visit,
             CustomerVisitOrderOption orderOption,
-            BusinessRandomEncounterEntry encounter,
-            bool usedCooldownFallback)
+            BusinessRandomEncounterEntry encounter)
         {
             Visit = visit;
             OrderOption = orderOption;
             Encounter = encounter;
-            UsedCooldownFallback = usedCooldownFallback;
         }
 
         public CustomerVisitData Visit { get; }
         public CustomerVisitOrderOption OrderOption { get; }
         public BusinessRandomEncounterEntry Encounter { get; }
-        public bool UsedCooldownFallback { get; }
         public bool IsEncounter => Encounter != null;
 
         public static BusinessSequenceSelection ForVisit(
             CustomerVisitData visit,
-            CustomerVisitOrderOption orderOption,
-            bool usedCooldownFallback)
+            CustomerVisitOrderOption orderOption)
         {
             return new BusinessSequenceSelection(
                 visit,
                 orderOption,
-                null,
-                usedCooldownFallback);
+                null);
         }
 
         public static BusinessSequenceSelection ForEncounter(
             BusinessRandomEncounterEntry encounter)
         {
-            return new BusinessSequenceSelection(null, null, encounter, false);
+            return new BusinessSequenceSelection(null, null, encounter);
         }
     }
 
@@ -76,8 +68,7 @@ namespace Slainte.Business
                 CustomerVisitData visit = database.visits[i];
                 if (!IsStructurallyValidVisit(visit)
                     || visit.weight <= 0f
-                    || !ProgressConditionEvaluator.IsMet(visit.condition, progress, visit.maxDay)
-                    || !HasEligibleOrder(visit, progress))
+                    || !HasStructurallyValidOrder(visit))
                     continue;
 
                 result.Add(visit);
@@ -89,25 +80,24 @@ namespace Slainte.Business
         public static BusinessVisitSelection PickWeightedVisit(
             IReadOnlyList<CustomerVisitData> frozenPool,
             GameProgress progress,
-            IReadOnlyDictionary<string, float> cooldownUntilByVisit,
+            ISet<string> recentVisitKeys,
             ISet<string> invalidVisitKeys,
-            float activeBusinessSeconds,
             System.Random random)
         {
             if (frozenPool == null || frozenPool.Count == 0 || progress == null)
                 return null;
 
             random ??= new System.Random();
-            List<VisitCandidate> readyCandidates = new();
-            List<VisitCandidate> cooldownFallbackCandidates = new();
-            float readyTotalWeight = 0f;
-            float cooldownFallbackTotalWeight = 0f;
+            List<VisitCandidate> candidates = new();
+            float totalWeight = 0f;
 
             for (int i = 0; i < frozenPool.Count; i++)
             {
                 CustomerVisitData visit = frozenPool[i];
                 if (!IsStructurallyValidVisit(visit)
                     || visit.weight <= 0f
+                    || !IsVisitAvailable(visit, progress)
+                    || IsRecentlySeen(visit, recentVisitKeys)
                     || (invalidVisitKeys != null && invalidVisitKeys.Contains(visit.visitKey)))
                     continue;
 
@@ -117,24 +107,10 @@ namespace Slainte.Business
 
                 float visitWeight = GetVisitWeight(visit, orders, progress);
                 VisitCandidate candidate = new(visit, orders, visitWeight);
-                cooldownFallbackCandidates.Add(candidate);
-                cooldownFallbackTotalWeight += visitWeight;
-
-                if (!IsCoolingDown(visit.GetCooldownKey(), cooldownUntilByVisit, activeBusinessSeconds))
-                {
-                    readyCandidates.Add(candidate);
-                    readyTotalWeight += visitWeight;
-                }
+                candidates.Add(candidate);
+                totalWeight += visitWeight;
             }
 
-            List<VisitCandidate> candidates = readyCandidates.Count > 0
-                ? readyCandidates
-                : cooldownFallbackCandidates;
-            bool usedCooldownFallback = readyCandidates.Count == 0
-                && cooldownFallbackCandidates.Count > 0;
-            float totalWeight = readyCandidates.Count > 0
-                ? readyTotalWeight
-                : cooldownFallbackTotalWeight;
             if (candidates.Count == 0 || totalWeight <= 0f)
                 return null;
 
@@ -157,7 +133,7 @@ namespace Slainte.Business
                 progress,
                 applyTVModifiers: true);
             return order != null
-                ? new BusinessVisitSelection(selected.Visit, order, usedCooldownFallback)
+                ? new BusinessVisitSelection(selected.Visit, order)
                 : null;
         }
 
@@ -194,20 +170,17 @@ namespace Slainte.Business
             IReadOnlyList<BusinessRandomEncounterEntry> frozenEncounterPool,
             ISet<string> startedEncounterIds,
             GameProgress progress,
-            IReadOnlyDictionary<string, float> cooldownUntilByVisit,
+            ISet<string> recentVisitKeys,
             ISet<string> invalidVisitKeys,
             ISet<string> invalidEncounterIds,
-            float activeBusinessSeconds,
             System.Random random)
         {
             if (progress == null)
                 return null;
 
             random ??= new System.Random();
-            List<SequenceCandidate> readyCandidates = new();
-            List<SequenceCandidate> cooldownFallbackCandidates = new();
-            float readyTotalWeight = 0f;
-            float cooldownFallbackTotalWeight = 0f;
+            List<SequenceCandidate> candidates = new();
+            float totalWeight = 0f;
 
             if (frozenVisitPool != null)
             {
@@ -216,6 +189,8 @@ namespace Slainte.Business
                     CustomerVisitData visit = frozenVisitPool[i];
                     if (!IsStructurallyValidVisit(visit)
                         || visit.weight <= 0f
+                        || !IsVisitAvailable(visit, progress)
+                        || IsRecentlySeen(visit, recentVisitKeys)
                         || (invalidVisitKeys != null && invalidVisitKeys.Contains(visit.visitKey)))
                         continue;
 
@@ -225,13 +200,8 @@ namespace Slainte.Business
 
                     float visitWeight = GetVisitWeight(visit, orders, progress);
                     SequenceCandidate candidate = new(visit, orders, visitWeight);
-                    cooldownFallbackCandidates.Add(candidate);
-                    cooldownFallbackTotalWeight += visitWeight;
-                    if (!IsCoolingDown(visit.GetCooldownKey(), cooldownUntilByVisit, activeBusinessSeconds))
-                    {
-                        readyCandidates.Add(candidate);
-                        readyTotalWeight += visitWeight;
-                    }
+                    candidates.Add(candidate);
+                    totalWeight += visitWeight;
                 }
             }
 
@@ -244,6 +214,7 @@ namespace Slainte.Business
                     if (!IsStructurallyValidEncounter(episode)
                         || entry.weight <= 0f
                         || progress.IsEpisodeCompleted(episode.episodeId)
+                        || !ProgressConditionEvaluator.IsMet(episode.triggerCondition, progress)
                         || (startedEncounterIds != null
                             && startedEncounterIds.Contains(episode.episodeId))
                         || (invalidEncounterIds != null
@@ -251,21 +222,11 @@ namespace Slainte.Business
                         continue;
 
                     SequenceCandidate candidate = new(entry);
-                    readyCandidates.Add(candidate);
-                    cooldownFallbackCandidates.Add(candidate);
-                    readyTotalWeight += entry.weight;
-                    cooldownFallbackTotalWeight += entry.weight;
+                    candidates.Add(candidate);
+                    totalWeight += entry.weight;
                 }
             }
 
-            List<SequenceCandidate> candidates = readyCandidates.Count > 0
-                ? readyCandidates
-                : cooldownFallbackCandidates;
-            bool usedCooldownFallback = readyCandidates.Count == 0
-                && cooldownFallbackCandidates.Count > 0;
-            float totalWeight = readyCandidates.Count > 0
-                ? readyTotalWeight
-                : cooldownFallbackTotalWeight;
             if (candidates.Count == 0 || totalWeight <= 0f)
                 return null;
 
@@ -293,8 +254,7 @@ namespace Slainte.Business
             return order != null
                 ? BusinessSequenceSelection.ForVisit(
                     selected.Visit,
-                    order,
-                    usedCooldownFallback)
+                    order)
                 : null;
         }
 
@@ -373,14 +333,20 @@ namespace Slainte.Business
             return false;
         }
 
-        private static bool HasEligibleOrder(CustomerVisitData visit, GameProgress progress)
+        private static bool HasStructurallyValidOrder(CustomerVisitData visit)
         {
             if (visit?.orders == null)
                 return false;
 
             for (int i = 0; i < visit.orders.Count; i++)
             {
-                if (IsEligibleOrder(visit.orders[i], progress))
+                CustomerVisitOrderOption option = visit.orders[i];
+                CustomerOrderData order = option?.order;
+                if (option != null
+                    && option.weight > 0f
+                    && order != null
+                    && !string.IsNullOrWhiteSpace(order.key)
+                    && !string.IsNullOrWhiteSpace(order.requestedRecipeId))
                     return true;
             }
 
@@ -465,6 +431,9 @@ namespace Slainte.Business
             for (int i = 0; i < visits.Count; i++)
             {
                 CustomerVisitData visit = visits[i];
+                if (!IsVisitAvailable(visit, progress))
+                    continue;
+
                 if (active.effectType == TVBroadcastEffectType.BoostCustomerTagWeight)
                 {
                     if (TVBroadcastRuntime.CustomerMatchesActiveBoost(
@@ -539,14 +508,47 @@ namespace Slainte.Business
             return Mathf.Max(0f, option != null ? option.weight * multiplier : 0f);
         }
 
-        private static bool IsCoolingDown(
-            string visitKey,
-            IReadOnlyDictionary<string, float> cooldownUntilByVisit,
-            float activeBusinessSeconds)
+        public static bool IsVisitAvailable(
+            CustomerVisitData visit,
+            GameProgress progress)
         {
-            return cooldownUntilByVisit != null
-                && cooldownUntilByVisit.TryGetValue(visitKey, out float cooldownUntil)
-                && cooldownUntil > activeBusinessSeconds;
+            if (visit == null
+                || progress == null
+                || !ProgressConditionEvaluator.IsMet(
+                    visit.condition,
+                    progress,
+                    visit.maxDay))
+            {
+                return false;
+            }
+
+            bool available = visit.initiallyAvailable;
+            if (visit.availabilityTransitions == null)
+                return available;
+
+            for (int i = 0; i < visit.availabilityTransitions.Count; i++)
+            {
+                CustomerAvailabilityTransition transition =
+                    visit.availabilityTransitions[i];
+                if (transition != null
+                    && ProgressConditionEvaluator.IsMet(transition.condition, progress))
+                {
+                    available = transition.enabled;
+                }
+            }
+
+            return available;
+        }
+
+        private static bool IsRecentlySeen(
+            CustomerVisitData visit,
+            ISet<string> recentVisitKeys)
+        {
+            if (visit == null || recentVisitKeys == null)
+                return false;
+
+            string key = visit.GetReappearanceKey();
+            return !string.IsNullOrWhiteSpace(key) && recentVisitKeys.Contains(key);
         }
 
         private static bool IsConfiguredRequiredTarget(BusinessRequiredActionRule rule)

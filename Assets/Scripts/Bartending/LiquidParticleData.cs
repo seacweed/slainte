@@ -14,6 +14,8 @@ namespace Slainte.Bartending
     [Serializable]
     public sealed class LiquidPayload
     {
+        private static readonly List<ItemDef> SharedItemBuffer = new List<ItemDef>(8);
+
         public List<LiquidPortion> portions = new();
         public float temperatureC = 20f;
         public CocktailTechnique techniques = CocktailTechnique.None;
@@ -110,7 +112,7 @@ namespace Slainte.Bartending
             left.techniques = combinedTechniques;
             right.techniques = combinedTechniques;
 
-            List<ItemDef> keys = new();
+            List<ItemDef> keys = GetSharedItemBuffer();
             AddKeys(left, keys);
             AddKeys(right, keys);
 
@@ -142,7 +144,7 @@ namespace Slainte.Bartending
             }
         }
 
-        public Color EvaluateColor(float minimumAlpha = 1f)
+        public Color EvaluateColor(float minimumAlpha = 0f)
         {
             float validTotal = 0f;
             for (int i = 0; i < portions.Count; i++)
@@ -200,7 +202,7 @@ namespace Slainte.Bartending
             if (myTotal <= tolerance || otherTotal <= tolerance)
                 return true;
 
-            List<ItemDef> keys = new();
+            List<ItemDef> keys = GetSharedItemBuffer();
             AddKeys(this, keys);
             AddKeys(other, keys);
 
@@ -217,6 +219,12 @@ namespace Slainte.Bartending
             return false;
         }
 
+        private static List<ItemDef> GetSharedItemBuffer()
+        {
+            SharedItemBuffer.Clear();
+            return SharedItemBuffer;
+        }
+
         public void CoolTowards(float ambientTemperatureC, float degreesPerSecond, float deltaTime)
         {
             temperatureC = Mathf.MoveTowards(
@@ -228,6 +236,10 @@ namespace Slainte.Bartending
 
     public sealed class LiquidParticleData : MonoBehaviour
     {
+        [Header("Volume")]
+        [Tooltip("Volume in milliliters represented by one newly spawned liquid particle.")]
+        [SerializeField, Min(0.01f)] private float defaultVolumeMl = 1f;
+
         public LiquidPayload payload = new();
         public bool hasBeenCollected;
 
@@ -238,7 +250,17 @@ namespace Slainte.Bartending
         private SpriteRenderer spriteRenderer;
         private Collider2D particleCollider;
 
+        public float DefaultVolumeMl => Mathf.Max(0.01f, defaultVolumeMl);
         public VesselLiquidTracker VesselOwner { get; private set; }
+        internal SpriteRenderer ParticleRenderer
+        {
+            get
+            {
+                if (spriteRenderer == null)
+                    spriteRenderer = GetComponent<SpriteRenderer>();
+                return spriteRenderer;
+            }
+        }
         internal Collider2D ParticleCollider
         {
             get

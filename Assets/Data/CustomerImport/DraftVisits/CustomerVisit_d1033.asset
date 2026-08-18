@@ -16,6 +16,8 @@ MonoBehaviour:
   visitKey: d1033
   customerAttributeKey: F72
   speechStyleKey: F72
+  preferredTasteKey: 
+  preferredAtmosphereKey: "\uC815\uC5F4\uC801\uC778"
   tags:
   - customer_attribute:F72
   members:
@@ -24,7 +26,7 @@ MonoBehaviour:
     expressionKeyMid: mid
     expressionKeyGood: good
     expressionKeyBad: bad
-  weight: 1
+  weight: 3
   condition:
     minDay: 0
     requiredFlags: []
@@ -32,9 +34,28 @@ MonoBehaviour:
     prerequisiteEpisodeIds: []
     requiredVars: []
     requiredCustomerAppearances: []
+  initiallyAvailable: 0
+  availabilityTransitions:
+  - enabled: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds:
+      - StrangeCoin_0
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - enabled: 0
+    condition:
+      minDay: 0
+      requiredFlags:
+      - sc2_1_false
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
   maxDay: 0
-  cooldownSeconds: 100
-  cooldownGroupKey: f72
+  reappearanceGroupKey: f72
   plannedOrderNames:
   - "\uD55C\uC5EC\uB984\uC758 \uB098\uB0AD\uB098"
   - "\uBC88\uD584 \uC0AC\uC6CC"

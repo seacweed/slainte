@@ -85,7 +85,7 @@ namespace Slainte.EditorTools
             RunCustomerPoolStressValidation();
             EditorUtility.DisplayDialog(
                 "Customer Pool Stress Test",
-                "60명 풀의 50,000회 가중치 추첨과 쿨다운 검증을 통과했습니다.",
+                "60명 풀의 50,000회 가중치 추첨과 최근 2명 제한 검증을 통과했습니다.",
                 "확인");
         }
 
@@ -104,7 +104,7 @@ namespace Slainte.EditorTools
         {
             const int visitCount = 60;
             const int weightedDrawCount = 50000;
-            const int fallbackDrawCount = 5000;
+            const int recentRuleDrawCount = 5000;
 
             GameObject progressObject = new("CustomerPoolStressValidator_GameProgress");
             GameProgress progress = progressObject.AddComponent<GameProgress>();
@@ -125,13 +125,9 @@ namespace Slainte.EditorTools
                     CustomerVisitData visit =
                         ScriptableObject.CreateInstance<CustomerVisitData>();
                     visit.visitKey = $"stress_validator_visit_{i:00}";
+                    visit.reappearanceGroupKey = visit.visitKey;
                     visit.weight = 1f + i % 5;
-                    visit.cooldownSeconds = i % 3 switch
-                    {
-                        0 => 5f,
-                        1 => 20f,
-                        _ => 100f
-                    };
+                    visit.initiallyAvailable = true;
                     visit.members.Add(new CustomerVisitMember
                     {
                         characterKey = "stress_validator_customer"
@@ -156,16 +152,16 @@ namespace Slainte.EditorTools
                     progress,
                     weightedDrawCount,
                     new System.Random(1208));
-                ValidateReadyCustomerPriority(pool, progress);
-                ValidateAllCoolingDownFallback(
+                ValidateRecentCustomerExclusion(pool, progress);
+                ValidateRecentTwoRule(
                     pool,
                     progress,
-                    fallbackDrawCount,
+                    recentRuleDrawCount,
                     new System.Random(812));
 
                 Debug.Log(
                     $"[CustomerPoolStressValidator] PASS: pool={visitCount}, "
-                    + $"weightedDraws={weightedDrawCount}, fallbackDraws={fallbackDrawCount}");
+                    + $"weightedDraws={weightedDrawCount}, recentRuleDraws={recentRuleDrawCount}");
             }
             finally
             {
@@ -286,11 +282,8 @@ namespace Slainte.EditorTools
                     progress,
                     null,
                     null,
-                    0f,
                     random);
                 Require(selection != null, $"가중치 추첨 {i}회에서 손님 선택이 실패했습니다.");
-                Require(!selection.UsedCooldownFallback,
-                    "쿨다운이 없는데 대체 추첨으로 표시되었습니다.");
                 int weight = Mathf.RoundToInt(selection.Visit.weight);
                 Require(weight >= 1 && weight <= 5, "예상하지 못한 가중치가 선택되었습니다.");
                 drawsByWeight[weight]++;
@@ -307,66 +300,71 @@ namespace Slainte.EditorTools
             }
         }
 
-        private static void ValidateReadyCustomerPriority(
+        private static void ValidateRecentCustomerExclusion(
             IReadOnlyList<CustomerVisitData> pool,
             GameProgress progress)
         {
-            CustomerVisitData onlyReady = pool[17];
-            Dictionary<string, float> cooldowns =
-                new(StringComparer.OrdinalIgnoreCase);
-            for (int i = 0; i < pool.Count; i++)
+            HashSet<string> recent = new(StringComparer.OrdinalIgnoreCase)
             {
-                if (pool[i] != onlyReady)
-                    cooldowns[pool[i].visitKey] = 100f;
-            }
+                pool[0].GetReappearanceKey(),
+                pool[1].GetReappearanceKey()
+            };
+            BusinessVisitSelection selection = BusinessSequencePlanner.PickWeightedVisit(
+                new[] { pool[0], pool[1], pool[2] },
+                progress,
+                recent,
+                null,
+                new System.Random(77));
+            Require(selection?.Visit == pool[2],
+                "최근 손님 2명이 다음 추첨 후보에서 제외되지 않았습니다.");
 
-            System.Random random = new(77);
-            for (int i = 0; i < 1000; i++)
-            {
-                BusinessVisitSelection selection = BusinessSequencePlanner.PickWeightedVisit(
-                    pool,
-                    progress,
-                    cooldowns,
-                    null,
-                    0f,
-                    random);
-                Require(selection?.Visit == onlyReady,
-                    "쿨다운이 끝난 유일한 손님보다 쿨다운 중인 손님이 먼저 선택되었습니다.");
-                Require(!selection.UsedCooldownFallback,
-                    "선택 가능한 손님이 있는데 대체 추첨이 사용되었습니다.");
-            }
+            BusinessVisitSelection shortage = BusinessSequencePlanner.PickWeightedVisit(
+                new[] { pool[0], pool[1] },
+                progress,
+                recent,
+                null,
+                new System.Random(78));
+            Require(shortage == null,
+                "고유 손님이 2명뿐인데 최근 2명 제한을 완화했습니다.");
         }
 
-        private static void ValidateAllCoolingDownFallback(
+        private static void ValidateRecentTwoRule(
             IReadOnlyList<CustomerVisitData> pool,
             GameProgress progress,
             int drawCount,
             System.Random random)
         {
-            Dictionary<string, float> cooldowns =
-                new(StringComparer.OrdinalIgnoreCase);
-            for (int i = 0; i < pool.Count; i++)
-                cooldowns[pool[i].visitKey] = 100f;
-
+            Queue<string> history = new();
+            HashSet<string> recent = new(StringComparer.OrdinalIgnoreCase);
             HashSet<string> selectedKeys = new(StringComparer.OrdinalIgnoreCase);
             for (int i = 0; i < drawCount; i++)
             {
                 BusinessVisitSelection selection = BusinessSequencePlanner.PickWeightedVisit(
                     pool,
                     progress,
-                    cooldowns,
+                    recent,
                     null,
-                    0f,
                     random);
                 Require(selection != null,
-                    $"전체 쿨다운 대체 추첨 {i}회에서 손님 선택이 실패했습니다.");
-                Require(selection.UsedCooldownFallback,
-                    "모든 손님이 쿨다운인데 대체 추첨으로 표시되지 않았습니다.");
-                selectedKeys.Add(selection.Visit.visitKey);
+                    $"최근 2명 제한 추첨 {i}회에서 손님 선택이 실패했습니다.");
+
+                string selectedKey = selection.Visit.GetReappearanceKey();
+                Require(!recent.Contains(selectedKey),
+                    $"최근 손님이 2명 간격 전에 재등장했습니다: {selectedKey}");
+                history.Enqueue(selectedKey);
+                recent.Add(selectedKey);
+                while (history.Count > 2)
+                {
+                    string removed = history.Dequeue();
+                    if (!history.Contains(removed))
+                        recent.Remove(removed);
+                }
+
+                selectedKeys.Add(selectedKey);
             }
 
             Require(selectedKeys.Count >= pool.Count * 0.9f,
-                $"전체 쿨다운 대체 추첨에서 선택 다양성이 부족합니다: "
+                $"최근 2명 제한 추첨에서 선택 다양성이 부족합니다: "
                 + $"{selectedKeys.Count}/{pool.Count}");
         }
 

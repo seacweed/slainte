@@ -16,6 +16,8 @@ MonoBehaviour:
   visitKey: d1027
   customerAttributeKey: "\uAC70\uBB3C"
   speechStyleKey: "\uBE45-\uD53C\uC26C"
+  preferredTasteKey: 
+  preferredAtmosphereKey: "\uACE0\uAE09\uC2A4\uB7EC\uC6B4"
   tags:
   - "customer_attribute:\uAC70\uBB3C"
   members:
@@ -32,9 +34,10 @@ MonoBehaviour:
     prerequisiteEpisodeIds: []
     requiredVars: []
     requiredCustomerAppearances: []
+  initiallyAvailable: 0
+  availabilityTransitions: []
   maxDay: 0
-  cooldownSeconds: 100
-  cooldownGroupKey: big_fish
+  reappearanceGroupKey: big_fish
   plannedOrderNames:
   - "\uBC88\uD584 \uC0AC\uC6CC"
   - "\uC170\uC774\uB514"

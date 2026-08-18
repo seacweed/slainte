@@ -16,6 +16,8 @@ MonoBehaviour:
   visitKey: d1034
   customerAttributeKey: "\uC140\uB9AC"
   speechStyleKey: "\uC140\uB9AC"
+  preferredTasteKey: "\uC501\uC4F8\uD568_Bitterness"
+  preferredAtmosphereKey: "\uAE54\uB054\uD55C"
   tags:
   - "customer_attribute:\uC140\uB9AC"
   members:
@@ -24,7 +26,7 @@ MonoBehaviour:
     expressionKeyMid: mid
     expressionKeyGood: good
     expressionKeyBad: bad
-  weight: 1
+  weight: 3
   condition:
     minDay: 0
     requiredFlags: []
@@ -32,24 +34,24 @@ MonoBehaviour:
     prerequisiteEpisodeIds: []
     requiredVars: []
     requiredCustomerAppearances: []
-  maxDay: 0
-  cooldownSeconds: 100
-  cooldownGroupKey: sally
-  plannedOrderNames:
-  - "\uC170\uC774\uB514"
-  - "\uAC13 \uB808\uC774\uB514"
-  - "\uC544\uC774\uB9AC\uC2DC \uCEE4\uD53C"
-  orders:
-  - order: {fileID: 11400000, guid: 1c01cf11f3011e44bb1c72b113dcdf09, type: 2}
-    weight: 1
+  initiallyAvailable: 0
+  availabilityTransitions:
+  - enabled: 1
     condition:
       minDay: 0
-      requiredFlags: []
+      requiredFlags:
+      - sc2_1_true
       blockedFlags: []
       prerequisiteEpisodeIds: []
       requiredVars: []
       requiredCustomerAppearances: []
-  - order: {fileID: 11400000, guid: a21f74e223c627943bf6e196e48d701b, type: 2}
+  maxDay: 0
+  reappearanceGroupKey: sally
+  plannedOrderNames:
+  - "\uC170\uC774\uB514"
+  - "\uC544\uC774\uB9AC\uC2DC \uCEE4\uD53C"
+  orders:
+  - order: {fileID: 11400000, guid: 1c01cf11f3011e44bb1c72b113dcdf09, type: 2}
     weight: 1
     condition:
       minDay: 0

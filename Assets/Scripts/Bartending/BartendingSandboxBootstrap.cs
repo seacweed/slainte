@@ -49,7 +49,14 @@ namespace Slainte.Bartending
             if (FindFirstObjectByType<AudioListener>() == null)
                 gameObject.AddComponent<AudioListener>();
             if (barCounter != null && tableSlots != null)
+            {
+                BartendingSessionBuilder.EnsureSlotLayoutGuideCount(
+                    tableSlots,
+                    settings != null && settings.slotPositions != null
+                        ? settings.slotPositions.Length
+                        : 0);
                 return;
+            }
 
             Canvas canvas = GetComponentInChildren<Canvas>(true);
             if (canvas == null)
@@ -62,6 +69,12 @@ namespace Slainte.Bartending
             tableSlots = FindChildRect(canvas.transform, "TableSlots");
             if (tableSlots == null)
                 tableSlots = CreateTableSlots(canvas.transform);
+
+            BartendingSessionBuilder.EnsureSlotLayoutGuideCount(
+                tableSlots,
+                settings != null && settings.slotPositions != null
+                    ? settings.slotPositions.Length
+                    : 0);
 
         }
 
@@ -310,8 +323,8 @@ namespace Slainte.Bartending
             rect.anchoredPosition = new Vector2(0f, 185f);
             rect.sizeDelta = new Vector2(2200f, 150f);
 
-            const int count = 6;
-            const float spacing = 350f;
+            const int count = 8;
+            const float spacing = 275f;
             for (int i = 0; i < count; i++)
             {
                 GameObject slot = new GameObject(

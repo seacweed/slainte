@@ -195,7 +195,7 @@ namespace Slainte.EditorTools
                 int boostedCount = 0;
                 int normalCount = 0;
                 var pool = new[] { boostedVisit, normalVisit };
-                var cooldowns = new System.Collections.Generic.Dictionary<string, float>(
+                var recent = new System.Collections.Generic.HashSet<string>(
                     StringComparer.OrdinalIgnoreCase);
                 var invalid = new System.Collections.Generic.HashSet<string>(
                     StringComparer.OrdinalIgnoreCase);
@@ -205,9 +205,8 @@ namespace Slainte.EditorTools
                     BusinessVisitSelection selection = BusinessSequencePlanner.PickWeightedVisit(
                         pool,
                         progress,
-                        cooldowns,
+                        recent,
                         invalid,
-                        0f,
                         random);
                     if (selection?.Visit == boostedVisit) boostedCount++;
                     else if (selection?.Visit == normalVisit) normalCount++;
@@ -216,22 +215,21 @@ namespace Slainte.EditorTools
                 Require(boostedCount > normalCount * 1.5f,
                     $"고도수 주문의 전체 등장 확률이 충분히 증가하지 않았습니다: {boostedCount}/{normalCount}");
 
-                boostedVisit.cooldownGroupKey = "shared_person";
-                normalVisit.cooldownGroupKey = "shared_person";
+                boostedVisit.reappearanceGroupKey = "shared_person";
+                normalVisit.reappearanceGroupKey = "shared_person";
                 CustomerOrderData readyOrder = CreateValidationOrder("ready", false);
                 CustomerVisitData readyVisit = CreateValidationVisit("ready_visit", readyOrder);
                 try
                 {
-                    cooldowns["shared_person"] = 100f;
+                    recent.Add("shared_person");
                     BusinessVisitSelection readySelection = BusinessSequencePlanner.PickWeightedVisit(
                         new[] { boostedVisit, normalVisit, readyVisit },
                         progress,
-                        cooldowns,
+                        recent,
                         invalid,
-                        0f,
                         new System.Random(7));
                     Require(readySelection?.Visit == readyVisit,
-                        "같은 인물의 여러 방문형이 쿨다운을 공유하지 않습니다.");
+                        "같은 인물의 여러 방문형이 최근 등장 제한을 공유하지 않습니다.");
                 }
                 finally
                 {

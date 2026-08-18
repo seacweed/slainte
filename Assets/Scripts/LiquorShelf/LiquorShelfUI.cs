@@ -49,6 +49,7 @@ public class LiquorShelfUI : MonoBehaviour
     [SerializeField, Min(0f)] private float deliveryCharacterBottomMargin;
     [SerializeField, Min(0f)] private float deliveryCharacterHiddenPadding = 80f;
     [SerializeField, Min(0.01f)] private float deliveryCharacterSlideDuration = 0.35f;
+    [SerializeField, Min(0f)] private float deliveryCharacterHoldDuration = 1f;
 
     private bool                                  _isOpen;
     private bool                                  _interactable = true;
@@ -63,6 +64,7 @@ public class LiquorShelfUI : MonoBehaviour
     private string                                _deliveryUnavailableReason = string.Empty;
     private bool                                  _deliverySessionActive;
     private int                                   _deliveryTransitionVersion;
+    private Coroutine                             _deliveryCharacterPresentation;
 
     public bool IsDeliveryAvailable => _deliveryAvailable;
     public bool IsDeliveryOpen => _deliveryPanel != null && _deliveryPanel.IsVisible;
@@ -184,7 +186,6 @@ public class LiquorShelfUI : MonoBehaviour
         _deliverySessionActive = true;
         _deliveryTransitionVersion++;
         _deliveryPanel.Show();
-        _deliveryCharacter?.Show();
         if (closeButton != null) closeButton.gameObject.SetActive(false);
         if (!_isOpen)
         {
@@ -241,7 +242,7 @@ public class LiquorShelfUI : MonoBehaviour
             deliveryRect.offsetMax = Vector2.zero;
             deliveryRect.localScale = Vector3.one;
             _deliveryPanel.Initialize(deliveryCatalog, deliveryPriceMultiplier);
-            _deliveryPanel.Purchased += RefreshShelfSlots;
+            _deliveryPanel.Purchased += HandleDeliveryPurchased;
             _deliveryPanel.CloseRequested += Close;
         }
 
@@ -266,6 +267,29 @@ public class LiquorShelfUI : MonoBehaviour
             foreach (var slot in entry.container.GetComponentsInChildren<LiquorBottleSlotUI>(true))
                 slot.Refresh();
         }
+    }
+
+    private void HandleDeliveryPurchased()
+    {
+        RefreshShelfSlots();
+        if (_deliveryCharacter == null) return;
+
+        if (_deliveryCharacterPresentation != null)
+            StopCoroutine(_deliveryCharacterPresentation);
+
+        _deliveryCharacter.Show();
+        _deliveryCharacterPresentation = StartCoroutine(
+            HideDeliveryCharacterAfterPurchase());
+    }
+
+    private IEnumerator HideDeliveryCharacterAfterPurchase()
+    {
+        float visibleTime = deliveryCharacterSlideDuration + deliveryCharacterHoldDuration;
+        if (visibleTime > 0f)
+            yield return new WaitForSecondsRealtime(visibleTime);
+
+        _deliveryCharacterPresentation = null;
+        _deliveryCharacter?.Hide();
     }
 
     private void BuildDeliveryCharacter()
@@ -299,6 +323,12 @@ public class LiquorShelfUI : MonoBehaviour
     private void EndDeliverySession()
     {
         if (!_deliverySessionActive && !IsDeliveryOpen) return;
+
+        if (_deliveryCharacterPresentation != null)
+        {
+            StopCoroutine(_deliveryCharacterPresentation);
+            _deliveryCharacterPresentation = null;
+        }
 
         _deliveryPanel?.SetInteractable(false);
         _deliveryPanel?.HideImmediate();

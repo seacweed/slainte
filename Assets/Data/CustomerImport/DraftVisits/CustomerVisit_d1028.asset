@@ -16,6 +16,8 @@ MonoBehaviour:
   visitKey: d1028
   customerAttributeKey: N8
   speechStyleKey: N8
+  preferredTasteKey: 
+  preferredAtmosphereKey: 
   tags:
   - customer_attribute:N8
   members:
@@ -24,7 +26,7 @@ MonoBehaviour:
     expressionKeyMid: mid
     expressionKeyGood: good
     expressionKeyBad: bad
-  weight: 1
+  weight: 3
   condition:
     minDay: 0
     requiredFlags: []
@@ -32,9 +34,10 @@ MonoBehaviour:
     prerequisiteEpisodeIds: []
     requiredVars: []
     requiredCustomerAppearances: []
+  initiallyAvailable: 0
+  availabilityTransitions: []
   maxDay: 0
-  cooldownSeconds: 100
-  cooldownGroupKey: n8
+  reappearanceGroupKey: n8
   plannedOrderNames:
   - "\uBE14\uB799 \uCEE4\uD53C"
   - "\uB808\uBAAC \uD53C\uC988"

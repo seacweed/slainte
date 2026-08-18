@@ -51,7 +51,10 @@ namespace Slainte.Bartending
         public Transform liquidSpawnPoint;
         public float maxCapacity = 100f;
         public float currentCapacity = 100f;
-        public float pourRate = 0.05f;
+        [Tooltip("Liquid volume emitted per second, in milliliters.")]
+        [Min(0.01f)] public float pourMlPerSecond = 20f;
+        [Tooltip("Safety limit for catch-up emission after a slow frame.")]
+        [SerializeField, Min(1)] private int maxParticlesPerFrame = 8;
         private float pourTimer = 0f;
         private float? initialCapacityOverride;
 
@@ -260,24 +263,47 @@ namespace Slainte.Bartending
 
         private void HandlePouring()
         {
-            if (Mathf.Abs(currentAngle) >= 90f && currentCapacity > 0)
-            {
-                pourTimer += Time.deltaTime;
-                if (pourTimer >= pourRate)
-                {
-                    pourTimer = 0f;
-                    SpawnLiquid();
-                }
-            }
-            else
+            if (Mathf.Abs(currentAngle) < 90f || currentCapacity <= 0f)
             {
                 pourTimer = 0f;
+                return;
+            }
+
+            LiquidPool pool = LiquidPool.Instance;
+            if (pool == null)
+            {
+                pourTimer = 0f;
+                return;
+            }
+
+            pourTimer += Time.deltaTime;
+            int emittedParticleCount = 0;
+            int emissionLimit = Mathf.Max(1, maxParticlesPerFrame);
+            float mlPerSecond = Mathf.Max(0.01f, pourMlPerSecond);
+
+            while (currentCapacity > 0f && emittedParticleCount < emissionLimit)
+            {
+                float volumeMl = Mathf.Min(pool.DefaultParticleVolumeMl, currentCapacity);
+                float emissionInterval = volumeMl / mlPerSecond;
+                if (pourTimer < emissionInterval)
+                    break;
+
+                if (!TrySpawnLiquid(volumeMl))
+                {
+                    pourTimer = Mathf.Min(pourTimer, emissionInterval);
+                    break;
+                }
+
+                pourTimer -= emissionInterval;
+                emittedParticleCount++;
             }
         }
 
-        private void SpawnLiquid()
+        private bool TrySpawnLiquid(float requestedVolumeMl)
         {
-            if (LiquidPool.Instance == null) return;
+            LiquidPool pool = LiquidPool.Instance;
+            if (pool == null || requestedVolumeMl <= 0f || currentCapacity <= 0f)
+                return false;
 
             if (liquidSpawnPoint == null)
             {
@@ -287,17 +313,18 @@ namespace Slainte.Bartending
             Vector3 spawnPos = liquidSpawnPoint != null ? liquidSpawnPoint.position : transform.position;
             Vector3 randomOffset = new Vector3(Random.Range(-0.1f, 0.1f), 0, 0);
 
-            float volumeMl = Mathf.Min(1f, currentCapacity);
-            GameObject obj = LiquidPool.Instance.GetParticle(
+            float volumeMl = Mathf.Min(requestedVolumeMl, currentCapacity);
+            GameObject obj = pool.GetParticle(
                 spawnPos + randomOffset,
                 bottleData,
                 volumeMl);
-            if (obj != null)
-            {
-                currentCapacity = Mathf.Max(0f, currentCapacity - volumeMl);
-                initialCapacityOverride = currentCapacity;
-                CapacityChanged?.Invoke(this, currentCapacity);
-            }
+            if (obj == null)
+                return false;
+
+            currentCapacity = Mathf.Max(0f, currentCapacity - volumeMl);
+            initialCapacityOverride = currentCapacity;
+            CapacityChanged?.Invoke(this, currentCapacity);
+            return true;
         }
 
         private void HandleInput()
@@ -528,6 +555,9 @@ namespace Slainte.Bartending
 
         private void PerformHorizontalRotationMovement()
         {
+            if (currentState == BottleState.Tilting)
+                return;
+
             Bounds bounds = col != null
                 ? col.bounds
                 : new Bounds(transform.position, Vector3.one);

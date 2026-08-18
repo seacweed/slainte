@@ -14,6 +14,8 @@ namespace Slainte.EditorTools
         private const string BusinessScenePath = "Assets/BusinessScene.unity";
         private const string SettingsPath = "Assets/Resources/Business/BusinessOrderFlowSettings.asset";
         private const string TicketDatabasePath = "Assets/Data/OrderTicket/OrderTicketDatabase.asset";
+        private const string CustomerOrderDatabasePath =
+            "Assets/Data/CustomerOrder/CustomerOrderDatabase.asset";
 
         [MenuItem("Slainte/품질 검증/시간 기반 영업 검증")]
         public static void ValidateFromMenu()
@@ -30,10 +32,61 @@ namespace Slainte.EditorTools
         private static void RunValidation()
         {
             ValidateSettingsAndScene();
+            ValidatePublishedCustomerOrders();
             ValidatePlannerRules();
             ValidateEpisodeCraftingCompatibility();
             ValidateTechnicalFailureContract();
-            Debug.Log("[BusinessShiftValidator] 통과: 180초 설정, 손님·인카운터 통합 풀, 손님 쿨다운, 인카운터 ID별 일일 1회·완료 제외, 필수 액션, 에피소드 실제 제조 결과·구형 분기 호환, BusinessScene 구성");
+            Debug.Log("[BusinessShiftValidator] 통과: 180초 설정, 손님·주문 DB 무결성, 손님·인카운터 통합 풀, 최근 손님 2명 제한, 인카운터 ID별 일일 1회·완료 제외, 필수 액션, 에피소드 실제 제조 결과·구형 분기 호환, BusinessScene 구성");
+        }
+
+        private static void ValidatePublishedCustomerOrders()
+        {
+            BusinessOrderFlowSettings settings =
+                AssetDatabase.LoadAssetAtPath<BusinessOrderFlowSettings>(SettingsPath);
+            CustomerOrderDatabase orderDatabase =
+                AssetDatabase.LoadAssetAtPath<CustomerOrderDatabase>(CustomerOrderDatabasePath);
+            Require(settings?.customerVisitDatabase != null,
+                "손님 방문 데이터베이스를 불러오지 못했습니다.");
+            Require(orderDatabase != null, "손님 주문 데이터베이스를 불러오지 못했습니다.");
+
+            HashSet<string> registeredKeys = new(StringComparer.OrdinalIgnoreCase);
+            for (int i = 0; i < orderDatabase.customers.Count; i++)
+            {
+                CustomerOrderData registered = orderDatabase.customers[i];
+                Require(registered != null && !string.IsNullOrWhiteSpace(registered.key),
+                    $"손님 주문 DB의 {i}번 항목이 비어 있거나 키가 없습니다.");
+                Require(registeredKeys.Add(registered.key),
+                    $"손님 주문 DB에 중복 키가 있습니다: {registered.key}");
+            }
+
+            ItemDefCatalog items = ItemDefCatalog.LoadFromResources("Items", null);
+            CocktailRecipeCatalog recipes = CocktailRecipeDataLoader.LoadDefault(items);
+            int connectedOrderCount = 0;
+            for (int visitIndex = 0;
+                 visitIndex < settings.customerVisitDatabase.visits.Count;
+                 visitIndex++)
+            {
+                CustomerVisitData visit = settings.customerVisitDatabase.visits[visitIndex];
+                if (visit?.orders == null)
+                    continue;
+
+                for (int orderIndex = 0; orderIndex < visit.orders.Count; orderIndex++)
+                {
+                    CustomerOrderData order = visit.orders[orderIndex]?.order;
+                    Require(order != null && !string.IsNullOrWhiteSpace(order.key),
+                        $"{visit.visitKey}: 연결 주문이 비어 있거나 키가 없습니다.");
+                    Require(orderDatabase.FindByKey(order.key) == order,
+                        $"{visit.visitKey}/{order.key}: 방문과 주문 DB의 에셋 참조가 다릅니다.");
+                    Require(recipes.TryGet(order.requestedRecipeId, out CocktailRecipe recipe)
+                            && recipe != null
+                            && recipe.isOrderable,
+                        $"{visit.visitKey}/{order.key}: 주문 가능한 레시피가 없습니다: "
+                        + order.requestedRecipeId);
+                    connectedOrderCount++;
+                }
+            }
+
+            Require(connectedOrderCount > 0, "검증할 손님 연결 주문이 없습니다.");
         }
 
         private static void ValidateSettingsAndScene()
@@ -64,8 +117,8 @@ namespace Slainte.EditorTools
                 CustomerVisitData visit = settings.customerVisitDatabase.visits[i];
                 if (visit == null)
                     continue;
-                Require(visit.cooldownSeconds >= 0f,
-                    $"손님 쿨다운이 음수입니다: {visit.visitKey}");
+                Require(visit.weight >= 0f,
+                    $"손님 등장 가중치가 음수입니다: {visit.visitKey}");
             }
 
             var scene = EditorSceneManager.OpenScene(BusinessScenePath, OpenSceneMode.Single);
@@ -96,8 +149,9 @@ namespace Slainte.EditorTools
                 order.key = "validator_order";
                 order.requestedRecipeId = "validator_recipe";
                 visit.visitKey = "validator_visit";
+                visit.reappearanceGroupKey = visit.visitKey;
                 visit.weight = 1f;
-                visit.cooldownSeconds = 100f;
+                visit.initiallyAvailable = true;
                 visit.members.Add(new CustomerVisitMember { characterKey = "validator_customer" });
                 visit.orders.Add(new CustomerVisitOrderOption
                 {
@@ -111,22 +165,23 @@ namespace Slainte.EditorTools
                     BusinessSequencePlanner.BuildEligibleVisitPool(database, progress);
                 Require(pool.Count == 1, "조건을 만족하는 검증 손님이 풀에 들어오지 않았습니다.");
 
-                Dictionary<string, float> cooldowns = new(StringComparer.OrdinalIgnoreCase)
+                HashSet<string> recent = new(StringComparer.OrdinalIgnoreCase)
                 {
-                    [visit.visitKey] = 100f
+                    visit.GetReappearanceKey()
                 };
-                BusinessVisitSelection beforeCooldown = BusinessSequencePlanner.PickWeightedVisit(
+                BusinessVisitSelection blockedRecent = BusinessSequencePlanner.PickWeightedVisit(
                     pool,
                     progress,
-                    cooldowns,
+                    recent,
                     null,
-                    99.999f,
                     new System.Random(1));
-                Require(beforeCooldown?.Visit == visit,
-                    "모든 손님이 쿨다운 중일 때 대체 손님을 선택하지 못했습니다.");
+                Require(blockedRecent == null,
+                    "최근 등장한 손님을 후보 부족 상황에서 다시 선택했습니다.");
 
                 readyVisit.visitKey = "validator_ready_visit";
+                readyVisit.reappearanceGroupKey = readyVisit.visitKey;
                 readyVisit.weight = 1f;
+                readyVisit.initiallyAvailable = true;
                 readyVisit.members.Add(
                     new CustomerVisitMember { characterKey = "validator_ready_customer" });
                 readyVisit.orders.Add(new CustomerVisitOrderOption
@@ -136,24 +191,24 @@ namespace Slainte.EditorTools
                     condition = new EpisodeTriggerCondition()
                 });
                 List<CustomerVisitData> mixedPool = new() { visit, readyVisit };
-                BusinessVisitSelection readyPreferred = BusinessSequencePlanner.PickWeightedVisit(
+                BusinessVisitSelection readySelected = BusinessSequencePlanner.PickWeightedVisit(
                     mixedPool,
                     progress,
-                    cooldowns,
+                    recent,
                     null,
-                    99.999f,
                     new System.Random(1));
-                Require(readyPreferred?.Visit == readyVisit,
-                    "쿨다운이 끝난 손님보다 쿨다운 중인 손님을 먼저 선택했습니다.");
+                Require(readySelected?.Visit == readyVisit,
+                    "최근 등장 제한에 없는 손님을 선택하지 못했습니다.");
 
-                BusinessVisitSelection atCooldown = BusinessSequencePlanner.PickWeightedVisit(
+                recent.Clear();
+                BusinessVisitSelection afterTwoOthers = BusinessSequencePlanner.PickWeightedVisit(
                     pool,
                     progress,
-                    cooldowns,
+                    recent,
                     null,
-                    100f,
                     new System.Random(1));
-                Require(atCooldown?.Visit == visit, "100초 쿨다운 경계에서 손님이 복귀하지 않았습니다.");
+                Require(afterTwoOthers?.Visit == visit,
+                    "최근 2명 목록에서 빠진 손님이 후보로 복귀하지 않았습니다.");
 
                 episode.episodeId = "validator_episode";
                 episode.episodeType = EpisodeType.Encounter;
@@ -182,19 +237,19 @@ namespace Slainte.EditorTools
                 Require(encounterPool.Count == 2,
                     "조건을 만족한 랜덤 인카운터가 풀에 들어오지 않았습니다.");
 
+                recent.Add(visit.GetReappearanceKey());
                 BusinessSequenceSelection encounterBeforeCoolingCustomer =
                     BusinessSequencePlanner.PickWeightedSequence(
                         pool,
                         encounterPool,
                         null,
                         progress,
-                        cooldowns,
+                        recent,
                         null,
                         null,
-                        99.999f,
                         new System.Random(1));
                 Require(encounterBeforeCoolingCustomer?.IsEncounter == true,
-                    "실행 가능한 인카운터보다 쿨다운 중인 손님을 먼저 선택했습니다.");
+                    "실행 가능한 인카운터보다 최근 등장한 손님을 먼저 선택했습니다.");
 
                 HashSet<string> startedEncounterIds = new(StringComparer.OrdinalIgnoreCase)
                 {
@@ -206,28 +261,26 @@ namespace Slainte.EditorTools
                         encounterPool,
                         startedEncounterIds,
                         progress,
-                        cooldowns,
+                        recent,
                         null,
                         null,
-                        99.999f,
                         new System.Random(1));
                 Require(differentEncounterSameDay?.Encounter?.episode == secondEpisode,
                     "하나의 인카운터 실행이 다른 종류의 당일 등장까지 막았습니다.");
 
                 startedEncounterIds.Add(secondEpisode.episodeId);
+                recent.Clear();
                 BusinessSequenceSelection noRepeatedEncounter =
                     BusinessSequencePlanner.PickWeightedSequence(
                         pool,
                         encounterPool,
                         startedEncounterIds,
                         progress,
-                        cooldowns,
+                        recent,
                         null,
                         null,
-                        99.999f,
                         new System.Random(1));
-                Require(noRepeatedEncounter?.Visit == visit
-                        && noRepeatedEncounter.UsedCooldownFallback,
+                Require(noRepeatedEncounter?.Visit == visit,
                     "당일에 실행한 인카운터 ID가 다시 선택되었습니다.");
 
                 HashSet<string> reservedTargets = new(StringComparer.OrdinalIgnoreCase)
@@ -348,9 +401,10 @@ namespace Slainte.EditorTools
                 ScriptableObject.CreateInstance<BusinessOrderFlowSettings>();
             try
             {
+                CustomerSpawner spawner = controllerObject.AddComponent<CustomerSpawner>();
                 BusinessOrderSessionController controller =
                     controllerObject.AddComponent<BusinessOrderSessionController>();
-                controller.Initialize(null, null, null, null, null, null, settings);
+                controller.Initialize(null, spawner, null, null, null, null, settings);
 
                 int callbackCount = 0;
                 BusinessOrderSessionResult completed = null;
@@ -374,6 +428,34 @@ namespace Slainte.EditorTools
                     "누락 레시피가 플레이 결과가 아닌 기술 실패로 분류되지 않았습니다.");
                 Require(controller.State == BusinessOrderSessionState.Completed,
                     "기술 실패 후 주문 세션이 Completed 상태로 정리되지 않았습니다.");
+
+                callbackCount = 0;
+                completed = null;
+                started = controller.BeginOrder(new OrderSessionRequest
+                {
+                    sessionId = "validator_missing_customer_order",
+                    owner = OrderSessionOwner.Business,
+                    customerVisitKey = "validator_visit",
+                    customerOrderKey = "validator_order_that_does_not_exist",
+                    requestedRecipeId = "rec_1006",
+                    presentOrder = true,
+                    presentFeedback = false,
+                    applyProgressRewards = false
+                }, result =>
+                {
+                    callbackCount++;
+                    completed = result;
+                });
+
+                Require(started, "누락 손님 주문이 기술 실패 결과를 반환하지 않았습니다.");
+                Require(callbackCount == 1, "누락 손님 주문의 완료 콜백이 정확히 한 번 호출되지 않았습니다.");
+                Require(completed != null && completed.technicalFailure,
+                    "누락 손님 주문이 기술 실패로 분류되지 않았습니다.");
+                Require(!string.IsNullOrWhiteSpace(completed.failureReason)
+                        && completed.failureReason.Contains("validator_visit")
+                        && completed.failureReason.Contains("validator_order_that_does_not_exist")
+                        && completed.failureReason.Contains("rec_1006"),
+                    "누락 손님 주문의 실패 원인에 방문·주문·레시피 정보가 없습니다.");
             }
             finally
             {

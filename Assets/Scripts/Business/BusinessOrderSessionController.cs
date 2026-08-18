@@ -36,6 +36,58 @@ namespace Slainte.Business
         public event Action<BusinessOrderSessionState, BusinessOrderSessionState> StateChanged;
         public event Action<BusinessOrderSessionResult> OrderCompleted;
 
+        public bool ValidateCustomerOrderData(
+            CustomerOrderData order,
+            out string failureReason)
+        {
+            if (order == null)
+            {
+                failureReason = "주문 에셋이 없습니다.";
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(order.key))
+            {
+                failureReason = "주문 키가 비어 있습니다.";
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(order.requestedRecipeId))
+            {
+                failureReason = $"주문 {order.key}의 레시피 ID가 비어 있습니다.";
+                return false;
+            }
+
+            if (orderGenerator == null
+                || !orderGenerator.CanGenerateOrder(order.requestedRecipeId))
+            {
+                failureReason =
+                    $"주문 가능한 레시피를 불러올 수 없습니다: {order.requestedRecipeId}";
+                return false;
+            }
+
+            if (customerSpawner == null)
+            {
+                failureReason = "CustomerSpawner 참조가 없습니다.";
+                return false;
+            }
+
+            if (!customerSpawner.CanResolveOrder(order.key, out CustomerOrderData registered))
+            {
+                failureReason = $"손님 주문 DB에 주문 키가 없습니다: {order.key}";
+                return false;
+            }
+
+            if (registered != order)
+            {
+                failureReason = $"방문 데이터와 손님 주문 DB가 서로 다른 주문 에셋을 가리킵니다: {order.key}";
+                return false;
+            }
+
+            failureReason = string.Empty;
+            return true;
+        }
+
         public void Initialize(
             GameModeManager gameModeManager,
             CustomerSpawner sceneCustomerSpawner,
@@ -106,7 +158,9 @@ namespace Slainte.Business
 
             if (currentOrder == null)
             {
-                ui?.ShowError("요청한 레시피를 불러올 수 없습니다: " + currentRequest.requestedRecipeId);
+                string reason = "요청한 레시피를 불러올 수 없습니다: "
+                    + currentRequest.requestedRecipeId;
+                ui?.ShowError(reason);
                 CompleteCurrentOrder(new BusinessOrderSessionResult
                 {
                     outcome = OrderSessionOutcome.Failed,
@@ -115,7 +169,7 @@ namespace Slainte.Business
                     accepted = false,
                     grade = OrderEvaluationGrade.Bad,
                     technicalFailure = true,
-                    failureReason = "요청한 레시피를 불러올 수 없습니다."
+                    failureReason = reason
                 });
                 return true;
             }
@@ -128,20 +182,29 @@ namespace Slainte.Business
 
             SetState(BusinessOrderSessionState.PresentingOrder);
             ui?.ShowPresentingOrder(currentRequest.customerOrderKey);
-            customerSpawner?.ShowVisit(
-                currentRequest.customerVisitKey,
-                currentRequest.customerOrderKey);
+            bool visitShown = customerSpawner != null
+                && customerSpawner.ShowVisit(
+                    currentRequest.customerVisitKey,
+                    currentRequest.customerOrderKey);
 
-            if (customerSpawner == null || customerSpawner.CurrentOrderData == null)
+            if (!visitShown)
             {
-                ui?.ShowError("손님 주문 데이터를 불러올 수 없습니다: " + currentRequest.customerOrderKey);
+                string reason = customerSpawner == null
+                    ? "CustomerSpawner 참조가 없습니다."
+                    : "손님 주문 DB에서 주문 키를 찾을 수 없습니다.";
+                reason += $" visit={currentRequest.customerVisitKey}, "
+                    + $"order={currentRequest.customerOrderKey}, "
+                    + $"recipe={currentRequest.requestedRecipeId}";
+                ui?.ShowError(reason);
                 CompleteCurrentOrder(new BusinessOrderSessionResult
                 {
                     outcome = OrderSessionOutcome.Failed,
                     customerOrderKey = currentRequest.customerOrderKey,
                     requestedRecipeId = currentRequest.requestedRecipeId,
                     accepted = false,
-                    grade = OrderEvaluationGrade.Bad
+                    grade = OrderEvaluationGrade.Bad,
+                    technicalFailure = true,
+                    failureReason = reason
                 });
                 return true;
             }

@@ -274,13 +274,10 @@ namespace Slainte.Business
                 visit.name = $"IntegrationVisit_{i:00}";
                 visit.hideFlags = HideFlags.DontSave;
                 visit.visitKey = $"integration_visit_{i:00}";
+                visit.reappearanceGroupKey = visit.visitKey;
                 visit.weight = 1f + i % 4;
-                visit.cooldownSeconds = i % 3 switch
-                {
-                    0 => 5f,
-                    1 => 20f,
-                    _ => 100f
-                };
+                visit.initiallyAvailable = true;
+                visit.availabilityTransitions = new List<CustomerAvailabilityTransition>();
                 visit.condition = new EpisodeTriggerCondition();
                 visit.maxDay = 0;
                 runtimeVisits.Add(visit);
@@ -391,16 +388,14 @@ namespace Slainte.Business
             status = $"Order: {previous} -> {next}";
         }
 
-        private void HandleCustomerVisitStarted(
-            CustomerVisitData visit,
-            bool usedCooldownFallback)
+        private void HandleCustomerVisitStarted(CustomerVisitData visit)
         {
             if (visit == null)
                 return;
 
             appearances.TryGetValue(visit.visitKey, out int count);
             appearances[visit.visitKey] = count + 1;
-            status = $"Visit: {visit.visitKey} | fallback={usedCooldownFallback}";
+            status = $"Visit: {visit.visitKey}";
         }
 
         private void TogglePause()
@@ -497,8 +492,8 @@ namespace Slainte.Business
                 .Append(" | Encounter pool: ").Append(shift?.FrozenEncounterPoolCount ?? 0)
                 .Append(" | Started: ").Append(shift?.TotalStartedCustomerCount ?? 0)
                 .Append(" | Completed: ").Append(shift?.CompletedOrderCount ?? 0)
-                .Append(" | Cooling: ").Append(shift?.CoolingDownCustomerCount ?? 0)
-                .Append(" | Fallbacks: ").Append(shift?.CooldownFallbackSelectionCount ?? 0)
+                .Append(" | Spawning stopped: ")
+                .Append(shift?.IsRandomCustomerSpawningStopped ?? false)
                 .AppendLine();
             panel.Append("Last visit: ").Append(shift?.LastSelectedVisitKey ?? "-")
                 .Append(" | Encounter count: ").Append(encounterCount)
@@ -536,7 +531,7 @@ namespace Slainte.Business
             switch (ActiveScenario)
             {
                 case BusinessPlaytestScenario.NormalShift:
-                    panel.AppendLine("  - Complete several orders; verify random visits and cooldowns.");
+                    panel.AppendLine("  - Complete several orders; verify weighted visits and the recent-two rule.");
                     panel.AppendLine("  - Verify the timer keeps decreasing during order/crafting.");
                     break;
                 case BusinessPlaytestScenario.ShortTimer:

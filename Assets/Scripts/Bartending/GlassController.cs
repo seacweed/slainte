@@ -15,8 +15,7 @@ namespace Slainte.Bartending
         Idle,
         PickedUp,
         Tilting,
-        Returning,
-        Snapping
+        Returning
     }
 
     [ExecuteInEditMode]
@@ -46,7 +45,6 @@ namespace Slainte.Bartending
         [SerializeField] private float tiltSensitivity = 0.5f;
         [SerializeField] private float returnSpeed = 0.8f;
         [SerializeField] private AnimationCurve returnEase = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
-        [SerializeField, Min(0f)] private float slotSnapDuration = 0.1f;
         [SerializeField] private LayerMask slotLayer;
 
         [Header("제출 조건")]
@@ -82,11 +80,6 @@ namespace Slainte.Bartending
         private Vector2 pendingPositionTarget;
         private bool rotationTargetPending;
         private float pendingRotationTarget;
-        private bool slotSnapActive;
-        private Vector2 slotSnapStartPosition;
-        private Vector2 slotSnapTargetPosition;
-        private float slotSnapStartAngle;
-        private float slotSnapElapsed;
         private bool serveGestureEnabled;
         private bool serveRequested;
         private IBartendingServeTarget serveTarget;
@@ -97,6 +90,7 @@ namespace Slainte.Bartending
 
         public VesselLiquidTracker LiquidTracker => liquidTracker;
         public event Action<GlassController> ServeRequested;
+        public event Action<GlassController, bool> HeldStateChanged;
 
         public void ConfigureServeGesture(IBartendingServeTarget target)
         {
@@ -202,16 +196,12 @@ namespace Slainte.Bartending
             if (!Application.isPlaying)
                 return;
 
-            if (slotSnapActive)
-                ApplySlotSnapStep();
-            else
-                ApplyPendingPhysicsMotion();
+            ApplyPendingPhysicsMotion();
         }
 
         private void OnDisable()
         {
             CancelPendingPhysicsMotion();
-            slotSnapActive = false;
             CancelPointerSynchronization();
             BartendingPointerAnchor.Release(this);
         }
@@ -271,8 +261,11 @@ namespace Slainte.Bartending
 
         private void PickupGlass()
         {
+            bool wasHeld = IsPickedUp;
             CancelPendingPhysicsMotion();
             currentState = GlassState.PickedUp;
+            if (!wasHeld)
+                HeldStateChanged?.Invoke(this, true);
             interactionOrder?.BringToFront();
             
             // 기존 슬롯 점유 해제 (독립)
@@ -368,7 +361,7 @@ namespace Slainte.Bartending
                     {
                         // 슬롯 스냅 안착 (바닥면 Y 오프셋 칼각 정렬!)
                         float bottomOffset = GetPivotToBottomOffset();
-                        BeginSlotSnap(
+                        SnapVesselAndContentsToSlot(
                             new Vector3(hit.transform.position.x, hit.transform.position.y + bottomOffset, 0f),
                             slot);
                         return;
@@ -378,7 +371,7 @@ namespace Slainte.Bartending
                 {
                     // 슬롯 스냅 안착 (하위 호환용)
                     float bottomOffset = GetPivotToBottomOffset();
-                    BeginSlotSnap(
+                    SnapVesselAndContentsToSlot(
                         new Vector3(hit.transform.position.x, hit.transform.position.y + bottomOffset, 0f),
                         null);
                     return;
@@ -393,23 +386,13 @@ namespace Slainte.Bartending
         public void SnapToSlot(Transform slotTransform, SlotController slot)
         {
             float bottomOffset = GetPivotToBottomOffset();
-            BeginSlotSnap(
+            SnapVesselAndContentsToSlot(
                 new Vector3(slotTransform.position.x, slotTransform.position.y + bottomOffset, 0f),
                 slot);
         }
 
-        private void BeginSlotSnap(Vector3 targetPosition, SlotController slot)
+        private void SnapVesselAndContentsToSlot(Vector3 targetPosition, SlotController slot)
         {
-            CancelPendingPhysicsMotion();
-            CancelPointerSynchronization();
-            BartendingPointerAnchor.Release(this);
-
-            if (returnCoroutine != null)
-            {
-                StopCoroutine(returnCoroutine);
-                returnCoroutine = null;
-            }
-
             if (currentSlot != null && currentSlot != slot)
                 currentSlot.Vacate();
 
@@ -417,46 +400,32 @@ namespace Slainte.Bartending
             if (slot != null && !ReferenceEquals(slot.OccupiedItem, this))
                 slot.Occupy(this);
 
-            targetPosition.z = 0f;
-            if (!Application.isPlaying || body == null || slotSnapDuration <= Mathf.Epsilon)
-            {
-                slotSnapActive = false;
-                transform.position = targetPosition;
-                SetRotationImmediately(0f);
-                currentState = GlassState.Idle;
-                return;
-            }
-
-            slotSnapStartPosition = body.position;
-            slotSnapTargetPosition = targetPosition;
-            slotSnapStartAngle = body.rotation;
-            slotSnapElapsed = 0f;
-            slotSnapActive = true;
-            currentState = GlassState.Snapping;
+            MoveVesselAndContents(targetPosition);
+            SetRotationImmediately(0f);
+            ReleaseGlass();
         }
 
-        private void ApplySlotSnapStep()
+        private void MoveVesselAndContents(Vector3 targetPosition)
         {
-            if (body == null)
-            {
-                slotSnapActive = false;
-                currentState = GlassState.Idle;
-                return;
-            }
+            CancelPendingPhysicsMotion();
+            targetPosition.z = 0f;
+            Vector2 currentPosition = body != null
+                ? body.position
+                : (Vector2)transform.position;
+            liquidTracker?.TranslateTrackedParticles((Vector2)targetPosition - currentPosition);
 
-            slotSnapElapsed += Time.fixedDeltaTime;
-            float normalizedTime = Mathf.Clamp01(slotSnapElapsed / Mathf.Max(slotSnapDuration, Mathf.Epsilon));
-            float easedTime = normalizedTime * normalizedTime * (3f - 2f * normalizedTime);
-            body.MovePosition(Vector2.Lerp(slotSnapStartPosition, slotSnapTargetPosition, easedTime));
-            currentAngle = Mathf.LerpAngle(slotSnapStartAngle, 0f, easedTime);
-            body.MoveRotation(currentAngle);
-
-            if (normalizedTime >= 1f)
+            if (body != null)
             {
-                currentAngle = 0f;
-                slotSnapActive = false;
-                currentState = GlassState.Idle;
+                body.position = targetPosition;
+                transform.position = new Vector3(
+                    targetPosition.x,
+                    targetPosition.y,
+                    transform.position.z);
+                body.linearVelocity = Vector2.zero;
+                body.MovePosition(targetPosition);
             }
+            else
+                transform.position = targetPosition;
         }
 
         public void OnPickedUp()
@@ -471,8 +440,8 @@ namespace Slainte.Bartending
 
         private void ReleaseGlass()
         {
+            bool wasHeld = IsPickedUp;
             currentState = GlassState.Idle;
-            slotSnapActive = false;
             CancelPendingPhysicsMotion();
             CancelPointerSynchronization();
             BartendingPointerAnchor.Release(this);
@@ -482,6 +451,9 @@ namespace Slainte.Bartending
                 StopCoroutine(returnCoroutine);
                 returnCoroutine = null;
             }
+
+            if (wasHeld)
+                HeldStateChanged?.Invoke(this, false);
         }
 
         private void StartTilting()
@@ -633,7 +605,12 @@ namespace Slainte.Bartending
             rotationTargetPending = false;
             currentAngle = targetAngle;
             if (body != null)
+            {
                 body.rotation = targetAngle;
+                transform.rotation = Quaternion.Euler(0f, 0f, targetAngle);
+                body.angularVelocity = 0f;
+                body.MoveRotation(targetAngle);
+            }
             else
                 transform.rotation = Quaternion.Euler(0f, 0f, targetAngle);
         }

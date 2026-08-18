@@ -16,6 +16,8 @@ MonoBehaviour:
   visitKey: d1021
   customerAttributeKey: "\uC544\uBB34\uAC1C\uB4E4"
   speechStyleKey: "\uC544\uBB34\uAC1C\uB4E4_\uACFC\uACA9\uD55C\uB0A8\uC131"
+  preferredTasteKey: 
+  preferredAtmosphereKey: "\uC815\uC5F4\uC801\uC778"
   tags:
   - "customer_attribute:\uC544\uBB34\uAC1C\uB4E4"
   members:
@@ -24,7 +26,7 @@ MonoBehaviour:
     expressionKeyMid: mid
     expressionKeyGood: good
     expressionKeyBad: bad
-  weight: 1
+  weight: 5
   condition:
     minDay: 0
     requiredFlags: []
@@ -32,9 +34,28 @@ MonoBehaviour:
     prerequisiteEpisodeIds: []
     requiredVars: []
     requiredCustomerAppearances: []
+  initiallyAvailable: 0
+  availabilityTransitions:
+  - enabled: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds:
+      - StrangeCoin_0
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - enabled: 0
+    condition:
+      minDay: 0
+      requiredFlags:
+      - sc2_1_false
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
   maxDay: 0
-  cooldownSeconds: 100
-  cooldownGroupKey: vago
+  reappearanceGroupKey: vago
   plannedOrderNames:
   - "\uBE0C\uB9AC\uC988 \uB2C8\uD2B8"
   - "\uBE0C\uB9AC\uC988 \uC628\uB354\uB77D"

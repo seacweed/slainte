@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
@@ -116,6 +117,11 @@ namespace Slainte.Bartending
         private CharacterStage characterStage;
         private RectTransform servingTargetLowerBoundary;
         private Image servingTargetImage;
+        private CanvasGroup servingTargetCanvasGroup;
+        private Coroutine servingTargetFadeRoutine;
+        private bool servingGlassHeld;
+        private bool servingTargetAvailable;
+        private bool servingTargetVisibilityRequested;
         private bool useFallbackServingTarget;
         private bool missingTargetWarningShown;
         private float nextContentsRefreshTime;
@@ -185,19 +191,21 @@ namespace Slainte.Bartending
             servingTargetLowerBoundary = lowerBoundary;
             useFallbackServingTarget = allowFallbackTarget;
             missingTargetWarningShown = false;
+            RefreshServingTarget();
         }
 
         public bool TryGetServeTargetScreenRect(out Rect screenRect)
         {
             if (characterStage != null
-                && characterStage.TryGetActiveGroupScreenRect(out screenRect))
+                && characterStage.TryGetActiveGroupScreenRect(out _))
             {
-                screenRect = ExpandRect(screenRect, settings.serveTargetPaddingPixels);
+                screenRect = GetFixedServingTargetScreenRect();
                 if (TryGetRectTransformScreenRect(
                         servingTargetLowerBoundary,
                         out Rect lowerBoundaryRect))
                 {
-                    screenRect.yMin = Mathf.Max(screenRect.yMin, lowerBoundaryRect.yMax);
+                    // The business target always starts exactly at the bar-table top.
+                    screenRect.yMin = lowerBoundaryRect.yMax;
                 }
 
                 return screenRect.width > Mathf.Epsilon
@@ -206,18 +214,23 @@ namespace Slainte.Bartending
 
             if (useFallbackServingTarget)
             {
-                Vector4 normalized = settings.sandboxServeTargetNormalized;
-                screenRect = new Rect(
-                    normalized.x * Screen.width,
-                    normalized.y * Screen.height,
-                    Mathf.Max(0f, normalized.z) * Screen.width,
-                    Mathf.Max(0f, normalized.w) * Screen.height);
-                screenRect = ExpandRect(screenRect, settings.serveTargetPaddingPixels);
+                screenRect = GetFixedServingTargetScreenRect();
                 return screenRect.width > Mathf.Epsilon && screenRect.height > Mathf.Epsilon;
             }
 
             screenRect = default;
             return false;
+        }
+
+        private Rect GetFixedServingTargetScreenRect()
+        {
+            Vector4 normalized = settings.serveTargetNormalized;
+            Rect screenRect = new Rect(
+                Mathf.Clamp01(normalized.x) * Screen.width,
+                Mathf.Clamp01(normalized.y) * Screen.height,
+                Mathf.Clamp01(normalized.z) * Screen.width,
+                Mathf.Clamp01(normalized.w) * Screen.height);
+            return ExpandRect(screenRect, settings.serveTargetPaddingPixels);
         }
 
         private void Initialize(
@@ -231,6 +244,10 @@ namespace Slainte.Bartending
             servingGlass = glass;
             settings = sessionSettings;
             servingTargetImage = CreateServingTargetImage();
+            servingGlassHeld = servingGlass != null && servingGlass.IsPickedUp;
+            if (servingGlass != null)
+                servingGlass.HeldStateChanged += HandleServingGlassHeldStateChanged;
+            RefreshServingTarget();
 
             if (slots == null)
                 return;
@@ -252,7 +269,8 @@ namespace Slainte.Bartending
                 "ServingTarget",
                 typeof(RectTransform),
                 typeof(CanvasRenderer),
-                typeof(Image));
+                typeof(Image),
+                typeof(CanvasGroup));
             RectTransform targetRect = (RectTransform)targetObject.transform;
             targetRect.SetParent(rootRect, false);
             targetRect.anchorMin = new Vector2(0.5f, 0.5f);
@@ -260,18 +278,28 @@ namespace Slainte.Bartending
             targetRect.pivot = new Vector2(0.5f, 0.5f);
 
             Image image = targetObject.GetComponent<Image>();
-            image.color = settings.serveTargetFillColor;
+            image.sprite = settings.serveTargetSprite;
+            image.preserveAspect = image.sprite != null;
+            image.color = image.sprite != null ? Color.white : settings.serveTargetFillColor;
             image.raycastTarget = false;
 
-            float width = Mathf.Max(0f, settings.serveTargetOutlineWidth);
-            CreateServingTargetBorder(targetRect, "Top", settings.serveTargetOutlineColor,
-                new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, width));
-            CreateServingTargetBorder(targetRect, "Bottom", settings.serveTargetOutlineColor,
-                new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, width));
-            CreateServingTargetBorder(targetRect, "Left", settings.serveTargetOutlineColor,
-                new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(width, 0f));
-            CreateServingTargetBorder(targetRect, "Right", settings.serveTargetOutlineColor,
-                new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(width, 0f));
+            servingTargetCanvasGroup = targetObject.GetComponent<CanvasGroup>();
+            servingTargetCanvasGroup.alpha = 0f;
+            servingTargetCanvasGroup.interactable = false;
+            servingTargetCanvasGroup.blocksRaycasts = false;
+
+            if (image.sprite == null)
+            {
+                float width = Mathf.Max(0f, settings.serveTargetOutlineWidth);
+                CreateServingTargetBorder(targetRect, "Top", settings.serveTargetOutlineColor,
+                    new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, width));
+                CreateServingTargetBorder(targetRect, "Bottom", settings.serveTargetOutlineColor,
+                    new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, width));
+                CreateServingTargetBorder(targetRect, "Left", settings.serveTargetOutlineColor,
+                    new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(width, 0f));
+                CreateServingTargetBorder(targetRect, "Right", settings.serveTargetOutlineColor,
+                    new Vector2(1f, 0f), new Vector2(1f, 1f), new Vector2(width, 0f));
+            }
 
             targetObject.SetActive(false);
             return image;
@@ -306,7 +334,7 @@ namespace Slainte.Bartending
 
         private void LateUpdate()
         {
-            UpdateServingTarget();
+            RefreshServingTarget();
             UpdateLabelPositions();
 
             if (Time.unscaledTime >= nextContentsRefreshTime)
@@ -317,27 +345,38 @@ namespace Slainte.Bartending
             }
         }
 
-        private void UpdateServingTarget()
+        private void HandleServingGlassHeldStateChanged(GlassController glass, bool isHeld)
+        {
+            if (glass != servingGlass)
+                return;
+
+            servingGlassHeld = isHeld;
+            RefreshServingTarget();
+        }
+
+        private void RefreshServingTarget()
         {
             if (servingTargetImage == null)
                 return;
 
             Rect targetRect = default;
-            bool shouldShow = servingGlass != null
-                && servingGlass.IsPickedUp
+            bool targetAvailable = servingGlassHeld
                 && TryGetServeTargetScreenRect(out targetRect);
 
-            servingTargetImage.gameObject.SetActive(shouldShow);
-
-            if (shouldShow)
+            if (targetAvailable)
             {
                 ApplyScreenRect(servingTargetImage.rectTransform, targetRect);
                 missingTargetWarningShown = false;
-                return;
             }
 
-            if (servingGlass != null
-                && servingGlass.IsPickedUp
+            if (targetAvailable != servingTargetAvailable)
+            {
+                servingTargetAvailable = targetAvailable;
+                SetServingTargetVisible(servingGlassHeld && servingTargetAvailable);
+            }
+
+            if (servingGlassHeld
+                && !targetAvailable
                 && !useFallbackServingTarget
                 && !missingTargetWarningShown)
             {
@@ -345,6 +384,62 @@ namespace Slainte.Bartending
                 Debug.LogWarning(
                     "[Bartending] 활성 손님 표시 영역이 없어 서빙 판정을 비활성화했습니다.");
             }
+        }
+
+        private void SetServingTargetVisible(bool visible)
+        {
+            if (servingTargetImage == null || servingTargetCanvasGroup == null
+                || servingTargetVisibilityRequested == visible)
+            {
+                return;
+            }
+
+            servingTargetVisibilityRequested = visible;
+            if (servingTargetFadeRoutine != null)
+            {
+                StopCoroutine(servingTargetFadeRoutine);
+                servingTargetFadeRoutine = null;
+            }
+
+            GameObject targetObject = servingTargetImage.gameObject;
+            if (visible)
+                targetObject.SetActive(true);
+
+            float targetAlpha = visible ? 1f : 0f;
+            float duration = Mathf.Max(0f, settings.serveTargetFadeDuration);
+            if (duration <= Mathf.Epsilon
+                || Mathf.Approximately(servingTargetCanvasGroup.alpha, targetAlpha))
+            {
+                servingTargetCanvasGroup.alpha = targetAlpha;
+                targetObject.SetActive(visible);
+                return;
+            }
+
+            servingTargetFadeRoutine = StartCoroutine(
+                FadeServingTarget(servingTargetCanvasGroup.alpha, targetAlpha, duration, visible));
+        }
+
+        private IEnumerator FadeServingTarget(
+            float startAlpha,
+            float targetAlpha,
+            float duration,
+            bool keepVisible)
+        {
+            float elapsed = 0f;
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                servingTargetCanvasGroup.alpha = Mathf.Lerp(
+                    startAlpha,
+                    targetAlpha,
+                    Mathf.Clamp01(elapsed / duration));
+                yield return null;
+            }
+
+            servingTargetCanvasGroup.alpha = targetAlpha;
+            if (!keepVisible)
+                servingTargetImage.gameObject.SetActive(false);
+            servingTargetFadeRoutine = null;
         }
 
         private void HandleSlotOccupancyChanged(SlotController slot, IBartendingItem item)
@@ -396,7 +491,9 @@ namespace Slainte.Bartending
             textRect.offsetMax = new Vector2(-10f, -8f);
 
             TextMeshProUGUI text = textObject.GetComponent<TextMeshProUGUI>();
-            text.font = TMP_Settings.defaultFontAsset;
+            text.font = settings.contentsLabelFont != null
+                ? settings.contentsLabelFont
+                : TMP_Settings.defaultFontAsset;
             text.fontSize = Mathf.Max(8, settings.contentsLabelFontSize);
             text.color = settings.contentsLabelTextColor;
             text.alignment = TextAlignmentOptions.TopLeft;
@@ -456,15 +553,16 @@ namespace Slainte.Bartending
                 for (int i = 0; i < visibleVolumes.Count; i++)
                 {
                     KeyValuePair<ItemDef, float> pair = visibleVolumes[i];
+                    contentsBuilder.Append("<b>");
                     contentsBuilder.Append(GetItemName(pair.Key));
-                    contentsBuilder.Append(' ');
+                    contentsBuilder.Append("</b>  •  ");
                     contentsBuilder.Append(pair.Value.ToString("0.#"));
                     contentsBuilder.AppendLine(" ml");
                 }
                 contentsBuilder.AppendLine("─────────");
             }
 
-            contentsBuilder.Append("합계 ");
+            contentsBuilder.Append("<b>합계</b>  •  ");
             contentsBuilder.Append(composition.TotalVolumeMl.ToString("0.#"));
             contentsBuilder.Append(" ml");
             label.Text.text = contentsBuilder.ToString();
@@ -579,6 +677,9 @@ namespace Slainte.Bartending
 
         private void OnDestroy()
         {
+            if (servingGlass != null)
+                servingGlass.HeldStateChanged -= HandleServingGlassHeldStateChanged;
+
             foreach (SlotController slot in subscribedSlots)
             {
                 if (slot != null)
@@ -689,7 +790,8 @@ namespace Slainte.Bartending
             session.SlotLayout = CreateSessionSlotLayout(
                 slotLayoutTemplate,
                 session.Viewport != null ? session.Viewport.transform as RectTransform : null,
-                counter);
+                counter,
+                settings.slotPositions != null ? settings.slotPositions.Length : 0);
             Canvas.ForceUpdateCanvases();
 
             GetSlotLayout(
@@ -893,7 +995,8 @@ namespace Slainte.Bartending
         public static RectTransform CreateSessionSlotLayout(
             RectTransform template,
             RectTransform viewport,
-            RectTransform counter)
+            RectTransform counter,
+            int desiredSlotCount = 0)
         {
             if (template == null)
                 return null;
@@ -912,6 +1015,8 @@ namespace Slainte.Bartending
             if (viewport != null)
                 layout.SetSiblingIndex(viewport.GetSiblingIndex());
 
+            EnsureSlotLayoutGuideCount(layout, desiredSlotCount);
+
             foreach (UIDropSlot dropSlot in layout.GetComponentsInChildren<UIDropSlot>(true))
                 dropSlot.enabled = false;
             foreach (Graphic graphic in layout.GetComponentsInChildren<Graphic>(true))
@@ -925,6 +1030,62 @@ namespace Slainte.Bartending
             Canvas.ForceUpdateCanvases();
             AlignSlotLayoutToVisibleTable(layout, counter, viewport);
             return layout;
+        }
+
+        internal static void EnsureSlotLayoutGuideCount(RectTransform layout, int desiredSlotCount)
+        {
+            if (layout == null || desiredSlotCount <= 0)
+                return;
+
+            List<UIDropSlot> guides = new List<UIDropSlot>(
+                layout.GetComponentsInChildren<UIDropSlot>(true));
+            if (guides.Count == 0 || guides.Count >= desiredSlotCount)
+                return;
+
+            UIDropSlot source = guides[guides.Count - 1];
+            while (guides.Count < desiredSlotCount)
+            {
+                GameObject clone = Object.Instantiate(
+                    source.gameObject,
+                    source.transform.parent,
+                    false);
+                clone.name = "Slot_" + guides.Count;
+                UIDropSlot clonedGuide = clone.GetComponent<UIDropSlot>();
+                if (clonedGuide == null)
+                    break;
+                guides.Add(clonedGuide);
+                source = clonedGuide;
+            }
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(layout);
+            if (layout.GetComponent<LayoutGroup>() != null || guides.Count < 2)
+                return;
+
+            float averageWidth = 0f;
+            float averageY = 0f;
+            for (int i = 0; i < guides.Count; i++)
+            {
+                RectTransform guideRect = guides[i].transform as RectTransform;
+                if (guideRect == null)
+                    continue;
+                averageWidth += Mathf.Abs(guideRect.rect.width);
+                averageY += guideRect.anchoredPosition.y;
+            }
+
+            averageWidth /= guides.Count;
+            averageY /= guides.Count;
+            float usableHalfWidth = Mathf.Max(0f, (layout.rect.width - averageWidth) * 0.5f);
+            for (int i = 0; i < guides.Count; i++)
+            {
+                RectTransform guideRect = guides[i].transform as RectTransform;
+                if (guideRect == null)
+                    continue;
+                guideRect.anchorMin = new Vector2(0.5f, 0.5f);
+                guideRect.anchorMax = new Vector2(0.5f, 0.5f);
+                guideRect.anchoredPosition = new Vector2(
+                    Mathf.Lerp(-usableHalfWidth, usableHalfWidth, i / (guides.Count - 1f)),
+                    averageY);
+            }
         }
 
         public static List<SlotController> CreateSlots(

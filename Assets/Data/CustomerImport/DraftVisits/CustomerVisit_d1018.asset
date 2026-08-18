@@ -16,6 +16,8 @@ MonoBehaviour:
   visitKey: d1018
   customerAttributeKey: "\uC544\uBB34\uAC1C\uB4E4"
   speechStyleKey: "\uC544\uBB34\uAC1C\uB4E4_\uC2A4\uD0A4\uCE20"
+  preferredTasteKey: 
+  preferredAtmosphereKey: 
   tags:
   - "customer_attribute:\uC544\uBB34\uAC1C\uB4E4"
   members:
@@ -24,7 +26,7 @@ MonoBehaviour:
     expressionKeyMid: mid
     expressionKeyGood: good
     expressionKeyBad: bad
-  weight: 1
+  weight: 5
   condition:
     minDay: 0
     requiredFlags: []
@@ -32,9 +34,28 @@ MonoBehaviour:
     prerequisiteEpisodeIds: []
     requiredVars: []
     requiredCustomerAppearances: []
+  initiallyAvailable: 0
+  availabilityTransitions:
+  - enabled: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds:
+      - StrangeCoin_0
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - enabled: 0
+    condition:
+      minDay: 0
+      requiredFlags:
+      - sc2_1_false
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
   maxDay: 0
-  cooldownSeconds: 100
-  cooldownGroupKey: skitz
+  reappearanceGroupKey: skitz
   plannedOrderNames:
   - "\uD55C\uC5EC\uB984\uC758 \uB098\uB0AD\uB098"
   - "\uCF54\uD2BC \uC0AC\uC6CC"

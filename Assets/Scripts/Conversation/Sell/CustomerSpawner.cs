@@ -29,11 +29,17 @@ public class CustomerSpawner : MonoBehaviour
         ShowVisit(string.Empty, orderKeys[0]);
     }
 
-    public void ShowVisit(string visitKey, string orderKey)
+    public bool CanResolveOrder(string orderKey, out CustomerOrderData order)
     {
-        _currentOrderData = customerDB != null ? customerDB.FindByKey(orderKey) : null;
+        order = customerDB != null ? customerDB.FindByKey(orderKey) : null;
+        return order != null;
+    }
+
+    public bool ShowVisit(string visitKey, string orderKey)
+    {
+        CanResolveOrder(orderKey, out _currentOrderData);
         _currentVisitData = visitDB != null ? visitDB.FindByKey(visitKey) : null;
-        if (_currentOrderData == null) return;
+        if (_currentOrderData == null) return false;
 
         List<CharacterSlotEntry> entries = BuildVisitEntries(_currentVisitData);
         if (entries.Count > 0)
@@ -41,7 +47,7 @@ public class CustomerSpawner : MonoBehaviour
             characterStage?.ShowCharacters(entries, () => OnCharactersShown(_currentOrderData));
             if (characterStage == null)
                 OnCharactersShown(_currentOrderData);
-            return;
+            return true;
         }
 
         if (!string.IsNullOrWhiteSpace(_currentOrderData.characterKey))
@@ -59,6 +65,8 @@ public class CustomerSpawner : MonoBehaviour
         {
             OnCharactersShown(_currentOrderData);
         }
+
+        return true;
     }
 
     public void ShowFeedbackExpression(bool isGood)

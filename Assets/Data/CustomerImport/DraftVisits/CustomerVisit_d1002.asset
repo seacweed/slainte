@@ -16,6 +16,8 @@ MonoBehaviour:
   visitKey: d1002
   customerAttributeKey: "\uADFC\uB85C\uC790\uB4E4"
   speechStyleKey: "\uADFC\uB85C\uC790\uB4E4_\uC18C\uC2EC\uD55C\uB0A8\uC131"
+  preferredTasteKey: "\uC0C8\uCF64\uB2EC\uCF64\uD568_Sweet and Sour"
+  preferredAtmosphereKey: 
   tags:
   - "customer_attribute:\uADFC\uB85C\uC790\uB4E4"
   members:
@@ -24,7 +26,7 @@ MonoBehaviour:
     expressionKeyMid: mid
     expressionKeyGood: good
     expressionKeyBad: bad
-  weight: 1
+  weight: 5
   condition:
     minDay: 0
     requiredFlags: []
@@ -32,9 +34,10 @@ MonoBehaviour:
     prerequisiteEpisodeIds: []
     requiredVars: []
     requiredCustomerAppearances: []
+  initiallyAvailable: 1
+  availabilityTransitions: []
   maxDay: 0
-  cooldownSeconds: 100
-  cooldownGroupKey: varis
+  reappearanceGroupKey: varis
   plannedOrderNames:
   - "\uD55C\uC5EC\uB984\uC758 \uB098\uB0AD\uB098"
   - "\uCF54\uD2BC \uC0AC\uC6CC"

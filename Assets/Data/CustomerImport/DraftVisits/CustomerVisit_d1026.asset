@@ -16,6 +16,8 @@ MonoBehaviour:
   visitKey: d1026
   customerAttributeKey: "\uC57C\uAC04\uC21C\uCC30"
   speechStyleKey: "\uC57C\uAC04\uC21C\uCC30_\uC678\uD5A5\uC801"
+  preferredTasteKey: 
+  preferredAtmosphereKey: 
   tags:
   - "customer_attribute:\uC57C\uAC04\uC21C\uCC30"
   members:
@@ -24,7 +26,7 @@ MonoBehaviour:
     expressionKeyMid: mid
     expressionKeyGood: good
     expressionKeyBad: bad
-  weight: 1
+  weight: 5
   condition:
     minDay: 0
     requiredFlags: []
@@ -32,14 +34,14 @@ MonoBehaviour:
     prerequisiteEpisodeIds: []
     requiredVars: []
     requiredCustomerAppearances: []
+  initiallyAvailable: 0
+  availabilityTransitions: []
   maxDay: 0
-  cooldownSeconds: 100
-  cooldownGroupKey: f49
+  reappearanceGroupKey: f49
   plannedOrderNames:
   - "\uBE0C\uB9AC\uC988 \uB2C8\uD2B8"
   - "\uBE0C\uB9AC\uC988 \uC628\uB354\uB77D"
   - "\uAC13 \uB808\uC774\uB514"
-  - "\uBE14\uB799 \uCEE4\uD53C"
   orders:
   - order: {fileID: 11400000, guid: 05cfb75d0ccbe3649831763527f2806b, type: 2}
     weight: 1

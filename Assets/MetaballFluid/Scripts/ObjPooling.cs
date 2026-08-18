@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class LiquidPool : MonoBehaviour
 {
+    private const float FallbackParticleVolumeMl = 1f;
+
     public static LiquidPool Instance;
     public GameObject particlePrefab;
     [Min(0)] public int poolSize = 900;
@@ -13,10 +15,14 @@ public class LiquidPool : MonoBehaviour
     private readonly List<GameObject> activeParticles = new List<GameObject>();
     private bool initialized;
     private bool missingPrefabLogged;
+    private bool missingParticleDataLogged;
+    private GameObject cachedVolumePrefab;
+    private float cachedDefaultParticleVolumeMl = FallbackParticleVolumeMl;
 
     public int ActiveParticleCount => activeParticles.Count;
     public int AvailableParticleCount => poolQueue.Count;
     public int TotalParticleCount => activeParticles.Count + poolQueue.Count;
+    public float DefaultParticleVolumeMl => ResolveDefaultParticleVolumeMl();
 
     private void Awake()
     {
@@ -134,6 +140,33 @@ public class LiquidPool : MonoBehaviour
 
         missingPrefabLogged = true;
         Debug.LogError("[LiquidPool] Particle Prefab이 설정되지 않아 액체 입자를 생성할 수 없습니다.", this);
+    }
+
+    private float ResolveDefaultParticleVolumeMl()
+    {
+        if (particlePrefab == null)
+            return FallbackParticleVolumeMl;
+
+        if (cachedVolumePrefab == particlePrefab)
+            return cachedDefaultParticleVolumeMl;
+
+        cachedVolumePrefab = particlePrefab;
+        cachedDefaultParticleVolumeMl = FallbackParticleVolumeMl;
+        missingParticleDataLogged = false;
+
+        if (particlePrefab.TryGetComponent(out LiquidParticleData particleData))
+        {
+            cachedDefaultParticleVolumeMl = particleData.DefaultVolumeMl;
+        }
+        else if (!missingParticleDataLogged)
+        {
+            missingParticleDataLogged = true;
+            Debug.LogWarning(
+                "[LiquidPool] Particle Prefab에 LiquidParticleData가 없어 입자당 부피를 1ml로 처리합니다.",
+                this);
+        }
+
+        return cachedDefaultParticleVolumeMl;
     }
 
     private static void SetLayerRecursively(GameObject root, int layer)

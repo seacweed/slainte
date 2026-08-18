@@ -14,17 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CustomerVisitData
   sourceCustomerId: D1039
   visitKey: d1039
-  customerAttributeKey: "\uC57C\uAC04\uC21C\uCC30"
+  customerAttributeKey: "\uC57C\uAC04\uC21C\uCC30_E12"
   speechStyleKey: "\uC57C\uAC04\uC21C\uCC30_E12"
+  preferredTasteKey: 
+  preferredAtmosphereKey: 
   tags:
-  - "customer_attribute:\uC57C\uAC04\uC21C\uCC30"
+  - "customer_attribute:\uC57C\uAC04\uC21C\uCC30_E12"
   members:
   - characterKey: e12
     slotIndex: -1
     expressionKeyMid: mid
     expressionKeyGood: good
     expressionKeyBad: bad
-  weight: 1
+  weight: 3
   condition:
     minDay: 0
     requiredFlags: []
@@ -32,14 +34,15 @@ MonoBehaviour:
     prerequisiteEpisodeIds: []
     requiredVars: []
     requiredCustomerAppearances: []
+  initiallyAvailable: 0
+  availabilityTransitions: []
   maxDay: 0
-  cooldownSeconds: 100
-  cooldownGroupKey: e12
+  reappearanceGroupKey: e12
   plannedOrderNames:
-  - "\uC170\uC774\uB514"
+  - "\uD55C\uC5EC\uB984\uC758 \uB098\uB0AD\uB098"
   - "\uBE14\uB799 \uCEE4\uD53C"
   orders:
-  - order: {fileID: 11400000, guid: a90005b77e2491e4aaa54b563d27fed4, type: 2}
+  - order: {fileID: 11400000, guid: 62a38c7981ad4d044aff4a84c98a1ba6, type: 2}
     weight: 1
     condition:
       minDay: 0

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -44,6 +45,8 @@ namespace Slainte.EditorTools
             "Assets/Data/CharacterData/CharacterDatabase.asset";
         private const string VisitDatabasePath =
             "Assets/Resources/CustomerVisit/CustomerVisitDatabase.asset";
+        private const string OrderDatabasePath =
+            "Assets/Data/CustomerOrder/CustomerOrderDatabase.asset";
 
         private static readonly Dictionary<string, string> RecipeNameAliases =
             new(StringComparer.OrdinalIgnoreCase)
@@ -51,10 +54,21 @@ namespace Slainte.EditorTools
                 { "갓 레이디", "갓레이디" }
             };
 
-        public static string DefaultCsvPath => Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-            "Downloads",
-            "Data_slainte.csv - 손님.csv");
+        public static string DefaultCsvPath
+        {
+            get
+            {
+                string downloads = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                    "Downloads");
+                string updated = Path.Combine(
+                    downloads,
+                    "Data_slainte.csv - 손님 (1).csv");
+                return File.Exists(updated)
+                    ? updated
+                    : Path.Combine(downloads, "Data_slainte.csv - 손님.csv");
+            }
+        }
 
         [MenuItem("Slainte/데이터/손님 CSV 드래프트 임포트")]
         public static void ImportDefaultFromMenu()
@@ -75,6 +89,12 @@ namespace Slainte.EditorTools
             CustomerCsvImportReport report = Import(DefaultCsvPath, showDialog: false);
             if (report.errors.Count > 0)
                 throw new InvalidDataException(string.Join("\n", report.errors));
+        }
+
+        public static void ImportAndPublishDefaultFromCommandLine()
+        {
+            ImportDefaultFromCommandLine();
+            PublishValidatedDraftsFromMenu();
         }
 
         public static CustomerCsvImportReport Import(string csvPath, bool showDialog)
@@ -165,6 +185,8 @@ namespace Slainte.EditorTools
             {
                 string message = string.Join("\n", errors.Take(20));
                 Debug.LogError("[손님 드래프트 게시] 중단\n" + string.Join("\n", errors));
+                if (Application.isBatchMode)
+                    throw new InvalidDataException(message);
                 EditorUtility.DisplayDialog("손님 드래프트 게시 실패", message, "확인");
                 return;
             }
@@ -173,17 +195,25 @@ namespace Slainte.EditorTools
                 AssetDatabase.LoadAssetAtPath<CharacterDatabase>(CharacterDatabasePath);
             CustomerVisitDatabase visitDatabase =
                 AssetDatabase.LoadAssetAtPath<CustomerVisitDatabase>(VisitDatabasePath);
-            if (characterDatabase == null || visitDatabase == null)
+            CustomerOrderDatabase orderDatabase =
+                AssetDatabase.LoadAssetAtPath<CustomerOrderDatabase>(OrderDatabasePath);
+            if (characterDatabase == null || visitDatabase == null || orderDatabase == null)
             {
+                if (Application.isBatchMode)
+                    throw new InvalidDataException(
+                        "캐릭터, 손님 방문 또는 손님 주문 데이터베이스를 찾을 수 없습니다.");
                 EditorUtility.DisplayDialog(
                     "손님 드래프트 게시 실패",
-                    "캐릭터 또는 손님 방문 데이터베이스를 찾을 수 없습니다.",
+                    "캐릭터, 손님 방문 또는 손님 주문 데이터베이스를 찾을 수 없습니다.",
                     "확인");
                 return;
             }
 
             int addedCharacters = 0;
             int addedVisits = 0;
+            int addedOrders = 0;
+            int updatedOrders = 0;
+            orderDatabase.customers ??= new List<CustomerOrderData>();
             for (int i = 0; i < visits.Count; i++)
             {
                 CustomerVisitData visit = visits[i];
@@ -205,15 +235,48 @@ namespace Slainte.EditorTools
                 }
             }
 
+            List<CustomerOrderData> publishedOrders = CollectPublishedOrders(visits);
+            for (int i = 0; i < publishedOrders.Count; i++)
+            {
+                CustomerOrderData order = publishedOrders[i];
+                int existingIndex = FindOrderIndex(orderDatabase, order.key);
+                if (existingIndex < 0)
+                {
+                    orderDatabase.customers.Add(order);
+                    addedOrders++;
+                }
+                else if (orderDatabase.customers[existingIndex] != order)
+                {
+                    orderDatabase.customers[existingIndex] = order;
+                    updatedOrders++;
+                }
+            }
+
+            for (int i = 0; i < publishedOrders.Count; i++)
+            {
+                CustomerOrderData order = publishedOrders[i];
+                if (orderDatabase.FindByKey(order.key) != order)
+                {
+                    throw new InvalidDataException(
+                        $"게시한 주문을 손님 주문 DB에서 동일한 에셋으로 조회할 수 없습니다: {order.key}");
+                }
+            }
+
             EditorUtility.SetDirty(characterDatabase);
             EditorUtility.SetDirty(visitDatabase);
+            EditorUtility.SetDirty(orderDatabase);
             AssetDatabase.SaveAssets();
             Debug.Log(
-                $"[손님 드래프트 게시] 캐릭터 {addedCharacters}개, 방문 {addedVisits}개를 등록했습니다.");
-            EditorUtility.DisplayDialog(
-                "손님 드래프트 게시 완료",
-                $"캐릭터 {addedCharacters}개, 방문 {addedVisits}개를 등록했습니다.",
-                "확인");
+                $"[손님 드래프트 게시] 캐릭터 {addedCharacters}개, 방문 {addedVisits}개, "
+                + $"주문 추가/갱신 {addedOrders}/{updatedOrders}개를 등록했습니다.");
+            if (!Application.isBatchMode)
+            {
+                EditorUtility.DisplayDialog(
+                    "손님 드래프트 게시 완료",
+                    $"캐릭터 {addedCharacters}개, 방문 {addedVisits}개, "
+                    + $"주문 추가/갱신 {addedOrders}/{updatedOrders}개를 등록했습니다.",
+                    "확인");
+            }
         }
 
         public static List<string> ValidateDraftsForPublish(
@@ -230,6 +293,8 @@ namespace Slainte.EditorTools
             ItemDefCatalog items = ItemDefCatalog.LoadFromResources("Items", null);
             CocktailRecipeCatalog recipes = CocktailRecipeDataLoader.LoadDefault(items);
             bool hasNightPatrol = false;
+            Dictionary<string, CustomerOrderData> ordersByKey =
+                new(StringComparer.OrdinalIgnoreCase);
             for (int i = 0; i < visits.Count; i++)
             {
                 CustomerVisitData visit = visits[i];
@@ -260,24 +325,48 @@ namespace Slainte.EditorTools
                     }
                     else if (!HasPresentationSprite(character))
                     {
-                        errors.Add($"{visit.visitKey}: 캐릭터 {characterKey} 이미지가 없습니다.");
+                        Debug.LogWarning(
+                            $"[손님 드래프트 게시] {visit.visitKey}: "
+                            + $"캐릭터 {characterKey} 이미지가 없습니다.");
                     }
                 }
 
                 int plannedCount = visit.plannedOrderNames?.Count ?? 0;
                 int connectedCount = visit.orders?.Count ?? 0;
-                if (plannedCount == 0 || connectedCount != plannedCount)
+                if (connectedCount == 0)
                 {
                     errors.Add(
                         $"{visit.visitKey}: 기획 주문 {plannedCount}개 중 {connectedCount}개만 연결됐습니다.");
                     continue;
                 }
+                if (plannedCount == 0 || connectedCount != plannedCount)
+                {
+                    Debug.LogWarning(
+                        $"[손님 드래프트 게시] {visit.visitKey}: "
+                        + $"기획 주문 {plannedCount}개 중 {connectedCount}개만 연결됐습니다.");
+                }
 
                 for (int orderIndex = 0; orderIndex < visit.orders.Count; orderIndex++)
                 {
                     CustomerOrderData order = visit.orders[orderIndex]?.order;
-                    if (order == null
-                        || !recipes.TryGet(order.requestedRecipeId, out CocktailRecipe recipe)
+                    if (order == null || string.IsNullOrWhiteSpace(order.key))
+                    {
+                        errors.Add($"{visit.visitKey}: 키가 없는 주문이 연결됐습니다.");
+                        continue;
+                    }
+
+                    if (ordersByKey.TryGetValue(order.key, out CustomerOrderData duplicate)
+                        && duplicate != order)
+                    {
+                        errors.Add(
+                            $"{visit.visitKey}: 서로 다른 주문 에셋이 같은 키를 사용합니다: {order.key}");
+                    }
+                    else
+                    {
+                        ordersByKey[order.key] = order;
+                    }
+
+                    if (!recipes.TryGet(order.requestedRecipeId, out CocktailRecipe recipe)
                         || recipe == null
                         || !recipe.isOrderable)
                     {
@@ -285,7 +374,9 @@ namespace Slainte.EditorTools
                     }
                     else if (order.lines == null || order.lines.Count == 0)
                     {
-                        errors.Add($"{visit.visitKey}/{order.key}: 주문 대사가 없습니다.");
+                        Debug.LogWarning(
+                            $"[손님 드래프트 게시] {visit.visitKey}/{order.key}: "
+                            + "주문 대사가 없어 기본 주문 표시를 사용합니다.");
                     }
                 }
             }
@@ -293,6 +384,51 @@ namespace Slainte.EditorTools
             if (!hasNightPatrol)
                 errors.Add($"TV 대상 태그가 손님 드래프트에 없습니다: {NightPatrolAttributeTag}");
             return errors;
+        }
+
+        private static List<CustomerOrderData> CollectPublishedOrders(
+            IReadOnlyList<CustomerVisitData> visits)
+        {
+            Dictionary<string, CustomerOrderData> byKey =
+                new(StringComparer.OrdinalIgnoreCase);
+            if (visits != null)
+            {
+                for (int visitIndex = 0; visitIndex < visits.Count; visitIndex++)
+                {
+                    CustomerVisitData visit = visits[visitIndex];
+                    if (visit?.orders == null)
+                        continue;
+
+                    for (int orderIndex = 0; orderIndex < visit.orders.Count; orderIndex++)
+                    {
+                        CustomerOrderData order = visit.orders[orderIndex]?.order;
+                        if (order != null && !string.IsNullOrWhiteSpace(order.key))
+                            byKey[order.key] = order;
+                    }
+                }
+            }
+
+            return byKey.Values
+                .OrderBy(order => order.key, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
+
+        private static int FindOrderIndex(CustomerOrderDatabase database, string key)
+        {
+            if (database?.customers == null || string.IsNullOrWhiteSpace(key))
+                return -1;
+
+            for (int i = 0; i < database.customers.Count; i++)
+            {
+                CustomerOrderData existing = database.customers[i];
+                if (existing != null
+                    && string.Equals(existing.key, key, StringComparison.OrdinalIgnoreCase))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
 
         private static List<SourceCustomerRow> ParseAndValidate(
@@ -312,15 +448,41 @@ namespace Slainte.EditorTools
                 string sourceId = csv.Get("ID").Trim();
                 string displayName = csv.Get("Name").Trim();
                 string englishName = csv.Get("Name_eng").Trim();
+                string weightText = csv.Get("등장 확률").Trim();
                 string attribute = csv.Get("손님속성").Trim();
                 string speechStyle = csv.Get("말투속성").Trim();
-                if (string.IsNullOrWhiteSpace(sourceId)
-                    || string.IsNullOrWhiteSpace(displayName)
+                if (string.IsNullOrWhiteSpace(sourceId))
+                {
+                    bool looksLikeNote = !string.IsNullOrWhiteSpace(displayName)
+                        && string.IsNullOrWhiteSpace(englishName)
+                        && string.IsNullOrWhiteSpace(weightText)
+                        && string.IsNullOrWhiteSpace(attribute)
+                        && string.IsNullOrWhiteSpace(speechStyle);
+                    if (looksLikeNote)
+                        report.warnings.Add($"{i + 2}행 설명을 건너뛰었습니다: {displayName}");
+                    else
+                        report.errors.Add($"{i + 2}행: 손님 ID가 비어 있습니다.");
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(displayName)
                     || string.IsNullOrWhiteSpace(englishName)
+                    || string.IsNullOrWhiteSpace(weightText)
                     || string.IsNullOrWhiteSpace(attribute)
                     || string.IsNullOrWhiteSpace(speechStyle))
                 {
                     report.errors.Add($"{i + 2}행: 필수 값이 비어 있습니다.");
+                    continue;
+                }
+
+                if (!float.TryParse(
+                        weightText,
+                        NumberStyles.Float,
+                        CultureInfo.InvariantCulture,
+                        out float weight)
+                    || weight < 0f)
+                {
+                    report.errors.Add($"{i + 2}행: 등장 확률은 0 이상의 숫자여야 합니다: {weightText}");
                     continue;
                 }
 
@@ -347,8 +509,11 @@ namespace Slainte.EditorTools
                     characterKey = characterKey,
                     displayName = displayName,
                     englishName = englishName,
+                    weight = weight,
                     attribute = attribute,
-                    speechStyle = speechStyle
+                    speechStyle = speechStyle,
+                    preferredTaste = csv.Get("주문 항목 6: 맛").Trim(),
+                    preferredAtmosphere = csv.Get("주문 항목 7: 분위기").Trim()
                 };
                 for (int orderIndex = 1; orderIndex <= 5; orderIndex++)
                 {
@@ -409,8 +574,6 @@ namespace Slainte.EditorTools
             {
                 visit = ScriptableObject.CreateInstance<CustomerVisitData>();
                 visit.name = "CustomerVisit_" + row.visitKey;
-                visit.weight = 1f;
-                visit.cooldownSeconds = 100f;
                 AssetDatabase.CreateAsset(
                     visit,
                     $"{VisitFolder}/{visit.name}.asset");
@@ -426,7 +589,17 @@ namespace Slainte.EditorTools
             visit.visitKey = row.visitKey;
             visit.customerAttributeKey = row.attribute;
             visit.speechStyleKey = row.speechStyle;
-            visit.cooldownGroupKey = row.characterKey;
+            visit.preferredTasteKey = row.preferredTaste;
+            visit.preferredAtmosphereKey = row.preferredAtmosphere;
+            visit.weight = row.weight;
+            visit.reappearanceGroupKey = row.characterKey;
+            ConfigureAvailability(row, visit);
+            if (visit.initiallyAvailable && !HasPresentationSprite(character))
+            {
+                visit.initiallyAvailable = false;
+                report.warnings.Add(
+                    $"{visit.visitKey}: 시작 손님이지만 이미지가 없어 임시로 비활성화했습니다.");
+            }
             visit.tags ??= new List<string>();
             visit.tags.RemoveAll(tag => tag != null && tag.StartsWith(
                 AttributeTagPrefix,
@@ -445,6 +618,96 @@ namespace Slainte.EditorTools
             visit.members.Add(member);
             EditorUtility.SetDirty(visit);
             return visit;
+        }
+
+        private static void ConfigureAvailability(
+            SourceCustomerRow row,
+            CustomerVisitData visit)
+        {
+            visit.initiallyAvailable = string.Equals(
+                    row.attribute,
+                    "근로자들",
+                    StringComparison.OrdinalIgnoreCase)
+                || string.Equals(
+                    row.attribute,
+                    "F54",
+                    StringComparison.OrdinalIgnoreCase);
+            visit.availabilityTransitions ??= new List<CustomerAvailabilityTransition>();
+            visit.availabilityTransitions.Clear();
+
+            if (string.Equals(row.attribute, "아무개들", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(row.attribute, "F72", StringComparison.OrdinalIgnoreCase))
+            {
+                AddAvailabilityTransition(
+                    visit,
+                    enabled: true,
+                    prerequisiteEpisodeId: "StrangeCoin_0");
+                AddAvailabilityTransition(
+                    visit,
+                    enabled: false,
+                    requiredFlag: "sc2_1_false");
+                return;
+            }
+
+            if (string.Equals(row.attribute, "셀리", StringComparison.OrdinalIgnoreCase))
+            {
+                AddAvailabilityTransition(
+                    visit,
+                    enabled: true,
+                    requiredFlag: "sc2_1_true");
+                return;
+            }
+
+            if (string.Equals(row.attribute, "E12", StringComparison.OrdinalIgnoreCase))
+            {
+                AddAvailabilityTransition(
+                    visit,
+                    enabled: true,
+                    prerequisiteEpisodeId: "StrangeCoin_3");
+                return;
+            }
+
+            if (string.Equals(
+                    row.attribute,
+                    "카사_아이들_셀리",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                AddAvailabilityTransition(
+                    visit,
+                    enabled: true,
+                    requiredFlag: "tl3_2_1_true");
+                return;
+            }
+
+            if (string.Equals(
+                    row.attribute,
+                    "카사_아이들_F54",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                AddAvailabilityTransition(
+                    visit,
+                    enabled: true,
+                    requiredFlag: "tl3_2_2_true");
+            }
+        }
+
+        private static void AddAvailabilityTransition(
+            CustomerVisitData visit,
+            bool enabled,
+            string prerequisiteEpisodeId = null,
+            string requiredFlag = null)
+        {
+            EpisodeTriggerCondition condition = new();
+            if (!string.IsNullOrWhiteSpace(prerequisiteEpisodeId))
+                condition.prerequisiteEpisodeIds.Add(prerequisiteEpisodeId);
+            if (!string.IsNullOrWhiteSpace(requiredFlag))
+                condition.requiredFlags.Add(requiredFlag);
+
+            visit.availabilityTransitions.Add(new CustomerAvailabilityTransition
+            {
+                enabled = enabled,
+                condition = condition
+            });
         }
 
         private static void UpsertOrders(
@@ -689,8 +952,11 @@ namespace Slainte.EditorTools
             public string characterKey;
             public string displayName;
             public string englishName;
+            public float weight;
             public string attribute;
             public string speechStyle;
+            public string preferredTaste;
+            public string preferredAtmosphere;
             public readonly List<string> orderNames = new();
         }
     }

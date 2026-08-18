@@ -16,6 +16,8 @@ MonoBehaviour:
   visitKey: d1011
   customerAttributeKey: "\uADFC\uB85C\uC790\uB4E4"
   speechStyleKey: "\uADFC\uB85C\uC790\uB4E4_\uACFC\uBB35\uD55C\uB0A8\uC131"
+  preferredTasteKey: "\uB2EC\uD070\uD568_Honeyed"
+  preferredAtmosphereKey: 
   tags:
   - "customer_attribute:\uADFC\uB85C\uC790\uB4E4"
   members:
@@ -24,7 +26,7 @@ MonoBehaviour:
     expressionKeyMid: mid
     expressionKeyGood: good
     expressionKeyBad: bad
-  weight: 1
+  weight: 5
   condition:
     minDay: 0
     requiredFlags: []
@@ -32,14 +34,15 @@ MonoBehaviour:
     prerequisiteEpisodeIds: []
     requiredVars: []
     requiredCustomerAppearances: []
+  initiallyAvailable: 1
+  availabilityTransitions: []
   maxDay: 0
-  cooldownSeconds: 100
-  cooldownGroupKey: kester
+  reappearanceGroupKey: kester
   plannedOrderNames:
   - "\uBC88\uD584 \uBC84\uBC88 \uB2C8\uD2B8"
   - "\uAC13\uB85C\uB4DC"
   - "\uBC88\uD584 \uC0AC\uC6CC"
-  - "\uBE14\uB799 \uCEE4\uD53C"
+  - "\uC870\uB2C8 \uB3C5\uC2A4 \uC628\uB354\uB77D"
   - "\uC544\uC774\uB9AC\uC2DC \uCEE4\uD53C"
   orders:
   - order: {fileID: 11400000, guid: db15da8b72e20fe4594d67d67b0fe107, type: 2}
@@ -61,6 +64,15 @@ MonoBehaviour:
       requiredVars: []
       requiredCustomerAppearances: []
   - order: {fileID: 11400000, guid: cb9d7d2be7a192741a786997a9bffc63, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: b1030bd931acac841adf1470079a5f90, type: 2}
     weight: 1
     condition:
       minDay: 0

@@ -30,7 +30,6 @@ namespace Slainte.Bartending.EditorTools
         private static BartendingInteractionOverlay oldOverlay;
         private static BeakerController snappingBeaker;
         private static Vector2 expectedSnapPosition;
-        private static double snapStartedAt;
         private static GameObject snapSlotObject;
 
         [MenuItem("Slainte/Bartending/Validate Interaction UI And Rotation")]
@@ -137,7 +136,7 @@ namespace Slainte.Bartending.EditorTools
             Require(session.Beaker is BeakerController, "Beaker controller was not created.");
             Require(session.CobblerShaker is BeakerController,
                 "Cobbler shaker is not using the common beaker controller.");
-            Require(session.Slots.Count >= 3, "Expected at least three bartending slots.");
+            Require(session.Slots.Count == 8, "Expected exactly eight functional bartending slots.");
             Require(session.InteractionOverlay.VisibleVesselLabelCount >= 3,
                 "Glass, beaker and shaker content labels were not created after slot snap.");
             Require(!session.InteractionOverlay.IsServingTargetVisible,
@@ -247,7 +246,8 @@ namespace Slainte.Bartending.EditorTools
                 "StartReturning",
                 "PerformHorizontalRotationMovement",
                 "ApplyPendingPhysicsMotion",
-                "ReleaseBeaker");
+                "ReleaseBeaker",
+                true);
             RequireVector(
                 particleBefore,
                 GetPosition(testParticle.gameObject),
@@ -268,14 +268,16 @@ namespace Slainte.Bartending.EditorTools
                 "StartReturning",
                 "PerformHorizontalRotationMovement",
                 "ApplyPendingPhysicsMotion",
-                "ReleaseBeaker");
+                "ReleaseBeaker",
+                true);
             ValidateControllerTiltAndReturnMovement(
                 bottle,
                 "StartTilting",
                 "StartReturning",
                 "PerformHorizontalRotationMovement",
                 null,
-                "ReleaseBottle");
+                "ReleaseBottle",
+                false);
 
             GlassController glass = session.ServingGlass;
             glass.OnPickedUp();
@@ -357,32 +359,49 @@ namespace Slainte.Bartending.EditorTools
             snapSlotObject.AddComponent<BoxCollider2D>().isTrigger = true;
             snapSlotObject.AddComponent<SpriteRenderer>();
             SlotController snapSlot = snapSlotObject.AddComponent<SlotController>();
+
+            CreateTrackedContents(session);
+            Vector2 beakerBeforeSnap = GetPosition(snappingBeaker.gameObject);
+            Vector2 particleBeforeSnap = GetPosition(testParticle.gameObject);
+            Vector2 cubeBeforeSnap = GetPosition(testCube.gameObject);
+            float bottomOffset = InvokeNonPublicWithResult<float>(
+                snappingBeaker,
+                "GetPivotToBottomOffset");
+            expectedSnapPosition = new Vector2(
+                snapSlotObject.transform.position.x,
+                snapSlotObject.transform.position.y + bottomOffset);
+
             snappingBeaker.SnapToSlot(snapSlotObject.transform, snapSlot);
 
-            Require(GetPrivateState(snappingBeaker, "currentState") == BeakerState.Snapping.ToString(),
-                "Runtime slot placement did not enter the physical snapping state.");
+            Require(GetPrivateState(snappingBeaker, "currentState") == BeakerState.Idle.ToString(),
+                "Runtime slot placement did not complete immediately.");
             Require(snapSlot.IsOccupied && ReferenceEquals(snapSlot.OccupiedItem, snappingBeaker),
-                "Physical slot snap did not reserve its destination slot.");
-            expectedSnapPosition = GetPrivateField<Vector2>(
-                snappingBeaker,
-                "slotSnapTargetPosition");
-            snapStartedAt = EditorApplication.timeSinceStartup;
+                "Immediate slot snap did not reserve its destination slot.");
+            RequireVector(expectedSnapPosition, GetPosition(snappingBeaker.gameObject), 0.03f,
+                "Immediate slot snap did not reach the requested position.");
+
+            Vector2 vesselDelta = GetPosition(snappingBeaker.gameObject) - beakerBeforeSnap;
+            RequireVector(
+                particleBeforeSnap + vesselDelta,
+                GetPosition(testParticle.gameObject),
+                0.03f,
+                "Liquid did not move with the beaker during slot placement.");
+            RequireVector(
+                cubeBeforeSnap + vesselDelta,
+                GetPosition(testCube.gameObject),
+                0.03f,
+                "Ice did not move with the beaker during slot placement.");
             AdvancePhase(6);
         }
 
         private static void ValidatePhysicalSlotSnap()
         {
-            Require(snappingBeaker != null, "Snapping beaker reference was lost.");
+            Require(snappingBeaker != null, "Slot-snapped beaker reference was lost.");
             string state = GetPrivateState(snappingBeaker, "currentState");
-            if (state == BeakerState.Snapping.ToString())
-                return;
-
             Require(state == BeakerState.Idle.ToString(),
-                "Beaker did not return to Idle after its physical slot snap: " + state);
-            Require(EditorApplication.timeSinceStartup - snapStartedAt >= 0.07d,
-                "Runtime slot placement completed as an immediate teleport.");
+                "Beaker did not stay Idle after its immediate slot snap: " + state);
             RequireVector(expectedSnapPosition, GetPosition(snappingBeaker.gameObject), 0.03f,
-                "Physical slot snap did not finish at the requested position.");
+                "Immediate slot snap did not remain at the requested position.");
 
             if (snapSlotObject != null)
                 UnityEngine.Object.Destroy(snapSlotObject);
@@ -393,7 +412,8 @@ namespace Slainte.Bartending.EditorTools
                 "serving boundary, one-shot click, logical target, glass/beaker/shaker labels, "
                 + "world-physics liquid and ice ownership, horizontal tilt, two-axis return movement, "
                 + "bottle/glass/beaker/shaker return behavior, "
-                + "cursor unlock, 0.1-second physical slot snap, and session recreation passed.");
+                + "cursor unlock, slot-only contents transport, immediate slot snap, "
+                + "and session recreation passed.");
         }
 
         private static Vector2 ValidateControllerTiltAndReturnMovement(
@@ -402,7 +422,8 @@ namespace Slainte.Bartending.EditorTools
             string startReturnMethod,
             string horizontalMethod,
             string applyPhysicsMethod,
-            string releaseMethod)
+            string releaseMethod,
+            bool expectHorizontalTiltMovement)
         {
             Component controller = item as Component;
             Require(controller != null, "Bartending item is not a component.");
@@ -413,8 +434,16 @@ namespace Slainte.Bartending.EditorTools
             InvokeNonPublic(controller, startTiltMethod);
             ApplyInjectedHorizontalMovement(controller, horizontalMethod, applyPhysicsMethod);
             Vector2 afterTiltPosition = GetPosition(controller.gameObject);
-            Require(Mathf.Abs(afterTiltPosition.x - startPosition.x) > 0.001f,
-                controller.name + " did not move horizontally while tilting.");
+            if (expectHorizontalTiltMovement)
+            {
+                Require(Mathf.Abs(afterTiltPosition.x - startPosition.x) > 0.001f,
+                    controller.name + " did not move horizontally while tilting.");
+            }
+            else
+            {
+                RequireApproximately(startPosition.x, afterTiltPosition.x, 0.001f,
+                    controller.name + " moved horizontally while bottle tilt was active.");
+            }
             RequireApproximately(startPosition.y, afterTiltPosition.y, 0.001f,
                 controller.name + " moved vertically while tilting.");
 
@@ -732,10 +761,36 @@ namespace Slainte.Bartending.EditorTools
                     boundaryCorners[1]).y;
                 RequireApproximately(tableTop, clampedTarget.yMin, 0.01f,
                     "Serving target lower edge was not clamped to the bar table top.");
-                Require(clampedTarget.yMin > union.yMin,
-                    "Bar table top did not reduce the serving target from below.");
-                RequireApproximately(union.yMax, clampedTarget.yMax, 0.01f,
-                    "Bar table clamp changed the serving target upper edge.");
+                Vector4 normalizedTarget = settings.serveTargetNormalized;
+                RequireApproximately(
+                    Mathf.Clamp01(normalizedTarget.x) * Screen.width,
+                    clampedTarget.xMin,
+                    0.01f,
+                    "Serving target left edge changed with the customer sprite bounds.");
+                RequireApproximately(
+                    Mathf.Clamp01(normalizedTarget.z) * Screen.width,
+                    clampedTarget.width,
+                    0.01f,
+                    "Serving target width changed with the customer sprite bounds.");
+                RequireApproximately(
+                    (Mathf.Clamp01(normalizedTarget.y) + Mathf.Clamp01(normalizedTarget.w))
+                        * Screen.height,
+                    clampedTarget.yMax,
+                    0.01f,
+                    "Serving target upper edge changed with the customer sprite bounds.");
+
+                right.GetComponent<RectTransform>().anchoredPosition += new Vector2(240f, 80f);
+                Canvas.ForceUpdateCanvases();
+                Require(overlay.TryGetServeTargetScreenRect(out Rect movedCustomerTarget),
+                    "Serving target disappeared after moving a customer sprite.");
+                RequireApproximately(clampedTarget.xMin, movedCustomerTarget.xMin, 0.01f,
+                    "Serving target position followed a customer sprite.");
+                RequireApproximately(clampedTarget.width, movedCustomerTarget.width, 0.01f,
+                    "Serving target size followed a customer sprite.");
+                RequireApproximately(clampedTarget.yMin, movedCustomerTarget.yMin, 0.01f,
+                    "Serving target lower edge followed a customer sprite.");
+                RequireApproximately(clampedTarget.yMax, movedCustomerTarget.yMax, 0.01f,
+                    "Serving target upper edge followed a customer sprite.");
             }
             finally
             {
@@ -772,8 +827,9 @@ namespace Slainte.Bartending.EditorTools
             BartendingInteractionOverlay overlay,
             BusinessBartendingSettings settings)
         {
-            Require(overlay.ServingTargetBorderCount == 4,
-                "Serving target did not create four rectangular border edges.");
+            int expectedBorderCount = settings.serveTargetSprite != null ? 0 : 4;
+            Require(overlay.ServingTargetBorderCount == expectedBorderCount,
+                $"Serving target border count is incorrect: {overlay.ServingTargetBorderCount}");
             Image[] images = overlay.GetComponentsInChildren<Image>(true);
             int borderCount = 0;
             for (int i = 0; i < images.Length; i++)
@@ -789,7 +845,7 @@ namespace Slainte.Bartending.EditorTools
                     $"Serving target border '{image.name}' blocks pointer input.");
             }
 
-            Require(borderCount == 4,
+            Require(borderCount == expectedBorderCount,
                 $"Serving target rectangular border image count is incorrect: {borderCount}");
         }
 
@@ -884,6 +940,25 @@ namespace Slainte.Bartending.EditorTools
             try
             {
                 method.Invoke(target, arguments);
+            }
+            catch (TargetInvocationException exception)
+            {
+                throw exception.InnerException ?? exception;
+            }
+        }
+
+        private static T InvokeNonPublicWithResult<T>(
+            object target,
+            string methodName,
+            params object[] arguments)
+        {
+            MethodInfo method = target?.GetType().GetMethod(
+                methodName,
+                BindingFlags.Instance | BindingFlags.NonPublic);
+            Require(method != null, $"Private method '{methodName}' was not found.");
+            try
+            {
+                return (T)method.Invoke(target, arguments);
             }
             catch (TargetInvocationException exception)
             {

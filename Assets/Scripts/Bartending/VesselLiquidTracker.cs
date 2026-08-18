@@ -9,6 +9,9 @@ namespace Slainte.Bartending
         private readonly Dictionary<ItemDef, float> volumes = new();
         private float thermalVolumeMl;
         private float weightedTemperature;
+        private LiquidPayload finalColorPayload;
+        private Color cachedFinalColor;
+        private bool finalColorDirty = true;
 
         public IReadOnlyDictionary<ItemDef, float> Volumes => volumes;
         public float TotalVolumeMl { get; private set; }
@@ -29,6 +32,7 @@ namespace Slainte.Bartending
 
             volumes[item] += volumeMl;
             TotalVolumeMl += volumeMl;
+            finalColorDirty = true;
         }
 
         public float GetVolume(ItemDef item)
@@ -61,6 +65,30 @@ namespace Slainte.Bartending
         public CocktailTechnique GetEffectiveTechniques()
         {
             return Techniques == CocktailTechnique.None ? CocktailTechnique.Build : Techniques;
+        }
+
+        public Color EvaluateFinalColor()
+        {
+            if (!finalColorDirty)
+                return cachedFinalColor;
+
+            finalColorPayload ??= new LiquidPayload();
+            finalColorPayload.portions.Clear();
+            foreach (KeyValuePair<ItemDef, float> pair in volumes)
+            {
+                if (pair.Key == null || pair.Value <= 0f)
+                    continue;
+
+                finalColorPayload.portions.Add(new LiquidPortion
+                {
+                    sourceItem = pair.Key,
+                    volumeMl = pair.Value
+                });
+            }
+
+            cachedFinalColor = finalColorPayload.EvaluateColor();
+            finalColorDirty = false;
+            return cachedFinalColor;
         }
     }
 
@@ -144,6 +172,7 @@ namespace Slainte.Bartending
         }
 
         internal int InteractionPriority => interactionPriority;
+        internal static HashSet<LiquidParticleData> ActiveParticles => activeParticles;
 
         internal void SetInteractionPriority(int priority)
         {
@@ -267,6 +296,42 @@ namespace Slainte.Bartending
         public void SetHasIce(bool value)
         {
             hasIce = value;
+        }
+
+        public void TranslateTrackedParticles(Vector2 delta)
+        {
+            if (delta.sqrMagnitude <= 0.000001f)
+                return;
+
+            Cleanup();
+            RefreshTrackedParticles();
+
+            foreach (LiquidParticleData particle in particles)
+            {
+                if (particle == null)
+                    continue;
+
+                Rigidbody2D particleBody = particle.GetComponent<Rigidbody2D>();
+                if (particleBody != null)
+                {
+                    particleBody.position += delta;
+                    particleBody.WakeUp();
+                }
+                else
+                {
+                    particle.transform.position += (Vector3)delta;
+                }
+            }
+
+            TranslateTrackedIceCubes(delta);
+        }
+
+        private void TranslateTrackedIceCubes(Vector2 delta)
+        {
+            Cleanup();
+            RefreshTrackedIceCubes();
+            foreach (IceCubeController iceCube in iceCubes)
+                iceCube?.Translate(delta);
         }
 
         private void Track(Collider2D other)

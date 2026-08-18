@@ -16,6 +16,8 @@ MonoBehaviour:
   visitKey: d1031
   customerAttributeKey: "\uCE74\uC0AC"
   speechStyleKey: "\uCE74\uC0AC"
+  preferredTasteKey: 
+  preferredAtmosphereKey: 
   tags:
   - "customer_attribute:\uCE74\uC0AC"
   members:
@@ -24,7 +26,7 @@ MonoBehaviour:
     expressionKeyMid: mid
     expressionKeyGood: good
     expressionKeyBad: bad
-  weight: 1
+  weight: 3
   condition:
     minDay: 0
     requiredFlags: []
@@ -32,9 +34,10 @@ MonoBehaviour:
     prerequisiteEpisodeIds: []
     requiredVars: []
     requiredCustomerAppearances: []
+  initiallyAvailable: 0
+  availabilityTransitions: []
   maxDay: 0
-  cooldownSeconds: 100
-  cooldownGroupKey: cartha
+  reappearanceGroupKey: cartha
   plannedOrderNames:
   - "\uD55C\uC5EC\uB984\uC758 \uC8FC\uC2A4"
   - "\uBE14\uB799 \uCEE4\uD53C"

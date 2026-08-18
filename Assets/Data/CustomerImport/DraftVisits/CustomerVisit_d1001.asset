@@ -16,6 +16,8 @@ MonoBehaviour:
   visitKey: d1001
   customerAttributeKey: "\uADFC\uB85C\uC790\uB4E4"
   speechStyleKey: "\uADFC\uB85C\uC790\uB4E4_\uB8E8\uC2A4\uD0C0"
+  preferredTasteKey: "\uC501\uC4F8\uD568_Bitterness"
+  preferredAtmosphereKey: 
   tags:
   - "customer_attribute:\uADFC\uB85C\uC790\uB4E4"
   members:
@@ -24,7 +26,7 @@ MonoBehaviour:
     expressionKeyMid: mid
     expressionKeyGood: good
     expressionKeyBad: bad
-  weight: 1
+  weight: 5
   condition:
     minDay: 0
     requiredFlags: []
@@ -32,12 +34,13 @@ MonoBehaviour:
     prerequisiteEpisodeIds: []
     requiredVars: []
     requiredCustomerAppearances: []
+  initiallyAvailable: 1
+  availabilityTransitions: []
   maxDay: 0
-  cooldownSeconds: 100
-  cooldownGroupKey: rusta
+  reappearanceGroupKey: rusta
   plannedOrderNames:
   - "\uBC88\uD584 \uBC84\uBC88 \uB2C8\uD2B8"
-  - "\uAC13\uB85C\uB4DC"
+  - "\uBC88\uD584 \uBC84\uBC88 \uC628\uB354\uB77D"
   - "\uD56B \uD14C\uB514"
   orders:
   - order: {fileID: 11400000, guid: 3a2ebd28cb299de4f9ddacd61e1f02e3, type: 2}
@@ -49,7 +52,7 @@ MonoBehaviour:
       prerequisiteEpisodeIds: []
       requiredVars: []
       requiredCustomerAppearances: []
-  - order: {fileID: 11400000, guid: 88eb415cebdd2d9408c49e19c8a129c9, type: 2}
+  - order: {fileID: 11400000, guid: 6ad90db0047169142930b6565e2ac722, type: 2}
     weight: 1
     condition:
       minDay: 0
