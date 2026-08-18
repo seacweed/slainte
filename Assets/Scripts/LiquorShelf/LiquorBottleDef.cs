@@ -26,6 +26,8 @@ public class LiquorBottleDef : ScriptableObject
     public LiquorCategoryDef category;
     [Tooltip("Price for one bottle (unitVolume) in the shop.")]
     public int      price;
+    [Tooltip("Price for one bottle (unitVolume) in the strange shop, paid with strange coins.")]
+    public int      strangeCoinPrice;
 
     [Header("Shop Lock Hint (display only, unlock itself uses unlockFlagKey)")]
     public IngredientUnlockHintType unlockHintType = IngredientUnlockHintType.None;

@@ -226,6 +226,15 @@ public class GameProgress : MonoSingleton<GameProgress>
             OnAffinityChanged?.Invoke(varName, delta);
     }
 
+    // 잔액이 충분할 때만 차감. varName 기반 범용 변수를 화폐처럼 소비할 때 사용(예: 이상한 동전).
+    public bool TrySpendAffinity(string varName, int amount)
+    {
+        if (amount <= 0) return true;
+        if (GetAffinity(varName) < amount) return false;
+        AddAffinity(varName, -amount);
+        return true;
+    }
+
     private void SyncAffinityToLists(string varName, int value)
     {
         int idx = affinityKeys.IndexOf(varName);

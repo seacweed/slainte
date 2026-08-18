@@ -11,6 +11,9 @@
   - [TRIGGER](#trigger)
   - [PLAY_TRIGGER](#play_trigger)
   - [OPENING_CHARS](#opening_chars)
+  - [BOARD](#board)
+  - [BOARD_CHARS](#board_chars)
+  - [SELECT_CHARS](#select_chars)
   - [NODES](#nodes)
   - [NODE_CRAFTING_BRANCHES](#node_crafting_branches)
   - [NODE_CHARS](#node_chars)
@@ -35,7 +38,7 @@
 
 ## 전체 구조
 
-파일은 `#섹션명` 으로 구분된 최대 11개 섹션으로 이루어집니다.  
+파일은 `#섹션명` 으로 구분된 최대 15개 섹션으로 이루어집니다.  
 각 섹션은 **헤더 행(열 이름)** → **데이터 행** 순서로 작성합니다.
 
 ```
@@ -52,7 +55,16 @@
 #SELECT_TRIGGER
 ...
 
+#SELECT_CHARS
+...
+
 #OPENING_CHARS
+...
+
+#BOARD
+...
+
+#BOARD_CHARS
 ...
 
 #NODES
@@ -155,11 +167,11 @@ minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCu
 - **옵션 하나당 조건은 딱 하나**입니다(`TRIGGER`/`PLAY_TRIGGER`처럼 여러 조건을 AND로 걸 수 없음). 조건을 여러 개 걸고 싶으면 옵션(행)을 여러 개로 나눠서 작성하세요
 - 그 조건이 충족된 옵션만 토글 인터랙션이 가능(미충족이면 off로 고정, 비활성 표시)
 - 켜진 옵션의 on/off 값은 Play 버튼 클릭(에피소드 시작) 시점에 그 행의 `selectFlag` 열 플래그로 반영됨(켜진 옵션 → `SetFlag`, 나머지 옵션 → `ClearFlag`) — 에피소드 노드의 `flagBranches` 등에서 분기 조건으로 사용
-- 컬럼: `conditionType`(`None`/`MinDay`/`RequiredFlag`/`PrerequisiteEpisode`/`RequiredVar` 중 하나), `conditionValue`(타입에 따라 의미가 다름 — 아래 표), `selectFlag`(반영할 플래그 이름), `selectText`(이 옵션 조건 뒤에 표시할 커스텀 힌트 한 줄. 비우면 조건에서 문구를 자동 생성)
+- 컬럼: `conditionType`(`None`/`MinDay`/`RequiredFlag`/`PrerequisiteEpisode`/`RequiredVar` 중 하나), `conditionValue`(타입에 따라 의미가 다름 — 아래 표), `selectFlag`(반영할 플래그 이름), `selectText`(이 옵션 조건 뒤에 표시할 커스텀 힌트 한 줄. 비우면 조건에서 문구를 자동 생성), `revealConditionType`/`revealConditionValue`(이 옵션의 내용을 플레이어에게 공개하는 조건 — 형식은 `conditionType`/`conditionValue`와 동일. 미충족이면 "???"로 가려서 표시. 비우면 항상 공개)
 
-| `conditionType` | `conditionValue` 형식 | 예시 |
+| `conditionType` / `revealConditionType` | `conditionValue` / `revealConditionValue` 형식 | 예시 |
 |---|---|---|
-| `None` | (비움) | 조건 없음 — 항상 토글 가능 |
+| `None` | (비움) | 조건 없음 — 항상 토글 가능 / 항상 공개 |
 | `MinDay` | 숫자 | `3` |
 | `RequiredFlag` | 플래그 이름 | `flag_got_hint` |
 | `PrerequisiteEpisode` | 에피소드 ID | `Intro_0` |
@@ -167,10 +179,37 @@ minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCu
 
 ```csv
 #SELECT_TRIGGER
-conditionType,conditionValue,selectFlag,selectText
-RequiredFlag,flag_got_hint,select_confront_f72,단도직입적으로 물어본다
-RequiredFlag,flag_got_hint,select_evade_f72,모르는 척 넘어간다
+conditionType,conditionValue,selectFlag,selectText,revealConditionType,revealConditionValue
+RequiredFlag,flag_got_hint,select_confront_f72,단도직입적으로 물어본다,,
+RequiredFlag,flag_got_hint,select_evade_f72,모르는 척 넘어간다,MinDay,5
 ```
+
+> **주의**: `SELECT_TRIGGER`는 재임포트 시 항상 CSV 내용으로 전체 교체됩니다(섹션이 있으면 없는 옵션은 사라짐).
+
+---
+
+### SELECT_CHARS
+
+`SELECT_TRIGGER`의 각 옵션이 선택됐을 때 보여줄 초상화(`characterOverrides`)입니다. **선택 사항** — 비워두면(섹션 자체를 안 쓰면) 해당 옵션은 기본 `characters`(아래 `BOARD_CHARS`)를 그대로 사용합니다.
+
+- **행 하나 = 초상화 슬롯 하나**입니다. `selectFlag`가 같은 행을 여러 개 작성하면 `BOARD_CHARS`/`OPENING_CHARS`와 같은 슬롯 순서로 채워집니다.
+- 슬롯 개수·순서는 `characters`(기본 초상화 목록)와 맞춰야 합니다.
+- `selectFlag`는 `SELECT_TRIGGER`의 `selectFlag` 열과 일치해야 매칭됩니다.
+
+| 열 | 설명 | 예시 |
+|---|---|---|
+| `selectFlag` | 대상 옵션의 `SELECT_TRIGGER.selectFlag` | `select_confront_f72` |
+| `isHidden` | `true`면 이 슬롯을 "???"로 비공개 표시 | `false` |
+| `characterName` | `isHidden=false`일 때 표시할 캐릭터 이름 | `f72` |
+
+```csv
+#SELECT_CHARS
+selectFlag,isHidden,characterName
+select_confront_f72,false,f72
+select_evade_f72,true,
+```
+
+> **주의**: `#SELECT_CHARS` 섹션 자체가 CSV에 없으면 기존 에셋의 `characterOverrides`가 유지됩니다. 섹션을 쓰면(빈 섹션 포함) 그 옵션들의 초상화는 CSV가 기준이 되며, 행이 없는 `selectFlag`는 초상화가 빈 목록(기본 `characters` 미사용, 초상화 없음)으로 대체됩니다.
 
 ---
 
@@ -189,6 +228,46 @@ RequiredFlag,flag_got_hint,select_evade_f72,모르는 척 넘어간다
 #OPENING_CHARS
 characterKey,expressionKey,slotIndex
 f72,frust,-1
+```
+
+---
+
+### BOARD
+
+작전판(Rest 화면)에 표시되는 정보입니다. **선택 사항** — 비워두면(섹션 자체를 안 쓰면) 기존 에셋 값을 유지합니다. **데이터 행은 1개**만 작성합니다.
+
+| 열 | 설명 | 예시 |
+|---|---|---|
+| `episodeDescription` | 작전판에 표시될 에피소드 설명(여러 줄 가능) | `이상한 동전을 주운 손님이 찾아온다.` |
+| `iconNameBoard` | 작전판 카드에 쓸 아이콘 이름 | `icon_coin` |
+| `iconNameArchive` | 아카이브(다시보기)에 쓸 아이콘 이름 | `icon_coin_archive` |
+| `triggerConditionTexts` | 해금 조건 커스텀 힌트 목록(`\|` 구분). 비우면 `TRIGGER` 조건에서 문구를 자동 생성 | `A에게 돈 10000원 지급\|3일차 이후` |
+
+```csv
+#BOARD
+episodeDescription,iconNameBoard,iconNameArchive,triggerConditionTexts
+"이상한 동전을 주운 손님이 찾아온다.",icon_coin,icon_coin_archive,A에게 돈 10000원 지급
+```
+
+> **주의**: 설명에 쉼표가 있으면 `NODES`의 `text`와 마찬가지로 큰따옴표로 감싸야 합니다.
+
+---
+
+### BOARD_CHARS
+
+작전판에서 선택 조건 미충족/미선택 시(기본으로) 보여줄 초상화 목록입니다. **선택 사항** — 비워두면(섹션 자체를 안 쓰면) 기존 에셋 값을 유지합니다.
+
+- **행 하나 = 초상화 슬롯 하나**입니다. 여러 명이면 행을 여러 개 작성하고, 순서가 곧 슬롯 순서입니다.
+
+| 열 | 설명 | 예시 |
+|---|---|---|
+| `isHidden` | `true`면 이 슬롯을 "???"로 비공개 표시 | `false` |
+| `characterName` | `isHidden=false`일 때 표시할 캐릭터 이름 | `f72` |
+
+```csv
+#BOARD_CHARS
+isHidden,characterName
+false,f72
 ```
 
 ---
@@ -424,6 +503,14 @@ minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCu
 characterKey,expressionKey,slotIndex
 f72,neutral,-1
 
+#BOARD
+episodeDescription,iconNameBoard,iconNameArchive,triggerConditionTexts
+"작전판에 표시될 짧은 설명입니다.",icon_example,icon_example_archive,
+
+#BOARD_CHARS
+isHidden,characterName
+false,f72
+
 #NODES
 nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,bgmCommand,bgmClipName
 0,f72,???,뭘 마시겠어?,1,false,,play,bgm_bar
@@ -468,6 +555,8 @@ nodeId,requiredCompletedEpisodeId,nextNodeId
 
 같은 `episodeId`의 에셋이 이미 존재하면 **덮어씁니다**.
 
+`BOARD`/`BOARD_CHARS`/`SELECT_CHARS` 섹션은 CSV에 아예 없으면(헤더조차 없으면) 기존 에셋 값을 유지합니다. 즉 이 섹션들만 CSV에 없는 예전 CSV를 재임포트해도 인스펙터에서 채워둔 값이 지워지지 않습니다. 반대로 섹션을 (빈 섹션이라도) 작성하면 그때부터 CSV가 해당 필드의 기준이 됩니다.
+
 ---
 
 ## 자주 하는 실수
@@ -482,3 +571,5 @@ nodeId,requiredCompletedEpisodeId,nextNodeId
 | 분기가 동작하지 않음 | `varChanges` 형식 오류 | `varName+숫자` 또는 `varName-숫자` 형식 확인 |
 | 필수 에피소드인데 Rest 보드에서 선택 가능 | `episodeType`을 `Mandatory`로 안 바꿈 | `#META`의 `episodeType`, `mandatorySlot` 확인 |
 | 챕터별 필수 에피소드 큐 조회가 안 됨 | `chapterId`가 비어있거나 다른 챕터와 다름 | `#META`의 `chapterId`를 `ChapterData.chapterId`와 일치시키기 |
+| 재임포트했더니 작전판 설명/아이콘/초상화가 사라짐 | `#BOARD`/`#BOARD_CHARS`/`#SELECT_CHARS` 섹션을 (빈 섹션으로) 작성해서 CSV가 기준이 됐는데 실제 값은 안 채움 | 값을 인스펙터로 계속 관리하고 싶으면 해당 섹션을 CSV에서 아예 빼기 |
+| 선택 옵션의 초상화가 기본 초상화로만 나옴 | 해당 `selectFlag`에 대한 `#SELECT_CHARS` 행이 없음(섹션은 있지만 그 flag 행이 없으면 빈 목록으로 대체됨) | `#SELECT_CHARS`에 해당 `selectFlag` 행 추가 |

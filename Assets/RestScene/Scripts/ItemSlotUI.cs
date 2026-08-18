@@ -11,13 +11,24 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI subCategoryText;
     public TextMeshProUGUI priceText;
+    [Tooltip("Currency unit icon shown before priceText. Hidden together with priceText when locked.")]
+    public GameObject currencyIcon;
     public Button buyButton;
     [Tooltip("Shown instead of name/subCategory when the ingredient is locked.")]
     public GameObject lockedLabel;
 
+    [Header("Insufficient Funds")]
+    [Tooltip("buyButton's Image component. Swapped between buyButtonOnSprite/buyButtonOffSprite by affordability.")]
+    public Image buyButtonImage;
+    public Sprite buyButtonOnSprite;
+    public Sprite buyButtonOffSprite;
+    public Color priceColorNormal = Color.white;
+    public Color priceColorInsufficient = Color.red;
+
     public event Action OnPurchased;
 
     private LiquorBottleDef _def;
+    private IShopCurrency   _currency;
     private RectTransform   _rectTransform;
 
     void Awake()
@@ -25,9 +36,11 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         _rectTransform = GetComponent<RectTransform>();
     }
 
-    public void Setup(LiquorBottleDef def)
+    // currency를 생략하면 일반 상점(원화)으로 동작 — 기존 호출부와 호환됨.
+    public void Setup(LiquorBottleDef def, IShopCurrency currency = null)
     {
         _def = def;
+        _currency = currency ?? new MoneyShopCurrency();
 
         buyButton.onClick.RemoveAllListeners();
         buyButton.onClick.AddListener(OnBuyClick);
@@ -45,6 +58,7 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         {
             iconImage.sprite = _def.sprite;
             iconImage.color  = unlocked ? Color.white : Color.black;
+            iconImage.preserveAspect = true;
         }
 
         if (nameText)        nameText.gameObject.SetActive(unlocked);
@@ -57,10 +71,21 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (subCategoryText) subCategoryText.text = _def.subCategory;
         }
 
+        int  price = _currency.GetPrice(_def);
         bool isFull = GameProgress.Instance.GetBottleAmount(_def.id, 0f) >= _def.MaxAmount;
+        bool canAfford = _currency.CurrentAmount >= price;
+        bool insufficientFunds = unlocked && !isFull && !canAfford;
 
-        if (priceText) priceText.text = unlocked ? $"{_def.price:N0} G" : "";
-        if (buyButton) buyButton.interactable = unlocked && !isFull;
+        if (priceText)
+        {
+            priceText.text = unlocked ? $"{price:N0}" : "";
+            priceText.color = insufficientFunds ? priceColorInsufficient : priceColorNormal;
+        }
+        if (currencyIcon) currencyIcon.SetActive(unlocked);
+        if (buyButton)    buyButton.interactable = unlocked && !isFull && canAfford;
+
+        if (buyButtonImage != null && buyButtonOnSprite != null && buyButtonOffSprite != null)
+            buyButtonImage.sprite = insufficientFunds ? buyButtonOffSprite : buyButtonOnSprite;
     }
 
     private bool IsUnlocked()
@@ -73,7 +98,7 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private void OnBuyClick()
     {
         if (!IsUnlocked()) return;
-        if (!GameProgress.Instance.TrySpendMoney(_def.price)) return;
+        if (!_currency.TrySpend(_currency.GetPrice(_def))) return;
 
         GameProgress.Instance.AddBottleAmount(_def.id, _def.unitVolume, _def.MaxAmount);
         Refresh();

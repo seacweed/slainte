@@ -15,3 +15,4 @@ MonoBehaviour:
   id: syrup
   displayName: "\uC2DC\uB7FD"
   icon: {fileID: 7070898859007527560, guid: 8526083b308adb94bba80c9ad7902e5d, type: 3}
+  color: {r: 0.98823535, g: 0.9960785, b: 0.36078432, a: 1}

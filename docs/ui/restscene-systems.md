@@ -39,7 +39,12 @@ TooltipPopup                — 툴팁 팝업 UI 구현체
 ItemData                    — 상점 아이템 ScriptableObject
 ItemSlotUI                  — 상점 아이템 슬롯 UI
 CategoryButton              — 상점 카테고리 필터 버튼
-ExitButton                  — 팝업 닫기 버튼
+ExitButton                  — 팝업 닫기 버튼 (상점에는 더 이상 사용하지 않음, 다른 팝업엔 남아있음)
+ShopLoadingScreen           — 상점 최초 오픈 1회 로딩 연출
+ScrollContentMinHeight      — ScrollRect Content 최소 높이(=뷰포트) 보정, Content Size Fitter 대체
+RecipeBookDef                — 상점 레시피북 ScriptableObject
+RecipeBookSlotUI             — 상점 레시피북 슬롯 UI
+IShopCurrency / MoneyShopCurrency / StrangeCoinShopCurrency — 상점 결제 수단 추상화(ShopCurrency.cs)
 ```
 
 ---
@@ -50,15 +55,17 @@ ExitButton                  — 팝업 닫기 버튼
 
 | 메서드 | 설명 |
 |---|---|
-| `OpenUI()` | `gameObject` 활성화 → `OnOpen()` → `AnimateOpen()` |
+| `OpenUI()` | 다른 열린 팝업을 전부 `CloseUI()` → `gameObject` 활성화 → `OnOpen()` → `AnimateOpen()` |
 | `CloseUI()` | `AnimateClose()` → `OnClose()` |
 | `AnimateOpen()` | (추상) 자식이 직접 구현 |
 | `AnimateClose()` | (추상) 자식이 직접 구현 |
 | `OnOpen()` | (가상) 열릴 때 초기화 — 기본 빈 함수 |
 | `OnClose()` | (가상) 닫힐 때 정리 — 기본 빈 함수 |
+| `LockTransitions()` / `UnlockTransitions()` | (정적, protected) 잠긴 동안 모든 `OpenUI()` 호출이 즉시 no-op — 진행 중인 연출(예: 상점 최초 로딩) 도중 다른 팝업으로 전환되는 것을 막을 때 사용. `CloseUI()`는 막지 않으므로 잠긴 상태에서도 자기 자신은 닫을 수 있음 |
 
 - Awake에서 `CanvasGroup.alpha = 0`, `interactable = false`, `gameObject.SetActive(false)` 초기화
 - 진행 중인 코루틴은 항상 중단 후 재시작 (`_activeCoroutine`)
+- **상호 배타**: 정적 `HashSet<BaseUIManager>`로 현재 열린 인스턴스를 추적. `OpenUI()`가 호출되면 자기 자신을 제외한 나머지를 자동으로 `CloseUI()` — 에피소드 보드/현황판/상점 등 이 클래스를 상속하는 모든 RestScene 팝업이 하나만 열려있도록 별도 조율 코드 없이 보장됨. `OnDestroy()`에서 자신을 목록에서 제거해 씬 언로드 후 낡은 참조가 남지 않게 함
 
 ---
 
@@ -162,9 +169,10 @@ public Color buttonInactiveColor;     // 미선택 시
 - 표시할 조건 개수보다 `triggerConditionRows` 배열이 길면 남는 행은 비활성화
 
 **선택 조건 (`data.selectConditions: List<SelectConditionEntry>`)**
-- `SelectConditionEntry { condition, flag, conditionText, characterOverrides }` — 옵션 하나 = 조건 **하나**(`SelectSingleCondition`) + 플래그 + 커스텀 힌트 한 줄 + 초상화 override. 해금 조건과 달리 옵션 하나에 여러 조건을 AND로 걸 수 없음 — 조건을 여러 개 걸고 싶으면 옵션을 여러 개로 나눠서 표현
+- `SelectConditionEntry { condition, flag, conditionText, revealCondition, characterOverrides }` — 옵션 하나 = 조건 **하나**(`SelectSingleCondition`) + 플래그 + 커스텀 힌트 한 줄 + 공개 조건 + 초상화 override. 해금 조건과 달리 옵션 하나에 여러 조건을 AND로 걸 수 없음 — 조건을 여러 개 걸고 싶으면 옵션을 여러 개로 나눠서 표현
 - `SelectSingleCondition { type, minDay, requiredFlag, prerequisiteEpisodeId, varName, varOp, varThreshold }` — `SelectConditionType`(`None`/`MinDay`/`RequiredFlag`/`PrerequisiteEpisode`/`RequiredVar`) 하나로 어떤 조건인지 결정, 나머지 필드 중 해당 타입에 대응하는 값만 사용
 - 옵션당 UI도 행 하나(`SelectConditionGroup.conditionRow: ConditionRow`, 배열이 아님) — 자물쇠 아이콘 하나 + 설명 한 줄 + 토글 하나로 고정. 텍스트는 `entry.conditionText`가 있으면 그걸, 없으면 `BuildSelectConditionText()`가 조건 타입에서 자동 생성("N일차 이상", 플래그명, "선행 에피소드 '제목'", `varName 연산자 threshold` 등)
+- **공개 조건 (`entry.revealCondition: SelectSingleCondition`)** — "선택 조건의 내용이 플레이어에게 공개되는 조건"(선택 가능 여부 `condition`과는 별개 층). 타입과 필드 구조는 `condition`과 동일하고 `EpisodeManager.EvaluateSelectCondition()`을 그대로 재사용해 평가. 기본값(`None`)은 항상 공개(기존 데이터와 동일하게 동작). 미충족이면 `ApplySelectConditionRow()`가 조건 텍스트를 `"???"`로 가리고 자물쇠 아이콘도 잠김으로 고정 표시(실제 `condition` 충족 여부와 무관)
 - `해금 조건`/`playCondition`과 완전히 독립 — **Play 버튼 활성화에는 전혀 영향을 주지 않음**. 어떤 옵션도 미충족/미선택이어도 에피소드는 평소대로 플레이 가능
 - **옵션끼리 상호 배타적** — `selectToggleGroup`(유니티 내장 `ToggleGroup`)에 모든 옵션의 `Toggle`을 묶어서, 하나를 켜면 나머지는 자동으로 꺼짐. `Awake()`에서 `group.toggle.group = selectToggleGroup`로 한 번만 연결
 - `EpisodeInfoUI.selectConditionGroups[i]`가 `data.selectConditions[i]`와 인덱스로 1:1 매칭(고정 슬롯, 배열 길이보다 옵션이 적으면 남는 슬롯은 컨테이너까지 비활성화)
@@ -205,19 +213,16 @@ public Color buttonInactiveColor;     // 미선택 시
 
 `RestScene/Scripts/ShopUIManager.cs`, `BaseUIManager` 상속.
 
-**애니메이션**: 2단계 펼침 (`animDuration = 0.5f`, 단계당 절반씩)
-1. 가로 확장: `(0, lineWidth, 1)` → `(1, lineWidth, 1)`
-2. 세로 확장: `(1, lineWidth, 1)` → `(1, 1, 1)`
-- 닫을 때는 역순
+**열기/닫기**: 펼침·접힘 애니메이션 없음 — `AnimateOpen()`/`AnimateClose()`는 `CanvasGroup`의 `alpha`/`interactable`/`blocksRaycasts`만 즉시 전환하고 끝남(과거의 가로→세로 스케일 애니메이션은 열리는 도중 뒷화면이 그대로 비쳐 보이는 문제로 제거됨).
 
 **화면 구조 (4단계, `SetScreen()`으로 하나만 활성화)**
 
 ```
 homePanel (재료/업그레이드/레시피북 3버튼)
- ├─ ingredientCategoryPanel — LiquorCategoryDef 대분류 버튼 그리드
+ ├─ ingredientCategoryPanel — LiquorCategoryDef 대분류 버튼 그리드 (ScrollRect)
  │    └─ itemScrollPanel     — LiquorBottleDef 소분류 아이템 그리드(ScrollRect)
  ├─ upgradePanel             — UpgradeDef 리스트(Vertical Layout Group + ScrollRect)
- └─ 레시피북                  — 기획 미정, OnRecipeBookClicked() 클릭 스텁만 존재
+ └─ recipeBookPanel          — RecipeBookDef 리스트(Vertical Layout Group + ScrollRect)
 ```
 
 **중요: 재료 마스터 데이터는 `ItemData`가 아니라 술장의 `LiquorBottleDef`/`LiquorCategoryDef`를 그대로 사용**. `Resources/Items/`의 `ItemData`는 임시 데이터라 상점이 참조하지 않음(아래 ItemData 섹션 참고). 상점에서 구매한 재료의 잔량(`GameProgress.bottleAmount`, id 키)이 술장(`LiquorShelfUI`/`LiquorBottleSlotUI`)에 표시되는 잔량과 완전히 같은 저장소를 공유하므로 두 화면이 자동으로 동기화된다.
@@ -226,11 +231,32 @@ homePanel (재료/업그레이드/레시피북 3버튼)
 
 | 메서드 | 설명 |
 |---|---|
-| `ShowHome()` / `OpenIngredients()` / `OpenUpgrades()` | 화면 전환. 각 화면 타이틀(텍스트/이미지)은 코드가 아니라 해당 패널 안에 직접 배치 — 패널 활성화만으로 자동 노출됨 |
-| `ShowListByCategory(LiquorCategoryDef)` | `allBottles`를 카테고리로 필터링해 `slotPrefab`(`ItemSlotUI`) 재생성, `categoryNameText`에 카테고리 이름 표시(재료 소분류 화면에서만 필요한 유일한 동적 텍스트) |
-| `OnRecipeBookClicked()` | 빈 스텁 |
+| `ShowHome()` / `OpenIngredients()` / `OpenUpgrades()` / `OpenRecipeBooks()` | 화면 전환. 각 화면 타이틀(텍스트/이미지)은 코드가 아니라 해당 패널 안에 직접 배치 — 패널 활성화만으로 자동 노출됨. `OpenUpgrades()`/`OpenRecipeBooks()`는 전환과 함께 각 슬롯의 `Refresh()`도 호출해 구매 상태를 최신화 |
+| `ShowListByCategory(LiquorCategoryDef)` | `allBottles`를 카테고리로 필터링해 `slotPrefab`(`ItemSlotUI`) 재생성, `categoryNameText`에 카테고리 이름 표시하고 `categoryNameColorImage`(텍스트 왼쪽의 동일 모양 액센트 이미지)를 그 카테고리의 `color`로 틴트(재료 소분류 화면에서만 필요한 유일한 동적 텍스트/이미지) |
+| `GoBack()` | 뒤로가기 버튼 OnClick에 연결. 현재 화면을 `_parentScreenMap`(화면별로 고정된 상위 화면 하나, 히스토리 스택 아님)에서 찾아 `SetScreen()` — 재료 목록→재료 대분류, 재료 대분류/업그레이드/레시피북→홈 |
 
 검색 기능은 없음(제거됨).
+
+**뒤로가기 네비게이션**: 기존 X버튼(`ExitButton`)은 제거됨. `backButtonObject`는 `SetScreen()`이 호출될 때마다 홈 화면이 아니면 자동으로 활성화되고, 홈 화면이면 자동으로 비활성화됨 — 화면마다 별도로 표시 여부를 관리할 필요 없음.
+
+**로딩 화면 (`ShopLoadingScreen`)**: 씬 진입 후 상점을 처음 열 때만 재생되는 로고+로딩바 연출.
+- `ShopUIManager.loadingScreen` 필드로 연결, `AnimateOpen()`이 표시 직후(펼침 애니메이션이 없으므로 사실상 열리자마자) 1회 재생하고 이후 오픈부터는 건너뜀(`_hasShownLoadingOnce`)
+- 재생 중에는 `ShopUIManager`의 `CanvasGroup.interactable`을 끄고 `homePanel` 자체를 `SetActive(false)`로 비활성화해 뒤에서 보이거나 눌리지 않게 함(과거엔 전체화면 불투명 `Blocker` 이미지로 덮기만 했으나, 홈 패널을 실제로 꺼서 로딩 UI 뒤로 원래 배경이 그대로 비치는 방식으로 변경— 로딩 중 화면이 아예 안 보이길 원하면 `ShopLoadingScreen` 쪽에 자체 배경이 있어야 함), `moneyDisplayRoot`(소지금 아이콘+숫자를 감싸는 부모)도 함께 꺼졌다가 재생이 끝나면 `homePanel`과 함께 다시 켜짐
+- `ShopLoadingScreen.Play()`가 `fillImage.fillAmount`를 `fillDuration` 동안 0→1로 보간(`Image Type = Filled / Horizontal`)한 뒤 `root`를 다시 비활성화하는 코루틴 — `ShopUIManager.AnimateOpen()`이 이 코루틴을 직접 `yield return`으로 이어붙여 실행
+- **`ShopUIManager.Start()`는 `ShowHome()`을 호출하지 않음**: `OnOpen()`이 이미 매번 `ShowHome()`을 부르는데, `ShopUIManager` GameObject는 씬 로드 시 비활성 상태로 있다가 최초 `OpenUI()` 때 활성화되므로 `Start()`가 그 순간에 지연 실행됨 — 예전엔 `Start()`도 `ShowHome()`을 불러서, 로딩 연출이 `homePanel`을 꺼둔 직후 지연된 `Start()`가 다시 켜버려 로딩 화면과 홈 화면이 겹쳐 보이는 버그가 있었음
+- 로딩 재생 중에는 `LockTransitions()`로 다른 팝업(작전판 등)으로의 전환 자체를 막음. 재생 도중 `CloseUI()`로 강제 종료되는 경우(코루틴이 `StopCoroutine`으로 끊겨 `Play()`가 끝까지 못 돎)를 대비해 `AnimateClose()`에서 `UnlockTransitions()` + `loadingScreen.ResetVisual()`(root 비활성화 + fillAmount 초기화)을 방어적으로 호출 — 안 하면 다음에 열 때 로딩 화면이 켜진 채로 남아있음(`_hasShownLoadingOnce`가 이미 true라 로딩 분기를 다시 안 타서 아무도 안 꺼줌)
+
+**소지금 표시 및 화폐 단위**: `moneyText`는 `{amount:N0}` 형식의 숫자만 표시 — "G" 같은 단위 텍스트는 코드에 없고, 화폐 아이콘 이미지를 숫자 앞에 별도 `Image`로 씬에서 배치한다. `ItemSlotUI`/`UpgradeSlotUI`/`RecipeBookSlotUI`의 개별 가격 텍스트도 동일하게 숫자만 표시하며, 각각 `currencyIcon`(`GameObject`) 필드로 아이콘을 참조해 가격이 아닌 다른 문구가 표시될 때(잠김/"MAX"/"구매완료") 아이콘도 함께 숨김 처리한다.
+
+**기본 프레임(배경/상단/하단 오버레이)**: 5개 화면 모두가 공유하는 배경 이미지 1장 + 상단 오버레이(금액 표시, 항상 고정) 1장은 `ShopUIManager` 루트에 한 번만 배치하고 화면 패널들은 그 위에 얹힘 — 화면마다 중복 배치하지 않음. 하단 오버레이만 예외: `homePanel`(스크롤 없음)은 그 자식으로 두면 패널 활성화에 따라 자동으로 같이 열리고 닫히고, 스크롤이 있는 나머지 4화면은 각자의 `ScrollRect` Content 맨 끝에 배치해 끝까지 스크롤해야 보이는 캡 이미지로 동작(아래 `ScrollContentMinHeight` 참고).
+
+### ScrollContentMinHeight (`RestScene/Scripts/ScrollContentMinHeight.cs`)
+
+`ScrollRect`의 Content에 부착, `ContentSizeFitter`를 대체. 자식(아이템 목록 + 하단 오버레이 캡)의 실제 필요 높이가 뷰포트보다 작으면 뷰포트 높이로 고정해 `Vertical Layout Group`의 `Flexible` 자식(Spacer)이 남는 공간을 채우게 해서 하단 캡 이미지가 화면 맨 밑에 붙게 하고, 필요 높이가 뷰포트보다 크면 그 값을 그대로 써서 정상적으로 스크롤되게 한다.
+
+- Content 구조: `ItemsContainer`(실제 동적 인스턴스 타겟, Grid 또는 Vertical) → `Spacer`(`Layout Element`: Flexible Height = 1) → `BottomOverlayImage`(`Layout Element`: Preferred Height 지정)
+- `contentRoot`/`categoryButtonContent`/`upgradeContentRoot`는 바깥 Content가 아니라 이 `ItemsContainer`를 가리켜야 함 — 그렇지 않으면 런타임에 동적으로 추가되는 아이템들이 `Instantiate(prefab, contentRoot)`로 매번 맨 마지막 자식에 붙으면서 `Spacer`/`BottomOverlayImage` 뒤로 밀려 들어가 순서가 깨짐
+- 재료 대분류/재료 목록/업그레이드/레시피북 4화면 모두 이 구조를 동일하게 씀(업그레이드·레시피북도 재사용 목적)
 
 ### LiquorBottleDef 상점용 확장 필드
 
@@ -239,7 +265,8 @@ homePanel (재료/업그레이드/레시피북 3버튼)
 | 필드 | 설명 |
 |---|---|
 | `category` | `LiquorCategoryDef` 참조. null이면 상점 어느 카테고리에도 노출되지 않음 |
-| `price` | 1병(`unitVolume`) 구매 가격 |
+| `price` | 1병(`unitVolume`) 구매 가격(원화) |
+| `strangeCoinPrice` | 1병(`unitVolume`) 구매 가격(이상한 동전) — 이상한 상점 전용, 비워두면 0이라 항상 구매 가능한 것으로 처리되니 주의 |
 | `unlockHintType` | `None`/`RecipeBook`/`Episode` — 잠금 툴팁에 표시할 힌트 종류(표시 전용, 실제 해금 여부는 기존 `unlockFlagKey`로 판정) |
 | `recipeBookIcon` / `recipeBookName` | `unlockHintType == RecipeBook`일 때 툴팁에 표시 |
 
@@ -247,10 +274,12 @@ homePanel (재료/업그레이드/레시피북 3버튼)
 
 `LiquorBottleDef` 하나를 바인딩하는 그리드 슬롯. `IPointerEnterHandler`/`IPointerExitHandler` 구현.
 
-- **해금**: 아이콘 원색 표시, 이름/소분류 텍스트, 가격+구매버튼 활성화(재고가 가득 찼으면 버튼 비활성화)
-- **잠금**: 아이콘을 검정으로 틴트(`Image.color`만 변경, 별도 실루엣 아트 불필요), 이름/소분류 대신 `lockedLabel`("입고예정") 표시, 가격 텍스트 비움 + 구매버튼 비활성화
+- **해금**: 아이콘 원색 표시(`preserveAspect = true`로 원본 비율 유지), 이름/소분류 텍스트, 가격+구매버튼 활성화(재고가 가득 찼거나 잔액이 부족하면 버튼 비활성화)
+- **잠금**: 아이콘을 검정으로 틴트(`Image.color`만 변경, 별도 실루엣 아트 불필요), 이름/소분류 대신 `lockedLabel`("입고예정") 표시, 가격 텍스트 비움 + `currencyIcon` 숨김 + 구매버튼 비활성화
+- **잔액 부족**: 재고 매진/최대 레벨/구매완료 등 다른 비활성 사유와 구분해서, "잔액이 모자라서" 비활성인 경우에만 `priceText.color`를 `priceColorInsufficient`(기본 빨강)로 바꾸고 `buyButtonImage.sprite`를 `buyButtonOffSprite`로 교체(`buyButtonImage`/`buyButtonOnSprite`/`buyButtonOffSprite` 셋 다 인스펙터에 할당된 경우에만 동작, 비워두면 무시됨). 한 슬롯에서 구매해 잔액이 바뀌면 `ShopUIManager`가 현재 들고 있는 모든 슬롯의 `Refresh()`를 다시 호출해 다른 슬롯들의 버튼/색상도 같이 갱신됨
 - **호버**: 해금 시 `LiquorBottleInfoCard.Instance.Show()`(술장과 동일 컴포넌트) — 단 `LiquorBottleInfoCard`는 BusinessScene 전용으로 만들어져 있어 RestScene과 동시 로드되지 않으므로, RestScene에는 프리팹으로 추출한 별도 인스턴스를 배치(이름/소분류 텍스트는 슬롯에 이미 상시 표시되므로 이 인스턴스에서만 제거). 잠금 시 `IngredientUnlockTooltip.Instance.Show()`
-- **구매(`OnBuyClick`)**: `GameProgress.TrySpendMoney(price)` 성공 시 `GameProgress.AddBottleAmount(id, unitVolume, MaxAmount)`로 **1병 단위** 충전(가득 리필이 아님), `OnPurchased` 이벤트로 `ShopUIManager`의 소지금 텍스트 갱신을 트리거
+- **구매(`OnBuyClick`)**: `IShopCurrency.TrySpend(price)` 성공 시 `GameProgress.AddBottleAmount(id, unitVolume, MaxAmount)`로 **1병 단위** 충전(가득 리필이 아님), `OnPurchased` 이벤트로 `ShopUIManager`의 소지금 텍스트 갱신을 트리거
+- **`Setup(def, currency)`**: `currency`를 생략하면 `MoneyShopCurrency`(원화)로 동작 — 일반 상점 호출부는 수정 없이 그대로 호환됨. 이상한 상점은 `StrangeCoinShopCurrency`를 넘겨서 같은 슬롯 로직을 재사용(아래 "이상한 상점" 참고)
 
 ### IngredientUnlockTooltip (`RestScene/Scripts/IngredientUnlockTooltip.cs`)
 
@@ -262,8 +291,47 @@ homePanel (재료/업그레이드/레시피북 3버튼)
 ### 업그레이드 (`UpgradeDef.cs`, `UpgradeSlotUI.cs`)
 
 - `UpgradeDef`(SO): `id`, `icon`, `displayName`, `description`, `pricesPerLevel(int[])` — 배열 길이가 곧 최대 레벨(현재 기획상 4단계)
-- `UpgradeSlotUI`: `GameProgress.GetUpgradeLevel(id)`만큼 pip(`Image[]`, 색 토글)을 채워 표시, 다음 단계 가격을 구매버튼에 표시(만렙이면 비활성 + "MAX"), 구매 시 `TrySpendMoney` → `SetUpgradeLevel`
+- `UpgradeSlotUI`: `GameProgress.GetUpgradeLevel(id)`만큼 pip(`Image[]`, 색 토글)을 채워 표시(아이콘 `preserveAspect = true`), 다음 단계 가격을 구매버튼에 표시(만렙이면 비활성 + "MAX"), 구매 시 `TrySpendMoney` → `SetUpgradeLevel`. `ItemSlotUI`와 동일한 잔액 부족 표시(가격 빨간색 + `buyButtonImage` off 스프라이트 교체) 적용됨
 - 레벨은 `GameProgress`(`upgradeKeys`/`upgradeValues`)에 저장되고 `SaveData`/`DataManager`로 저장·로드됨
+
+### 레시피북 (`RecipeBookDef.cs`, `RecipeBookSlotUI.cs`)
+
+업그레이드와 동일한 스크롤 목록 구조. 슬롯 레이아웃은 왼쪽에 아이콘 + 가격/구매버튼, 오른쪽에 이름 + 설명 + 해금 정보 문구.
+
+- `RecipeBookDef`(SO): `id`, `icon`, `price`, `displayName`, `description`, `unlockInfoText`(예: "스피릿 1종 해금" — `CategoryColorText.Highlight()`로 표시되어 안의 카테고리 단어가 자동으로 색칠됨), `unlockFlagKeys`(구매 시 설정할 `GameProgress` 플래그 목록 — 이 레시피북이 해금하는 `LiquorBottleDef.unlockFlagKey`와 같은 값을 넣어야 실제로 잠금 재료가 풀림)
+- 구매 여부는 레벨이 아니라 전용 플래그(`RecipeBookDef.PurchasedFlagKey` = `"RecipeBook_{id}_Purchased"`) 하나로 판정 — `GameProgress`에 별도 저장소를 추가하지 않고 기존 flag 시스템 재사용
+- `RecipeBookSlotUI.OnBuyClick()`: `TrySpendMoney(price)` 성공 시 구매 플래그 설정 + `unlockFlagKeys` 전부 `SetFlag` → 구매 완료 시 `UpgradeSlotUI`의 만렙 표시와 동일한 패턴으로 구매버튼 비활성화 + 가격 텍스트를 "구매완료"로 전환. 아이콘 `preserveAspect = true`, 잔액 부족 시 `ItemSlotUI`와 동일한 표시(가격 빨간색 + off 스프라이트) 적용됨
+- `LiquorBottleDef.unlockHintType == RecipeBook`으로 표시되는 잠금 툴팁(`recipeBookIcon`/`recipeBookName`)은 여전히 별도 필드로 수동 입력 — `RecipeBookDef`를 직접 참조하지 않으므로 잠금 재료 쪽 표시 문구/아이콘과 실제 판매 중인 `RecipeBookDef`의 이름/아이콘을 일치시키는 것은 데이터 입력자의 책임
+
+### 카테고리 고유색 (`LiquorCategoryDef.color`, `CategoryColorText.cs`)
+
+`LiquorCategoryDef`에 `color` 필드가 추가되어 대분류마다(스피릿/리큐르 등) 고유색을 가짐. 카테고리 이름 텍스트 자체의 폰트 색은 바꾸지 않고, 두 가지 방식으로만 반영한다.
+
+- **같은 모양의 액센트 이미지 틴트**: `LiquorCategoryButtonUI.colorImage`(선택 필드, 스프라이트는 씬에서 미리 배치)와 `ShopUIManager.categoryNameColorImage`(재료 소분류 화면 타이틀 옆)를 카테고리의 `color`로 `Image.color`만 갱신. 술장의 카테고리 버튼 프리팹은 `colorImage`를 비워두면 색이 적용되지 않음 — 상점 전용으로 켜고 싶은 곳만 프리팹에서 연결
+- **자유 문장 속 단어 강조**: `CategoryColorText.Register(categories)`(`ShopUIManager.Start()`에서 1회 등록) + `CategoryColorText.Highlight(text)`가 문장 속에 등장하는 카테고리 `displayName`을 TMP `<color=#RRGGBB>` 태그로 감싸 반환. 레시피북의 `description`/`unlockInfoText`에 적용됨. 전역 텍스트 후킹이 아니라 명시적으로 `Highlight()`를 거친 텍스트에만 적용되므로, 새 텍스트에 카테고리 단어를 강조하려면 해당 텍스트 대입 지점에서 직접 호출해야 함
+
+### 이상한 상점 (`ShopUIManager` 확장)
+
+이상한 동전(`strange_coin`, "이상한 동전 - 0부" 클리어로 해금)으로 재료를 구매하는 특수 상점. 일반 상점과 같은 `allBottles`(`LiquorBottleDef`) 목록을 재사용하되 결제 수단과 비주얼만 다르다 — 별도 데이터/씬 상태를 만들지 않고 기존 화면 전환 체계에 편입하는 방식으로 구현됨. 코드·씬 배치 모두 완료된 상태.
+
+**해금 및 진입**
+- `ShopUIManager.strangeShopUnlockEpisodeId`(기본 `"StrangeCoin_0"`)를 `GameProgress.IsEpisodeCompleted()`로 체크 — 완료 전엔 코인 아이콘(`strangeShopIconButton`) 자체가 숨겨짐(`RefreshStrangeShopIcon()`, `OnOpen()`마다 재평가)
+- 코인 아이콘 클릭(`OnStrangeShopIconClicked()`)이 일반 상점 ↔ 이상한 상점을 토글: 스프라이트를 `strangeShopIconOffSprite`/`OnSprite`로 교체, `moneyDisplayRoot`/`strangeCoinDisplayRoot`를 상호 배타적으로 표시, `ApplyShopSkin()` 호출
+- 진입 시 홈이 아니라 **재료 카테고리 화면(`strangeIngredientCategoryPanel`)부터 시작** — 이상한 상점은 재료 섹션만 존재하므로 홈 화면 자체가 없음
+- `SetScreen()`/`_parentScreenMap`이 이상한 상점의 두 패널(`strangeIngredientCategoryPanel`, `strangeItemScrollPanel`)도 같이 관리 — `GoBack()`/`backButtonObject`가 별도 코드 없이 그대로 동작. 단 `strangeIngredientCategoryPanel`은 이상한 상점의 최상위 화면이라 `_parentScreenMap`에 없음(뒤로가기로 못 나감) — 나가려면 코인 아이콘만 눌러야 함(`backButtonObject`는 `target != homePanel && target != strangeIngredientCategoryPanel`일 때만 표시)
+
+**화폐 (`ShopCurrency.cs`)**
+- `IShopCurrency { GetPrice(LiquorBottleDef), CurrentAmount, TrySpend(amount) }` — `ItemSlotUI`가 `GameProgress`를 직접 호출하지 않고 이 인터페이스로만 결제
+- `MoneyShopCurrency`: `def.price` / `GameProgress.CurrentMoney` / `TrySpendMoney` (일반 상점 기본값, `ItemSlotUI.Setup()`에서 currency 생략 시 자동 사용)
+- `StrangeCoinShopCurrency`: `def.strangeCoinPrice` / `GameProgress.GetAffinity("strange_coin")` / `GameProgress.TrySpendAffinity("strange_coin", amount)`
+- "이상한 동전" 자체는 `GameProgress`에 새 저장소를 만들지 않고 기존 범용 수치 변수 저장소(`GetAffinity`/`AddAffinity`, 원래 캐릭터 호감도용이지만 임의의 문자열 key로 범용 사용 가능)를 `varName = "strange_coin"`으로 재사용 — 에피소드 CSV의 `varChanges`(`strange_coin+1` 형식)로 지급 가능, 코드 추가 불필요
+- `GameProgress.TrySpendAffinity(varName, amount)`: `TrySpendMoney`와 동일하게 잔액 부족 시 차감 없이 `false` 반환. 화폐 전용이 아니라 범용이라 다른 특수 화폐가 생겨도 재사용 가능
+
+**아이템 리스트**: `BuildStrangeCategoryButtons()`/`ShowStrangeListByCategory()`/`UpdateStrangeList()`가 일반 상점의 `BuildCategoryButtons()`/`ShowListByCategory()`/`UpdateList()`와 동일한 구조로 병렬 존재(코드 중복을 감수하고 패널·프리팹만 분리) — `UpdateStrangeList()`만 `slot.Setup(bottle, _strangeCurrency)`로 화폐를 주입한다는 점이 다름. `RefreshStrangeCoinText()`가 잔액 텍스트 갱신 + 이상한 상점 슬롯들의 `Refresh()`를 담당(일반 상점의 `RefreshMoneyText()`와 대응, 서로 다른 화폐라 상대 슬롯은 갱신하지 않음)
+
+**스킨 교체 (`ThemedSprite`)**: 패널과 무관하게 `ShopWindow`에 상시 깔려있는 배경류(윈도우 배경/상단 오버레이/뒤로가기 버튼)는 각 패널 안에 있지 않아 패널 전환만으로는 안 바뀜 — `ShopUIManager` 내부 직렬화 클래스 `ThemedSprite { image, normalSprite, strangeSprite }`가 이 3곳(`windowBackgroundSkin`/`upperOverlaySkin`/`backButtonSkin`)을 `ApplyShopSkin(bool)`로 한 번에 교체. `OnOpen()`(항상 일반 모드로 리셋)과 `OnStrangeShopIconClicked()`(토글)에서 호출됨
+
+**카테고리 버튼 프리팹 재사용 시 주의**: `strangeCategoryButtonPrefab`를 `ShopCategoryButton.prefab` 복제로 만들 경우, 원본에 있던 클릭 범위 버그(배경 `Image`가 `Button` 컴포넌트의 부모 오브젝트에 있어 아이콘+텍스트 바깥 영역은 클릭이 안 되는 문제 — Unity 이벤트 버블링은 자식→부모 방향으로만 핸들러를 찾기 때문)를 원본에서 먼저 고친 뒤 복제할 것. 자세한 원인은 이 문서가 아니라 프리팹 자체를 열어 `Button`/배경 `Image`의 부모-자식 관계를 확인.
 
 ### ItemData (`RestScene/Scripts/ItemData.cs`) — 임시 데이터, 상점 미사용
 
@@ -330,6 +398,7 @@ public enum ItemType { Alcohol, Liqueur, NonAlcohol, Powder, Tool, Glass }
 |---|---|---|
 | 현황판 데이터 | `EpisodeUIManager` | `money`, `isBusinessOpen` → `GameProgress` 연동 필요 |
 | `ObjectInteraction` 중복 | `ObjectInteractionBoard` | 두 클래스 코드 동일, 하나로 통합 가능 |
-| 레시피북 화면 | `ShopUIManager.OnRecipeBookClicked` | 기획 미정, 클릭 스텁만 존재 |
 | 재료 소진 로직 | `GameProgress.AddBottleAmount` | 영업 중 사용에 따른 잔량 감소는 미구현(음수 delta로 재사용 가능하도록만 설계됨) |
 | `LiquorBottleDef` 상점 데이터 | `Assets/Data/LiquorBottle/*.asset` | `price`/`category`/`unlockFlagKey`/`unlockHintType` 값이 비어있으면 상점에 노출되지 않음 — 애셋별로 직접 입력 필요 |
+| `RecipeBookDef` 에셋 | `Assets/RestScene/Scripts/RecipeBookDef.cs` | 코드만 존재, 실제 SO 에셋과 `ShopUIManager.allRecipeBooks`/`recipeBookPanel` 연결은 아직 수동 작업 필요 |
+| `LiquorCategoryDef.color` 값 | `LiquorCategoryDef` 에셋 | 필드만 추가됨, 카테고리별 실제 색상 값은 아직 미입력(기본값 흰색) |

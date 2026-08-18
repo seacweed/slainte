@@ -15,3 +15,4 @@ MonoBehaviour:
   id: powder
   displayName: "\uAC00\uB8E8"
   icon: {fileID: 7070898859007527560, guid: 8526083b308adb94bba80c9ad7902e5d, type: 3}
+  color: {r: 0.21176472, g: 0.14117648, b: 0.14117648, a: 1}

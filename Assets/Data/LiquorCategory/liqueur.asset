@@ -15,3 +15,4 @@ MonoBehaviour:
   id: liqueur
   displayName: "\uB9AC\uD050\uB974"
   icon: {fileID: 7070898859007527560, guid: 8526083b308adb94bba80c9ad7902e5d, type: 3}
+  color: {r: 0.89019614, g: 0.30588236, b: 0.6745098, a: 1}

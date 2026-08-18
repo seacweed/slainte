@@ -22,6 +22,7 @@
 - 에피소드 제조 노드는 `EpisodeRunner.HandleCraftingStart()`에서 처리되며, 기존 방식대로 `OrderTicketManager.Prepare(node.craftingTicketKey)` + `GameModeManager.RequestModeChange(GameMode.CraftingMode)`로 진입해 `CraftingJudgeUI`의 버튼 6개로 수동 판정합니다.
 - 영업과 같은 `BusinessOrderSessionController`(레시피 기반 자동 판정, `BusinessFlowBootstrap.StartEpisodeOrder()` 경유)로 연동해서 수동 판정을 대체하려던 시도가 있었으나(그래프 노드에 `craftingRecipeId` 컬럼과 `CraftingRecipeId` 필드 추가) 컴파일 문제로 되돌려졌습니다. 재통합 예정입니다.
 - 그 흔적으로 `StrangeCoin_0.asset`/`StrangeCoin_1.asset` 그래프에는 `CraftingRecipeId: vodka_lemon`/`whiskey_neat` 값이 여전히 남아 있고, `EpisodeCsvImporter.cs`도 CSV의 `craftingRecipeId` 컬럼을 계속 파싱합니다. 하지만 `EpisodeNode`/`EpisodeEventData` 클래스엔 이 필드가 없어서 지금은 그래프를 저장할 때마다 버려지는 고아 값입니다. 재통합 시 `EpisodeNode.craftingRecipeId` 필드부터 다시 추가해야 합니다.
+- 또 다른 흔적으로 `BusinessFlowBootstrap`이 `CraftingJudgeUI`를 "legacy"로 취급해 `gameObject.SetActive(false)`로 강제로 꺼버리는 코드가 여러 군데(특히 `OrderSessionState` 변화 시마다) 남아있었음 — `GameModeManager.RefreshPanels()`가 `CraftingMode`에서 `CanvasGroup`으로 정상적으로 패널을 켜려 해도 이 강제 비활성화가 덮어써서 크래프팅 진행 중 판정 패널이 안 보이는 버그가 있었음. 해당 코드는 모두 제거되었고, 이제 `CraftingJudgePanel`의 표시 여부는 `GameModeManager`의 모드 전환 하나로만 결정됨.
 
 ## 영업 씬 손님 & 주문 (`Assets/Scripts/Conversation/Sell/`, `Assets/Scripts/OrderTicket/`)
 

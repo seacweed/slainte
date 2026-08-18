@@ -1,0 +1,741 @@
+fileFormatVersion: 2
+guid: 0e3366461444117458dbc1992fc72e29
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -7523542392632660450
+    second: Shop-logo-green-text_0
+  - first:
+      213: 3983077216140039793
+    second: Shop-logo-green-text_1
+  - first:
+      213: 3369970873420755211
+    second: Shop-logo-green-text_2
+  - first:
+      213: 4750622395307187286
+    second: Shop-logo-green-text_3
+  - first:
+      213: -1076452454498621104
+    second: Shop-logo-green-text_4
+  - first:
+      213: -4737407202926033774
+    second: Shop-logo-green-text_5
+  - first:
+      213: -2824535819055771768
+    second: Shop-logo-green-text_6
+  - first:
+      213: 3281766471422236776
+    second: Shop-logo-green-text_7
+  - first:
+      213: 613283551235776868
+    second: Shop-logo-green-text_8
+  - first:
+      213: -782922960803781268
+    second: Shop-logo-green-text_9
+  - first:
+      213: -5132849320653282430
+    second: Shop-logo-green-text_10
+  - first:
+      213: 8291568160309030530
+    second: Shop-logo-green-text_11
+  - first:
+      213: 5646086187297665579
+    second: Shop-logo-green-text_12
+  - first:
+      213: -1249455345709240098
+    second: Shop-logo-green-text_13
+  - first:
+      213: 4011972869331672088
+    second: Shop-logo-green-text_14
+  - first:
+      213: -8653881054333850667
+    second: Shop-logo-green-text_15
+  - first:
+      213: -582703077658645980
+    second: Shop-logo-green-text_16
+  - first:
+      213: 6513302188830636774
+    second: Shop-logo-green-text_17
+  - first:
+      213: 3227738783364096184
+    second: Shop-logo-green-text_18
+  - first:
+      213: -3253670243903989457
+    second: Shop-logo-green-text_19
+  - first:
+      213: -8730301229726778683
+    second: Shop-logo-green-text_20
+  - first:
+      213: 7536942804186210213
+    second: Shop-logo-green-text_21
+  - first:
+      213: 3404310067540113001
+    second: Shop-logo-green-text_22
+  - first:
+      213: -4975516977282398399
+    second: Shop-logo-green-text_23
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Shop-logo-green-text_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 554
+        height: 221
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e1ea98a2e02079790800000000000000
+      internalID: -7523542392632660450
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_1
+      rect:
+        serializedVersion: 2
+        x: 131
+        y: 63
+        width: 159
+        height: 158
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1769af4ff9bb64730800000000000000
+      internalID: 3983077216140039793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_2
+      rect:
+        serializedVersion: 2
+        x: 257
+        y: 63
+        width: 159
+        height: 158
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b0138ad87aa84ce20800000000000000
+      internalID: 3369970873420755211
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_3
+      rect:
+        serializedVersion: 2
+        x: 381
+        y: 63
+        width: 58
+        height: 158
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65cdc4e06e99de140800000000000000
+      internalID: 4750622395307187286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_4
+      rect:
+        serializedVersion: 2
+        x: 403
+        y: 63
+        width: 71
+        height: 158
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0592308223caf01f0800000000000000
+      internalID: -1076452454498621104
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_5
+      rect:
+        serializedVersion: 2
+        x: 440
+        y: 63
+        width: 114
+        height: 158
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2948731bf39514eb0800000000000000
+      internalID: -4737407202926033774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_6
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 8
+        width: 38
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 88f40d933ab3dc8d0800000000000000
+      internalID: -2824535819055771768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_7
+      rect:
+        serializedVersion: 2
+        x: 78
+        y: 27
+        width: 33
+        height: 19
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 868d8ecd73d2b8d20800000000000000
+      internalID: 3281766471422236776
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_8
+      rect:
+        serializedVersion: 2
+        x: 138
+        y: 24
+        width: 38
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 461aff9f322d28800800000000000000
+      internalID: 613283551235776868
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_9
+      rect:
+        serializedVersion: 2
+        x: 145
+        y: 30
+        width: 31
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c652bca17bf7225f0800000000000000
+      internalID: -782922960803781268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_10
+      rect:
+        serializedVersion: 2
+        x: 204
+        y: 18
+        width: 28
+        height: 28
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2832bd4ecb474c8b0800000000000000
+      internalID: -5132849320653282430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_11
+      rect:
+        serializedVersion: 2
+        x: 223
+        y: 8
+        width: 20
+        height: 38
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 28ea82aaf41911370800000000000000
+      internalID: 8291568160309030530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_12
+      rect:
+        serializedVersion: 2
+        x: 270
+        y: 8
+        width: 38
+        height: 22
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b22fd1d197dea5e40800000000000000
+      internalID: 5646086187297665579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_13
+      rect:
+        serializedVersion: 2
+        x: 277
+        y: 30
+        width: 32
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed0b944abfa09aee0800000000000000
+      internalID: -1249455345709240098
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_14
+      rect:
+        serializedVersion: 2
+        x: 342
+        y: 27
+        width: 33
+        height: 19
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 81cd40d71146da730800000000000000
+      internalID: 4011972869331672088
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_15
+      rect:
+        serializedVersion: 2
+        x: 402
+        y: 24
+        width: 38
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5dba2f3080d37e780800000000000000
+      internalID: -8653881054333850667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_16
+      rect:
+        serializedVersion: 2
+        x: 409
+        y: 30
+        width: 32
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42a21ae53a2d9e7f0800000000000000
+      internalID: -582703077658645980
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_17
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 24
+        width: 38
+        height: 6
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ea3600f4d5e36a50800000000000000
+      internalID: 6513302188830636774
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_18
+      rect:
+        serializedVersion: 2
+        x: 477
+        y: 30
+        width: 30
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8b02b2a725b3bcc20800000000000000
+      internalID: 3227738783364096184
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_19
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 8
+        width: 36
+        height: 19
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f2918dfd624a8d2d0800000000000000
+      internalID: -3253670243903989457
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_20
+      rect:
+        serializedVersion: 2
+        x: 138
+        y: 8
+        width: 29
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cabaf3694db7d680800000000000000
+      internalID: -8730301229726778683
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_21
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 8
+        width: 36
+        height: 19
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5af94f74c89989860800000000000000
+      internalID: 7536942804186210213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_22
+      rect:
+        serializedVersion: 2
+        x: 404
+        y: 8
+        width: 30
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 966b30938f98e3f20800000000000000
+      internalID: 3404310067540113001
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-green-text_23
+      rect:
+        serializedVersion: 2
+        x: 468
+        y: 8
+        width: 32
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 147482baba963fab0800000000000000
+      internalID: -4975516977282398399
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 71397bacdfee45f4199de99624c92276
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Shop-logo-green-text_0: -7523542392632660450
+      Shop-logo-green-text_1: 3983077216140039793
+      Shop-logo-green-text_10: -5132849320653282430
+      Shop-logo-green-text_11: 8291568160309030530
+      Shop-logo-green-text_12: 5646086187297665579
+      Shop-logo-green-text_13: -1249455345709240098
+      Shop-logo-green-text_14: 4011972869331672088
+      Shop-logo-green-text_15: -8653881054333850667
+      Shop-logo-green-text_16: -582703077658645980
+      Shop-logo-green-text_17: 6513302188830636774
+      Shop-logo-green-text_18: 3227738783364096184
+      Shop-logo-green-text_19: -3253670243903989457
+      Shop-logo-green-text_2: 3369970873420755211
+      Shop-logo-green-text_20: -8730301229726778683
+      Shop-logo-green-text_21: 7536942804186210213
+      Shop-logo-green-text_22: 3404310067540113001
+      Shop-logo-green-text_23: -4975516977282398399
+      Shop-logo-green-text_3: 4750622395307187286
+      Shop-logo-green-text_4: -1076452454498621104
+      Shop-logo-green-text_5: -4737407202926033774
+      Shop-logo-green-text_6: -2824535819055771768
+      Shop-logo-green-text_7: 3281766471422236776
+      Shop-logo-green-text_8: 613283551235776868
+      Shop-logo-green-text_9: -782922960803781268
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

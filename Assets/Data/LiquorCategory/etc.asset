@@ -15,3 +15,4 @@ MonoBehaviour:
   id: etc
   displayName: "\uAE30\uD0C0"
   icon: {fileID: 7070898859007527560, guid: 8526083b308adb94bba80c9ad7902e5d, type: 3}
+  color: {r: 0.69803923, g: 0.69803923, b: 0.69803923, a: 1}

@@ -1,0 +1,663 @@
+fileFormatVersion: 2
+guid: 0b06d1d05524a0e419212fe4d856e420
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2655226457346614096
+    second: Shop-logo-mint-text_0
+  - first:
+      213: 4622691616452893395
+    second: Shop-logo-mint-text_1
+  - first:
+      213: -7931924937649853156
+    second: Shop-logo-mint-text_2
+  - first:
+      213: 4582324050183374143
+    second: Shop-logo-mint-text_3
+  - first:
+      213: -1929623506360105838
+    second: Shop-logo-mint-text_4
+  - first:
+      213: 7561833108475823278
+    second: Shop-logo-mint-text_5
+  - first:
+      213: 8669820456917512523
+    second: Shop-logo-mint-text_6
+  - first:
+      213: -4556256436963564169
+    second: Shop-logo-mint-text_7
+  - first:
+      213: -2950694426294243563
+    second: Shop-logo-mint-text_8
+  - first:
+      213: 4993287652761841363
+    second: Shop-logo-mint-text_9
+  - first:
+      213: -4108598669398915962
+    second: Shop-logo-mint-text_10
+  - first:
+      213: -8528694016804413298
+    second: Shop-logo-mint-text_11
+  - first:
+      213: -7964256477860968402
+    second: Shop-logo-mint-text_12
+  - first:
+      213: 8073923032821418816
+    second: Shop-logo-mint-text_13
+  - first:
+      213: 8528594486982662174
+    second: Shop-logo-mint-text_14
+  - first:
+      213: -968629237600590741
+    second: Shop-logo-mint-text_15
+  - first:
+      213: 774555073352353142
+    second: Shop-logo-mint-text_16
+  - first:
+      213: 1850414719884674528
+    second: Shop-logo-mint-text_17
+  - first:
+      213: -1612364968120542753
+    second: Shop-logo-mint-text_18
+  - first:
+      213: 6152821513722886515
+    second: Shop-logo-mint-text_19
+  - first:
+      213: 5423214417082191743
+    second: Shop-logo-mint-text_20
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Shop-logo-mint-text_0
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 49
+        width: 103
+        height: 124
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0532d5c156249d420800000000000000
+      internalID: 2655226457346614096
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-mint-text_1
+      rect:
+        serializedVersion: 2
+        x: 102
+        y: 49
+        width: 125
+        height: 124
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3dad9d87889172040800000000000000
+      internalID: 4622691616452893395
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-mint-text_2
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 49
+        width: 124
+        height: 124
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c1d615a5b442ce190800000000000000
+      internalID: -7931924937649853156
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-mint-text_3
+      rect:
+        serializedVersion: 2
+        x: 298
+        y: 49
+        width: 45
+        height: 124
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f35c8e8027fa79f30800000000000000
+      internalID: 4582324050183374143
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-mint-text_4
+      rect:
+        serializedVersion: 2
+        x: 315
+        y: 49
+        width: 56
+        height: 124
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 294892105a99835e0800000000000000
+      internalID: -1929623506360105838
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-mint-text_5
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 49
+        width: 90
+        height: 124
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea44d79d52701f860800000000000000
+      internalID: 7561833108475823278
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-mint-text_6
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 7
+        width: 30
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b41bbf855c3615870800000000000000
+      internalID: 8669820456917512523
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-mint-text_7
+      rect:
+        serializedVersion: 2
+        x: 61
+        y: 22
+        width: 26
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 775233129ece4c0c0800000000000000
+      internalID: -4556256436963564169
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-mint-text_8
+      rect:
+        serializedVersion: 2
+        x: 108
+        y: 7
+        width: 30
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 51fa1008d070d07d0800000000000000
+      internalID: -2950694426294243563
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-mint-text_9
+      rect:
+        serializedVersion: 2
+        x: 113
+        y: 24
+        width: 25
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3dea6342aa8bb4540800000000000000
+      internalID: 4993287652761841363
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-mint-text_10
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 14
+        width: 23
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 684c5d947435bf6c0800000000000000
+      internalID: -4108598669398915962
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-mint-text_11
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 7
+        width: 17
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e80af5a8afdf3a980800000000000000
+      internalID: -8528694016804413298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-mint-text_12
+      rect:
+        serializedVersion: 2
+        x: 211
+        y: 7
+        width: 30
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e284ef80ee6497190800000000000000
+      internalID: -7964256477860968402
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-mint-text_13
+      rect:
+        serializedVersion: 2
+        x: 216
+        y: 24
+        width: 26
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 04b4a2b88365c0070800000000000000
+      internalID: 8073923032821418816
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-mint-text_14
+      rect:
+        serializedVersion: 2
+        x: 267
+        y: 22
+        width: 27
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e18d4fddf77ab5670800000000000000
+      internalID: 8528594486982662174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-mint-text_15
+      rect:
+        serializedVersion: 2
+        x: 314
+        y: 7
+        width: 30
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6462c527dcbe82f0800000000000000
+      internalID: -968629237600590741
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-mint-text_16
+      rect:
+        serializedVersion: 2
+        x: 319
+        y: 24
+        width: 26
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 675c4264cb5cfba00800000000000000
+      internalID: 774555073352353142
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-mint-text_17
+      rect:
+        serializedVersion: 2
+        x: 365
+        y: 7
+        width: 30
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0e541e1426efda910800000000000000
+      internalID: 1850414719884674528
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-mint-text_18
+      rect:
+        serializedVersion: 2
+        x: 372
+        y: 24
+        width: 25
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fd914eaaa9abf99e0800000000000000
+      internalID: -1612364968120542753
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-mint-text_19
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 7
+        width: 29
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37975d35196336550800000000000000
+      internalID: 6152821513722886515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Shop-logo-mint-text_20
+      rect:
+        serializedVersion: 2
+        x: 262
+        y: 7
+        width: 29
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7f06f667c0234b40800000000000000
+      internalID: 5423214417082191743
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Shop-logo-mint-text_0: 2655226457346614096
+      Shop-logo-mint-text_1: 4622691616452893395
+      Shop-logo-mint-text_10: -4108598669398915962
+      Shop-logo-mint-text_11: -8528694016804413298
+      Shop-logo-mint-text_12: -7964256477860968402
+      Shop-logo-mint-text_13: 8073923032821418816
+      Shop-logo-mint-text_14: 8528594486982662174
+      Shop-logo-mint-text_15: -968629237600590741
+      Shop-logo-mint-text_16: 774555073352353142
+      Shop-logo-mint-text_17: 1850414719884674528
+      Shop-logo-mint-text_18: -1612364968120542753
+      Shop-logo-mint-text_19: 6152821513722886515
+      Shop-logo-mint-text_2: -7931924937649853156
+      Shop-logo-mint-text_20: 5423214417082191743
+      Shop-logo-mint-text_3: 4582324050183374143
+      Shop-logo-mint-text_4: -1929623506360105838
+      Shop-logo-mint-text_5: 7561833108475823278
+      Shop-logo-mint-text_6: 8669820456917512523
+      Shop-logo-mint-text_7: -4556256436963564169
+      Shop-logo-mint-text_8: -2950694426294243563
+      Shop-logo-mint-text_9: 4993287652761841363
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

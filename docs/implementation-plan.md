@@ -256,7 +256,7 @@ RecipeUnlockRule
 
 - [x] `EpisodeTriggerCondition`을 `ProgressConditionEvaluator` 공통 조건 평가기로 추출한다.
 - [ ] 보드 UI에서 숨김, 잠김, 선택 불가, 선택 가능 상태를 구분한다.
-- [ ] 선택 조건이 아직 공개되지 않았다면 구체적인 요구사항을 숨긴다.
+- [x] 선택 조건이 아직 공개되지 않았다면 구체적인 요구사항을 숨긴다. (`SelectConditionEntry.revealCondition`, `EpisodeInfoUI.ApplySelectConditionRow`)
 - [ ] 선택 불가 사유를 한국어 텍스트로 표시한다.
 - [ ] 선택 결과에 따라 후속 등장인물과 다음 에피소드 후보가 바뀌도록 한다.
 - [ ] 처음부터 존재하는 메인 에피소드 `지구로`를 지속형 메인 퀘스트로 등록한다.

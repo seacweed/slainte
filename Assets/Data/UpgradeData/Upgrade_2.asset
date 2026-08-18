@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Upgrade_2
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeDef
   id: upgrade_2
-  icon: {fileID: 0}
+  icon: {fileID: 4252508104529615135, guid: f9f7416d8aac14648a6f88b12aa8b9c9, type: 3}
   displayName: "\uBC14\uD150\uB529 101"
   description: "\uB9E4\uC77C \uCCAB \uC2E4\uD328\uC758 \uD328\uB110\uD2F0\uAC00 \uC904\uC5B4\uB4ED\uB2C8\uB2E4."
   pricesPerLevel: 64000000c80000002c01000090010000

@@ -9,11 +9,12 @@
 | 스크립트 | 위치 | 역할 |
 |---|---|---|
 | `LiquorShelfUI` | ShelfPanel | 메인 컨트롤러 — 슬라이드, 카테고리 전환, EpisodeMode 대응 |
-| `LiquorCategoryButtonUI` | 카테고리 버튼 프리팹 | 클릭 시 `LiquorShelfUI.OpenCategory()` 호출 |
+| `LiquorCategoryButtonUI` | 카테고리 버튼 프리팹 (술장/상점 공용) | 클릭 시 `LiquorShelfUI.OpenCategory()`(술장) 또는 `ShopUIManager.ShowListByCategory()`(상점) 호출. `colorImage`(선택 필드)가 연결된 프리팹 인스턴스에서만 카테고리 고유색으로 틴트 — 술장 프리팹은 비워두면 색이 적용되지 않음 |
 | `LiquorBottleSlotUI` | 개별 슬롯 오브젝트 | 해금 플래그 확인, 호버 정보 표시, 잔여량 갱신, 제작 중 좌클릭 선택 |
 | `LiquorBottleInfoCard` | ShelfPanel 직계 자식 (씬에 단 하나) | 호버한 병의 이름/소분류/병 단위 상태/잔여량 표시 |
 | `LiquorBottleDef` | ScriptableObject | 술 데이터 (id, sprite, unlockFlagKey, subCategory, bottleCount, unitVolume) |
-| `LiquorCategoryDef` | ScriptableObject | 카테고리 데이터 (id, displayName, icon) |
+| `LiquorCategoryDef` | ScriptableObject | 카테고리 데이터 (id, displayName, icon, color) |
+| `CategoryColorText` | 정적 유틸리티 클래스 | 등록된 카테고리들의 `displayName`을 문장 속에서 찾아 `color`로 TMP `<color>` 태그를 씌우는 헬퍼. `ShopUIManager.Start()`에서 `Register()`, 자유 문장 텍스트를 대입하는 지점에서 `Highlight()`를 명시적으로 호출해야 적용됨(전역 자동 적용 아님) — 상점 레시피북 설명/해금정보에 사용, 자세한 내용은 [restscene-systems.md](restscene-systems.md#카테고리-고유색-liquorcategorydefcolor-categorycolortextcs) 참고 |
 | `LiquorStockLevelPalette` | ScriptableObject (공유 에셋 1개) | 병 잔여량 아이콘용 12단계 스프라이트(empty/intermediate×10/full) 팔레트, `GetSprite(ratio01)`로 조회 |
 
 ## 데이터 구조
@@ -26,6 +27,7 @@
 - `MaxAmount` (계산 프로퍼티): `bottleCount * unitVolume`
 
 **`LiquorCategoryDef`** (`Assets > Create > Bartending > Liquor Category`)
+- `color`: 카테고리 고유색. 라벨 텍스트 색 자체는 바꾸지 않고, `LiquorCategoryButtonUI.colorImage`/`ShopUIManager.categoryNameColorImage` 같은 액센트 이미지 틴트와 `CategoryColorText` 문장 강조에만 쓰임
 
 **`LiquorStockLevelPalette`** (`Assets > Create > Bartending > Liquor Stock Level Palette`)
 - `emptySprite` / `intermediateSprites[10]` / `fullSprite` — 총 12개
