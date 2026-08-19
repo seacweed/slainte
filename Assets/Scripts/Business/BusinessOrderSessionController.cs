@@ -185,7 +185,8 @@ namespace Slainte.Business
             bool visitShown = customerSpawner != null
                 && customerSpawner.ShowVisit(
                     currentRequest.customerVisitKey,
-                    currentRequest.customerOrderKey);
+                    currentRequest.customerOrderKey,
+                    currentOrder.line);
 
             if (!visitShown)
             {

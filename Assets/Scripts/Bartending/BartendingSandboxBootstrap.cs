@@ -132,6 +132,8 @@ namespace Slainte.Bartending
             if (session == null)
                 return;
 
+            session.Viewport?.SetOutputVisible(false);
+
             if (session.ServingGlass != null)
             {
                 session.InteractionOverlay?.ConfigureServingTarget(
@@ -208,6 +210,8 @@ namespace Slainte.Bartending
                     break;
                 Snap(bottles[i], slot);
             }
+
+            session.Viewport?.SetOutputVisible(true);
 
             snapRoutine = null;
         }

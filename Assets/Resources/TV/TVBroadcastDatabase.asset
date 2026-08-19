@@ -19,7 +19,7 @@ MonoBehaviour:
       \uC54A\uC558\uC2B5\uB2C8\uB2E4. \uD3C9\uC628\uD55C \uC601\uC5C5\uC774 \uC608\uC0C1\uB429\uB2C8\uB2E4."
     weight: 55
     presenterSprite: {fileID: 0}
-    eventSprite: {fileID: 0}
+    eventSprite: {fileID: 21300000, guid: d0c1927d56e981d4996dd859e7fa7823, type: 3}
     effectType: 0
     targetTag: 
     effectMultiplier: 1
@@ -31,7 +31,7 @@ MonoBehaviour:
       \uC77C\uC2DC \uC911\uB2E8\uB429\uB2C8\uB2E4."
     weight: 5
     presenterSprite: {fileID: 0}
-    eventSprite: {fileID: 0}
+    eventSprite: {fileID: 21300000, guid: 245d872f8d5bed743ba78d9d2b6cc301, type: 3}
     effectType: 1
     targetTag: 
     effectMultiplier: 1
@@ -43,7 +43,7 @@ MonoBehaviour:
       \uD734\uC2DD \uB3D9\uC548 \uC0C1\uC810 \uC774\uC6A9\uC774 \uC81C\uD55C\uB429\uB2C8\uB2E4."
     weight: 5
     presenterSprite: {fileID: 0}
-    eventSprite: {fileID: 0}
+    eventSprite: {fileID: 21300000, guid: 597f721bbafb5f1419ce5d6f0b081e6b, type: 3}
     effectType: 2
     targetTag: 
     effectMultiplier: 1
@@ -55,7 +55,7 @@ MonoBehaviour:
       \uACE0\uB3C4\uC218 \uC74C\uB8CC \uC8FC\uBB38\uC774 \uC99D\uAC00\uD560 \uC804\uB9DD\uC785\uB2C8\uB2E4."
     weight: 10
     presenterSprite: {fileID: 0}
-    eventSprite: {fileID: 0}
+    eventSprite: {fileID: 21300000, guid: 85e2cb7de6e96544d8247244a83c05fb, type: 3}
     effectType: 3
     targetTag: high_abv
     effectMultiplier: 2
@@ -67,7 +67,7 @@ MonoBehaviour:
       \uC190\uB2D8\uB4E4\uC758 \uD301 \uC9C0\uCD9C\uC774 \uC99D\uAC00\uD560 \uC804\uB9DD\uC785\uB2C8\uB2E4."
     weight: 15
     presenterSprite: {fileID: 0}
-    eventSprite: {fileID: 0}
+    eventSprite: {fileID: 21300000, guid: d0382bfb6ec22aa42906ed0de645dacd, type: 3}
     effectType: 4
     targetTag: 
     effectMultiplier: 1.5
@@ -79,7 +79,7 @@ MonoBehaviour:
       \uD2B9\uC815 \uC190\uB2D8\uB4E4\uC758 \uC774\uB3D9\uC774 \uC99D\uAC00\uD569\uB2C8\uB2E4."
     weight: 10
     presenterSprite: {fileID: 0}
-    eventSprite: {fileID: 0}
+    eventSprite: {fileID: 21300000, guid: d380c5be87201684da21a8370619cc89, type: 3}
     effectType: 5
     targetTag: "customer_attribute:\uC57C\uAC04\uC21C\uCC30"
     effectMultiplier: 2

@@ -49,6 +49,7 @@ namespace Slainte.Bartending
 
         [Header("제출 조건")]
         [SerializeField] private string glassId = "rock";
+        [SerializeField, Min(1f)] private float capacityMl = 200f;
 
         [Header("김 연출")]
         [SerializeField] private float steamStartTemperatureC = 55f;
@@ -87,8 +88,15 @@ namespace Slainte.Bartending
         private float rotationHorizontalScreenPadding = 12f;
         private BartendingItemOrder interactionOrder;
         private SlotController currentSlot; // 현재 점유 중인 슬롯 레퍼런스
+        private GlassCollisionProfileDefinition activeCollisionProfile;
+
+        private const string DefaultGlassId = "rock";
+        private const string ContentTriggerPrefix = "__GlassContentTrigger_";
 
         public VesselLiquidTracker LiquidTracker => liquidTracker;
+        public string GlassId => string.IsNullOrWhiteSpace(glassId) ? DefaultGlassId : glassId.Trim();
+        public float CapacityMl => Mathf.Max(1f, capacityMl);
+        public GlassCollisionProfileDefinition ActiveCollisionProfile => activeCollisionProfile;
         public event Action<GlassController> ServeRequested;
         public event Action<GlassController, bool> HeldStateChanged;
 
@@ -107,7 +115,9 @@ namespace Slainte.Bartending
 
         private void Start()
         {
-            mainCollider = GetComponent<Collider2D>();
+            TryApplyDetectedCollisionProfile(true);
+            if (mainCollider == null)
+                mainCollider = GetComponent<Collider2D>();
             mainCamera = Camera.main;
 
             if (Application.isPlaying)
@@ -150,6 +160,7 @@ namespace Slainte.Bartending
             if (liquidTracker == null)
                 liquidTracker = gameObject.AddComponent<VesselLiquidTracker>();
 
+            glassId = GlassId;
             liquidTracker.ConfigureServingStyle(glassId);
 
             steamEmitter = GetComponent<GlassSteamEmitter>();
@@ -172,6 +183,23 @@ namespace Slainte.Bartending
             liquidTracker?.SetHasIce(containsIce);
         }
 
+        public bool CanContain(float volumeMl)
+        {
+            return volumeMl >= 0f && volumeMl <= CapacityMl + 0.001f;
+        }
+
+        public bool TryApplyDetectedCollisionProfile()
+        {
+            return TryApplyDetectedCollisionProfile(true);
+        }
+
+        public void ApplyCollisionProfile(
+            GlassCollisionProfileDefinition profile,
+            SpriteRenderer visual)
+        {
+            ApplyCollisionProfile(profile, visual, true);
+        }
+
         private void Reset()
         {
             edgeCollider = GetComponent<EdgeCollider2D>();
@@ -180,7 +208,8 @@ namespace Slainte.Bartending
 
         private void OnValidate()
         {
-            GenerateCurvedCollider();
+            if (!TryApplyDetectedCollisionProfile(false))
+                GenerateCurvedCollider();
         }
 
         private void Update()
@@ -351,7 +380,7 @@ namespace Slainte.Bartending
             foreach (var hit in hits)
             {
                 // 자기 자신 콜라이더는 건너뜁니다.
-                if (hit == mainCollider || hit == edgeCollider) continue;
+                if (hit == null || hit.transform.IsChildOf(transform)) continue;
 
                 SlotController slot = hit.GetComponent<SlotController>();
                 if (slot != null)
@@ -800,6 +829,144 @@ namespace Slainte.Bartending
             }
 
             edgeCollider.SetPoints(points);
+        }
+
+        private bool TryApplyDetectedCollisionProfile(bool configureContentTriggers)
+        {
+            SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>(true);
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                SpriteRenderer renderer = renderers[i];
+                if (renderer == null
+                    || renderer.sprite == null
+                    || !GlassCollisionProfiles.TryGetBySpriteName(
+                        renderer.sprite.name,
+                        out GlassCollisionProfileDefinition profile))
+                {
+                    continue;
+                }
+
+                ApplyCollisionProfile(profile, renderer, configureContentTriggers);
+                return true;
+            }
+
+            return false;
+        }
+
+        private void ApplyCollisionProfile(
+            GlassCollisionProfileDefinition profile,
+            SpriteRenderer visual,
+            bool configureContentTriggers)
+        {
+            if (profile == null)
+                throw new ArgumentNullException(nameof(profile));
+            if (visual == null || visual.sprite == null)
+                throw new ArgumentException("A SpriteRenderer with a sprite is required.", nameof(visual));
+
+            if (edgeCollider == null)
+                edgeCollider = GetComponent<EdgeCollider2D>();
+            if (edgeCollider == null)
+                edgeCollider = gameObject.AddComponent<EdgeCollider2D>();
+
+            Vector2[] spritePoints = profile.BuildEdgePath(visual.sprite);
+            Vector2[] rootPoints = new Vector2[spritePoints.Length];
+            for (int i = 0; i < spritePoints.Length; i++)
+            {
+                Vector3 worldPoint = visual.transform.TransformPoint(spritePoints[i]);
+                rootPoints[i] = transform.InverseTransformPoint(worldPoint);
+            }
+
+            edgeCollider.isTrigger = false;
+            edgeCollider.edgeRadius = edgeRadius;
+            edgeCollider.SetPoints(new List<Vector2>(rootPoints));
+
+            activeCollisionProfile = profile;
+            glassId = profile.GlassId;
+            capacityMl = profile.CapacityMl;
+            UpdateLegacyGeometryMetrics(rootPoints);
+
+            if (configureContentTriggers)
+                mainCollider = ConfigureContentTriggers(profile, visual);
+
+            liquidTracker?.ConfigureServingStyle(glassId);
+            liquidTracker?.RefreshCollisionGeometry();
+        }
+
+        private Collider2D ConfigureContentTriggers(
+            GlassCollisionProfileDefinition profile,
+            SpriteRenderer visual)
+        {
+            BoxCollider2D[] rootBoxes = GetComponents<BoxCollider2D>();
+            for (int i = 0; i < rootBoxes.Length; i++)
+                rootBoxes[i].enabled = false;
+
+            int triggerCount = profile.ContentTriggersNormalized.Count;
+            BoxCollider2D primary = null;
+            for (int i = 0; i < triggerCount; i++)
+            {
+                string triggerName = ContentTriggerPrefix + i;
+                Transform triggerTransform = visual.transform.Find(triggerName);
+                if (triggerTransform == null)
+                {
+                    GameObject triggerObject = new GameObject(triggerName);
+                    triggerObject.layer = gameObject.layer;
+                    triggerTransform = triggerObject.transform;
+                    triggerTransform.SetParent(visual.transform, false);
+                }
+
+                triggerTransform.localPosition = Vector3.zero;
+                triggerTransform.localRotation = Quaternion.identity;
+                triggerTransform.localScale = Vector3.one;
+                triggerTransform.gameObject.SetActive(true);
+
+                BoxCollider2D trigger = triggerTransform.GetComponent<BoxCollider2D>();
+                if (trigger == null)
+                    trigger = triggerTransform.gameObject.AddComponent<BoxCollider2D>();
+
+                Rect localRect = profile.BuildContentTrigger(visual.sprite, i);
+                trigger.enabled = true;
+                trigger.isTrigger = true;
+                trigger.offset = localRect.center;
+                trigger.size = localRect.size;
+                primary ??= trigger;
+            }
+
+            for (int i = 0; i < visual.transform.childCount; i++)
+            {
+                Transform child = visual.transform.GetChild(i);
+                if (!child.name.StartsWith(ContentTriggerPrefix, StringComparison.Ordinal))
+                    continue;
+
+                string suffix = child.name.Substring(ContentTriggerPrefix.Length);
+                if (!int.TryParse(suffix, out int index) || index < 0 || index >= triggerCount)
+                    child.gameObject.SetActive(false);
+            }
+
+            return primary != null ? primary : edgeCollider;
+        }
+
+        private void UpdateLegacyGeometryMetrics(IReadOnlyList<Vector2> points)
+        {
+            if (points == null || points.Count == 0)
+                return;
+
+            float minX = points[0].x;
+            float maxX = points[0].x;
+            float minY = points[0].y;
+            float maxY = points[0].y;
+            for (int i = 1; i < points.Count; i++)
+            {
+                Vector2 point = points[i];
+                minX = Mathf.Min(minX, point.x);
+                maxX = Mathf.Max(maxX, point.x);
+                minY = Mathf.Min(minY, point.y);
+                maxY = Mathf.Max(maxY, point.y);
+            }
+
+            height = Mathf.Max(0.1f, maxY - minY);
+            colliderYOffset = (minY + maxY) * 0.5f;
+            topWidth = Mathf.Max(0.1f, Mathf.Abs(points[points.Count - 1].x - points[0].x));
+            bottomWidth = Mathf.Max(0.1f, maxX - minX);
         }
     }
 }

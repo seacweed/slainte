@@ -35,7 +35,7 @@ public class CustomerSpawner : MonoBehaviour
         return order != null;
     }
 
-    public bool ShowVisit(string visitKey, string orderKey)
+    public bool ShowVisit(string visitKey, string orderKey, string fallbackOrderLine = null)
     {
         CanResolveOrder(orderKey, out _currentOrderData);
         _currentVisitData = visitDB != null ? visitDB.FindByKey(visitKey) : null;
@@ -44,9 +44,11 @@ public class CustomerSpawner : MonoBehaviour
         List<CharacterSlotEntry> entries = BuildVisitEntries(_currentVisitData);
         if (entries.Count > 0)
         {
-            characterStage?.ShowCharacters(entries, () => OnCharactersShown(_currentOrderData));
+            characterStage?.ShowCharacters(
+                entries,
+                () => OnCharactersShown(_currentOrderData, fallbackOrderLine));
             if (characterStage == null)
-                OnCharactersShown(_currentOrderData);
+                OnCharactersShown(_currentOrderData, fallbackOrderLine);
             return true;
         }
 
@@ -57,13 +59,15 @@ public class CustomerSpawner : MonoBehaviour
                 characterKey  = _currentOrderData.characterKey,
                 expressionKey = _currentOrderData.expressionKeyMid
             };
-            characterStage?.ShowCharacters(new[] { entry }, () => OnCharactersShown(_currentOrderData));
+            characterStage?.ShowCharacters(
+                new[] { entry },
+                () => OnCharactersShown(_currentOrderData, fallbackOrderLine));
             if (characterStage == null)
-                OnCharactersShown(_currentOrderData);
+                OnCharactersShown(_currentOrderData, fallbackOrderLine);
         }
         else
         {
-            OnCharactersShown(_currentOrderData);
+            OnCharactersShown(_currentOrderData, fallbackOrderLine);
         }
 
         return true;
@@ -102,19 +106,49 @@ public class CustomerSpawner : MonoBehaviour
         characterStage?.Clear();
     }
 
-    private void OnCharactersShown(CustomerOrderData data)
+    private void OnCharactersShown(CustomerOrderData data, string fallbackOrderLine)
     {
         if (data == null) return;
 
+        ticketManager?.Prepare(data.key);
+
         if (data.lines != null && data.lines.Count > 0)
         {
-            ticketManager?.Prepare(data.key);
             dialogue?.StartDialogue(data.lines);
+        }
+        else if (!string.IsNullOrWhiteSpace(fallbackOrderLine))
+        {
+            string characterKey = ResolveOrderingCharacterKey(data);
+            string speakerName = characterKey;
+            Color nameColor = Color.white;
+            characterStage?.TryGetDialogueIdentity(
+                characterKey,
+                out speakerName,
+                out nameColor);
+            dialogue?.ShowSingleLine(speakerName, fallbackOrderLine, nameColor);
         }
         else
         {
             dialogue?.HideImmediate();
         }
+    }
+
+    private string ResolveOrderingCharacterKey(CustomerOrderData data)
+    {
+        if (data != null && !string.IsNullOrWhiteSpace(data.characterKey))
+            return data.characterKey;
+
+        if (_currentVisitData?.members == null)
+            return string.Empty;
+
+        for (int i = 0; i < _currentVisitData.members.Count; i++)
+        {
+            CustomerVisitMember member = _currentVisitData.members[i];
+            if (member != null && !string.IsNullOrWhiteSpace(member.characterKey))
+                return member.characterKey;
+        }
+
+        return string.Empty;
     }
 
     private void ApplyFeedbackExpressions(OrderEvaluationGrade grade)

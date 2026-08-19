@@ -51,6 +51,7 @@ namespace Slainte.EditorTools
 
             ValidateRuntime(database);
             ValidatePrefabAndScene();
+            RestSceneFinalArtValidator.ValidateOrThrow();
             Debug.Log(
                 "[TVSystemValidator] PASS: six broadcasts/100 weight, persistent forecast, "
                 + "delivery/shop restrictions, tip/tag multipliers, world TV prefab and Canvas panel.");

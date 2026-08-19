@@ -15,7 +15,7 @@ MonoBehaviour:
   id: item_1003
   displayName: "\uD569\uC131 \uB808\uBAAC"
   type: 0
-  icon: {fileID: 8455280647246717337, guid: 14e5016a02536da428a10ee835f58d2b, type: 3}
+  icon: {fileID: 21300000, guid: ba470000000000000000000000000026, type: 3}
   price: 2000
   tasteTag: 2
   abvPercent: 0

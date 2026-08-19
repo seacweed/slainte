@@ -15,6 +15,10 @@ MonoBehaviour:
   id: cotton
   displayName: "\uCF54\uD2BC"
   sprite: {fileID: -6828235300387644391, guid: 91e6f03485dc77849adfd4ec5ea08650, type: 3}
+  useContextImages: 1
+  shopBlankSprite: {fileID: 21300000, guid: ba470000000000000000000000000011, type: 3}
+  shelfLidSprite: {fileID: 21300000, guid: ba470000000000000000000000000012, type: 3}
+  barSprite: {fileID: 21300000, guid: ba470000000000000000000000000010, type: 3}
   unlockFlagKey: 
   subCategory: "\uACAC\uACFC\uB958 \uB9AC\uD050\uB974"
   bottleCount: 5

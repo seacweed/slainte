@@ -1,0 +1,1477 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Slainte 레시피의 재료 색과 용량을 조합해 최종 색상을 미리 보는 로컬 도구">
+  <title>Recipe Color Mixer</title>
+  <style>
+:root {
+  color-scheme: dark;
+  --bg: #0d0c12;
+  --surface: rgba(26, 24, 34, 0.92);
+  --surface-strong: #211f2a;
+  --surface-soft: #17161e;
+  --line: rgba(255, 255, 255, 0.1);
+  --line-strong: rgba(255, 255, 255, 0.18);
+  --text: #f6f2ec;
+  --muted: #a8a2ae;
+  --accent: #f4a261;
+  --accent-bright: #ffc17e;
+  --accent-ink: #27170d;
+  --danger: #ff8b8b;
+  --focus: #ffe1b4;
+  --radius-lg: 28px;
+  --radius-md: 18px;
+  --radius-sm: 12px;
+  font-family: Pretendard, "Noto Sans KR", "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 18% 0%, rgba(112, 78, 151, 0.2), transparent 32rem),
+    radial-gradient(circle at 92% 72%, rgba(236, 141, 75, 0.12), transparent 34rem),
+    var(--bg);
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button,
+select,
+input[type="color"] {
+  cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+input,
+select {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--text);
+  background: rgba(8, 8, 12, 0.55);
+  transition: border-color 140ms ease, background-color 140ms ease;
+}
+
+input {
+  padding: 0 12px;
+}
+
+select {
+  padding: 0 38px 0 13px;
+}
+
+input:hover,
+select:hover {
+  border-color: var(--line-strong);
+}
+
+input[aria-invalid="true"] {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 1px rgba(255, 139, 139, 0.2);
+}
+
+input[type="number"] {
+  font-variant-numeric: tabular-nums;
+}
+
+.ambient {
+  position: fixed;
+  z-index: -1;
+  width: 26rem;
+  height: 26rem;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.13;
+  pointer-events: none;
+}
+
+.ambient-one {
+  top: -12rem;
+  left: -8rem;
+  background: #ae77e6;
+}
+
+.ambient-two {
+  right: -10rem;
+  bottom: -10rem;
+  background: #ff984f;
+}
+
+.app-shell {
+  width: min(1220px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 60px 0 80px;
+}
+
+.app-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 34px;
+}
+
+.eyebrow,
+.section-kicker,
+.value-label {
+  margin: 0;
+  color: var(--accent-bright);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin: 8px 0 10px;
+  font-size: clamp(2.2rem, 5vw, 4.5rem);
+  line-height: 1.03;
+  letter-spacing: -0.055em;
+}
+
+h2 {
+  margin: 5px 0 0;
+  font-size: 1.35rem;
+  letter-spacing: -0.025em;
+}
+
+.intro {
+  max-width: 650px;
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.data-summary {
+  flex: 0 0 auto;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(15, 14, 20, 0.72);
+  font-size: 0.82rem;
+}
+
+.recipe-loader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 18px;
+  padding: 20px 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(20, 18, 27, 0.72);
+  backdrop-filter: blur(18px);
+}
+
+.recipe-loader-copy p:last-child {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.recipe-loader-controls {
+  display: grid;
+  grid-template-columns: minmax(220px, 340px) auto;
+  gap: 10px;
+  width: min(100%, 470px);
+}
+
+.notice {
+  margin-bottom: 18px;
+  padding: 12px 15px;
+  border: 1px solid rgba(244, 162, 97, 0.3);
+  border-radius: var(--radius-sm);
+  color: #ffd8aa;
+  background: rgba(244, 162, 97, 0.08);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.72fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.ingredients-panel,
+.result-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(20px);
+}
+
+.ingredients-panel {
+  padding: 24px;
+}
+
+.section-heading,
+.result-heading,
+.ingredient-card-header,
+.result-code-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.section-heading {
+  margin-bottom: 18px;
+}
+
+.button,
+.copy-button,
+.remove-button {
+  min-height: 42px;
+  border: 0;
+  border-radius: 11px;
+  font-weight: 700;
+  transition: transform 140ms ease, filter 140ms ease, background-color 140ms ease;
+}
+
+.button {
+  padding: 0 16px;
+}
+
+.button:hover,
+.copy-button:hover,
+.remove-button:hover {
+  filter: brightness(1.08);
+}
+
+.button:active,
+.copy-button:active,
+.remove-button:active {
+  transform: translateY(1px);
+}
+
+.button-primary {
+  color: var(--accent-ink);
+  background: var(--accent);
+}
+
+.button-secondary,
+.copy-button {
+  color: var(--text);
+  background: #33303e;
+}
+
+.ingredients-list {
+  display: grid;
+  gap: 12px;
+}
+
+.ingredient-card {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-soft);
+}
+
+.ingredient-card-header {
+  padding: 13px 15px 11px;
+  border-bottom: 1px solid var(--line);
+}
+
+.ingredient-number {
+  display: grid;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--accent-bright);
+  background: rgba(244, 162, 97, 0.12);
+  font-size: 0.72rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.name-field {
+  flex: 1;
+}
+
+.name-field input {
+  min-height: 36px;
+  padding: 0 8px;
+  border-color: transparent;
+  background: transparent;
+  font-weight: 700;
+}
+
+.ratio-badge {
+  min-width: 48px;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.remove-button {
+  min-height: 34px;
+  padding: 0 10px;
+  color: var(--muted);
+  background: transparent;
+  font-size: 0.78rem;
+}
+
+.remove-button:hover {
+  color: var(--danger);
+  background: rgba(255, 139, 139, 0.08);
+}
+
+.ingredient-editor {
+  display: grid;
+  grid-template-columns: 92px minmax(170px, 1fr) minmax(155px, 0.9fr);
+  grid-template-areas:
+    "picker primary channels"
+    "picker alpha alpha";
+  gap: 14px 16px;
+  padding: 16px;
+}
+
+.field-label,
+.channel-fields label span {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.color-picker-field {
+  grid-area: picker;
+}
+
+.color-picker-checker,
+.preview-checker {
+  background-color: #d8d8d8;
+  background-image:
+    linear-gradient(45deg, #b9b9b9 25%, transparent 25%),
+    linear-gradient(-45deg, #b9b9b9 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #b9b9b9 75%),
+    linear-gradient(-45deg, transparent 75%, #b9b9b9 75%);
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+  background-size: 16px 16px;
+}
+
+.color-picker-checker {
+  position: relative;
+  display: block;
+  width: 76px;
+  height: 76px;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 18px;
+}
+
+.color-picker-preview {
+  position: absolute;
+  inset: 0;
+}
+
+.color-picker-checker input[type="color"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+}
+
+.picker-hint {
+  display: block;
+  width: 76px;
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 0.68rem;
+  text-align: center;
+}
+
+.primary-fields {
+  grid-area: primary;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 10px;
+}
+
+.channel-fields {
+  grid-area: channels;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+}
+
+.channel-fields input {
+  padding: 0 8px;
+  text-align: center;
+}
+
+.input-with-unit {
+  position: relative;
+  display: block;
+}
+
+.input-with-unit input {
+  padding-right: 34px;
+}
+
+.input-with-unit > span {
+  position: absolute;
+  top: 50%;
+  right: 11px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.alpha-fields {
+  grid-area: alpha;
+  display: grid;
+  grid-template-columns: auto minmax(100px, 1fr) 82px;
+  gap: 10px;
+  align-items: center;
+}
+
+.alpha-fields .field-label {
+  margin: 0;
+}
+
+input[type="range"] {
+  min-height: 24px;
+  padding: 0;
+  accent-color: var(--accent);
+  background: transparent;
+}
+
+.alpha-number input {
+  min-height: 38px;
+}
+
+.ratio-track {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.ratio-track span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: var(--ingredient-color, var(--accent));
+  transition: width 180ms ease;
+}
+
+.result-panel {
+  position: sticky;
+  top: 20px;
+}
+
+.result-card {
+  padding: 24px;
+}
+
+.mix-status {
+  padding: 7px 10px;
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 0.76rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.preview-checker {
+  height: 280px;
+  margin: 20px 0;
+  overflow: hidden;
+  border-radius: 22px;
+}
+
+.result-liquid {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  transition: background-color 180ms ease;
+}
+
+.result-liquid::after {
+  content: "";
+  position: absolute;
+  inset: auto 8% 7% 8%;
+  height: 18%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  filter: blur(15px);
+}
+
+.liquid-shine {
+  position: absolute;
+  top: 10%;
+  left: 8%;
+  width: 34%;
+  height: 48%;
+  border-radius: 50%;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0));
+  filter: blur(12px);
+  transform: rotate(12deg);
+}
+
+.result-code-row {
+  align-items: flex-end;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.result-hex {
+  display: block;
+  margin-top: 6px;
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  letter-spacing: -0.04em;
+}
+
+.copy-button {
+  padding: 0 13px;
+  font-size: 0.78rem;
+}
+
+.result-values {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  margin: 18px 0 22px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--line);
+}
+
+.result-values div {
+  min-width: 0;
+  padding: 12px;
+  background: var(--surface-soft);
+}
+
+.result-values dt {
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 0.7rem;
+}
+
+.result-values dd {
+  margin: 0;
+  overflow: hidden;
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.composition-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.composition-row {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.composition-swatch {
+  width: 12px;
+  height: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 4px;
+}
+
+.composition-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.composition-value {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.formula-note {
+  margin: 22px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.75rem;
+  line-height: 1.65;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 940px) {
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .result-panel {
+    position: static;
+  }
+
+  .preview-checker {
+    height: 230px;
+  }
+}
+
+@media (max-width: 680px) {
+  .app-shell {
+    width: min(100% - 24px, 1220px);
+    padding: 36px 0 54px;
+  }
+
+  .app-header,
+  .recipe-loader {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .data-summary {
+    align-self: flex-start;
+  }
+
+  .recipe-loader-controls {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .ingredients-panel,
+  .result-card {
+    padding: 16px;
+    border-radius: 22px;
+  }
+
+  .ingredient-editor {
+    grid-template-columns: 78px 1fr;
+    grid-template-areas:
+      "picker primary"
+      "channels channels"
+      "alpha alpha";
+  }
+
+  .color-picker-checker,
+  .picker-hint {
+    width: 68px;
+  }
+
+  .color-picker-checker {
+    height: 68px;
+  }
+}
+
+@media (max-width: 440px) {
+  .section-heading {
+    align-items: flex-start;
+  }
+
+  .section-heading .button {
+    padding: 0 11px;
+  }
+
+  .ingredient-card-header {
+    gap: 7px;
+  }
+
+  .ratio-badge {
+    display: none;
+  }
+
+  .ingredient-editor {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "picker"
+      "primary"
+      "channels"
+      "alpha";
+  }
+
+  .color-picker-field {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "label label"
+      "picker hint";
+    align-items: center;
+    gap: 0 12px;
+  }
+
+  .color-picker-field .field-label {
+    grid-area: label;
+  }
+
+  .color-picker-checker {
+    grid-area: picker;
+  }
+
+  .picker-hint {
+    grid-area: hint;
+    width: auto;
+    margin: 0;
+    text-align: left;
+  }
+
+  .result-values {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+  </style>
+
+
+
+</head>
+<body>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <div class="app-shell">
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">SLAINTE · COLOR LAB</p>
+        <h1>레시피 컬러 믹서</h1>
+        <p class="intro">Unity 설치 없이 재료의 색과 용량을 조합해, 완전히 섞였을 때의 입자 색을 확인합니다.</p>
+      </div>
+      <div class="data-summary" id="data-summary" aria-live="polite"></div>
+    </header>
+
+    <section class="recipe-loader" aria-labelledby="recipe-loader-title">
+      <div class="recipe-loader-copy">
+        <p class="section-kicker" id="recipe-loader-title">BUNDLED RECIPE</p>
+        <p>프로그램에 내장된 레시피를 시작점으로 불러올 수 있습니다.</p>
+      </div>
+      <div class="recipe-loader-controls">
+        <label for="recipe-select" class="sr-only">레시피 선택</label>
+        <select id="recipe-select">
+          <option value="">직접 배합</option>
+        </select>
+        <button type="button" class="button button-secondary" id="load-recipe-button">불러오기</button>
+      </div>
+    </section>
+
+    <div class="notice" id="data-notice" role="status" hidden></div>
+
+    <main class="workspace">
+      <section class="ingredients-panel" aria-labelledby="ingredients-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">INGREDIENTS</p>
+            <h2 id="ingredients-title">재료 배합</h2>
+          </div>
+          <button type="button" class="button button-primary" id="add-ingredient-button">
+            <span aria-hidden="true">＋</span> 재료 추가
+          </button>
+        </div>
+
+        <div class="ingredients-list" id="ingredients-list"></div>
+      </section>
+
+      <aside class="result-panel" aria-labelledby="result-title">
+        <div class="result-card">
+          <div class="result-heading">
+            <div>
+              <p class="section-kicker">FINAL MIX</p>
+              <h2 id="result-title">예상 결과색</h2>
+            </div>
+            <span class="mix-status" id="mix-status">0 ml</span>
+          </div>
+
+          <div class="preview-checker">
+            <div class="result-liquid" id="result-liquid" aria-label="혼합 결과 색상 미리보기">
+              <span class="liquid-shine" aria-hidden="true"></span>
+            </div>
+          </div>
+
+          <div class="result-code-row">
+            <div>
+              <span class="value-label">HEX + ALPHA</span>
+              <strong class="result-hex" id="result-hex">#00000000</strong>
+            </div>
+            <button type="button" class="copy-button" id="copy-result-button">색상 복사</button>
+          </div>
+
+          <dl class="result-values">
+            <div>
+              <dt>RGB</dt>
+              <dd id="result-rgb">0 · 0 · 0</dd>
+            </div>
+            <div>
+              <dt>알파</dt>
+              <dd id="result-alpha">0%</dd>
+            </div>
+            <div>
+              <dt>Unity Color</dt>
+              <dd id="result-unity">0, 0, 0, 0</dd>
+            </div>
+            <div>
+              <dt>표시 알파</dt>
+              <dd id="result-display-alpha">0%</dd>
+            </div>
+          </dl>
+
+          <div class="composition" aria-labelledby="composition-title">
+            <p class="value-label" id="composition-title">배합 비율</p>
+            <div id="composition-list" class="composition-list"></div>
+          </div>
+
+          <p class="formula-note">각 색상 채널을 재료 용량 비율로 가중평균합니다. 표시 알파에는 게임 렌더러의 최소값 5%가 반영됩니다.</p>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <template id="ingredient-template">
+    <article class="ingredient-card">
+      <div class="ingredient-card-header">
+        <span class="ingredient-number" aria-hidden="true"></span>
+        <label class="name-field">
+          <span class="sr-only">재료 이름</span>
+          <input type="text" data-field="name" maxlength="60" placeholder="재료 이름">
+        </label>
+        <span class="ratio-badge" data-role="ratio">0%</span>
+        <button type="button" class="remove-button" data-action="remove" aria-label="재료 삭제">삭제</button>
+      </div>
+
+      <div class="ingredient-editor">
+        <label class="color-picker-field">
+          <span class="field-label">색 선택</span>
+          <span class="color-picker-checker">
+            <span class="color-picker-preview" data-role="color-preview"></span>
+            <input type="color" data-field="color-picker" aria-label="색상 선택기">
+          </span>
+          <span class="picker-hint">눌러서 선택</span>
+        </label>
+
+        <div class="primary-fields">
+          <label>
+            <span class="field-label">HEX + ALPHA</span>
+            <input type="text" data-field="hex" spellcheck="false" maxlength="9" placeholder="#RRGGBBAA">
+          </label>
+          <label>
+            <span class="field-label">용량</span>
+            <span class="input-with-unit">
+              <input type="number" data-field="volume" min="0" max="99999" step="1" inputmode="decimal">
+              <span>ml</span>
+            </span>
+          </label>
+        </div>
+
+        <div class="channel-fields" aria-label="RGB 채널 입력">
+          <label><span>R</span><input type="number" data-field="r" min="0" max="255" step="1" inputmode="numeric"></label>
+          <label><span>G</span><input type="number" data-field="g" min="0" max="255" step="1" inputmode="numeric"></label>
+          <label><span>B</span><input type="number" data-field="b" min="0" max="255" step="1" inputmode="numeric"></label>
+        </div>
+
+        <div class="alpha-fields">
+          <span class="field-label">알파</span>
+          <input type="range" data-field="alpha-range" min="0" max="100" step="1" aria-label="알파 슬라이더">
+          <span class="input-with-unit alpha-number">
+            <input type="number" data-field="alpha" min="0" max="100" step="1" inputmode="numeric" aria-label="알파 퍼센트">
+            <span>%</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="ratio-track" aria-hidden="true"><span data-role="ratio-bar"></span></div>
+    </article>
+  </template>
+  <script>
+window.RECIPE_COLOR_DATA = {"ingredients":[{"id":"item_1023","displayName":"꿀","color":{"r":1,"g":1,"b":1,"a":1},"source":"Assets/Resources/Items/Planning/item_1023.asset"},{"id":"item_1007","displayName":"나낭나","color":{"r":1,"g":1,"b":1,"a":1},"source":"Assets/Resources/Items/Planning/item_1007.asset"},{"id":"item_1024","displayName":"뜨거운 물","color":{"r":1,"g":1,"b":1,"a":1},"source":"Assets/Resources/Items/Planning/item_1024.asset"},{"id":"lans_whiskey","displayName":"란스 위스키","color":{"r":0.72,"g":0.36,"b":0.08,"a":0.65},"source":"Assets/Resources/Items/lans_whiskey.asset"},{"id":"lemon_juice","displayName":"레몬 주스","color":{"r":1,"g":0.44841516,"b":0.28627455,"a":0.5058824},"source":"Assets/Resources/Items/lemon_juice.asset"},{"id":"item_1014","displayName":"바하","color":{"r":1,"g":1,"b":1,"a":1},"source":"Assets/Resources/Items/Planning/item_1014.asset"},{"id":"item_1013","displayName":"번햄 버번","color":{"r":1,"g":1,"b":1,"a":1},"source":"Assets/Resources/Items/Planning/item_1013.asset"},{"id":"breeze_vodka","displayName":"브리즈 보드카","color":{"r":0.4433962,"g":0.49169675,"b":1,"a":0.40392157},"source":"Assets/Resources/Items/breeze_vodka.asset"},{"id":"item_1011","displayName":"브리즈 보드카","color":{"r":1,"g":1,"b":1,"a":1},"source":"Assets/Resources/Items/Planning/item_1011.asset"},{"id":"item_1010","displayName":"블레스","color":{"r":1,"g":1,"b":1,"a":1},"source":"Assets/Resources/Items/Planning/item_1010.asset"},{"id":"item_1005","displayName":"슬롭","color":{"r":1,"g":1,"b":1,"a":1},"source":"Assets/Resources/Items/Planning/item_1005.asset"},{"id":"item_1002","displayName":"실청","color":{"r":1,"g":1,"b":1,"a":1},"source":"Assets/Resources/Items/Planning/item_1002.asset"},{"id":"item_1001","displayName":"열대 주스","color":{"r":1,"g":1,"b":1,"a":1},"source":"Assets/Resources/Items/Planning/item_1001.asset"},{"id":"item_1012","displayName":"조니 독스","color":{"r":1,"g":1,"b":1,"a":1},"source":"Assets/Resources/Items/Planning/item_1012.asset"},{"id":"item_1025","displayName":"커피 분말","color":{"r":1,"g":1,"b":1,"a":1},"source":"Assets/Resources/Items/Planning/item_1025.asset"},{"id":"item_1008","displayName":"코튼","color":{"r":1,"g":1,"b":1,"a":1},"source":"Assets/Resources/Items/Planning/item_1008.asset"},{"id":"item_1003","displayName":"합성 레몬","color":{"r":1,"g":1,"b":1,"a":1},"source":"Assets/Resources/Items/Planning/item_1003.asset"},{"id":"item_1009","displayName":"헥타르","color":{"r":1,"g":1,"b":1,"a":1},"source":"Assets/Resources/Items/Planning/item_1009.asset"}],"recipes":[{"id":"rec_1003","displayName":"갓레이디","ingredients":[{"itemId":"item_1008","targetMl":30},{"itemId":"item_1011","targetMl":30}],"source":"Assets/Resources/Recipes/Planning/rec_1003.asset"},{"id":"rec_1004","displayName":"갓로드","ingredients":[{"itemId":"item_1008","targetMl":30},{"itemId":"item_1012","targetMl":30}],"source":"Assets/Resources/Recipes/Planning/rec_1004.asset"},{"id":"rec_1015","displayName":"바하 니트","ingredients":[{"itemId":"item_1014","targetMl":30}],"source":"Assets/Resources/Recipes/Planning/rec_1015.asset"},{"id":"rec_1016","displayName":"바하 온더락","ingredients":[{"itemId":"item_1014","targetMl":30}],"source":"Assets/Resources/Recipes/Planning/rec_1016.asset"},{"id":"rec_1013","displayName":"번햄 버번 니트","ingredients":[{"itemId":"item_1013","targetMl":30}],"source":"Assets/Resources/Recipes/Planning/rec_1013.asset"},{"id":"rec_1014","displayName":"번햄 버번 온더락","ingredients":[{"itemId":"item_1013","targetMl":30}],"source":"Assets/Resources/Recipes/Planning/rec_1014.asset"},{"id":"rec_1001","displayName":"번햄 사워","ingredients":[{"itemId":"item_1002","targetMl":15},{"itemId":"item_1005","targetMl":30},{"itemId":"item_1003","targetMl":15},{"itemId":"item_1013","targetMl":30}],"source":"Assets/Resources/Recipes/Planning/rec_1001.asset"},{"id":"vodka_lemon","displayName":"보드카 레몬","ingredients":[{"itemId":"breeze_vodka","targetMl":50},{"itemId":"lemon_juice","targetMl":30}],"source":"Assets/StreamingAssets/Data/recipes.csv"},{"id":"rec_1017","displayName":"브리즈 니트","ingredients":[{"itemId":"item_1011","targetMl":30}],"source":"Assets/Resources/Recipes/Planning/rec_1017.asset"},{"id":"rec_1018","displayName":"브리즈 온더락","ingredients":[{"itemId":"item_1011","targetMl":30}],"source":"Assets/Resources/Recipes/Planning/rec_1018.asset"},{"id":"rec_1005","displayName":"셰이디","ingredients":[{"itemId":"item_1009","targetMl":30},{"itemId":"item_1010","targetMl":30},{"itemId":"item_1013","targetMl":30}],"source":"Assets/Resources/Recipes/Planning/rec_1005.asset"},{"id":"whiskey_neat","displayName":"위스키 니트","ingredients":[{"itemId":"lans_whiskey","targetMl":50}],"source":"Assets/StreamingAssets/Data/recipes.csv"},{"id":"rec_1011","displayName":"조니 독스 니트","ingredients":[{"itemId":"item_1012","targetMl":30}],"source":"Assets/Resources/Recipes/Planning/rec_1011.asset"},{"id":"rec_1012","displayName":"조니 독스 온더락","ingredients":[{"itemId":"item_1012","targetMl":30}],"source":"Assets/Resources/Recipes/Planning/rec_1012.asset"},{"id":"rec_1002","displayName":"코튼 사워","ingredients":[{"itemId":"item_1008","targetMl":60},{"itemId":"item_1005","targetMl":30},{"itemId":"item_1003","targetMl":15}],"source":"Assets/Resources/Recipes/Planning/rec_1002.asset"},{"id":"rec_1006","displayName":"한여름의 나낭나","ingredients":[{"itemId":"item_1007","targetMl":30},{"itemId":"item_1001","targetMl":90}],"source":"Assets/Resources/Recipes/Planning/rec_1006.asset"},{"id":"rec_1007","displayName":"한여름의 주스","ingredients":[{"itemId":"item_1002","targetMl":15},{"itemId":"item_1003","targetMl":15},{"itemId":"item_1001","targetMl":90}],"source":"Assets/Resources/Recipes/Planning/rec_1007.asset"}]};
+
+(function (root, factory) {
+  const api = factory();
+  root.RecipeColorMath = api;
+
+  if (typeof module === "object" && module.exports) {
+    module.exports = api;
+  }
+}(typeof globalThis !== "undefined" ? globalThis : this, function () {
+  "use strict";
+
+  function clamp(value, minimum, maximum) {
+    const number = Number(value);
+    if (!Number.isFinite(number)) {
+      return minimum;
+    }
+
+    return Math.min(maximum, Math.max(minimum, number));
+  }
+
+  function mixIngredients(ingredients) {
+    const validIngredients = Array.isArray(ingredients)
+      ? ingredients.filter((ingredient) => Number(ingredient.volume) > 0)
+      : [];
+
+    const totalVolume = validIngredients.reduce(
+      (sum, ingredient) => sum + Math.max(0, Number(ingredient.volume) || 0),
+      0
+    );
+
+    if (totalVolume <= 0) {
+      return { r: 0, g: 0, b: 0, a: 0, totalVolume: 0 };
+    }
+
+    const mixed = validIngredients.reduce((result, ingredient) => {
+      const weight = Math.max(0, Number(ingredient.volume) || 0) / totalVolume;
+      result.r += clamp(ingredient.r, 0, 255) * weight;
+      result.g += clamp(ingredient.g, 0, 255) * weight;
+      result.b += clamp(ingredient.b, 0, 255) * weight;
+      result.a += clamp(ingredient.a, 0, 1) * weight;
+      return result;
+    }, { r: 0, g: 0, b: 0, a: 0 });
+
+    return {
+      r: clamp(mixed.r, 0, 255),
+      g: clamp(mixed.g, 0, 255),
+      b: clamp(mixed.b, 0, 255),
+      a: clamp(mixed.a, 0, 1),
+      totalVolume
+    };
+  }
+
+  function channelToHex(value) {
+    return Math.round(clamp(value, 0, 255)).toString(16).padStart(2, "0").toUpperCase();
+  }
+
+  function rgbToHex(color) {
+    return `#${channelToHex(color.r)}${channelToHex(color.g)}${channelToHex(color.b)}`;
+  }
+
+  function rgbaToHex(color) {
+    return `${rgbToHex(color)}${channelToHex(clamp(color.a, 0, 1) * 255)}`;
+  }
+
+  function colorToCss(color, alphaOverride) {
+    const alpha = alphaOverride === undefined ? color.a : alphaOverride;
+    return `rgba(${Math.round(clamp(color.r, 0, 255))}, ${Math.round(clamp(color.g, 0, 255))}, ${Math.round(clamp(color.b, 0, 255))}, ${clamp(alpha, 0, 1).toFixed(4)})`;
+  }
+
+  function parseHex(value) {
+    const normalized = String(value || "").trim().replace(/^#/, "");
+    if (![3, 4, 6, 8].includes(normalized.length) || !/^[0-9a-fA-F]+$/.test(normalized)) {
+      return null;
+    }
+
+    const expanded = normalized.length <= 4
+      ? normalized.split("").map((character) => character + character).join("")
+      : normalized;
+
+    const parsed = {
+      r: parseInt(expanded.slice(0, 2), 16),
+      g: parseInt(expanded.slice(2, 4), 16),
+      b: parseInt(expanded.slice(4, 6), 16)
+    };
+
+    if (expanded.length === 8) {
+      parsed.a = parseInt(expanded.slice(6, 8), 16) / 255;
+    }
+
+    return parsed;
+  }
+
+  return {
+    clamp,
+    mixIngredients,
+    rgbToHex,
+    rgbaToHex,
+    colorToCss,
+    parseHex
+  };
+}));
+
+(function () {
+  "use strict";
+
+  const math = window.RecipeColorMath;
+  const recipeData = window.RECIPE_COLOR_DATA || { ingredients: [], recipes: [] };
+  const ingredientCatalog = new Map(
+    (recipeData.ingredients || []).map((ingredient) => [ingredient.id, ingredient])
+  );
+
+  const elements = {
+    dataSummary: document.getElementById("data-summary"),
+    dataNotice: document.getElementById("data-notice"),
+    recipeSelect: document.getElementById("recipe-select"),
+    loadRecipeButton: document.getElementById("load-recipe-button"),
+    addIngredientButton: document.getElementById("add-ingredient-button"),
+    ingredientsList: document.getElementById("ingredients-list"),
+    ingredientTemplate: document.getElementById("ingredient-template"),
+    resultLiquid: document.getElementById("result-liquid"),
+    resultHex: document.getElementById("result-hex"),
+    resultRgb: document.getElementById("result-rgb"),
+    resultAlpha: document.getElementById("result-alpha"),
+    resultUnity: document.getElementById("result-unity"),
+    resultDisplayAlpha: document.getElementById("result-display-alpha"),
+    mixStatus: document.getElementById("mix-status"),
+    compositionList: document.getElementById("composition-list"),
+    copyResultButton: document.getElementById("copy-result-button")
+  };
+
+  const fallbackPalette = [
+    { r: 91, g: 129, b: 255, a: 0.72 },
+    { r: 255, g: 151, b: 76, a: 0.82 },
+    { r: 228, g: 92, b: 158, a: 0.74 },
+    { r: 79, g: 198, b: 149, a: 0.68 },
+    { r: 166, g: 104, b: 224, a: 0.8 }
+  ];
+
+  let nextIngredientId = 1;
+  let ingredients = [];
+
+  function createIngredient(overrides) {
+    const base = fallbackPalette[(nextIngredientId - 1) % fallbackPalette.length];
+    const ingredient = {
+      localId: nextIngredientId++,
+      sourceItemId: "",
+      name: `재료 ${nextIngredientId - 1}`,
+      r: base.r,
+      g: base.g,
+      b: base.b,
+      a: base.a,
+      volume: 30
+    };
+
+    return Object.assign(ingredient, overrides || {});
+  }
+
+  function ingredientFromRecipe(portion, index, missingItems) {
+    const source = ingredientCatalog.get(portion.itemId);
+    if (!source) {
+      missingItems.push(portion.itemId);
+      return createIngredient({
+        sourceItemId: portion.itemId,
+        name: portion.itemId || `재료 ${index + 1}`,
+        r: 255,
+        g: 255,
+        b: 255,
+        a: 1,
+        volume: Number(portion.targetMl) || 0
+      });
+    }
+
+    return createIngredient({
+      sourceItemId: source.id,
+      name: source.displayName || source.id,
+      r: Math.round(math.clamp(source.color.r, 0, 1) * 255),
+      g: Math.round(math.clamp(source.color.g, 0, 1) * 255),
+      b: Math.round(math.clamp(source.color.b, 0, 1) * 255),
+      a: math.clamp(source.color.a, 0, 1),
+      volume: Number(portion.targetMl) || 0
+    });
+  }
+
+  function populateRecipeSelect() {
+    const recipes = Array.isArray(recipeData.recipes) ? recipeData.recipes : [];
+    recipes.forEach((recipe) => {
+      const option = document.createElement("option");
+      option.value = recipe.id;
+      option.textContent = `${recipe.displayName || recipe.id} · ${recipe.id}`;
+      elements.recipeSelect.appendChild(option);
+    });
+
+    const ingredientCount = (recipeData.ingredients || []).length;
+    elements.dataSummary.textContent = recipes.length > 0
+      ? `내장 재료 ${ingredientCount}개 · 레시피 ${recipes.length}개`
+      : "내장 데이터 없음 · 직접 배합 모드";
+
+    elements.loadRecipeButton.disabled = recipes.length === 0;
+  }
+
+  function setNotice(messages) {
+    const visibleMessages = (messages || []).filter(Boolean);
+    elements.dataNotice.hidden = visibleMessages.length === 0;
+    elements.dataNotice.textContent = visibleMessages.join(" ");
+  }
+
+  function loadSelectedRecipe() {
+    const recipeId = elements.recipeSelect.value;
+    const recipe = (recipeData.recipes || []).find((candidate) => candidate.id === recipeId);
+
+    if (!recipe) {
+      ingredients = [
+        createIngredient({ name: "재료 1", volume: 50 }),
+        createIngredient({ name: "재료 2", volume: 30 })
+      ];
+      setNotice([]);
+      renderIngredients();
+      return;
+    }
+
+    const missingItems = [];
+    ingredients = (recipe.ingredients || []).map((portion, index) =>
+      ingredientFromRecipe(portion, index, missingItems)
+    );
+
+    if (ingredients.length === 0) {
+      ingredients = [createIngredient({ name: "빈 레시피", volume: 0 })];
+    }
+
+    const messages = [];
+    if (missingItems.length > 0) {
+      messages.push(`색상 데이터를 찾지 못한 재료: ${missingItems.join(", ")}. 흰색으로 불러왔습니다.`);
+    }
+
+    const allOpaqueWhite = ingredients.length > 0 && ingredients.every((ingredient) =>
+      ingredient.r === 255 && ingredient.g === 255 && ingredient.b === 255 && ingredient.a === 1
+    );
+    if (allOpaqueWhite) {
+      messages.push("이 레시피의 재료 색상이 모두 기본 흰색입니다. 아래에서 직접 색을 바꿀 수 있습니다.");
+    }
+
+    setNotice(messages);
+    renderIngredients();
+  }
+
+  function renderIngredients() {
+    elements.ingredientsList.replaceChildren();
+
+    ingredients.forEach((ingredient, index) => {
+      const fragment = elements.ingredientTemplate.content.cloneNode(true);
+      const card = fragment.querySelector(".ingredient-card");
+      card.dataset.ingredientId = String(ingredient.localId);
+      card.querySelector(".ingredient-number").textContent = String(index + 1).padStart(2, "0");
+      card.querySelector("[data-action='remove']").setAttribute(
+        "aria-label",
+        `${ingredient.name || `재료 ${index + 1}`} 삭제`
+      );
+      elements.ingredientsList.appendChild(fragment);
+      syncIngredientCard(ingredient.localId);
+    });
+
+    updateResult();
+  }
+
+  function getCard(localId) {
+    return elements.ingredientsList.querySelector(`[data-ingredient-id="${localId}"]`);
+  }
+
+  function getIngredient(localId) {
+    return ingredients.find((ingredient) => ingredient.localId === localId);
+  }
+
+  function syncIngredientCard(localId, skippedField) {
+    const ingredient = getIngredient(localId);
+    const card = getCard(localId);
+    if (!ingredient || !card) {
+      return;
+    }
+
+    const values = {
+      name: ingredient.name,
+      "color-picker": math.rgbToHex(ingredient),
+      hex: math.rgbaToHex(ingredient),
+      volume: formatNumber(ingredient.volume, 2),
+      r: Math.round(ingredient.r),
+      g: Math.round(ingredient.g),
+      b: Math.round(ingredient.b),
+      "alpha-range": Math.round(ingredient.a * 100),
+      alpha: Math.round(ingredient.a * 100)
+    };
+
+    Object.entries(values).forEach(([field, value]) => {
+      if (field === skippedField) {
+        return;
+      }
+      const input = card.querySelector(`[data-field="${field}"]`);
+      if (input) {
+        input.value = value;
+        input.setAttribute("aria-invalid", "false");
+      }
+    });
+
+    const cssColor = math.colorToCss(ingredient);
+    card.style.setProperty("--ingredient-color", cssColor);
+    card.querySelector("[data-role='color-preview']").style.backgroundColor = cssColor;
+  }
+
+  function handleIngredientInput(event) {
+    const input = event.target.closest("[data-field]");
+    const card = event.target.closest(".ingredient-card");
+    if (!input || !card) {
+      return;
+    }
+
+    const localId = Number(card.dataset.ingredientId);
+    const ingredient = getIngredient(localId);
+    const field = input.dataset.field;
+    if (!ingredient) {
+      return;
+    }
+
+    let shouldSync = false;
+    switch (field) {
+      case "name":
+        ingredient.name = input.value;
+        break;
+      case "color-picker": {
+        const parsed = math.parseHex(input.value);
+        if (parsed) {
+          Object.assign(ingredient, parsed);
+          shouldSync = true;
+        }
+        break;
+      }
+      case "hex": {
+        const parsed = math.parseHex(input.value);
+        const includesAlpha = parsed && Number.isFinite(parsed.a);
+        input.setAttribute("aria-invalid", includesAlpha ? "false" : "true");
+        if (!includesAlpha) {
+          return;
+        }
+        Object.assign(ingredient, parsed);
+        shouldSync = true;
+        break;
+      }
+      case "r":
+      case "g":
+      case "b": {
+        if (input.value === "") {
+          input.setAttribute("aria-invalid", "true");
+          return;
+        }
+        ingredient[field] = math.clamp(input.value, 0, 255);
+        input.setAttribute("aria-invalid", "false");
+        shouldSync = true;
+        break;
+      }
+      case "alpha":
+      case "alpha-range": {
+        if (input.value === "") {
+          input.setAttribute("aria-invalid", "true");
+          return;
+        }
+        ingredient.a = math.clamp(input.value, 0, 100) / 100;
+        input.setAttribute("aria-invalid", "false");
+        shouldSync = true;
+        break;
+      }
+      case "volume":
+        ingredient.volume = input.value === "" ? 0 : math.clamp(input.value, 0, 99999);
+        input.setAttribute("aria-invalid", "false");
+        break;
+      default:
+        return;
+    }
+
+    if (shouldSync) {
+      syncIngredientCard(localId, field);
+    }
+
+    setNotice([]);
+    updateResult();
+  }
+
+  function restoreInvalidInput(event) {
+    const input = event.target.closest("[data-field]");
+    const card = event.target.closest(".ingredient-card");
+    if (!input || !card || input.getAttribute("aria-invalid") !== "true") {
+      return;
+    }
+
+    syncIngredientCard(Number(card.dataset.ingredientId));
+  }
+
+  function handleIngredientAction(event) {
+    const button = event.target.closest("[data-action='remove']");
+    const card = event.target.closest(".ingredient-card");
+    if (!button || !card) {
+      return;
+    }
+
+    const localId = Number(card.dataset.ingredientId);
+    ingredients = ingredients.filter((ingredient) => ingredient.localId !== localId);
+    if (ingredients.length === 0) {
+      ingredients.push(createIngredient({ name: "재료 1", volume: 0 }));
+    }
+    setNotice([]);
+    renderIngredients();
+  }
+
+  function addIngredient() {
+    ingredients.push(createIngredient());
+    setNotice([]);
+    renderIngredients();
+
+    const newCard = getCard(ingredients[ingredients.length - 1].localId);
+    if (newCard) {
+      newCard.querySelector("[data-field='name']").focus();
+      newCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }
+
+  function updateResult() {
+    const result = math.mixIngredients(ingredients);
+    const totalVolume = result.totalVolume;
+    const roundedRgb = [Math.round(result.r), Math.round(result.g), Math.round(result.b)];
+    const displayAlpha = totalVolume > 0 ? Math.max(result.a, 0.05) : 0;
+
+    elements.resultLiquid.style.backgroundColor = math.colorToCss(result);
+    elements.resultHex.textContent = math.rgbaToHex(result);
+    elements.resultRgb.textContent = roundedRgb.join(" · ");
+    elements.resultAlpha.textContent = `${formatNumber(result.a * 100, 1)}%`;
+    elements.resultDisplayAlpha.textContent = `${formatNumber(displayAlpha * 100, 1)}%`;
+    elements.resultUnity.textContent = [
+      result.r / 255,
+      result.g / 255,
+      result.b / 255,
+      result.a
+    ].map((value) => formatNumber(value, 4)).join(", ");
+    elements.mixStatus.textContent = `${formatNumber(totalVolume, 2)} ml`;
+
+    updateComposition(totalVolume);
+  }
+
+  function updateComposition(totalVolume) {
+    elements.compositionList.replaceChildren();
+
+    ingredients.forEach((ingredient) => {
+      const ratio = totalVolume > 0 ? Math.max(0, ingredient.volume) / totalVolume : 0;
+      const percentage = `${formatNumber(ratio * 100, 1)}%`;
+      const card = getCard(ingredient.localId);
+      if (card) {
+        card.querySelector("[data-role='ratio']").textContent = percentage;
+        card.querySelector("[data-role='ratio-bar']").style.width = percentage;
+      }
+
+      const row = document.createElement("div");
+      row.className = "composition-row";
+
+      const swatch = document.createElement("span");
+      swatch.className = "composition-swatch";
+      swatch.style.backgroundColor = math.colorToCss(ingredient);
+
+      const name = document.createElement("span");
+      name.className = "composition-name";
+      name.textContent = ingredient.name || "이름 없는 재료";
+
+      const value = document.createElement("span");
+      value.className = "composition-value";
+      value.textContent = `${formatNumber(ingredient.volume, 2)} ml · ${percentage}`;
+
+      row.append(swatch, name, value);
+      elements.compositionList.appendChild(row);
+    });
+  }
+
+  function formatNumber(value, maximumFractionDigits) {
+    return new Intl.NumberFormat("ko-KR", {
+      maximumFractionDigits,
+      useGrouping: false
+    }).format(Number(value) || 0);
+  }
+
+  async function copyResult() {
+    const value = elements.resultHex.textContent;
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(value);
+      } else {
+        const textarea = document.createElement("textarea");
+        textarea.value = value;
+        textarea.setAttribute("readonly", "");
+        textarea.style.position = "fixed";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        textarea.remove();
+      }
+      elements.copyResultButton.textContent = "복사됨";
+    } catch (error) {
+      elements.copyResultButton.textContent = "복사 실패";
+    }
+
+    window.setTimeout(() => {
+      elements.copyResultButton.textContent = "색상 복사";
+    }, 1200);
+  }
+
+  function initialize() {
+    populateRecipeSelect();
+
+    const preferredRecipe = (recipeData.recipes || []).find((recipe) => recipe.id === "vodka_lemon")
+      || (recipeData.recipes || [])[0];
+    if (preferredRecipe) {
+      elements.recipeSelect.value = preferredRecipe.id;
+    }
+
+    elements.loadRecipeButton.addEventListener("click", loadSelectedRecipe);
+    elements.addIngredientButton.addEventListener("click", addIngredient);
+    elements.ingredientsList.addEventListener("input", handleIngredientInput);
+    elements.ingredientsList.addEventListener("focusout", restoreInvalidInput);
+    elements.ingredientsList.addEventListener("click", handleIngredientAction);
+    elements.copyResultButton.addEventListener("click", copyResult);
+
+    loadSelectedRecipe();
+  }
+
+  initialize();
+}());
+
+  </script>
+</body>
+</html>

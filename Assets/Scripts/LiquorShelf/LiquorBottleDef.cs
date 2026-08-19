@@ -12,7 +12,18 @@ public class LiquorBottleDef : ScriptableObject
 {
     public string   id;
     public string   displayName;
+    [Tooltip("Legacy context-neutral bottle image. Kept as the fallback for existing assets.")]
     public Sprite   sprite;
+
+    [Header("Context Images")]
+    [Tooltip("Use context images even when every context is intentionally empty. Any assigned context image also enables strict context mode.")]
+    public bool     useContextImages;
+    [Tooltip("Bottle image used in shops. Expected artwork suffix: _blank.")]
+    public Sprite   shopBlankSprite;
+    [Tooltip("Capped bottle image used on the liquor shelf. Expected artwork suffix: _lid.")]
+    public Sprite   shelfLidSprite;
+    [Tooltip("Uncapped bottle image used on the bar table. Expected artwork: base file name without a suffix.")]
+    public Sprite   barSprite;
     [Tooltip("GameProgress flag key. Empty = always unlocked.")]
     public string   unlockFlagKey;
     public string   subCategory;
@@ -34,4 +45,27 @@ public class LiquorBottleDef : ScriptableObject
     public string   recipeBookName;
 
     public float MaxAmount => bottleCount * unitVolume;
+    public bool HasContextVisuals => useContextImages
+        || shopBlankSprite != null
+        || shelfLidSprite != null
+        || barSprite != null;
+
+    public Sprite GetShopSprite()
+    {
+        return HasContextVisuals ? shopBlankSprite : sprite;
+    }
+
+    public Sprite GetShelfSprite()
+    {
+        return HasContextVisuals ? shelfLidSprite : sprite;
+    }
+
+    public Sprite GetBarSprite(Sprite legacyItemIcon = null)
+    {
+        if (HasContextVisuals)
+            return barSprite;
+        if (legacyItemIcon != null)
+            return legacyItemIcon;
+        return sprite;
+    }
 }

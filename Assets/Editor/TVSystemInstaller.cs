@@ -52,13 +52,7 @@ namespace Slainte.EditorTools
 
         private static void Install()
         {
-            TVBroadcastDatabase database = EnsureDatabase();
-            GameObject panelPrefab = EnsurePanelPrefab(database);
-            GameObject prefab = EnsurePrefab(database, panelPrefab);
-            InstallInScene(prefab);
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-            Debug.Log("[TVSystemInstaller] PASS: world TV prefab, Canvas panel prefab, and RestScene placement installed.");
+            RestSceneFinalArtInstaller.InstallAll();
         }
 
         private static TVBroadcastDatabase EnsureDatabase()

@@ -23,6 +23,8 @@ namespace Slainte.Bartending
     {
         [Header("Item Data")]
         [SerializeField] private ItemDef bottleData;
+        private Sprite bottleVisualOverride;
+        private bool hasBottleVisualOverride;
         
         public ItemDef BottleData => bottleData;
 
@@ -136,6 +138,16 @@ namespace Slainte.Bartending
 
         public void Init(ItemDef data)
         {
+            Init(data, null, false);
+        }
+
+        public void Init(ItemDef data, Sprite visualOverride)
+        {
+            Init(data, visualOverride, true);
+        }
+
+        private void Init(ItemDef data, Sprite visualOverride, bool hasVisualOverride)
+        {
             if (data == null || data.type != ItemType.Bottle)
             {
                 Debug.LogWarning("BottleController에는 종류가 Bottle인 ItemDef가 필요합니다.");
@@ -143,6 +155,8 @@ namespace Slainte.Bartending
             }
 
             bottleData = data;
+            bottleVisualOverride = visualOverride;
+            hasBottleVisualOverride = hasVisualOverride;
             ApplyBottleData();
         }
         private void ApplyBottleData()
@@ -153,8 +167,11 @@ namespace Slainte.Bartending
             if (spriteRenderer == null)
                 spriteRenderer = GetComponent<SpriteRenderer>();
 
-            if (bottleData.icon != null)
-                spriteRenderer.sprite = bottleData.icon;
+            Sprite visualSprite = hasBottleVisualOverride
+                ? bottleVisualOverride
+                : bottleData.icon;
+            if (hasBottleVisualOverride || visualSprite != null)
+                spriteRenderer.sprite = visualSprite;
 
             ApplyBottleGeometryOverride();
 

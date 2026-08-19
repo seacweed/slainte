@@ -26,10 +26,12 @@ public class LiquorBottleSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (bottleImage == null) return;
 
         bool unlocked = IsUnlocked();
+        Sprite shelfSprite = def != null ? def.GetShelfSprite() : null;
 
-        bottleImage.enabled = unlocked && def.sprite != null;
-        if (unlocked && def.sprite != null)
-            bottleImage.sprite = def.sprite;
+        bottleImage.preserveAspect = true;
+        bottleImage.enabled = unlocked && shelfSprite != null;
+        if (unlocked)
+            bottleImage.sprite = shelfSprite;
 
         RefreshAmountBar(unlocked);
     }

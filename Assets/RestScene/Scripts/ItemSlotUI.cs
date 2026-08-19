@@ -65,7 +65,10 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
         if (iconImage != null)
         {
-            iconImage.sprite = _def.sprite;
+            Sprite shopSprite = _def.GetShopSprite();
+            iconImage.preserveAspect = true;
+            iconImage.sprite = shopSprite;
+            iconImage.enabled = shopSprite != null;
             iconImage.color  = unlocked ? Color.white : Color.black;
         }
 

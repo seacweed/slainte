@@ -164,6 +164,7 @@ namespace Slainte.Bartending
             sessionRoot = builtSession.Root;
             sessionWorld = builtSession.World;
             sessionViewport = builtSession.Viewport;
+            sessionViewport?.SetOutputVisible(false);
             sessionSlotLayout = builtSession.SlotLayout;
             sessionLiquidPool = builtSession.LiquidPool;
             sessionItemScale = builtSession.ItemScale;
@@ -302,7 +303,7 @@ namespace Slainte.Bartending
                 return false;
             }
 
-            BottleController bottle = CreateBottle(item, shelfDefinition.MaxAmount);
+            BottleController bottle = CreateBottle(item, shelfDefinition, shelfDefinition.MaxAmount);
             if (bottle == null)
             {
                 failure = "술병 오브젝트를 만들지 못했습니다.";
@@ -330,7 +331,7 @@ namespace Slainte.Bartending
                     continue;
                 }
 
-                BottleController bottle = CreateBottle(item, shelfDefinition.MaxAmount);
+                BottleController bottle = CreateBottle(item, shelfDefinition, shelfDefinition.MaxAmount);
                 if (bottle != null)
                     bottles.Add(bottle);
             }
@@ -338,7 +339,10 @@ namespace Slainte.Bartending
             return bottles;
         }
 
-        private BottleController CreateBottle(ItemDef item, float defaultInventoryAmount)
+        private BottleController CreateBottle(
+            ItemDef item,
+            LiquorBottleDef shelfDefinition,
+            float defaultInventoryAmount)
         {
             if (item == null || sessionWorld == null)
                 return null;
@@ -358,7 +362,10 @@ namespace Slainte.Bartending
                 return null;
             }
 
-            bottle.Init(item);
+            Sprite barSprite = shelfDefinition != null
+                ? shelfDefinition.GetBarSprite(item.icon)
+                : item.icon;
+            bottle.Init(item, barSprite);
             RegisterBottle(bottle, defaultInventoryAmount);
             return bottle;
         }
@@ -790,6 +797,8 @@ namespace Slainte.Bartending
                     bottles[i].SnapToSlot(targetSlot.transform, targetSlot);
                 }
             }
+
+            sessionViewport?.SetOutputVisible(true);
 
             snapRoutine = null;
         }

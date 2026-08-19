@@ -29,6 +29,15 @@ namespace Slainte.Bartending
             }
         }
 
+        public void SetOutputVisible(bool visible)
+        {
+            if (outputImage == null)
+                outputImage = GetComponent<RawImage>();
+
+            if (outputImage != null)
+                outputImage.enabled = visible;
+        }
+
         private void OnEnable()
         {
             if (Application.isPlaying && registerForInput)
