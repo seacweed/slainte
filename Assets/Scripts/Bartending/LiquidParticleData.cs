@@ -249,9 +249,11 @@ namespace Slainte.Bartending
 
         private SpriteRenderer spriteRenderer;
         private Collider2D particleCollider;
+        private Color logicalColor = Color.clear;
 
         public float DefaultVolumeMl => Mathf.Max(0.01f, defaultVolumeMl);
         public VesselLiquidTracker VesselOwner { get; private set; }
+        internal Color LogicalColor => logicalColor;
         internal SpriteRenderer ParticleRenderer
         {
             get
@@ -275,6 +277,7 @@ namespace Slainte.Bartending
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
             particleCollider = GetComponent<Collider2D>();
+            ApplyVisualFromPayload();
         }
 
         private void OnEnable()
@@ -364,15 +367,17 @@ namespace Slainte.Bartending
 
         public void ApplyVisualFromPayload()
         {
+            logicalColor = payload != null
+                ? payload.EvaluateColor()
+                : Color.clear;
+
             if (spriteRenderer == null)
                 spriteRenderer = GetComponent<SpriteRenderer>();
 
             if (spriteRenderer == null)
                 return;
 
-            spriteRenderer.color = payload != null
-                ? payload.EvaluateColor()
-                : Color.clear;
+            spriteRenderer.color = logicalColor;
         }
     }
 }

@@ -1523,8 +1523,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LiquidMetaballRenderer
   accumulationMaterial: {fileID: 2100000, guid: 96ea9ea980184d038d7e30e043ad8f62, type: 2}
   outputRenderer: {fileID: 1011387299}
+  legacyOutputRenderer: {fileID: 511549319}
   textureSize: {x: 240, y: 135}
   threshold: 0.3
+  mergeStrength: 0.45
+  edgeSoftness: 0.03
+  minimumVisibleAlpha: 0.05
+  preferSinglePassMrt: 1
+  debugView: 0
 --- !u!20 &1878633704
 Camera:
   m_ObjectHideFlags: 0

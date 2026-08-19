@@ -60,6 +60,14 @@ MonoBehaviour:
   - {x: 5.714, y: -2.5, z: 0}
   - {x: 8, y: -2.5, z: 0}
   liquidPoolSize: 300
+  liquidMetaballAccumulationMaterial: {fileID: 2100000, guid: 96ea9ea980184d038d7e30e043ad8f62, type: 2}
+  liquidMetaballCompositeMaterial: {fileID: 2100000, guid: 44d610bd275aa564daa56b547c7bf07d, type: 2}
+  liquidMetaballTextureSize: {x: 240, y: 135}
+  liquidMetaballThreshold: 0.3
+  liquidMetaballMergeStrength: 0.45
+  liquidMetaballEdgeSoftness: 0.03
+  liquidMinimumVisibleAlpha: 0.05
+  liquidSortingOrder: 12
   iceBinWidth: 2.2
   iceBinHeight: 1.2
   iceCubeSize: 0.42

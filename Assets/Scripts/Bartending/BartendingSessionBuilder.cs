@@ -21,6 +21,7 @@ namespace Slainte.Bartending
         public BartendingViewport Viewport { get; internal set; }
         public RectTransform SlotLayout { get; internal set; }
         public LiquidPool LiquidPool { get; internal set; }
+        public LiquidMetaballRenderer LiquidMetaballRenderer { get; internal set; }
         public IceBinController IceBin { get; internal set; }
         public IBartendingItem Beaker { get; internal set; }
         public IBartendingItem CobblerShaker { get; internal set; }
@@ -84,6 +85,7 @@ namespace Slainte.Bartending
             Viewport = null;
             SlotLayout = null;
             LiquidPool = null;
+            LiquidMetaballRenderer = null;
             IceBin = null;
             Beaker = null;
             CobblerShaker = null;
@@ -786,6 +788,14 @@ namespace Slainte.Bartending
 
             session.WorldCamera = CreateWorldCamera(world.transform, settings, renderLayer);
             session.Viewport = CreateViewport(counter, session.WorldCamera, settings, !isPreview);
+            if (!isPreview)
+            {
+                session.LiquidMetaballRenderer = CreateLiquidMetaballRenderer(
+                    world.transform,
+                    session.WorldCamera,
+                    settings,
+                    renderLayer);
+            }
             Canvas.ForceUpdateCanvases();
             session.SlotLayout = CreateSessionSlotLayout(
                 slotLayoutTemplate,
@@ -908,6 +918,75 @@ namespace Slainte.Bartending
             camera.allowMSAA = false;
             camera.depth = -10f;
             return camera;
+        }
+
+        public static LiquidMetaballRenderer CreateLiquidMetaballRenderer(
+            Transform parent,
+            Camera worldCamera,
+            BusinessBartendingSettings settings,
+            int renderLayer)
+        {
+            if (parent == null || worldCamera == null || settings == null
+                || settings.liquidMetaballAccumulationMaterial == null
+                || settings.liquidMetaballCompositeMaterial == null)
+            {
+                return null;
+            }
+
+            GameObject outputObject = GameObject.CreatePrimitive(PrimitiveType.Quad);
+            outputObject.name = "LiquidMetaballOutput";
+            outputObject.transform.SetParent(parent, false);
+            outputObject.transform.localPosition = new Vector3(0f, 0f, -0.5f);
+
+            float targetAspect = Mathf.Max(1, settings.renderTextureSize.x)
+                / (float)Mathf.Max(1, settings.renderTextureSize.y);
+            float outputHeight = worldCamera.orthographicSize * 2f;
+            float outputYScale = SystemInfo.graphicsUVStartsAtTop
+                ? -outputHeight
+                : outputHeight;
+            outputObject.transform.localScale = new Vector3(
+                outputHeight * targetAspect,
+                outputYScale,
+                1f);
+            SetLayerRecursively(outputObject, renderLayer);
+
+            Collider outputCollider = outputObject.GetComponent<Collider>();
+            if (outputCollider != null)
+                Object.Destroy(outputCollider);
+
+            MeshRenderer outputRenderer = outputObject.GetComponent<MeshRenderer>();
+            outputRenderer.sharedMaterial = settings.liquidMetaballCompositeMaterial;
+            outputRenderer.sortingOrder = settings.liquidSortingOrder;
+            outputRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            outputRenderer.receiveShadows = false;
+            outputRenderer.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
+            outputRenderer.reflectionProbeUsage = UnityEngine.Rendering.ReflectionProbeUsage.Off;
+
+            GameObject captureObject = new GameObject("LiquidMetaballCaptureCamera");
+            captureObject.SetActive(false);
+            captureObject.transform.SetParent(parent, false);
+            captureObject.transform.localPosition = worldCamera.transform.localPosition;
+            captureObject.transform.localRotation = worldCamera.transform.localRotation;
+
+            Camera captureCamera = captureObject.AddComponent<Camera>();
+            captureCamera.CopyFrom(worldCamera);
+            captureCamera.targetTexture = null;
+            captureCamera.aspect = targetAspect;
+            captureCamera.cullingMask = 0;
+
+            LiquidMetaballRenderer metaballRenderer =
+                captureObject.AddComponent<LiquidMetaballRenderer>();
+            metaballRenderer.Configure(
+                settings.liquidMetaballAccumulationMaterial,
+                outputRenderer,
+                settings.liquidMetaballTextureSize,
+                settings.liquidMetaballThreshold,
+                settings.liquidMetaballMergeStrength,
+                settings.liquidMetaballEdgeSoftness,
+                settings.liquidMinimumVisibleAlpha);
+
+            captureObject.SetActive(true);
+            return metaballRenderer;
         }
 
         public static BartendingViewport CreateViewport(

@@ -81,6 +81,14 @@ namespace Slainte.Bartending
 
         [Header("Liquid")]
         [Min(1)] public int liquidPoolSize = 300;
+        public Material liquidMetaballAccumulationMaterial;
+        public Material liquidMetaballCompositeMaterial;
+        public Vector2Int liquidMetaballTextureSize = new Vector2Int(240, 135);
+        [Range(0f, 1f)] public float liquidMetaballThreshold = 0.3f;
+        [Range(0f, 1f)] public float liquidMetaballMergeStrength = 0.45f;
+        [Range(0f, 0.25f)] public float liquidMetaballEdgeSoftness = 0.03f;
+        [Range(0f, 1f)] public float liquidMinimumVisibleAlpha = 0.05f;
+        public int liquidSortingOrder = 12;
 
         [Header("Ice")]
         [Min(0.1f)] public float iceBinWidth = 2.2f;

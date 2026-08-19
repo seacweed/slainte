@@ -56,7 +56,43 @@ Shader "Slainte/LiquidMetaballAccumulation"
 
         Pass
         {
-            Name "Density"
+            Name "AccumulateMRT"
+            Blend One One
+            Cull Off
+            ZWrite Off
+            ZTest Always
+
+            HLSLPROGRAM
+            #pragma target 3.5
+            #pragma vertex Vert
+            #pragma fragment FragMrt
+            #pragma multi_compile_instancing
+
+            struct AccumulationOutput
+            {
+                half4 density : SV_Target0;
+                half4 color : SV_Target1;
+            };
+
+            AccumulationOutput FragMrt(Varyings input)
+            {
+                half coverage = SAMPLE_TEXTURE2D(
+                    _MainTex, sampler_MainTex, input.uv).a;
+                half4 particleColor = saturate(input.color);
+
+                AccumulationOutput output;
+                output.density = coverage.xxxx;
+                output.color = half4(
+                    particleColor.rgb * coverage,
+                    particleColor.a * coverage);
+                return output;
+            }
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "DensityFallback"
             Blend One One
             Cull Off
             ZWrite Off
@@ -77,7 +113,7 @@ Shader "Slainte/LiquidMetaballAccumulation"
 
         Pass
         {
-            Name "PremultipliedColor"
+            Name "PremultipliedColorFallback"
             Blend One One
             Cull Off
             ZWrite Off
@@ -94,6 +130,28 @@ Shader "Slainte/LiquidMetaballAccumulation"
                 half weightedAlpha = coverage * saturate(input.color.a);
                 half3 weightedColor = input.color.rgb * coverage;
                 return half4(weightedColor, weightedAlpha);
+            }
+            ENDHLSL
+        }
+
+        Pass
+        {
+            Name "MaximumCoverage"
+            Blend One One
+            BlendOp Max
+            Cull Off
+            ZWrite Off
+            ZTest Always
+
+            HLSLPROGRAM
+            #pragma vertex Vert
+            #pragma fragment FragMaximumCoverage
+            #pragma multi_compile_instancing
+
+            half4 FragMaximumCoverage(Varyings input) : SV_Target
+            {
+                half coverage = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, input.uv).a;
+                return coverage.xxxx;
             }
             ENDHLSL
         }
