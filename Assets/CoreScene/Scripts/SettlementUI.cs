@@ -142,13 +142,18 @@ public class SettlementUI : MonoBehaviour
             {
                 DrinkSaleEntry e = entry;
                 steps.Add(() => InstantiateLine(
-                    $"{e.drinkName} x {e.count}",
+                    $"{e.drinkName} x {e.count}"
+                    + (e.currency == Slainte.Economy.GameCurrency.StrangeCoin ? " [이상한 동전]" : string.Empty),
                     FormatSigned(e.baseRevenue)));
             }
         }
 
         if (data.tipRevenue != 0)
             steps.Add(() => InstantiateLine("팁", FormatSigned(data.tipRevenue)));
+        if (data.strangeCoinTipRevenue != 0)
+            steps.Add(() => InstantiateLine("이상한 동전 팁", FormatSigned(data.strangeCoinTipRevenue)));
+        if (data.strangeCoinRevenue != 0)
+            steps.Add(() => InstantiateLine("이상한 동전 수입", FormatSigned(data.strangeCoinRevenue)));
         if (data.reputationDelta != 0)
             steps.Add(() => InstantiateLine("명성 변화", FormatSigned(data.reputationDelta)));
 

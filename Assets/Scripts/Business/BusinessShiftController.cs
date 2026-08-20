@@ -106,7 +106,7 @@ namespace Slainte.Business
             sessionUi = businessSessionUi;
             modeManager = gameModeManager;
             settings = flowSettings;
-            salePayoutPolicy = new DeferredSettlementSalePayoutPolicy();
+            salePayoutPolicy = new ImmediateSalePayoutPolicy();
             initialized = orderSession != null && settings != null;
 
             if (!initialized)
@@ -358,6 +358,7 @@ namespace Slainte.Business
                 requestedRecipeId = order.requestedRecipeId,
                 ticketKey = order.key,
                 orderType = order.orderType,
+                paymentCurrency = order.paymentCurrency,
                 presentOrder = true,
                 presentFeedback = true,
                 applyProgressRewards = false,

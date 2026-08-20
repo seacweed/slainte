@@ -16,6 +16,8 @@ MonoBehaviour:
   displayName: "\uD55C\uC5EC\uB984\uC758 \uB098\uB0AD\uB098 (Mid: \uC794 rock, \uC5BC\uC74C
     \uC5C6\uC74C)"
   englishName: Midsummer Nanangna
+  price: 189
+  strangeCoinPrice: 3
   isOrderable: 0
   appearsInRecipeBook: 0
   baseRecipeId: rec_1006
@@ -26,8 +28,10 @@ MonoBehaviour:
   allowExtraIngredients: 0
   glassId: rock
   iceRequirement: 1
-  requiredTechnique: 2
-  abvOverridePercent: -1
+  requiredIceCount: 0
+  shakeIceRequirement: 2
+  requiredTechnique: 4
+  abvOverridePercent: 5
   ingredientPropertyTags:
   - "\uACFC\uC77C \uB9AC\uD050\uB974"
   - "\uACFC\uC77C \uC8FC\uC2A4"
@@ -36,9 +40,9 @@ MonoBehaviour:
   - "\uC0C8\uCF64\uB2EC\uCF64\uD568"
   moodTags:
   - "\uD654\uB824\uD55C"
-  - "\uD3EC\uADFC\uD55C"
+  - "\uC815\uC5F4\uC801\uC778"
   ingredients:
-  - itemId: item_1007
+  - itemId: item_1005
     targetMl: 30
     toleranceMl: 5
   - itemId: item_1001

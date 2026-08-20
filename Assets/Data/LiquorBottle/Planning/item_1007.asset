@@ -13,13 +13,21 @@ MonoBehaviour:
   m_Name: item_1007
   m_EditorClassIdentifier: Assembly-CSharp::LiquorBottleDef
   id: item_1007
-  displayName: "\uB098\uB0AD\uB098"
+  displayName: "\uD5E5\uD0C0\uB974"
+  item: {fileID: 11400000, guid: d8fc4c49e26edd243a89ce72b978db82, type: 2}
   sprite: {fileID: -5414705535406064539, guid: 3892bcf35c78c06409fcebcbde39b94e, type: 3}
   useContextImages: 1
-  shopBlankSprite: {fileID: 21300000, guid: ba47000000000000000000000000001e, type: 3}
-  shelfLidSprite: {fileID: 21300000, guid: ba47000000000000000000000000001f, type: 3}
-  barSprite: {fileID: 21300000, guid: ba47000000000000000000000000001d, type: 3}
-  unlockFlagKey: 
-  subCategory: "\uACFC\uC77C \uB9AC\uD050\uB974"
+  shopBlankSprite: {fileID: 21300000, guid: ba470000000000000000000000000014, type: 3}
+  shelfLidSprite: {fileID: 21300000, guid: ba470000000000000000000000000015, type: 3}
+  barSprite: {fileID: 21300000, guid: ba470000000000000000000000000013, type: 3}
+  unlockFlagKey:
+  subCategory: "\uBCA0\uB974\uBB47"
   bottleCount: 6
+  defaultBottleCount: 4
   unitVolume: 700
+  category: {fileID: 11400000, guid: 4fa98afa4995af440adc4efbca8847c1, type: 2}
+  price: 2100
+  strangeCoinPrice: 20
+  unlockHintType: 0
+  recipeBookIcon: {fileID: 0}
+  recipeBookName:

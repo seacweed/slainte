@@ -1,4 +1,5 @@
 using UnityEngine;
+using Slainte.Economy;
 
 public enum IngredientUnlockHintType
 {
@@ -12,6 +13,8 @@ public class LiquorBottleDef : ScriptableObject
 {
     public string   id;
     public string   displayName;
+    [Tooltip("ItemDef consumed by bartending. The CSV importer connects the matching item explicitly.")]
+    public ItemDef  item;
     [Tooltip("Legacy context-neutral bottle image. Kept as the fallback for existing assets.")]
     public Sprite   sprite;
 
@@ -29,6 +32,8 @@ public class LiquorBottleDef : ScriptableObject
     public string   subCategory;
     [Tooltip("Number of bottle icons shown in the info card.")]
     public int      bottleCount = 6;
+    [Tooltip("Number of full bottles owned when no saved inventory exists yet.")]
+    public int      defaultBottleCount;
     [Tooltip("Volume per bottle, e.g. 700 (ml).")]
     public float    unitVolume = 700f;
 
@@ -47,6 +52,35 @@ public class LiquorBottleDef : ScriptableObject
     public string   recipeBookName;
 
     public float MaxAmount => bottleCount * unitVolume;
+    public float DefaultAmount => Mathf.Clamp(defaultBottleCount, 0, bottleCount) * unitVolume;
+    public string InventoryId
+    {
+        get
+        {
+            if (item != null && !string.IsNullOrWhiteSpace(item.id))
+                return item.id;
+
+            string legacyId = string.IsNullOrWhiteSpace(id) ? string.Empty : id.Trim();
+            return legacyId.ToLowerInvariant() switch
+            {
+                "tropical_juice" => "item_1001",
+                "siltrop" => "item_1002",
+                "synthetic_lemon" => "item_1003",
+                "nanangna" => "item_1005",
+                "cotton" => "item_1006",
+                "hectar" => "item_1007",
+                "bless" => "item_1008",
+                "breeze_vodka" => "item_1009",
+                "johnny_dogs" => "item_1010",
+                "burnham_bourbon" => "item_1011",
+                "beatha" => "item_1012",
+                "minute_fizz" => "item_1013",
+                "hot_water" => "item_1014",
+                "coffee_powder" => "item_1015",
+                _ => legacyId
+            };
+        }
+    }
     public bool HasContextVisuals => useContextImages
         || shopBlankSprite != null
         || shelfLidSprite != null
@@ -69,5 +103,10 @@ public class LiquorBottleDef : ScriptableObject
         if (legacyItemIcon != null)
             return legacyItemIcon;
         return sprite;
+    }
+
+    public int GetPrice(GameCurrency currency)
+    {
+        return currency == GameCurrency.StrangeCoin ? strangeCoinPrice : price;
     }
 }

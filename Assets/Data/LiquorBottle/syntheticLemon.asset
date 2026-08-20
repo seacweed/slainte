@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LiquorBottleDef
   id: synthetic_lemon
   displayName: "\uD569\uC131 \uB808\uBAAC"
+  item: {fileID: 11400000, guid: 1cd9aa7cb58c4934281fc536031b9827, type: 2}
   sprite: {fileID: 8455280647246717337, guid: 14e5016a02536da428a10ee835f58d2b, type: 3}
   useContextImages: 1
   shopBlankSprite: {fileID: 21300000, guid: ba470000000000000000000000000027, type: 3}
@@ -21,11 +22,12 @@ MonoBehaviour:
   barSprite: {fileID: 21300000, guid: ba470000000000000000000000000026, type: 3}
   unlockFlagKey: 
   subCategory: "\uACFC\uC77C \uC2DC\uB7FD"
-  bottleCount: 3
+  bottleCount: 6
+  defaultBottleCount: 3
   unitVolume: 200
   category: {fileID: 11400000, guid: 17c366124d7692f4b80847a1719d2134, type: 2}
-  price: 2000
-  strangeCoinPrice: 0
+  price: 300
+  strangeCoinPrice: 3
   unlockHintType: 0
   recipeBookIcon: {fileID: 0}
   recipeBookName: 

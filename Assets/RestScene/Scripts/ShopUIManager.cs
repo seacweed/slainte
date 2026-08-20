@@ -324,7 +324,7 @@ public class ShopUIManager : BaseUIManager
         {
             GameObject slotObj = Instantiate(strangeSlotPrefab, strangeContentRoot);
             var slot = slotObj.GetComponent<ItemSlotUI>();
-            slot.Setup(bottle, _strangeCurrency);
+            slot.Setup(bottle, _strangeCurrency, 1f, null, bottle.DefaultAmount);
             slot.OnPurchased += RefreshStrangeCoinText;
             _strangeItemSlots.Add(slot);
         }
@@ -375,7 +375,7 @@ public class ShopUIManager : BaseUIManager
         {
             GameObject slotObj = Instantiate(slotPrefab, contentRoot);
             var slot = slotObj.GetComponent<ItemSlotUI>();
-            slot.Setup(bottle);
+            slot.Setup(bottle, 1f, null, bottle.DefaultAmount);
             slot.OnPurchased += RefreshMoneyText;
             _itemSlots.Add(slot);
         }

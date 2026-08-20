@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Slainte.Bartending;
+using Slainte.Economy;
 using Slainte.TV;
 using UnityEngine;
 
@@ -226,8 +227,11 @@ namespace Slainte.Business
 
             dialogue?.HideImmediate();
             modeManager?.RequestModeChange(GameMode.OrderMode);
+            GameCurrency paymentCurrency = currentRequest.paymentCurrency;
+            int listedPrice = GetListedPrice(paymentCurrency);
             BusinessOrderReward reward = BusinessOrderRewardCalculator.Calculate(
                 OrderEvaluationGrade.Good,
+                listedPrice,
                 settings,
                 TVBroadcastRuntime.GetTipMultiplier(
                     GameProgress.Instance,
@@ -238,12 +242,16 @@ namespace Slainte.Business
                 customerOrderKey = currentRequest.customerOrderKey,
                 customerVisitKey = currentRequest.customerVisitKey,
                 requestedRecipeId = currentRequest.requestedRecipeId,
+                paymentCurrency = paymentCurrency,
+                listedPrice = listedPrice,
                 accepted = true,
                 grade = OrderEvaluationGrade.Good,
                 customerMood = reward.Mood,
                 baseRevenue = reward.BaseRevenue,
                 tipAmount = reward.TipAmount,
-                moneyDelta = reward.TotalRevenue,
+                moneyDelta = paymentCurrency == GameCurrency.Money ? reward.TotalRevenue : 0,
+                strangeCoinDelta = paymentCurrency == GameCurrency.StrangeCoin ? reward.TotalRevenue : 0,
+                totalPayment = reward.TotalRevenue,
                 reputationDelta = reward.ReputationDelta
             });
             return true;
@@ -297,8 +305,11 @@ namespace Slainte.Business
             }
 
             OrderEvaluationGrade grade = OrderEvaluationGrader.Resolve(evaluation, settings);
+            GameCurrency paymentCurrency = currentRequest.paymentCurrency;
+            int listedPrice = GetListedPrice(paymentCurrency);
             BusinessOrderReward reward = BusinessOrderRewardCalculator.Calculate(
                 grade,
+                listedPrice,
                 settings,
                 TVBroadcastRuntime.GetTipMultiplier(
                     GameProgress.Instance,
@@ -309,12 +320,16 @@ namespace Slainte.Business
                 customerOrderKey = currentRequest.customerOrderKey,
                 customerVisitKey = currentRequest.customerVisitKey,
                 requestedRecipeId = currentRequest.requestedRecipeId,
+                paymentCurrency = paymentCurrency,
+                listedPrice = listedPrice,
                 accepted = true,
                 grade = grade,
                 customerMood = reward.Mood,
                 baseRevenue = reward.BaseRevenue,
                 tipAmount = reward.TipAmount,
-                moneyDelta = reward.TotalRevenue,
+                moneyDelta = paymentCurrency == GameCurrency.Money ? reward.TotalRevenue : 0,
+                strangeCoinDelta = paymentCurrency == GameCurrency.StrangeCoin ? reward.TotalRevenue : 0,
+                totalPayment = reward.TotalRevenue,
                 reputationDelta = reward.ReputationDelta,
                 evaluation = evaluation
             };
@@ -421,10 +436,12 @@ namespace Slainte.Business
             result.customerVisitKey = completedRequest?.customerVisitKey ?? result.customerVisitKey;
 
             GameProgress progress = GameProgress.Instance;
-            if (progress != null && completedRequest != null && completedRequest.applyProgressRewards)
+            if (progress != null && completedRequest != null)
             {
-                progress.AddMoney(result.moneyDelta);
-                progress.AddReputation(result.reputationDelta);
+                if (completedRequest.applyProgressRewards || completedRequest.applyPayment)
+                    GameCurrencyWallet.Add(progress, result.paymentCurrency, result.PaymentAmount);
+                if (completedRequest.applyProgressRewards || completedRequest.applyReputation)
+                    progress.AddReputation(result.reputationDelta);
             }
 
             if (completedRequest == null || completedRequest.clearCustomerOnComplete)
@@ -441,6 +458,12 @@ namespace Slainte.Business
             servingTarget = null;
             OrderCompleted?.Invoke(result);
             callback?.Invoke(result);
+        }
+
+        private int GetListedPrice(GameCurrency currency)
+        {
+            CocktailRecipe recipe = currentOrder?.requestedRecipe;
+            return recipe != null ? recipe.GetPrice(currency) : -1;
         }
 
         private IEnumerator WaitForCraftingPreparation()

@@ -174,7 +174,7 @@ public sealed class DeliveryShopPanelUI : MonoBehaviour
         foreach (LiquorBottleDef bottle in products)
         {
             ItemSlotUI slot = Instantiate(itemSlotPrefab, contentRoot);
-            slot.Setup(bottle, priceMultiplier, null, bottle.MaxAmount);
+            slot.Setup(bottle, priceMultiplier, null, bottle.DefaultAmount);
             slot.OnPurchased += HandlePurchased;
             itemSlots.Add(slot);
         }

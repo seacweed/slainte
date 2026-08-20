@@ -15,6 +15,8 @@ MonoBehaviour:
   id: rec_1005__mid_technique_build
   displayName: "\uC170\uC774\uB514 (Mid: \uC81C\uC870\uBC95 Build)"
   englishName: Shady
+  price: 462
+  strangeCoinPrice: 3
   isOrderable: 0
   appearsInRecipeBook: 0
   baseRecipeId: rec_1005
@@ -25,8 +27,10 @@ MonoBehaviour:
   allowExtraIngredients: 0
   glassId: rock
   iceRequirement: 2
+  requiredIceCount: 3
+  shakeIceRequirement: 0
   requiredTechnique: 1
-  abvOverridePercent: -1
+  abvOverridePercent: 28
   ingredientPropertyTags:
   - "\uBCA0\uB974\uBB47"
   - "\uC704\uC2A4\uD0A4"
@@ -36,12 +40,12 @@ MonoBehaviour:
   moodTags:
   - "\uACE0\uAE09\uC2A4\uB7EC\uC6B4"
   ingredients:
-  - itemId: item_1009
+  - itemId: item_1007
     targetMl: 30
     toleranceMl: 5
-  - itemId: item_1010
+  - itemId: item_1008
     targetMl: 30
     toleranceMl: 5
-  - itemId: item_1013
+  - itemId: item_1011
     targetMl: 30
     toleranceMl: 5

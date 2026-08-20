@@ -13,27 +13,38 @@ MonoBehaviour:
   m_Name: rec_1012
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.CocktailRecipeDef
   id: rec_1012
-  displayName: "\uC870\uB2C8 \uB3C5\uC2A4 \uC628\uB354\uB77D"
-  englishName: Johnny Dogs On the Rocks
+  displayName: "\uB85C\uB2CC\uC988"
+  englishName: Ronins
+  price: 322
+  strangeCoinPrice: 3
   isOrderable: 1
   appearsInRecipeBook: 1
   baseRecipeId: 
   evaluationGrade: 0
-  minTotalMl: 25
-  maxTotalMl: 35
+  minTotalMl: 155
+  maxTotalMl: 165
   toleranceMl: 5
   allowExtraIngredients: 0
-  glassId: rock
+  glassId: highball
   iceRequirement: 2
-  requiredTechnique: 1
-  abvOverridePercent: -1
+  requiredIceCount: 4
+  shakeIceRequirement: 0
+  requiredTechnique: 2
+  abvOverridePercent: 7.5
   ingredientPropertyTags:
-  - "\uC704\uC2A4\uD0A4"
+  - "\uBCA0\uB974\uBB47"
   tasteTags:
-  - "\uC501\uC4F8\uD568"
+  - "\uB2EC\uD070\uD568"
   moodTags:
-  - "\uACE0\uAE09\uC2A4\uB7EC\uC6B4"
+  - "\uC815\uC5F4\uC801\uC778"
+  - "\uCCAD\uB7C9\uD55C"
   ingredients:
-  - itemId: item_1012
+  - itemId: item_1008
     targetMl: 30
+    toleranceMl: 5
+  - itemId: item_1007
+    targetMl: 30
+    toleranceMl: 5
+  - itemId: item_1013
+    targetMl: 100
     toleranceMl: 5

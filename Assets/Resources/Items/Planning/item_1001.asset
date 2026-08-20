@@ -14,15 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDef
   id: item_1001
   displayName: "\uC5F4\uB300 \uC8FC\uC2A4"
+  englishName: Tropical Juice
   type: 0
   icon: {fileID: 21300000, guid: ba470000000000000000000000000029, type: 3}
-  price: 2000
+  price: 500
   tasteTag: 3
   abvPercent: 0
   bottleCategory: 4
   liquidType: 5
   capacityMl: 1000
-  liquidColor: {r: 1, g: 1, b: 1, a: 1}
+  liquidColor: {r: 0.9490196, g: 0.41568628, b: 0.05882353, a: 1}
   density: 1
   servingTemperatureC: 20
   overrideBottleGeometry: 0

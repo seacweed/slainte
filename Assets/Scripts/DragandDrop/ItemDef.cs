@@ -45,6 +45,7 @@ public class ItemDef : ScriptableObject
     [Header("Common")]
     public string id;
     public string displayName;
+    public string englishName;
     public ItemType type;
     public Sprite icon;
     public int price;

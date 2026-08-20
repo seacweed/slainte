@@ -14,15 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemDef
   id: item_1003
   displayName: "\uD569\uC131 \uB808\uBAAC"
+  englishName: Synthetic Lemon
   type: 0
   icon: {fileID: 21300000, guid: ba470000000000000000000000000026, type: 3}
-  price: 2000
+  price: 300
   tasteTag: 2
   abvPercent: 0
   bottleCategory: 2
   liquidType: 6
-  capacityMl: 300
-  liquidColor: {r: 1, g: 1, b: 1, a: 1}
+  capacityMl: 200
+  liquidColor: {r: 0.92156863, g: 1, b: 0, a: 0.7019608}
   density: 1
   servingTemperatureC: 20
   overrideBottleGeometry: 0

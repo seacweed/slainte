@@ -50,7 +50,22 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             currency ?? new MoneyShopCurrency(),
             1f,
             null,
-            0f);
+            def != null ? def.DefaultAmount : 0f);
+    }
+
+    public void Setup(
+        LiquorBottleDef def,
+        IShopCurrency currency,
+        float priceMultiplier,
+        Func<int, bool> trySpendMoney,
+        float defaultInventoryAmount)
+    {
+        Configure(
+            def,
+            currency ?? new MoneyShopCurrency(),
+            priceMultiplier,
+            trySpendMoney,
+            defaultInventoryAmount);
     }
 
     // 배송 상점
@@ -121,7 +136,7 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         int  price = CalculatePrice(basePrice, _priceMultiplier);
         bool hasValidPrice = basePrice >= 0;
         bool isFull = progress != null
-            && progress.GetBottleAmount(_def.id, _defaultInventoryAmount) >= _def.MaxAmount;
+            && progress.EnsureBottleAmount(_def.InventoryId, _defaultInventoryAmount) >= _def.MaxAmount;
         bool canAfford = hasValidPrice
             && progress != null
             && (price == 0 || _currency.CurrentAmount >= price);
@@ -156,7 +171,9 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     {
         GameProgress progress = GameProgress.Instance;
         if (!IsUnlocked() || progress == null) return false;
-        if (progress.GetBottleAmount(_def.id, _defaultInventoryAmount) >= _def.MaxAmount) return false;
+        string inventoryId = _def.InventoryId;
+        if (progress.EnsureBottleAmount(inventoryId, _defaultInventoryAmount) >= _def.MaxAmount)
+            return false;
 
         int basePrice = GetBasePrice();
         if (basePrice < 0) return false;
@@ -172,7 +189,7 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (!spent) return false;
         }
 
-        progress.AddBottleAmount(_def.id, _def.unitVolume, _def.MaxAmount);
+        progress.AddBottleAmount(inventoryId, _def.unitVolume, _def.MaxAmount);
         Refresh();
         OnPurchased?.Invoke();
         return true;
@@ -199,7 +216,7 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         if (IsUnlocked())
             LiquorBottleInfoCard.Instance?.Show(
                 _def,
-                GameProgress.Instance.GetBottleAmount(_def.id, _defaultInventoryAmount),
+                GameProgress.Instance.EnsureBottleAmount(_def.InventoryId, _defaultInventoryAmount),
                 _rectTransform);
         else
             IngredientUnlockTooltip.Instance?.Show(_def, _rectTransform);

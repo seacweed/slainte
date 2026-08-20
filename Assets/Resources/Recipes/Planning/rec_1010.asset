@@ -15,18 +15,22 @@ MonoBehaviour:
   id: rec_1010
   displayName: "\uD56B \uD14C\uB514"
   englishName: Hot Teddy
-  isOrderable: 0
+  price: 727
+  strangeCoinPrice: 7
+  isOrderable: 1
   appearsInRecipeBook: 1
   baseRecipeId: 
   evaluationGrade: 0
-  minTotalMl: 0
-  maxTotalMl: 0
+  minTotalMl: 225
+  maxTotalMl: 235
   toleranceMl: 5
   allowExtraIngredients: 0
   glassId: hurricane
   iceRequirement: 1
+  requiredIceCount: 0
+  shakeIceRequirement: 0
   requiredTechnique: 2
-  abvOverridePercent: -1
+  abvOverridePercent: 0
   ingredientPropertyTags:
   - "\uC704\uC2A4\uD0A4"
   - "\uB2F9\uB958 \uC2DC\uB7FD"
@@ -37,4 +41,16 @@ MonoBehaviour:
   - "\uC0C8\uD07C\uD568"
   moodTags:
   - "\uD3EC\uADFC\uD55C"
-  ingredients: []
+  ingredients:
+  - itemId: item_1011
+    targetMl: 40
+    toleranceMl: 5
+  - itemId: item_1002
+    targetMl: 30
+    toleranceMl: 5
+  - itemId: item_1003
+    targetMl: 10
+    toleranceMl: 5
+  - itemId: item_1014
+    targetMl: 150
+    toleranceMl: 5

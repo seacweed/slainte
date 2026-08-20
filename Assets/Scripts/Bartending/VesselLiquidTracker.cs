@@ -20,6 +20,7 @@ namespace Slainte.Bartending
             : 20f;
         public string GlassId { get; private set; } = string.Empty;
         public bool HasIce { get; private set; }
+        public int IceCount { get; private set; }
         public bool WasShakenWithIce { get; private set; }
         public CocktailTechnique Techniques { get; private set; } = CocktailTechnique.None;
 
@@ -64,8 +65,14 @@ namespace Slainte.Bartending
 
         public void SetServingStyle(string glassId, bool hasIce)
         {
+            SetServingStyle(glassId, hasIce ? 1 : 0);
+        }
+
+        public void SetServingStyle(string glassId, int iceCount)
+        {
             GlassId = glassId?.Trim() ?? string.Empty;
-            HasIce = hasIce;
+            IceCount = Mathf.Max(0, iceCount);
+            HasIce = IceCount > 0;
         }
 
         public CocktailTechnique GetEffectiveTechniques()
@@ -284,7 +291,10 @@ namespace Slainte.Bartending
             RefreshTrackedIceCubes();
 
             CocktailComposition composition = new CocktailComposition();
-            composition.SetServingStyle(servingGlassId, hasIce || iceCubes.Count > 0);
+            int servingIceCount = iceCubes.Count;
+            if (servingIceCount == 0 && hasIce)
+                servingIceCount = 1;
+            composition.SetServingStyle(servingGlassId, servingIceCount);
             foreach (LiquidParticleData particle in particles)
             {
                 if (particle == null || particle.payload == null)

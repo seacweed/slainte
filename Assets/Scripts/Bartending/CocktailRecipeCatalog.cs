@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Slainte.Economy;
 
 namespace Slainte.Bartending
 {
@@ -38,6 +39,8 @@ namespace Slainte.Bartending
         public string id;
         public string displayName;
         public string englishName;
+        public int price;
+        public int strangeCoinPrice;
         public bool isOrderable = true;
         public bool appearsInRecipeBook = true;
         public string baseRecipeId;
@@ -49,12 +52,18 @@ namespace Slainte.Bartending
         public bool allowExtraIngredients;
         public string glassId;
         public IceRequirement iceRequirement = IceRequirement.Any;
+        public int requiredIceCount = -1;
         public IceRequirement shakeIceRequirement = IceRequirement.Any;
         public CocktailTechnique requiredTechnique = CocktailTechnique.None;
         public readonly HashSet<string> ingredientPropertyTags = new(StringComparer.OrdinalIgnoreCase);
         public readonly HashSet<string> tasteTags = new(StringComparer.OrdinalIgnoreCase);
         public readonly HashSet<string> moodTags = new(StringComparer.OrdinalIgnoreCase);
         public readonly List<CocktailRecipeIngredient> ingredients = new();
+
+        public int GetPrice(GameCurrency currency)
+        {
+            return currency == GameCurrency.StrangeCoin ? strangeCoinPrice : price;
+        }
     }
 
     public sealed class CocktailRecipeCatalog

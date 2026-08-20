@@ -156,8 +156,8 @@ public static class DeliverySystemValidator
         Require(catalog != null, "Default liquor shop catalog is missing.");
         Require(catalog.categories != null && catalog.categories.Count == 6,
             "Shared shop catalog does not contain the six configured categories.");
-        Require(catalog.bottles != null && catalog.bottles.Count == 11,
-            "Shared shop catalog does not contain the eleven configured products.");
+        Require(catalog.bottles != null && catalog.bottles.Count == 15,
+            "Shared shop catalog does not contain the fifteen CSV products.");
         Require(catalog.categoryButtonPrefab != null && catalog.itemSlotPrefab != null,
             "Shared shop UI prefabs are missing from the catalog.");
         Require(catalog.deliveryPanelPrefab != null,

@@ -1,5 +1,6 @@
 using System;
 using Slainte.Bartending;
+using Slainte.Economy;
 using UnityEngine;
 
 namespace Slainte.Business
@@ -35,9 +36,12 @@ namespace Slainte.Business
         public string requestedRecipeId;
         public string ticketKey;
         public CocktailOrderType orderType = CocktailOrderType.RecipeOrder;
+        public GameCurrency paymentCurrency = GameCurrency.Money;
         public bool presentOrder = true;
         public bool presentFeedback = true;
         public bool applyProgressRewards = true;
+        public bool applyPayment;
+        public bool applyReputation;
         public bool clearCustomerOnComplete = true;
     }
 
@@ -84,8 +88,25 @@ namespace Slainte.Business
             BusinessOrderFlowSettings settings,
             float externalTipMultiplier = 1f)
         {
+            return Calculate(grade, -1, settings, externalTipMultiplier);
+        }
+
+        public static BusinessOrderReward Calculate(
+            OrderEvaluationGrade grade,
+            int listedRecipePrice,
+            BusinessOrderFlowSettings settings,
+            float externalTipMultiplier = 1f)
+        {
             CustomerMood mood = ResolveMood(grade);
-            int baseRevenue = settings != null ? settings.GetMoneyReward(grade) : 0;
+            int baseRevenue = listedRecipePrice >= 0
+                ? Mathf.FloorToInt(
+                    Mathf.Max(0, listedRecipePrice)
+                    * (settings != null
+                        ? settings.GetRecipePriceMultiplier(grade)
+                        : grade == OrderEvaluationGrade.Good ? 1f
+                        : grade == OrderEvaluationGrade.Mid ? 0.5f
+                        : 0f))
+                : settings != null ? settings.GetMoneyReward(grade) : 0;
             float tipRate = settings != null ? settings.GetTipRate(mood) : 0f;
             int tipAmount = Mathf.FloorToInt(
                 Mathf.Max(0, baseRevenue)
@@ -112,12 +133,15 @@ namespace Slainte.Business
         public string customerOrderKey;
         public string customerVisitKey;
         public string requestedRecipeId;
+        public GameCurrency paymentCurrency = GameCurrency.Money;
+        public int listedPrice;
         public OrderEvaluationGrade grade;
         public CustomerMood customerMood;
         public int baseRevenue;
         public int tipAmount;
         public int totalRevenue;
         public int reputationDelta;
+        public bool paymentApplied;
 
         public BusinessSaleRecord Clone()
         {
@@ -159,16 +183,24 @@ namespace Slainte.Business
         public string customerOrderKey;
         public string customerVisitKey;
         public string requestedRecipeId;
+        public GameCurrency paymentCurrency = GameCurrency.Money;
+        public int listedPrice;
         public bool accepted;
         public OrderEvaluationGrade grade;
         public CustomerMood customerMood;
         public int baseRevenue;
         public int tipAmount;
         public int moneyDelta;
+        public int strangeCoinDelta;
+        public int totalPayment;
         public int reputationDelta;
         public bool technicalFailure;
         public string failureReason;
         public CocktailOrderEvaluationResult evaluation;
+
+        public int PaymentAmount => totalPayment != 0
+            ? totalPayment
+            : moneyDelta + strangeCoinDelta;
 
         public BusinessSaleRecord ToSaleRecord()
         {
@@ -177,11 +209,13 @@ namespace Slainte.Business
                 customerOrderKey = customerOrderKey,
                 customerVisitKey = customerVisitKey,
                 requestedRecipeId = requestedRecipeId,
+                paymentCurrency = paymentCurrency,
+                listedPrice = listedPrice,
                 grade = grade,
                 customerMood = customerMood,
                 baseRevenue = baseRevenue,
                 tipAmount = tipAmount,
-                totalRevenue = moneyDelta,
+                totalRevenue = PaymentAmount,
                 reputationDelta = reputationDelta
             };
         }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Slainte.Economy;
 using UnityEngine;
 
 namespace Slainte.Bartending
@@ -19,6 +20,8 @@ namespace Slainte.Bartending
         public string id;
         public string displayName;
         public string englishName;
+        [Min(0)] public int price;
+        [Min(0)] public int strangeCoinPrice;
 
         [Header("Availability")]
         public bool isOrderable = true;
@@ -33,6 +36,8 @@ namespace Slainte.Bartending
         public bool allowExtraIngredients;
         public string glassId;
         public IceRequirement iceRequirement = IceRequirement.Any;
+        [Tooltip("Exact serving-glass ice count. -1 keeps the legacy presence-only rule.")]
+        [Min(-1)] public int requiredIceCount = -1;
         public IceRequirement shakeIceRequirement = IceRequirement.Any;
         public CocktailTechnique requiredTechnique = CocktailTechnique.None;
         [Tooltip("0 이상이면 이 값을 사용하고, 음수이면 재료의 도수와 용량으로 계산합니다.")]
@@ -53,6 +58,8 @@ namespace Slainte.Bartending
                 id = id != null ? id.Trim() : string.Empty,
                 displayName = displayName,
                 englishName = englishName,
+                price = price,
+                strangeCoinPrice = strangeCoinPrice,
                 isOrderable = isOrderable && ingredients != null && ingredients.Count > 0,
                 appearsInRecipeBook = appearsInRecipeBook,
                 baseRecipeId = baseRecipeId != null ? baseRecipeId.Trim() : string.Empty,
@@ -63,6 +70,7 @@ namespace Slainte.Bartending
                 allowExtraIngredients = allowExtraIngredients,
                 glassId = glassId != null ? glassId.Trim() : string.Empty,
                 iceRequirement = iceRequirement,
+                requiredIceCount = requiredIceCount,
                 shakeIceRequirement = shakeIceRequirement,
                 requiredTechnique = requiredTechnique
             };

@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using Slainte.Economy;
 
 [Serializable]
 public struct DrinkSaleEntry
 {
     public string drinkName;
+    public GameCurrency currency;
     public int    count;
     public int    baseRevenue;
     public int    tipAmount;
@@ -22,6 +24,9 @@ public struct SettlementData
     public int    drinkRevenue;
     public int    reputationDelta;
     public int    totalIncome;
+    public int    strangeCoinBaseRevenue;
+    public int    strangeCoinTipRevenue;
+    public int    strangeCoinRevenue;
     public int    currentMoney;
     public List<DrinkSaleEntry> drinkSales;
 }

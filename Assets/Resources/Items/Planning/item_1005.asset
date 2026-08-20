@@ -13,16 +13,17 @@ MonoBehaviour:
   m_Name: item_1005
   m_EditorClassIdentifier: Assembly-CSharp::ItemDef
   id: item_1005
-  displayName: "\uC2AC\uB86D"
+  displayName: "\uB098\uB0AD\uB098"
+  englishName: Nanangna
   type: 0
-  icon: {fileID: 21300000, guid: ba470000000000000000000000000023, type: 3}
-  price: 2000
-  tasteTag: 5
-  abvPercent: 0
-  bottleCategory: 2
+  icon: {fileID: 21300000, guid: ba47000000000000000000000000001d, type: 3}
+  price: 2100
+  tasteTag: 4
+  abvPercent: 20
+  bottleCategory: 1
   liquidType: 7
   capacityMl: 700
-  liquidColor: {r: 1, g: 1, b: 1, a: 1}
+  liquidColor: {r: 1, g: 0.6431373, b: 0, a: 0.8}
   density: 1
   servingTemperatureC: 20
   overrideBottleGeometry: 0

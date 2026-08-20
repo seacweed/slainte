@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Slainte.Business;
+using Slainte.Economy;
 using UnityEngine;
 
 // 정산 화면(셔터+모니터) 진행을 담당. GameManager.ChangeState(GameState.Settlement)에서 호출됨.
@@ -38,6 +39,9 @@ public class SettlementManager : MonoSingleton<SettlementManager>
             drinkRevenue    = gp.DayDrinkRevenue,
             reputationDelta = gp.DayReputationDelta,
             totalIncome     = gp.DayTotalIncome,
+            strangeCoinBaseRevenue = gp.DayStrangeCoinBaseRevenue,
+            strangeCoinTipRevenue = gp.DayStrangeCoinTipRevenue,
+            strangeCoinRevenue = gp.DayStrangeCoinRevenue,
             drinkSales      = BuildDrinkSales(gp)
         };
 
@@ -55,8 +59,12 @@ public class SettlementManager : MonoSingleton<SettlementManager>
         if (progress == null)
             return 0;
 
-        int income = progress.DayTotalIncome;
+        int income = Mathf.Max(0, progress.DayTotalIncome - progress.DayPaidMoneyIncome);
         progress.AddMoney(income);
+        int strangeCoinIncome = Mathf.Max(
+            0,
+            progress.DayStrangeCoinRevenue - progress.DayPaidStrangeCoinIncome);
+        GameCurrencyWallet.Add(progress, GameCurrency.StrangeCoin, strangeCoinIncome);
         return income;
     }
 
@@ -77,7 +85,8 @@ public class SettlementManager : MonoSingleton<SettlementManager>
                     ? record.customerOrderKey
                     : "음료 판매";
 
-            if (indexByDrink.TryGetValue(drinkName, out int entryIndex))
+            string groupingKey = record.paymentCurrency + ":" + drinkName;
+            if (indexByDrink.TryGetValue(groupingKey, out int entryIndex))
             {
                 DrinkSaleEntry entry = entries[entryIndex];
                 entry.count += 1;
@@ -88,10 +97,11 @@ public class SettlementManager : MonoSingleton<SettlementManager>
                 continue;
             }
 
-            indexByDrink.Add(drinkName, entries.Count);
+            indexByDrink.Add(groupingKey, entries.Count);
             entries.Add(new DrinkSaleEntry
             {
                 drinkName = drinkName,
+                currency = record.paymentCurrency,
                 count = 1,
                 baseRevenue = record.baseRevenue,
                 tipAmount = record.tipAmount,
@@ -104,6 +114,7 @@ public class SettlementManager : MonoSingleton<SettlementManager>
             entries.Add(new DrinkSaleEntry
             {
                 drinkName = "음료 판매",
+                currency = Slainte.Economy.GameCurrency.Money,
                 count = gp.DayDrinkSalesCount,
                 baseRevenue = gp.DayDrinkBaseRevenue != 0
                     ? gp.DayDrinkBaseRevenue

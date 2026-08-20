@@ -13,16 +13,17 @@ MonoBehaviour:
   m_Name: item_1014
   m_EditorClassIdentifier: Assembly-CSharp::ItemDef
   id: item_1014
-  displayName: "\uBC14\uD558"
+  displayName: "\uB728\uAC70\uC6B4 \uBB3C"
+  englishName: Hot Water
   type: 0
-  icon: {fileID: 21300000, guid: ba470000000000000000000000000001, type: 3}
-  price: 2000
-  tasteTag: 1
-  abvPercent: 40
-  bottleCategory: 0
-  liquidType: 1
-  capacityMl: 700
-  liquidColor: {r: 1, g: 1, b: 1, a: 1}
+  icon: {fileID: 21300000, guid: ba470000000000000000000000000016, type: 3}
+  price: 1000
+  tasteTag: 5
+  abvPercent: 0
+  bottleCategory: 4
+  liquidType: 7
+  capacityMl: 500
+  liquidColor: {r: 1, g: 1, b: 1, a: 0.2}
   density: 1
   servingTemperatureC: 20
   overrideBottleGeometry: 0

@@ -13,16 +13,17 @@ MonoBehaviour:
   m_Name: item_1013
   m_EditorClassIdentifier: Assembly-CSharp::ItemDef
   id: item_1013
-  displayName: "\uBC88\uD584 \uBC84\uBC88"
+  displayName: "\uD0C4\uC0B0 \uBBF8\uB2DB"
+  englishName: Minute Fizz
   type: 0
-  icon: {fileID: 21300000, guid: ba47000000000000000000000000000a, type: 3}
-  price: 2000
-  tasteTag: 1
-  abvPercent: 45
-  bottleCategory: 0
-  liquidType: 1
-  capacityMl: 700
-  liquidColor: {r: 1, g: 1, b: 1, a: 1}
+  icon: {fileID: 21300000, guid: ba47000000000000000000000000001a, type: 3}
+  price: 150
+  tasteTag: 5
+  abvPercent: 0
+  bottleCategory: 4
+  liquidType: 7
+  capacityMl: 300
+  liquidColor: {r: 0.8235294, g: 1, b: 0.93333334, a: 0.4}
   density: 1
   servingTemperatureC: 20
   overrideBottleGeometry: 0

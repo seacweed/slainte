@@ -20,17 +20,21 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d78ee9a45bc7a464bb944ffb8d2a6d9d, type: 2}
   - {fileID: 11400000, guid: 39f8dd8cc50d0824680d06e6f65743dd, type: 2}
   bottles:
-  - {fileID: 11400000, guid: f38ad3a9f336b614ba99c4927ed61ca0, type: 2}
-  - {fileID: 11400000, guid: b37c84938864c5042bacaf1f19786244, type: 2}
-  - {fileID: 11400000, guid: e4e198c1efa17974daf840edcf74d0cc, type: 2}
-  - {fileID: 11400000, guid: 608fe087606233949a3ebc8a624f2314, type: 2}
-  - {fileID: 11400000, guid: ec8983917a3241442bc9f07ecb8d8079, type: 2}
-  - {fileID: 11400000, guid: 82fc3c53a29aafe44987d970b8406453, type: 2}
-  - {fileID: 11400000, guid: 6b614383d93ca5c4fa9d8d5ef85ea2d1, type: 2}
-  - {fileID: 11400000, guid: 6833bda5e9603cf4d92498aa3cdf309d, type: 2}
-  - {fileID: 11400000, guid: 54f950e070e1ccc418ede6ce9a863a51, type: 2}
-  - {fileID: 11400000, guid: dc865b6362d9c1e48b557b8cb412e5f1, type: 2}
-  - {fileID: 11400000, guid: b47e561cbd18a6d49b319b3cdf10aeda, type: 2}
+  - {fileID: 11400000, guid: 7c67ad7a0b2a7a347b0c3cf1940e0619, type: 2}
+  - {fileID: 11400000, guid: a940fcc38958bb543bfaf331c12bf9b8, type: 2}
+  - {fileID: 11400000, guid: 4a16400827cdf154d8d33dc8a42bad18, type: 2}
+  - {fileID: 11400000, guid: 4d022083db4a0a64bba0dd288b2f0c2e, type: 2}
+  - {fileID: 11400000, guid: f927fb67cda5efe48be0019f141ca85a, type: 2}
+  - {fileID: 11400000, guid: 8fd28373e9465c84398b9c455b5ddc78, type: 2}
+  - {fileID: 11400000, guid: 3dd67bb5e238f1c498b86178adc63718, type: 2}
+  - {fileID: 11400000, guid: c798b33f22dca21469f04e7ac053f758, type: 2}
+  - {fileID: 11400000, guid: d7c974bb6e8e95b4ca2470450613ab2f, type: 2}
+  - {fileID: 11400000, guid: c224f5bb1ba414f42b92c2db35f44d53, type: 2}
+  - {fileID: 11400000, guid: af0d59ff1f5cce047a1de33e17990bcd, type: 2}
+  - {fileID: 11400000, guid: 1711e3f151167f3408743e64116ab6c1, type: 2}
+  - {fileID: 11400000, guid: fe5fc9d6c089e8f4dbc569a8b1b124cc, type: 2}
+  - {fileID: 11400000, guid: ad39a76e2bd652f489bd1785ff669441, type: 2}
+  - {fileID: 11400000, guid: bd45194e8a218374eab37f2afe8ae8f3, type: 2}
   categoryButtonPrefab: {fileID: 3891292751173392382, guid: 00e953edd48a96f4984e0a9f793062b9, type: 3}
   itemSlotPrefab: {fileID: 4017360452662112547, guid: 18ec5d34d8a718e4385fbfa4fe85ac37, type: 3}
   deliveryPanelPrefab: {fileID: 7086043699049062762, guid: 971ce6f0900076845a1f8840053f916a, type: 3}

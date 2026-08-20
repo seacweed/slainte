@@ -40,9 +40,11 @@ namespace Slainte.Business
                 requestedRecipeId = node.craftingRecipeId,
                 ticketKey = node.craftingTicketKey,
                 orderType = CocktailOrderType.EpisodeOrder,
+                paymentCurrency = node.craftingPaymentCurrency,
                 presentOrder = false,
                 presentFeedback = false,
                 applyProgressRewards = false,
+                applyPayment = node.craftingPaymentEnabled,
                 clearCustomerOnComplete = false
             };
 

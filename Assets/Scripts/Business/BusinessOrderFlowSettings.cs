@@ -93,6 +93,12 @@ namespace Slainte.Business
         public int goodMoneyReward = 100;
         public int midMoneyReward = 50;
         public int badMoneyReward;
+        [Tooltip("CSV 레시피 가격에 곱하는 Good 지급 비율입니다.")]
+        [Min(0f)] public float goodRecipePriceMultiplier = 1f;
+        [Tooltip("CSV 레시피 가격에 곱하는 Mid 지급 비율입니다.")]
+        [Min(0f)] public float midRecipePriceMultiplier = 0.5f;
+        [Tooltip("CSV 레시피 가격에 곱하는 Bad 지급 비율입니다.")]
+        [Min(0f)] public float badRecipePriceMultiplier;
         public int goodReputationReward = 2;
         public int midReputationReward;
         public int badReputationReward = -1;
@@ -115,6 +121,16 @@ namespace Slainte.Business
                 OrderEvaluationGrade.Good => goodMoneyReward,
                 OrderEvaluationGrade.Mid => midMoneyReward,
                 _ => badMoneyReward
+            };
+        }
+
+        public float GetRecipePriceMultiplier(OrderEvaluationGrade grade)
+        {
+            return grade switch
+            {
+                OrderEvaluationGrade.Good => goodRecipePriceMultiplier,
+                OrderEvaluationGrade.Mid => midRecipePriceMultiplier,
+                _ => badRecipePriceMultiplier
             };
         }
 

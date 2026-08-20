@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Slainte.Bartending;
+using Slainte.Economy;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Slainte/손님 주문 데이터", fileName = "CustomerOrderData_")]
@@ -13,6 +14,8 @@ public class CustomerOrderData : ScriptableObject
     public string requestedRecipeId;
     [InspectorName("주문 유형")]
     public CocktailOrderType orderType = CocktailOrderType.RecipeOrder;
+    [InspectorName("결제 통화")]
+    public GameCurrency paymentCurrency = GameCurrency.Money;
     [InspectorName("주문 태그")]
     public List<string> tags = new();
 

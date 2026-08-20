@@ -51,7 +51,7 @@ public class LiquorBottleSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerE
         amountFillImage.enabled = unlocked;
         if (!unlocked) return;
 
-        float amount = GameProgress.Instance.GetBottleAmount(def.id, def.MaxAmount);
+        float amount = GameProgress.Instance.EnsureBottleAmount(def.InventoryId, def.DefaultAmount);
         amountFillImage.fillAmount = def.MaxAmount > 0f ? Mathf.Clamp01(amount / def.MaxAmount) : 0f;
     }
 
@@ -66,7 +66,7 @@ public class LiquorBottleSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (!IsUnlocked() || LiquorBottleInfoCard.Instance == null) return;
 
-        float amount = GameProgress.Instance.GetBottleAmount(def.id, def.MaxAmount);
+        float amount = GameProgress.Instance.EnsureBottleAmount(def.InventoryId, def.DefaultAmount);
         LiquorBottleInfoCard.Instance.Show(def, amount, rectTransform);
     }
 
@@ -102,7 +102,7 @@ public class LiquorBottleSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerE
         Refresh();
         if (LiquorBottleInfoCard.Instance != null)
         {
-            float amount = GameProgress.Instance.GetBottleAmount(def.id, def.MaxAmount);
+            float amount = GameProgress.Instance.EnsureBottleAmount(def.InventoryId, def.DefaultAmount);
             LiquorBottleInfoCard.Instance.Show(def, amount, rectTransform);
         }
     }

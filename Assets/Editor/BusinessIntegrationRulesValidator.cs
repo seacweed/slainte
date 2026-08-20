@@ -1,5 +1,6 @@
 using System;
 using Slainte.Business;
+using Slainte.Economy;
 using UnityEditor;
 using UnityEngine;
 
@@ -29,9 +30,12 @@ namespace Slainte.EditorTools
             ValidateSaveSuppressionNesting();
             ValidateRewardCalculation();
             ValidateDeferredSettlement();
+            ValidateImmediateCurrencyPayout();
+            ValidatePlanningInventoryMigration();
             Debug.Log(
                 "[BusinessIntegrationRulesValidator] PASS: timer, encounter type, explicit pause, save isolation, "
-                + "mood/tip calculation, detailed sale save, deferred settlement payout and reset");
+                + "recipe-price rewards, Money/StrangeCoin immediate payout, detailed sale save, "
+                + "deferred settlement payout and reset");
         }
 
         private static void ValidateClockRules()
@@ -192,10 +196,210 @@ namespace Slainte.EditorTools
                 Require(bad.Mood == CustomerMood.Dissatisfied
                     && bad.TipAmount == 0 && bad.ReputationDelta == -1,
                     "불만족 보상 계산이 잘못됐습니다.");
+
+                BusinessOrderReward pricedGood = BusinessOrderRewardCalculator.Calculate(
+                    OrderEvaluationGrade.Good,
+                    125,
+                    settings);
+                Require(pricedGood.BaseRevenue == 125
+                    && pricedGood.TipAmount == 25
+                    && pricedGood.TotalRevenue == 150,
+                    "Good 결과가 CSV 레시피 가격 100%와 팁에 연결되지 않았습니다.");
+
+                BusinessOrderReward pricedMid = BusinessOrderRewardCalculator.Calculate(
+                    OrderEvaluationGrade.Mid,
+                    125,
+                    settings);
+                Require(pricedMid.BaseRevenue == 62
+                    && pricedMid.TipAmount == 3
+                    && pricedMid.TotalRevenue == 65,
+                    "Mid 결과가 CSV 레시피 가격 50%와 팁에 연결되지 않았습니다.");
+
+                BusinessOrderReward free = BusinessOrderRewardCalculator.Calculate(
+                    OrderEvaluationGrade.Good,
+                    0,
+                    settings);
+                Require(free.BaseRevenue == 0 && free.TotalRevenue == 0,
+                    "0원 레시피 보상이 0으로 유지되지 않았습니다.");
             }
             finally
             {
                 UnityEngine.Object.DestroyImmediate(settings);
+            }
+        }
+
+        private static void ValidateImmediateCurrencyPayout()
+        {
+            GameProgress existing = GameProgress.Instance;
+            GameObject host = null;
+            GameProgress progress = existing;
+            SaveData restore = existing != null ? Capture(existing) : null;
+
+            try
+            {
+                if (progress == null)
+                {
+                    host = new GameObject("BusinessCurrencyValidator_GameProgress");
+                    progress = host.AddComponent<GameProgress>();
+                }
+
+                progress.LoadFrom(new SaveData
+                {
+                    dayCount = 1,
+                    currentMoney = 500,
+                    affinityKeys = new System.Collections.Generic.List<string>
+                    {
+                        GameCurrencyWallet.StrangeCoinVariableName
+                    },
+                    affinityValues = new System.Collections.Generic.List<int> { 10 }
+                });
+
+                ImmediateSalePayoutPolicy policy = new();
+                policy.Apply(new BusinessOrderSessionResult
+                {
+                    outcome = OrderSessionOutcome.Served,
+                    accepted = true,
+                    paymentCurrency = GameCurrency.Money,
+                    listedPrice = 100,
+                    baseRevenue = 100,
+                    tipAmount = 20,
+                    moneyDelta = 120,
+                    totalPayment = 120
+                }, progress);
+
+                Require(progress.CurrentMoney == 620,
+                    "일반 화폐 판매 대금이 주문 완료 즉시 지급되지 않았습니다.");
+                Require(progress.DayPaidMoneyIncome == 120,
+                    "즉시 지급된 일반 화폐가 정산 중복 지급 방지값에 기록되지 않았습니다.");
+                Require(SettlementManager.ApplyRecordedIncome(progress) == 0
+                    && progress.CurrentMoney == 620,
+                    "즉시 지급된 일반 화폐가 정산에서 중복 지급됐습니다.");
+
+                policy.Apply(new BusinessOrderSessionResult
+                {
+                    outcome = OrderSessionOutcome.Served,
+                    accepted = true,
+                    paymentCurrency = GameCurrency.StrangeCoin,
+                    listedPrice = 40,
+                    baseRevenue = 40,
+                    strangeCoinDelta = 40,
+                    totalPayment = 40
+                }, progress);
+
+                Require(GameCurrencyWallet.GetBalance(progress, GameCurrency.StrangeCoin) == 50,
+                    "이상한 동전 판매 대금이 주문 완료 즉시 같은 화폐로 지급되지 않았습니다.");
+                Require(progress.DayPaidStrangeCoinIncome == 40,
+                    "즉시 지급된 이상한 동전이 정산 중복 지급 방지값에 기록되지 않았습니다.");
+                SettlementManager.ApplyRecordedIncome(progress);
+                Require(GameCurrencyWallet.GetBalance(progress, GameCurrency.StrangeCoin) == 50,
+                    "즉시 지급된 이상한 동전이 정산에서 중복 지급됐습니다.");
+                Require(progress.GetDayDrinkSales().Count == 2
+                    && progress.GetDayDrinkSales()[1].paymentCurrency == GameCurrency.StrangeCoin,
+                    "판매 기록에 결제 화폐가 보존되지 않았습니다.");
+            }
+            finally
+            {
+                if (restore != null && progress != null)
+                    progress.LoadFrom(restore);
+                if (host != null)
+                    UnityEngine.Object.DestroyImmediate(host);
+            }
+        }
+
+        private static void ValidatePlanningInventoryMigration()
+        {
+            GameProgress existing = GameProgress.Instance;
+            GameObject host = null;
+            GameProgress progress = existing;
+            SaveData restore = existing != null ? Capture(existing) : null;
+
+            try
+            {
+                if (progress == null)
+                {
+                    host = new GameObject("PlanningInventoryMigrationValidator_GameProgress");
+                    progress = host.AddComponent<GameProgress>();
+                }
+
+                progress.LoadFrom(new SaveData
+                {
+                    dayCount = 1,
+                    bottleAmountKeys = new System.Collections.Generic.List<string>
+                    {
+                        "item_1005", // old Slop
+                        "nanangna",  // semantic old Nanangna
+                        "item_1007", // numeric old Nanangna
+                        "coffee_powder"
+                    },
+                    bottleAmountValues = new System.Collections.Generic.List<float>
+                    {
+                        55f,
+                        70f,
+                        60f,
+                        25f
+                    }
+                });
+
+                Require(Mathf.Approximately(progress.GetBottleAmount("item_1004", -1f), 55f),
+                    "구형 슬롭 재고가 새 item_1004로 이관되지 않았습니다.");
+                Require(Mathf.Approximately(progress.GetBottleAmount("item_1005", -1f), 70f),
+                    "구형 나낭나 별칭 재고가 새 item_1005로 이관되지 않았습니다.");
+                Require(Mathf.Approximately(progress.GetBottleAmount("item_1015", -1f), 25f),
+                    "구형 커피 분말 재고가 새 item_1015로 이관되지 않았습니다.");
+                Require(Mathf.Approximately(progress.GetBottleAmount("nanangna", -1f), -1f),
+                    "이관 후 구형 재고 별칭이 남아 있습니다.");
+                Require(progress.HasFlag("csv_item_ids_v2"),
+                    "재고 ID 이관 완료 플래그가 저장되지 않았습니다.");
+
+                SaveData migrated = Capture(progress);
+                progress.LoadFrom(migrated);
+                Require(Mathf.Approximately(progress.GetBottleAmount("item_1004", -1f), 55f)
+                    && Mathf.Approximately(progress.GetBottleAmount("item_1005", -1f), 70f),
+                    "재고 ID 이관이 저장 재로드 때 중복 적용됐습니다.");
+
+                progress.LoadFrom(new SaveData
+                {
+                    dayCount = 1,
+                    flags = new System.Collections.Generic.List<string> { "csv_item_ids_v2" }
+                });
+                Require(Mathf.Approximately(
+                        progress.EnsureBottleAmount("item_1001", 3000f),
+                        3000f),
+                    "CSV 기본 재고가 최초 접근 때 생성되지 않았습니다.");
+                Require(progress.GetBottleAmountKeys().Contains("item_1001"),
+                    "생성된 CSV 기본 재고가 저장 목록에 연결되지 않았습니다.");
+                Require(Mathf.Approximately(
+                        progress.AddBottleAmount("item_1001", 1000f, 6000f),
+                        4000f),
+                    "구매 재고가 CSV 기본 재고에 누적되지 않았습니다.");
+
+                LiquorBottleDef legacyJohnny = ScriptableObject.CreateInstance<LiquorBottleDef>();
+                try
+                {
+                    legacyJohnny.id = "johnny_dogs";
+                    legacyJohnny.bottleCount = 6;
+                    legacyJohnny.defaultBottleCount = 4;
+                    legacyJohnny.unitVolume = 700f;
+                    Require(legacyJohnny.InventoryId == "item_1010",
+                        "구형 조니 독스 ID가 새 item_1010 재고 ID로 변환되지 않았습니다.");
+                    Require(Mathf.Approximately(
+                            progress.EnsureBottleAmount(
+                                legacyJohnny.InventoryId,
+                                legacyJohnny.DefaultAmount),
+                            2800f),
+                        "구형 조니 독스 에셋이 새 기본 재고를 생성하지 못했습니다.");
+                }
+                finally
+                {
+                    UnityEngine.Object.DestroyImmediate(legacyJohnny);
+                }
+            }
+            finally
+            {
+                if (restore != null && progress != null)
+                    progress.LoadFrom(restore);
+                if (host != null)
+                    UnityEngine.Object.DestroyImmediate(host);
             }
         }
 
@@ -224,6 +428,11 @@ namespace Slainte.EditorTools
                 dayDrinkTipRevenue = progress.DayDrinkTipRevenue,
                 dayDrinkRevenue = progress.DayDrinkRevenue,
                 dayTotalIncome = progress.DayTotalIncome,
+                dayPaidMoneyIncome = progress.DayPaidMoneyIncome,
+                dayStrangeCoinBaseRevenue = progress.DayStrangeCoinBaseRevenue,
+                dayStrangeCoinTipRevenue = progress.DayStrangeCoinTipRevenue,
+                dayStrangeCoinRevenue = progress.DayStrangeCoinRevenue,
+                dayPaidStrangeCoinIncome = progress.DayPaidStrangeCoinIncome,
                 dayReputationDelta = progress.DayReputationDelta,
                 dayDrinkSales = progress.GetDayDrinkSales(),
                 tvForecastBroadcastId = progress.TVForecastBroadcastId,

@@ -13,16 +13,17 @@ MonoBehaviour:
   m_Name: item_1010
   m_EditorClassIdentifier: Assembly-CSharp::ItemDef
   id: item_1010
-  displayName: "\uBE14\uB808\uC2A4"
+  displayName: "\uC870\uB2C8 \uB3C5\uC2A4"
+  englishName: Johnny Dogs
   type: 0
-  icon: {fileID: 21300000, guid: ba470000000000000000000000000004, type: 3}
-  price: 2000
-  tasteTag: 4
-  abvPercent: 25
-  bottleCategory: 1
-  liquidType: 7
+  icon: {fileID: 21300000, guid: ba470000000000000000000000000017, type: 3}
+  price: 3500
+  tasteTag: 1
+  abvPercent: 40
+  bottleCategory: 0
+  liquidType: 1
   capacityMl: 700
-  liquidColor: {r: 1, g: 1, b: 1, a: 1}
+  liquidColor: {r: 0.6627451, g: 0.31764707, b: 0.02745098, a: 0.8}
   density: 1
   servingTemperatureC: 20
   overrideBottleGeometry: 0

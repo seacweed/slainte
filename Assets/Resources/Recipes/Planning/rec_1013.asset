@@ -13,27 +13,35 @@ MonoBehaviour:
   m_Name: rec_1013
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.CocktailRecipeDef
   id: rec_1013
-  displayName: "\uBC88\uD584 \uBC84\uBC88 \uB2C8\uD2B8"
-  englishName: Burnham Bourbon Neat
+  displayName: "\uBCF4\uC77C\uB9C1 \uD3EC\uC778\uD2B8"
+  englishName: Boiling Point
+  price: 385
+  strangeCoinPrice: 4
   isOrderable: 1
   appearsInRecipeBook: 1
   baseRecipeId: 
   evaluationGrade: 0
-  minTotalMl: 25
-  maxTotalMl: 35
+  minTotalMl: 185
+  maxTotalMl: 195
   toleranceMl: 5
   allowExtraIngredients: 0
-  glassId: rock
-  iceRequirement: 1
-  requiredTechnique: 1
-  abvOverridePercent: -1
+  glassId: highball
+  iceRequirement: 2
+  requiredIceCount: 4
+  shakeIceRequirement: 0
+  requiredTechnique: 2
+  abvOverridePercent: 8.4
   ingredientPropertyTags:
   - "\uC704\uC2A4\uD0A4"
   tasteTags:
   - "\uC501\uC4F8\uD568"
   moodTags:
-  - "\uD3EC\uADFC\uD55C"
+  - "\uAE54\uB054\uD55C"
+  - "\uCCAD\uB7C9\uD55C"
   ingredients:
+  - itemId: item_1010
+    targetMl: 40
+    toleranceMl: 5
   - itemId: item_1013
-    targetMl: 30
+    targetMl: 150
     toleranceMl: 5

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LiquorBottleDef
   id: coffee_powder
   displayName: "\uCEE4\uD53C \uBD84\uB9D0"
+  item: {fileID: 11400000, guid: 11f995151024c3f4fad33ff1a95a87ca, type: 2}
   sprite: {fileID: 0}
   useContextImages: 1
   shopBlankSprite: {fileID: 21300000, guid: ba47000000000000000000000000000e, type: 3}
@@ -21,11 +22,12 @@ MonoBehaviour:
   barSprite: {fileID: 21300000, guid: ba47000000000000000000000000000d, type: 3}
   unlockFlagKey: 
   subCategory: "\uAE30\uD0C0"
-  bottleCount: 2
+  bottleCount: 6
+  defaultBottleCount: 2
   unitVolume: 200
   category: {fileID: 11400000, guid: d78ee9a45bc7a464bb944ffb8d2a6d9d, type: 2}
-  price: 2000
-  strangeCoinPrice: 0
+  price: 5000
+  strangeCoinPrice: 50
   unlockHintType: 0
   recipeBookIcon: {fileID: 0}
   recipeBookName: 

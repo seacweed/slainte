@@ -15,18 +15,22 @@ MonoBehaviour:
   id: rec_1008
   displayName: "\uC544\uC774\uB9AC\uC2DC \uCEE4\uD53C"
   englishName: Irish Coffee
-  isOrderable: 0
+  price: 1050
+  strangeCoinPrice: 10
+  isOrderable: 1
   appearsInRecipeBook: 1
   baseRecipeId: 
   evaluationGrade: 0
-  minTotalMl: 0
-  maxTotalMl: 0
+  minTotalMl: 205
+  maxTotalMl: 215
   toleranceMl: 5
   allowExtraIngredients: 0
   glassId: hurricane
   iceRequirement: 1
+  requiredIceCount: 0
+  shakeIceRequirement: 0
   requiredTechnique: 2
-  abvOverridePercent: -1
+  abvOverridePercent: 7.6
   ingredientPropertyTags:
   - "\uB2F9\uB958 \uC2DC\uB7FD"
   - "\uACFC\uC77C \uC2DC\uB7FD"
@@ -35,5 +39,17 @@ MonoBehaviour:
   - "\uC501\uC4F8\uD568"
   - "\uB2EC\uCF64\uD568"
   moodTags:
-  - "\uCCAD\uB7C9\uD55C"
-  ingredients: []
+  - "\uD3EC\uADFC\uD55C"
+  ingredients:
+  - itemId: item_1012
+    targetMl: 40
+    toleranceMl: 5
+  - itemId: item_1002
+    targetMl: 10
+    toleranceMl: 5
+  - itemId: item_1015
+    targetMl: 10
+    toleranceMl: 5
+  - itemId: item_1014
+    targetMl: 150
+    toleranceMl: 5

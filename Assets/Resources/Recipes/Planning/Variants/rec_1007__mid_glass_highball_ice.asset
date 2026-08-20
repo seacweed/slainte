@@ -16,6 +16,8 @@ MonoBehaviour:
   displayName: "\uD55C\uC5EC\uB984\uC758 \uC8FC\uC2A4 (Mid: \uC794 highball, \uC5BC\uC74C
     \uC788\uC74C)"
   englishName: Midsummer Juice
+  price: 97
+  strangeCoinPrice: 3
   isOrderable: 0
   appearsInRecipeBook: 0
   baseRecipeId: rec_1007
@@ -26,7 +28,9 @@ MonoBehaviour:
   allowExtraIngredients: 0
   glassId: highball
   iceRequirement: 2
-  requiredTechnique: 2
+  requiredIceCount: -1
+  shakeIceRequirement: 2
+  requiredTechnique: 4
   abvOverridePercent: 0
   ingredientPropertyTags:
   - "\uB2F9\uB958 \uC2DC\uB7FD"

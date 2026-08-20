@@ -690,23 +690,25 @@ namespace Slainte.Bartending
                 return false;
             }
 
-            if (FindSelectedDefinition(shelfDefinition.id) != null)
+            string inventoryId = shelfDefinition.InventoryId;
+            if (FindSelectedDefinition(inventoryId) != null)
             {
                 failure = $"{shelfDefinition.displayName} 병은 이미 테이블에 있습니다.";
                 return false;
             }
 
-            if (itemCatalog == null || !itemCatalog.TryGet(shelfDefinition.id, out ItemDef item)
-                || item == null || item.type != ItemType.Bottle)
+            ItemDef item = ResolveShelfItem(shelfDefinition);
+            if (item == null || item.type != ItemType.Bottle)
             {
-                failure = $"{shelfDefinition.displayName}에 연결된 제작용 재료가 없습니다.";
+                failure = $"{shelfDefinition.displayName}에 연결된 제작용 재료가 없습니다. "
+                    + $"(병 ID: {shelfDefinition.id}, 재고 ID: {inventoryId})";
                 return false;
             }
 
             GameProgress progress = GameProgress.Instance;
             float inventoryAmount = progress != null
-                ? progress.GetBottleAmount(shelfDefinition.id, shelfDefinition.MaxAmount)
-                : shelfDefinition.MaxAmount;
+                ? progress.EnsureBottleAmount(inventoryId, shelfDefinition.DefaultAmount)
+                : shelfDefinition.DefaultAmount;
             if (inventoryAmount <= 0f)
             {
                 failure = $"{shelfDefinition.displayName} 재고가 없습니다.";
@@ -720,7 +722,7 @@ namespace Slainte.Bartending
                 return false;
             }
 
-            BottleController bottle = CreateBottle(item, shelfDefinition, shelfDefinition.MaxAmount);
+            BottleController bottle = CreateBottle(item, shelfDefinition, shelfDefinition.DefaultAmount);
             if (bottle == null)
             {
                 failure = "술병 오브젝트를 만들지 못했습니다.";
@@ -739,16 +741,13 @@ namespace Slainte.Bartending
             for (int i = 0; i < selectedBottleDefinitions.Count; i++)
             {
                 LiquorBottleDef shelfDefinition = selectedBottleDefinitions[i];
-                if (shelfDefinition == null
-                    || itemCatalog == null
-                    || !itemCatalog.TryGet(shelfDefinition.id, out ItemDef item)
-                    || item == null
-                    || item.type != ItemType.Bottle)
+                ItemDef item = ResolveShelfItem(shelfDefinition);
+                if (shelfDefinition == null || item == null || item.type != ItemType.Bottle)
                 {
                     continue;
                 }
 
-                BottleController bottle = CreateBottle(item, shelfDefinition, shelfDefinition.MaxAmount);
+                BottleController bottle = CreateBottle(item, shelfDefinition, shelfDefinition.DefaultAmount);
                 if (bottle != null)
                     bottles.Add(bottle);
             }
@@ -793,13 +792,26 @@ namespace Slainte.Bartending
             {
                 LiquorBottleDef definition = selectedBottleDefinitions[i];
                 if (definition != null
-                    && string.Equals(definition.id, itemId, StringComparison.OrdinalIgnoreCase))
+                    && string.Equals(definition.InventoryId, itemId, StringComparison.OrdinalIgnoreCase))
                 {
                     return definition;
                 }
             }
 
             return null;
+        }
+
+        private ItemDef ResolveShelfItem(LiquorBottleDef shelfDefinition)
+        {
+            if (shelfDefinition == null)
+                return null;
+            if (shelfDefinition.item != null)
+                return shelfDefinition.item;
+
+            return itemCatalog != null
+                && itemCatalog.TryGet(shelfDefinition.InventoryId, out ItemDef item)
+                    ? item
+                    : null;
         }
 
         private SlotController FindRightmostFreeSlot()

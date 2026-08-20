@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: rec_1017__mid_glass_hurricane
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.CocktailRecipeDef
   id: rec_1017__mid_glass_hurricane
-  displayName: "\uBE0C\uB9AC\uC988 \uB2C8\uD2B8 (Mid: \uC794 hurricane)"
-  englishName: Breeze Neat
+  displayName: "\uBC88\uD584 \uBC84\uBC88 \uC628\uB354\uB77D (Mid: \uC794 hurricane)"
+  englishName: Burnham Bourbon On the Rocks
+  price: 210
+  strangeCoinPrice: 2
   isOrderable: 0
   appearsInRecipeBook: 0
   baseRecipeId: rec_1017
@@ -24,16 +26,17 @@ MonoBehaviour:
   toleranceMl: 5
   allowExtraIngredients: 0
   glassId: hurricane
-  iceRequirement: 1
+  iceRequirement: 2
+  requiredIceCount: 3
+  shakeIceRequirement: 0
   requiredTechnique: 1
-  abvOverridePercent: -1
+  abvOverridePercent: 45
   ingredientPropertyTags:
-  - "\uBCF4\uB4DC\uCE74"
+  - "\uC704\uC2A4\uD0A4"
   tasteTags:
-  - "\uBB34\uB9DB"
+  - "\uC501\uC4F8\uD568"
   moodTags:
-  - "\uAE54\uB054\uD55C"
-  - "\uD3EC\uADFC\uD55C"
+  - "\uC815\uC5F4\uC801\uC778"
   ingredients:
   - itemId: item_1011
     targetMl: 30

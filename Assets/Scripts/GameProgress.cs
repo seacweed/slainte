@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using Slainte.Business;
+using Slainte.Economy;
 using UnityEngine;
 
 public class GameProgress : MonoSingleton<GameProgress>
 {
+    private const string PlanningItemIdMigrationFlag = "csv_item_ids_v2";
+
     public static event Action<string, int> OnAffinityChanged;
 
     [SerializeField] private int currentDay = 1;
@@ -46,6 +49,11 @@ public class GameProgress : MonoSingleton<GameProgress>
     [SerializeField] private int dayDrinkTipRevenue  = 0;
     [SerializeField] private int dayDrinkRevenue     = 0;
     [SerializeField] private int dayTotalIncome      = 0;
+    [SerializeField] private int dayPaidMoneyIncome  = 0;
+    [SerializeField] private int dayStrangeCoinBaseRevenue = 0;
+    [SerializeField] private int dayStrangeCoinTipRevenue  = 0;
+    [SerializeField] private int dayStrangeCoinRevenue     = 0;
+    [SerializeField] private int dayPaidStrangeCoinIncome  = 0;
     [SerializeField] private int dayReputationDelta  = 0;
     [SerializeField] private List<BusinessSaleRecord> dayDrinkSales = new();
 
@@ -72,6 +80,11 @@ public class GameProgress : MonoSingleton<GameProgress>
     public int    DayDrinkTipRevenue  => dayDrinkTipRevenue;
     public int    DayDrinkRevenue    => dayDrinkRevenue;
     public int    DayTotalIncome     => dayTotalIncome;
+    public int    DayPaidMoneyIncome => dayPaidMoneyIncome;
+    public int    DayStrangeCoinBaseRevenue => dayStrangeCoinBaseRevenue;
+    public int    DayStrangeCoinTipRevenue => dayStrangeCoinTipRevenue;
+    public int    DayStrangeCoinRevenue => dayStrangeCoinRevenue;
+    public int    DayPaidStrangeCoinIncome => dayPaidStrangeCoinIncome;
     public int    DayReputationDelta => dayReputationDelta;
     public string TVForecastBroadcastId => tvForecastBroadcastId;
     public bool   TVForecastRevealed => tvForecastRevealed;
@@ -82,6 +95,7 @@ public class GameProgress : MonoSingleton<GameProgress>
     {
         base.Awake();
         RebuildRuntimeSets();
+        MigratePlanningItemIdsIfNeeded();
     }
 
     [ContextMenu("Rebuild Runtime Sets (Debug)")]
@@ -141,6 +155,11 @@ public class GameProgress : MonoSingleton<GameProgress>
         dayDrinkTipRevenue  = data.dayDrinkTipRevenue;
         dayDrinkRevenue     = data.dayDrinkRevenue;
         dayTotalIncome      = data.dayTotalIncome;
+        dayPaidMoneyIncome  = data.dayPaidMoneyIncome;
+        dayStrangeCoinBaseRevenue = data.dayStrangeCoinBaseRevenue;
+        dayStrangeCoinTipRevenue = data.dayStrangeCoinTipRevenue;
+        dayStrangeCoinRevenue = data.dayStrangeCoinRevenue;
+        dayPaidStrangeCoinIncome = data.dayPaidStrangeCoinIncome;
         dayReputationDelta  = data.dayReputationDelta;
         dayDrinkSales       = CloneSaleRecords(data.dayDrinkSales);
         tvForecastBroadcastId = data.tvForecastBroadcastId ?? "";
@@ -158,6 +177,88 @@ public class GameProgress : MonoSingleton<GameProgress>
         }
 
         RebuildRuntimeSets();
+        MigratePlanningItemIdsIfNeeded();
+    }
+
+    /// <summary>
+    /// Moves bottle stock from the pre-CSV semantic/shifted IDs to the new
+    /// authoritative item_1001..item_1015 IDs. A snapshot is used because some
+    /// old numeric IDs now mean a different ingredient.
+    /// </summary>
+    private void MigratePlanningItemIdsIfNeeded()
+    {
+        if (_flagSet.Contains(PlanningItemIdMigrationFlag))
+            return;
+
+        Dictionary<string, float> oldAmounts = new Dictionary<string, float>(
+            _bottleAmounts,
+            StringComparer.OrdinalIgnoreCase);
+        Dictionary<string, float> migrated = new Dictionary<string, float>(
+            StringComparer.OrdinalIgnoreCase);
+
+        CaptureMigratedAmount(oldAmounts, migrated, "item_1001", "tropical_juice", "item_1001");
+        CaptureMigratedAmount(oldAmounts, migrated, "item_1002", "siltrop", "item_1002");
+        CaptureMigratedAmount(oldAmounts, migrated, "item_1003", "synthetic_lemon", "item_1003");
+        CaptureMigratedAmount(oldAmounts, migrated, "item_1004", "item_1005");
+        CaptureMigratedAmount(oldAmounts, migrated, "item_1005", "nanangna", "item_1007");
+        CaptureMigratedAmount(oldAmounts, migrated, "item_1006", "cotton", "item_1008");
+        CaptureMigratedAmount(oldAmounts, migrated, "item_1007", "hectar", "item_1009");
+        CaptureMigratedAmount(oldAmounts, migrated, "item_1008", "bless", "item_1010");
+        CaptureMigratedAmount(oldAmounts, migrated, "item_1009", "breeze_vodka", "item_1011");
+        CaptureMigratedAmount(oldAmounts, migrated, "item_1010", "johnny_dogs", "item_1012");
+        CaptureMigratedAmount(oldAmounts, migrated, "item_1011", "burnham_bourbon", "item_1013");
+        CaptureMigratedAmount(oldAmounts, migrated, "item_1012", "beatha", "item_1014");
+        CaptureMigratedAmount(oldAmounts, migrated, "item_1013", "minute_fizz");
+        CaptureMigratedAmount(oldAmounts, migrated, "item_1014", "hot_water", "item_1024");
+        CaptureMigratedAmount(oldAmounts, migrated, "item_1015", "coffee_powder", "item_1025");
+
+        string[] retiredAliases =
+        {
+            "tropical_juice", "siltrop", "synthetic_lemon", "nanangna", "cotton",
+            "hectar", "bless", "breeze_vodka", "johnny_dogs", "burnham_bourbon",
+            "beatha", "minute_fizz", "hot_water", "coffee_powder",
+            "item_1001", "item_1002", "item_1003", "item_1004", "item_1005",
+            "item_1006", "item_1007", "item_1008", "item_1009", "item_1010",
+            "item_1011", "item_1012", "item_1013", "item_1014", "item_1015",
+            "item_1024", "item_1025"
+        };
+        for (int i = 0; i < retiredAliases.Length; i++)
+            _bottleAmounts.Remove(retiredAliases[i]);
+
+        foreach (KeyValuePair<string, float> pair in migrated)
+            _bottleAmounts[pair.Key] = pair.Value;
+
+        bottleAmountKeys.Clear();
+        bottleAmountValues.Clear();
+        foreach (KeyValuePair<string, float> pair in _bottleAmounts)
+        {
+            bottleAmountKeys.Add(pair.Key);
+            bottleAmountValues.Add(pair.Value);
+        }
+
+        _flagSet.Add(PlanningItemIdMigrationFlag);
+        flags.Add(PlanningItemIdMigrationFlag);
+    }
+
+    private static void CaptureMigratedAmount(
+        IReadOnlyDictionary<string, float> source,
+        IDictionary<string, float> destination,
+        string targetId,
+        params string[] sourceIds)
+    {
+        bool found = false;
+        float amount = 0f;
+        for (int i = 0; i < sourceIds.Length; i++)
+        {
+            if (!source.TryGetValue(sourceIds[i], out float candidate))
+                continue;
+
+            amount = found ? Mathf.Max(amount, candidate) : candidate;
+            found = true;
+        }
+
+        if (found)
+            destination[targetId] = Mathf.Max(0f, amount);
     }
 
     public List<string> GetFlagList()         => new List<string>(flags);
@@ -355,6 +456,18 @@ public class GameProgress : MonoSingleton<GameProgress>
         return _bottleAmounts.TryGetValue(bottleId, out float value) ? value : defaultValue;
     }
 
+    // Materializes CSV/default stock so the shelf, shop and bartending session all
+    // read and mutate the same saved inventory entry from the first access onward.
+    public float EnsureBottleAmount(string bottleId, float defaultValue)
+    {
+        if (string.IsNullOrWhiteSpace(bottleId)) return Mathf.Max(0f, defaultValue);
+        if (_bottleAmounts.TryGetValue(bottleId, out float value)) return value;
+
+        float initialValue = Mathf.Max(0f, defaultValue);
+        SetBottleAmount(bottleId, initialValue);
+        return initialValue;
+    }
+
     public void SetBottleAmount(string bottleId, float value)
     {
         if (string.IsNullOrWhiteSpace(bottleId)) return;
@@ -492,10 +605,23 @@ public class GameProgress : MonoSingleton<GameProgress>
         dayDrinkSales ??= new List<BusinessSaleRecord>();
         dayDrinkSales.Add(stored);
         dayDrinkSalesCount += 1;
-        dayDrinkBaseRevenue += stored.baseRevenue;
-        dayDrinkTipRevenue += stored.tipAmount;
-        dayDrinkRevenue += stored.totalRevenue;
-        dayTotalIncome += stored.totalRevenue;
+        if (stored.paymentCurrency == GameCurrency.StrangeCoin)
+        {
+            dayStrangeCoinBaseRevenue += stored.baseRevenue;
+            dayStrangeCoinTipRevenue += stored.tipAmount;
+            dayStrangeCoinRevenue += stored.totalRevenue;
+            if (stored.paymentApplied)
+                dayPaidStrangeCoinIncome += stored.totalRevenue;
+        }
+        else
+        {
+            dayDrinkBaseRevenue += stored.baseRevenue;
+            dayDrinkTipRevenue += stored.tipAmount;
+            dayDrinkRevenue += stored.totalRevenue;
+            dayTotalIncome += stored.totalRevenue;
+            if (stored.paymentApplied)
+                dayPaidMoneyIncome += stored.totalRevenue;
+        }
         dayReputationDelta += stored.reputationDelta;
     }
 
@@ -511,6 +637,11 @@ public class GameProgress : MonoSingleton<GameProgress>
         dayDrinkTipRevenue  = 0;
         dayDrinkRevenue    = 0;
         dayTotalIncome     = 0;
+        dayPaidMoneyIncome = 0;
+        dayStrangeCoinBaseRevenue = 0;
+        dayStrangeCoinTipRevenue = 0;
+        dayStrangeCoinRevenue = 0;
+        dayPaidStrangeCoinIncome = 0;
         dayReputationDelta = 0;
         dayDrinkSales?.Clear();
     }

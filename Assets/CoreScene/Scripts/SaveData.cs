@@ -27,6 +27,11 @@ public class SaveData
     public int    dayDrinkTipRevenue  = 0;
     public int    dayDrinkRevenue    = 0;
     public int    dayTotalIncome     = 0;
+    public int    dayPaidMoneyIncome = 0;
+    public int    dayStrangeCoinBaseRevenue = 0;
+    public int    dayStrangeCoinTipRevenue = 0;
+    public int    dayStrangeCoinRevenue = 0;
+    public int    dayPaidStrangeCoinIncome = 0;
     public int    dayReputationDelta = 0;
     public List<BusinessSaleRecord> dayDrinkSales = new();
     public string tvForecastBroadcastId = "";

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LiquorBottleDef
   id: breeze_vodka
   displayName: "\uBE0C\uB9AC\uC988 \uBCF4\uB4DC\uCE74"
+  item: {fileID: 11400000, guid: 16a1a195e8542434aaec6209f214b5ed, type: 2}
   sprite: {fileID: -6828235300387644391, guid: 91e6f03485dc77849adfd4ec5ea08650, type: 3}
   useContextImages: 1
   shopBlankSprite: {fileID: 21300000, guid: ba470000000000000000000000000008, type: 3}
@@ -21,11 +22,12 @@ MonoBehaviour:
   barSprite: {fileID: 21300000, guid: ba470000000000000000000000000007, type: 3}
   unlockFlagKey: 
   subCategory: "\uBCF4\uB4DC\uCE74"
-  bottleCount: 4
+  bottleCount: 6
+  defaultBottleCount: 4
   unitVolume: 700
   category: {fileID: 11400000, guid: dfd2955e219a9244d90f3a2ad4a1fad7, type: 2}
-  price: 2000
-  strangeCoinPrice: 0
+  price: 3500
+  strangeCoinPrice: 35
   unlockHintType: 0
   recipeBookIcon: {fileID: 0}
   recipeBookName: 

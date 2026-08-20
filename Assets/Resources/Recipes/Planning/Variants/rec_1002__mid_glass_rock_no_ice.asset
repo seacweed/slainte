@@ -15,6 +15,8 @@ MonoBehaviour:
   id: rec_1002__mid_glass_rock_no_ice
   displayName: "\uCF54\uD2BC \uC0AC\uC6CC (Mid: \uC794 rock, \uC5BC\uC74C \uC5C6\uC74C)"
   englishName: Cotton Sour
+  price: 347
+  strangeCoinPrice: 3
   isOrderable: 0
   appearsInRecipeBook: 0
   baseRecipeId: rec_1002
@@ -25,8 +27,10 @@ MonoBehaviour:
   allowExtraIngredients: 0
   glassId: rock
   iceRequirement: 1
+  requiredIceCount: 0
+  shakeIceRequirement: 2
   requiredTechnique: 4
-  abvOverridePercent: -1
+  abvOverridePercent: 11.4
   ingredientPropertyTags:
   - "\uACAC\uACFC\uB958 \uB9AC\uD050\uB974"
   - "\uACFC\uC77C \uC2DC\uB7FD"
@@ -36,10 +40,10 @@ MonoBehaviour:
   moodTags:
   - "\uD3EC\uADFC\uD55C"
   ingredients:
-  - itemId: item_1008
+  - itemId: item_1006
     targetMl: 60
     toleranceMl: 5
-  - itemId: item_1005
+  - itemId: item_1004
     targetMl: 30
     toleranceMl: 5
   - itemId: item_1003

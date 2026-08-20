@@ -33,24 +33,23 @@ namespace Slainte.Editor
             new ArtMapping("tropicaljuice", "tropical_juice", "item_1001"),
             new ArtMapping("siltrop", "siltrop", "item_1002"),
             new ArtMapping("syntheticlemon", "synthetic_lemon", "item_1003"),
-            new ArtMapping("slop", "item_1005"),
-            new ArtMapping("nanangna", "nanangna", "item_1007"),
-            new ArtMapping("cotton", "cotton", "item_1008"),
-            new ArtMapping("hectar", "hectar", "item_1009"),
-            new ArtMapping("bless", "bless", "item_1010"),
-            new ArtMapping("breezevodka", "breeze_vodka", "item_1011"),
-            new ArtMapping("johnnydogs", "johnny_dogs", "item_1012"),
-            new ArtMapping("burnhambourbon", "burnham_bourbon", "item_1013"),
-            new ArtMapping("beatha", "beatha", "item_1014"),
-            new ArtMapping("coffeepowder", "coffee_powder", "item_1025"),
-            new ArtMapping("minutefizz", "minute_fizz")
+            new ArtMapping("slop", "item_1004"),
+            new ArtMapping("nanangna", "nanangna", "item_1005"),
+            new ArtMapping("cotton", "cotton", "item_1006"),
+            new ArtMapping("hectar", "hectar", "item_1007"),
+            new ArtMapping("bless", "bless", "item_1008"),
+            new ArtMapping("breezevodka", "breeze_vodka", "item_1009"),
+            new ArtMapping("johnnydogs", "johnny_dogs", "item_1010"),
+            new ArtMapping("burnhambourbon", "burnham_bourbon", "item_1011"),
+            new ArtMapping("beatha", "beatha", "item_1012"),
+            new ArtMapping("minutefizz", "minute_fizz", "item_1013"),
+            new ArtMapping("coffeepowder", "coffee_powder", "item_1015")
         };
 
         private static readonly HashSet<string> IntentionalDataOnlyIds =
             new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
-                "lemon_juice",
-                "item_1023"
+                "lemon_juice"
             };
 
         [MenuItem("Tools/Slainte/Apply Bartending Bottle Art")]
@@ -128,7 +127,7 @@ namespace Slainte.Editor
             }
 
             Sprite hotWater = LoadSprite("hotwater.png");
-            result.Add("item_1024", new ExpectedSprites(hotWater, hotWater, hotWater));
+            result.Add("item_1014", new ExpectedSprites(hotWater, hotWater, hotWater));
             return result;
         }
 

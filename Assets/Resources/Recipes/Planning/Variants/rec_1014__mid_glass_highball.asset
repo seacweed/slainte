@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: rec_1014__mid_glass_highball
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.CocktailRecipeDef
   id: rec_1014__mid_glass_highball
-  displayName: "\uBC88\uD584 \uBC84\uBC88 \uC628\uB354\uB77D (Mid: \uC794 highball)"
-  englishName: Burnham Bourbon On the Rocks
+  displayName: "\uC870\uB2C8 \uB3C5\uC2A4 \uB2C8\uD2B8 (Mid: \uC794 highball)"
+  englishName: Johnny Dogs Neat
+  price: 210
+  strangeCoinPrice: 2
   isOrderable: 0
   appearsInRecipeBook: 0
   baseRecipeId: rec_1014
@@ -24,16 +26,18 @@ MonoBehaviour:
   toleranceMl: 5
   allowExtraIngredients: 0
   glassId: highball
-  iceRequirement: 2
+  iceRequirement: 1
+  requiredIceCount: 0
+  shakeIceRequirement: 0
   requiredTechnique: 1
-  abvOverridePercent: -1
+  abvOverridePercent: 40
   ingredientPropertyTags:
   - "\uC704\uC2A4\uD0A4"
   tasteTags:
   - "\uC501\uC4F8\uD568"
   moodTags:
-  - "\uC815\uC5F4\uC801\uC778"
+  - "\uACE0\uAE09\uC2A4\uB7EC\uC6B4"
   ingredients:
-  - itemId: item_1013
+  - itemId: item_1010
     targetMl: 30
     toleranceMl: 5

@@ -13,27 +13,39 @@ MonoBehaviour:
   m_Name: rec_1011
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.CocktailRecipeDef
   id: rec_1011
-  displayName: "\uC870\uB2C8 \uB3C5\uC2A4 \uB2C8\uD2B8"
-  englishName: Johnny Dogs Neat
+  displayName: "\uB808\uBAAC \uD53C\uC988"
+  englishName: Lemon Fizz
+  price: 136
+  strangeCoinPrice: 1
   isOrderable: 1
   appearsInRecipeBook: 1
   baseRecipeId: 
   evaluationGrade: 0
-  minTotalMl: 25
-  maxTotalMl: 35
+  minTotalMl: 140
+  maxTotalMl: 150
   toleranceMl: 5
   allowExtraIngredients: 0
-  glassId: rock
-  iceRequirement: 1
-  requiredTechnique: 1
-  abvOverridePercent: -1
+  glassId: highball
+  iceRequirement: 2
+  requiredIceCount: 4
+  shakeIceRequirement: 0
+  requiredTechnique: 2
+  abvOverridePercent: 0
   ingredientPropertyTags:
-  - "\uC704\uC2A4\uD0A4"
+  - "\uB2F9\uB958 \uC2DC\uB7FD"
+  - "\uACFC\uC77C \uC2DC\uB7FD"
   tasteTags:
-  - "\uC501\uC4F8\uD568"
+  - "\uB2EC\uCF64\uD568"
+  - "\uC0C8\uD07C\uD568"
   moodTags:
-  - "\uACE0\uAE09\uC2A4\uB7EC\uC6B4"
+  - "\uCCAD\uB7C9\uD55C"
   ingredients:
-  - itemId: item_1012
+  - itemId: item_1002
+    targetMl: 15
+    toleranceMl: 5
+  - itemId: item_1003
     targetMl: 30
+    toleranceMl: 5
+  - itemId: item_1013
+    targetMl: 100
     toleranceMl: 5

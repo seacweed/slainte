@@ -47,12 +47,15 @@ namespace Slainte.Bartending
                 {
                     id = row.Get("id"),
                     displayName = row.Get("displayName"),
+                    price = ParseInt(row.Get("price")),
+                    strangeCoinPrice = ParseInt(row.Get("strangeCoinPrice")),
                     minTotalMl = ParseFloat(row.Get("minTotalMl")),
                     maxTotalMl = ParseFloat(row.Get("maxTotalMl")),
                     toleranceMl = ParseFloat(row.Get("toleranceMl"), 5f),
                     allowExtraIngredients = ParseBool(row.Get("allowExtraIngredients")),
                     glassId = row.Get("glassId").Trim(),
                     iceRequirement = ParseEnum(row.Get("iceRequirement"), IceRequirement.Any),
+                    requiredIceCount = ParseInt(row.Get("requiredIceCount"), -1),
                     shakeIceRequirement = ParseEnum(
                         row.Get("shakeIceRequirement"),
                         IceRequirement.Any),
@@ -100,6 +103,13 @@ namespace Slainte.Bartending
         private static float ParseFloat(string value, float fallback = 0f)
         {
             return float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out float result)
+                ? result
+                : fallback;
+        }
+
+        private static int ParseInt(string value, int fallback = 0)
+        {
+            return int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out int result)
                 ? result
                 : fallback;
         }

@@ -223,7 +223,6 @@ public static class LiquorShelfSpawnValidator
 
     private static LiquorBottleSlotUI FindUsableSlot()
     {
-        ItemDefCatalog catalog = ItemDefCatalog.LoadFromResources("Items", null);
         foreach (LiquorBottleSlotUI slot in Resources.FindObjectsOfTypeAll<LiquorBottleSlotUI>())
         {
             if (slot == null
@@ -239,12 +238,17 @@ public static class LiquorShelfSpawnValidator
                 definitionProperty?.objectReferenceValue as LiquorBottleDef;
             if (definition == null
                 || string.IsNullOrWhiteSpace(definition.id)
+                || definition.item == null
+                || !string.Equals(
+                    definition.InventoryId,
+                    definition.id,
+                    StringComparison.OrdinalIgnoreCase)
                 || (!string.IsNullOrEmpty(definition.unlockFlagKey)
                     && !GameProgress.Instance.HasFlag(definition.unlockFlagKey))
-                || !catalog.TryGet(definition.id, out ItemDef item)
-                || item == null
-                || item.type != ItemType.Bottle
-                || GameProgress.Instance.GetBottleAmount(definition.id, definition.MaxAmount) <= 0f)
+                || definition.item.type != ItemType.Bottle
+                || GameProgress.Instance.EnsureBottleAmount(
+                    definition.InventoryId,
+                    definition.DefaultAmount) <= 0f)
             {
                 continue;
             }

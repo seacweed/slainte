@@ -15,6 +15,8 @@ MonoBehaviour:
   id: rec_1003__mid_technique_shake
   displayName: "\uAC13\uB808\uC774\uB514 (Mid: \uC81C\uC870\uBC95 Shake)"
   englishName: God Lady
+  price: 336
+  strangeCoinPrice: 3
   isOrderable: 0
   appearsInRecipeBook: 0
   baseRecipeId: rec_1003
@@ -25,8 +27,10 @@ MonoBehaviour:
   allowExtraIngredients: 0
   glassId: rock
   iceRequirement: 2
+  requiredIceCount: 3
+  shakeIceRequirement: 2
   requiredTechnique: 4
-  abvOverridePercent: -1
+  abvOverridePercent: 30
   ingredientPropertyTags:
   - "\uACAC\uACFC\uB958 \uB9AC\uD050\uB974"
   - "\uBCF4\uB4DC\uCE74"
@@ -35,9 +39,9 @@ MonoBehaviour:
   moodTags:
   - "\uACE0\uAE09\uC2A4\uB7EC\uC6B4"
   ingredients:
-  - itemId: item_1008
+  - itemId: item_1006
     targetMl: 30
     toleranceMl: 5
-  - itemId: item_1011
+  - itemId: item_1009
     targetMl: 30
     toleranceMl: 5

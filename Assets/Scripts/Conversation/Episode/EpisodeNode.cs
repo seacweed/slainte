@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Slainte.Economy;
 using UnityEngine;
 
 [Serializable]
@@ -37,6 +38,9 @@ public class EpisodeNode
     public string craftingTicketKey;
     [HideInInspector]
     public string craftingRecipeId;
+    [Tooltip("활성화하면 이 제조 주문 완료 시 선택한 통화로 레시피 가격을 지급합니다.")]
+    public bool craftingPaymentEnabled;
+    public GameCurrency craftingPaymentCurrency = GameCurrency.Money;
     public List<CraftingOutcome> craftingOutcomes = new();
 
     [HideInInspector, SerializeField] private string nextNodeIdGood;

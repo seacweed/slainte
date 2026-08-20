@@ -1,0 +1,22 @@
+ID,Name,Name_eng,재료,재료1,재료1 용량,재료2,재료2 용량,재료3,재료3 용량,재료4,재료4 용량,얼음 개수
+rec_1001,번햄 사워,Burnham Sour,"실청 15ml, 슬롭 30ml, 합성 레몬 15ml, 번햄 버번 위스키 30ml",item_1002 실청,15,item_1004 슬롭,30,item_1003 합성 레몬,15,item_1011 번햄 버번,30,3
+rec_1002,코튼 사워,Cotton Sour,"코튼 60ml, 슬롭 30ml, 합성 레몬 15ml",item_1006 코튼,60,item_1004 슬롭,30,item_1003 합성 레몬,15,,,3
+rec_1003,갓레이디,God Lady,"코튼 30ml, 브리즈 보드카 30ml",item_1006 코튼,30,item_1009 브리즈 보드카,30,,,,,3
+rec_1004,갓로드,God Lord,"코튼 30ml, 조니 독스 위스키 30ml",item_1006 코튼,30,item_1010 조니 독스,30,,,,,3
+rec_1005,셰이디,Shady,"헥타르 30ml, 블레스 30ml, 번햄 버번 위스키 30ml",item_1007 헥타르,30,item_1008 블레스,30,item_1011 번햄 버번,30,,,3
+rec_1006,한여름의 나낭나,Midsummer Nanangna,"나낭나 30ml, 열대주스 90ml",item_1005 나낭나,30,item_1001 열대주스,90,,,,,3
+rec_1007,한여름의 주스,Midsummer Juice,"실청 15ml, 합성레몬 15ml, 열대주스 90ml",item_1002 실청,15,item_1003 합성 레몬,15,item_1001 열대주스,90,,,3
+rec_1008,아이리시 커피,Irish Coffee,"바하 40ml, 실청 5ml, 커피 분말 10ml, 뜨거운 물 150ml",item_1012 바하,40,item_1002 실청,10,item_1015 커피분말,10,item_1014 뜨거운 물,150,X
+rec_1009,블랙 커피,Black Coffee,"커피 분말 20ml, 뜨거운 물 300ml",item_1015 커피분말,30,item_1014 뜨거운 물,150,,,,,X
+rec_1010,핫 테디,Hot Teddy,"번햄 버번 40ml, 실청 30ml, 합성 레몬 10ml, 뜨거운 물 200ml",item_1011 번햄 버번,40,item_1002 실청,30,item_1003 합성 레몬,10,item_1014 뜨거운 물,150,X
+rec_1011,레몬 피즈,Lemon Fizz,"실청 15m, 합성 레몬 15ml, 탄산 미닛 60ml",item_1002 실청,15,item_1003 합성 레몬,30,item_1013 탄산 미닛,100,,,4
+rec_1012,로닌즈,Ronins,"블레스 30ml, 헥타르 30ml, 탄산 미닛 60ml",item_1008 블레스,30,item_1007 헥타르,30,item_1013 탄산 미닛,100,,,4
+rec_1013,보일링 포인트,Boiling Point,"조니독스 45ml, 탄산 미닛 60ml",item_1010 조니 독스,40,item_1013 탄산 미닛,150,,,,,4
+rec_1014,조니 독스 니트,Johnny Dogs Neat,조니 독스 위스키 30ml,item_1010 조니 독스,30,,,,,,,X
+rec_1015,조니 독스 온더락,Johnny Dogs On the Rocks,조니 독스 위스키 30ml,item_1010 조니 독스,30,,,,,,,3
+rec_1016,번햄 버번 니트,Burnham Bourbon Neat,번햄 버번 위스키 30ml,item_1011 번햄 버번,30,,,,,,,X
+rec_1017,번햄 버번 온더락,Burnham Bourbon On the Rocks,번햄 버번 위스키 30ml,item_1011 번햄 버번,30,,,,,,,3
+rec_1018,바하 니트,Beatha Neat,바하 위스키 30ml,item_1012 바하,30,,,,,,,X
+rec_1019,바하 온더락,Beatha On the Rocks,바하 위스키 30ml,item_1012 바하,30,,,,,,,3
+rec_1020,브리즈 니트,Breeze Neat,브리즈 보드카 30ml,item_1009 브리즈 보드카,30,,,,,,,X
+rec_1021,브리즈 온더락,Breeze On the Rocks,브리즈 보드카 30ml,item_1009 브리즈 보드카,30,,,,,,,3
