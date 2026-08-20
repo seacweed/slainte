@@ -29,7 +29,6 @@ MonoBehaviour:
     prerequisiteEpisodeIds: []
     requiredVars: []
   maxDay: 0
-  cooldownSeconds: 100
   orders:
   - order: {fileID: 11400000, guid: 976afdcf79473bf4cb536372ea1fe3b2, type: 2}
     weight: 1

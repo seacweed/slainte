@@ -14,9 +14,12 @@ namespace Slainte.Bartending
     [Serializable]
     public sealed class LiquidPayload
     {
+        private static readonly List<ItemDef> SharedItemBuffer = new List<ItemDef>(8);
+
         public List<LiquidPortion> portions = new();
         public float temperatureC = 20f;
         public CocktailTechnique techniques = CocktailTechnique.None;
+        public bool wasShakenWithIce;
 
         public float TotalVolumeMl
         {
@@ -34,6 +37,7 @@ namespace Slainte.Bartending
             portions.Clear();
             temperatureC = sourceItem != null ? sourceItem.servingTemperatureC : 20f;
             techniques = CocktailTechnique.None;
+            wasShakenWithIce = false;
 
             if (sourceItem == null || volumeMl <= 0f)
                 return;
@@ -109,8 +113,11 @@ namespace Slainte.Bartending
             CocktailTechnique combinedTechniques = left.techniques | right.techniques;
             left.techniques = combinedTechniques;
             right.techniques = combinedTechniques;
+            bool combinedShakenWithIce = left.wasShakenWithIce || right.wasShakenWithIce;
+            left.wasShakenWithIce = combinedShakenWithIce;
+            right.wasShakenWithIce = combinedShakenWithIce;
 
-            List<ItemDef> keys = new();
+            List<ItemDef> keys = GetSharedItemBuffer();
             AddKeys(left, keys);
             AddKeys(right, keys);
 
@@ -142,7 +149,7 @@ namespace Slainte.Bartending
             }
         }
 
-        public Color EvaluateColor(float minimumAlpha = 1f)
+        public Color EvaluateColor(float minimumAlpha = 0f)
         {
             float validTotal = 0f;
             for (int i = 0; i < portions.Count; i++)
@@ -188,7 +195,8 @@ namespace Slainte.Bartending
                 return TotalVolumeMl > tolerance;
 
             if (Mathf.Abs(temperatureC - other.temperatureC) > 0.1f
-                || techniques != other.techniques)
+                || techniques != other.techniques
+                || wasShakenWithIce != other.wasShakenWithIce)
                 return true;
 
             float myTotal = TotalVolumeMl;
@@ -200,7 +208,7 @@ namespace Slainte.Bartending
             if (myTotal <= tolerance || otherTotal <= tolerance)
                 return true;
 
-            List<ItemDef> keys = new();
+            List<ItemDef> keys = GetSharedItemBuffer();
             AddKeys(this, keys);
             AddKeys(other, keys);
 
@@ -217,6 +225,12 @@ namespace Slainte.Bartending
             return false;
         }
 
+        private static List<ItemDef> GetSharedItemBuffer()
+        {
+            SharedItemBuffer.Clear();
+            return SharedItemBuffer;
+        }
+
         public void CoolTowards(float ambientTemperatureC, float degreesPerSecond, float deltaTime)
         {
             temperatureC = Mathf.MoveTowards(
@@ -228,6 +242,10 @@ namespace Slainte.Bartending
 
     public sealed class LiquidParticleData : MonoBehaviour
     {
+        [Header("Volume")]
+        [Tooltip("Volume in milliliters represented by one newly spawned liquid particle.")]
+        [SerializeField, Min(0.01f)] private float defaultVolumeMl = 1f;
+
         public LiquidPayload payload = new();
         public bool hasBeenCollected;
 
@@ -237,8 +255,20 @@ namespace Slainte.Bartending
 
         private SpriteRenderer spriteRenderer;
         private Collider2D particleCollider;
+        private Color logicalColor = Color.clear;
 
+        public float DefaultVolumeMl => Mathf.Max(0.01f, defaultVolumeMl);
         public VesselLiquidTracker VesselOwner { get; private set; }
+        internal Color LogicalColor => logicalColor;
+        internal SpriteRenderer ParticleRenderer
+        {
+            get
+            {
+                if (spriteRenderer == null)
+                    spriteRenderer = GetComponent<SpriteRenderer>();
+                return spriteRenderer;
+            }
+        }
         internal Collider2D ParticleCollider
         {
             get
@@ -253,6 +283,7 @@ namespace Slainte.Bartending
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
             particleCollider = GetComponent<Collider2D>();
+            ApplyVisualFromPayload();
         }
 
         private void OnEnable()
@@ -342,15 +373,17 @@ namespace Slainte.Bartending
 
         public void ApplyVisualFromPayload()
         {
+            logicalColor = payload != null
+                ? payload.EvaluateColor()
+                : Color.clear;
+
             if (spriteRenderer == null)
                 spriteRenderer = GetComponent<SpriteRenderer>();
 
             if (spriteRenderer == null)
                 return;
 
-            spriteRenderer.color = payload != null
-                ? payload.EvaluateColor()
-                : Color.clear;
+            spriteRenderer.color = logicalColor;
         }
     }
 }

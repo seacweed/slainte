@@ -11,6 +11,12 @@ public static class LiquorShelfSpawnValidator
 {
     private const string BusinessScenePath = "Assets/BusinessScene.unity";
     private const string RunningKey = "Slainte.LiquorShelfSpawnValidator.Running";
+    private const string ManualToolCabinetKey =
+        "Slainte.ToolCabinetManualPlaytest.Running";
+    private const string ManualToolCabinetReadyKey =
+        "Slainte.ToolCabinetManualPlaytest.Ready";
+    private const string ManualToolCabinetAutoStartKey =
+        "Slainte.ToolCabinetManualPlaytest.PreviousAutoStart";
     private static int phase;
     private static int phaseFrames;
     private static double phaseStartedAt;
@@ -19,6 +25,33 @@ public static class LiquorShelfSpawnValidator
     public static void RunFromMenu()
     {
         Begin(false);
+    }
+
+    [MenuItem("Slainte/Bartending/Prepare Tool Cabinet Manual Playtest")]
+    public static void PrepareToolCabinetManualPlaytest()
+    {
+        if (EditorApplication.isPlaying)
+        {
+            PrepareManualPlaytestOnUpdate();
+            return;
+        }
+
+        Scene scene = EditorSceneManager.OpenScene(BusinessScenePath, OpenSceneMode.Single);
+        GameObject isolationHost = new GameObject("__ToolCabinetManualPlaytestIsolation");
+        SceneManager.MoveGameObjectToScene(isolationHost, scene);
+        PlaytestProgressIsolation.Attach(isolationHost);
+        BusinessOrderFlowSettings flowSettings =
+            Resources.Load<BusinessOrderFlowSettings>("Business/BusinessOrderFlowSettings");
+        if (flowSettings != null)
+        {
+            SessionState.SetBool(ManualToolCabinetAutoStartKey, flowSettings.autoStart);
+            flowSettings.autoStart = false;
+        }
+        SessionState.SetBool(ManualToolCabinetKey, true);
+        SessionState.SetBool(ManualToolCabinetReadyKey, false);
+        EditorApplication.update -= PrepareManualPlaytestOnUpdate;
+        EditorApplication.update += PrepareManualPlaytestOnUpdate;
+        EditorApplication.isPlaying = true;
     }
 
     public static void RunFromCommandLine()
@@ -44,12 +77,76 @@ public static class LiquorShelfSpawnValidator
     [InitializeOnLoadMethod]
     private static void ResumeAfterReload()
     {
+        if (SessionState.GetBool(ManualToolCabinetKey, false))
+        {
+            EditorApplication.update -= PrepareManualPlaytestOnUpdate;
+            EditorApplication.update += PrepareManualPlaytestOnUpdate;
+        }
+
         if (!SessionState.GetBool(RunningKey, false))
             return;
 
         EditorApplication.update -= ValidateOnUpdate;
         EditorApplication.update += ValidateOnUpdate;
         phaseStartedAt = EditorApplication.timeSinceStartup;
+    }
+
+    private static void PrepareManualPlaytestOnUpdate()
+    {
+        if (!EditorApplication.isPlaying)
+        {
+            if (!EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                EditorApplication.update -= PrepareManualPlaytestOnUpdate;
+                RestoreBusinessAutoStartForManualPlaytest();
+                SessionState.EraseBool(ManualToolCabinetKey);
+                SessionState.EraseBool(ManualToolCabinetReadyKey);
+            }
+
+            return;
+        }
+
+        GameModeManager modeManager =
+            UnityEngine.Object.FindFirstObjectByType<GameModeManager>();
+        BusinessBartendingBootstrap bartending =
+            UnityEngine.Object.FindFirstObjectByType<BusinessBartendingBootstrap>();
+        if (modeManager == null || bartending == null)
+            return;
+
+        BusinessShiftController[] shifts =
+            UnityEngine.Object.FindObjectsByType<BusinessShiftController>(
+                FindObjectsSortMode.None);
+        for (int i = 0; i < shifts.Length; i++)
+            shifts[i].enabled = false;
+
+        if (modeManager.CurrentMode != GameMode.CraftingMode)
+        {
+            modeManager.RequestModeChange(GameMode.CraftingMode);
+            return;
+        }
+
+        if (!bartending.IsSessionReady)
+            return;
+
+        if (SessionState.GetBool(ManualToolCabinetReadyKey, false))
+            return;
+
+        SessionState.SetBool(ManualToolCabinetReadyKey, true);
+        Debug.Log(
+            "[ToolCabinetManualPlaytest] READY: progress writes are isolated and CraftingMode is active.");
+    }
+
+    private static void RestoreBusinessAutoStartForManualPlaytest()
+    {
+        BusinessOrderFlowSettings flowSettings =
+            Resources.Load<BusinessOrderFlowSettings>("Business/BusinessOrderFlowSettings");
+        if (flowSettings != null
+            && SessionState.GetBool(ManualToolCabinetAutoStartKey, false))
+        {
+            flowSettings.autoStart = true;
+        }
+
+        SessionState.EraseBool(ManualToolCabinetAutoStartKey);
     }
 
     private static void ValidateOnUpdate()
@@ -88,7 +185,7 @@ public static class LiquorShelfSpawnValidator
                     if (modeManager == null
                         || bartending == null
                         || modeManager.CurrentMode != GameMode.CraftingMode
-                        || bartending.CurrentTargetTracker == null)
+                        || !bartending.IsSessionReady)
                     {
                         return;
                     }

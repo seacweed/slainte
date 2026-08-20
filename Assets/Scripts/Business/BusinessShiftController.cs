@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Slainte.TV;
 using UnityEngine;
 
 namespace Slainte.Business
@@ -38,7 +39,10 @@ namespace Slainte.Business
 
     public sealed class BusinessShiftController : MonoBehaviour
     {
-        private readonly Dictionary<string, float> cooldownUntilByVisit =
+        private const int RecentCustomerLimit = 2;
+
+        private readonly Queue<string> recentCustomerKeys = new();
+        private readonly HashSet<string> recentCustomerKeySet =
             new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> invalidVisitKeys =
             new(StringComparer.OrdinalIgnoreCase);
@@ -66,6 +70,7 @@ namespace Slainte.Business
         private bool explicitlyPaused;
         private bool initialRequiredPhaseComplete;
         private bool beginOrderCallInProgress;
+        private bool randomCustomerSpawningStopped;
         private int orderSequence;
         private int completedOrderCount;
         private float remainingSeconds;
@@ -81,26 +86,12 @@ namespace Slainte.Business
         public int CompletedOrderCount => completedOrderCount;
         public int TotalStartedCustomerCount { get; private set; }
         public int TotalStartedEncounterCount { get; private set; }
-        public int CooldownFallbackSelectionCount { get; private set; }
+        public bool IsRandomCustomerSpawningStopped => randomCustomerSpawningStopped;
         public string LastSelectedVisitKey { get; private set; } = string.Empty;
-        public int CoolingDownCustomerCount
-        {
-            get
-            {
-                int count = 0;
-                foreach (KeyValuePair<string, float> pair in cooldownUntilByVisit)
-                {
-                    if (pair.Value > activeBusinessSeconds)
-                        count++;
-                }
-
-                return count;
-            }
-        }
 
         public event Action<BusinessShiftState, BusinessShiftState> StateChanged;
         public event Action ShiftCompleted;
-        public event Action<CustomerVisitData, bool> CustomerVisitStarted;
+        public event Action<CustomerVisitData> CustomerVisitStarted;
 
         public void Initialize(
             BusinessOrderSessionController sessionController,
@@ -134,6 +125,17 @@ namespace Slainte.Business
 
             frozenCustomerPool.AddRange(
                 BusinessSequencePlanner.BuildEligibleVisitPool(database, progress));
+            ExcludeVisitsWithInvalidOrderData();
+            if (!BusinessSequencePlanner.HasEligibleTargetForActiveTVEffect(
+                    frozenCustomerPool,
+                    progress))
+            {
+                TVBroadcastEntry active = TVBroadcastRuntime.GetActiveBroadcast(
+                    progress,
+                    TVBroadcastDatabase.LoadDefault());
+                Debug.LogWarning(
+                    $"[TV] 오늘 조건을 만족하는 방송 대상이 없어 효과만 생략합니다: {active?.id}");
+            }
             frozenEncounterPool.AddRange(
                 BusinessSequencePlanner.BuildEligibleRandomEncounterPool(
                     settings.randomEncounters,
@@ -185,7 +187,10 @@ namespace Slainte.Business
             bool paused = IsBusinessClockPaused();
             sessionUi?.SetShiftTime(remainingSeconds, paused);
 
-            if (!orderActive && !encounterActive && !paused)
+            if (!orderActive
+                && !encounterActive
+                && !paused
+                && (!randomCustomerSpawningStopped || remainingSeconds <= 0f))
                 AdvanceAtSafePoint();
         }
 
@@ -264,10 +269,9 @@ namespace Slainte.Business
                 frozenEncounterPool,
                 startedEncounterIds,
                 progress,
-                cooldownUntilByVisit,
+                recentCustomerKeySet,
                 invalidVisitKeys,
                 invalidEncounterIds,
-                activeBusinessSeconds,
                 random);
             if (selection != null)
             {
@@ -279,13 +283,11 @@ namespace Slainte.Business
 
                 StartCustomerOrder(
                     selection.Visit,
-                    selection.OrderOption,
-                    selection.UsedCooldownFallback);
+                    selection.OrderOption);
                 return;
             }
 
-            SetState(BusinessShiftState.WaitingForCustomer);
-            sessionUi?.ShowWaitingForCustomer();
+            StopRandomCustomerSpawning();
         }
 
         private BusinessRequiredActionRule PickRequiredAction(
@@ -331,12 +333,21 @@ namespace Slainte.Business
 
         private void StartCustomerOrder(
             CustomerVisitData visit,
-            CustomerVisitOrderOption orderOption,
-            bool usedCooldownFallback = false)
+            CustomerVisitOrderOption orderOption)
         {
             CustomerOrderData order = orderOption?.order;
             if (visit == null || order == null)
                 return;
+
+            if (!orderSession.ValidateCustomerOrderData(order, out string validationError))
+            {
+                invalidVisitKeys.Add(visit.visitKey);
+                Debug.LogError(
+                    $"[BusinessShift] 유효하지 않은 손님 주문을 시작하지 않습니다: "
+                    + $"visit={visit.visitKey}, order={order.key}, "
+                    + $"recipe={order.requestedRecipeId}, reason={validationError}");
+                return;
+            }
 
             OrderSessionRequest request = new()
             {
@@ -374,9 +385,8 @@ namespace Slainte.Business
             {
                 TotalStartedCustomerCount++;
                 LastSelectedVisitKey = visit.visitKey;
-                if (usedCooldownFallback)
-                    CooldownFallbackSelectionCount++;
-                CustomerVisitStarted?.Invoke(visit, usedCooldownFallback);
+                RecordRecentCustomer(visit);
+                CustomerVisitStarted?.Invoke(visit);
                 RecordCustomerAppearance(visit);
             }
         }
@@ -386,27 +396,38 @@ namespace Slainte.Business
             BusinessOrderSessionResult result)
         {
             orderActive = false;
-            completedOrderCount++;
 
             bool completedSuccessfully = result != null
                 && result.outcome == OrderSessionOutcome.Served
                 && result.accepted;
 
-            if (!completedSuccessfully)
-            {
-                if (visit != null && !string.IsNullOrWhiteSpace(visit.visitKey))
-                    invalidVisitKeys.Add(visit.visitKey);
-                Debug.LogError(
-                    $"[BusinessShift] 주문 처리에 실패하여 손님을 오늘의 풀에서 제외합니다: {visit?.visitKey}");
-            }
-            else if (visit != null && !string.IsNullOrWhiteSpace(visit.visitKey))
-            {
-                cooldownUntilByVisit[visit.visitKey] =
-                    activeBusinessSeconds + Mathf.Max(0f, visit.cooldownSeconds);
-            }
-
             if (completedSuccessfully)
+            {
+                completedOrderCount++;
                 RecordSale(result);
+            }
+            else
+            {
+                bool excludeVisit = result != null && !result.technicalFailure;
+                if (excludeVisit
+                    && visit != null
+                    && !string.IsNullOrWhiteSpace(visit.visitKey))
+                {
+                    invalidVisitKeys.Add(visit.visitKey);
+                }
+
+                string message =
+                    (excludeVisit
+                        ? "[BusinessShift] 주문 미완료로 손님을 오늘의 풀에서 제외합니다: "
+                        : "[BusinessShift] 주문 처리 실패 후 손님을 오늘의 풀에 유지합니다: ")
+                    + $"visit={visit?.visitKey}, order={result?.customerOrderKey}, "
+                    + $"recipe={result?.requestedRecipeId}, "
+                    + $"reason={result?.failureReason ?? "결과가 없거나 주문이 거절됐습니다."}";
+                if (result?.technicalFailure == true)
+                    Debug.LogError(message);
+                else
+                    Debug.LogWarning(message);
+            }
 
             SetState(remainingSeconds <= 0f
                 ? BusinessShiftState.CompletingRequiredActions
@@ -422,6 +443,42 @@ namespace Slainte.Business
                 return;
 
             salePayoutPolicy?.Apply(result, progress);
+        }
+
+        private void ExcludeVisitsWithInvalidOrderData()
+        {
+            if (orderSession == null || frozenCustomerPool.Count == 0)
+                return;
+
+            List<string> failures = new();
+            for (int visitIndex = 0; visitIndex < frozenCustomerPool.Count; visitIndex++)
+            {
+                CustomerVisitData visit = frozenCustomerPool[visitIndex];
+                if (visit?.orders == null)
+                    continue;
+
+                for (int orderIndex = 0; orderIndex < visit.orders.Count; orderIndex++)
+                {
+                    CustomerOrderData order = visit.orders[orderIndex]?.order;
+                    if (orderSession.ValidateCustomerOrderData(order, out string reason))
+                        continue;
+
+                    if (!string.IsNullOrWhiteSpace(visit.visitKey))
+                        invalidVisitKeys.Add(visit.visitKey);
+                    failures.Add(
+                        $"- visit={visit.visitKey}, order={order?.key}, "
+                        + $"recipe={order?.requestedRecipeId}, reason={reason}");
+                    break;
+                }
+            }
+
+            if (failures.Count > 0)
+            {
+                Debug.LogError(
+                    $"[BusinessShift] 주문 데이터가 유효하지 않은 방문 {failures.Count}개를 "
+                    + "오늘의 풀에서 제외합니다.\n"
+                    + string.Join("\n", failures));
+            }
         }
 
         private void StartBusinessEncounter(
@@ -490,6 +547,36 @@ namespace Slainte.Business
                 AdvanceAtSafePoint();
         }
 
+        private void RecordRecentCustomer(CustomerVisitData visit)
+        {
+            string key = visit?.GetReappearanceKey();
+            if (string.IsNullOrWhiteSpace(key))
+                return;
+
+            recentCustomerKeys.Enqueue(key);
+            recentCustomerKeySet.Add(key);
+            while (recentCustomerKeys.Count > RecentCustomerLimit)
+            {
+                string removed = recentCustomerKeys.Dequeue();
+                if (!recentCustomerKeys.Contains(removed))
+                    recentCustomerKeySet.Remove(removed);
+            }
+        }
+
+        private void StopRandomCustomerSpawning()
+        {
+            if (randomCustomerSpawningStopped)
+                return;
+
+            randomCustomerSpawningStopped = true;
+            SetState(BusinessShiftState.WaitingForCustomer);
+            sessionUi?.ShowWaitingForCustomer();
+            Debug.LogWarning(
+                "[BusinessShift] 최근 손님 2명 제한과 현재 등장 조건을 만족하는 다음 대상이 없습니다. "
+                + "이번 영업의 랜덤 손님 생성을 중단하고 남은 시간은 계속 진행합니다. "
+                + $"recent=[{string.Join(", ", recentCustomerKeys)}]");
+        }
+
         private void RecordCustomerAppearance(CustomerVisitData visit)
         {
             GameProgress progress = GameProgress.Instance;
@@ -519,7 +606,8 @@ namespace Slainte.Business
 
         private void ResetRuntimeState()
         {
-            cooldownUntilByVisit.Clear();
+            recentCustomerKeys.Clear();
+            recentCustomerKeySet.Clear();
             invalidVisitKeys.Clear();
             invalidEncounterIds.Clear();
             startedEncounterIds.Clear();
@@ -532,11 +620,11 @@ namespace Slainte.Business
             explicitlyPaused = false;
             initialRequiredPhaseComplete = false;
             beginOrderCallInProgress = false;
+            randomCustomerSpawningStopped = false;
             orderSequence = 0;
             completedOrderCount = 0;
             TotalStartedCustomerCount = 0;
             TotalStartedEncounterCount = 0;
-            CooldownFallbackSelectionCount = 0;
             LastSelectedVisitKey = string.Empty;
             remainingSeconds = 0f;
             activeBusinessSeconds = 0f;

@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb0b776e1e75c104782861e2bceaf956, type: 3}
+  m_Name: TVBroadcastDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.TV.TVBroadcastDatabase
+  broadcasts:
+  - id: none
+    title: "\uC774\uC0C1 \uC5C6\uC74C"
+    tickerText: "\uC624\uB298 \uBC24 \uD2B9\uBCC4\uD55C \uC0AC\uAC74\uC740 \uD655\uC778\uB418\uC9C0
+      \uC54A\uC558\uC2B5\uB2C8\uB2E4. \uD3C9\uC628\uD55C \uC601\uC5C5\uC774 \uC608\uC0C1\uB429\uB2C8\uB2E4."
+    weight: 55
+    presenterSprite: {fileID: 0}
+    eventSprite: {fileID: 21300000, guid: d0c1927d56e981d4996dd859e7fa7823, type: 3}
+    effectType: 0
+    targetTag: 
+    effectMultiplier: 1
+    minimumAbvPercent: -1
+    restrictionReason: 
+  - id: delivery_outage
+    title: "\uBC30\uC1A1\uB9DD \uB9C8\uBE44"
+    tickerText: "\uAE34\uAE09 \uC810\uAC80\uC73C\uB85C \uBC30\uC1A1 \uC11C\uBE44\uC2A4\uAC00
+      \uC77C\uC2DC \uC911\uB2E8\uB429\uB2C8\uB2E4."
+    weight: 5
+    presenterSprite: {fileID: 0}
+    eventSprite: {fileID: 21300000, guid: 245d872f8d5bed743ba78d9d2b6cc301, type: 3}
+    effectType: 1
+    targetTag: 
+    effectMultiplier: 1
+    minimumAbvPercent: -1
+    restrictionReason: "TV \uC608\uBCF4: \uBC30\uC1A1\uB9DD \uB9C8\uBE44"
+  - id: shop_maintenance
+    title: "\uC0C1\uC810 \uC815\uAE30 \uC810\uAC80"
+    tickerText: "\uC0C1\uC810 \uC124\uBE44 \uC810\uAC80\uC73C\uB85C \uB2E4\uC74C
+      \uD734\uC2DD \uB3D9\uC548 \uC0C1\uC810 \uC774\uC6A9\uC774 \uC81C\uD55C\uB429\uB2C8\uB2E4."
+    weight: 5
+    presenterSprite: {fileID: 0}
+    eventSprite: {fileID: 21300000, guid: 597f721bbafb5f1419ce5d6f0b081e6b, type: 3}
+    effectType: 2
+    targetTag: 
+    effectMultiplier: 1
+    minimumAbvPercent: -1
+    restrictionReason: "TV \uC608\uBCF4: \uC0C1\uC810 \uC815\uAE30 \uC810\uAC80"
+  - id: high_abv_orders
+    title: "\uACE0\uB3C4\uC218 \uC74C\uB8CC \uC12D\uCDE8 \uAD8C\uC7A5"
+    tickerText: "\uAE30\uC628 \uAE09\uAC15\uD558\uAC00 \uC608\uC0C1\uB429\uB2C8\uB2E4.
+      \uACE0\uB3C4\uC218 \uC74C\uB8CC \uC8FC\uBB38\uC774 \uC99D\uAC00\uD560 \uC804\uB9DD\uC785\uB2C8\uB2E4."
+    weight: 10
+    presenterSprite: {fileID: 0}
+    eventSprite: {fileID: 21300000, guid: 85e2cb7de6e96544d8247244a83c05fb, type: 3}
+    effectType: 3
+    targetTag: high_abv
+    effectMultiplier: 2
+    minimumAbvPercent: -1
+    restrictionReason: 
+  - id: tip_bonus
+    title: "\uADFC\uB85C\uC790 \uC131\uACFC \uBC30\uAE09\uAE08 \uC9C0\uAE09"
+    tickerText: "\uD2B9\uBCC4 \uC131\uACFC \uBC30\uAE09\uAE08\uC774 \uC9C0\uAE09\uB418\uC5B4
+      \uC190\uB2D8\uB4E4\uC758 \uD301 \uC9C0\uCD9C\uC774 \uC99D\uAC00\uD560 \uC804\uB9DD\uC785\uB2C8\uB2E4."
+    weight: 15
+    presenterSprite: {fileID: 0}
+    eventSprite: {fileID: 21300000, guid: d0382bfb6ec22aa42906ed0de645dacd, type: 3}
+    effectType: 4
+    targetTag: 
+    effectMultiplier: 1.5
+    minimumAbvPercent: -1
+    restrictionReason: 
+  - id: district_9_patrol
+    title: "[UPD] 9\uBC88\uAC00 \uB300\uADDC\uBAA8 \uC21C\uCC30"
+    tickerText: "9\uBC88\uAC00 \uC77C\uB300\uC758 \uB300\uADDC\uBAA8 \uC21C\uCC30\uB85C
+      \uD2B9\uC815 \uC190\uB2D8\uB4E4\uC758 \uC774\uB3D9\uC774 \uC99D\uAC00\uD569\uB2C8\uB2E4."
+    weight: 10
+    presenterSprite: {fileID: 0}
+    eventSprite: {fileID: 21300000, guid: d380c5be87201684da21a8370619cc89, type: 3}
+    effectType: 5
+    targetTag: "customer_attribute:\uC57C\uAC04\uC21C\uCC30"
+    effectMultiplier: 2
+    minimumAbvPercent: -1
+    restrictionReason: 

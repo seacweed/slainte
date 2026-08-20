@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Slainte.Business;
 
 [Serializable]
 public class SaveData
@@ -22,6 +23,14 @@ public class SaveData
     public int    currentMoney      = 0;
     public int    reputation        = 0;
     public int    dayDrinkSalesCount = 0;
+    public int    dayDrinkBaseRevenue = 0;
+    public int    dayDrinkTipRevenue  = 0;
     public int    dayDrinkRevenue    = 0;
     public int    dayTotalIncome     = 0;
+    public int    dayReputationDelta = 0;
+    public List<BusinessSaleRecord> dayDrinkSales = new();
+    public string tvForecastBroadcastId = "";
+    public bool   tvForecastRevealed = false;
+    public string tvActiveBroadcastId = "";
+    public int    tvActiveBusinessDay = -1;
 }

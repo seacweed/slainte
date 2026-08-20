@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [Serializable]
 public sealed class CustomerVisitMember
@@ -28,12 +29,31 @@ public sealed class CustomerVisitOrderOption
     public EpisodeTriggerCondition condition = new();
 }
 
+[Serializable]
+public sealed class CustomerAvailabilityTransition
+{
+    public bool enabled = true;
+    public EpisodeTriggerCondition condition = new();
+}
+
 [CreateAssetMenu(menuName = "Slainte/손님 방문 데이터", fileName = "CustomerVisit_")]
 public sealed class CustomerVisitData : ScriptableObject
 {
     [Header("식별 정보")]
+    [InspectorName("원본 손님 ID")]
+    public string sourceCustomerId;
     [InspectorName("방문 키")]
     public string visitKey;
+    [InspectorName("손님 속성 키")]
+    public string customerAttributeKey;
+    [InspectorName("말투 속성 키")]
+    public string speechStyleKey;
+    [InspectorName("선호 맛")]
+    [Tooltip("기획 CSV 원문 보존용입니다. 실제 주문 선택 규칙에는 아직 사용하지 않습니다.")]
+    public string preferredTasteKey;
+    [InspectorName("선호 분위기")]
+    [Tooltip("기획 CSV 원문 보존용입니다. 실제 주문 선택 규칙에는 아직 사용하지 않습니다.")]
+    public string preferredAtmosphereKey;
     [InspectorName("태그")]
     public List<string> tags = new();
 
@@ -46,14 +66,29 @@ public sealed class CustomerVisitData : ScriptableObject
     [Min(0f)] public float weight = 1f;
     [InspectorName("등장 조건")]
     public EpisodeTriggerCondition condition = new();
+    [InspectorName("시작 시 활성")]
+    public bool initiallyAvailable = true;
+    [InspectorName("활성 상태 전환")]
+    public List<CustomerAvailabilityTransition> availabilityTransitions = new();
     [InspectorName("최대 등장 날짜")]
     [Tooltip("0이면 최대 날짜 제한이 없습니다.")]
     [Min(0)] public int maxDay;
-    [InspectorName("재등장 대기 시간(초)")]
-    [Tooltip("주문 결과 처리가 끝난 뒤 이 손님이 일반 손님 풀에 다시 들어오기까지의 유효 영업시간입니다.")]
-    [Min(0f)] public float cooldownSeconds = 100f;
+    [FormerlySerializedAs("cooldownGroupKey")]
+    [InspectorName("재등장 공유 키")]
+    [Tooltip("같은 인물의 여러 방문형이 공유할 키입니다. 비어 있으면 방문 키를 사용합니다.")]
+    public string reappearanceGroupKey;
 
     [Header("주문 후보")]
+    [InspectorName("기획 원본 주문명")]
+    [Tooltip("CSV 원문 보존용입니다. 연결되지 않은 레시피도 이 목록에는 남습니다.")]
+    public List<string> plannedOrderNames = new();
     [InspectorName("주문 목록")]
     public List<CustomerVisitOrderOption> orders = new();
+
+    public string GetReappearanceKey()
+    {
+        return !string.IsNullOrWhiteSpace(reappearanceGroupKey)
+            ? reappearanceGroupKey.Trim()
+            : visitKey?.Trim() ?? string.Empty;
+    }
 }

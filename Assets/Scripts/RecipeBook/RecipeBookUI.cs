@@ -29,6 +29,10 @@ public class RecipeBookUI : MonoBehaviour
     private BookState _state = BookState.Closed;
     private Coroutine _slideCo;
     private bool _interactable = true;
+    private bool _temporarilyBlocked;
+
+    public bool IsOpen => _state == BookState.Open;
+    public bool IsTemporarilyBlocked => _temporarilyBlocked;
 
     void Awake()
     {
@@ -41,7 +45,7 @@ public class RecipeBookUI : MonoBehaviour
 
     public void Toggle()
     {
-        if (_slideCo != null) return;
+        if (_temporarilyBlocked || _slideCo != null) return;
 
         if      (_state == BookState.Open)   BeginClose();
         else if (_state == BookState.Closed) BeginOpen();
@@ -49,7 +53,14 @@ public class RecipeBookUI : MonoBehaviour
 
     public void Open()
     {
-        if (_state == BookState.Closed) BeginOpen();
+        if (!_temporarilyBlocked && _state == BookState.Closed) BeginOpen();
+    }
+
+    public void Close()
+    {
+        if (_state != BookState.Open) return;
+        _state = BookState.Closed;
+        BeginClose();
     }
 
     // EpisodeMode: close if open and disable interaction
@@ -59,7 +70,7 @@ public class RecipeBookUI : MonoBehaviour
         bool wasDisabled = !_interactable;
         _interactable = on;
 
-        SetButtonInteractable(on);
+        SetButtonInteractable(on && !_temporarilyBlocked);
 
         if (!on && _state == BookState.Open)
             BeginClose();
@@ -68,6 +79,13 @@ public class RecipeBookUI : MonoBehaviour
         // not on a plain Tab-toggle open/close.
         if (on && wasDisabled)
             recipeSearchUI?.ResetToMain();
+    }
+
+    public void SetTemporarilyBlocked(bool blocked)
+    {
+        _temporarilyBlocked = blocked;
+        SetButtonInteractable(_interactable && !blocked);
+        if (blocked) Close();
     }
 
     // Open: swap sprite immediately, then slide in

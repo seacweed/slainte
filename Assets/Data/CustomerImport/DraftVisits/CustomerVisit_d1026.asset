@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac17f86c00d94b55aa7b8895fa1d91f1, type: 3}
+  m_Name: CustomerVisit_d1026
+  m_EditorClassIdentifier: Assembly-CSharp::CustomerVisitData
+  sourceCustomerId: D1026
+  visitKey: d1026
+  customerAttributeKey: "\uC57C\uAC04\uC21C\uCC30"
+  speechStyleKey: "\uC57C\uAC04\uC21C\uCC30_\uC678\uD5A5\uC801"
+  preferredTasteKey: 
+  preferredAtmosphereKey: 
+  tags:
+  - "customer_attribute:\uC57C\uAC04\uC21C\uCC30"
+  members:
+  - characterKey: f49
+    slotIndex: -1
+    expressionKeyMid: mid
+    expressionKeyGood: good
+    expressionKeyBad: bad
+  weight: 5
+  condition:
+    minDay: 0
+    requiredFlags: []
+    blockedFlags: []
+    prerequisiteEpisodeIds: []
+    requiredVars: []
+    requiredCustomerAppearances: []
+  initiallyAvailable: 0
+  availabilityTransitions: []
+  maxDay: 0
+  reappearanceGroupKey: f49
+  plannedOrderNames:
+  - "\uBE0C\uB9AC\uC988 \uB2C8\uD2B8"
+  - "\uBE0C\uB9AC\uC988 \uC628\uB354\uB77D"
+  - "\uAC13 \uB808\uC774\uB514"
+  orders:
+  - order: {fileID: 11400000, guid: 05cfb75d0ccbe3649831763527f2806b, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: 05266fd943544d84784f75cb9a11b911, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: fa4f01b2b726ea142b1ace377e69404e, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []

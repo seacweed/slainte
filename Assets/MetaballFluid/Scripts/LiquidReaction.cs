@@ -81,11 +81,6 @@ public class LiquidReaction : MonoBehaviour
         TryMixCollision(collision);
     }
 
-    void OnCollisionStay2D(Collision2D collision)
-    {
-        TryMixCollision(collision);
-    }
-
     void TryMixCollision(Collision2D collision)
     {
         if (isLogicallySleeping) return;

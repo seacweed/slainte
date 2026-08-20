@@ -13,20 +13,44 @@ namespace Slainte.Bartending
         [SerializeField] private RawImage outputImage;
         [SerializeField] private Vector2Int renderSize = new Vector2Int(1700, 650);
         [SerializeField] private bool registerForInput = true;
+        [SerializeField] private RectTransform bottomExtensionRect;
 
         private RenderTexture targetTexture;
+        private float baseCameraOrthographicSize;
+        private Vector3 baseCameraLocalPosition;
+        private bool cameraFramingCaptured;
+        private bool updatingViewportGeometry;
 
-        public void Initialize(Camera camera, Vector2Int size, bool enableInputRegistration = true)
+        public void Initialize(
+            Camera camera,
+            Vector2Int size,
+            bool enableInputRegistration = true,
+            RectTransform extendToBottom = null)
         {
+            if (worldCamera != camera)
+                cameraFramingCaptured = false;
             worldCamera = camera;
             renderSize = size;
             registerForInput = enableInputRegistration;
+            bottomExtensionRect = extendToBottom;
             outputImage = GetComponent<RawImage>();
+            CaptureBaseCameraFraming();
+            Canvas.ForceUpdateCanvases();
+            ApplyBottomExtension();
 
             if (isActiveAndEnabled)
             {
                 BuildTargetTexture();
             }
+        }
+
+        public void SetOutputVisible(bool visible)
+        {
+            if (outputImage == null)
+                outputImage = GetComponent<RawImage>();
+
+            if (outputImage != null)
+                outputImage.enabled = visible;
         }
 
         private void OnEnable()
@@ -35,6 +59,8 @@ namespace Slainte.Bartending
                 Active = this;
             if (worldCamera != null)
             {
+                CaptureBaseCameraFraming();
+                ApplyBottomExtension();
                 BuildTargetTexture();
             }
         }
@@ -119,6 +145,51 @@ namespace Slainte.Bartending
             else
                 DestroyImmediate(targetTexture);
             targetTexture = null;
+        }
+
+        private void CaptureBaseCameraFraming()
+        {
+            if (cameraFramingCaptured || worldCamera == null)
+                return;
+
+            baseCameraOrthographicSize = worldCamera.orthographicSize;
+            baseCameraLocalPosition = worldCamera.transform.localPosition;
+            cameraFramingCaptured = true;
+        }
+
+        private void ApplyBottomExtension()
+        {
+            RectTransform viewportRect = transform as RectTransform;
+            RectTransform parentRect = viewportRect != null
+                ? viewportRect.parent as RectTransform
+                : null;
+            if (viewportRect == null || parentRect == null || !cameraFramingCaptured)
+                return;
+
+            float baseHeight = Mathf.Max(1f, parentRect.rect.height);
+            float bottomExtension = 0f;
+            if (bottomExtensionRect != null)
+            {
+                Bounds extensionBounds =
+                    RectTransformUtility.CalculateRelativeRectTransformBounds(
+                        parentRect,
+                        bottomExtensionRect);
+                bottomExtension = Mathf.Max(
+                    0f,
+                    parentRect.rect.yMin - extensionBounds.min.y);
+            }
+
+            updatingViewportGeometry = true;
+            Vector2 offsetMin = viewportRect.offsetMin;
+            offsetMin.y = -bottomExtension;
+            viewportRect.offsetMin = offsetMin;
+
+            float heightRatio = (baseHeight + bottomExtension) / baseHeight;
+            worldCamera.orthographicSize = baseCameraOrthographicSize * heightRatio;
+            Vector3 cameraPosition = baseCameraLocalPosition;
+            cameraPosition.y -= baseCameraOrthographicSize * bottomExtension / baseHeight;
+            worldCamera.transform.localPosition = cameraPosition;
+            updatingViewportGeometry = false;
         }
 
         public static bool TryGetPointerWorldPosition(Camera fallbackCamera, Vector2 screenPosition, out Vector3 worldPosition)
@@ -375,8 +446,9 @@ namespace Slainte.Bartending
 
         private void OnRectTransformDimensionsChange()
         {
-            if (isActiveAndEnabled && worldCamera != null)
+            if (!updatingViewportGeometry && isActiveAndEnabled && worldCamera != null)
             {
+                ApplyBottomExtension();
                 BuildTargetTexture();
             }
         }

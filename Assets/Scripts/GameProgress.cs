@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Slainte.Business;
 using UnityEngine;
 
 public class GameProgress : MonoSingleton<GameProgress>
@@ -41,8 +42,18 @@ public class GameProgress : MonoSingleton<GameProgress>
 
     [Header("Day Settlement (transient, resets each day)")]
     [SerializeField] private int dayDrinkSalesCount = 0;
+    [SerializeField] private int dayDrinkBaseRevenue = 0;
+    [SerializeField] private int dayDrinkTipRevenue  = 0;
     [SerializeField] private int dayDrinkRevenue     = 0;
     [SerializeField] private int dayTotalIncome      = 0;
+    [SerializeField] private int dayReputationDelta  = 0;
+    [SerializeField] private List<BusinessSaleRecord> dayDrinkSales = new();
+
+    [Header("TV")]
+    [SerializeField] private string tvForecastBroadcastId = "";
+    [SerializeField] private bool tvForecastRevealed;
+    [SerializeField] private string tvActiveBroadcastId = "";
+    [SerializeField] private int tvActiveBusinessDay = -1;
 
     private HashSet<string>           _flagSet;
     private HashSet<string>           _completedSet;
@@ -57,8 +68,15 @@ public class GameProgress : MonoSingleton<GameProgress>
     public int    CurrentMoney      => currentMoney;
     public int    Reputation        => reputation;
     public int    DayDrinkSalesCount => dayDrinkSalesCount;
+    public int    DayDrinkBaseRevenue => dayDrinkBaseRevenue;
+    public int    DayDrinkTipRevenue  => dayDrinkTipRevenue;
     public int    DayDrinkRevenue    => dayDrinkRevenue;
     public int    DayTotalIncome     => dayTotalIncome;
+    public int    DayReputationDelta => dayReputationDelta;
+    public string TVForecastBroadcastId => tvForecastBroadcastId;
+    public bool   TVForecastRevealed => tvForecastRevealed;
+    public string TVActiveBroadcastId => tvActiveBroadcastId;
+    public int    TVActiveBusinessDay => tvActiveBusinessDay;
 
     protected override void Awake()
     {
@@ -119,8 +137,25 @@ public class GameProgress : MonoSingleton<GameProgress>
         currentMoney        = data.currentMoney;
         reputation          = data.reputation;
         dayDrinkSalesCount  = data.dayDrinkSalesCount;
+        dayDrinkBaseRevenue = data.dayDrinkBaseRevenue;
+        dayDrinkTipRevenue  = data.dayDrinkTipRevenue;
         dayDrinkRevenue     = data.dayDrinkRevenue;
         dayTotalIncome      = data.dayTotalIncome;
+        dayReputationDelta  = data.dayReputationDelta;
+        dayDrinkSales       = CloneSaleRecords(data.dayDrinkSales);
+        tvForecastBroadcastId = data.tvForecastBroadcastId ?? "";
+        tvForecastRevealed = data.tvForecastRevealed;
+        tvActiveBroadcastId = data.tvActiveBroadcastId ?? "";
+        tvActiveBusinessDay = data.tvActiveBusinessDay;
+
+        // 이전 저장 파일은 총 판매금만 가지고 있으므로 전액을 기본 판매금으로 이관한다.
+        if (dayDrinkBaseRevenue == 0
+            && dayDrinkTipRevenue == 0
+            && dayDrinkRevenue != 0
+            && dayDrinkSales.Count == 0)
+        {
+            dayDrinkBaseRevenue = dayDrinkRevenue;
+        }
 
         RebuildRuntimeSets();
     }
@@ -137,6 +172,7 @@ public class GameProgress : MonoSingleton<GameProgress>
     public List<int>    GetCustomerAppearanceValues() => new List<int>(customerAppearanceValues);
     public List<string> GetUpgradeKeys()   => new List<string>(upgradeKeys);
     public List<int>    GetUpgradeValues() => new List<int>(upgradeValues);
+    public List<BusinessSaleRecord> GetDayDrinkSales() => CloneSaleRecords(dayDrinkSales);
 
     // ── Flags ──────────────────────────────────────────────────
 
@@ -181,6 +217,30 @@ public class GameProgress : MonoSingleton<GameProgress>
     public void AdvanceDay()
     {
         currentDay++;
+    }
+
+    public void SetTVForecast(string broadcastId)
+    {
+        tvForecastBroadcastId = broadcastId ?? "";
+        tvForecastRevealed = false;
+    }
+
+    public void MarkTVForecastRevealed()
+    {
+        if (!string.IsNullOrWhiteSpace(tvForecastBroadcastId))
+            tvForecastRevealed = true;
+    }
+
+    public bool ActivateTVForecastForBusiness()
+    {
+        if (string.IsNullOrWhiteSpace(tvForecastBroadcastId))
+            return false;
+
+        tvActiveBroadcastId = tvForecastBroadcastId;
+        tvActiveBusinessDay = currentDay;
+        tvForecastBroadcastId = "";
+        tvForecastRevealed = false;
+        return true;
     }
 
     // ── Chapter ────────────────────────────────────────────────
@@ -399,9 +459,35 @@ public class GameProgress : MonoSingleton<GameProgress>
 
     public void RecordDrinkSale(int revenue)
     {
+        RecordDrinkSale(new BusinessSaleRecord
+        {
+            baseRevenue = revenue,
+            totalRevenue = revenue
+        });
+    }
+
+    public void RecordDrinkSale(BusinessSaleRecord record)
+    {
+        if (record == null)
+            return;
+
+        BusinessSaleRecord stored = record.Clone();
+        if (stored.baseRevenue == 0 && stored.tipAmount == 0 && stored.totalRevenue != 0)
+            stored.baseRevenue = stored.totalRevenue;
+        else
+            stored.totalRevenue = stored.baseRevenue + stored.tipAmount;
+
+        if (stored.customerMood == CustomerMood.Unknown)
+            stored.customerMood = BusinessOrderRewardCalculator.ResolveMood(stored.grade);
+
+        dayDrinkSales ??= new List<BusinessSaleRecord>();
+        dayDrinkSales.Add(stored);
         dayDrinkSalesCount += 1;
-        dayDrinkRevenue    += revenue;
-        dayTotalIncome     += revenue;
+        dayDrinkBaseRevenue += stored.baseRevenue;
+        dayDrinkTipRevenue += stored.tipAmount;
+        dayDrinkRevenue += stored.totalRevenue;
+        dayTotalIncome += stored.totalRevenue;
+        dayReputationDelta += stored.reputationDelta;
     }
 
     public void AddDayIncome(int amount)
@@ -412,7 +498,28 @@ public class GameProgress : MonoSingleton<GameProgress>
     public void ResetDaySettlement()
     {
         dayDrinkSalesCount = 0;
+        dayDrinkBaseRevenue = 0;
+        dayDrinkTipRevenue  = 0;
         dayDrinkRevenue    = 0;
         dayTotalIncome     = 0;
+        dayReputationDelta = 0;
+        dayDrinkSales?.Clear();
+    }
+
+    private static List<BusinessSaleRecord> CloneSaleRecords(
+        IReadOnlyList<BusinessSaleRecord> source)
+    {
+        List<BusinessSaleRecord> result = new();
+        if (source == null)
+            return result;
+
+        for (int i = 0; i < source.Count; i++)
+        {
+            BusinessSaleRecord record = source[i];
+            if (record != null)
+                result.Add(record.Clone());
+        }
+
+        return result;
     }
 }

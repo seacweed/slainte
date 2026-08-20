@@ -6,6 +6,19 @@ BusinessScene의 CraftingMode에서 동작하는 도구 인터랙션과 액체 �
 
 ## 바텐딩 도구 (`Assets/Scripts/Bartending/`)
 
+### 영업 도구장
+
+`BusinessBartendingSettings.useToolCabinet`이 활성화되고 Resources 카탈로그가 유효하면 영업 제조 세션은 고정 도구 대신 `DrawerArea` 도구장을 사용한다. 카탈로그가 없거나 손상되면 기존 고정 Beaker/Shaker/Glass/IceBin 생성으로 폴백한다.
+
+- `ToolCabinetController`: 기존 서랍 배경·구획 UI, 도구장 슬롯 표시, 클릭 집기, 반환, 얼음 충전
+- `BusinessBartendingBootstrap`: 세션별 도구장 `SlotController`와 월드 인스턴스 등록·정리, 동적 서빙 잔 교체
+- `ToolDef` / `GlassDef` / `ToolCabinetCatalog`: 도구·잔 데이터와 아트 연결
+- `ToolCabinetWorldFactory`: 지거·셰이커 레이어, 바스푼, 얼음통, 임시 잔 월드 오브젝트 생성
+
+이동 가능한 도구와 잔은 세션 시작 시 각각 실제 `SlotController` 하나를 점유한다. 도구장 아이콘 드래그로 새 오브젝트를 생성하지 않는다. 슬롯을 클릭하면 같은 인스턴스를 `Vacate`하고 즉시 집으며, 자기 도구장 슬롯에 반환하면 `Occupy`와 `SnapToSlot`을 그대로 사용한다. 내용물과 얼음은 반환할 때 폐기하지 않는다. 기존 바테이블 슬롯 코드와 슬롯 목록은 변경하지 않으며 도구장 슬롯도 그 목록에 섞지 않는다.
+
+정책은 도구별 1개, 서빙 잔 1개, 주문 종료 자동 정리다. 지거는 데이터 기반 30/45 ml 전환과 용량 차단을 사용한다. 바스푼은 물리 혼합만 수행하며 평가 기법을 기록하지 않는다. 얼음통은 이동 슬롯과 분리된 기존 전용 앵커를 유지하고 최대 20개이며 하단 오른쪽 제빙 영역에서 충전한다.
+
 ### IBartendingItem
 
 모든 바텐딩 도구가 구현하는 공통 인터페이스.

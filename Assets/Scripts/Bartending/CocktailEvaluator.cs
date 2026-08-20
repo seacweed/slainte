@@ -25,9 +25,11 @@ namespace Slainte.Bartending
         public bool isSuccess;
         public float score;
         public float actualTotalMl;
+        public Color finalColor = Color.clear;
         public string failureReason;
         public bool glassValid = true;
         public bool iceValid = true;
+        public bool shakeIceValid = true;
         public bool techniqueValid = true;
         public readonly List<CocktailIngredientEvaluation> ingredients = new();
         public readonly List<CocktailExtraIngredient> extraIngredients = new();
@@ -43,6 +45,17 @@ namespace Slainte.Bartending
             builder.Append("% | 총량 ");
             builder.Append(actualTotalMl.ToString("0.##"));
             builder.AppendLine(" ml");
+            builder.Append("최종 색상: #");
+            builder.Append(ColorUtility.ToHtmlStringRGBA(finalColor));
+            builder.Append(" | RGBA(");
+            builder.Append(finalColor.r.ToString("0.###"));
+            builder.Append(", ");
+            builder.Append(finalColor.g.ToString("0.###"));
+            builder.Append(", ");
+            builder.Append(finalColor.b.ToString("0.###"));
+            builder.Append(", ");
+            builder.Append(finalColor.a.ToString("0.###"));
+            builder.AppendLine(")");
 
             if (!string.IsNullOrWhiteSpace(failureReason))
                 builder.AppendLine(failureReason);
@@ -159,7 +172,8 @@ namespace Slainte.Bartending
             CocktailEvaluationResult result = new CocktailEvaluationResult
             {
                 matchedRecipe = recipe,
-                actualTotalMl = composition != null ? composition.TotalVolumeMl : 0f
+                actualTotalMl = composition != null ? composition.TotalVolumeMl : 0f,
+                finalColor = composition != null ? composition.EvaluateFinalColor() : Color.clear
             };
 
             HashSet<ItemDef> recipeItems = new HashSet<ItemDef>();
@@ -205,6 +219,7 @@ namespace Slainte.Bartending
             bool totalValid = IsTotalWithinRange(recipe, result.actualTotalMl);
             bool glassValid = IsGlassValid(recipe, composition);
             bool iceValid = IsIceValid(recipe, composition);
+            bool shakeIceValid = IsShakeIceValid(recipe, composition);
             bool techniqueValid = IsTechniqueValid(recipe, composition);
 
             float ingredientScore = recipe.ingredients.Count > 0
@@ -217,6 +232,7 @@ namespace Slainte.Bartending
 
             result.glassValid = glassValid;
             result.iceValid = iceValid;
+            result.shakeIceValid = shakeIceValid;
             result.techniqueValid = techniqueValid;
             result.score = Mathf.Clamp01(
                 ingredientScore * 0.7f
@@ -224,12 +240,14 @@ namespace Slainte.Bartending
                 + extraScore * 0.05f
                 + (glassValid ? 0.05f : 0f)
                 + (iceValid ? 0.05f : 0f)
-                + (techniqueValid ? 0.05f : 0f));
+                + (techniqueValid ? 0.05f : 0f)
+                - (shakeIceValid ? 0f : 0.05f));
             result.isSuccess = allIngredientsValid
                 && extrasValid
                 && totalValid
                 && glassValid
                 && iceValid
+                && shakeIceValid
                 && techniqueValid
                 && !hasUnresolvedIngredient;
             result.failureReason = BuildFailureReason(
@@ -239,6 +257,7 @@ namespace Slainte.Bartending
                 totalValid,
                 glassValid,
                 iceValid,
+                shakeIceValid,
                 techniqueValid);
             return result;
         }
@@ -264,13 +283,26 @@ namespace Slainte.Bartending
 
         private static bool IsTechniqueValid(CocktailRecipe recipe, CocktailComposition composition)
         {
-            if (recipe.requiredTechnique == CocktailTechnique.None)
+            CocktailTechnique evaluatedRequirement =
+                recipe.requiredTechnique & ~CocktailTechnique.Stir;
+            if (evaluatedRequirement == CocktailTechnique.None)
                 return true;
 
             CocktailTechnique actual = composition != null
                 ? composition.GetEffectiveTechniques()
                 : CocktailTechnique.Build;
-            return (actual & recipe.requiredTechnique) != 0;
+            return (actual & evaluatedRequirement) != 0;
+        }
+
+        private static bool IsShakeIceValid(CocktailRecipe recipe, CocktailComposition composition)
+        {
+            if (recipe.shakeIceRequirement == IceRequirement.Any)
+                return true;
+
+            bool wasShakenWithIce = composition != null && composition.WasShakenWithIce;
+            return recipe.shakeIceRequirement == IceRequirement.Required
+                ? wasShakenWithIce
+                : !wasShakenWithIce;
         }
 
         private static float CollectExtras(
@@ -339,6 +371,7 @@ namespace Slainte.Bartending
             bool totalValid,
             bool glassValid,
             bool iceValid,
+            bool shakeIceValid,
             bool techniqueValid)
         {
             if (!hasUnresolvedIngredient
@@ -347,6 +380,7 @@ namespace Slainte.Bartending
                 && totalValid
                 && glassValid
                 && iceValid
+                && shakeIceValid
                 && techniqueValid)
                 return string.Empty;
 
@@ -363,6 +397,8 @@ namespace Slainte.Bartending
                 reasons.Add("잔 종류 불일치");
             if (!iceValid)
                 reasons.Add("얼음 조건 불일치");
+            if (!shakeIceValid)
+                reasons.Add("셰이킹 얼음 조건 불일치");
             if (!techniqueValid)
                 reasons.Add("제조법 불일치");
 
@@ -376,6 +412,7 @@ namespace Slainte.Bartending
                 isSuccess = false,
                 score = 0f,
                 actualTotalMl = composition != null ? composition.TotalVolumeMl : 0f,
+                finalColor = composition != null ? composition.EvaluateFinalColor() : Color.clear,
                 failureReason = reason
             };
         }

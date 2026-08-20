@@ -107,8 +107,16 @@ namespace Slainte.Business
                 currentMoney = progress.CurrentMoney,
                 reputation = progress.Reputation,
                 dayDrinkSalesCount = progress.DayDrinkSalesCount,
+                dayDrinkBaseRevenue = progress.DayDrinkBaseRevenue,
+                dayDrinkTipRevenue = progress.DayDrinkTipRevenue,
                 dayDrinkRevenue = progress.DayDrinkRevenue,
-                dayTotalIncome = progress.DayTotalIncome
+                dayTotalIncome = progress.DayTotalIncome,
+                dayReputationDelta = progress.DayReputationDelta,
+                dayDrinkSales = progress.GetDayDrinkSales(),
+                tvForecastBroadcastId = progress.TVForecastBroadcastId,
+                tvForecastRevealed = progress.TVForecastRevealed,
+                tvActiveBroadcastId = progress.TVActiveBroadcastId,
+                tvActiveBusinessDay = progress.TVActiveBusinessDay
             };
         }
     }

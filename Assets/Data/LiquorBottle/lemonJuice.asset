@@ -15,6 +15,10 @@ MonoBehaviour:
   id: lemon_juice
   displayName: "\uB808\uBAAC \uC8FC\uC2A4"
   sprite: {fileID: 8455280647246717337, guid: 14e5016a02536da428a10ee835f58d2b, type: 3}
+  useContextImages: 1
+  shopBlankSprite: {fileID: 0}
+  shelfLidSprite: {fileID: 0}
+  barSprite: {fileID: 0}
   unlockFlagKey: 
   subCategory: "\uACFC\uC77C \uC8FC\uC2A4"
   bottleCount: 6

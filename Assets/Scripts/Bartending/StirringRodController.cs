@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Slainte.Bartending
 {
@@ -12,7 +11,7 @@ namespace Slainte.Bartending
 
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Collider2D))]
-    public sealed class StirringRodController : MonoBehaviour, IBartendingItem
+    public sealed class StirringRodController : MonoBehaviour, IBartendingItem, IPointerAnchoredPickup
     {
         [Header("Interaction")]
         [SerializeField] private float maxRotationAngle = 180f;
@@ -48,6 +47,7 @@ namespace Slainte.Bartending
         private Vector2 rodVelocity;
         private float previousAngle;
         private float rodAngularVelocity;
+        private Vector3 pointerOffset;
 
         public GameObject GameObject => gameObject;
         public bool IsPickedUp => currentState == StirringRodState.PickedUp || currentState == StirringRodState.Rotating;
@@ -76,8 +76,7 @@ namespace Slainte.Bartending
 
         private void OnDisable()
         {
-            if (currentState == StirringRodState.Rotating)
-                UnlockCursor();
+            BartendingPointerAnchor.Release(this);
         }
 
         private void Update()
@@ -125,15 +124,32 @@ namespace Slainte.Bartending
 
         private void PickupRod()
         {
+            if (!BartendingViewport.TryGetPointerWorldPosition(
+                    mainCamera,
+                    Input.mousePosition,
+                    out Vector3 pointerWorld))
+            {
+                pointerWorld = transform.position;
+            }
+            PickupRod(pointerWorld);
+        }
+
+        private void PickupRod(Vector3 pointerWorld)
+        {
             currentState = StirringRodState.PickedUp;
             currentSlot?.Vacate();
             currentSlot = null;
+            pointerOffset = transform.position - pointerWorld;
+            pointerOffset.z = 0f;
             SetPickedSortingOrder();
             interactionOrder?.BringToFront();
         }
 
         private void TryDropRod()
         {
+            if (ToolCabinetController.TryReturnHeldItem(this, mainCamera, Input.mousePosition))
+                return;
+
             if (!BartendingViewport.TryGetPointerWorldPosition(mainCamera, Input.mousePosition, out Vector3 mousePosition))
                 return;
 
@@ -168,13 +184,21 @@ namespace Slainte.Bartending
 
             currentSlot = slot;
             float bottomOffset = GetBottomOffset();
-            SetPosition(new Vector3(slotTransform.position.x, slotTransform.position.y + bottomOffset, 0f));
+            SetPositionImmediately(new Vector3(
+                slotTransform.position.x,
+                slotTransform.position.y + bottomOffset,
+                0f));
             ReleaseRod();
         }
 
         public void OnPickedUp()
         {
             PickupRod();
+        }
+
+        public void OnPickedUpAt(Vector3 pointerWorld)
+        {
+            PickupRod(pointerWorld);
         }
 
         public void OnDropped()
@@ -185,6 +209,7 @@ namespace Slainte.Bartending
         private void ReleaseRod()
         {
             currentState = StirringRodState.Idle;
+            pointerOffset = Vector3.zero;
             RestoreSortingOrder();
         }
 
@@ -193,14 +218,15 @@ namespace Slainte.Bartending
             if (!BartendingViewport.TryGetPointerWorldPosition(mainCamera, Input.mousePosition, out Vector3 mousePosition))
                 return;
 
-            SetPosition(mousePosition);
+            SetPosition(mousePosition + pointerOffset);
         }
 
         private void StartRotating()
         {
+            if (!BartendingPointerAnchor.TryLock(this))
+                return;
+
             currentState = StirringRodState.Rotating;
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
         }
 
         private void PerformRotation()
@@ -213,21 +239,13 @@ namespace Slainte.Bartending
 
         private void StopRotating()
         {
-            UnlockCursor();
-
-            if (Mouse.current != null && mainCamera != null)
-            {
-                Vector2 screenPosition = BartendingViewport.GetPointerScreenPosition(mainCamera, transform.position);
-                Mouse.current.WarpCursorPosition(screenPosition);
-            }
+            BartendingPointerAnchor.UnlockAndWarp(
+                this,
+                mainCamera,
+                transform.position,
+                out _);
 
             currentState = StirringRodState.PickedUp;
-        }
-
-        private void UnlockCursor()
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
         }
 
         private void SetPosition(Vector3 position)
@@ -237,6 +255,17 @@ namespace Slainte.Bartending
                 rb.MovePosition(position);
             else
                 transform.position = position;
+        }
+
+        private void SetPositionImmediately(Vector3 position)
+        {
+            position.z = 0f;
+            if (rb != null)
+            {
+                rb.position = position;
+                rb.linearVelocity = Vector2.zero;
+            }
+            transform.position = position;
         }
 
         private void SetRotation(float angle)
@@ -288,8 +317,6 @@ namespace Slainte.Bartending
 
             if (other == null || !other.TryGetComponent(out LiquidParticleData particle))
                 return;
-
-            particle.RecordTechnique(CocktailTechnique.Stir);
 
             Rigidbody2D otherRb = other.attachedRigidbody;
             if (otherRb == null)

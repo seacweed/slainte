@@ -33,6 +33,7 @@ namespace Slainte.Bartending
         public bool allowExtraIngredients;
         public string glassId;
         public IceRequirement iceRequirement = IceRequirement.Any;
+        public IceRequirement shakeIceRequirement = IceRequirement.Any;
         public CocktailTechnique requiredTechnique = CocktailTechnique.None;
         [Tooltip("0 이상이면 이 값을 사용하고, 음수이면 재료의 도수와 용량으로 계산합니다.")]
         public float abvOverridePercent = -1f;
@@ -62,6 +63,7 @@ namespace Slainte.Bartending
                 allowExtraIngredients = allowExtraIngredients,
                 glassId = glassId != null ? glassId.Trim() : string.Empty,
                 iceRequirement = iceRequirement,
+                shakeIceRequirement = shakeIceRequirement,
                 requiredTechnique = requiredTechnique
             };
 

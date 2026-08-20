@@ -269,11 +269,11 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  slotSnapDuration: 0.1
   slotLayer:
     serializedVersion: 2
     m_Bits: 1
   glassId: rock
+  capacityMl: 200
   steamStartTemperatureC: 55
   steamStopTemperatureC: 48
   steamTopOffset: 0.08

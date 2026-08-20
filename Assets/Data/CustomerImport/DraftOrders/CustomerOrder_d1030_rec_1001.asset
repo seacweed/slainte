@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 596ac274de286b84aaa5c1510f09601f, type: 3}
+  m_Name: CustomerOrder_d1030_rec_1001
+  m_EditorClassIdentifier: Assembly-CSharp::CustomerOrderData
+  key: d1030_rec_1001
+  requestedRecipeId: rec_1001
+  orderType: 0
+  tags: []
+  characterKey: f54
+  expressionKeyMid: mid
+  expressionKeyGood: good
+  expressionKeyBad: bad
+  lines: []
+  feedbackLinesGood: []
+  feedbackLinesMid: []
+  feedbackLinesBad: []

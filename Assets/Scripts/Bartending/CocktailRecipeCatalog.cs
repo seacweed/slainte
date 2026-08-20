@@ -49,6 +49,7 @@ namespace Slainte.Bartending
         public bool allowExtraIngredients;
         public string glassId;
         public IceRequirement iceRequirement = IceRequirement.Any;
+        public IceRequirement shakeIceRequirement = IceRequirement.Any;
         public CocktailTechnique requiredTechnique = CocktailTechnique.None;
         public readonly HashSet<string> ingredientPropertyTags = new(StringComparer.OrdinalIgnoreCase);
         public readonly HashSet<string> tasteTags = new(StringComparer.OrdinalIgnoreCase);

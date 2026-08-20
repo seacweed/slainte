@@ -21,6 +21,11 @@ namespace Slainte.Bartending
             return GenerateOrder(CocktailOrderType.RecipeOrder, requestedRecipeId);
         }
 
+        public bool CanGenerateOrder(string requestedRecipeId)
+        {
+            return ResolveRecipe(requestedRecipeId) != null;
+        }
+
         public GeneratedCocktailOrder GenerateOrder(
             CocktailOrderType orderType,
             string requestedRecipeId = "")

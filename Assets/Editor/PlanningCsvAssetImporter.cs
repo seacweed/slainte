@@ -347,6 +347,8 @@ namespace Slainte.EditorTools
             if (isNew)
                 definition = ScriptableObject.CreateInstance<LiquorBottleDef>();
 
+            CopyExistingContextVisuals(displayName, id, definition);
+
             definition.name = id;
             definition.id = id;
             definition.displayName = displayName;
@@ -950,15 +952,51 @@ namespace Slainte.EditorTools
                 LiquorBottleDef definition = AssetDatabase.LoadAssetAtPath<LiquorBottleDef>(
                     AssetDatabase.GUIDToAssetPath(guids[i]));
                 if (definition == null
-                    || definition.sprite == null
                     || string.Equals(definition.id, importedId, StringComparison.OrdinalIgnoreCase)
                     || !string.Equals(definition.displayName, displayName, StringComparison.OrdinalIgnoreCase))
                     continue;
 
-                return definition.sprite;
+                Sprite barSprite = definition.GetBarSprite();
+                if (barSprite != null)
+                    return barSprite;
             }
 
             return null;
+        }
+
+        private static void CopyExistingContextVisuals(
+            string displayName,
+            string importedId,
+            LiquorBottleDef destination)
+        {
+            if (destination == null
+                || destination.HasContextVisuals
+                || string.IsNullOrWhiteSpace(displayName))
+            {
+                return;
+            }
+
+            string[] guids = AssetDatabase.FindAssets(
+                "t:LiquorBottleDef",
+                new[] { "Assets/Data/LiquorBottle" });
+            for (int i = 0; i < guids.Length; i++)
+            {
+                LiquorBottleDef source = AssetDatabase.LoadAssetAtPath<LiquorBottleDef>(
+                    AssetDatabase.GUIDToAssetPath(guids[i]));
+                if (source == null
+                    || !source.HasContextVisuals
+                    || string.Equals(source.id, importedId, StringComparison.OrdinalIgnoreCase)
+                    || !string.Equals(source.displayName, displayName, StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+
+                destination.useContextImages = source.useContextImages;
+                destination.shopBlankSprite = source.shopBlankSprite;
+                destination.shelfLidSprite = source.shelfLidSprite;
+                destination.barSprite = source.barSprite;
+                return;
+            }
         }
 
         private static bool AssetExistsWithItemId(string itemId)

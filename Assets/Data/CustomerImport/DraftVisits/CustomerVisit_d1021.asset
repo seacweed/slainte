@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac17f86c00d94b55aa7b8895fa1d91f1, type: 3}
+  m_Name: CustomerVisit_d1021
+  m_EditorClassIdentifier: Assembly-CSharp::CustomerVisitData
+  sourceCustomerId: D1021
+  visitKey: d1021
+  customerAttributeKey: "\uC544\uBB34\uAC1C\uB4E4"
+  speechStyleKey: "\uC544\uBB34\uAC1C\uB4E4_\uACFC\uACA9\uD55C\uB0A8\uC131"
+  preferredTasteKey: 
+  preferredAtmosphereKey: "\uC815\uC5F4\uC801\uC778"
+  tags:
+  - "customer_attribute:\uC544\uBB34\uAC1C\uB4E4"
+  members:
+  - characterKey: vago
+    slotIndex: -1
+    expressionKeyMid: mid
+    expressionKeyGood: good
+    expressionKeyBad: bad
+  weight: 5
+  condition:
+    minDay: 0
+    requiredFlags: []
+    blockedFlags: []
+    prerequisiteEpisodeIds: []
+    requiredVars: []
+    requiredCustomerAppearances: []
+  initiallyAvailable: 0
+  availabilityTransitions:
+  - enabled: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds:
+      - StrangeCoin_0
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - enabled: 0
+    condition:
+      minDay: 0
+      requiredFlags:
+      - sc2_1_false
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  maxDay: 0
+  reappearanceGroupKey: vago
+  plannedOrderNames:
+  - "\uBE0C\uB9AC\uC988 \uB2C8\uD2B8"
+  - "\uBE0C\uB9AC\uC988 \uC628\uB354\uB77D"
+  - "\uC170\uC774\uB514"
+  - "\uBCF4\uC77C\uB9C1 \uD3EC\uC778\uD2B8"
+  - "\uB85C\uB2CC\uC988"
+  orders:
+  - order: {fileID: 11400000, guid: 694c66ee3be5fee4f8c896d1c3efca97, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: cb056f7313e3bd640b222e5534fc811f, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: e02edfde113364a46b733b47eaa9b7d2, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []

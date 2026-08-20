@@ -97,6 +97,11 @@ namespace Slainte.Business
         public int midReputationReward;
         public int badReputationReward = -1;
 
+        [Header("팁")]
+        [Range(0f, 1f)] public float satisfiedTipRate = 0.2f;
+        [Range(0f, 1f)] public float neutralTipRate = 0.05f;
+        [Range(0f, 1f)] public float dissatisfiedTipRate;
+
         [Header("기본 반응 대사")]
         public string feedbackSpeakerName = "손님";
         [TextArea(2, 4)] public string goodFeedbackText = "완벽해. 딱 원하던 맛이야.";
@@ -120,6 +125,28 @@ namespace Slainte.Business
                 OrderEvaluationGrade.Good => goodReputationReward,
                 OrderEvaluationGrade.Mid => midReputationReward,
                 _ => badReputationReward
+            };
+        }
+
+        public int GetReputationReward(CustomerMood mood)
+        {
+            return mood switch
+            {
+                CustomerMood.Satisfied => goodReputationReward,
+                CustomerMood.Neutral => midReputationReward,
+                CustomerMood.Dissatisfied => badReputationReward,
+                _ => 0
+            };
+        }
+
+        public float GetTipRate(CustomerMood mood)
+        {
+            return mood switch
+            {
+                CustomerMood.Satisfied => satisfiedTipRate,
+                CustomerMood.Neutral => neutralTipRate,
+                CustomerMood.Dissatisfied => dissatisfiedTipRate,
+                _ => 0f
             };
         }
 

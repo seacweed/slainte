@@ -16,7 +16,6 @@ namespace Slainte.Business
         [Header("Stress Pool")]
         [SerializeField, Min(1)] private int customerCount = 32;
         [SerializeField, Min(1f)] private float shiftDurationSeconds = 600f;
-        [SerializeField] private float[] cooldownPatternSeconds = { 5f, 20f, 100f };
         [SerializeField] private bool suppressRequiredActions = true;
 
         [Header("Optional Overrides")]
@@ -35,7 +34,6 @@ namespace Slainte.Business
         private GUIStyle panelStyle;
         private bool configurationFailed;
         private string failureReason = string.Empty;
-        private bool lastSelectionUsedCooldownFallback;
 
         private void Awake()
         {
@@ -128,8 +126,10 @@ namespace Slainte.Business
                 visit.name = $"CustomerVisit_Stress_{i:00}";
                 visit.hideFlags = HideFlags.DontSave;
                 visit.visitKey = $"stress_visit_{i:00}";
+                visit.reappearanceGroupKey = visit.visitKey;
                 visit.weight = 1f + i % 5;
-                visit.cooldownSeconds = ResolveCooldown(i);
+                visit.initiallyAvailable = true;
+                visit.availabilityTransitions = new List<CustomerAvailabilityTransition>();
                 visit.maxDay = 0;
                 visit.condition = new EpisodeTriggerCondition();
                 visit.tags ??= new List<string>();
@@ -144,32 +144,17 @@ namespace Slainte.Business
             return true;
         }
 
-        private float ResolveCooldown(int index)
-        {
-            if (cooldownPatternSeconds == null || cooldownPatternSeconds.Length == 0)
-                return 100f;
-
-            return Mathf.Max(
-                0f,
-                cooldownPatternSeconds[index % cooldownPatternSeconds.Length]);
-        }
-
-        private void HandleCustomerVisitStarted(
-            CustomerVisitData visit,
-            bool usedCooldownFallback)
+        private void HandleCustomerVisitStarted(CustomerVisitData visit)
         {
             if (visit == null || string.IsNullOrWhiteSpace(visit.visitKey))
                 return;
 
             appearanceCounts.TryGetValue(visit.visitKey, out int count);
             appearanceCounts[visit.visitKey] = count + 1;
-            lastSelectionUsedCooldownFallback = usedCooldownFallback;
 
             Debug.Log(
                 $"[CustomerPoolStress] 등장 #{shift?.TotalStartedCustomerCount ?? 0}: "
-                + $"{visit.visitKey}, weight={visit.weight:0.##}, "
-                + $"cooldown={visit.cooldownSeconds:0.##}s, "
-                + $"fallback={usedCooldownFallback}");
+                + $"{visit.visitKey}, weight={visit.weight:0.##}");
         }
 
         private void OnGUI()
@@ -205,16 +190,13 @@ namespace Slainte.Business
                 .AppendLine("s");
             panelText.Append("Started: ").Append(shift.TotalStartedCustomerCount)
                 .Append(" | Completed: ").Append(shift.CompletedOrderCount)
-                .Append(" | Cooling down: ").Append(shift.CoolingDownCustomerCount)
                 .AppendLine();
             panelText.Append("Last visit: ")
                 .Append(string.IsNullOrWhiteSpace(shift.LastSelectedVisitKey)
                     ? "-"
                     : shift.LastSelectedVisitKey)
-                .Append(" | Last used fallback: ")
-                .Append(lastSelectionUsedCooldownFallback)
-                .Append(" | Total fallbacks: ")
-                .Append(shift.CooldownFallbackSelectionCount)
+                .Append(" | Spawning stopped: ")
+                .Append(shift.IsRandomCustomerSpawningStopped)
                 .AppendLine();
 
             panelText.AppendLine();

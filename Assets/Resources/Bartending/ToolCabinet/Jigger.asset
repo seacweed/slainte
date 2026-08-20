@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 587a823bfe3929a4980f14c2616b7f3d, type: 3}
+  m_Name: Jigger
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.ToolDef
+  id: tool_jigger
+  displayName: Jigger
+  kind: 0
+  cabinetLayers:
+  - {fileID: 21300000, guid: 7ecc069d213ff1a4595a925abed0599c, type: 3}
+  - {fileID: 21300000, guid: 3fb5745c804bd0a40927f09f9b55436d, type: 3}
+  worldLayers:
+  - {fileID: 21300000, guid: 7ecc069d213ff1a4595a925abed0599c, type: 3}
+  - {fileID: 21300000, guid: 3fb5745c804bd0a40927f09f9b55436d, type: 3}
+  stateSprites: []
+  iceSprites: []
+  worldPrefab: {fileID: 8706099201883949432, guid: ead121c425b1bdf48942d7144b694817, type: 3}
+  primaryCapacityMl: 30
+  secondaryCapacityMl: 45
+  maxCount: 0
+  worldScale: 0.65
+  worldVisualOffset: {x: 0, y: 1.875}
+  useDedicatedAnchor: 0

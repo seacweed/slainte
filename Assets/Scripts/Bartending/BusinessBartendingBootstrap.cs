@@ -18,6 +18,11 @@ namespace Slainte.Bartending
         private readonly List<SlotController> sessionSlots = new List<SlotController>();
         private readonly Dictionary<BottleController, float> bottleReserveAmounts =
             new Dictionary<BottleController, float>();
+        private readonly Dictionary<string, GameObject> cabinetInstances =
+            new Dictionary<string, GameObject>(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<GlassController> deployedServingGlasses =
+            new HashSet<GlassController>();
+        private readonly ToolCabinetShiftState cabinetShiftState = new ToolCabinetShiftState();
         private Scene targetScene;
         private BusinessBartendingSettings settings;
         private ItemDefCatalog itemCatalog;
@@ -36,10 +41,14 @@ namespace Slainte.Bartending
         private Camera sourceCamera;
         private int sourceCameraMask;
         private bool slotLayoutTemplateWasActive;
+        private ToolCabinetController toolCabinet;
+        private IceBinController cabinetIceBucket;
+        private Transform cabinetSlotRoot;
+        private Transform cabinetPickupAnchor;
 
-        public VesselLiquidTracker CurrentTargetTracker { get; private set; }
+        public bool IsSessionReady => sessionRoot != null && builtSession != null;
         public int SessionBottleCount => sessionBottles.Count;
-        public event Action<VesselLiquidTracker> SessionReady;
+        public event Action SessionReady;
         public event Action SessionDestroyed;
         public event Action<VesselLiquidTracker> ServeRequested;
 
@@ -109,6 +118,10 @@ namespace Slainte.Bartending
 
             CaptureSlotLayoutTemplate(scene);
             HideCanvasBartendingItems(scene);
+            toolCabinet = GetComponent<ToolCabinetController>();
+            if (toolCabinet == null)
+                toolCabinet = gameObject.AddComponent<ToolCabinetController>();
+            toolCabinet.Initialize(scene, this);
             modeManager.OnModeChanged += HandleModeChanged;
             StartCoroutine(SyncInitialMode());
         }
@@ -153,7 +166,9 @@ namespace Slainte.Bartending
                 counter,
                 slotLayoutTemplate,
                 settings,
-                BartendingSessionBuildMode.Runtime);
+                BartendingSessionBuildMode.Runtime,
+                settings.useToolCabinet && toolCabinet != null && toolCabinet.IsConfigured,
+                toolCabinet != null ? toolCabinet.WorldRenderExtensionRect : null);
             if (builtSession == null)
             {
                 Debug.LogError("영업 제조 세션을 생성하지 못했습니다.");
@@ -164,25 +179,22 @@ namespace Slainte.Bartending
             sessionRoot = builtSession.Root;
             sessionWorld = builtSession.World;
             sessionViewport = builtSession.Viewport;
+            sessionViewport?.SetOutputVisible(false);
             sessionSlotLayout = builtSession.SlotLayout;
             sessionLiquidPool = builtSession.LiquidPool;
             sessionItemScale = builtSession.ItemScale;
             sessionSlots.Clear();
             sessionSlots.AddRange(builtSession.Slots);
-            if (builtSession.ServingGlass is GlassController servingGlass)
-            {
-                CharacterStage characterStage = FindInScene<CharacterStage>(targetScene);
-                builtSession.InteractionOverlay?.ConfigureServingTarget(
-                    characterStage,
-                    counter,
-                    allowFallbackTarget: false);
-                servingGlass.ConfigureServeGesture(builtSession.InteractionOverlay);
-                servingGlass.ServeRequested += HandleGlassServeRequested;
-            }
+            CharacterStage characterStage = FindInScene<CharacterStage>(targetScene);
+            builtSession.InteractionOverlay?.ConfigureServingTarget(
+                characterStage,
+                counter,
+                allowFallbackTarget: false);
             List<BottleController> selectedBottles = CreateSelectedBottles();
             snapRoutine = StartCoroutine(SnapStartingItems(builtSession.StartingTools, selectedBottles));
 
             readyRoutine = StartCoroutine(CaptureTargetTracker(builtSession.ServingGlass));
+            toolCabinet?.NotifySessionReady();
 
             sourceCamera = Camera.main;
             if (sourceCamera != null && sourceCamera != builtSession.WorldCamera)
@@ -194,6 +206,7 @@ namespace Slainte.Bartending
 
         private void DestroySession(bool clearBottleSelections)
         {
+            UnregisterAllServingGlasses();
             if (snapRoutine != null)
             {
                 StopCoroutine(snapRoutine);
@@ -213,6 +226,11 @@ namespace Slainte.Bartending
             }
             sessionBottles.Clear();
             bottleReserveAmounts.Clear();
+            cabinetInstances.Clear();
+            deployedServingGlasses.Clear();
+            cabinetIceBucket = null;
+            cabinetSlotRoot = null;
+            cabinetPickupAnchor = null;
             sessionSlots.Clear();
 
             if (builtSession != null)
@@ -235,25 +253,425 @@ namespace Slainte.Bartending
                 selectedBottleDefinitions.Clear();
 
             RestoreSessionOverrides();
-            CurrentTargetTracker = null;
+            toolCabinet?.NotifySessionDestroyed();
             SessionDestroyed?.Invoke();
         }
 
         private IEnumerator CaptureTargetTracker(GlassController glass)
         {
             yield return null;
-            CurrentTargetTracker = glass != null ? glass.LiquidTracker : null;
+            if (glass != null)
+                RegisterServingGlass(glass);
             readyRoutine = null;
-            SessionReady?.Invoke(CurrentTargetTracker);
+            SessionReady?.Invoke();
         }
 
         private void HandleGlassServeRequested(GlassController glass)
         {
             VesselLiquidTracker tracker = glass != null ? glass.LiquidTracker : null;
-            if (tracker == null || tracker != CurrentTargetTracker)
+            if (tracker == null || !deployedServingGlasses.Contains(glass))
                 return;
 
             ServeRequested?.Invoke(tracker);
+        }
+
+        private void HandleServingGlassHeldStateChanged(GlassController glass, bool isHeld)
+        {
+            if (!isHeld || glass == null || !deployedServingGlasses.Contains(glass))
+                return;
+
+            // This reference only controls the serving-area overlay while a glass
+            // is held. Evaluation always uses the glass that raises ServeRequested.
+            builtSession?.InteractionOverlay?.SetServingGlass(glass);
+        }
+
+        public void PrepareCabinetInventory(ToolCabinetCatalog catalog)
+        {
+            if (catalog == null || sessionWorld == null || settings == null)
+                return;
+
+            if (cabinetSlotRoot == null)
+            {
+                GameObject slots = new GameObject("__ToolCabinetSlots");
+                slots.transform.SetParent(sessionWorld, false);
+                // LiquidPool recycles particles outside x +/-14, y -10..12.
+                // Keep cabinet contents inside that contract while presentation is hidden.
+                slots.transform.localPosition = new Vector3(0f, 7f, 0f);
+                cabinetSlotRoot = slots.transform;
+
+                GameObject pickup = new GameObject("__ToolCabinetPickupAnchor");
+                pickup.transform.SetParent(sessionWorld, false);
+                cabinetPickupAnchor = pickup.transform;
+            }
+
+            int slotIndex = 0;
+            ToolDef[] tools = catalog.tools ?? Array.Empty<ToolDef>();
+            for (int i = 0; i < tools.Length; i++)
+            {
+                ToolDef definition = tools[i];
+                if (definition == null
+                    || string.IsNullOrWhiteSpace(definition.StableId)
+                    || cabinetInstances.ContainsKey(definition.StableId))
+                {
+                    continue;
+                }
+
+                IBartendingItem item = ToolCabinetWorldFactory.CreateTool(
+                    definition,
+                    sessionWorld,
+                    settings,
+                    sessionRenderLayer,
+                    sessionItemScale,
+                    cabinetShiftState,
+                    out GameObject instance);
+                if (instance == null)
+                {
+                    Debug.LogWarning("The cabinet tool could not be prepared: "
+                        + definition.StableId);
+                    continue;
+                }
+
+                cabinetInstances[definition.StableId] = instance;
+                BartendingSessionBuilder.ConfigureRotatingMovement(item, settings);
+                if (definition.kind == ToolKind.IceBucket)
+                    cabinetIceBucket = instance.GetComponent<IceBinController>();
+
+                SlotController cabinetSlot = CreateCabinetSlot(
+                    definition.StableId,
+                    slotIndex++);
+                ToolCabinetRuntimeTag tag = ConfigureCabinetTag(
+                    instance,
+                    definition,
+                    cabinetSlot);
+                // Bind before Store: Occupy is raised while the real world renderers
+                // are still enabled, allowing the cabinet view to cache their exact
+                // projected size instead of inventing a separate icon scale.
+                toolCabinet?.BindCabinetSlot(definition.StableId, cabinetSlot);
+                if (!tag.Store(item))
+                    Debug.LogWarning("The cabinet tool slot could not store " + definition.StableId);
+            }
+
+            GlassDef[] glasses = catalog.glasses ?? Array.Empty<GlassDef>();
+            for (int i = 0; i < glasses.Length; i++)
+            {
+                GlassDef definition = glasses[i];
+                if (definition == null
+                    || string.IsNullOrWhiteSpace(definition.StableId)
+                    || cabinetInstances.ContainsKey(definition.StableId))
+                {
+                    continue;
+                }
+
+                GlassController glass = ToolCabinetWorldFactory.CreateGlass(
+                    definition,
+                    sessionWorld,
+                    settings,
+                    sessionRenderLayer,
+                    sessionItemScale,
+                    out GameObject instance);
+                if (glass == null || instance == null)
+                {
+                    if (instance != null)
+                        Destroy(instance);
+                    Debug.LogWarning("The cabinet glass could not be prepared: "
+                        + definition.StableId);
+                    continue;
+                }
+
+                SlotController cabinetSlot = CreateCabinetSlot(
+                    definition.StableId,
+                    slotIndex++);
+                ToolCabinetRuntimeTag tag = ConfigureCabinetTag(
+                    instance,
+                    definition,
+                    cabinetSlot);
+                cabinetInstances[definition.StableId] = instance;
+                BartendingSessionBuilder.ConfigureRotatingMovement(glass, settings);
+                toolCabinet?.BindCabinetSlot(definition.StableId, cabinetSlot);
+                if (!tag.Store(glass))
+                    Debug.LogWarning("The cabinet glass slot could not store " + definition.StableId);
+            }
+        }
+
+        private ToolCabinetRuntimeTag ConfigureCabinetTag(
+            GameObject instance,
+            ToolDef definition,
+            SlotController cabinetSlot)
+        {
+            ToolCabinetRuntimeTag tag = instance.GetComponent<ToolCabinetRuntimeTag>();
+            if (tag == null)
+                tag = instance.AddComponent<ToolCabinetRuntimeTag>();
+            tag.Configure(definition);
+            tag.BindCabinetSlot(cabinetSlot);
+            return tag;
+        }
+
+        private ToolCabinetRuntimeTag ConfigureCabinetTag(
+            GameObject instance,
+            GlassDef definition,
+            SlotController cabinetSlot)
+        {
+            ToolCabinetRuntimeTag tag = instance.GetComponent<ToolCabinetRuntimeTag>();
+            if (tag == null)
+                tag = instance.AddComponent<ToolCabinetRuntimeTag>();
+            tag.Configure(definition);
+            tag.BindCabinetSlot(cabinetSlot);
+            return tag;
+        }
+
+        private SlotController CreateCabinetSlot(string id, int index)
+        {
+            GameObject slotObject = new GameObject("CabinetSlot_" + id);
+            slotObject.transform.SetParent(cabinetSlotRoot, false);
+            slotObject.transform.localPosition = new Vector3(-9f + index * 3f, 0f, 0f);
+            int slotLayer = LayerMask.NameToLayer("Slot");
+            slotObject.layer = slotLayer >= 0 ? slotLayer : sessionRenderLayer;
+
+            BoxCollider2D collider = slotObject.AddComponent<BoxCollider2D>();
+            collider.size = new Vector2(2f, 2f);
+            collider.isTrigger = true;
+            SpriteRenderer renderer = slotObject.AddComponent<SpriteRenderer>();
+            renderer.enabled = false;
+            return slotObject.AddComponent<SlotController>();
+        }
+
+        public bool TryPickUpCabinetItem(
+            string definitionId,
+            Vector2 screenPosition,
+            out string failure)
+        {
+            failure = string.Empty;
+            if (!CanUseToolCabinet(out failure))
+                return false;
+
+            if (HasHeldBartendingItem())
+            {
+                failure = "Put down the item already being held before taking another one.";
+                return false;
+            }
+
+            string id = definitionId?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(id)
+                || !cabinetInstances.TryGetValue(id, out GameObject instance)
+                || instance == null)
+            {
+                failure = "The cabinet slot has no prepared item.";
+                return false;
+            }
+
+            ToolCabinetRuntimeTag tag = instance.GetComponent<ToolCabinetRuntimeTag>();
+            IBartendingItem item = instance.GetComponent<IBartendingItem>();
+            if (tag == null
+                || item == null
+                || !tag.IsInCabinet
+                || tag.CabinetSlot == null
+                || !ReferenceEquals(tag.CabinetSlot.OccupiedItem, item))
+            {
+                failure = "The cabinet slot is empty.";
+                return false;
+            }
+
+            if (!TryGetCabinetPickupWorldPosition(screenPosition, out Vector3 pickupWorld))
+            {
+                failure = "The bartending counter is not ready to receive this item.";
+                return false;
+            }
+
+            // Cabinet slots store each item by its visible bottom, while a cabinet
+            // click is a grab point. Preserve the exact per-item slot offset so the
+            // existing SnapToSlot contract places the item's root on the pointer
+            // instead of one vessel height above it.
+            Vector3 storedSlotOffset =
+                item.GameObject.transform.position - tag.CabinetSlot.transform.position;
+            storedSlotOffset.z = 0f;
+
+            if (!tag.TakeFromCabinet(item))
+            {
+                failure = "The cabinet slot could not release its item.";
+                return false;
+            }
+
+            Vector3 visualCenterOffset = GetVisualCenterOffset(item.GameObject);
+            Vector3 targetRootPosition = pickupWorld - visualCenterOffset;
+            cabinetPickupAnchor.position = targetRootPosition - storedSlotOffset;
+            item.SnapToSlot(cabinetPickupAnchor, null);
+            if (item is IPointerAnchoredPickup pointerAnchored)
+                pointerAnchored.OnPickedUpAt(pickupWorld);
+            else
+                item.OnPickedUp();
+
+            if (item is GlassController glass)
+                RegisterServingGlass(glass);
+            toolCabinet?.NotifyAvailability(id, false);
+            return true;
+        }
+
+        private static Vector3 GetVisualCenterOffset(GameObject itemObject)
+        {
+            if (itemObject == null)
+                return Vector3.zero;
+
+            SpriteRenderer[] renderers =
+                itemObject.GetComponentsInChildren<SpriteRenderer>(true);
+            Bounds combined = default;
+            bool found = false;
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                SpriteRenderer renderer = renderers[i];
+                if (renderer == null
+                    || !renderer.enabled
+                    || renderer.sprite == null
+                    || !renderer.gameObject.activeInHierarchy
+                    || renderer.GetComponentInParent<LiquidParticleData>() != null
+                    || renderer.GetComponentInParent<IceCubeController>() != null)
+                {
+                    continue;
+                }
+
+                if (!found)
+                {
+                    combined = renderer.bounds;
+                    found = true;
+                }
+                else
+                    combined.Encapsulate(renderer.bounds);
+            }
+
+            if (!found)
+                return Vector3.zero;
+
+            Vector3 offset = combined.center - itemObject.transform.position;
+            offset.z = 0f;
+            return offset;
+        }
+
+        private bool HasHeldBartendingItem()
+        {
+            if (sessionWorld == null)
+                return false;
+
+            MonoBehaviour[] behaviours =
+                sessionWorld.GetComponentsInChildren<MonoBehaviour>(true);
+            for (int i = 0; i < behaviours.Length; i++)
+            {
+                if (behaviours[i] is IBartendingItem item && item.IsPickedUp)
+                    return true;
+            }
+            return false;
+        }
+
+        public bool TryReturnCabinetItem(
+            IBartendingItem item,
+            string targetDefinitionId,
+            out string failure)
+        {
+            failure = string.Empty;
+            if (item?.GameObject == null)
+                return false;
+
+            ToolCabinetRuntimeTag tag = item.GameObject.GetComponent<ToolCabinetRuntimeTag>();
+            if (tag == null || string.IsNullOrWhiteSpace(tag.DefinitionId))
+            {
+                failure = "Only cabinet items can be placed in cabinet slots.";
+                return false;
+            }
+
+            if (!string.Equals(
+                    tag.DefinitionId,
+                    targetDefinitionId,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                failure = "Return the item to its own cabinet slot.";
+                return false;
+            }
+
+            if (!tag.Store(item))
+            {
+                failure = "That cabinet slot is already occupied.";
+                return false;
+            }
+
+            if (item is GlassController glass)
+                UnregisterServingGlass(glass);
+            toolCabinet?.NotifyAvailability(tag.DefinitionId, true);
+            return true;
+        }
+
+        private bool TryGetCabinetPickupWorldPosition(
+            Vector2 cabinetScreenPosition,
+            out Vector3 worldPosition)
+        {
+            return BartendingViewport.TryGetPointerWorldPosition(
+                Camera.main,
+                cabinetScreenPosition,
+                out worldPosition);
+        }
+
+        public bool TryRefillIceBucket(out string failure)
+        {
+            failure = string.Empty;
+            if (!CanUseToolCabinet(out failure))
+                return false;
+            if (cabinetIceBucket == null)
+            {
+                failure = "The cabinet ice bucket is unavailable.";
+                return false;
+            }
+            if (!cabinetIceBucket.Refill())
+            {
+                failure = "The ice bucket cannot be refilled.";
+                return false;
+            }
+            return true;
+        }
+
+        private bool CanUseToolCabinet(out string failure)
+        {
+            failure = string.Empty;
+            if (modeManager == null
+                || modeManager.CurrentMode != GameMode.CraftingMode
+                || !IsSessionReady
+                || sessionWorld == null)
+            {
+                failure = "Cabinet items are available only during bartending.";
+                return false;
+            }
+            return true;
+        }
+
+        private void RegisterServingGlass(GlassController glass)
+        {
+            if (glass == null || !deployedServingGlasses.Add(glass))
+                return;
+
+            glass.ConfigureServeGesture(builtSession.InteractionOverlay);
+            glass.ServeRequested -= HandleGlassServeRequested;
+            glass.ServeRequested += HandleGlassServeRequested;
+            glass.HeldStateChanged -= HandleServingGlassHeldStateChanged;
+            glass.HeldStateChanged += HandleServingGlassHeldStateChanged;
+            if (glass.IsPickedUp)
+                builtSession.InteractionOverlay?.SetServingGlass(glass);
+        }
+
+        private void UnregisterServingGlass(GlassController glass)
+        {
+            if (glass == null || !deployedServingGlasses.Remove(glass))
+                return;
+            glass.ServeRequested -= HandleGlassServeRequested;
+            glass.HeldStateChanged -= HandleServingGlassHeldStateChanged;
+            glass.ConfigureServeGesture(null);
+            builtSession?.InteractionOverlay?.SetServingGlass(null);
+        }
+
+        private void UnregisterAllServingGlasses()
+        {
+            if (deployedServingGlasses.Count == 0)
+                return;
+
+            List<GlassController> glasses =
+                new List<GlassController>(deployedServingGlasses);
+            for (int i = 0; i < glasses.Count; i++)
+                UnregisterServingGlass(glasses[i]);
         }
 
         public bool TryPlaceBottleFromShelf(LiquorBottleDef shelfDefinition, out string failure)
@@ -302,7 +720,7 @@ namespace Slainte.Bartending
                 return false;
             }
 
-            BottleController bottle = CreateBottle(item, shelfDefinition.MaxAmount);
+            BottleController bottle = CreateBottle(item, shelfDefinition, shelfDefinition.MaxAmount);
             if (bottle == null)
             {
                 failure = "술병 오브젝트를 만들지 못했습니다.";
@@ -330,7 +748,7 @@ namespace Slainte.Bartending
                     continue;
                 }
 
-                BottleController bottle = CreateBottle(item, shelfDefinition.MaxAmount);
+                BottleController bottle = CreateBottle(item, shelfDefinition, shelfDefinition.MaxAmount);
                 if (bottle != null)
                     bottles.Add(bottle);
             }
@@ -338,7 +756,10 @@ namespace Slainte.Bartending
             return bottles;
         }
 
-        private BottleController CreateBottle(ItemDef item, float defaultInventoryAmount)
+        private BottleController CreateBottle(
+            ItemDef item,
+            LiquorBottleDef shelfDefinition,
+            float defaultInventoryAmount)
         {
             if (item == null || sessionWorld == null)
                 return null;
@@ -358,7 +779,10 @@ namespace Slainte.Bartending
                 return null;
             }
 
-            bottle.Init(item);
+            Sprite barSprite = shelfDefinition != null
+                ? shelfDefinition.GetBarSprite(item.icon)
+                : item.icon;
+            bottle.Init(item, barSprite);
             RegisterBottle(bottle, defaultInventoryAmount);
             return bottle;
         }
@@ -790,6 +1214,8 @@ namespace Slainte.Bartending
                     bottles[i].SnapToSlot(targetSlot.transform, targetSlot);
                 }
             }
+
+            sessionViewport?.SetOutputVisible(true);
 
             snapRoutine = null;
         }

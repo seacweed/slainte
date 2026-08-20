@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac17f86c00d94b55aa7b8895fa1d91f1, type: 3}
+  m_Name: CustomerVisit_d1029
+  m_EditorClassIdentifier: Assembly-CSharp::CustomerVisitData
+  sourceCustomerId: D1029
+  visitKey: d1029
+  customerAttributeKey: "\uADFC\uB85C\uC790\uB4E4"
+  speechStyleKey: "\uC5D0\uB9AD"
+  preferredTasteKey: "\uC0C8\uD07C\uD568_Sourness"
+  preferredAtmosphereKey: 
+  tags:
+  - "customer_attribute:\uADFC\uB85C\uC790\uB4E4"
+  members:
+  - characterKey: eric
+    slotIndex: -1
+    expressionKeyMid: mid
+    expressionKeyGood: good
+    expressionKeyBad: bad
+  weight: 3
+  condition:
+    minDay: 0
+    requiredFlags: []
+    blockedFlags: []
+    prerequisiteEpisodeIds: []
+    requiredVars: []
+    requiredCustomerAppearances: []
+  initiallyAvailable: 0
+  availabilityTransitions: []
+  maxDay: 0
+  reappearanceGroupKey: eric
+  plannedOrderNames:
+  - "\uBC14\uD558 \uB2C8\uD2B8"
+  - "\uC870\uB2C8 \uB3C5\uC2A4 \uB2C8\uD2B8"
+  - "\uCF54\uD2BC \uC0AC\uC6CC"
+  - "\uC544\uC774\uB9AC\uC2DC \uCEE4\uD53C"
+  - "\uD56B \uD14C\uB514"
+  orders:
+  - order: {fileID: 11400000, guid: 6e9bf8013d2dc084fb2da476ac230b2b, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: 2293ddf945497de4b9ed96e6163aae7a, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: 297f6aa6e9c6c22478016df3305bc296, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []

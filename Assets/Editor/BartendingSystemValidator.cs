@@ -407,9 +407,13 @@ public static class BartendingSystemValidator
         VesselLiquidTracker sourceTracker = null;
         VesselLiquidTracker targetTracker = null;
         IceCubeController iceCube = null;
+        bool previousLiquidIceCollisionEnabled =
+            VesselLiquidTracker.LiquidIceCollisionEnabled;
 
         try
         {
+            VesselLiquidTracker.SetLiquidIceCollisionEnabled(true);
+
             BoxCollider2D sourceTrigger = sourceObject.AddComponent<BoxCollider2D>();
             sourceTrigger.isTrigger = true;
             sourceTrigger.size = Vector2.one * 2f;
@@ -502,9 +506,29 @@ public static class BartendingSystemValidator
                 "얼음이 자기 용기의 물리 스트레이너를 무시합니다.");
             Assert(!Physics2D.GetIgnoreCollision(particleCollider, iceCollider),
                 "같은 용기에 속한 액체와 얼음의 충돌이 복원되지 않았습니다.");
+
+            VesselLiquidTracker.SetLiquidIceCollisionEnabled(false);
+            Assert(!VesselLiquidTracker.LiquidIceCollisionEnabled,
+                "액체와 얼음의 충돌 비활성화 상태가 반영되지 않았습니다.");
+            Assert(Physics2D.GetIgnoreCollision(particleCollider, iceCollider),
+                "충돌 비활성화 후 액체와 얼음이 계속 충돌합니다.");
+
+            // Simulate a pooled particle being disabled and enabled while collisions are off.
+            InvokeNonPublic(particle, "OnDisable");
+            InvokeNonPublic(particle, "OnEnable");
+            Assert(Physics2D.GetIgnoreCollision(particleCollider, iceCollider),
+                "재활성화된 액체 입자에 현재 충돌 설정이 적용되지 않았습니다.");
+
+            VesselLiquidTracker.SetLiquidIceCollisionEnabled(true);
+            Assert(VesselLiquidTracker.LiquidIceCollisionEnabled,
+                "액체와 얼음의 충돌 활성화 상태가 반영되지 않았습니다.");
+            Assert(!Physics2D.GetIgnoreCollision(particleCollider, iceCollider),
+                "충돌 재활성화 후 액체와 얼음의 충돌이 복원되지 않았습니다.");
         }
         finally
         {
+            VesselLiquidTracker.SetLiquidIceCollisionEnabled(
+                previousLiquidIceCollisionEnabled);
             LiquidParticleData particle = particleObject.GetComponent<LiquidParticleData>();
             if (particle != null)
                 InvokeNonPublic(particle, "OnDisable");

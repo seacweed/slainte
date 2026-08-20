@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac17f86c00d94b55aa7b8895fa1d91f1, type: 3}
+  m_Name: CustomerVisit_d1009
+  m_EditorClassIdentifier: Assembly-CSharp::CustomerVisitData
+  sourceCustomerId: D1009
+  visitKey: d1009
+  customerAttributeKey: "\uADFC\uB85C\uC790\uB4E4"
+  speechStyleKey: "\uADFC\uB85C\uC790\uB4E4_\uC694\uB9AC\uCE74"
+  preferredTasteKey: "\uB2EC\uCF64\uD568_Sweetness"
+  preferredAtmosphereKey: "\uCCAD\uB7C9\uD55C"
+  tags:
+  - "customer_attribute:\uADFC\uB85C\uC790\uB4E4"
+  members:
+  - characterKey: jorika
+    slotIndex: -1
+    expressionKeyMid: mid
+    expressionKeyGood: good
+    expressionKeyBad: bad
+  weight: 5
+  condition:
+    minDay: 0
+    requiredFlags: []
+    blockedFlags: []
+    prerequisiteEpisodeIds: []
+    requiredVars: []
+    requiredCustomerAppearances: []
+  initiallyAvailable: 1
+  availabilityTransitions: []
+  maxDay: 0
+  reappearanceGroupKey: jorika
+  plannedOrderNames:
+  - "\uAC13\uB85C\uB4DC"
+  - "\uBC88\uD584 \uC0AC\uC6CC"
+  - "\uBC88\uD584 \uBC84\uBC88 \uC628\uB354\uB77D"
+  - "\uC870\uB2C8 \uB3C5\uC2A4 \uC628\uB354\uB77D"
+  orders:
+  - order: {fileID: 11400000, guid: eeb2f6695ef651048886636df114938a, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: 56743e70bbfbc3840bb15c77d1c75f32, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: 121f19f205e17da42a306b56b1a0acef, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: 88ddf1f3a51b268449378e6fefc85a68, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []

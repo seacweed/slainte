@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac17f86c00d94b55aa7b8895fa1d91f1, type: 3}
+  m_Name: CustomerVisit_d1038
+  m_EditorClassIdentifier: Assembly-CSharp::CustomerVisitData
+  sourceCustomerId: D1038
+  visitKey: d1038
+  customerAttributeKey: "\uC57C\uAC04\uC21C\uCC30_F72"
+  speechStyleKey: "\uC57C\uAC04\uC21C\uCC30_F72"
+  preferredTasteKey: 
+  preferredAtmosphereKey: "\uC815\uC5F4\uC801\uC778"
+  tags:
+  - "customer_attribute:\uC57C\uAC04\uC21C\uCC30_F72"
+  members:
+  - characterKey: f72
+    slotIndex: -1
+    expressionKeyMid: mid
+    expressionKeyGood: good
+    expressionKeyBad: bad
+  weight: 3
+  condition:
+    minDay: 0
+    requiredFlags: []
+    blockedFlags: []
+    prerequisiteEpisodeIds: []
+    requiredVars: []
+    requiredCustomerAppearances: []
+  initiallyAvailable: 0
+  availabilityTransitions: []
+  maxDay: 0
+  reappearanceGroupKey: f72
+  plannedOrderNames:
+  - "\uD55C\uC5EC\uB984\uC758 \uB098\uB0AD\uB098"
+  - "\uBC88\uD584 \uC0AC\uC6CC"
+  - "\uCF54\uD2BC \uC0AC\uC6CC"
+  - "\uB85C\uB2CC\uC988"
+  orders:
+  - order: {fileID: 11400000, guid: d245b84618060b4498322120d8bc7c92, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: 335d60eb90f43d742af70a71163b8090, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: 97966d3043c723943aecdbd6883dc3e6, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []

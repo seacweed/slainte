@@ -15,13 +15,12 @@ namespace Slainte.Bartending
         Idle,
         PickedUp,
         Tilting,
-        Returning,
-        Snapping
+        Returning
     }
 
     [ExecuteInEditMode]
     [RequireComponent(typeof(EdgeCollider2D), typeof(Collider2D))]
-    public class GlassController : MonoBehaviour, IBartendingItem
+    public class GlassController : MonoBehaviour, IBartendingItem, IPointerAnchoredPickup
     {
         [Header("잔(Glass) 형태 및 실루엣 설정")]
         [Min(0.1f)] public float bottomWidth = 1.4f;
@@ -46,11 +45,11 @@ namespace Slainte.Bartending
         [SerializeField] private float tiltSensitivity = 0.5f;
         [SerializeField] private float returnSpeed = 0.8f;
         [SerializeField] private AnimationCurve returnEase = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
-        [SerializeField, Min(0f)] private float slotSnapDuration = 0.1f;
         [SerializeField] private LayerMask slotLayer;
 
         [Header("제출 조건")]
         [SerializeField] private string glassId = "rock";
+        [SerializeField, Min(1f)] private float capacityMl = 200f;
 
         [Header("김 연출")]
         [SerializeField] private float steamStartTemperatureC = 55f;
@@ -82,11 +81,6 @@ namespace Slainte.Bartending
         private Vector2 pendingPositionTarget;
         private bool rotationTargetPending;
         private float pendingRotationTarget;
-        private bool slotSnapActive;
-        private Vector2 slotSnapStartPosition;
-        private Vector2 slotSnapTargetPosition;
-        private float slotSnapStartAngle;
-        private float slotSnapElapsed;
         private bool serveGestureEnabled;
         private bool serveRequested;
         private IBartendingServeTarget serveTarget;
@@ -94,9 +88,18 @@ namespace Slainte.Bartending
         private float rotationHorizontalScreenPadding = 12f;
         private BartendingItemOrder interactionOrder;
         private SlotController currentSlot; // 현재 점유 중인 슬롯 레퍼런스
+        private GlassCollisionProfileDefinition activeCollisionProfile;
+        private SpriteRenderer collisionVisual;
+
+        private const string DefaultGlassId = "rock";
+        private const string ContentTriggerPrefix = "__GlassContentTrigger_";
 
         public VesselLiquidTracker LiquidTracker => liquidTracker;
+        public string GlassId => string.IsNullOrWhiteSpace(glassId) ? DefaultGlassId : glassId.Trim();
+        public float CapacityMl => Mathf.Max(1f, capacityMl);
+        public GlassCollisionProfileDefinition ActiveCollisionProfile => activeCollisionProfile;
         public event Action<GlassController> ServeRequested;
+        public event Action<GlassController, bool> HeldStateChanged;
 
         public void ConfigureServeGesture(IBartendingServeTarget target)
         {
@@ -111,9 +114,21 @@ namespace Slainte.Bartending
             rotationHorizontalScreenPadding = Mathf.Max(0f, screenPadding);
         }
 
+        public void ConfigureServingIdentity(string servingGlassId, float servingCapacityMl)
+        {
+            glassId = string.IsNullOrWhiteSpace(servingGlassId)
+                ? DefaultGlassId
+                : servingGlassId.Trim();
+            capacityMl = Mathf.Max(1f, servingCapacityMl);
+            if (Application.isPlaying)
+                EnsureLiquidTracker();
+        }
+
         private void Start()
         {
-            mainCollider = GetComponent<Collider2D>();
+            TryApplyDetectedCollisionProfile(true);
+            if (mainCollider == null)
+                mainCollider = GetComponent<Collider2D>();
             mainCamera = Camera.main;
 
             if (Application.isPlaying)
@@ -146,7 +161,8 @@ namespace Slainte.Bartending
                 interactionOrder = BartendingItemOrder.Attach(
                     gameObject,
                     mainCollider,
-                    liquidTracker);
+                    liquidTracker,
+                    ContainsInteractionPoint);
             }
         }
 
@@ -156,6 +172,7 @@ namespace Slainte.Bartending
             if (liquidTracker == null)
                 liquidTracker = gameObject.AddComponent<VesselLiquidTracker>();
 
+            glassId = GlassId;
             liquidTracker.ConfigureServingStyle(glassId);
 
             steamEmitter = GetComponent<GlassSteamEmitter>();
@@ -178,6 +195,23 @@ namespace Slainte.Bartending
             liquidTracker?.SetHasIce(containsIce);
         }
 
+        public bool CanContain(float volumeMl)
+        {
+            return volumeMl >= 0f && volumeMl <= CapacityMl + 0.001f;
+        }
+
+        public bool TryApplyDetectedCollisionProfile()
+        {
+            return TryApplyDetectedCollisionProfile(true);
+        }
+
+        public void ApplyCollisionProfile(
+            GlassCollisionProfileDefinition profile,
+            SpriteRenderer visual)
+        {
+            ApplyCollisionProfile(profile, visual, true);
+        }
+
         private void Reset()
         {
             edgeCollider = GetComponent<EdgeCollider2D>();
@@ -186,7 +220,8 @@ namespace Slainte.Bartending
 
         private void OnValidate()
         {
-            GenerateCurvedCollider();
+            if (!TryApplyDetectedCollisionProfile(false))
+                GenerateCurvedCollider();
         }
 
         private void Update()
@@ -202,16 +237,12 @@ namespace Slainte.Bartending
             if (!Application.isPlaying)
                 return;
 
-            if (slotSnapActive)
-                ApplySlotSnapStep();
-            else
-                ApplyPendingPhysicsMotion();
+            ApplyPendingPhysicsMotion();
         }
 
         private void OnDisable()
         {
             CancelPendingPhysicsMotion();
-            slotSnapActive = false;
             CancelPointerSynchronization();
             BartendingPointerAnchor.Release(this);
         }
@@ -263,16 +294,27 @@ namespace Slainte.Bartending
                 PerformTilting();
             }
 
-            if (currentState == GlassState.Tilting)
-                PerformHorizontalRotationMovement();
-            else if (currentState == GlassState.Returning && !pointerSyncPending)
+            if (currentState == GlassState.Returning && !pointerSyncPending)
                 FollowMousePosition();
         }
 
         private void PickupGlass()
         {
+            PreparePickup();
+            BeginPointerSynchronization(
+                transform.position,
+                unlockCursor: false,
+                completeReturn: false);
+        }
+
+        private void PreparePickup()
+        {
+            bool wasHeld = IsPickedUp;
+            CancelPointerSynchronization();
             CancelPendingPhysicsMotion();
             currentState = GlassState.PickedUp;
+            if (!wasHeld)
+                HeldStateChanged?.Invoke(this, true);
             interactionOrder?.BringToFront();
             
             // 기존 슬롯 점유 해제 (독립)
@@ -287,11 +329,6 @@ namespace Slainte.Bartending
                 StopCoroutine(returnCoroutine);
                 returnCoroutine = null;
             }
-
-            BeginPointerSynchronization(
-                transform.position,
-                unlockCursor: false,
-                completeReturn: false);
         }
 
         private void FollowMousePosition()
@@ -348,6 +385,9 @@ namespace Slainte.Bartending
 
         private void TryDropGlass()
         {
+            if (ToolCabinetController.TryReturnHeldItem(this, mainCamera, Input.mousePosition))
+                return;
+
             if (!BartendingViewport.TryGetPointerWorldPosition(mainCamera, Input.mousePosition, out Vector3 mousePos))
             {
                 return;
@@ -358,7 +398,7 @@ namespace Slainte.Bartending
             foreach (var hit in hits)
             {
                 // 자기 자신 콜라이더는 건너뜁니다.
-                if (hit == mainCollider || hit == edgeCollider) continue;
+                if (hit == null || hit.transform.IsChildOf(transform)) continue;
 
                 SlotController slot = hit.GetComponent<SlotController>();
                 if (slot != null)
@@ -368,7 +408,7 @@ namespace Slainte.Bartending
                     {
                         // 슬롯 스냅 안착 (바닥면 Y 오프셋 칼각 정렬!)
                         float bottomOffset = GetPivotToBottomOffset();
-                        BeginSlotSnap(
+                        SnapVesselAndContentsToSlot(
                             new Vector3(hit.transform.position.x, hit.transform.position.y + bottomOffset, 0f),
                             slot);
                         return;
@@ -378,7 +418,7 @@ namespace Slainte.Bartending
                 {
                     // 슬롯 스냅 안착 (하위 호환용)
                     float bottomOffset = GetPivotToBottomOffset();
-                    BeginSlotSnap(
+                    SnapVesselAndContentsToSlot(
                         new Vector3(hit.transform.position.x, hit.transform.position.y + bottomOffset, 0f),
                         null);
                     return;
@@ -393,23 +433,13 @@ namespace Slainte.Bartending
         public void SnapToSlot(Transform slotTransform, SlotController slot)
         {
             float bottomOffset = GetPivotToBottomOffset();
-            BeginSlotSnap(
+            SnapVesselAndContentsToSlot(
                 new Vector3(slotTransform.position.x, slotTransform.position.y + bottomOffset, 0f),
                 slot);
         }
 
-        private void BeginSlotSnap(Vector3 targetPosition, SlotController slot)
+        private void SnapVesselAndContentsToSlot(Vector3 targetPosition, SlotController slot)
         {
-            CancelPendingPhysicsMotion();
-            CancelPointerSynchronization();
-            BartendingPointerAnchor.Release(this);
-
-            if (returnCoroutine != null)
-            {
-                StopCoroutine(returnCoroutine);
-                returnCoroutine = null;
-            }
-
             if (currentSlot != null && currentSlot != slot)
                 currentSlot.Vacate();
 
@@ -417,51 +447,44 @@ namespace Slainte.Bartending
             if (slot != null && !ReferenceEquals(slot.OccupiedItem, this))
                 slot.Occupy(this);
 
-            targetPosition.z = 0f;
-            if (!Application.isPlaying || body == null || slotSnapDuration <= Mathf.Epsilon)
-            {
-                slotSnapActive = false;
-                transform.position = targetPosition;
-                SetRotationImmediately(0f);
-                currentState = GlassState.Idle;
-                return;
-            }
-
-            slotSnapStartPosition = body.position;
-            slotSnapTargetPosition = targetPosition;
-            slotSnapStartAngle = body.rotation;
-            slotSnapElapsed = 0f;
-            slotSnapActive = true;
-            currentState = GlassState.Snapping;
+            MoveVesselAndContents(targetPosition);
+            SetRotationImmediately(0f);
+            ReleaseGlass();
         }
 
-        private void ApplySlotSnapStep()
+        private void MoveVesselAndContents(Vector3 targetPosition)
         {
-            if (body == null)
-            {
-                slotSnapActive = false;
-                currentState = GlassState.Idle;
-                return;
-            }
+            CancelPendingPhysicsMotion();
+            targetPosition.z = 0f;
+            Vector2 currentPosition = body != null
+                ? body.position
+                : (Vector2)transform.position;
+            liquidTracker?.TranslateTrackedParticles((Vector2)targetPosition - currentPosition);
 
-            slotSnapElapsed += Time.fixedDeltaTime;
-            float normalizedTime = Mathf.Clamp01(slotSnapElapsed / Mathf.Max(slotSnapDuration, Mathf.Epsilon));
-            float easedTime = normalizedTime * normalizedTime * (3f - 2f * normalizedTime);
-            body.MovePosition(Vector2.Lerp(slotSnapStartPosition, slotSnapTargetPosition, easedTime));
-            currentAngle = Mathf.LerpAngle(slotSnapStartAngle, 0f, easedTime);
-            body.MoveRotation(currentAngle);
-
-            if (normalizedTime >= 1f)
+            if (body != null)
             {
-                currentAngle = 0f;
-                slotSnapActive = false;
-                currentState = GlassState.Idle;
+                body.position = targetPosition;
+                transform.position = new Vector3(
+                    targetPosition.x,
+                    targetPosition.y,
+                    transform.position.z);
+                body.linearVelocity = Vector2.zero;
+                body.MovePosition(targetPosition);
             }
+            else
+                transform.position = targetPosition;
         }
 
         public void OnPickedUp()
         {
             PickupGlass();
+        }
+
+        public void OnPickedUpAt(Vector3 pointerWorld)
+        {
+            PreparePickup();
+            pointerPivotOffset = transform.position - pointerWorld;
+            pointerPivotOffset.z = 0f;
         }
 
         public void OnDropped()
@@ -471,8 +494,8 @@ namespace Slainte.Bartending
 
         private void ReleaseGlass()
         {
+            bool wasHeld = IsPickedUp;
             currentState = GlassState.Idle;
-            slotSnapActive = false;
             CancelPendingPhysicsMotion();
             CancelPointerSynchronization();
             BartendingPointerAnchor.Release(this);
@@ -482,6 +505,9 @@ namespace Slainte.Bartending
                 StopCoroutine(returnCoroutine);
                 returnCoroutine = null;
             }
+
+            if (wasHeld)
+                HeldStateChanged?.Invoke(this, false);
         }
 
         private void StartTilting()
@@ -633,7 +659,12 @@ namespace Slainte.Bartending
             rotationTargetPending = false;
             currentAngle = targetAngle;
             if (body != null)
+            {
                 body.rotation = targetAngle;
+                transform.rotation = Quaternion.Euler(0f, 0f, targetAngle);
+                body.angularVelocity = 0f;
+                body.MoveRotation(targetAngle);
+            }
             else
                 transform.rotation = Quaternion.Euler(0f, 0f, targetAngle);
         }
@@ -734,8 +765,6 @@ namespace Slainte.Bartending
 
         private bool IsMouseOverGlass()
         {
-            if (mainCollider == null) return false;
-            
             if (!BartendingViewport.TryGetPointerWorldPosition(mainCamera, Input.mousePosition, out Vector3 mousePos))
             {
                 return false;
@@ -744,12 +773,50 @@ namespace Slainte.Bartending
             // 다른 겹치는 오브젝트(액체 입자 등)에 방해받지 않는 단독 격리 판정
             return interactionOrder != null
                 ? interactionOrder.IsFrontmostAt(mousePos)
-                : mainCollider.OverlapPoint(mousePos);
+                : ContainsInteractionPoint(mousePos);
+        }
+
+        private bool ContainsInteractionPoint(Vector2 worldPoint)
+        {
+            if (activeCollisionProfile != null
+                && collisionVisual != null
+                && collisionVisual.sprite != null)
+            {
+                return activeCollisionProfile.ContainsInteractionPoint(
+                    collisionVisual.sprite,
+                    collisionVisual.transform,
+                    worldPoint);
+            }
+
+            return mainCollider != null
+                && mainCollider.enabled
+                && mainCollider.OverlapPoint(worldPoint);
         }
 
         private float GetPivotToBottomOffset()
         {
-            // Y 오프셋 보정 수식 (Y축 위로 올리면 피벗에서 하단 바닥까지의 물리 실측 거리는 그만큼 줄어듦)
+            if (activeCollisionProfile != null
+                && collisionVisual != null
+                && collisionVisual.sprite != null)
+            {
+                float localBottom = activeCollisionProfile.GetVisibleBottomLocalY(
+                    collisionVisual.sprite);
+                float worldBottom = collisionVisual.transform.TransformPoint(
+                    new Vector3(0f, localBottom, 0f)).y;
+                return Mathf.Max(0f, transform.position.y - worldBottom);
+            }
+
+            float rendererBottom = float.PositiveInfinity;
+            SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>(true);
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                SpriteRenderer renderer = renderers[i];
+                if (renderer != null && renderer.enabled && renderer.sprite != null)
+                    rendererBottom = Mathf.Min(rendererBottom, renderer.bounds.min.y);
+            }
+            if (!float.IsPositiveInfinity(rendererBottom))
+                return Mathf.Max(0f, transform.position.y - rendererBottom);
+
             return (height / 2f) - colliderYOffset;
         }
 
@@ -823,6 +890,157 @@ namespace Slainte.Bartending
             }
 
             edgeCollider.SetPoints(points);
+        }
+
+        private bool TryApplyDetectedCollisionProfile(bool configureContentTriggers)
+        {
+            SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>(true);
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                SpriteRenderer renderer = renderers[i];
+                if (renderer == null
+                    || renderer.sprite == null
+                    || !GlassCollisionProfiles.TryGetBySpriteName(
+                        renderer.sprite.name,
+                        out GlassCollisionProfileDefinition profile))
+                {
+                    continue;
+                }
+
+                ApplyCollisionProfile(profile, renderer, configureContentTriggers);
+                return true;
+            }
+
+            return false;
+        }
+
+        private void ApplyCollisionProfile(
+            GlassCollisionProfileDefinition profile,
+            SpriteRenderer visual,
+            bool configureContentTriggers)
+        {
+            if (profile == null)
+                throw new ArgumentNullException(nameof(profile));
+            if (visual == null || visual.sprite == null)
+                throw new ArgumentException("A SpriteRenderer with a sprite is required.", nameof(visual));
+
+            if (edgeCollider == null)
+                edgeCollider = GetComponent<EdgeCollider2D>();
+            if (edgeCollider == null)
+                edgeCollider = gameObject.AddComponent<EdgeCollider2D>();
+
+            Vector2[] spritePoints = profile.BuildEdgePath(visual.sprite);
+            Vector2[] rootPoints = new Vector2[spritePoints.Length];
+            for (int i = 0; i < spritePoints.Length; i++)
+            {
+                Vector3 worldPoint = visual.transform.TransformPoint(spritePoints[i]);
+                rootPoints[i] = transform.InverseTransformPoint(worldPoint);
+            }
+
+            edgeCollider.isTrigger = false;
+            edgeCollider.edgeRadius = edgeRadius;
+            edgeCollider.SetPoints(new List<Vector2>(rootPoints));
+
+            activeCollisionProfile = profile;
+            collisionVisual = visual;
+            glassId = profile.GlassId;
+            capacityMl = profile.CapacityMl;
+            UpdateLegacyGeometryMetrics(rootPoints);
+
+            if (configureContentTriggers)
+            {
+                ConfigureContentTriggers(profile, visual);
+                mainCollider = edgeCollider;
+            }
+
+            if (Application.isPlaying)
+            {
+                interactionOrder = BartendingItemOrder.Attach(
+                    gameObject,
+                    mainCollider,
+                    liquidTracker,
+                    ContainsInteractionPoint);
+            }
+
+            liquidTracker?.ConfigureServingStyle(glassId);
+            liquidTracker?.RefreshCollisionGeometry();
+        }
+
+        private Collider2D ConfigureContentTriggers(
+            GlassCollisionProfileDefinition profile,
+            SpriteRenderer visual)
+        {
+            BoxCollider2D[] rootBoxes = GetComponents<BoxCollider2D>();
+            for (int i = 0; i < rootBoxes.Length; i++)
+                rootBoxes[i].enabled = false;
+
+            int triggerCount = profile.ContentTriggerPixels.Count;
+            BoxCollider2D primary = null;
+            for (int i = 0; i < triggerCount; i++)
+            {
+                string triggerName = ContentTriggerPrefix + i;
+                Transform triggerTransform = visual.transform.Find(triggerName);
+                if (triggerTransform == null)
+                {
+                    GameObject triggerObject = new GameObject(triggerName);
+                    triggerObject.layer = gameObject.layer;
+                    triggerTransform = triggerObject.transform;
+                    triggerTransform.SetParent(visual.transform, false);
+                }
+
+                triggerTransform.localPosition = Vector3.zero;
+                triggerTransform.localRotation = Quaternion.identity;
+                triggerTransform.localScale = Vector3.one;
+                triggerTransform.gameObject.SetActive(true);
+
+                BoxCollider2D trigger = triggerTransform.GetComponent<BoxCollider2D>();
+                if (trigger == null)
+                    trigger = triggerTransform.gameObject.AddComponent<BoxCollider2D>();
+
+                Rect localRect = profile.BuildContentTrigger(visual.sprite, i);
+                trigger.enabled = true;
+                trigger.isTrigger = true;
+                trigger.offset = localRect.center;
+                trigger.size = localRect.size;
+                primary ??= trigger;
+            }
+
+            for (int i = 0; i < visual.transform.childCount; i++)
+            {
+                Transform child = visual.transform.GetChild(i);
+                if (!child.name.StartsWith(ContentTriggerPrefix, StringComparison.Ordinal))
+                    continue;
+
+                string suffix = child.name.Substring(ContentTriggerPrefix.Length);
+                if (!int.TryParse(suffix, out int index) || index < 0 || index >= triggerCount)
+                    child.gameObject.SetActive(false);
+            }
+
+            return primary != null ? primary : edgeCollider;
+        }
+
+        private void UpdateLegacyGeometryMetrics(IReadOnlyList<Vector2> points)
+        {
+            if (points == null || points.Count == 0)
+                return;
+
+            float minX = points[0].x;
+            float maxX = points[0].x;
+            float minY = points[0].y;
+            float maxY = points[0].y;
+            for (int i = 1; i < points.Count; i++)
+            {
+                Vector2 point = points[i];
+                minX = Mathf.Min(minX, point.x);
+                maxX = Mathf.Max(maxX, point.x);
+                minY = Mathf.Min(minY, point.y);
+                maxY = Mathf.Max(maxY, point.y);
+            }
+
+            height = Mathf.Max(0.1f, maxY - minY);
+            colliderYOffset = (minY + maxY) * 0.5f;
+            topWidth = Mathf.Max(0.1f, Mathf.Abs(points[points.Count - 1].x - points[0].x));
+            bottomWidth = Mathf.Max(0.1f, maxX - minX);
         }
     }
 }

@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -6,6 +7,9 @@ namespace Slainte.Bartending
     [CreateAssetMenu(menuName = "Bartending/Business Scene Settings")]
     public sealed class BusinessBartendingSettings : ScriptableObject
     {
+        [Header("Tool Cabinet")]
+        public bool useToolCabinet;
+
         [Header("Prefabs")]
         public GameObject beakerPrefab;
         [Tooltip("스트레이너가 뚜껑에 결합된 코블러 셰이커 프리팹입니다.")]
@@ -34,17 +38,22 @@ namespace Slainte.Bartending
         [Range(8, 31)] public int renderLayer = 30;
 
         [Header("Serving Target")]
+        [Tooltip("Optional serving-area art. It is centered inside the existing serving target.")]
+        public Sprite serveTargetSprite;
         [HideInInspector, Range(0f, 1f)] public float serveLineScreenRatio = 0.3f;
         public Color serveTargetFillColor = new Color(1f, 1f, 1f, 0f);
         public Color serveTargetOutlineColor = new Color(1f, 0.82f, 0.05f, 0.8f);
         [Min(0f)] public float serveTargetOutlineWidth = 4f;
         [Min(0f)] public float serveTargetPaddingPixels = 0f;
-        [Tooltip("Sandbox fallback target as normalized x, y, width, height.")]
-        public Vector4 sandboxServeTargetNormalized = new Vector4(0.35f, 0.48f, 0.3f, 0.42f);
+        [Min(0f)] public float serveTargetFadeDuration = 0.2f;
+        [FormerlySerializedAs("sandboxServeTargetNormalized")]
+        [Tooltip("Fixed serving target as normalized x, y, width, height at every resolution.")]
+        public Vector4 serveTargetNormalized = new Vector4(0.35f, 0.48f, 0.3f, 0.42f);
 
         [Header("Vessel Contents UI")]
         public Color contentsLabelBackgroundColor = new Color(0.04f, 0.05f, 0.06f, 0.82f);
-        public Color contentsLabelTextColor = Color.white;
+        public TMP_FontAsset contentsLabelFont;
+        public Color contentsLabelTextColor = new Color(1f, 0.82f, 0.05f, 1f);
         public Vector2 contentsLabelSizePixels = new Vector2(220f, 150f);
         public Vector2 contentsLabelOffsetPixels = new Vector2(28f, 45f);
         [Min(8)] public int contentsLabelFontSize = 18;
@@ -64,15 +73,29 @@ namespace Slainte.Bartending
         public Vector3[] slotPositions =
         {
             new Vector3(-8f, -2.5f, 0f),
-            new Vector3(-4.8f, -2.5f, 0f),
-            new Vector3(-1.6f, -2.5f, 0f),
-            new Vector3(1.6f, -2.5f, 0f),
-            new Vector3(4.8f, -2.5f, 0f),
+            new Vector3(-5.714f, -2.5f, 0f),
+            new Vector3(-3.429f, -2.5f, 0f),
+            new Vector3(-1.143f, -2.5f, 0f),
+            new Vector3(1.143f, -2.5f, 0f),
+            new Vector3(3.429f, -2.5f, 0f),
+            new Vector3(5.714f, -2.5f, 0f),
             new Vector3(8f, -2.5f, 0f)
         };
 
         [Header("Liquid")]
         [Min(1)] public int liquidPoolSize = 300;
+        public Material liquidMetaballAccumulationMaterial;
+        public Material liquidMetaballCompositeMaterial;
+        public Vector2Int liquidMetaballTextureSize = new Vector2Int(240, 135);
+        [Range(0f, 1f)] public float liquidMetaballThreshold = 0.3f;
+        [Range(0f, 1f)] public float liquidMetaballMergeStrength = 0.45f;
+        [Range(0f, 0.25f)] public float liquidMetaballEdgeSoftness = 0.03f;
+        [Range(0f, 1f)] public float liquidMinimumVisibleAlpha = 0.05f;
+        public int liquidSortingOrder = 12;
+
+        [Header("Liquid/Ice Interaction")]
+        [Tooltip("Whether liquid particles physically collide with ice cubes during bartending.")]
+        public bool liquidIceCollisionEnabled = true;
 
         [Header("Ice")]
         [Min(0.1f)] public float iceBinWidth = 2.2f;

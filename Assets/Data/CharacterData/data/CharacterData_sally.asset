@@ -14,40 +14,65 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
   key: sally
   displayName: "\uC140\uB9AC"
+  englishName: Sally
   nameColor: {r: 0.81960785, g: 0.36862746, b: 0.7254902, a: 1}
   defaultSprite: {fileID: 0}
   defaultOverlaySprite: {fileID: 0}
+  defaultBlinkSprite: {fileID: 0}
+  defaultBlinkOverlaySprite: {fileID: 0}
   expressions:
   - key: mid
     sprite: {fileID: -4509229159563578660, guid: 5fe8253a33a1c914eb8395b5be472275, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
   - key: aim
     sprite: {fileID: 58537775430694542, guid: cd25eadb51322a341aad1a0fe95d0e2c, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
   - key: angry
     sprite: {fileID: -9082789242079819192, guid: d75ff4c98af32164299458ecf76ff6b4, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
   - key: smile
     sprite: {fileID: 8580352971482666360, guid: 21c780eda21af25458182e93a00a920b, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
   - key: blood_angry
     sprite: {fileID: -816692220500740878, guid: fd76f46fe03483a408889ed0b78c95ef, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
   - key: blood_mid
     sprite: {fileID: 3374994579945756278, guid: 9439ea3471839ca429b5dca4aefe99fd, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
   - key: blood_tired
     sprite: {fileID: 1620443861845200053, guid: fc530715f5483da4da2175c742682fd3, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
   - key: blood_smile
     sprite: {fileID: -521326214385864486, guid: aa236632e89b4c34fbb7b920e690bb90, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
   - key: blood_smileClosed
     sprite: {fileID: -4027058767215579801, guid: 7f619780fd466d44681d5fa7a905475f, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
   - key: closed
     sprite: {fileID: 3910119953844233957, guid: e19ce6e96b667244da5ef1ddfe88528c, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
   - key: blood_closed
     sprite: {fileID: 3206553586366147522, guid: 25092c95e6129744b828317320bd9287, type: 3}
     overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}

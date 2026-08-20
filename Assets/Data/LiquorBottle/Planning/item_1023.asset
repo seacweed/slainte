@@ -15,6 +15,10 @@ MonoBehaviour:
   id: item_1023
   displayName: "\uAFC0"
   sprite: {fileID: 0}
+  useContextImages: 1
+  shopBlankSprite: {fileID: 0}
+  shelfLidSprite: {fileID: 0}
+  barSprite: {fileID: 0}
   unlockFlagKey: 
   subCategory: "\uB2F9\uB958 \uC2DC\uB7FD"
   bottleCount: 6

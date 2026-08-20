@@ -27,10 +27,11 @@ namespace Slainte.EditorTools
             ValidateClockRules();
             ValidateEncounterEpisodeType();
             ValidateSaveSuppressionNesting();
+            ValidateRewardCalculation();
             ValidateDeferredSettlement();
             Debug.Log(
                 "[BusinessIntegrationRulesValidator] PASS: timer, encounter type, explicit pause, save isolation, "
-                + "deferred sale recording, settlement payout and reset");
+                + "mood/tip calculation, detailed sale save, deferred settlement payout and reset");
         }
 
         private static void ValidateClockRules()
@@ -99,7 +100,14 @@ namespace Slainte.EditorTools
                 {
                     outcome = OrderSessionOutcome.Served,
                     accepted = true,
-                    moneyDelta = 100,
+                    customerOrderKey = "validator_order",
+                    customerVisitKey = "validator_visit",
+                    requestedRecipeId = "vodka_lemon",
+                    grade = OrderEvaluationGrade.Good,
+                    customerMood = CustomerMood.Satisfied,
+                    baseRevenue = 100,
+                    tipAmount = 20,
+                    moneyDelta = 120,
                     reputationDelta = 2
                 }, progress);
 
@@ -107,17 +115,32 @@ namespace Slainte.EditorTools
                     "판매 직후 돈이 지급됐습니다. 정산 전에는 돈이 변하면 안 됩니다.");
                 Require(progress.Reputation == 12, "판매 평판이 기록되지 않았습니다.");
                 Require(progress.DayDrinkSalesCount == 1, "판매 횟수가 기록되지 않았습니다.");
-                Require(progress.DayDrinkRevenue == 100, "판매 매출이 기록되지 않았습니다.");
-                Require(progress.DayTotalIncome == 100, "정산 예정 수입이 기록되지 않았습니다.");
+                Require(progress.DayDrinkBaseRevenue == 100, "기본 판매금이 기록되지 않았습니다.");
+                Require(progress.DayDrinkTipRevenue == 20, "팁이 기록되지 않았습니다.");
+                Require(progress.DayDrinkRevenue == 120, "총 판매금이 기록되지 않았습니다.");
+                Require(progress.DayTotalIncome == 120, "정산 예정 수입이 기록되지 않았습니다.");
+                Require(progress.DayReputationDelta == 2, "당일 명성 변화가 기록되지 않았습니다.");
+
+                SaveData serialized = JsonUtility.FromJson<SaveData>(
+                    JsonUtility.ToJson(Capture(progress)));
+                progress.LoadFrom(serialized);
+                Require(progress.GetDayDrinkSales().Count == 1,
+                    "저장 후 상세 판매 기록이 복원되지 않았습니다.");
+                Require(progress.GetDayDrinkSales()[0].tipAmount == 20,
+                    "저장 후 팁 기록이 복원되지 않았습니다.");
 
                 int paid = SettlementManager.ApplyRecordedIncome(progress);
-                Require(paid == 100, "정산 지급액이 기록 매출과 다릅니다.");
-                Require(progress.CurrentMoney == 600, "정산에서 돈이 지급되지 않았습니다.");
+                Require(paid == 120, "정산 지급액이 기본 판매금+팁과 다릅니다.");
+                Require(progress.CurrentMoney == 620, "정산에서 돈과 팁이 지급되지 않았습니다.");
 
                 progress.ResetDaySettlement();
                 Require(progress.DayDrinkSalesCount == 0
+                    && progress.DayDrinkBaseRevenue == 0
+                    && progress.DayDrinkTipRevenue == 0
                     && progress.DayDrinkRevenue == 0
-                    && progress.DayTotalIncome == 0,
+                    && progress.DayTotalIncome == 0
+                    && progress.DayReputationDelta == 0
+                    && progress.GetDayDrinkSales().Count == 0,
                     "정산 종료 후 일일 판매 기록이 초기화되지 않았습니다.");
             }
             finally
@@ -126,6 +149,53 @@ namespace Slainte.EditorTools
                     progress.LoadFrom(restore);
                 if (host != null)
                     UnityEngine.Object.DestroyImmediate(host);
+            }
+        }
+
+        private static void ValidateRewardCalculation()
+        {
+            BusinessOrderFlowSettings settings =
+                ScriptableObject.CreateInstance<BusinessOrderFlowSettings>();
+            try
+            {
+                settings.goodMoneyReward = 100;
+                settings.midMoneyReward = 50;
+                settings.badMoneyReward = 0;
+                settings.goodReputationReward = 2;
+                settings.midReputationReward = 0;
+                settings.badReputationReward = -1;
+                settings.satisfiedTipRate = 0.2f;
+                settings.neutralTipRate = 0.05f;
+                settings.dissatisfiedTipRate = 0f;
+
+                BusinessOrderReward good = BusinessOrderRewardCalculator.Calculate(
+                    OrderEvaluationGrade.Good,
+                    settings);
+                Require(good.Mood == CustomerMood.Satisfied,
+                    "Good 결과가 만족 상태로 변환되지 않았습니다.");
+                Require(good.BaseRevenue == 100 && good.TipAmount == 20
+                    && good.TotalRevenue == 120 && good.ReputationDelta == 2,
+                    "만족 보상 계산이 잘못됐습니다.");
+
+                BusinessOrderReward mid = BusinessOrderRewardCalculator.Calculate(
+                    OrderEvaluationGrade.Mid,
+                    settings);
+                Require(mid.Mood == CustomerMood.Neutral,
+                    "Mid 결과가 보통 상태로 변환되지 않았습니다.");
+                Require(mid.BaseRevenue == 50 && mid.TipAmount == 2
+                    && mid.TotalRevenue == 52 && mid.ReputationDelta == 0,
+                    "보통 팁의 1원 미만 버림 계산이 잘못됐습니다.");
+
+                BusinessOrderReward bad = BusinessOrderRewardCalculator.Calculate(
+                    OrderEvaluationGrade.Bad,
+                    settings);
+                Require(bad.Mood == CustomerMood.Dissatisfied
+                    && bad.TipAmount == 0 && bad.ReputationDelta == -1,
+                    "불만족 보상 계산이 잘못됐습니다.");
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(settings);
             }
         }
 
@@ -150,8 +220,16 @@ namespace Slainte.EditorTools
                 currentMoney = progress.CurrentMoney,
                 reputation = progress.Reputation,
                 dayDrinkSalesCount = progress.DayDrinkSalesCount,
+                dayDrinkBaseRevenue = progress.DayDrinkBaseRevenue,
+                dayDrinkTipRevenue = progress.DayDrinkTipRevenue,
                 dayDrinkRevenue = progress.DayDrinkRevenue,
-                dayTotalIncome = progress.DayTotalIncome
+                dayTotalIncome = progress.DayTotalIncome,
+                dayReputationDelta = progress.DayReputationDelta,
+                dayDrinkSales = progress.GetDayDrinkSales(),
+                tvForecastBroadcastId = progress.TVForecastBroadcastId,
+                tvForecastRevealed = progress.TVForecastRevealed,
+                tvActiveBroadcastId = progress.TVActiveBroadcastId,
+                tvActiveBusinessDay = progress.TVActiveBusinessDay
             };
         }
 

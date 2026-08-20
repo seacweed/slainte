@@ -28,6 +28,28 @@ public class CharacterStage : MonoBehaviour
         _activeSlotIndices.Clear();
     }
 
+    public bool TryGetDialogueIdentity(
+        string characterKey,
+        out string displayName,
+        out Color nameColor)
+    {
+        CharacterData data = characterDB != null
+            ? characterDB.FindByKey(characterKey)
+            : null;
+        if (data == null)
+        {
+            displayName = characterKey;
+            nameColor = Color.white;
+            return false;
+        }
+
+        displayName = string.IsNullOrWhiteSpace(data.displayName)
+            ? characterKey
+            : data.displayName;
+        nameColor = data.nameColor;
+        return true;
+    }
+
     public void ShowCharacters(IReadOnlyList<CharacterSlotEntry> entries, Action onAllShown = null)
     {
         if (entries == null || entries.Count == 0)

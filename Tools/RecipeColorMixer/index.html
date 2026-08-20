@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Slainte 레시피의 재료 색과 용량을 조합해 최종 색상을 미리 보는 로컬 도구">
+  <title>Recipe Color Mixer</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="recipe-data.js" defer></script>
+  <script src="color-math.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <div class="app-shell">
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">SLAINTE · COLOR LAB</p>
+        <h1>레시피 컬러 믹서</h1>
+        <p class="intro">Unity 설치 없이 재료의 색과 용량을 조합해, 완전히 섞였을 때의 입자 색을 확인합니다.</p>
+      </div>
+      <div class="data-summary" id="data-summary" aria-live="polite"></div>
+    </header>
+
+    <section class="recipe-loader" aria-labelledby="recipe-loader-title">
+      <div class="recipe-loader-copy">
+        <p class="section-kicker" id="recipe-loader-title">BUNDLED RECIPE</p>
+        <p>프로그램에 내장된 레시피를 시작점으로 불러올 수 있습니다.</p>
+      </div>
+      <div class="recipe-loader-controls">
+        <label for="recipe-select" class="sr-only">레시피 선택</label>
+        <select id="recipe-select">
+          <option value="">직접 배합</option>
+        </select>
+        <button type="button" class="button button-secondary" id="load-recipe-button">불러오기</button>
+      </div>
+    </section>
+
+    <div class="notice" id="data-notice" role="status" hidden></div>
+
+    <main class="workspace">
+      <section class="ingredients-panel" aria-labelledby="ingredients-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">INGREDIENTS</p>
+            <h2 id="ingredients-title">재료 배합</h2>
+          </div>
+          <button type="button" class="button button-primary" id="add-ingredient-button">
+            <span aria-hidden="true">＋</span> 재료 추가
+          </button>
+        </div>
+
+        <div class="ingredients-list" id="ingredients-list"></div>
+      </section>
+
+      <aside class="result-panel" aria-labelledby="result-title">
+        <div class="result-card">
+          <div class="result-heading">
+            <div>
+              <p class="section-kicker">FINAL MIX</p>
+              <h2 id="result-title">예상 결과색</h2>
+            </div>
+            <span class="mix-status" id="mix-status">0 ml</span>
+          </div>
+
+          <div class="preview-checker">
+            <div class="result-liquid" id="result-liquid" aria-label="혼합 결과 색상 미리보기">
+              <span class="liquid-shine" aria-hidden="true"></span>
+            </div>
+          </div>
+
+          <div class="result-code-row">
+            <div>
+              <span class="value-label">HEX + ALPHA</span>
+              <strong class="result-hex" id="result-hex">#00000000</strong>
+            </div>
+            <button type="button" class="copy-button" id="copy-result-button">색상 복사</button>
+          </div>
+
+          <dl class="result-values">
+            <div>
+              <dt>RGB</dt>
+              <dd id="result-rgb">0 · 0 · 0</dd>
+            </div>
+            <div>
+              <dt>알파</dt>
+              <dd id="result-alpha">0%</dd>
+            </div>
+            <div>
+              <dt>Unity Color</dt>
+              <dd id="result-unity">0, 0, 0, 0</dd>
+            </div>
+            <div>
+              <dt>표시 알파</dt>
+              <dd id="result-display-alpha">0%</dd>
+            </div>
+          </dl>
+
+          <div class="composition" aria-labelledby="composition-title">
+            <p class="value-label" id="composition-title">배합 비율</p>
+            <div id="composition-list" class="composition-list"></div>
+          </div>
+
+          <p class="formula-note">각 색상 채널을 재료 용량 비율로 가중평균합니다. 표시 알파에는 게임 렌더러의 최소값 5%가 반영됩니다.</p>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <template id="ingredient-template">
+    <article class="ingredient-card">
+      <div class="ingredient-card-header">
+        <span class="ingredient-number" aria-hidden="true"></span>
+        <label class="name-field">
+          <span class="sr-only">재료 이름</span>
+          <input type="text" data-field="name" maxlength="60" placeholder="재료 이름">
+        </label>
+        <span class="ratio-badge" data-role="ratio">0%</span>
+        <button type="button" class="remove-button" data-action="remove" aria-label="재료 삭제">삭제</button>
+      </div>
+
+      <div class="ingredient-editor">
+        <label class="color-picker-field">
+          <span class="field-label">색 선택</span>
+          <span class="color-picker-checker">
+            <span class="color-picker-preview" data-role="color-preview"></span>
+            <input type="color" data-field="color-picker" aria-label="색상 선택기">
+          </span>
+          <span class="picker-hint">눌러서 선택</span>
+        </label>
+
+        <div class="primary-fields">
+          <label>
+            <span class="field-label">HEX + ALPHA</span>
+            <input type="text" data-field="hex" spellcheck="false" maxlength="9" placeholder="#RRGGBBAA">
+          </label>
+          <label>
+            <span class="field-label">용량</span>
+            <span class="input-with-unit">
+              <input type="number" data-field="volume" min="0" max="99999" step="1" inputmode="decimal">
+              <span>ml</span>
+            </span>
+          </label>
+        </div>
+
+        <div class="channel-fields" aria-label="RGB 채널 입력">
+          <label><span>R</span><input type="number" data-field="r" min="0" max="255" step="1" inputmode="numeric"></label>
+          <label><span>G</span><input type="number" data-field="g" min="0" max="255" step="1" inputmode="numeric"></label>
+          <label><span>B</span><input type="number" data-field="b" min="0" max="255" step="1" inputmode="numeric"></label>
+        </div>
+
+        <div class="alpha-fields">
+          <span class="field-label">알파</span>
+          <input type="range" data-field="alpha-range" min="0" max="100" step="1" aria-label="알파 슬라이더">
+          <span class="input-with-unit alpha-number">
+            <input type="number" data-field="alpha" min="0" max="100" step="1" inputmode="numeric" aria-label="알파 퍼센트">
+            <span>%</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="ratio-track" aria-hidden="true"><span data-role="ratio-bar"></span></div>
+    </article>
+  </template>
+</body>
+</html>

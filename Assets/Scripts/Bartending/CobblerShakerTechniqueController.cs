@@ -1,30 +1,61 @@
+using System;
 using UnityEngine;
 
 namespace Slainte.Bartending
 {
+    public enum ShakerIceMode
+    {
+        IcedShake,
+        DryShake
+    }
+
     [DisallowMultipleComponent]
     [RequireComponent(typeof(BeakerController))]
     public sealed class CobblerShakerTechniqueController : MonoBehaviour
     {
-        [Header("Cobbler")]
+        [Header("Cobbler Closure")]
         [SerializeField] private bool integratedStrainer = true;
         [SerializeField, Range(0.5f, 1f)] private float strainerWidthRatio = 0.9f;
         [SerializeField, Min(0.02f)] private float strainerThickness = 0.08f;
+        [SerializeField, Range(0.5f, 1.1f)] private float capWidthRatio = 1f;
+        [SerializeField, Min(0.02f)] private float capThickness = 0.1f;
 
-        [Header("Shake Gesture")]
+        [Header("Shake Requirement")]
+        [SerializeField] private ShakerIceMode iceMode = ShakerIceMode.IcedShake;
         [SerializeField, Min(0.1f)] private float minimumSpeed = 3.5f;
-        [SerializeField, Min(2)] private int requiredDirectionChanges = 4;
-        [SerializeField, Min(0.1f)] private float gestureTimeout = 0.8f;
+        [SerializeField, Min(0.2f)] private float requiredShakeDuration = 1.5f;
+        [SerializeField, Min(1)] private int minimumReversals = 3;
+        [SerializeField, Min(0.1f)] private float maximumReversalInterval = 0.65f;
+        [SerializeField, Range(-0.95f, -0.05f)] private float reversalDotThreshold = -0.25f;
 
         private BeakerController shaker;
         private Vector3 previousPosition;
-        private int previousDirection;
-        private int directionChanges;
-        private float lastDirectionChangeTime;
-        private bool strainerConfigured;
+        private Vector2 previousFastDirection;
+        private int reversalCount;
+        private float lastReversalTime;
+        private float qualifiedShakeTime;
+        private bool barriersConfigured;
         private IceOnlyVesselBarrier strainerBarrier;
+        private BoxCollider2D capBarrier;
+        private bool strainerAttached = true;
+        private bool capAttached = true;
+        private bool shakeComplete;
+        private int contentSignature;
+        private bool hasContentSignature;
 
         public bool HasIntegratedStrainer => integratedStrainer;
+        public bool IsStrainerAttached => strainerAttached;
+        public bool IsCapAttached => capAttached;
+        public bool IsFullyClosed => strainerAttached && capAttached;
+        public bool IsShakeComplete => shakeComplete;
+        public float ShakeProgress => Mathf.Clamp01(
+            qualifiedShakeTime / Mathf.Max(0.01f, requiredShakeDuration));
+        public bool HasLiquid => GetTracker()?.ParticleCount > 0;
+        public bool HasRequiredIce => iceMode == ShakerIceMode.DryShake
+            || (GetTracker()?.IceCount ?? 0) > 0;
+
+        public event Action<float> ShakeProgressChanged;
+        public event Action ShakeCompleted;
 
         private void Awake()
         {
@@ -35,8 +66,7 @@ namespace Slainte.Bartending
         private void OnEnable()
         {
             previousPosition = transform.position;
-            strainerConfigured = false;
-            ResetGesture();
+            ResetGesture(false);
         }
 
         private void LateUpdate()
@@ -44,71 +74,110 @@ namespace Slainte.Bartending
             if (shaker == null)
                 shaker = GetComponent<BeakerController>();
 
-            if (!strainerConfigured && shaker != null && shaker.LiquidTracker != null)
-            {
-                ConfigurePhysicalStrainer();
-                strainerConfigured = true;
-            }
+            if (!barriersConfigured && shaker != null && shaker.LiquidTracker != null)
+                ConfigurePhysicalClosures();
+
+            VesselLiquidTracker tracker = GetTracker();
+            RefreshContentVersion(tracker);
 
             Vector3 currentPosition = transform.position;
             float deltaTime = Mathf.Max(Time.unscaledDeltaTime, 0.0001f);
             Vector2 velocity = (currentPosition - previousPosition) / deltaTime;
             previousPosition = currentPosition;
 
-            if (shaker == null || !shaker.IsPickedUp)
+            if (shakeComplete || !CanAdvanceShake(tracker))
             {
-                ResetGesture();
+                ResetGesture(false);
                 return;
             }
-
-            if (Time.unscaledTime - lastDirectionChangeTime > gestureTimeout)
-                ResetGesture();
 
             if (velocity.magnitude < minimumSpeed)
-                return;
-
-            float dominantAxis = Mathf.Abs(velocity.x) >= Mathf.Abs(velocity.y)
-                ? velocity.x
-                : velocity.y;
-            int direction = dominantAxis >= 0f ? 1 : -1;
-            if (previousDirection != 0 && direction != previousDirection)
             {
-                directionChanges++;
-                lastDirectionChangeTime = Time.unscaledTime;
+                if (Time.unscaledTime - lastReversalTime > maximumReversalInterval)
+                    ResetGesture(true);
+                return;
             }
-            previousDirection = direction;
 
-            if (directionChanges >= requiredDirectionChanges)
+            Vector2 direction = velocity.normalized;
+            if (previousFastDirection.sqrMagnitude > 0.5f
+                && Vector2.Dot(previousFastDirection, direction) <= reversalDotThreshold)
+            {
+                reversalCount++;
+                lastReversalTime = Time.unscaledTime;
+            }
+            previousFastDirection = direction;
+
+            if (reversalCount > 0
+                && Time.unscaledTime - lastReversalTime <= maximumReversalInterval)
+            {
+                qualifiedShakeTime += deltaTime;
+                ShakeProgressChanged?.Invoke(ShakeProgress);
+            }
+
+            if (reversalCount >= minimumReversals
+                && qualifiedShakeTime >= requiredShakeDuration)
             {
                 MarkContentsAsShaken();
-                ResetGesture();
             }
+        }
+
+        public void SetClosureState(bool hasStrainer, bool hasCap)
+        {
+            strainerAttached = integratedStrainer && hasStrainer;
+            capAttached = strainerAttached && hasCap;
+            if (!barriersConfigured && GetTracker() != null)
+                ConfigurePhysicalClosures();
+            RefreshPhysicalClosures();
+            if (!IsFullyClosed)
+                ResetGesture(true);
         }
 
         public void MarkContentsAsShaken()
         {
-            VesselLiquidTracker tracker = shaker != null
-                ? shaker.LiquidTracker
-                : GetComponent<VesselLiquidTracker>();
-            if (tracker == null)
+            VesselLiquidTracker tracker = GetTracker();
+            if (!CanAdvanceShake(tracker))
                 return;
 
+            bool hasIce = tracker.IceCount > 0;
             foreach (LiquidParticleData particle in tracker.Particles)
-                particle?.RecordTechnique(CocktailTechnique.Shake);
-        }
-
-        private void ConfigurePhysicalStrainer()
-        {
-            strainerBarrier = GetComponentInChildren<IceOnlyVesselBarrier>(true);
-            if (!integratedStrainer)
             {
-                if (strainerBarrier != null)
-                    strainerBarrier.gameObject.SetActive(false);
+                if (particle == null)
+                    continue;
 
-                shaker.LiquidTracker.RefreshCollisionGeometry();
-                return;
+                particle.RecordTechnique(CocktailTechnique.Shake);
+                if (particle.payload != null)
+                    particle.payload.wasShakenWithIce |= hasIce;
             }
 
+            shakeComplete = true;
+            qualifiedShakeTime = requiredShakeDuration;
+            ShakeProgressChanged?.Invoke(1f);
+            ShakeCompleted?.Invoke();
+        }
+
+        private bool CanAdvanceShake(VesselLiquidTracker tracker)
+        {
+            return shaker != null
+                && shaker.IsPickedUp
+                && IsFullyClosed
+                && tracker != null
+                && tracker.ParticleCount > 0
+                && (iceMode == ShakerIceMode.DryShake || tracker.IceCount > 0);
+        }
+
+        private VesselLiquidTracker GetTracker()
+        {
+            return shaker != null
+                ? shaker.LiquidTracker
+                : GetComponent<VesselLiquidTracker>();
+        }
+
+        private void ConfigurePhysicalClosures()
+        {
+            if (shaker == null || shaker.LiquidTracker == null)
+                return;
+
+            strainerBarrier = GetComponentInChildren<IceOnlyVesselBarrier>(true);
             if (strainerBarrier == null)
             {
                 GameObject barrierObject = new GameObject("__IntegratedStrainerBarrier");
@@ -118,30 +187,121 @@ namespace Slainte.Bartending
                 barrierObject.AddComponent<BoxCollider2D>();
             }
 
-            GameObject barrier = strainerBarrier.gameObject;
-            barrier.SetActive(true);
-            barrier.layer = gameObject.layer;
-            barrier.transform.localPosition = new Vector3(
-                0f,
-                shaker.colliderYOffset + shaker.height * 0.5f - strainerThickness * 0.5f,
-                0f);
-            barrier.transform.localRotation = Quaternion.identity;
-            barrier.transform.localScale = Vector3.one;
+            Transform capTransform = transform.Find("__CobblerCapBarrier");
+            if (capTransform == null)
+            {
+                GameObject capObject = new GameObject("__CobblerCapBarrier");
+                capObject.transform.SetParent(transform, false);
+                capObject.layer = gameObject.layer;
+                capTransform = capObject.transform;
+            }
+            capBarrier = capTransform.GetComponent<BoxCollider2D>();
+            if (capBarrier == null)
+                capBarrier = capTransform.gameObject.AddComponent<BoxCollider2D>();
 
-            BoxCollider2D collider = barrier.GetComponent<BoxCollider2D>();
-            collider.isTrigger = false;
-            collider.size = new Vector2(
-                Mathf.Max(0.1f, shaker.topWidth * strainerWidthRatio),
-                Mathf.Max(0.02f, strainerThickness));
+            float top = shaker.colliderYOffset + shaker.height * 0.5f;
+            ConfigureBarrier(
+                strainerBarrier.GetComponent<BoxCollider2D>(),
+                top - strainerThickness * 0.5f,
+                shaker.topWidth * strainerWidthRatio,
+                strainerThickness);
+            ConfigureBarrier(
+                capBarrier,
+                top + capThickness * 0.5f,
+                shaker.topWidth * capWidthRatio,
+                capThickness);
 
-            shaker.LiquidTracker.RefreshCollisionGeometry();
+            barriersConfigured = true;
+            RefreshPhysicalClosures();
         }
 
-        private void ResetGesture()
+        private void ConfigureBarrier(
+            BoxCollider2D collider,
+            float localY,
+            float width,
+            float thickness)
         {
-            previousDirection = 0;
-            directionChanges = 0;
-            lastDirectionChangeTime = Time.unscaledTime;
+            Transform barrier = collider.transform;
+            barrier.localPosition = new Vector3(0f, localY, 0f);
+            barrier.localRotation = Quaternion.identity;
+            barrier.localScale = Vector3.one;
+            collider.isTrigger = false;
+            collider.size = new Vector2(
+                Mathf.Max(0.1f, width),
+                Mathf.Max(0.02f, thickness));
+        }
+
+        private void RefreshPhysicalClosures()
+        {
+            if (!barriersConfigured)
+                return;
+
+            strainerBarrier.gameObject.SetActive(strainerAttached);
+            capBarrier.gameObject.SetActive(capAttached);
+            shaker.LiquidTracker?.RefreshCollisionGeometry();
+        }
+
+        private void RefreshContentVersion(VesselLiquidTracker tracker)
+        {
+            int signature = CalculateContentSignature(tracker);
+            if (!hasContentSignature)
+            {
+                contentSignature = signature;
+                hasContentSignature = true;
+                return;
+            }
+
+            if (contentSignature == signature)
+                return;
+
+            contentSignature = signature;
+            shakeComplete = false;
+            ResetGesture(true);
+        }
+
+        private static int CalculateContentSignature(VesselLiquidTracker tracker)
+        {
+            if (tracker == null)
+                return 0;
+
+            unchecked
+            {
+                int sum = 17;
+                int xor = 0;
+                foreach (LiquidParticleData particle in tracker.Particles)
+                {
+                    if (particle == null)
+                        continue;
+                    int volume = particle.payload != null
+                        ? Mathf.RoundToInt(particle.payload.TotalVolumeMl * 10f)
+                        : 0;
+                    int value = particle.GetInstanceID() * 397 ^ volume;
+                    sum += value;
+                    xor ^= value;
+                }
+
+                foreach (IceCubeController ice in tracker.IceCubes)
+                {
+                    if (ice == null)
+                        continue;
+                    int value = ice.GetInstanceID() * 31;
+                    sum += value;
+                    xor ^= value;
+                }
+
+                return sum * 397 ^ xor;
+            }
+        }
+
+        private void ResetGesture(bool notify)
+        {
+            previousFastDirection = Vector2.zero;
+            reversalCount = 0;
+            lastReversalTime = Time.unscaledTime;
+            if (!shakeComplete)
+                qualifiedShakeTime = 0f;
+            if (notify)
+                ShakeProgressChanged?.Invoke(ShakeProgress);
         }
     }
 }
