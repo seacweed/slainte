@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 643b84c3f80d67e4da6e7d257295c40f
+guid: 44d8d74424c2bdd4083b59a07669d68a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3473359137553555466
-    second: icon2_0
+      213: 3197945676879404282
+    second: hectar_lid_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: icon2_0
+      name: hectar_lid_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 310
-        height: 590
+        x: 35
+        y: 2
+        width: 239
+        height: 521
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: a00ac33abb9d33030800000000000000
-      internalID: 3473359137553555466
+      spriteID: afc946156a2616c20800000000000000
+      internalID: 3197945676879404282
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 22b512c1e1437964da94c607a421e843
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      icon2_0: 3473359137553555466
+      hectar_lid_0: 3197945676879404282
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

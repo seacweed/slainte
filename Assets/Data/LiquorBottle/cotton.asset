@@ -14,13 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LiquorBottleDef
   id: cotton
   displayName: "\uCF54\uD2BC"
-  sprite: {fileID: -6828235300387644391, guid: 91e6f03485dc77849adfd4ec5ea08650, type: 3}
+  shelfSprite: {fileID: 21300000, guid: 0aafbe9fe31e7ca43a54f02cb233e1a7, type: 3}
+  shopSprite: {fileID: 21300000, guid: 9174d8245dbe43848a0a300497eb689e, type: 3}
   unlockFlagKey: 
   subCategory: "\uACAC\uACFC\uB958 \uB9AC\uD050\uB974"
-  bottleCount: 5
+  bottleCount: 4
   unitVolume: 700
   category: {fileID: 11400000, guid: 4fa98afa4995af440adc4efbca8847c1, type: 2}
   price: 2000
+  strangeCoinPrice: 0
   unlockHintType: 0
   recipeBookIcon: {fileID: 0}
   recipeBookName: 

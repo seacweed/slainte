@@ -244,7 +244,8 @@ public class EpisodeCsvImporter : EditorWindow
                 condition       = ParseSingleCondition(Field(row, 0), Field(row, 1)),
                 flag            = Field(row, 2),
                 conditionText   = Field(row, 3),
-                revealCondition = ParseSingleCondition(Field(row, 4), Field(row, 5))
+                revealCondition = ParseSingleCondition(Field(row, 4), Field(row, 5)),
+                hiddenText      = Field(row, 6)
             };
 
             if (hasSelectChars)

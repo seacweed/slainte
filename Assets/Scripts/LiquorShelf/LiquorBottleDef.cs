@@ -12,7 +12,10 @@ public class LiquorBottleDef : ScriptableObject
 {
     public string   id;
     public string   displayName;
-    public Sprite   sprite;
+    [Tooltip("Shown on LiquorShelfUI slots (_lid variant).")]
+    public Sprite   shelfSprite;
+    [Tooltip("Shown on shop item slots (_blank variant).")]
+    public Sprite   shopSprite;
     [Tooltip("GameProgress flag key. Empty = always unlocked.")]
     public string   unlockFlagKey;
     public string   subCategory;

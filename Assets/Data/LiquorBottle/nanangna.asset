@@ -14,13 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LiquorBottleDef
   id: nanangna
   displayName: "\uB098\uB0AD\uB098"
-  sprite: {fileID: -5414705535406064539, guid: 3892bcf35c78c06409fcebcbde39b94e, type: 3}
+  shelfSprite: {fileID: 21300000, guid: 4decca3cf4b36524f8edc7b0507478fa, type: 3}
+  shopSprite: {fileID: 21300000, guid: e6598f27d52087a488957ae05fcafbd5, type: 3}
   unlockFlagKey: 
   subCategory: "\uACFC\uC77C \uB9AC\uD050\uB974"
-  bottleCount: 5
+  bottleCount: 4
   unitVolume: 700
   category: {fileID: 11400000, guid: 4fa98afa4995af440adc4efbca8847c1, type: 2}
   price: 2000
+  strangeCoinPrice: 0
   unlockHintType: 0
   recipeBookIcon: {fileID: 0}
   recipeBookName: 

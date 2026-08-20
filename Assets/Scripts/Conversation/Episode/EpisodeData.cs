@@ -41,9 +41,12 @@ public class SelectConditionEntry
     public string flag;
     public string conditionText; // 커스텀 힌트 문구. 비어있으면 condition에서 자동 생성한 문구를 사용
 
-    // 이 옵션의 내용(조건 문구·아이콘)이 플레이어에게 공개되는 조건. 미충족이면 "???"로 가려서 표시.
+    // 이 옵션의 내용(조건 문구·아이콘)이 플레이어에게 공개되는 조건.
     // 기본값(None)이면 항상 공개 — 기존 데이터와 동일하게 동작
     public SelectSingleCondition revealCondition = new();
+
+    // revealCondition 미충족일 때 conditionText 대신 보여줄 텍스트. 비어있으면 "???"로 표시.
+    public string hiddenText;
 
     // 이 옵션이 선택됐을 때 보여줄 초상화. EpisodeData.characters와 같은 순서/슬롯 수로 채우면 됨.
     // 비어있으면(입력 안 하면) 기본 characters를 그대로 사용.

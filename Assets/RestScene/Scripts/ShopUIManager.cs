@@ -57,7 +57,7 @@ public class ShopUIManager : BaseUIManager
     public ScrollRect itemScrollView;
     public Transform contentRoot;
     public GameObject slotPrefab;
-    public List<LiquorBottleDef> allBottles;
+    public LiquorBottleCatalog catalog;
 
     [Header("Upgrades")]
     public Transform upgradeContentRoot;
@@ -316,7 +316,7 @@ public class ShopUIManager : BaseUIManager
         foreach (Transform child in strangeContentRoot) Destroy(child.gameObject);
         _strangeItemSlots.Clear();
 
-        var result = allBottles.Where(bottle =>
+        var result = catalog.bottles.Where(bottle =>
             bottle != null && (categoryFilter == null || bottle.category == categoryFilter)
         ).ToList();
 
@@ -367,7 +367,7 @@ public class ShopUIManager : BaseUIManager
         foreach (Transform child in contentRoot) Destroy(child.gameObject);
         _itemSlots.Clear();
 
-        var result = allBottles.Where(bottle =>
+        var result = catalog.bottles.Where(bottle =>
             bottle != null && (categoryFilter == null || bottle.category == categoryFilter)
         ).ToList();
 

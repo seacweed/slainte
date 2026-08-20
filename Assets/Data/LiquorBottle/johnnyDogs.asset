@@ -14,13 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LiquorBottleDef
   id: johnny_dogs
   displayName: "\uC870\uB2C8 \uB3C5\uC2A4"
-  sprite: {fileID: -2174827668884051896, guid: 493584a1deb49db438cec56aa0f577ea, type: 3}
+  shelfSprite: {fileID: 21300000, guid: a6fe008087b5664429ce2ad9ee926e0f, type: 3}
+  shopSprite: {fileID: 21300000, guid: 7b0c944f5a36aa54dbe750208ab121c3, type: 3}
   unlockFlagKey: 
   subCategory: "\uC704\uC2A4\uD0A4"
-  bottleCount: 5
+  bottleCount: 4
   unitVolume: 700
   category: {fileID: 11400000, guid: dfd2955e219a9244d90f3a2ad4a1fad7, type: 2}
   price: 2000
+  strangeCoinPrice: 0
   unlockHintType: 0
   recipeBookIcon: {fileID: 0}
   recipeBookName: 

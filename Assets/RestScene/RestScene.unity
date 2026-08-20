@@ -257,18 +257,7 @@ MonoBehaviour:
   itemScrollView: {fileID: 1057469623}
   contentRoot: {fileID: 310331915}
   slotPrefab: {fileID: 8233791964675480531, guid: 18ec5d34d8a718e4385fbfa4fe85ac37, type: 3}
-  allBottles:
-  - {fileID: 11400000, guid: f38ad3a9f336b614ba99c4927ed61ca0, type: 2}
-  - {fileID: 11400000, guid: b37c84938864c5042bacaf1f19786244, type: 2}
-  - {fileID: 11400000, guid: e4e198c1efa17974daf840edcf74d0cc, type: 2}
-  - {fileID: 11400000, guid: 608fe087606233949a3ebc8a624f2314, type: 2}
-  - {fileID: 11400000, guid: ec8983917a3241442bc9f07ecb8d8079, type: 2}
-  - {fileID: 11400000, guid: 82fc3c53a29aafe44987d970b8406453, type: 2}
-  - {fileID: 11400000, guid: 6b614383d93ca5c4fa9d8d5ef85ea2d1, type: 2}
-  - {fileID: 11400000, guid: 6833bda5e9603cf4d92498aa3cdf309d, type: 2}
-  - {fileID: 11400000, guid: 54f950e070e1ccc418ede6ce9a863a51, type: 2}
-  - {fileID: 11400000, guid: dc865b6362d9c1e48b557b8cb412e5f1, type: 2}
-  - {fileID: 11400000, guid: b47e561cbd18a6d49b319b3cdf10aeda, type: 2}
+  catalog: {fileID: 11400000, guid: 197e39bbcc3b12f40a0fd5a6b70c143e, type: 2}
   upgradeContentRoot: {fileID: 1188979967}
   upgradeSlotPrefab: {fileID: 6433565362936336155, guid: 482f3a2308b77d748940f0d6f9e7c6ca, type: 3}
   allUpgrades:

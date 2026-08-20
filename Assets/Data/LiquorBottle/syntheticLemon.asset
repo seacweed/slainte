@@ -14,13 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LiquorBottleDef
   id: synthetic_lemon
   displayName: "\uD569\uC131 \uB808\uBAAC"
-  sprite: {fileID: 8455280647246717337, guid: 14e5016a02536da428a10ee835f58d2b, type: 3}
+  shelfSprite: {fileID: 21300000, guid: 64ae2dd414442724baa85191b4787ed6, type: 3}
+  shopSprite: {fileID: 21300000, guid: df1e66d158491684285e67db48e87301, type: 3}
   unlockFlagKey: 
   subCategory: "\uACFC\uC77C \uC2DC\uB7FD"
-  bottleCount: 5
-  unitVolume: 300
+  bottleCount: 3
+  unitVolume: 200
   category: {fileID: 11400000, guid: 17c366124d7692f4b80847a1719d2134, type: 2}
   price: 2000
+  strangeCoinPrice: 0
   unlockHintType: 0
   recipeBookIcon: {fileID: 0}
   recipeBookName: 

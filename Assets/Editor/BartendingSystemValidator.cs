@@ -249,12 +249,6 @@ public static class BartendingSystemValidator
                 $"선반 액체 '{shelfBottle.id}'의 병 용량이 ItemDef와 다릅니다.");
             Assert(item.overrideBottleGeometry,
                 $"선반 액체 '{shelfBottle.id}'에 병 형상 프로필이 없습니다.");
-
-            if (shelfBottle.sprite != item.icon)
-            {
-                Debug.LogWarning(
-                    $"[바텐딩 시스템 검증] 선반 액체 '{shelfBottle.id}'의 선반 이미지와 ItemDef 이미지가 다릅니다.");
-            }
         }
 
         if (missingItemIds.Count > 0)

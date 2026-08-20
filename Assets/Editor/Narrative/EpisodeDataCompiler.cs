@@ -391,19 +391,12 @@ namespace NarrativeFlow.Editor
             if (data.selectConditions != null && data.selectConditions.Count > 0)
             {
                 sb.AppendLine("#SELECT_TRIGGER");
-                sb.AppendLine("conditionType,conditionValue,selectFlag,selectText");
+                sb.AppendLine("conditionType,conditionValue,selectFlag,selectText,revealConditionType,revealConditionValue,hiddenText");
                 foreach (var sc in data.selectConditions)
                 {
                     var cond = sc.condition ?? new SelectSingleCondition();
-                    string value = cond.type switch
-                    {
-                        SelectConditionType.MinDay => cond.minDay.ToString(),
-                        SelectConditionType.RequiredFlag => cond.requiredFlag,
-                        SelectConditionType.PrerequisiteEpisode => cond.prerequisiteEpisodeId,
-                        SelectConditionType.RequiredVar => $"{cond.varName}{CompareOpToString(cond.varOp)}{cond.varThreshold}",
-                        _ => ""
-                    };
-                    sb.AppendLine($"{cond.type},{value},{sc.flag},{Csv(sc.conditionText)}");
+                    var reveal = sc.revealCondition ?? new SelectSingleCondition();
+                    sb.AppendLine($"{cond.type},{ConditionValueString(cond)},{sc.flag},{Csv(sc.conditionText)},{reveal.type},{ConditionValueString(reveal)},{Csv(sc.hiddenText)}");
                 }
                 sb.AppendLine();
             }
@@ -519,6 +512,15 @@ namespace NarrativeFlow.Editor
             CompareOp.Less           => "<",
             CompareOp.LessOrEqual    => "<=",
             _                        => "=="
+        };
+
+        private static string ConditionValueString(SelectSingleCondition cond) => cond.type switch
+        {
+            SelectConditionType.MinDay => cond.minDay.ToString(),
+            SelectConditionType.RequiredFlag => cond.requiredFlag,
+            SelectConditionType.PrerequisiteEpisode => cond.prerequisiteEpisodeId,
+            SelectConditionType.RequiredVar => $"{cond.varName}{CompareOpToString(cond.varOp)}{cond.varThreshold}",
+            _ => ""
         };
     }
 }

@@ -167,7 +167,7 @@ minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCu
 - **옵션 하나당 조건은 딱 하나**입니다(`TRIGGER`/`PLAY_TRIGGER`처럼 여러 조건을 AND로 걸 수 없음). 조건을 여러 개 걸고 싶으면 옵션(행)을 여러 개로 나눠서 작성하세요
 - 그 조건이 충족된 옵션만 토글 인터랙션이 가능(미충족이면 off로 고정, 비활성 표시)
 - 켜진 옵션의 on/off 값은 Play 버튼 클릭(에피소드 시작) 시점에 그 행의 `selectFlag` 열 플래그로 반영됨(켜진 옵션 → `SetFlag`, 나머지 옵션 → `ClearFlag`) — 에피소드 노드의 `flagBranches` 등에서 분기 조건으로 사용
-- 컬럼: `conditionType`(`None`/`MinDay`/`RequiredFlag`/`PrerequisiteEpisode`/`RequiredVar` 중 하나), `conditionValue`(타입에 따라 의미가 다름 — 아래 표), `selectFlag`(반영할 플래그 이름), `selectText`(이 옵션 조건 뒤에 표시할 커스텀 힌트 한 줄. 비우면 조건에서 문구를 자동 생성), `revealConditionType`/`revealConditionValue`(이 옵션의 내용을 플레이어에게 공개하는 조건 — 형식은 `conditionType`/`conditionValue`와 동일. 미충족이면 "???"로 가려서 표시. 비우면 항상 공개)
+- 컬럼: `conditionType`(`None`/`MinDay`/`RequiredFlag`/`PrerequisiteEpisode`/`RequiredVar` 중 하나), `conditionValue`(타입에 따라 의미가 다름 — 아래 표), `selectFlag`(반영할 플래그 이름), `selectText`(이 옵션 조건 뒤에 표시할 커스텀 힌트 한 줄. 비우면 조건에서 문구를 자동 생성), `revealConditionType`/`revealConditionValue`(이 옵션의 내용을 플레이어에게 공개하는 조건 — 형식은 `conditionType`/`conditionValue`와 동일. 비우면 항상 공개), `hiddenText`(`revealConditionType`/`revealConditionValue` 미충족일 때 `selectText` 대신 표시할 텍스트. **비우면 `"???"`로 표시** — 미충족 시 항상 `"???"`가 아니라, 여기 채워둔 다른 문구를 보여주다가 reveal 조건이 충족되면 `selectText`로 바뀌는 것도 가능)
 
 | `conditionType` / `revealConditionType` | `conditionValue` / `revealConditionValue` 형식 | 예시 |
 |---|---|---|
@@ -179,10 +179,12 @@ minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCu
 
 ```csv
 #SELECT_TRIGGER
-conditionType,conditionValue,selectFlag,selectText,revealConditionType,revealConditionValue
-RequiredFlag,flag_got_hint,select_confront_f72,단도직입적으로 물어본다,,
-RequiredFlag,flag_got_hint,select_evade_f72,모르는 척 넘어간다,MinDay,5
+conditionType,conditionValue,selectFlag,selectText,revealConditionType,revealConditionValue,hiddenText
+RequiredFlag,flag_got_hint,select_confront_f72,단도직입적으로 물어본다,,,
+RequiredFlag,flag_got_hint,select_evade_f72,모르는 척 넘어간다,MinDay,5,수상한 낌새가 느껴진다
 ```
+
+두 번째 옵션은 `MinDay=5` 미만이면 `hiddenText`인 "수상한 낌새가 느껴진다"를 보여주다가, 5일차부터는 `selectText`인 "모르는 척 넘어간다"로 바뀝니다. 첫 번째 옵션처럼 `hiddenText`를 비워두면(reveal 조건도 없으므로 항상 공개) 아무 영향이 없습니다.
 
 > **주의**: `SELECT_TRIGGER`는 재임포트 시 항상 CSV 내용으로 전체 교체됩니다(섹션이 있으면 없는 옵션은 사라짐).
 
@@ -192,9 +194,10 @@ RequiredFlag,flag_got_hint,select_evade_f72,모르는 척 넘어간다,MinDay,5
 
 `SELECT_TRIGGER`의 각 옵션이 선택됐을 때 보여줄 초상화(`characterOverrides`)입니다. **선택 사항** — 비워두면(섹션 자체를 안 쓰면) 해당 옵션은 기본 `characters`(아래 `BOARD_CHARS`)를 그대로 사용합니다.
 
-- **행 하나 = 초상화 슬롯 하나**입니다. `selectFlag`가 같은 행을 여러 개 작성하면 `BOARD_CHARS`/`OPENING_CHARS`와 같은 슬롯 순서로 채워집니다.
+- **행 하나 = 초상화 슬롯 하나**이며, "몇 번째 캐릭터"인지는 별도 열이 아니라 **같은 `selectFlag`끼리 CSV에 작성된 순서**로 정해집니다. 즉 `selectFlag`가 같은 행을 여러 개 작성하면 1번째 행이 `BOARD_CHARS`의 1번째 슬롯, 2번째 행이 2번째 슬롯... 순으로 채워집니다.
 - 슬롯 개수·순서는 `characters`(기본 초상화 목록)와 맞춰야 합니다.
 - `selectFlag`는 `SELECT_TRIGGER`의 `selectFlag` 열과 일치해야 매칭됩니다.
+- **부분 교체 불가**: 한 `selectFlag`에 대해 작성한 행들은 해당 옵션의 초상화 목록 **전체**를 대체합니다(리스트 길이만큼만 표시되고 나머지 슬롯은 사라짐). 예를 들어 캐릭터가 3명 등장하는데 그중 3번째 캐릭터만 바뀌는 경우에도, 1·2번째 캐릭터를 그대로 유지하려면 1·2번째 행에 기존과 동일한 값을 반복해서 **3줄을 모두** 작성해야 합니다. "이 슬롯은 건드리지 않음"을 표현하는 방법은 없습니다.
 
 | 열 | 설명 | 예시 |
 |---|---|---|

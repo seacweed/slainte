@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,6 +27,8 @@ public class LiquorShelfUI : MonoBehaviour
 
     [Header("Categories")]
     [SerializeField] private CategoryEntry[] categoryEntries;
+    [SerializeField] private LiquorBottleCatalog  catalog;
+    [SerializeField] private LiquorBottleSlotUI   slotPrefab;
 
     [Header("Background")]
     [SerializeField] private Image             shelfBackgroundImage;
@@ -48,6 +51,7 @@ public class LiquorShelfUI : MonoBehaviour
 
         HideAllContainers();
         BuildCategoryButtons();
+        BuildCategorySlots();
     }
 
     private void BuildCategoryButtons()
@@ -60,6 +64,23 @@ public class LiquorShelfUI : MonoBehaviour
             var btn = Instantiate(categoryButtonPrefab, categoryButtonContent);
             btn.Bind(entry.def, OpenCategory);
             _categoryButtons.Add(btn);
+        }
+    }
+
+    private void BuildCategorySlots()
+    {
+        if (catalog == null || slotPrefab == null) return;
+
+        foreach (var entry in categoryEntries)
+        {
+            if (entry.def == null || entry.container == null) continue;
+
+            var bottles = catalog.bottles.Where(b => b != null && b.category == entry.def);
+            foreach (var bottle in bottles)
+            {
+                var slot = Instantiate(slotPrefab, entry.container.transform);
+                slot.Setup(bottle);
+            }
         }
     }
 

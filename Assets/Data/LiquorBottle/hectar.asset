@@ -14,13 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LiquorBottleDef
   id: hectar
   displayName: "\uD5E5\uD0C0\uB974"
-  sprite: {fileID: -5414705535406064539, guid: 3892bcf35c78c06409fcebcbde39b94e, type: 3}
+  shelfSprite: {fileID: 21300000, guid: 44d8d74424c2bdd4083b59a07669d68a, type: 3}
+  shopSprite: {fileID: 21300000, guid: 6741dd071d64184418e76f22e519d96c, type: 3}
   unlockFlagKey: 
   subCategory: "\uBCA0\uB974\uBB47"
-  bottleCount: 5
+  bottleCount: 4
   unitVolume: 700
   category: {fileID: 11400000, guid: 4fa98afa4995af440adc4efbca8847c1, type: 2}
   price: 2000
+  strangeCoinPrice: 0
   unlockHintType: 0
   recipeBookIcon: {fileID: 0}
   recipeBookName: 

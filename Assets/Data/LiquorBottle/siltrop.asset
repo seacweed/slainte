@@ -14,13 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LiquorBottleDef
   id: siltrop
   displayName: "\uC2E4\uCCAD"
-  sprite: {fileID: 8455280647246717337, guid: 14e5016a02536da428a10ee835f58d2b, type: 3}
+  shelfSprite: {fileID: 21300000, guid: 0ae75180320dad84db957d5cda7f7282, type: 3}
+  shopSprite: {fileID: 21300000, guid: 5484697d275211f46ba7e1ed1a869a8d, type: 3}
   unlockFlagKey: 
   subCategory: "\uB2F9\uB958 \uC2DC\uB7FD"
-  bottleCount: 5
-  unitVolume: 300
+  bottleCount: 4
+  unitVolume: 700
   category: {fileID: 11400000, guid: 17c366124d7692f4b80847a1719d2134, type: 2}
   price: 2000
+  strangeCoinPrice: 0
   unlockHintType: 0
   recipeBookIcon: {fileID: 0}
   recipeBookName: 

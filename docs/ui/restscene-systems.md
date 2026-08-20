@@ -169,10 +169,10 @@ public Color buttonInactiveColor;     // 미선택 시
 - 표시할 조건 개수보다 `triggerConditionRows` 배열이 길면 남는 행은 비활성화
 
 **선택 조건 (`data.selectConditions: List<SelectConditionEntry>`)**
-- `SelectConditionEntry { condition, flag, conditionText, revealCondition, characterOverrides }` — 옵션 하나 = 조건 **하나**(`SelectSingleCondition`) + 플래그 + 커스텀 힌트 한 줄 + 공개 조건 + 초상화 override. 해금 조건과 달리 옵션 하나에 여러 조건을 AND로 걸 수 없음 — 조건을 여러 개 걸고 싶으면 옵션을 여러 개로 나눠서 표현
+- `SelectConditionEntry { condition, flag, conditionText, revealCondition, hiddenText, characterOverrides }` — 옵션 하나 = 조건 **하나**(`SelectSingleCondition`) + 플래그 + 커스텀 힌트 한 줄 + 공개 조건 + 비공개 시 텍스트 + 초상화 override. 해금 조건과 달리 옵션 하나에 여러 조건을 AND로 걸 수 없음 — 조건을 여러 개 걸고 싶으면 옵션을 여러 개로 나눠서 표현
 - `SelectSingleCondition { type, minDay, requiredFlag, prerequisiteEpisodeId, varName, varOp, varThreshold }` — `SelectConditionType`(`None`/`MinDay`/`RequiredFlag`/`PrerequisiteEpisode`/`RequiredVar`) 하나로 어떤 조건인지 결정, 나머지 필드 중 해당 타입에 대응하는 값만 사용
 - 옵션당 UI도 행 하나(`SelectConditionGroup.conditionRow: ConditionRow`, 배열이 아님) — 자물쇠 아이콘 하나 + 설명 한 줄 + 토글 하나로 고정. 텍스트는 `entry.conditionText`가 있으면 그걸, 없으면 `BuildSelectConditionText()`가 조건 타입에서 자동 생성("N일차 이상", 플래그명, "선행 에피소드 '제목'", `varName 연산자 threshold` 등)
-- **공개 조건 (`entry.revealCondition: SelectSingleCondition`)** — "선택 조건의 내용이 플레이어에게 공개되는 조건"(선택 가능 여부 `condition`과는 별개 층). 타입과 필드 구조는 `condition`과 동일하고 `EpisodeManager.EvaluateSelectCondition()`을 그대로 재사용해 평가. 기본값(`None`)은 항상 공개(기존 데이터와 동일하게 동작). 미충족이면 `ApplySelectConditionRow()`가 조건 텍스트를 `"???"`로 가리고 자물쇠 아이콘도 잠김으로 고정 표시(실제 `condition` 충족 여부와 무관)
+- **공개 조건 (`entry.revealCondition: SelectSingleCondition`)** — "선택 조건의 내용이 플레이어에게 공개되는 조건"(선택 가능 여부 `condition`과는 별개 층). 타입과 필드 구조는 `condition`과 동일하고 `EpisodeManager.EvaluateSelectCondition()`을 그대로 재사용해 평가. 기본값(`None`)은 항상 공개(기존 데이터와 동일하게 동작). 미충족이면 `ApplySelectConditionRow()`가 조건 텍스트 대신 `entry.hiddenText`(비어있으면 `"???"`로 폴백)를 보여주고 자물쇠 아이콘도 잠김으로 고정 표시(실제 `condition` 충족 여부와 무관) — 공개 조건이 충족되는 순간 `hiddenText`에서 `conditionText`(또는 자동 생성 문구)로 전환됨
 - `해금 조건`/`playCondition`과 완전히 독립 — **Play 버튼 활성화에는 전혀 영향을 주지 않음**. 어떤 옵션도 미충족/미선택이어도 에피소드는 평소대로 플레이 가능
 - **옵션끼리 상호 배타적** — `selectToggleGroup`(유니티 내장 `ToggleGroup`)에 모든 옵션의 `Toggle`을 묶어서, 하나를 켜면 나머지는 자동으로 꺼짐. `Awake()`에서 `group.toggle.group = selectToggleGroup`로 한 번만 연결
 - `EpisodeInfoUI.selectConditionGroups[i]`가 `data.selectConditions[i]`와 인덱스로 1:1 매칭(고정 슬롯, 배열 길이보다 옵션이 적으면 남는 슬롯은 컨테이너까지 비활성화)
@@ -260,10 +260,11 @@ homePanel (재료/업그레이드/레시피북 3버튼)
 
 ### LiquorBottleDef 상점용 확장 필드
 
-술장용 필드(`id`, `displayName`, `sprite`, `unlockFlagKey`, `subCategory`, `bottleCount`, `unitVolume`) 외에 상점을 위해 추가된 필드:
+술장용 필드(`id`, `displayName`, `shelfSprite`, `unlockFlagKey`, `subCategory`, `bottleCount`, `unitVolume`) 외에 상점을 위해 추가된 필드:
 
 | 필드 | 설명 |
 |---|---|
+| `shopSprite` | `ItemSlotUI` 아이콘에 쓰는 상점 전용 스프라이트(`_blank` 변형). `shelfSprite`(술장, `_lid` 변형)와 별도 필드라 각각 채워야 함 |
 | `category` | `LiquorCategoryDef` 참조. null이면 상점 어느 카테고리에도 노출되지 않음 |
 | `price` | 1병(`unitVolume`) 구매 가격(원화) |
 | `strangeCoinPrice` | 1병(`unitVolume`) 구매 가격(이상한 동전) — 이상한 상점 전용, 비워두면 0이라 항상 구매 가능한 것으로 처리되니 주의 |

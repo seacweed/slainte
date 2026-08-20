@@ -312,8 +312,6 @@ namespace Slainte.EditorTools
 
             string iconName = First(row, "IconName", "iconName");
             Sprite icon = FindSprite(iconName);
-            if (icon == null)
-                icon = FindExistingShelfSprite(displayName, id);
             if (icon != null)
                 item.icon = icon;
             else if (!string.IsNullOrWhiteSpace(iconName) && item.icon == null)
@@ -350,8 +348,20 @@ namespace Slainte.EditorTools
             definition.name = id;
             definition.id = id;
             definition.displayName = displayName;
-            if (item != null && item.icon != null)
-                definition.sprite = item.icon;
+
+            string iconName = First(row, "IconName", "iconName");
+            Sprite shelfSprite = FindSprite(iconName + "_lid");
+            if (shelfSprite == null)
+                shelfSprite = FindExistingSprite(displayName, id, d => d.shelfSprite);
+            if (shelfSprite != null)
+                definition.shelfSprite = shelfSprite;
+
+            Sprite shopSprite = FindSprite(iconName + "_blank");
+            if (shopSprite == null)
+                shopSprite = FindExistingSprite(displayName, id, d => d.shopSprite);
+            if (shopSprite != null)
+                definition.shopSprite = shopSprite;
+
             definition.subCategory = LocalizedLabel(First(row, "소분류", "subcategory"));
             definition.unitVolume = item != null ? item.capacityMl : 700f;
             if (definition.bottleCount <= 0)
@@ -942,20 +952,21 @@ namespace Slainte.EditorTools
             }
         }
 
-        private static Sprite FindExistingShelfSprite(string displayName, string importedId)
+        private static Sprite FindExistingSprite(string displayName, string importedId, Func<LiquorBottleDef, Sprite> selector)
         {
             string[] guids = AssetDatabase.FindAssets("t:LiquorBottleDef", new[] { "Assets/Data/LiquorBottle" });
             for (int i = 0; i < guids.Length; i++)
             {
                 LiquorBottleDef definition = AssetDatabase.LoadAssetAtPath<LiquorBottleDef>(
                     AssetDatabase.GUIDToAssetPath(guids[i]));
+                Sprite existing = definition != null ? selector(definition) : null;
                 if (definition == null
-                    || definition.sprite == null
+                    || existing == null
                     || string.Equals(definition.id, importedId, StringComparison.OrdinalIgnoreCase)
                     || !string.Equals(definition.displayName, displayName, StringComparison.OrdinalIgnoreCase))
                     continue;
 
-                return definition.sprite;
+                return existing;
             }
 
             return null;

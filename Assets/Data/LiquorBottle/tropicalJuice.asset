@@ -14,13 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LiquorBottleDef
   id: tropical_juice
   displayName: "\uC5F4\uB300 \uC8FC\uC2A4"
-  sprite: {fileID: -4145211086132220793, guid: 6476ab10d3c581241afc5f4ec40790a7, type: 3}
+  shelfSprite: {fileID: 21300000, guid: 3349fd0fe92db8d40ab3627c27718f24, type: 3}
+  shopSprite: {fileID: 21300000, guid: 03e5c656cb49c9b428bfd4d8c027fbdc, type: 3}
   unlockFlagKey: 
   subCategory: "\uACFC\uC77C \uC8FC\uC2A4"
-  bottleCount: 6
+  bottleCount: 3
   unitVolume: 1000
   category: {fileID: 11400000, guid: d52c13a36954c044687e7d1ce8bcdc8a, type: 2}
   price: 2000
+  strangeCoinPrice: 0
   unlockHintType: 0
   recipeBookIcon: {fileID: 0}
   recipeBookName: 

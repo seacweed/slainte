@@ -44,7 +44,6 @@
 | **narrative** |||
 | [docs/narrative/episode-engine.md](docs/narrative/episode-engine.md) | 에피소드 오케스트레이션(EpisodeRunner, 분기, 제조 트리거), 오디오/BGM |
 | [docs/narrative/episode-csv-guide.md](docs/narrative/episode-csv-guide.md) | 에피소드 CSV 작성법 (섹션 구조, 열 설명, 예시) |
-| [docs/narrative/planner-episode-csv-guide.md](docs/narrative/planner-episode-csv-guide.md) | 에피소드 CSV 작성 가이드 (기획자용) |
 | [docs/narrative/narrative-graph-editor.md](docs/narrative/narrative-graph-editor.md) | 그래프 에디터 아키텍처, 데이터 구조, 컴파일/임포트/ID 할당 |
 | [docs/narrative/narrative-graph-guide.md](docs/narrative/narrative-graph-guide.md) | 그래프 에디터 사용 가이드 (노드 생성·연결·시퀀스 편집·컴파일) |
 | [docs/narrative/node-based-episode-editor-spec.md](docs/narrative/node-based-episode-editor-spec.md) | 노드 기반 에피소드 에디터 설계서 |

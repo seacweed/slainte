@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cac0f8029fff764f847d5e35337695d, type: 3}
+  m_Name: hotWater
+  m_EditorClassIdentifier: Assembly-CSharp::LiquorBottleDef
+  id: hot_water
+  displayName: "\uB728\uAC70\uC6B4 \uBB3C"
+  shelfSprite: {fileID: 21300000, guid: a139044075cf81d4ea103b50b1f43941, type: 3}
+  shopSprite: {fileID: 21300000, guid: 133580a8f9d05f94db6f155c2f884eea, type: 3}
+  unlockFlagKey: 
+  subCategory: "\uAE30\uD0C0"
+  bottleCount: 4
+  unitVolume: 500
+  category: {fileID: 11400000, guid: d52c13a36954c044687e7d1ce8bcdc8a, type: 2}
+  price: 2000
+  strangeCoinPrice: 0
+  unlockHintType: 0
+  recipeBookIcon: {fileID: 0}
+  recipeBookName: 

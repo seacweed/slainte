@@ -14,13 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LiquorBottleDef
   id: beatha
   displayName: "\uBC14\uD558"
-  sprite: {fileID: -5414705535406064539, guid: 3892bcf35c78c06409fcebcbde39b94e, type: 3}
+  shelfSprite: {fileID: 21300000, guid: 8d88f334a810c354fadae6d8f3e4ba82, type: 3}
+  shopSprite: {fileID: 21300000, guid: fb868382b77d7f949bacf2e43e3529cb, type: 3}
   unlockFlagKey: 
   subCategory: "\uC704\uC2A4\uD0A4"
-  bottleCount: 6
+  bottleCount: 4
   unitVolume: 700
   category: {fileID: 11400000, guid: dfd2955e219a9244d90f3a2ad4a1fad7, type: 2}
   price: 2000
+  strangeCoinPrice: 0
   unlockHintType: 0
   recipeBookIcon: {fileID: 0}
   recipeBookName: 

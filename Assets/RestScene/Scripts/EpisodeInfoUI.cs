@@ -170,12 +170,12 @@ public class EpisodeInfoUI : MonoBehaviour
 
     // 선택 조건 옵션 하나(= 행 하나)를 채운다. conditionText가 있으면 그걸, 없으면 condition에서 자동 생성한 문구를 사용.
     // 옵션에는 항상 조건이 하나 있다고 가정하므로(기획상 "조건 없음" 옵션은 없음) 행을 숨길 필요가 없다.
-    // revealCondition이 미충족이면 구체적인 문구 대신 "???"로 가려서 표시한다.
+    // revealCondition이 미충족이면 구체적인 문구 대신 hiddenText(비어있으면 "???")로 가려서 표시한다.
     private void ApplySelectConditionRow(ConditionRow row, SelectConditionEntry entry, bool met, bool revealed)
     {
         string text = revealed
             ? (!string.IsNullOrEmpty(entry.conditionText) ? entry.conditionText : BuildSelectConditionText(entry.condition))
-            : "???";
+            : (!string.IsNullOrEmpty(entry.hiddenText) ? entry.hiddenText : "???");
 
         if (row.label != null) row.label.text = text;
         if (row.lockIcon != null) row.lockIcon.sprite = (met && revealed) ? unlockedSprite : lockedSprite;

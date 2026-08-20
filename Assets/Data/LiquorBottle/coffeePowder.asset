@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cac0f8029fff764f847d5e35337695d, type: 3}
+  m_Name: coffeePowder
+  m_EditorClassIdentifier: Assembly-CSharp::LiquorBottleDef
+  id: coffee_powder
+  displayName: "\uCEE4\uD53C \uBD84\uB9D0"
+  shelfSprite: {fileID: 21300000, guid: cf447758e78b5184ab61ba3167dfbaaf, type: 3}
+  shopSprite: {fileID: 21300000, guid: 0db1c089134421a44bb33394cd303136, type: 3}
+  unlockFlagKey: 
+  subCategory: "\uAE30\uD0C0"
+  bottleCount: 2
+  unitVolume: 200
+  category: {fileID: 11400000, guid: d78ee9a45bc7a464bb944ffb8d2a6d9d, type: 2}
+  price: 2000
+  strangeCoinPrice: 0
+  unlockHintType: 0
+  recipeBookIcon: {fileID: 0}
+  recipeBookName: 
