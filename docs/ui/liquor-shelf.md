@@ -9,23 +9,32 @@
 | 스크립트 | 위치 | 역할 |
 |---|---|---|
 | `LiquorShelfUI` | ShelfPanel | 메인 컨트롤러 — 슬라이드, 카테고리 전환, EpisodeMode 대응 |
-| `LiquorCategoryButtonUI` | 카테고리 버튼 프리팹 | 클릭 시 `LiquorShelfUI.OpenCategory()` 호출 |
-| `LiquorBottleSlotUI` | 개별 슬롯 오브젝트 | 해금 플래그 확인, 호버 정보 표시, 잔여량 갱신, 제작 중 좌클릭 선택 |
+| `LiquorCategoryButtonUI` | 카테고리 버튼 프리팹 (술장/상점 공용) | 클릭 시 `LiquorShelfUI.OpenCategory()`(술장) 또는 `ShopUIManager.ShowListByCategory()`(상점) 호출. `colorImage`(선택 필드)가 연결된 프리팹 인스턴스에서만 카테고리 고유색으로 틴트 — 술장 프리팹은 비워두면 색이 적용되지 않음 |
+| `LiquorBottleSlotUI` | `BottleSlot.prefab` (`Assets/Prefabs/`) | 해금 플래그 확인, 호버 정보 표시, 잔여량 갱신, 제작 중 좌클릭 선택. `Setup(def)`로 런타임 주입되어 인스턴스화됨 |
 | `LiquorBottleInfoCard` | ShelfPanel 직계 자식 (씬에 단 하나) | 호버한 병의 이름/소분류/병 단위 상태/잔여량 표시 |
-| `LiquorBottleDef` | ScriptableObject | 술 데이터 (id, sprite, unlockFlagKey, subCategory, bottleCount, unitVolume) |
-| `LiquorCategoryDef` | ScriptableObject | 카테고리 데이터 (id, displayName, icon) |
+| `LiquorBottleDef` | ScriptableObject | 술 데이터 (id, shelfSprite, shopSprite, unlockFlagKey, subCategory, bottleCount, unitVolume) |
+| `LiquorBottleCatalog` | ScriptableObject (술장/상점 공용) | `List<LiquorBottleDef> bottles` — 전체 술 목록. `LiquorShelfUI`와 `ShopUIManager`(일반/이상한 상점)가 동일 에셋을 참조해 술 추가 시 한 곳만 등록하면 됨 |
+| `LiquorCategoryDef` | ScriptableObject | 카테고리 데이터 (id, displayName, icon, color) |
+| `CategoryColorText` | 정적 유틸리티 클래스 | 등록된 카테고리들의 `displayName`을 문장 속에서 찾아 `color`로 TMP `<color>` 태그를 씌우는 헬퍼. `ShopUIManager.Start()`에서 `Register()`, 자유 문장 텍스트를 대입하는 지점에서 `Highlight()`를 명시적으로 호출해야 적용됨(전역 자동 적용 아님) — 상점 레시피북 설명/해금정보에 사용, 자세한 내용은 [restscene-systems.md](restscene-systems.md#카테고리-고유색-liquorcategorydefcolor-categorycolortextcs) 참고 |
 | `LiquorStockLevelPalette` | ScriptableObject (공유 에셋 1개) | 병 잔여량 아이콘용 12단계 스프라이트(empty/intermediate×10/full) 팔레트, `GetSprite(ratio01)`로 조회 |
 
 ## 데이터 구조
 
 **`LiquorBottleDef`** (`Assets > Create > Bartending > Liquor Bottle`)
+- `shelfSprite`: `LiquorBottleSlotUI`(술장 슬롯)에 표시되는 스프라이트, `_lid` 변형 이미지 사용
+- `shopSprite`: `ItemSlotUI`(상점 슬롯)에 표시되는 스프라이트, `_blank` 변형 이미지 사용. `shelfSprite`와 별개 필드이므로 둘 다 채워야 함
+- 바테이블(제조 중 실제로 놓이는 병)에 뜨는 "기본" 이미지는 이 SO가 아니라 별도 `ItemDef.icon`(`Assets/Scripts/DragandDrop/ItemDef.cs`)에서 관리 — 세 화면(상점/술장/바테이블)이 각각 다른 스프라이트 소스를 참조하는 구조
 - `unlockFlagKey`: 비어있으면 항상 해금
 - `subCategory`: 정보카드에 표시할 소분류 텍스트
 - `bottleCount`: 정보카드에 표시할 병 아이콘 개수 (예: 6)
 - `unitVolume`: 병 1개당 용량, ml (예: 700)
 - `MaxAmount` (계산 프로퍼티): `bottleCount * unitVolume`
 
+**`LiquorBottleCatalog`** (`Assets > Create > Bartending > Liquor Bottle Catalog`)
+- `bottles`: `LiquorBottleDef` 전체 목록. `LiquorShelfUI`는 이 목록을 `LiquorBottleDef.category`(상점 그룹핑에 쓰이는 필드 재사용)로 필터링해 카테고리별 슬롯을 생성 — 카테고리 내 슬롯 순서는 이 리스트의 순서를 그대로 따름
+
 **`LiquorCategoryDef`** (`Assets > Create > Bartending > Liquor Category`)
+- `color`: 카테고리 고유색. 라벨 텍스트 색 자체는 바꾸지 않고, `LiquorCategoryButtonUI.colorImage`/`ShopUIManager.categoryNameColorImage` 같은 액센트 이미지 틴트와 `CategoryColorText` 문장 강조에만 쓰임
 
 **`LiquorStockLevelPalette`** (`Assets > Create > Bartending > Liquor Stock Level Palette`)
 - `emptySprite` / `intermediateSprites[10]` / `fullSprite` — 총 12개
@@ -34,8 +43,13 @@
 
 **`LiquorShelfUI.CategoryEntry`** (인스펙터 배열)
 - `def`: LiquorCategoryDef SO
-- `container`: 해당 카테고리 슬롯 컨테이너 GameObject
+- `container`: 해당 카테고리 슬롯 컨테이너 GameObject (`GridLayoutGroup` 부착, `Awake()`에서 이 아래에 슬롯이 동적 생성됨)
 - `backgroundSprite`: 카테고리별 배경 스프라이트
+
+**`LiquorShelfUI` 슬롯 생성 필드**
+- `catalog`: `LiquorBottleCatalog` 참조
+- `slotPrefab`: `BottleSlot.prefab` 참조
+- `Awake()` → `BuildCategorySlots()`에서 `catalog.bottles`를 `entry.def`(카테고리)로 필터링해 `entry.container` 아래에 `Instantiate` 후 `Setup(bottle)` 호출. 씬에 슬롯을 수동 배치할 필요 없음
 
 ## 씬 계층 구조
 
@@ -48,13 +62,14 @@ LiquorShelfPanel  [LiquorShelfUI]  ← shelfPanelRect (우측 슬라이드 대�
 │   └── Viewport  [Image + Mask]  ← 이 안쪽은 전부 클리핑됨
 │       └── Content
 │           ├── ShelfBG  [Image + AspectRatioFitter]
-│           ├── Category1, Category1 (1), ... × N  ← categoryEntries[i].container
-│           │   └── BottleRow1 × N  (한 줄)
-│           │       └── BottleSlot1 × N  [LiquorBottleSlotUI + Image (+ amountFillImage)]
+│           ├── Category1, Category1 (1), ... × N  [GridLayoutGroup]  ← categoryEntries[i].container
+│           │   └── (BottleSlot.prefab 인스턴스 — `BuildCategorySlots()`가 런타임 생성, 씬에 수동 배치 없음)
 │           └── ...
 ├── LiquorBottleInfoCard  ← 반드시 LiquorShelfPanel의 직계 자식, 맨 마지막 순서 (Viewport Mask 밖 + 렌더링 최상단)
 └── ShelfCloseButton
 ```
+
+`Category1...N` 컨테이너의 `GridLayoutGroup` 설정 (BusinessScene 기준): `CellSize = (120, 190)`, `Spacing = (40, 65)`, `Constraint = Fixed Column Count`. 병 이미지 크기가 고정이라는 전제로 셀 크기를 맞춰둔 값 — 병 스프라이트 규격이 바뀌면 5개 컨테이너 전부 같이 조정해야 함.
 
 `LiquorShelf`(스크롤뷰) 바로 아래에는 `Viewport` / `CategoryButtons` / `ShelfCloseButton` 외에 장식용 `ShelfFrame`(캐비닛 프레임 이미지, 패널 전체를 덮는 크기)이 **마지막 자식**으로 존재 — Hierarchy 순서상 맨 위에 렌더링되므로 **Raycast Target을 반드시 꺼둬야** 함(아래 "알려진 함정" 참고).
 
@@ -76,14 +91,15 @@ LiquorShelfPanel  [LiquorShelfUI]  ← shelfPanelRect (우측 슬라이드 대�
 
 ## LiquorBottleSlotUI
 
-- `def`는 인스펙터에서 직접 지정, `bottleImage`는 같은 GameObject의 `Image`를 `GetComponent`로 자동 참조 (슬롯 GameObject에 `Image` 컴포넌트 필수)
-- `Awake`에서 `Refresh()` 자동 호출
-- `unlockFlagKey`가 비어있거나 `GameProgress.HasFlag(unlockFlagKey)`이면 이미지 표시
+- `def`는 `Setup(def)`로 런타임 주입 (`LiquorShelfUI.BuildCategorySlots()` 참고). `bottleImage`는 같은 GameObject의 `Image`를 `GetComponent`로 자동 참조 (슬롯 GameObject에 `Image` 컴포넌트 필수 — `BottleSlot.prefab` 루트에 부착돼 있음)
+- `Awake`에서 `Refresh()` 자동 호출 (`Setup()` 호출 전이라 `def == null`이면 조기 반환)
+- 미해금이어도 스프라이트는 항상 표시하되 `bottleImage.color = Color.black`로 검정 실루엣 처리 (해금 시 `Color.white`) — 상점 `ItemSlotUI`와 동일한 방식
+- `bottleImage.preserveAspect = true`를 `Refresh()`에서 매번 설정 (프리팹 인스펙터 값이 아니라 코드에서 강제)
 - `IPointerEnterHandler`/`IPointerExitHandler` 구현 → 호버 시 `LiquorBottleInfoCard.Instance.Show(def, amount, rect)` / `Hide()`
 - `IPointerClickHandler` 구현 → 좌클릭 시 `BusinessBartendingBootstrap.TryPlaceBottleFromShelf()` 호출
 - 같은 종류의 병이 이미 테이블에 있거나 재고가 0이거나 빈 슬롯이 없으면 배치하지 않음
 - `LiquorBottleDef.id`와 `Resources/Items` 아래 제작용 `ItemDef.id`가 같아야 실제 병을 생성할 수 있음
-- `amountFillImage`(선택, `Image` Type=Filled/Horizontal)가 연결돼 있으면 `Refresh()`마다 `fillAmount = amount / def.MaxAmount`로 상시 갱신 (호버 무관, 잠금 시 자동 숨김)
+- `amountFillImage`(선택, `Image` Type=Filled/Horizontal, 프리팹에 포함)가 연결돼 있으면 `Refresh()`마다 `fillAmount = amount / def.MaxAmount`로 상시 갱신 (호버 무관, 잠금 시 자동 숨김)
 
 ## 잔여량 저장 (GameProgress)
 
@@ -104,17 +120,17 @@ LiquorShelfPanel  [LiquorShelfUI]  ← shelfPanelRect (우측 슬라이드 대�
 ## 상시 표시 잔여량 바
 
 - `LiquorBottleSlotUI.amountFillImage` 하나로는 채워진 부분만 그려지고 빈 공간은 안 보임
-- 빈 공간을 명확히 하려면 슬롯마다 배경용 `Image`(Type=Simple, 어두운 단색)를 `amountFillImage`와 동일한 위치/크기로 깔고 **Hierarchy 순서상 `amountFillImage`보다 먼저(더 위)** 배치 — 모든 병 공통 색상 하나면 충분
+- 빈 공간을 명확히 하려면 배경용 `Image`(Type=Simple, 어두운 단색)를 `amountFillImage`와 동일한 위치/크기로 깔고 **Hierarchy 순서상 `amountFillImage`보다 먼저(더 위)** 배치 — `BottleSlot.prefab`에 `AmountBarBG`(배경) / `AmountBar`(fill) 자식으로 이미 구성돼 있어 슬롯마다 개별 배치할 필요 없음
 
 ## 알려진 함정
 
 | 항목 | 설명 |
 |---|---|
-| `BottleSlot1`에 `Image` 컴포넌트 누락 | 씬에 수동 배치된 슬롯 중 다수가 `Image` 컴포넌트 없이 `LiquorBottleSlotUI`만 붙어있어 스프라이트가 안 뜸. 여러 개 동시 선택 후 Add Component로 일괄 추가 가능 |
-| `unlockFlagKey` 미해금 | 테스트 데이터에 `unlockFlagKey`가 채워져 있고 `GameProgress.flags`가 비어있으면 스프라이트가 조용히 안 뜸(에러 없음). 테스트 시에는 비워두거나 `SetFlag()`로 미리 심어둘 것 |
+| `unlockFlagKey` 미해금 | 테스트 데이터에 `unlockFlagKey`가 채워져 있고 `GameProgress.flags`가 비어있으면 검정 실루엣으로만 표시됨(정상 동작, 에러 아님). 해금 상태로 테스트하려면 비워두거나 `SetFlag()`로 미리 심어둘 것 |
+| `catalog`/`slotPrefab` 미연결 | `LiquorShelfUI.catalog` 또는 `slotPrefab`이 비어있으면 `BuildCategorySlots()`가 조용히 아무 슬롯도 생성하지 않음(에러 없음) — 카테고리를 열었는데 슬롯이 하나도 안 보이면 이 두 필드부터 확인 |
 | 잔여량-바텐딩 연동 | 실제로 따를 때 잔여량이 줄어드는 로직은 DragandDrop/바텐딩 브랜치 정리 이후 별도 작업 (아직 미구현) |
 | `ShelfFrame`이 호버 이벤트 차단 | `LiquorShelf` 하위 마지막 자식인 `ShelfFrame`(장식용 캐비닛 프레임, 패널 전체 크기)의 `Image.Raycast Target`이 켜져 있으면, PNG 중앙이 투명해도 Unity 레이캐스트는 알파를 무시하고 사각형 전체를 히트박스로 잡아 그 아래 `Viewport`의 모든 `BottleSlot`이 호버를 못 받음(정보카드가 아예 안 뜸). `ShelfFrame`은 순수 장식용이므로 **Raycast Target을 반드시 꺼둘 것** |
-| 새 이미지 에셋 교체 시 씬/SO 참조 재연결 필요 | `order_ticket`/`recipe_book`처럼 기존 파일명 그대로 내용만 덮어쓰면 GUID가 유지돼 자동 반영되지만, `shelf`처럼 새 파일명으로 추가하면 GUID가 달라져 `LiquorBottleDef.sprite`/`LiquorCategoryDef.icon`/`LiquorShelfUI.categoryEntries[].backgroundSprite` 등 기존 참조가 예전 스프라이트를 계속 가리킴. `Awake()`/`ShowCategory()`가 이 값들로 런타임에 강제 재할당하므로, 에디터에서 Image를 직접 드래그해 바꿔도 Play 시 예전 이미지로 되돌아감 — 데이터 소스(SO 에셋/직렬화 필드) 쪽을 새 스프라이트로 재연결해야 함 |
+| 새 이미지 에셋 교체 시 씬/SO 참조 재연결 필요 | `order_ticket`/`recipe_book`처럼 기존 파일명 그대로 내용만 덮어쓰면 GUID가 유지돼 자동 반영되지만, `shelf`처럼 새 파일명으로 추가하면 GUID가 달라져 `LiquorBottleDef.shelfSprite`/`shopSprite`/`LiquorCategoryDef.icon`/`LiquorShelfUI.categoryEntries[].backgroundSprite` 등 기존 참조가 예전 스프라이트를 계속 가리킴. `Awake()`/`ShowCategory()`가 이 값들로 런타임에 강제 재할당하므로, 에디터에서 Image를 직접 드래그해 바꿔도 Play 시 예전 이미지로 되돌아감 — 데이터 소스(SO 에셋/직렬화 필드) 쪽을 새 스프라이트로 재연결해야 함 |
 
 ## ContentHeightToBackground 세팅
 

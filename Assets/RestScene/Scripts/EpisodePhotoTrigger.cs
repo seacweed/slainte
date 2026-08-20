@@ -69,7 +69,7 @@ public class EpisodePhotoTrigger : MonoBehaviour, IPointerEnterHandler, IPointer
 
     private static Sprite LoadBoardSprite(string baseName, string state)
     {
-        Sprite sprite = Resources.Load<Sprite>($"Sprites/{baseName}-{state}");
+        Sprite sprite = Resources.Load<Sprite>($"Sprites/EpisodeBoard/{baseName}-{state}");
         if (sprite == null) sprite = Resources.Load<Sprite>($"{baseName}-{state}");
         return sprite;
     }

@@ -21,17 +21,25 @@ public class LiquorBottleSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerE
         Refresh();
     }
 
+    public void Setup(LiquorBottleDef bottleDef)
+    {
+        def = bottleDef;
+        Refresh();
+    }
+
     public void Refresh()
     {
         if (bottleImage == null) return;
+        if (def == null) return;
 
         bool unlocked = IsUnlocked();
-        Sprite shelfSprite = def != null ? def.GetShelfSprite() : null;
 
+        Sprite shelfSprite = def.GetShelfSprite();
+
+        bottleImage.sprite = shelfSprite;
+        bottleImage.enabled = shelfSprite != null;
+        bottleImage.color = unlocked ? Color.white : Color.black;
         bottleImage.preserveAspect = true;
-        bottleImage.enabled = unlocked && shelfSprite != null;
-        if (unlocked)
-            bottleImage.sprite = shelfSprite;
 
         RefreshAmountBar(unlocked);
     }

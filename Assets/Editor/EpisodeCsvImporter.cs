@@ -50,7 +50,7 @@ public class EpisodeCsvImporter : EditorWindow
         }
 
         string[] lines = File.ReadAllLines(_csvPath, Encoding.UTF8);
-        EpisodeData data = ParseCsv(lines);
+        EpisodeData data = ParseCsv(lines, out Dictionary<string, List<string[]>> sections);
         if (data == null) return;
 
         if (!AssetDatabase.IsValidFolder(_outputFolder))
@@ -64,13 +64,21 @@ public class EpisodeCsvImporter : EditorWindow
 
         if (existing != null)
         {
-            // 인스펙터에서 수동으로 입력한 데이터(CSV에 없는 데이터)를 유지합니다.
-            data.episodeDescription = existing.episodeDescription;
-            data.iconNameBoard = existing.iconNameBoard;
-            data.iconNameArchive = existing.iconNameArchive;
-            data.characters = existing.characters;
-            data.triggerConditionTexts = existing.triggerConditionTexts;
-            RestoreCharacterOverrides(data, existing);
+            // 이 CSV에 없는 섹션은 인스펙터에서 수동으로 입력한 기존 값을 유지합니다.
+            // 섹션이 있으면(빈 섹션 포함) CSV가 해당 필드의 source of truth가 됩니다.
+            if (!sections.ContainsKey("BOARD"))
+            {
+                data.episodeDescription    = existing.episodeDescription;
+                data.iconNameBoard         = existing.iconNameBoard;
+                data.iconNameArchive       = existing.iconNameArchive;
+                data.triggerConditionTexts = existing.triggerConditionTexts;
+            }
+
+            if (!sections.ContainsKey("BOARD_CHARS"))
+                data.characters = existing.characters;
+
+            if (!sections.ContainsKey("SELECT_CHARS"))
+                RestoreCharacterOverrides(data, existing);
 
             EditorUtility.CopySerialized(data, existing);
             EditorUtility.SetDirty(existing);
@@ -106,9 +114,9 @@ public class EpisodeCsvImporter : EditorWindow
     // Parsing
     // -------------------------------------------------------------------------
 
-    private static EpisodeData ParseCsv(string[] lines)
+    private static EpisodeData ParseCsv(string[] lines, out Dictionary<string, List<string[]>> sections)
     {
-        Dictionary<string, List<string[]>> sections = SplitIntoSections(lines);
+        sections = SplitIntoSections(lines);
 
         EpisodeData data = ScriptableObject.CreateInstance<EpisodeData>();
 
@@ -117,6 +125,8 @@ public class EpisodeCsvImporter : EditorWindow
         ParsePlayCondition(sections, data);
         ParseSelectCondition(sections, data);
         ParseOpeningChars(sections, data);
+        ParseBoard(sections, data);
+        ParseBoardChars(sections, data);
 
         Dictionary<string, List<CharacterSlotEntry>>  nodeChars           = BuildNodeCharsLookup(sections);
         Dictionary<string, List<EpisodeChoice>>       nodeChoices         = BuildNodeChoicesLookup(sections);
@@ -222,16 +232,78 @@ public class EpisodeCsvImporter : EditorWindow
 
         if (!sections.TryGetValue("SELECT_TRIGGER", out var rows)) return;
 
+        bool hasSelectChars = sections.ContainsKey("SELECT_CHARS");
+        Dictionary<string, List<CharacterDisplay>> selectChars = hasSelectChars
+            ? BuildSelectCharsLookup(sections)
+            : null;
+
         foreach (string[] row in rows)
         {
             var entry = new SelectConditionEntry
             {
-                condition     = ParseSingleCondition(Field(row, 0), Field(row, 1)),
-                flag          = Field(row, 2),
-                conditionText = Field(row, 3)
+                condition       = ParseSingleCondition(Field(row, 0), Field(row, 1)),
+                flag            = Field(row, 2),
+                conditionText   = Field(row, 3),
+                revealCondition = ParseSingleCondition(Field(row, 4), Field(row, 5)),
+                hiddenText      = Field(row, 6)
             };
+
+            if (hasSelectChars)
+            {
+                entry.characterOverrides = selectChars.TryGetValue(entry.flag, out var overrides)
+                    ? overrides : new List<CharacterDisplay>();
+            }
+
             data.selectConditions.Add(entry);
         }
+    }
+
+    private static Dictionary<string, List<CharacterDisplay>> BuildSelectCharsLookup(
+        Dictionary<string, List<string[]>> sections)
+    {
+        var lookup = new Dictionary<string, List<CharacterDisplay>>();
+
+        if (!sections.TryGetValue("SELECT_CHARS", out var rows)) return lookup;
+
+        foreach (string[] row in rows)
+        {
+            string flag = Field(row, 0);
+            if (!lookup.ContainsKey(flag))
+                lookup[flag] = new List<CharacterDisplay>();
+            lookup[flag].Add(ToCharacterDisplay(row, 1));
+        }
+
+        return lookup;
+    }
+
+    private static void ParseBoard(Dictionary<string, List<string[]>> sections, EpisodeData data)
+    {
+        if (!sections.TryGetValue("BOARD", out var rows) || rows.Count == 0) return;
+
+        string[] row = rows[0];
+        data.episodeDescription    = Field(row, 0);
+        data.iconNameBoard         = Field(row, 1);
+        data.iconNameArchive       = Field(row, 2);
+        data.triggerConditionTexts = SplitList(Field(row, 3));
+    }
+
+    private static void ParseBoardChars(Dictionary<string, List<string[]>> sections, EpisodeData data)
+    {
+        if (!sections.TryGetValue("BOARD_CHARS", out var rows)) return;
+
+        data.characters = new List<CharacterDisplay>();
+        foreach (string[] row in rows)
+            data.characters.Add(ToCharacterDisplay(row, 0));
+    }
+
+    private static CharacterDisplay ToCharacterDisplay(string[] row, int offset)
+    {
+        string hiddenStr = Field(row, offset);
+        return new CharacterDisplay
+        {
+            isHidden      = string.Equals(hiddenStr, "true", StringComparison.OrdinalIgnoreCase) || hiddenStr == "1",
+            characterName = Field(row, offset + 1)
+        };
     }
 
     // conditionType,conditionValue 두 열로 조건 하나(옵션당 하나)를 만든다.

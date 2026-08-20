@@ -21,10 +21,11 @@ MonoBehaviour:
   barSprite: {fileID: 21300000, guid: ba470000000000000000000000000029, type: 3}
   unlockFlagKey: 
   subCategory: "\uACFC\uC77C \uC8FC\uC2A4"
-  bottleCount: 6
+  bottleCount: 3
   unitVolume: 1000
   category: {fileID: 11400000, guid: d52c13a36954c044687e7d1ce8bcdc8a, type: 2}
   price: 2000
+  strangeCoinPrice: 0
   unlockHintType: 0
   recipeBookIcon: {fileID: 0}
   recipeBookName: 

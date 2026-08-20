@@ -11,13 +11,24 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI subCategoryText;
     public TextMeshProUGUI priceText;
+    [Tooltip("Currency unit icon shown before priceText. Hidden together with priceText when locked.")]
+    public GameObject currencyIcon;
     public Button buyButton;
     [Tooltip("Shown instead of name/subCategory when the ingredient is locked.")]
     public GameObject lockedLabel;
 
+    [Header("Insufficient Funds")]
+    [Tooltip("buyButton's Image component. Swapped between buyButtonOnSprite/buyButtonOffSprite by affordability.")]
+    public Image buyButtonImage;
+    public Sprite buyButtonOnSprite;
+    public Sprite buyButtonOffSprite;
+    public Color priceColorNormal = Color.white;
+    public Color priceColorInsufficient = Color.red;
+
     public event Action OnPurchased;
 
     private LiquorBottleDef _def;
+    private IShopCurrency   _currency;
     private RectTransform   _rectTransform;
     private float           _priceMultiplier = 1f;
     private Func<int, bool> _trySpendMoney;
@@ -32,18 +43,40 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         _rectTransform = GetComponent<RectTransform>();
     }
 
-    public void Setup(LiquorBottleDef def)
+    public void Setup(LiquorBottleDef def, IShopCurrency currency = null)
     {
-        Setup(def, 1f, null, 0f);
+        Configure(
+            def,
+            currency ?? new MoneyShopCurrency(),
+            1f,
+            null,
+            0f);
     }
 
+    // 배송 상점
     public void Setup(
         LiquorBottleDef def,
         float priceMultiplier,
         Func<int, bool> trySpendMoney = null,
         float defaultInventoryAmount = 0f)
     {
+        Configure(
+            def,
+            new MoneyShopCurrency(),
+            priceMultiplier,
+            trySpendMoney,
+            defaultInventoryAmount);
+    }
+
+    private void Configure(
+        LiquorBottleDef def,
+        IShopCurrency currency,
+        float priceMultiplier,
+        Func<int, bool> trySpendMoney,
+        float defaultInventoryAmount)
+    {
         _def = def;
+        _currency = currency ?? new MoneyShopCurrency();
         _priceMultiplier = Mathf.Max(0f, priceMultiplier);
         _trySpendMoney = trySpendMoney;
         _defaultInventoryAmount = Mathf.Max(0f, defaultInventoryAmount);
@@ -70,6 +103,7 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             iconImage.sprite = shopSprite;
             iconImage.enabled = shopSprite != null;
             iconImage.color  = unlocked ? Color.white : Color.black;
+            iconImage.preserveAspect = true;
         }
 
         if (nameText)        nameText.gameObject.SetActive(unlocked);
@@ -82,12 +116,21 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (subCategoryText) subCategoryText.text = _def.subCategory;
         }
 
-        GameProgress progress = GameProgress.Instance;
-        bool isFull = progress == null
-            || progress.GetBottleAmount(_def.id, _defaultInventoryAmount) >= _def.MaxAmount;
+        int  price = _currency.GetPrice(_def);
+        bool isFull = GameProgress.Instance.GetBottleAmount(_def.id, 0f) >= _def.MaxAmount;
+        bool canAfford = _currency.CurrentAmount >= price;
+        bool insufficientFunds = unlocked && !isFull && !canAfford;
 
-        if (priceText) priceText.text = unlocked ? $"{CurrentPrice:N0} G" : "";
-        if (buyButton) buyButton.interactable = unlocked && !isFull;
+        if (priceText)
+        {
+            priceText.text = unlocked ? $"{price:N0}" : "";
+            priceText.color = insufficientFunds ? priceColorInsufficient : priceColorNormal;
+        }
+        if (currencyIcon) currencyIcon.SetActive(unlocked);
+        if (buyButton)    buyButton.interactable = unlocked && !isFull && canAfford;
+
+        if (buyButtonImage != null && buyButtonOnSprite != null && buyButtonOffSprite != null)
+            buyButtonImage.sprite = insufficientFunds ? buyButtonOffSprite : buyButtonOnSprite;
     }
 
     private bool IsUnlocked()

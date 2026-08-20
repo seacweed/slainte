@@ -22,7 +22,15 @@
 
 레시피 CSV에는 정확한 재료와 용량이 없으므로 배합 CSV가 반드시 필요하다. 배합이 없는 레시피도 에셋은 생성하지만 무작위·지정 주문에는 사용할 수 없다. PDF 기준으로 배합이 확정된 기본 레시피 15종은 주문 가능하며, 변형 87종은 레시피북과 주문 후보에서는 숨기고 Mid 판정에만 사용한다.
 
-`RGBA`는 `#RRGGBB`, `#RRGGBBAA`, `R,G,B,A` 형식을 지원한다. 값이 비어 있으면 기존 에셋의 색을 유지하고 새 에셋은 흰색을 사용하며, 임포트 결과에 누락 경고가 표시된다. `IconName`은 Sprite 이름 또는 파일명과 일치해야 한다. 정확한 아이콘이 없으면 같은 표시 이름의 기존 진열장 스프라이트를 재사용한다.
+`RGBA`는 `#RRGGBB`, `#RRGGBBAA`, `R,G,B,A` 형식을 지원한다. 값이 비어 있으면 기존 에셋의 색을 유지하고 새 에셋은 흰색을 사용하며, 임포트 결과에 누락 경고가 표시된다.
+
+`IconName`은 재료별 3종 스프라이트의 공통 기본 이름이다(예: `beatha` → `beatha.png`/`beatha_lid.png`/`beatha_blank.png`).
+
+- `ItemDef.icon`(바테이블 표시용): `IconName`과 이름이 같은 Sprite
+- `LiquorBottleDef.shelfSprite`(술장 표시용): `IconName + "_lid"` Sprite
+- `LiquorBottleDef.shopSprite`(상점 표시용): `IconName + "_blank"` Sprite
+
+정확한 이름의 스프라이트가 없으면 각각 같은 표시 이름(`displayName`)의 기존 에셋에서 해당 필드를 재사용한다.
 
 ---
 
