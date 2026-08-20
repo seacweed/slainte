@@ -23,3 +23,9 @@ MonoBehaviour:
   subCategory: "\uAE30\uD0C0"
   bottleCount: 6
   unitVolume: 700
+  category: {fileID: 11400000, guid: 17c366124d7692f4b80847a1719d2134, type: 2}
+  price: 2000
+  strangeCoinPrice: 0
+  unlockHintType: 0
+  recipeBookIcon: {fileID: 0}
+  recipeBookName:

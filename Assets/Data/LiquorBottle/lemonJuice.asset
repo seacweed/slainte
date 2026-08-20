@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8cac0f8029fff764f847d5e35337695d, type: 3}
-  m_Name: slop
+  m_Name: lemonJuice
   m_EditorClassIdentifier: Assembly-CSharp::LiquorBottleDef
   id: lemon_juice
   displayName: "\uB808\uBAAC \uC8FC\uC2A4"

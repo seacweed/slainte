@@ -354,15 +354,35 @@ namespace Slainte.EditorTools
             string iconName = First(row, "IconName", "iconName");
             Sprite shelfSprite = FindSprite(iconName + "_lid");
             if (shelfSprite == null)
-                shelfSprite = FindExistingSprite(displayName, id, d => d.shelfSprite);
+                shelfSprite = FindExistingSprite(
+                    displayName,
+                    id,
+                    d => d.shelfLidSprite != null ? d.shelfLidSprite : d.sprite);
             if (shelfSprite != null)
-                definition.shelfSprite = shelfSprite;
+                definition.shelfLidSprite = shelfSprite;
 
             Sprite shopSprite = FindSprite(iconName + "_blank");
             if (shopSprite == null)
-                shopSprite = FindExistingSprite(displayName, id, d => d.shopSprite);
+                shopSprite = FindExistingSprite(
+                    displayName,
+                    id,
+                    d => d.shopBlankSprite != null ? d.shopBlankSprite : d.sprite);
             if (shopSprite != null)
-                definition.shopSprite = shopSprite;
+                definition.shopBlankSprite = shopSprite;
+
+            Sprite barSprite = FindSprite(iconName);
+            if (barSprite == null)
+                barSprite = FindExistingSprite(
+                    displayName,
+                    id,
+                    d => d.barSprite != null ? d.barSprite : d.sprite);
+            if (barSprite == null && item != null)
+                barSprite = item.icon;
+            if (barSprite != null)
+                definition.barSprite = barSprite;
+
+            if (shopSprite != null || shelfSprite != null || barSprite != null)
+                definition.useContextImages = true;
 
             definition.subCategory = LocalizedLabel(First(row, "소분류", "subcategory"));
             definition.unitVolume = item != null ? item.capacityMl : 700f;
@@ -959,17 +979,19 @@ namespace Slainte.EditorTools
             string[] guids = AssetDatabase.FindAssets("t:LiquorBottleDef", new[] { "Assets/Data/LiquorBottle" });
             for (int i = 0; i < guids.Length; i++)
             {
-                LiquorBottleDef definition = AssetDatabase.LoadAssetAtPath<LiquorBottleDef>(
-                    AssetDatabase.GUIDToAssetPath(guids[i]));
-                Sprite existing = definition != null ? selector(definition) : null;
+                string sourcePath = AssetDatabase.GUIDToAssetPath(guids[i]);
+                if (sourcePath.StartsWith(ShelfOutputFolder + "/", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                LiquorBottleDef definition = AssetDatabase.LoadAssetAtPath<LiquorBottleDef>(sourcePath);
                 if (definition == null
                     || string.Equals(definition.id, importedId, StringComparison.OrdinalIgnoreCase)
                     || !string.Equals(definition.displayName, displayName, StringComparison.OrdinalIgnoreCase))
                     continue;
 
-                Sprite barSprite = definition.GetBarSprite();
-                if (barSprite != null)
-                    return barSprite;
+                Sprite existing = selector(definition);
+                if (existing != null)
+                    return existing;
             }
 
             return null;
@@ -992,8 +1014,11 @@ namespace Slainte.EditorTools
                 new[] { "Assets/Data/LiquorBottle" });
             for (int i = 0; i < guids.Length; i++)
             {
-                LiquorBottleDef source = AssetDatabase.LoadAssetAtPath<LiquorBottleDef>(
-                    AssetDatabase.GUIDToAssetPath(guids[i]));
+                string sourcePath = AssetDatabase.GUIDToAssetPath(guids[i]);
+                if (sourcePath.StartsWith(ShelfOutputFolder + "/", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                LiquorBottleDef source = AssetDatabase.LoadAssetAtPath<LiquorBottleDef>(sourcePath);
                 if (source == null
                     || !source.HasContextVisuals
                     || string.Equals(source.id, importedId, StringComparison.OrdinalIgnoreCase)

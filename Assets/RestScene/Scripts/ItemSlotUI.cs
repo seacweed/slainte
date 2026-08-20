@@ -36,7 +36,7 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     public LiquorBottleDef Definition => _def;
     public float PriceMultiplier => _priceMultiplier;
-    public int CurrentPrice => CalculatePrice(_def != null ? _def.price : 0, _priceMultiplier);
+    public int CurrentPrice => CalculatePrice(GetBasePrice(), _priceMultiplier);
 
     void Awake()
     {
@@ -116,9 +116,15 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
             if (subCategoryText) subCategoryText.text = _def.subCategory;
         }
 
-        int  price = _currency.GetPrice(_def);
-        bool isFull = GameProgress.Instance.GetBottleAmount(_def.id, 0f) >= _def.MaxAmount;
-        bool canAfford = _currency.CurrentAmount >= price;
+        GameProgress progress = GameProgress.Instance;
+        int  basePrice = GetBasePrice();
+        int  price = CalculatePrice(basePrice, _priceMultiplier);
+        bool hasValidPrice = basePrice >= 0;
+        bool isFull = progress != null
+            && progress.GetBottleAmount(_def.id, _defaultInventoryAmount) >= _def.MaxAmount;
+        bool canAfford = hasValidPrice
+            && progress != null
+            && (price == 0 || _currency.CurrentAmount >= price);
         bool insufficientFunds = unlocked && !isFull && !canAfford;
 
         if (priceText)
@@ -135,9 +141,10 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
 
     private bool IsUnlocked()
     {
+        GameProgress progress = GameProgress.Instance;
         return _def != null
             && (string.IsNullOrEmpty(_def.unlockFlagKey)
-                || GameProgress.Instance.HasFlag(_def.unlockFlagKey));
+                || (progress != null && progress.HasFlag(_def.unlockFlagKey)));
     }
 
     private void OnBuyClick()
@@ -151,13 +158,31 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         if (!IsUnlocked() || progress == null) return false;
         if (progress.GetBottleAmount(_def.id, _defaultInventoryAmount) >= _def.MaxAmount) return false;
 
-        Func<int, bool> spend = _trySpendMoney ?? progress.TrySpendMoney;
-        if (!spend(CurrentPrice)) return false;
+        int basePrice = GetBasePrice();
+        if (basePrice < 0) return false;
+
+        int price = CalculatePrice(basePrice, _priceMultiplier);
+        if (price > 0)
+        {
+            bool spent = _trySpendMoney != null
+                ? _trySpendMoney(price)
+                : _currency != null
+                    ? _currency.TrySpend(price)
+                    : progress.TrySpendMoney(price);
+            if (!spent) return false;
+        }
 
         progress.AddBottleAmount(_def.id, _def.unitVolume, _def.MaxAmount);
         Refresh();
         OnPurchased?.Invoke();
         return true;
+    }
+
+    private int GetBasePrice()
+    {
+        if (_currency != null)
+            return _currency.GetPrice(_def);
+        return _def != null ? _def.price : 0;
     }
 
     public static int CalculatePrice(int basePrice, float multiplier)

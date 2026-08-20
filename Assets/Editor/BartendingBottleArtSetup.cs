@@ -42,7 +42,8 @@ namespace Slainte.Editor
             new ArtMapping("johnnydogs", "johnny_dogs", "item_1012"),
             new ArtMapping("burnhambourbon", "burnham_bourbon", "item_1013"),
             new ArtMapping("beatha", "beatha", "item_1014"),
-            new ArtMapping("coffeepowder", "item_1025")
+            new ArtMapping("coffeepowder", "coffee_powder", "item_1025"),
+            new ArtMapping("minutefizz", "minute_fizz")
         };
 
         private static readonly HashSet<string> IntentionalDataOnlyIds =

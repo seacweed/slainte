@@ -14,8 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LiquorBottleDef
   id: minute_fizz
   displayName: "\uD0C4\uC0B0 \uBBF8\uB2DB"
-  shelfSprite: {fileID: 21300000, guid: fc1a0097afb693546a5fba6f62671c9c, type: 3}
-  shopSprite: {fileID: 21300000, guid: 59a0f720b502e774185995291f2e6c0c, type: 3}
+  sprite: {fileID: 0}
+  useContextImages: 1
+  shopBlankSprite: {fileID: 21300000, guid: ba47000000000000000000000000001b, type: 3}
+  shelfLidSprite: {fileID: 21300000, guid: ba47000000000000000000000000001c, type: 3}
+  barSprite: {fileID: 21300000, guid: ba47000000000000000000000000001a, type: 3}
   unlockFlagKey: 
   subCategory: "\uAE30\uD0C0"
   bottleCount: 6

@@ -174,6 +174,8 @@ public static class DeliverySystemValidator
 
     private static void ValidateRuntimeStart(LiquorShelfUI shelf, GameProgress progress)
     {
+        ValidateZeroPricePurchase(progress);
+
         float timeScale = Time.timeScale;
         Require(shelf.IsDeliveryAvailable, "Delivery did not start in the available state.");
         Require(shelf.DeliveryTabButton.interactable,
@@ -274,6 +276,45 @@ public static class DeliverySystemValidator
                 presenter.TargetAnchoredX,
                 presenter.VisibleAnchoredX),
             "Rapid delivery purchase is not targeting the visible position.");
+    }
+
+    private static void ValidateZeroPricePurchase(GameProgress progress)
+    {
+        const string TestBottleId = "__delivery_validator_free_purchase";
+        GameObject host = new GameObject("__ZeroPricePurchaseValidation");
+        LiquorBottleDef definition = ScriptableObject.CreateInstance<LiquorBottleDef>();
+
+        try
+        {
+            definition.id = TestBottleId;
+            definition.displayName = "Zero Price Validation";
+            definition.bottleCount = 2;
+            definition.unitVolume = 1f;
+            definition.strangeCoinPrice = 0;
+
+            progress.SetBottleAmount(TestBottleId, 0f);
+            int beforeCoins = progress.GetAffinity(StrangeCoinShopCurrency.VarName);
+
+            ItemSlotUI slot = host.AddComponent<ItemSlotUI>();
+            slot.Setup(definition, new StrangeCoinShopCurrency());
+
+            Require(slot.CurrentPrice == 0, "Zero strange-coin price was not displayed as zero.");
+            Require(slot.TryPurchase(), "Zero strange-coin price was not purchasable.");
+            Require(progress.GetAffinity(StrangeCoinShopCurrency.VarName) == beforeCoins,
+                "Zero-price purchase changed the strange-coin balance.");
+            Require(Mathf.Approximately(progress.GetBottleAmount(TestBottleId, 0f), 1f),
+                "Zero-price purchase did not add inventory.");
+
+            progress.SetBottleAmount(TestBottleId, 0f);
+            definition.strangeCoinPrice = -1;
+            slot.Setup(definition, new StrangeCoinShopCurrency());
+            Require(!slot.TryPurchase(), "Negative strange-coin price was purchasable.");
+        }
+        finally
+        {
+            UnityEngine.Object.Destroy(host);
+            UnityEngine.Object.Destroy(definition);
+        }
     }
 
     private static void Require(bool condition, string message)
