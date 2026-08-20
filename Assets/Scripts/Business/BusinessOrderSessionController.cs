@@ -267,9 +267,9 @@ namespace Slainte.Business
             }
 
             modeManager?.RequestModeChange(GameMode.CraftingMode);
-            servingTarget = bartending != null ? bartending.CurrentTargetTracker : null;
+            servingTarget = null;
             StopCraftingPreparationTimeout();
-            if (servingTarget == null)
+            if (!bartending.IsSessionReady)
                 craftingPreparationRoutine = StartCoroutine(WaitForCraftingPreparation());
         }
 
@@ -278,9 +278,6 @@ namespace Slainte.Business
             if (State != BusinessOrderSessionState.Crafting)
                 return;
 
-            servingTarget = servingTarget != null
-                ? servingTarget
-                : bartending != null ? bartending.CurrentTargetTracker : null;
             if (servingTarget == null)
             {
                 ui?.ShowError("제출할 잔을 찾을 수 없습니다.");
@@ -377,18 +374,11 @@ namespace Slainte.Business
                 CompletePendingResult();
         }
 
-        private void HandleBartendingSessionReady(VesselLiquidTracker tracker)
+        private void HandleBartendingSessionReady()
         {
             if (State != BusinessOrderSessionState.Crafting)
                 return;
 
-            if (tracker == null)
-            {
-                AbortForTechnicalFailure("제조용 잔 또는 액체 추적기를 만들지 못했습니다.");
-                return;
-            }
-
-            servingTarget = tracker;
             StopCraftingPreparationTimeout();
         }
 
@@ -456,7 +446,8 @@ namespace Slainte.Business
         private IEnumerator WaitForCraftingPreparation()
         {
             float elapsed = 0f;
-            while (State == BusinessOrderSessionState.Crafting && servingTarget == null)
+            while (State == BusinessOrderSessionState.Crafting
+                && (bartending == null || !bartending.IsSessionReady))
             {
                 if (Time.timeScale > 0f)
                     elapsed += Mathf.Max(0f, Time.unscaledDeltaTime);

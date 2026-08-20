@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68ad398e47524fd0bac4655185b0834d, type: 3}
   m_Name: BusinessBartendingSettings
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.BusinessBartendingSettings
+  useToolCabinet: 1
   beakerPrefab: {fileID: 8706099201883949432, guid: ead121c425b1bdf48942d7144b694817, type: 3}
   cobblerShakerPrefab: {fileID: 4054720568392477730, guid: 4fcdbed02cfffa24cbe7caa594c1b2ea, type: 3}
   glassPrefab: {fileID: 2243653413097636618, guid: 0f545fa15c57b314184f5dc08a58782b, type: 3}
@@ -68,6 +69,7 @@ MonoBehaviour:
   liquidMetaballEdgeSoftness: 0.03
   liquidMinimumVisibleAlpha: 0.05
   liquidSortingOrder: 12
+  liquidIceCollisionEnabled: 1
   iceBinWidth: 2.2
   iceBinHeight: 1.2
   iceCubeSize: 0.42

@@ -396,18 +396,30 @@ namespace Slainte.Business
             BusinessOrderSessionResult result)
         {
             orderActive = false;
-            completedOrderCount++;
 
             bool completedSuccessfully = result != null
                 && result.outcome == OrderSessionOutcome.Served
                 && result.accepted;
 
-            if (!completedSuccessfully)
+            if (completedSuccessfully)
             {
-                if (visit != null && !string.IsNullOrWhiteSpace(visit.visitKey))
+                completedOrderCount++;
+                RecordSale(result);
+            }
+            else
+            {
+                bool excludeVisit = result != null && !result.technicalFailure;
+                if (excludeVisit
+                    && visit != null
+                    && !string.IsNullOrWhiteSpace(visit.visitKey))
+                {
                     invalidVisitKeys.Add(visit.visitKey);
+                }
+
                 string message =
-                    $"[BusinessShift] 주문 미완료로 손님을 오늘의 풀에서 제외합니다: "
+                    (excludeVisit
+                        ? "[BusinessShift] 주문 미완료로 손님을 오늘의 풀에서 제외합니다: "
+                        : "[BusinessShift] 주문 처리 실패 후 손님을 오늘의 풀에 유지합니다: ")
                     + $"visit={visit?.visitKey}, order={result?.customerOrderKey}, "
                     + $"recipe={result?.requestedRecipeId}, "
                     + $"reason={result?.failureReason ?? "결과가 없거나 주문이 거절됐습니다."}";
@@ -416,8 +428,6 @@ namespace Slainte.Business
                 else
                     Debug.LogWarning(message);
             }
-            if (completedSuccessfully)
-                RecordSale(result);
 
             SetState(remainingSeconds <= 0f
                 ? BusinessShiftState.CompletingRequiredActions

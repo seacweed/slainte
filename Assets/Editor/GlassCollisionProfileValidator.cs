@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using Slainte.Bartending;
 using UnityEditor;
@@ -79,19 +80,20 @@ namespace Slainte.Editor
                 profile.SourcePixelSize == GlassCollisionProfiles.TemporarySourcePixelSize,
                 profile.SourceSpriteName + " must retain the 310 x 590 source dimensions.");
 
-            IReadOnlyList<Vector2> edge = profile.EdgePathNormalized;
+            IReadOnlyList<Vector2> edge = profile.EdgePathPixels;
             Require(
                 edge[0].x < edge[edge.Count - 1].x,
                 profile.SourceSpriteName + " U-edge endpoints are reversed.");
             Require(
-                Mathf.Abs(edge[0].y - edge[edge.Count - 1].y) <= 0.02f,
+                Mathf.Abs(edge[0].y - edge[edge.Count - 1].y) <= 2f,
                 profile.SourceSpriteName + " open rim endpoints are not level.");
             Require(
-                Vector2.Distance(edge[0], edge[edge.Count - 1]) > 0.5f,
+                Vector2.Distance(edge[0], edge[edge.Count - 1])
+                    > profile.SourcePixelSize.x * 0.5f,
                 profile.SourceSpriteName + " U-edge opening is too narrow or closed.");
 
-            for (int i = 0; i < profile.ContentTriggersNormalized.Count; i++)
-                ValidateTriggerInsideOpenEdge(profile, profile.ContentTriggersNormalized[i], i);
+            for (int i = 0; i < profile.ContentTriggerPixels.Count; i++)
+                ValidateTriggerInsideOpenEdge(profile, profile.ContentTriggerPixels[i], i);
         }
 
         private static void ValidateImportedSpriteAndRuntimeGeometry(
@@ -105,6 +107,30 @@ namespace Slainte.Editor
                 sprite.texture.width == profile.SourcePixelSize.x
                     && sprite.texture.height == profile.SourcePixelSize.y,
                 profile.SourceSpriteName + " source image dimensions changed from 310 x 590.");
+            Require(
+                Mathf.Approximately(sprite.rect.x, 0f)
+                    && Mathf.Approximately(sprite.rect.y, 0f)
+                    && Mathf.Approximately(sprite.rect.width, profile.SourcePixelSize.x)
+                    && Mathf.Approximately(sprite.rect.height, profile.SourcePixelSize.y),
+                profile.SourceSpriteName + " sprite rectangle was trimmed from the full canvas.");
+            Require(
+                Mathf.Approximately(sprite.textureRect.x, 0f)
+                    && Mathf.Approximately(sprite.textureRect.y, 0f)
+                    && Mathf.Approximately(sprite.textureRect.width, profile.SourcePixelSize.x)
+                    && Mathf.Approximately(sprite.textureRect.height, profile.SourcePixelSize.y),
+                profile.SourceSpriteName + " texture rectangle was trimmed from the full canvas.");
+
+            TextureImporter importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
+            Require(importer != null, profile.SourceSpriteName + " has no TextureImporter.");
+            Require(importer.spriteImportMode == SpriteImportMode.Single,
+                profile.SourceSpriteName + " must use Sprite Mode Single.");
+            Require(Mathf.Approximately(importer.spritePixelsPerUnit, 100f),
+                profile.SourceSpriteName + " must use 100 pixels per unit.");
+            TextureImporterSettings importerSettings = new TextureImporterSettings();
+            importer.ReadTextureSettings(importerSettings);
+            Require(importerSettings.spriteMeshType == SpriteMeshType.FullRect,
+                profile.SourceSpriteName + " must use a Full Rect sprite mesh.");
+            ValidateEdgeAgainstSourcePixels(assetPath, profile);
 
             GameObject root = new GameObject("GlassProfileValidation_" + profile.SourceSpriteName);
             GameObject visualObject = new GameObject("Visual");
@@ -145,7 +171,7 @@ namespace Slainte.Editor
                     profile.SourceSpriteName + " created a forbidden PolygonCollider2D.");
                 Require(!edge.isTrigger,
                     profile.SourceSpriteName + " physical U-edge must not be a trigger.");
-                Require(edge.pointCount == profile.EdgePathNormalized.Count,
+                Require(edge.pointCount == profile.EdgePathPixels.Count,
                     profile.SourceSpriteName + " generated the wrong U-edge point count.");
                 Require(!legacyTrigger.enabled,
                     profile.SourceSpriteName + " left the broad legacy trigger enabled.");
@@ -157,7 +183,7 @@ namespace Slainte.Editor
                     if (boxes[i] != null && boxes[i].enabled && boxes[i].isTrigger)
                         activeTriggerCount++;
                 }
-                Require(activeTriggerCount == profile.ContentTriggersNormalized.Count,
+                Require(activeTriggerCount == profile.ContentTriggerPixels.Count,
                     profile.SourceSpriteName + " generated the wrong content trigger count.");
 
                 Require(root.transform.localScale == originalRootScale,
@@ -306,11 +332,14 @@ namespace Slainte.Editor
                 Vector2 normalized = new Vector2(
                     Mathf.InverseLerp(spriteBounds.min.x, spriteBounds.max.x, spriteLocal.x),
                     Mathf.InverseLerp(spriteBounds.min.y, spriteBounds.max.y, spriteLocal.y));
+                Vector2 sourcePixel = new Vector2(
+                    normalized.x * profile.SourcePixelSize.x,
+                    normalized.y * profile.SourcePixelSize.y);
 
-                Require(IsInsideOpenEdge(profile.EdgePathNormalized, normalized, 0.025f),
+                Require(IsInsideOpenEdge(profile.EdgePathPixels, sourcePixel, 8f),
                     profile.SourceSpriteName + " failed to retain the " + objectLabel
                         + " probe inside its hand-authored collision edge.");
-                Require(normalized.y <= profile.EdgePathNormalized[0].y + 0.025f,
+                Require(sourcePixel.y <= profile.EdgePathPixels[0].y + 8f,
                     profile.SourceSpriteName + " left the " + objectLabel
                         + " probe above the open rim after simulation.");
             }
@@ -538,10 +567,82 @@ namespace Slainte.Editor
 
             for (int i = 0; i < samples.Length; i++)
             {
-                Require(IsInsideOpenEdge(profile.EdgePathNormalized, samples[i], 0.012f),
+                Require(IsInsideOpenEdge(profile.EdgePathPixels, samples[i], 3f),
                     profile.SourceSpriteName + " content trigger " + triggerIndex
                         + " extends outside the hand-authored open edge.");
             }
+        }
+
+        private static void ValidateEdgeAgainstSourcePixels(
+            string assetPath,
+            GlassCollisionProfileDefinition profile)
+        {
+            byte[] bytes = File.ReadAllBytes(Path.GetFullPath(assetPath));
+            Texture2D source = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            try
+            {
+                Require(source.LoadImage(bytes, false),
+                    profile.SourceSpriteName + " source pixels could not be decoded.");
+                Color32[] pixels = source.GetPixels32();
+                const float maximumDistancePixels = 3f;
+                IReadOnlyList<Vector2> edge = profile.EdgePathPixels;
+                for (int segment = 0; segment < edge.Count - 1; segment++)
+                {
+                    Vector2 a = edge[segment];
+                    Vector2 b = edge[segment + 1];
+                    int steps = Mathf.Max(1, Mathf.CeilToInt(Vector2.Distance(a, b)));
+                    for (int step = 0; step <= steps; step++)
+                    {
+                        Vector2 sample = Vector2.Lerp(a, b, step / (float)steps);
+                        Require(
+                            HasDarkPixelNear(
+                                pixels,
+                                source.width,
+                                source.height,
+                                sample,
+                                maximumDistancePixels),
+                            profile.SourceSpriteName + " collision edge is more than "
+                                + maximumDistancePixels + " px from the drawn outline near "
+                                + sample + ".");
+                    }
+                }
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(source);
+            }
+        }
+
+        private static bool HasDarkPixelNear(
+            Color32[] pixels,
+            int width,
+            int height,
+            Vector2 sample,
+            float maximumDistance)
+        {
+            int radius = Mathf.CeilToInt(maximumDistance);
+            int centerX = Mathf.RoundToInt(sample.x);
+            int centerY = Mathf.RoundToInt(sample.y);
+            float maximumDistanceSquared = maximumDistance * maximumDistance;
+            for (int y = Mathf.Max(0, centerY - radius);
+                y <= Mathf.Min(height - 1, centerY + radius);
+                y++)
+            {
+                for (int x = Mathf.Max(0, centerX - radius);
+                    x <= Mathf.Min(width - 1, centerX + radius);
+                    x++)
+                {
+                    Vector2 offset = new Vector2(x, y) - sample;
+                    if (offset.sqrMagnitude > maximumDistanceSquared)
+                        continue;
+
+                    Color32 color = pixels[y * width + x];
+                    if (color.a >= 100 && color.r < 100 && color.g < 100 && color.b < 100)
+                        return true;
+                }
+            }
+
+            return false;
         }
 
         private static bool IsInsideOpenEdge(

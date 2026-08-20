@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,6 +11,11 @@ namespace Slainte.Bartending
         void SnapToSlot(Transform slotTransform, SlotController slot);
         void OnPickedUp();
         void OnDropped();
+    }
+
+    public interface IPointerAnchoredPickup
+    {
+        void OnPickedUpAt(Vector3 pointerWorld);
     }
 
     /// <summary>
@@ -25,6 +31,7 @@ namespace Slainte.Bartending
         private static int nextRank;
 
         private Collider2D pointerCollider;
+        private Func<Vector2, bool> pointerContains;
         private VesselLiquidTracker liquidTracker;
         private bool initialized;
         private float originalZ;
@@ -41,7 +48,8 @@ namespace Slainte.Bartending
         public static BartendingItemOrder Attach(
             GameObject item,
             Collider2D clickCollider,
-            VesselLiquidTracker tracker = null)
+            VesselLiquidTracker tracker = null,
+            Func<Vector2, bool> contains = null)
         {
             if (item == null)
                 return null;
@@ -50,7 +58,7 @@ namespace Slainte.Bartending
             if (order == null)
                 order = item.AddComponent<BartendingItemOrder>();
 
-            order.Initialize(clickCollider, tracker);
+            order.Initialize(clickCollider, tracker, contains);
             return order;
         }
 
@@ -84,9 +92,13 @@ namespace Slainte.Bartending
             return true;
         }
 
-        private void Initialize(Collider2D clickCollider, VesselLiquidTracker tracker)
+        private void Initialize(
+            Collider2D clickCollider,
+            VesselLiquidTracker tracker,
+            Func<Vector2, bool> contains)
         {
             pointerCollider = clickCollider;
+            pointerContains = contains;
             liquidTracker = tracker;
             if (!initialized)
             {
@@ -130,8 +142,11 @@ namespace Slainte.Bartending
 
         private bool Contains(Vector2 worldPoint)
         {
-            return isActiveAndEnabled
-                && pointerCollider != null
+            if (!isActiveAndEnabled)
+                return false;
+            if (pointerContains != null)
+                return pointerContains(worldPoint);
+            return pointerCollider != null
                 && pointerCollider.enabled
                 && pointerCollider.gameObject.activeInHierarchy
                 && pointerCollider.OverlapPoint(worldPoint);

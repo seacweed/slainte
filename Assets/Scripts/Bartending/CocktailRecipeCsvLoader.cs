@@ -53,6 +53,9 @@ namespace Slainte.Bartending
                     allowExtraIngredients = ParseBool(row.Get("allowExtraIngredients")),
                     glassId = row.Get("glassId").Trim(),
                     iceRequirement = ParseEnum(row.Get("iceRequirement"), IceRequirement.Any),
+                    shakeIceRequirement = ParseEnum(
+                        row.Get("shakeIceRequirement"),
+                        IceRequirement.Any),
                     requiredTechnique = ParseEnum(row.Get("technique"), CocktailTechnique.None)
                 };
 

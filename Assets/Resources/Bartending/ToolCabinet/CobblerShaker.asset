@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 587a823bfe3929a4980f14c2616b7f3d, type: 3}
+  m_Name: CobblerShaker
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.ToolDef
+  id: tool_cobbler_shaker
+  displayName: Cobbler Shaker
+  kind: 1
+  cabinetLayers:
+  - {fileID: 21300000, guid: 3212b5a237a3fc049989eba00e309842, type: 3}
+  - {fileID: 21300000, guid: 6bc9301662e8c59468214318771f92da, type: 3}
+  - {fileID: 21300000, guid: e0145ebca63b89740ad0b7261ffd78bd, type: 3}
+  - {fileID: 21300000, guid: d08dc00d097166a46b27f481a8c9319d, type: 3}
+  - {fileID: 21300000, guid: ce997135eb4e48d49a5b6ed6dc79b8a7, type: 3}
+  - {fileID: 21300000, guid: 7d27db0f8bbe11f4791015dabc8b58b3, type: 3}
+  worldLayers:
+  - {fileID: 21300000, guid: 3212b5a237a3fc049989eba00e309842, type: 3}
+  - {fileID: 21300000, guid: 6bc9301662e8c59468214318771f92da, type: 3}
+  - {fileID: 21300000, guid: e0145ebca63b89740ad0b7261ffd78bd, type: 3}
+  - {fileID: 21300000, guid: d08dc00d097166a46b27f481a8c9319d, type: 3}
+  - {fileID: 21300000, guid: ce997135eb4e48d49a5b6ed6dc79b8a7, type: 3}
+  - {fileID: 21300000, guid: 7d27db0f8bbe11f4791015dabc8b58b3, type: 3}
+  stateSprites: []
+  iceSprites: []
+  worldPrefab: {fileID: 4054720568392477730, guid: 4fcdbed02cfffa24cbe7caa594c1b2ea, type: 3}
+  primaryCapacityMl: 0
+  secondaryCapacityMl: 0
+  maxCount: 0
+  worldScale: 0.7
+  worldVisualOffset: {x: 0, y: 0.7}
+  useDedicatedAnchor: 0

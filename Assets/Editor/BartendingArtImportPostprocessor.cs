@@ -15,6 +15,7 @@ namespace Slainte.Editor
     {
         public const string BottleRoot = "Assets/Art/Bartending/Bottles/";
         public const string GlassRoot = "Assets/Art/Bartending/GlassCollisionTests/";
+        public const string ToolCabinetRoot = "Assets/Art/Bartending/ToolCabinet/";
 
         private void OnPreprocessTexture()
         {
@@ -33,7 +34,8 @@ namespace Slainte.Editor
             importer.filterMode = FilterMode.Bilinear;
             importer.textureCompression = TextureImporterCompression.Uncompressed;
             importer.crunchedCompression = false;
-            importer.maxTextureSize = 2048;
+            int maxTextureSize = IsToolCabinetBackground(assetPath) ? 4096 : 2048;
+            importer.maxTextureSize = maxTextureSize;
 
             TextureImporterSettings spriteSettings = new TextureImporterSettings();
             importer.ReadTextureSettings(spriteSettings);
@@ -41,16 +43,19 @@ namespace Slainte.Editor
             spriteSettings.spriteGenerateFallbackPhysicsShape = false;
             importer.SetTextureSettings(spriteSettings);
 
-            ApplyUncompressedPlatform(importer, "Standalone");
-            ApplyUncompressedPlatform(importer, "WebGL");
+            ApplyUncompressedPlatform(importer, "Standalone", maxTextureSize);
+            ApplyUncompressedPlatform(importer, "WebGL", maxTextureSize);
         }
 
-        private static void ApplyUncompressedPlatform(TextureImporter importer, string platform)
+        private static void ApplyUncompressedPlatform(
+            TextureImporter importer,
+            string platform,
+            int maxTextureSize)
         {
             TextureImporterPlatformSettings settings = importer.GetPlatformTextureSettings(platform);
             settings.name = platform;
             settings.overridden = true;
-            settings.maxTextureSize = 2048;
+            settings.maxTextureSize = maxTextureSize;
             settings.resizeAlgorithm = TextureResizeAlgorithm.Mitchell;
             settings.format = TextureImporterFormat.Automatic;
             settings.textureCompression = TextureImporterCompression.Uncompressed;
@@ -65,7 +70,20 @@ namespace Slainte.Editor
 
             string normalized = path.Replace('\\', '/');
             return normalized.StartsWith(BottleRoot, StringComparison.Ordinal)
-                || normalized.StartsWith(GlassRoot, StringComparison.Ordinal);
+                || normalized.StartsWith(GlassRoot, StringComparison.Ordinal)
+                || normalized.StartsWith(ToolCabinetRoot, StringComparison.Ordinal);
+        }
+
+        private static bool IsToolCabinetBackground(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return false;
+
+            string normalized = path.Replace('\\', '/');
+            return string.Equals(
+                normalized,
+                ToolCabinetRoot + "tool_cabinet.png",
+                StringComparison.Ordinal);
         }
     }
 

@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 587a823bfe3929a4980f14c2616b7f3d, type: 3}
+  m_Name: IceBucket
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.ToolDef
+  id: tool_ice_bucket
+  displayName: Ice Bucket
+  kind: 3
+  cabinetLayers:
+  - {fileID: 21300000, guid: c7a33ee97a080e5438c6eca0a3c6c854, type: 3}
+  - {fileID: 21300000, guid: b3eaf694b0b32974594e76d88fff2905, type: 3}
+  worldLayers:
+  - {fileID: 21300000, guid: c7a33ee97a080e5438c6eca0a3c6c854, type: 3}
+  - {fileID: 21300000, guid: b3eaf694b0b32974594e76d88fff2905, type: 3}
+  stateSprites:
+  - {fileID: 21300000, guid: b3ae6c347ddb6a7459a5915c1a47e429, type: 3}
+  - {fileID: 21300000, guid: 18c87ac74febec54188620484cc50b29, type: 3}
+  - {fileID: 21300000, guid: 7e23cf98cfbaa284680dd1c3a407b88c, type: 3}
+  - {fileID: 21300000, guid: 8672bb420d4e216459ab6feacd313d20, type: 3}
+  - {fileID: 21300000, guid: dc0bc60764d747f47bdc595a5f246c02, type: 3}
+  - {fileID: 21300000, guid: 5188c4c1f69abe54fa6919691d3d58e2, type: 3}
+  - {fileID: 21300000, guid: b3eaf694b0b32974594e76d88fff2905, type: 3}
+  iceSprites:
+  - {fileID: 21300000, guid: e2ac7b0648b44b4498e3f69190a2cff5, type: 3}
+  - {fileID: 21300000, guid: 662a47dee845fab41bb29900612314b0, type: 3}
+  - {fileID: 21300000, guid: b6acbd818d838c54e80b4544c476234c, type: 3}
+  worldPrefab: {fileID: 0}
+  primaryCapacityMl: 0
+  secondaryCapacityMl: 0
+  maxCount: 20
+  iceRefillPerSecond: 2
+  chargingShakeAmplitude: 0.055
+  chargingShakeFrequency: 18
+  icePourStartAngle: 90
+  icePourInterval: 0.18
+  icePourExitSpeed: 0.8
+  worldScale: 0.7
+  worldVisualOffset: {x: 0, y: 0.395}
+  useDedicatedAnchor: 0

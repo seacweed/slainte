@@ -206,8 +206,9 @@ namespace Slainte.Bartending
                         servingTargetLowerBoundary,
                         out Rect lowerBoundaryRect))
                 {
-                    // The business target always starts exactly at the bar-table top.
-                    screenRect.yMin = lowerBoundaryRect.yMax;
+                    // Translate the fixed-size target with the bar. Mutating only yMin
+                    // made the target shrink or grow whenever the drawer moved.
+                    screenRect.y = lowerBoundaryRect.yMax;
                 }
 
                 return screenRect.width > Mathf.Epsilon
@@ -263,6 +264,21 @@ namespace Slainte.Bartending
                 subscribedSlots.Add(slot);
                 HandleSlotOccupancyChanged(slot, slot.OccupiedItem);
             }
+        }
+
+        public void SetServingGlass(GlassController glass)
+        {
+            if (servingGlass == glass)
+                return;
+
+            if (servingGlass != null)
+                servingGlass.HeldStateChanged -= HandleServingGlassHeldStateChanged;
+
+            servingGlass = glass;
+            servingGlassHeld = servingGlass != null && servingGlass.IsPickedUp;
+            if (servingGlass != null)
+                servingGlass.HeldStateChanged += HandleServingGlassHeldStateChanged;
+            RefreshServingTarget();
         }
 
         private Image CreateServingTargetImage()
@@ -763,12 +779,21 @@ namespace Slainte.Bartending
             RectTransform counter,
             RectTransform slotLayoutTemplate,
             BusinessBartendingSettings settings,
-            BartendingSessionBuildMode mode = BartendingSessionBuildMode.Runtime)
+            BartendingSessionBuildMode mode = BartendingSessionBuildMode.Runtime,
+            bool? useToolCabinetOverride = null,
+            RectTransform viewportBottomExtension = null)
         {
             if (parent == null || counter == null || settings == null)
                 return null;
 
             bool isPreview = mode == BartendingSessionBuildMode.Preview;
+            if (!isPreview)
+            {
+                VesselLiquidTracker.SetLiquidIceCollisionEnabled(
+                    settings.liquidIceCollisionEnabled);
+            }
+
+            bool useToolCabinet = useToolCabinetOverride ?? settings.useToolCabinet;
             int renderLayer = Mathf.Clamp(settings.renderLayer, 8, 31);
             BartendingSessionInstance session = new BartendingSessionInstance
             {
@@ -787,7 +812,12 @@ namespace Slainte.Bartending
             session.World = world.transform;
 
             session.WorldCamera = CreateWorldCamera(world.transform, settings, renderLayer);
-            session.Viewport = CreateViewport(counter, session.WorldCamera, settings, !isPreview);
+            session.Viewport = CreateViewport(
+                counter,
+                session.WorldCamera,
+                settings,
+                !isPreview,
+                useToolCabinet ? viewportBottomExtension : null);
             if (!isPreview)
             {
                 session.LiquidMetaballRenderer = CreateLiquidMetaballRenderer(
@@ -813,42 +843,45 @@ namespace Slainte.Bartending
             session.ItemScale = itemScale;
             session.Slots.AddRange(CreateSlots(world.transform, settings, slotPositions, itemScale));
 
-            session.Beaker = CreateItem(
-                settings.beakerPrefab,
-                world.transform,
-                "Beaker",
-                settings.beakerPosition,
-                renderLayer,
-                itemScale);
-            session.CobblerShaker = CreateItem(
-                settings.cobblerShakerPrefab,
-                world.transform,
-                "CobblerShaker",
-                settings.cobblerShakerPosition,
-                renderLayer,
-                itemScale);
-            session.ServingGlass = CreateItem(
-                settings.glassPrefab,
-                world.transform,
-                "Glass",
-                settings.glassPosition,
-                renderLayer,
-                itemScale) as GlassController;
+            if (!useToolCabinet)
+            {
+                session.Beaker = CreateItem(
+                    settings.beakerPrefab,
+                    world.transform,
+                    "Beaker",
+                    settings.beakerPosition,
+                    renderLayer,
+                    itemScale);
+                session.CobblerShaker = CreateItem(
+                    settings.cobblerShakerPrefab,
+                    world.transform,
+                    "CobblerShaker",
+                    settings.cobblerShakerPosition,
+                    renderLayer,
+                    itemScale);
+                session.ServingGlass = CreateItem(
+                    settings.glassPrefab,
+                    world.transform,
+                    "Glass",
+                    settings.glassPosition,
+                    renderLayer,
+                    itemScale) as GlassController;
 
-            ConfigureRotatingMovement(session.Beaker, settings);
-            ConfigureRotatingMovement(session.CobblerShaker, settings);
-            ConfigureRotatingMovement(session.ServingGlass, settings);
+                ConfigureRotatingMovement(session.Beaker, settings);
+                ConfigureRotatingMovement(session.CobblerShaker, settings);
+                ConfigureRotatingMovement(session.ServingGlass, settings);
 
-            session.StartingTools.Add(session.Beaker);
-            session.StartingTools.Add(session.CobblerShaker);
-            session.StartingTools.Add(session.ServingGlass);
+                session.StartingTools.Add(session.Beaker);
+                session.StartingTools.Add(session.CobblerShaker);
+                session.StartingTools.Add(session.ServingGlass);
 
-            session.IceBin = IceBinController.Create(
-                world.transform,
-                settings,
-                renderLayer,
-                itemScale,
-                isPreview);
+                session.IceBin = IceBinController.Create(
+                    world.transform,
+                    settings,
+                    renderLayer,
+                    itemScale,
+                    isPreview);
+            }
 
             if (!isPreview)
             {
@@ -936,10 +969,13 @@ namespace Slainte.Bartending
             GameObject outputObject = GameObject.CreatePrimitive(PrimitiveType.Quad);
             outputObject.name = "LiquidMetaballOutput";
             outputObject.transform.SetParent(parent, false);
-            outputObject.transform.localPosition = new Vector3(0f, 0f, -0.5f);
+            Vector3 cameraPosition = worldCamera.transform.localPosition;
+            outputObject.transform.localPosition = new Vector3(
+                cameraPosition.x,
+                cameraPosition.y,
+                -0.5f);
 
-            float targetAspect = Mathf.Max(1, settings.renderTextureSize.x)
-                / (float)Mathf.Max(1, settings.renderTextureSize.y);
+            float targetAspect = Mathf.Max(0.01f, worldCamera.aspect);
             float outputHeight = worldCamera.orthographicSize * 2f;
             float outputYScale = SystemInfo.graphicsUVStartsAtTop
                 ? -outputHeight
@@ -993,7 +1029,8 @@ namespace Slainte.Bartending
             RectTransform counter,
             Camera camera,
             BusinessBartendingSettings settings,
-            bool registerForInput)
+            bool registerForInput,
+            RectTransform bottomExtension = null)
         {
             GameObject viewObject = new GameObject(
                 "BartendingViewport",
@@ -1009,7 +1046,10 @@ namespace Slainte.Bartending
             viewRect.sizeDelta = Vector2.zero;
             viewRect.anchoredPosition = Vector2.zero;
 
-            if (counter.parent != null)
+            Transform extensionSibling = FindDirectChild(bottomExtension, viewportParent);
+            if (extensionSibling != null)
+                viewRect.SetSiblingIndex(extensionSibling.GetSiblingIndex() + 1);
+            else if (counter.parent != null)
                 viewRect.SetSiblingIndex(counter.GetSiblingIndex() + 1);
             else
                 viewRect.SetAsFirstSibling();
@@ -1019,8 +1059,23 @@ namespace Slainte.Bartending
             image.color = Color.white;
 
             BartendingViewport viewport = viewObject.AddComponent<BartendingViewport>();
-            viewport.Initialize(camera, settings.renderTextureSize, registerForInput);
+            viewport.Initialize(
+                camera,
+                settings.renderTextureSize,
+                registerForInput,
+                bottomExtension);
             return viewport;
+        }
+
+        private static Transform FindDirectChild(Transform descendant, Transform ancestor)
+        {
+            if (descendant == null || ancestor == null)
+                return null;
+
+            Transform current = descendant;
+            while (current != null && current.parent != ancestor)
+                current = current.parent;
+            return current != null && current.parent == ancestor ? current : null;
         }
 
         public static void GetSlotLayout(

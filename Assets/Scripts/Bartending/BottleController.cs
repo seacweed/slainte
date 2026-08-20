@@ -389,9 +389,7 @@ namespace Slainte.Bartending
                 PerformTilting();
             }
 
-            if (currentState == BottleState.Tilting)
-                PerformHorizontalRotationMovement();
-            else if (currentState == BottleState.Returning && !pointerSyncPending)
+            if (currentState == BottleState.Returning && !pointerSyncPending)
                 FollowPointerWhileReturning();
         }
 

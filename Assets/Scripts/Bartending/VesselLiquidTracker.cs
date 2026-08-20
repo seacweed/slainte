@@ -20,6 +20,7 @@ namespace Slainte.Bartending
             : 20f;
         public string GlassId { get; private set; } = string.Empty;
         public bool HasIce { get; private set; }
+        public bool WasShakenWithIce { get; private set; }
         public CocktailTechnique Techniques { get; private set; } = CocktailTechnique.None;
 
         public void Add(ItemDef item, float volumeMl)
@@ -54,6 +55,11 @@ namespace Slainte.Bartending
         public void RecordTechnique(CocktailTechnique technique)
         {
             Techniques |= technique;
+        }
+
+        public void RecordShakenWithIce(bool value)
+        {
+            WasShakenWithIce |= value;
         }
 
         public void SetServingStyle(string glassId, bool hasIce)
@@ -98,6 +104,7 @@ namespace Slainte.Bartending
         private static readonly HashSet<VesselLiquidTracker> activeVessels = new();
         private static readonly HashSet<LiquidParticleData> activeParticles = new();
         private static readonly HashSet<IceCubeController> activeIceCubes = new();
+        private static bool liquidIceCollisionEnabled = true;
         private readonly HashSet<LiquidParticleData> particles = new();
         private readonly HashSet<LiquidParticleData> ownedParticles = new();
         private readonly HashSet<LiquidParticleData> pendingParticleReleases = new();
@@ -173,6 +180,16 @@ namespace Slainte.Bartending
 
         internal int InteractionPriority => interactionPriority;
         internal static HashSet<LiquidParticleData> ActiveParticles => activeParticles;
+        public static bool LiquidIceCollisionEnabled => liquidIceCollisionEnabled;
+
+        public static void SetLiquidIceCollisionEnabled(bool enabled)
+        {
+            if (liquidIceCollisionEnabled == enabled)
+                return;
+
+            liquidIceCollisionEnabled = enabled;
+            RefreshLiquidIceCollisions();
+        }
 
         internal void SetInteractionPriority(int priority)
         {
@@ -185,6 +202,7 @@ namespace Slainte.Bartending
             activeVessels.Clear();
             activeParticles.Clear();
             activeIceCubes.Clear();
+            liquidIceCollisionEnabled = true;
         }
 
         private void OnEnable()
@@ -282,6 +300,7 @@ namespace Slainte.Bartending
                     particle.payload.TotalVolumeMl,
                     particle.payload.temperatureC);
                 composition.RecordTechnique(particle.payload.techniques);
+                composition.RecordShakenWithIce(particle.payload.wasShakenWithIce);
             }
 
             return composition;
@@ -685,13 +704,10 @@ namespace Slainte.Bartending
                 if (iceCube == null || iceCube.PhysicsCollider == null)
                     continue;
 
-                bool ignoreIce = particle.VesselOwner != null
-                    && iceCube.VesselOwner != null
-                    && particle.VesselOwner != iceCube.VesselOwner;
                 Physics2D.IgnoreCollision(
                     particleCollider,
                     iceCube.PhysicsCollider,
-                    ignoreIce);
+                    ShouldIgnoreLiquidIceCollision(particle, iceCube));
             }
         }
 
@@ -727,11 +743,41 @@ namespace Slainte.Bartending
                 if (particle == null || particle.ParticleCollider == null)
                     continue;
 
-                bool ignoreParticle = iceCube.VesselOwner != null
-                    && particle.VesselOwner != null
-                    && iceCube.VesselOwner != particle.VesselOwner;
-                Physics2D.IgnoreCollision(iceCollider, particle.ParticleCollider, ignoreParticle);
+                Physics2D.IgnoreCollision(
+                    iceCollider,
+                    particle.ParticleCollider,
+                    ShouldIgnoreLiquidIceCollision(particle, iceCube));
             }
+        }
+
+        private static void RefreshLiquidIceCollisions()
+        {
+            foreach (LiquidParticleData particle in activeParticles)
+            {
+                if (particle == null || particle.ParticleCollider == null)
+                    continue;
+
+                foreach (IceCubeController iceCube in activeIceCubes)
+                {
+                    if (iceCube == null || iceCube.PhysicsCollider == null)
+                        continue;
+
+                    Physics2D.IgnoreCollision(
+                        particle.ParticleCollider,
+                        iceCube.PhysicsCollider,
+                        ShouldIgnoreLiquidIceCollision(particle, iceCube));
+                }
+            }
+        }
+
+        private static bool ShouldIgnoreLiquidIceCollision(
+            LiquidParticleData particle,
+            IceCubeController iceCube)
+        {
+            return !liquidIceCollisionEnabled
+                || (particle.VesselOwner != null
+                    && iceCube.VesselOwner != null
+                    && particle.VesselOwner != iceCube.VesselOwner);
         }
 
         private static void RegisterVessel(VesselLiquidTracker vessel)

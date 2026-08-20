@@ -5,58 +5,85 @@ using UnityEngine;
 namespace Slainte.Bartending
 {
     /// <summary>
-    /// Runtime-only collision data for the temporary glass drawings. Coordinates are
-    /// normalized against the complete source sprite, so transparent padding and the
-    /// original 310 x 590 image dimensions remain untouched.
+    /// Collision data authored in source-image pixels with a bottom-left origin.
+    /// Pixel coordinates deliberately keep the complete 310 x 590 canvas, including
+    /// transparent padding, so importer trimming can never silently change geometry.
     /// </summary>
     public sealed class GlassCollisionProfileDefinition
     {
-        private readonly Vector2[] edgePathNormalized;
-        private readonly Rect[] contentTriggersNormalized;
+        private readonly Vector2[] edgePathPixels;
+        private readonly Rect[] contentTriggerPixels;
+        private readonly Rect[] interactionRectPixels;
 
         public GlassCollisionProfileDefinition(
             string sourceSpriteName,
             string glassId,
             float capacityMl,
             Vector2Int sourcePixelSize,
-            Vector2[] edgePathNormalized,
-            Rect[] contentTriggersNormalized)
+            float visibleBottomPixel,
+            Vector2[] edgePathPixels,
+            Rect[] contentTriggerPixels,
+            Rect[] interactionRectPixels)
         {
             SourceSpriteName = sourceSpriteName?.Trim() ?? string.Empty;
             GlassId = glassId?.Trim() ?? string.Empty;
             CapacityMl = Mathf.Max(0f, capacityMl);
             SourcePixelSize = sourcePixelSize;
-            this.edgePathNormalized = edgePathNormalized ?? Array.Empty<Vector2>();
-            this.contentTriggersNormalized = contentTriggersNormalized ?? Array.Empty<Rect>();
+            VisibleBottomPixel = visibleBottomPixel;
+            this.edgePathPixels = edgePathPixels ?? Array.Empty<Vector2>();
+            this.contentTriggerPixels = contentTriggerPixels ?? Array.Empty<Rect>();
+            this.interactionRectPixels = interactionRectPixels ?? Array.Empty<Rect>();
         }
 
         public string SourceSpriteName { get; }
         public string GlassId { get; }
         public float CapacityMl { get; }
         public Vector2Int SourcePixelSize { get; }
-        public IReadOnlyList<Vector2> EdgePathNormalized => edgePathNormalized;
-        public IReadOnlyList<Rect> ContentTriggersNormalized => contentTriggersNormalized;
+        public float VisibleBottomPixel { get; }
+        public IReadOnlyList<Vector2> EdgePathPixels => edgePathPixels;
+        public IReadOnlyList<Rect> ContentTriggerPixels => contentTriggerPixels;
+        public IReadOnlyList<Rect> InteractionRectPixels => interactionRectPixels;
 
         public Vector2[] BuildEdgePath(Sprite sprite)
         {
             if (sprite == null)
                 return Array.Empty<Vector2>();
 
-            Vector2[] result = new Vector2[edgePathNormalized.Length];
-            for (int i = 0; i < edgePathNormalized.Length; i++)
-                result[i] = NormalizedToSpriteLocal(sprite, edgePathNormalized[i]);
+            Vector2[] result = new Vector2[edgePathPixels.Length];
+            for (int i = 0; i < edgePathPixels.Length; i++)
+                result[i] = PixelToSpriteLocal(sprite, edgePathPixels[i]);
             return result;
+        }
+
+        public float GetVisibleBottomLocalY(Sprite sprite)
+        {
+            return sprite == null
+                ? 0f
+                : PixelToSpriteLocal(sprite, new Vector2(0f, VisibleBottomPixel)).y;
         }
 
         public Rect BuildContentTrigger(Sprite sprite, int index)
         {
-            if (sprite == null || index < 0 || index >= contentTriggersNormalized.Length)
-                return default;
+            return BuildSpriteRect(sprite, contentTriggerPixels, index);
+        }
 
-            Rect normalized = contentTriggersNormalized[index];
-            Vector2 min = NormalizedToSpriteLocal(sprite, normalized.min);
-            Vector2 max = NormalizedToSpriteLocal(sprite, normalized.max);
-            return Rect.MinMaxRect(min.x, min.y, max.x, max.y);
+        public bool ContainsInteractionPoint(
+            Sprite sprite,
+            Transform visualTransform,
+            Vector2 worldPoint)
+        {
+            if (sprite == null || visualTransform == null)
+                return false;
+
+            Vector2 local = visualTransform.InverseTransformPoint(worldPoint);
+            for (int i = 0; i < interactionRectPixels.Length; i++)
+            {
+                Rect rect = BuildSpriteRect(sprite, interactionRectPixels, i);
+                if (rect.Contains(local))
+                    return true;
+            }
+
+            return false;
         }
 
         public bool IsValid(out string error)
@@ -85,53 +112,95 @@ namespace Slainte.Bartending
                 return false;
             }
 
-            if (edgePathNormalized.Length < 3)
+            if (VisibleBottomPixel < 0f || VisibleBottomPixel > SourcePixelSize.y)
+            {
+                error = SourceSpriteName + " has an invalid visible bottom pixel.";
+                return false;
+            }
+
+            if (edgePathPixels.Length < 3)
             {
                 error = SourceSpriteName + " needs at least three U-edge points.";
                 return false;
             }
 
-            for (int i = 0; i < edgePathNormalized.Length; i++)
+            for (int i = 0; i < edgePathPixels.Length; i++)
             {
-                Vector2 point = edgePathNormalized[i];
-                if (point.x < 0f || point.x > 1f || point.y < 0f || point.y > 1f)
+                if (!ContainsSourcePixel(edgePathPixels[i]))
                 {
                     error = SourceSpriteName + " has an edge point outside the source sprite.";
                     return false;
                 }
             }
 
-            if (contentTriggersNormalized.Length == 0)
+            if (contentTriggerPixels.Length == 0)
             {
                 error = SourceSpriteName + " has no content trigger.";
                 return false;
             }
 
-            for (int i = 0; i < contentTriggersNormalized.Length; i++)
+            if (!ValidateRects(contentTriggerPixels, "content trigger", out error)
+                || !ValidateRects(interactionRectPixels, "interaction rectangle", out error))
             {
-                Rect rect = contentTriggersNormalized[i];
-                if (rect.width <= 0f
-                    || rect.height <= 0f
-                    || rect.xMin < 0f
-                    || rect.yMin < 0f
-                    || rect.xMax > 1f
-                    || rect.yMax > 1f)
-                {
-                    error = SourceSpriteName + " has an invalid normalized content trigger.";
-                    return false;
-                }
+                return false;
+            }
+
+            if (interactionRectPixels.Length == 0)
+            {
+                error = SourceSpriteName + " has no interaction rectangle.";
+                return false;
             }
 
             error = string.Empty;
             return true;
         }
 
-        private static Vector2 NormalizedToSpriteLocal(Sprite sprite, Vector2 normalized)
+        private Rect BuildSpriteRect(Sprite sprite, Rect[] source, int index)
+        {
+            if (sprite == null || index < 0 || index >= source.Length)
+                return default;
+
+            Rect pixels = source[index];
+            Vector2 min = PixelToSpriteLocal(sprite, pixels.min);
+            Vector2 max = PixelToSpriteLocal(sprite, pixels.max);
+            return Rect.MinMaxRect(min.x, min.y, max.x, max.y);
+        }
+
+        private Vector2 PixelToSpriteLocal(Sprite sprite, Vector2 pixel)
         {
             Bounds bounds = sprite.bounds;
+            float normalizedX = pixel.x / SourcePixelSize.x;
+            float normalizedY = pixel.y / SourcePixelSize.y;
             return new Vector2(
-                Mathf.Lerp(bounds.min.x, bounds.max.x, normalized.x),
-                Mathf.Lerp(bounds.min.y, bounds.max.y, normalized.y));
+                Mathf.Lerp(bounds.min.x, bounds.max.x, normalizedX),
+                Mathf.Lerp(bounds.min.y, bounds.max.y, normalizedY));
+        }
+
+        private bool ContainsSourcePixel(Vector2 point)
+        {
+            return point.x >= 0f
+                && point.x <= SourcePixelSize.x
+                && point.y >= 0f
+                && point.y <= SourcePixelSize.y;
+        }
+
+        private bool ValidateRects(Rect[] rects, string label, out string error)
+        {
+            for (int i = 0; i < rects.Length; i++)
+            {
+                Rect rect = rects[i];
+                if (rect.width <= 0f
+                    || rect.height <= 0f
+                    || !ContainsSourcePixel(rect.min)
+                    || !ContainsSourcePixel(rect.max))
+                {
+                    error = SourceSpriteName + " has an invalid " + label + ".";
+                    return false;
+                }
+            }
+
+            error = string.Empty;
+            return true;
         }
     }
 
@@ -146,97 +215,96 @@ namespace Slainte.Bartending
                 "rock",
                 200f,
                 TemporarySourcePixelSize,
+                2f,
                 new[]
                 {
-                    new Vector2(0.108f, 0.414f),
-                    new Vector2(0.116f, 0.290f),
-                    new Vector2(0.145f, 0.086f),
-                    new Vector2(0.270f, 0.063f),
-                    new Vector2(0.500f, 0.060f),
-                    new Vector2(0.710f, 0.063f),
-                    new Vector2(0.835f, 0.086f),
-                    new Vector2(0.858f, 0.290f),
-                    new Vector2(0.888f, 0.414f)
+                    new Vector2(33f, 247f), new Vector2(36f, 190f),
+                    new Vector2(42f, 89f), new Vector2(45f, 30f),
+                    new Vector2(54f, 9f), new Vector2(84f, 6f),
+                    new Vector2(155f, 4f), new Vector2(219f, 6f),
+                    new Vector2(255f, 9f), new Vector2(263f, 30f),
+                    new Vector2(267f, 89f), new Vector2(273f, 190f),
+                    new Vector2(276f, 247f)
                 },
-                new[]
-                {
-                    new Rect(0.165f, 0.082f, 0.655f, 0.305f)
-                }),
+                new[] { new Rect(52f, 20f, 205f, 215f) },
+                new[] { new Rect(25f, 0f, 260f, 255f) }),
             new(
                 "200coc",
                 "martini",
                 200f,
                 TemporarySourcePixelSize,
+                9f,
                 new[]
                 {
-                    new Vector2(0.026f, 0.966f),
-                    new Vector2(0.160f, 0.790f),
-                    new Vector2(0.290f, 0.595f),
-                    new Vector2(0.410f, 0.405f),
-                    new Vector2(0.500f, 0.282f),
-                    new Vector2(0.590f, 0.405f),
-                    new Vector2(0.710f, 0.595f),
-                    new Vector2(0.840f, 0.790f),
-                    new Vector2(0.974f, 0.966f)
+                    new Vector2(10f, 341f), new Vector2(49f, 283f),
+                    new Vector2(90f, 233f), new Vector2(127f, 193f),
+                    new Vector2(154f, 159f), new Vector2(182f, 193f),
+                    new Vector2(219f, 233f), new Vector2(260f, 283f),
+                    new Vector2(298f, 341f)
                 },
                 new[]
                 {
-                    new Rect(0.180f, 0.800f, 0.640f, 0.125f),
-                    new Rect(0.300f, 0.620f, 0.400f, 0.180f),
-                    new Rect(0.405f, 0.455f, 0.190f, 0.165f),
-                    new Rect(0.482f, 0.330f, 0.036f, 0.125f)
+                    new Rect(50f, 290f, 210f, 35f),
+                    new Rect(80f, 240f, 150f, 50f),
+                    new Rect(115f, 200f, 80f, 40f),
+                    new Rect(145f, 165f, 19f, 35f)
+                },
+                new[]
+                {
+                    new Rect(5f, 155f, 300f, 195f),
+                    new Rect(145f, 20f, 20f, 145f),
+                    new Rect(50f, 5f, 210f, 25f)
                 }),
             new(
                 "400high",
                 "highball",
                 400f,
                 TemporarySourcePixelSize,
+                2f,
                 new[]
                 {
-                    new Vector2(0.198f, 0.653f),
-                    new Vector2(0.199f, 0.350f),
-                    new Vector2(0.210f, 0.016f),
-                    new Vector2(0.500f, 0.012f),
-                    new Vector2(0.790f, 0.016f),
-                    new Vector2(0.799f, 0.350f),
-                    new Vector2(0.800f, 0.653f)
+                    new Vector2(62f, 386f), new Vector2(62f, 207f),
+                    new Vector2(65f, 9f), new Vector2(155f, 2f),
+                    new Vector2(244f, 9f), new Vector2(247f, 207f),
+                    new Vector2(246f, 386f)
                 },
-                new[]
-                {
-                    new Rect(0.230f, 0.040f, 0.540f, 0.590f)
-                }),
+                new[] { new Rect(70f, 20f, 170f, 355f) },
+                new[] { new Rect(55f, 0f, 200f, 395f) }),
             new(
                 "400hurricane",
                 "hurricane",
                 400f,
                 TemporarySourcePixelSize,
+                3f,
                 new[]
                 {
-                    new Vector2(0.139f, 0.947f),
-                    new Vector2(0.213f, 0.830f),
-                    new Vector2(0.245f, 0.700f),
-                    new Vector2(0.218f, 0.555f),
-                    new Vector2(0.168f, 0.455f),
-                    new Vector2(0.171f, 0.360f),
-                    new Vector2(0.230f, 0.275f),
-                    new Vector2(0.335f, 0.210f),
-                    new Vector2(0.500f, 0.180f),
-                    new Vector2(0.665f, 0.210f),
-                    new Vector2(0.775f, 0.275f),
-                    new Vector2(0.832f, 0.360f),
-                    new Vector2(0.832f, 0.455f),
-                    new Vector2(0.782f, 0.555f),
-                    new Vector2(0.755f, 0.700f),
-                    new Vector2(0.787f, 0.830f),
-                    new Vector2(0.868f, 0.947f)
+                    new Vector2(43f, 430f), new Vector2(55f, 404f),
+                    new Vector2(69f, 369f), new Vector2(76f, 329f),
+                    new Vector2(67f, 289f), new Vector2(51f, 249f),
+                    new Vector2(50f, 209f), new Vector2(61f, 169f),
+                    new Vector2(82f, 139f), new Vector2(126f, 109f),
+                    new Vector2(154f, 104f), new Vector2(183f, 109f),
+                    new Vector2(225f, 139f), new Vector2(247f, 169f),
+                    new Vector2(258f, 209f), new Vector2(257f, 249f),
+                    new Vector2(241f, 289f), new Vector2(232f, 329f),
+                    new Vector2(239f, 369f), new Vector2(253f, 404f),
+                    new Vector2(266f, 430f)
                 },
                 new[]
                 {
-                    new Rect(0.270f, 0.780f, 0.460f, 0.125f),
-                    new Rect(0.285f, 0.610f, 0.430f, 0.170f),
-                    new Rect(0.245f, 0.440f, 0.510f, 0.170f),
-                    new Rect(0.285f, 0.300f, 0.430f, 0.140f),
-                    new Rect(0.385f, 0.215f, 0.230f, 0.085f)
+                    new Rect(65f, 380f, 180f, 35f),
+                    new Rect(85f, 330f, 140f, 50f),
+                    new Rect(85f, 280f, 140f, 50f),
+                    new Rect(65f, 230f, 180f, 50f),
+                    new Rect(65f, 180f, 180f, 50f),
+                    new Rect(85f, 140f, 140f, 40f),
+                    new Rect(132f, 110f, 45f, 25f)
+                },
+                new[]
+                {
+                    new Rect(35f, 100f, 240f, 340f),
+                    new Rect(125f, 20f, 60f, 95f),
+                    new Rect(65f, 0f, 180f, 30f)
                 })
         };
 

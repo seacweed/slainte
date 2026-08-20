@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f01d1d85f3e4aa29c1bde027fa96102, type: 3}
+  m_Name: ToolCabinetCatalog
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.ToolCabinetCatalog
+  backgroundSprite: {fileID: 21300000, guid: da729cbed02706249bfa7ae95ac4a2dc, type: 3}
+  toolStoragePixels: {x: 54, y: 321, width: 1334, height: 447}
+  glassStoragePixels: {x: 1456, y: 321, width: 1043, height: 447}
+  iceMakerPixels: {x: 1308, y: 60, width: 1190, height: 187}
+  tools:
+  - {fileID: 11400000, guid: e64776cfacba25a4bb86a6e9ea601ed2, type: 2}
+  - {fileID: 11400000, guid: ca79b9947e9ccda4691a0bf34b2de157, type: 2}
+  - {fileID: 11400000, guid: e165345cd0eab3a4a961063b4bea6592, type: 2}
+  - {fileID: 11400000, guid: 0815d5cd2588b124f98797ee8c404f6a, type: 2}
+  glasses:
+  - {fileID: 11400000, guid: c76ca96dab53a654ab471bb7548b2689, type: 2}
+  - {fileID: 11400000, guid: 24faa692e8441d74189e42cc15abb8ae, type: 2}
+  - {fileID: 11400000, guid: 55aba5856217635428c24905bb41d4a9, type: 2}
+  - {fileID: 11400000, guid: 1cc51162de82898488df0edab8fbf235, type: 2}

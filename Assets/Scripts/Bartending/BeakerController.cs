@@ -14,7 +14,7 @@ namespace Slainte.Bartending
 
     [ExecuteInEditMode]
     [RequireComponent(typeof(EdgeCollider2D), typeof(Collider2D))]
-    public class BeakerController : MonoBehaviour, IBartendingItem
+    public class BeakerController : MonoBehaviour, IBartendingItem, IPointerAnchoredPickup
     {
         [Header("비커 크기 및 형태 설정")]
         [Min(0.1f)] public float bottomWidth = 1.4f;
@@ -176,6 +176,15 @@ namespace Slainte.Bartending
             // Left Click (Pickup / Drop Toggle)
             if (Input.GetMouseButtonDown(0))
             {
+                CobblerShakerPresentation shakerPresentation =
+                    GetComponent<CobblerShakerPresentation>();
+                if (currentState == BeakerState.Idle
+                    && shakerPresentation != null
+                    && shakerPresentation.TryHandlePartClick(mainCamera, Input.mousePosition))
+                {
+                    return;
+                }
+
                 if (currentState == BeakerState.Idle && IsMouseOverBeaker())
                 {
                     PickupBeaker();
@@ -217,14 +226,22 @@ namespace Slainte.Bartending
                 PerformTilting();
             }
 
-            if (currentState == BeakerState.Tilting)
-                PerformHorizontalRotationMovement();
-            else if (currentState == BeakerState.Returning && !pointerSyncPending)
+            if (currentState == BeakerState.Returning && !pointerSyncPending)
                 FollowMousePosition();
         }
 
         private void PickupBeaker()
         {
+            PreparePickup();
+            BeginPointerSynchronization(
+                transform.position,
+                unlockCursor: false,
+                completeReturn: false);
+        }
+
+        private void PreparePickup()
+        {
+            CancelPointerSynchronization();
             CancelPendingPhysicsMotion();
             currentState = BeakerState.PickedUp;
             interactionOrder?.BringToFront();
@@ -241,11 +258,6 @@ namespace Slainte.Bartending
                 StopCoroutine(returnCoroutine);
                 returnCoroutine = null;
             }
-
-            BeginPointerSynchronization(
-                transform.position,
-                unlockCursor: false,
-                completeReturn: false);
         }
 
         private void FollowMousePosition()
@@ -289,6 +301,9 @@ namespace Slainte.Bartending
 
         private void TryDropBeaker()
         {
+            if (ToolCabinetController.TryReturnHeldItem(this, mainCamera, Input.mousePosition))
+                return;
+
             if (!BartendingViewport.TryGetPointerWorldPosition(mainCamera, Input.mousePosition, out Vector3 mousePos))
             {
                 return;
@@ -379,6 +394,13 @@ namespace Slainte.Bartending
         public void OnPickedUp()
         {
             PickupBeaker();
+        }
+
+        public void OnPickedUpAt(Vector3 pointerWorld)
+        {
+            PreparePickup();
+            pointerPivotOffset = transform.position - pointerWorld;
+            pointerPivotOffset.z = 0f;
         }
 
         public void OnDropped()

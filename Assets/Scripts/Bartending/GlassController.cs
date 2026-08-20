@@ -20,7 +20,7 @@ namespace Slainte.Bartending
 
     [ExecuteInEditMode]
     [RequireComponent(typeof(EdgeCollider2D), typeof(Collider2D))]
-    public class GlassController : MonoBehaviour, IBartendingItem
+    public class GlassController : MonoBehaviour, IBartendingItem, IPointerAnchoredPickup
     {
         [Header("잔(Glass) 형태 및 실루엣 설정")]
         [Min(0.1f)] public float bottomWidth = 1.4f;
@@ -89,6 +89,7 @@ namespace Slainte.Bartending
         private BartendingItemOrder interactionOrder;
         private SlotController currentSlot; // 현재 점유 중인 슬롯 레퍼런스
         private GlassCollisionProfileDefinition activeCollisionProfile;
+        private SpriteRenderer collisionVisual;
 
         private const string DefaultGlassId = "rock";
         private const string ContentTriggerPrefix = "__GlassContentTrigger_";
@@ -111,6 +112,16 @@ namespace Slainte.Bartending
         {
             rotationHorizontalSensitivity = Mathf.Max(0f, sensitivity);
             rotationHorizontalScreenPadding = Mathf.Max(0f, screenPadding);
+        }
+
+        public void ConfigureServingIdentity(string servingGlassId, float servingCapacityMl)
+        {
+            glassId = string.IsNullOrWhiteSpace(servingGlassId)
+                ? DefaultGlassId
+                : servingGlassId.Trim();
+            capacityMl = Mathf.Max(1f, servingCapacityMl);
+            if (Application.isPlaying)
+                EnsureLiquidTracker();
         }
 
         private void Start()
@@ -150,7 +161,8 @@ namespace Slainte.Bartending
                 interactionOrder = BartendingItemOrder.Attach(
                     gameObject,
                     mainCollider,
-                    liquidTracker);
+                    liquidTracker,
+                    ContainsInteractionPoint);
             }
         }
 
@@ -282,15 +294,23 @@ namespace Slainte.Bartending
                 PerformTilting();
             }
 
-            if (currentState == GlassState.Tilting)
-                PerformHorizontalRotationMovement();
-            else if (currentState == GlassState.Returning && !pointerSyncPending)
+            if (currentState == GlassState.Returning && !pointerSyncPending)
                 FollowMousePosition();
         }
 
         private void PickupGlass()
         {
+            PreparePickup();
+            BeginPointerSynchronization(
+                transform.position,
+                unlockCursor: false,
+                completeReturn: false);
+        }
+
+        private void PreparePickup()
+        {
             bool wasHeld = IsPickedUp;
+            CancelPointerSynchronization();
             CancelPendingPhysicsMotion();
             currentState = GlassState.PickedUp;
             if (!wasHeld)
@@ -309,11 +329,6 @@ namespace Slainte.Bartending
                 StopCoroutine(returnCoroutine);
                 returnCoroutine = null;
             }
-
-            BeginPointerSynchronization(
-                transform.position,
-                unlockCursor: false,
-                completeReturn: false);
         }
 
         private void FollowMousePosition()
@@ -370,6 +385,9 @@ namespace Slainte.Bartending
 
         private void TryDropGlass()
         {
+            if (ToolCabinetController.TryReturnHeldItem(this, mainCamera, Input.mousePosition))
+                return;
+
             if (!BartendingViewport.TryGetPointerWorldPosition(mainCamera, Input.mousePosition, out Vector3 mousePos))
             {
                 return;
@@ -460,6 +478,13 @@ namespace Slainte.Bartending
         public void OnPickedUp()
         {
             PickupGlass();
+        }
+
+        public void OnPickedUpAt(Vector3 pointerWorld)
+        {
+            PreparePickup();
+            pointerPivotOffset = transform.position - pointerWorld;
+            pointerPivotOffset.z = 0f;
         }
 
         public void OnDropped()
@@ -740,8 +765,6 @@ namespace Slainte.Bartending
 
         private bool IsMouseOverGlass()
         {
-            if (mainCollider == null) return false;
-            
             if (!BartendingViewport.TryGetPointerWorldPosition(mainCamera, Input.mousePosition, out Vector3 mousePos))
             {
                 return false;
@@ -750,12 +773,50 @@ namespace Slainte.Bartending
             // 다른 겹치는 오브젝트(액체 입자 등)에 방해받지 않는 단독 격리 판정
             return interactionOrder != null
                 ? interactionOrder.IsFrontmostAt(mousePos)
-                : mainCollider.OverlapPoint(mousePos);
+                : ContainsInteractionPoint(mousePos);
+        }
+
+        private bool ContainsInteractionPoint(Vector2 worldPoint)
+        {
+            if (activeCollisionProfile != null
+                && collisionVisual != null
+                && collisionVisual.sprite != null)
+            {
+                return activeCollisionProfile.ContainsInteractionPoint(
+                    collisionVisual.sprite,
+                    collisionVisual.transform,
+                    worldPoint);
+            }
+
+            return mainCollider != null
+                && mainCollider.enabled
+                && mainCollider.OverlapPoint(worldPoint);
         }
 
         private float GetPivotToBottomOffset()
         {
-            // Y 오프셋 보정 수식 (Y축 위로 올리면 피벗에서 하단 바닥까지의 물리 실측 거리는 그만큼 줄어듦)
+            if (activeCollisionProfile != null
+                && collisionVisual != null
+                && collisionVisual.sprite != null)
+            {
+                float localBottom = activeCollisionProfile.GetVisibleBottomLocalY(
+                    collisionVisual.sprite);
+                float worldBottom = collisionVisual.transform.TransformPoint(
+                    new Vector3(0f, localBottom, 0f)).y;
+                return Mathf.Max(0f, transform.position.y - worldBottom);
+            }
+
+            float rendererBottom = float.PositiveInfinity;
+            SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>(true);
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                SpriteRenderer renderer = renderers[i];
+                if (renderer != null && renderer.enabled && renderer.sprite != null)
+                    rendererBottom = Mathf.Min(rendererBottom, renderer.bounds.min.y);
+            }
+            if (!float.IsPositiveInfinity(rendererBottom))
+                return Mathf.Max(0f, transform.position.y - rendererBottom);
+
             return (height / 2f) - colliderYOffset;
         }
 
@@ -881,12 +942,25 @@ namespace Slainte.Bartending
             edgeCollider.SetPoints(new List<Vector2>(rootPoints));
 
             activeCollisionProfile = profile;
+            collisionVisual = visual;
             glassId = profile.GlassId;
             capacityMl = profile.CapacityMl;
             UpdateLegacyGeometryMetrics(rootPoints);
 
             if (configureContentTriggers)
-                mainCollider = ConfigureContentTriggers(profile, visual);
+            {
+                ConfigureContentTriggers(profile, visual);
+                mainCollider = edgeCollider;
+            }
+
+            if (Application.isPlaying)
+            {
+                interactionOrder = BartendingItemOrder.Attach(
+                    gameObject,
+                    mainCollider,
+                    liquidTracker,
+                    ContainsInteractionPoint);
+            }
 
             liquidTracker?.ConfigureServingStyle(glassId);
             liquidTracker?.RefreshCollisionGeometry();
@@ -900,7 +974,7 @@ namespace Slainte.Bartending
             for (int i = 0; i < rootBoxes.Length; i++)
                 rootBoxes[i].enabled = false;
 
-            int triggerCount = profile.ContentTriggersNormalized.Count;
+            int triggerCount = profile.ContentTriggerPixels.Count;
             BoxCollider2D primary = null;
             for (int i = 0; i < triggerCount; i++)
             {

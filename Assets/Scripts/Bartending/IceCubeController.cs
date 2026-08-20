@@ -11,6 +11,8 @@ namespace Slainte.Bartending
         private Collider2D cubeCollider;
         private Camera inputCamera;
         private BartendingItemOrder interactionOrder;
+        private SpriteRenderer[] visualRenderers;
+        private int[] freeSortingOrders;
         private VesselLiquidTracker vesselOwner;
         private Vector2 dragOffset;
         private float configuredGravityScale = 1f;
@@ -91,6 +93,52 @@ namespace Slainte.Bartending
             }
         }
 
+        public void ApplyVisualSprite(Sprite sprite)
+        {
+            if (sprite == null)
+                return;
+
+            EnsureComponents();
+            SpriteRenderer renderer = GetComponentInChildren<SpriteRenderer>(true);
+            if (renderer == null)
+            {
+                renderer = gameObject.AddComponent<SpriteRenderer>();
+                renderer.sortingOrder = 18;
+            }
+            renderer.sprite = sprite;
+            renderer.color = Color.white;
+            renderer.enabled = true;
+            CacheSortingOrders();
+        }
+
+        public void ReleaseFromSource(
+            Vector2 worldPosition,
+            Vector2 initialVelocity,
+            float initialAngularVelocity = 0f)
+        {
+            EnsureComponents();
+            ReleaseVesselOwner(vesselOwner);
+            isDragging = false;
+            dragOffset = Vector2.zero;
+            colliderWasTrigger = false;
+            if (cubeCollider != null)
+                cubeCollider.isTrigger = false;
+
+            transform.position = new Vector3(
+                worldPosition.x,
+                worldPosition.y,
+                transform.position.z);
+            if (body != null)
+            {
+                body.bodyType = RigidbodyType2D.Dynamic;
+                body.gravityScale = configuredGravityScale;
+                body.position = worldPosition;
+                body.linearVelocity = initialVelocity;
+                body.angularVelocity = initialAngularVelocity;
+                body.WakeUp();
+            }
+        }
+
         internal bool TryAssignVesselOwner(VesselLiquidTracker owner)
         {
             if (owner == null || isDragging)
@@ -102,6 +150,7 @@ namespace Slainte.Bartending
 
             vesselOwner = owner;
             owner.RegisterOwnedIceCube(this);
+            SetContainedSortingOrder();
             VesselLiquidTracker.RefreshIceIsolation(this);
             return true;
         }
@@ -114,6 +163,7 @@ namespace Slainte.Bartending
             VesselLiquidTracker previous = vesselOwner;
             vesselOwner = null;
             previous.UnregisterOwnedIceCube(this);
+            RestoreFreeSortingOrder();
             VesselLiquidTracker.RefreshIceIsolation(this);
         }
 
@@ -153,6 +203,31 @@ namespace Slainte.Bartending
         private void Awake()
         {
             EnsureComponents();
+            CacheSortingOrders();
+        }
+
+        private void CacheSortingOrders()
+        {
+            visualRenderers = GetComponentsInChildren<SpriteRenderer>(true);
+            freeSortingOrders = new int[visualRenderers.Length];
+            for (int i = 0; i < visualRenderers.Length; i++)
+                freeSortingOrders[i] = visualRenderers[i].sortingOrder;
+        }
+
+        private void SetContainedSortingOrder()
+        {
+            if (visualRenderers == null || freeSortingOrders == null)
+                CacheSortingOrders();
+            for (int i = 0; i < visualRenderers.Length; i++)
+                visualRenderers[i].sortingOrder = Mathf.Min(freeSortingOrders[i], 13);
+        }
+
+        private void RestoreFreeSortingOrder()
+        {
+            if (visualRenderers == null || freeSortingOrders == null)
+                return;
+            for (int i = 0; i < visualRenderers.Length && i < freeSortingOrders.Length; i++)
+                visualRenderers[i].sortingOrder = freeSortingOrders[i];
         }
 
         private void OnEnable()

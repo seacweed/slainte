@@ -19,6 +19,7 @@ namespace Slainte.Bartending
         public List<LiquidPortion> portions = new();
         public float temperatureC = 20f;
         public CocktailTechnique techniques = CocktailTechnique.None;
+        public bool wasShakenWithIce;
 
         public float TotalVolumeMl
         {
@@ -36,6 +37,7 @@ namespace Slainte.Bartending
             portions.Clear();
             temperatureC = sourceItem != null ? sourceItem.servingTemperatureC : 20f;
             techniques = CocktailTechnique.None;
+            wasShakenWithIce = false;
 
             if (sourceItem == null || volumeMl <= 0f)
                 return;
@@ -111,6 +113,9 @@ namespace Slainte.Bartending
             CocktailTechnique combinedTechniques = left.techniques | right.techniques;
             left.techniques = combinedTechniques;
             right.techniques = combinedTechniques;
+            bool combinedShakenWithIce = left.wasShakenWithIce || right.wasShakenWithIce;
+            left.wasShakenWithIce = combinedShakenWithIce;
+            right.wasShakenWithIce = combinedShakenWithIce;
 
             List<ItemDef> keys = GetSharedItemBuffer();
             AddKeys(left, keys);
@@ -190,7 +195,8 @@ namespace Slainte.Bartending
                 return TotalVolumeMl > tolerance;
 
             if (Mathf.Abs(temperatureC - other.temperatureC) > 0.1f
-                || techniques != other.techniques)
+                || techniques != other.techniques
+                || wasShakenWithIce != other.wasShakenWithIce)
                 return true;
 
             float myTotal = TotalVolumeMl;

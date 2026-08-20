@@ -7,6 +7,9 @@ namespace Slainte.Bartending
     [CreateAssetMenu(menuName = "Bartending/Business Scene Settings")]
     public sealed class BusinessBartendingSettings : ScriptableObject
     {
+        [Header("Tool Cabinet")]
+        public bool useToolCabinet;
+
         [Header("Prefabs")]
         public GameObject beakerPrefab;
         [Tooltip("스트레이너가 뚜껑에 결합된 코블러 셰이커 프리팹입니다.")]
@@ -89,6 +92,10 @@ namespace Slainte.Bartending
         [Range(0f, 0.25f)] public float liquidMetaballEdgeSoftness = 0.03f;
         [Range(0f, 1f)] public float liquidMinimumVisibleAlpha = 0.05f;
         public int liquidSortingOrder = 12;
+
+        [Header("Liquid/Ice Interaction")]
+        [Tooltip("Whether liquid particles physically collide with ice cubes during bartending.")]
+        public bool liquidIceCollisionEnabled = true;
 
         [Header("Ice")]
         [Min(0.1f)] public float iceBinWidth = 2.2f;

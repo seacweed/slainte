@@ -640,6 +640,7 @@ namespace Slainte.Bartending.EditorTools
         {
             GameObject slotObject = new GameObject("SlotOccupancyContract");
             GameObject beakerObject = new GameObject("SlotOccupancyItem");
+            ToolDef cabinetDefinition = ScriptableObject.CreateInstance<ToolDef>();
             try
             {
                 slotObject.AddComponent<SpriteRenderer>();
@@ -647,6 +648,8 @@ namespace Slainte.Bartending.EditorTools
                 SlotController slot = slotObject.AddComponent<SlotController>();
                 beakerObject.AddComponent<EdgeCollider2D>();
                 beakerObject.AddComponent<BoxCollider2D>();
+                SpriteRenderer itemRenderer = beakerObject.AddComponent<SpriteRenderer>();
+                Rigidbody2D itemBody = beakerObject.AddComponent<Rigidbody2D>();
                 BeakerController beaker = beakerObject.AddComponent<BeakerController>();
                 int events = 0;
                 IBartendingItem lastItem = null;
@@ -665,9 +668,39 @@ namespace Slainte.Bartending.EditorTools
                 Require(!slot.IsOccupied && slot.OccupiedItem == null && lastItem == null,
                     "Slot vacate event did not clear the vessel.");
                 Require(events == 2, "Slot occupancy contract emitted an unexpected event count.");
+
+                cabinetDefinition.id = "tool_slot_contract";
+                cabinetDefinition.kind = ToolKind.Jigger;
+                ToolCabinetRuntimeTag cabinetTag =
+                    beakerObject.AddComponent<ToolCabinetRuntimeTag>();
+                cabinetTag.Configure(cabinetDefinition);
+                cabinetTag.BindCabinetSlot(slot);
+                Require(cabinetTag.Store(beaker),
+                    "Cabinet slot rejected its assigned runtime item.");
+                Require(cabinetTag.IsInCabinet
+                        && slot.IsOccupied
+                        && ReferenceEquals(slot.OccupiedItem, beaker),
+                    "Cabinet storage did not use the normal slot occupancy contract.");
+                Require(!itemBody.simulated
+                        && !itemRenderer.enabled
+                        && !beakerObject.GetComponent<BoxCollider2D>().enabled,
+                    "Stored cabinet item did not suspend physics and presentation.");
+                Require(cabinetTag.TakeFromCabinet(beaker),
+                    "Cabinet slot did not release its occupied runtime item.");
+                Require(!cabinetTag.IsInCabinet
+                        && !slot.IsOccupied
+                        && slot.OccupiedItem == null,
+                    "Cabinet pickup did not vacate the normal slot contract.");
+                Require(itemBody.simulated
+                        && itemRenderer.enabled
+                        && beakerObject.GetComponent<BoxCollider2D>().enabled,
+                    "Cabinet pickup did not restore physics and presentation states.");
+                Require(events == 4,
+                    "Cabinet slot transitions emitted an unexpected event count.");
             }
             finally
             {
+                UnityEngine.Object.DestroyImmediate(cabinetDefinition);
                 UnityEngine.Object.DestroyImmediate(beakerObject);
                 UnityEngine.Object.DestroyImmediate(slotObject);
             }
