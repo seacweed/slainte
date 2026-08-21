@@ -14,7 +14,8 @@ namespace Slainte.Bartending
 
     [ExecuteInEditMode]
     [RequireComponent(typeof(EdgeCollider2D), typeof(Collider2D))]
-    public class BeakerController : MonoBehaviour, IBartendingItem, IPointerAnchoredPickup
+    public class BeakerController : MonoBehaviour, IBartendingItem, IPointerAnchoredPickup,
+        IBartendingViewTransitionParticipant
     {
         [Header("비커 크기 및 형태 설정")]
         [Min(0.1f)] public float bottomWidth = 1.4f;
@@ -65,6 +66,7 @@ namespace Slainte.Bartending
         private float rotationHorizontalScreenPadding = 12f;
 
         private SlotController currentSlot; // 현재 점유 중인 슬롯 레퍼런스
+        private bool viewTransitionSuspended;
         private Vector3 dragVelocity = Vector3.zero;
 
         private SpriteRenderer[] childRenderers;
@@ -151,6 +153,7 @@ namespace Slainte.Bartending
         private void Update()
         {
             if (!Application.isPlaying) return;
+            if (viewTransitionSuspended) return;
 
             if (!UpdatePointerSynchronization())
                 HandleInput();
@@ -160,8 +163,68 @@ namespace Slainte.Bartending
         {
             if (!Application.isPlaying)
                 return;
+            if (viewTransitionSuspended)
+                return;
 
             ApplyPendingPhysicsMotion();
+        }
+
+        public void SuspendForViewTransition()
+        {
+            if (viewTransitionSuspended)
+                return;
+
+            viewTransitionSuspended = true;
+            liquidTracker?.BeginExternalMotion();
+            CancelPendingPhysicsMotion();
+            pointerSyncPending = false;
+            completeReturnAfterPointerSync = false;
+            pointerSyncFramesRemaining = 0;
+        }
+
+        public void ResumeAfterViewTransition()
+        {
+            if (!viewTransitionSuspended)
+                return;
+
+            CancelPendingPhysicsMotion();
+            liquidTracker?.EndExternalMotion();
+            viewTransitionSuspended = false;
+            if (!IsPickedUp)
+                return;
+
+            if (mainCamera == null)
+                mainCamera = Camera.main;
+            if (!BartendingViewport.TryGetPointerWorldPosition(
+                    mainCamera,
+                    Input.mousePosition,
+                    out Vector3 pointerWorld))
+            {
+                return;
+            }
+
+            Vector3 pivotWorld = body != null
+                ? (Vector3)body.position
+                : transform.position;
+            pointerPivotOffset = pivotWorld - pointerWorld;
+            pointerPivotOffset.z = 0f;
+        }
+
+        public void UpdateForViewTransition(Vector3 pointerWorld)
+        {
+            if (!viewTransitionSuspended
+                || (currentState != BeakerState.PickedUp
+                    && currentState != BeakerState.Returning))
+            {
+                return;
+            }
+
+            Vector3 targetPivot = pointerWorld + pointerPivotOffset;
+            Vector3 targetPosition = BartendingPointerAnchor.CalculateRootPosition(
+                transform.position,
+                transform.position,
+                targetPivot);
+            MoveVesselAndContents(targetPosition);
         }
 
         private void OnDisable()
@@ -494,6 +557,12 @@ namespace Slainte.Bartending
 
             while (timeElapsed < returnSpeed)
             {
+                if (viewTransitionSuspended)
+                {
+                    yield return null;
+                    continue;
+                }
+
                 timeElapsed += Time.deltaTime;
                 float normalizedTime = Mathf.Clamp01(timeElapsed / returnSpeed);
                 float curveValue = returnEase.Evaluate(normalizedTime);

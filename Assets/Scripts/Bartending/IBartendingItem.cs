@@ -18,6 +18,13 @@ namespace Slainte.Bartending
         void OnPickedUpAt(Vector3 pointerWorld);
     }
 
+    public interface IBartendingViewTransitionParticipant
+    {
+        void SuspendForViewTransition();
+        void UpdateForViewTransition(Vector3 pointerWorld);
+        void ResumeAfterViewTransition();
+    }
+
     /// <summary>
     /// Defines interaction order and a tiny visual Z tie-break between items.
     /// It deliberately does not change renderer sorting orders, liquid presentation,

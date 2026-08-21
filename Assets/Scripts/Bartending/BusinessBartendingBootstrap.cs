@@ -9,6 +9,14 @@ namespace Slainte.Bartending
 {
     public sealed class BusinessBartendingBootstrap : MonoBehaviour
     {
+        private struct SuspendedBodyState
+        {
+            public Rigidbody2D body;
+            public bool simulated;
+            public Vector2 linearVelocity;
+            public float angularVelocity;
+        }
+
         private const string SceneName = "BusinessScene";
         private const string SettingsResourcePath = "Bartending/BusinessBartendingSettings";
 
@@ -45,6 +53,13 @@ namespace Slainte.Bartending
         private IceBinController cabinetIceBucket;
         private Transform cabinetSlotRoot;
         private Transform cabinetPickupAnchor;
+        private FrontCameraRig frontCameraRig;
+        private Coroutine resumeViewTransitionRoutine;
+        private bool viewTransitionSuspended;
+        private readonly List<SuspendedBodyState> suspendedBodyStates =
+            new List<SuspendedBodyState>();
+        private readonly List<IBartendingViewTransitionParticipant> viewTransitionParticipants =
+            new List<IBartendingViewTransitionParticipant>();
 
         public bool IsSessionReady => sessionRoot != null && builtSession != null;
         public int SessionBottleCount => sessionBottles.Count;
@@ -114,6 +129,14 @@ namespace Slainte.Bartending
                 Debug.LogError("영업 제조 화면에서 제조 모드를 관리할 GameModeManager가 필요합니다.");
                 enabled = false;
                 return;
+            }
+
+            frontCameraRig = FindInScene<FrontCameraRig>(scene);
+            if (frontCameraRig != null)
+            {
+                frontCameraRig.MoveStarted += HandleFrontWorldMoveStarted;
+                frontCameraRig.MoveUpdated += HandleFrontWorldMoveUpdated;
+                frontCameraRig.MoveCompleted += HandleFrontWorldMoveCompleted;
             }
 
             CaptureSlotLayoutTemplate(scene);
@@ -202,10 +225,14 @@ namespace Slainte.Bartending
                 sourceCameraMask = sourceCamera.cullingMask;
                 sourceCamera.cullingMask &= ~(1 << sessionRenderLayer);
             }
+
+            if (frontCameraRig != null && frontCameraRig.IsAnimating)
+                SuspendSessionForViewTransition();
         }
 
         private void DestroySession(bool clearBottleSelections)
         {
+            ClearViewTransitionState();
             UnregisterAllServingGlasses();
             if (snapRoutine != null)
             {
@@ -255,6 +282,143 @@ namespace Slainte.Bartending
             RestoreSessionOverrides();
             toolCabinet?.NotifySessionDestroyed();
             SessionDestroyed?.Invoke();
+        }
+
+        private void HandleFrontWorldMoveStarted()
+        {
+            SuspendSessionForViewTransition();
+        }
+
+        private void HandleFrontWorldMoveCompleted()
+        {
+            if (!viewTransitionSuspended)
+                return;
+
+            if (resumeViewTransitionRoutine != null)
+                StopCoroutine(resumeViewTransitionRoutine);
+            resumeViewTransitionRoutine = StartCoroutine(ResumeSessionAfterViewTransition());
+        }
+
+        private void HandleFrontWorldMoveUpdated()
+        {
+            if (!viewTransitionSuspended
+                || sessionViewport == null
+                || !sessionViewport.TryMapPointerToWorldWhileSuspended(
+                    Input.mousePosition,
+                    out Vector3 pointerWorld))
+            {
+                return;
+            }
+
+            for (int i = 0; i < viewTransitionParticipants.Count; i++)
+            {
+                IBartendingViewTransitionParticipant participant =
+                    viewTransitionParticipants[i];
+                if (participant is MonoBehaviour behaviour
+                    && behaviour != null
+                    && behaviour.isActiveAndEnabled)
+                {
+                    participant.UpdateForViewTransition(pointerWorld);
+                }
+            }
+        }
+
+        private void SuspendSessionForViewTransition()
+        {
+            if (resumeViewTransitionRoutine != null)
+            {
+                StopCoroutine(resumeViewTransitionRoutine);
+                resumeViewTransitionRoutine = null;
+            }
+
+            if (viewTransitionSuspended || sessionWorld == null)
+                return;
+
+            viewTransitionSuspended = true;
+            sessionViewport?.SetInputSuspended(true);
+
+            viewTransitionParticipants.Clear();
+            MonoBehaviour[] behaviours =
+                sessionWorld.GetComponentsInChildren<MonoBehaviour>(true);
+            for (int i = 0; i < behaviours.Length; i++)
+            {
+                if (behaviours[i] == null || !behaviours[i].isActiveAndEnabled)
+                    continue;
+                if (behaviours[i] is not IBartendingViewTransitionParticipant participant)
+                    continue;
+
+                viewTransitionParticipants.Add(participant);
+                participant.SuspendForViewTransition();
+            }
+
+            suspendedBodyStates.Clear();
+            Rigidbody2D[] bodies = sessionWorld.GetComponentsInChildren<Rigidbody2D>(true);
+            for (int i = 0; i < bodies.Length; i++)
+            {
+                Rigidbody2D body = bodies[i];
+                if (body == null || !body.gameObject.activeInHierarchy)
+                    continue;
+
+                suspendedBodyStates.Add(new SuspendedBodyState
+                {
+                    body = body,
+                    simulated = body.simulated,
+                    linearVelocity = body.linearVelocity,
+                    angularVelocity = body.angularVelocity
+                });
+                if (body.simulated)
+                    body.simulated = false;
+            }
+        }
+
+        private IEnumerator ResumeSessionAfterViewTransition()
+        {
+            yield return null;
+
+            Canvas.ForceUpdateCanvases();
+            sessionViewport?.SetInputSuspended(false);
+
+            for (int i = 0; i < suspendedBodyStates.Count; i++)
+            {
+                SuspendedBodyState state = suspendedBodyStates[i];
+                if (state.body == null)
+                    continue;
+
+                state.body.simulated = state.simulated;
+                if (state.simulated)
+                {
+                    state.body.linearVelocity = state.linearVelocity;
+                    state.body.angularVelocity = state.angularVelocity;
+                }
+            }
+
+            Physics2D.SyncTransforms();
+            viewTransitionSuspended = false;
+            for (int i = 0; i < viewTransitionParticipants.Count; i++)
+            {
+                IBartendingViewTransitionParticipant participant =
+                    viewTransitionParticipants[i];
+                if (participant is MonoBehaviour behaviour && behaviour != null)
+                    participant.ResumeAfterViewTransition();
+            }
+
+            suspendedBodyStates.Clear();
+            viewTransitionParticipants.Clear();
+            resumeViewTransitionRoutine = null;
+        }
+
+        private void ClearViewTransitionState()
+        {
+            if (resumeViewTransitionRoutine != null)
+            {
+                StopCoroutine(resumeViewTransitionRoutine);
+                resumeViewTransitionRoutine = null;
+            }
+
+            sessionViewport?.SetInputSuspended(false);
+            suspendedBodyStates.Clear();
+            viewTransitionParticipants.Clear();
+            viewTransitionSuspended = false;
         }
 
         private IEnumerator CaptureTargetTracker(GlassController glass)
@@ -732,6 +896,50 @@ namespace Slainte.Bartending
             selectedBottleDefinitions.Add(shelfDefinition);
             targetSlot.Occupy(bottle);
             bottle.SnapToSlot(targetSlot.transform, targetSlot);
+            return true;
+        }
+
+        public bool TryReturnHeldBottleToShelf(out string failure)
+        {
+            failure = string.Empty;
+            BottleController heldBottle = null;
+            for (int i = sessionBottles.Count - 1; i >= 0; i--)
+            {
+                BottleController candidate = sessionBottles[i];
+                if (candidate != null && candidate.IsPickedUp)
+                {
+                    heldBottle = candidate;
+                    break;
+                }
+            }
+
+            if (heldBottle == null)
+                return false;
+
+            if (modeManager == null
+                || modeManager.CurrentMode != GameMode.CraftingMode
+                || sessionWorld == null)
+            {
+                failure = "칵테일 제작 중에만 술병을 반환할 수 있습니다.";
+                return false;
+            }
+
+            ItemDef item = heldBottle.BottleData;
+            LiquorBottleDef shelfDefinition = item != null
+                ? FindSelectedDefinition(item.id)
+                : null;
+            if (shelfDefinition == null)
+            {
+                failure = "들고 있는 재료 병에 연결된 술장 데이터를 찾지 못했습니다.";
+                return false;
+            }
+
+            heldBottle.CapacityChanged -= HandleBottleCapacityChanged;
+            sessionBottles.Remove(heldBottle);
+            bottleReserveAmounts.Remove(heldBottle);
+            selectedBottleDefinitions.Remove(shelfDefinition);
+            heldBottle.PrepareForShelfReturn();
+            Destroy(heldBottle.gameObject);
             return true;
         }
 
@@ -1320,6 +1528,14 @@ namespace Slainte.Bartending
 
         private void OnDestroy()
         {
+            if (frontCameraRig != null)
+            {
+                frontCameraRig.MoveStarted -= HandleFrontWorldMoveStarted;
+                frontCameraRig.MoveUpdated -= HandleFrontWorldMoveUpdated;
+                frontCameraRig.MoveCompleted -= HandleFrontWorldMoveCompleted;
+                frontCameraRig = null;
+            }
+
             if (modeManager != null)
             {
                 modeManager.OnModeChanged -= HandleModeChanged;

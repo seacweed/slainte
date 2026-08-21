@@ -19,7 +19,8 @@ namespace Slainte.Bartending
     }
 
     [RequireComponent(typeof(SpriteRenderer), typeof(Collider2D))]
-    public class BottleController : MonoBehaviour, IBartendingItem
+    public class BottleController : MonoBehaviour, IBartendingItem,
+        IBartendingViewTransitionParticipant
     {
         [Header("Item Data")]
         [SerializeField] private ItemDef bottleData;
@@ -97,6 +98,7 @@ namespace Slainte.Bartending
         private Vector2 pointerSyncScreenPosition;
         private Vector3 pointerSyncPivotWorld;
         private Vector3 pointerPivotOffset;
+        private bool viewTransitionSuspended;
 
         private SlotController currentSlot; // 현재 안착되어 있는 슬롯 레퍼런스
         private Vector3 dragVelocity = Vector3.zero;
@@ -282,10 +284,76 @@ namespace Slainte.Bartending
 
         private void Update()
         {
+            if (viewTransitionSuspended)
+                return;
+
             bool synchronizingPointer = UpdatePointerSynchronization();
             if (!synchronizingPointer)
                 HandleInput();
             HandlePouring();
+        }
+
+        public void SuspendForViewTransition()
+        {
+            if (viewTransitionSuspended)
+                return;
+
+            viewTransitionSuspended = true;
+            pourTimer = 0f;
+            pointerSyncPending = false;
+            completeReturnAfterPointerSync = false;
+            pointerSyncFramesRemaining = 0;
+        }
+
+        public void ResumeAfterViewTransition()
+        {
+            if (!viewTransitionSuspended)
+                return;
+
+            viewTransitionSuspended = false;
+            if (!IsPickedUp)
+                return;
+
+            if (mainCamera == null)
+                mainCamera = Camera.main;
+            if (!BartendingViewport.TryGetPointerWorldPosition(
+                    mainCamera,
+                    Input.mousePosition,
+                    out Vector3 pointerWorld))
+            {
+                return;
+            }
+
+            Vector3 pivotWorld = hasRotationPivotAnchor
+                ? rotationPivotAnchorWorld
+                : GetConfiguredRotationPivotWorldPosition();
+            pointerPivotOffset = pivotWorld - pointerWorld;
+            pointerPivotOffset.z = 0f;
+        }
+
+        public void UpdateForViewTransition(Vector3 pointerWorld)
+        {
+            if (!viewTransitionSuspended)
+                return;
+
+            if (currentState == BottleState.Returning)
+            {
+                MoveToPointerPosition(pointerWorld);
+                return;
+            }
+            if (currentState != BottleState.PickedUp)
+                return;
+
+            Vector3 targetPivot = pointerWorld + pointerPivotOffset;
+            Vector3 targetPosition = BartendingPointerAnchor.CalculateRootPosition(
+                transform.position,
+                GetConfiguredRotationPivotWorldPosition(),
+                targetPivot);
+            Rigidbody2D body = GetComponent<Rigidbody2D>();
+            if (body != null)
+                body.position = targetPosition;
+            else
+                transform.position = targetPosition;
         }
 
         private void OnDisable()
@@ -628,6 +696,9 @@ namespace Slainte.Bartending
 
         private void TryDropBottle()
         {
+            if (LiquorShelfUI.TryReturnHeldBottle(Input.mousePosition))
+                return;
+
             if (!BartendingViewport.TryGetPointerWorldPosition(mainCamera, Input.mousePosition, out Vector3 mousePos))
             {
                 return;
@@ -697,6 +768,18 @@ namespace Slainte.Bartending
             TryDropBottle();
         }
 
+        public void PrepareForShelfReturn()
+        {
+            if (currentSlot != null)
+            {
+                currentSlot.Vacate();
+                currentSlot = null;
+            }
+
+            ReleaseBottle();
+            gameObject.SetActive(false);
+        }
+
         private void ReleaseBottle()
         {
             currentState = BottleState.Idle;
@@ -756,6 +839,12 @@ namespace Slainte.Bartending
 
             while (timeElapsed < returnSpeed)
             {
+                if (viewTransitionSuspended)
+                {
+                    yield return null;
+                    continue;
+                }
+
                 timeElapsed += Time.deltaTime;
                 float normalizedTime = Mathf.Clamp01(timeElapsed / returnSpeed);
                 float curveValue = returnEase.Evaluate(normalizedTime);

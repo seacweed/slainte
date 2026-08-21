@@ -118,6 +118,8 @@ namespace Slainte.Bartending
         private readonly HashSet<IceCubeController> iceCubes = new();
         private readonly HashSet<IceCubeController> ownedIceCubes = new();
         private readonly HashSet<IceCubeController> pendingIceReleases = new();
+        private readonly HashSet<LiquidParticleData> externalMotionParticles = new();
+        private readonly HashSet<IceCubeController> externalMotionIceCubes = new();
         private readonly List<Collider2D> overlapResults = new();
         private readonly List<LiquidParticleData> ownerReleaseBuffer = new();
         private readonly List<IceCubeController> iceReleaseBuffer = new();
@@ -128,6 +130,7 @@ namespace Slainte.Bartending
         private string servingGlassId = string.Empty;
         private bool hasIce;
         private int interactionPriority;
+        private bool externalMotionContentsCaptured;
 
         [Header("Debug View")]
         [SerializeField] private bool drawDebugGizmos = false;
@@ -248,6 +251,7 @@ namespace Slainte.Bartending
             ownedIceCubes.Clear();
             iceCubes.Clear();
             pendingIceReleases.Clear();
+            EndExternalMotion();
             UnregisterVessel(this);
         }
 
@@ -327,32 +331,88 @@ namespace Slainte.Bartending
             hasIce = value;
         }
 
+        public void BeginExternalMotion()
+        {
+            Cleanup();
+            RefreshTrackedParticles();
+            RefreshTrackedIceCubes();
+
+            externalMotionParticles.Clear();
+            foreach (LiquidParticleData particle in particles)
+            {
+                if (!IsInvalidParticle(particle))
+                    externalMotionParticles.Add(particle);
+            }
+
+            externalMotionIceCubes.Clear();
+            foreach (IceCubeController iceCube in iceCubes)
+            {
+                if (!IsInvalidIceCube(iceCube) && !iceCube.IsDragging)
+                    externalMotionIceCubes.Add(iceCube);
+            }
+
+            externalMotionContentsCaptured = true;
+        }
+
+        public void EndExternalMotion()
+        {
+            externalMotionContentsCaptured = false;
+            externalMotionParticles.Clear();
+            externalMotionIceCubes.Clear();
+        }
+
         public void TranslateTrackedParticles(Vector2 delta)
         {
             if (delta.sqrMagnitude <= 0.000001f)
                 return;
 
+            if (externalMotionContentsCaptured)
+            {
+                TranslateExternalMotionContents(delta);
+                return;
+            }
+
             Cleanup();
             RefreshTrackedParticles();
 
             foreach (LiquidParticleData particle in particles)
-            {
-                if (particle == null)
-                    continue;
-
-                Rigidbody2D particleBody = particle.GetComponent<Rigidbody2D>();
-                if (particleBody != null)
-                {
-                    particleBody.position += delta;
-                    particleBody.WakeUp();
-                }
-                else
-                {
-                    particle.transform.position += (Vector3)delta;
-                }
-            }
+                TranslateParticle(particle, delta);
 
             TranslateTrackedIceCubes(delta);
+        }
+
+        private void TranslateExternalMotionContents(Vector2 delta)
+        {
+            externalMotionParticles.RemoveWhere(IsInvalidParticle);
+            foreach (LiquidParticleData particle in externalMotionParticles)
+                TranslateParticle(particle, delta);
+
+            externalMotionIceCubes.RemoveWhere(IsInvalidIceCube);
+            foreach (IceCubeController iceCube in externalMotionIceCubes)
+                iceCube?.Translate(delta);
+        }
+
+        private static void TranslateParticle(LiquidParticleData particle, Vector2 delta)
+        {
+            if (particle == null)
+                return;
+
+            Rigidbody2D particleBody = particle.GetComponent<Rigidbody2D>();
+            if (particleBody != null)
+            {
+                Vector2 targetPosition = particleBody.position + delta;
+                particleBody.position = targetPosition;
+                particle.transform.position = new Vector3(
+                    targetPosition.x,
+                    targetPosition.y,
+                    particle.transform.position.z);
+                if (particleBody.simulated)
+                    particleBody.WakeUp();
+            }
+            else
+            {
+                particle.transform.position += (Vector3)delta;
+            }
         }
 
         private void TranslateTrackedIceCubes(Vector2 delta)

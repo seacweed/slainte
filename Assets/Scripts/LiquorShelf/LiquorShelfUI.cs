@@ -2,11 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Slainte.Bartending;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class LiquorShelfUI : MonoBehaviour
 {
+    public static LiquorShelfUI Active { get; private set; }
+
     [Serializable]
     private struct CategoryEntry
     {
@@ -68,6 +71,7 @@ public class LiquorShelfUI : MonoBehaviour
     private bool                                  _deliverySessionActive;
     private int                                   _deliveryTransitionVersion;
     private Coroutine                             _deliveryCharacterPresentation;
+    private int                                   _bottleReturnFrame = -1;
 
     public bool IsDeliveryAvailable => _deliveryAvailable;
     public bool IsDeliveryOpen => _deliveryPanel != null && _deliveryPanel.IsVisible;
@@ -82,6 +86,7 @@ public class LiquorShelfUI : MonoBehaviour
 
     void Awake()
     {
+        Active = this;
         if (recipeBook == null)
             recipeBook = FindFirstObjectByType<RecipeBookUI>(FindObjectsInactive.Include);
 
@@ -93,6 +98,57 @@ public class LiquorShelfUI : MonoBehaviour
         BuildCategoryButtons();
         BuildCategorySlots();
         BuildDelivery();
+    }
+
+    public static bool TryReturnHeldBottle(Vector2 screenPosition)
+    {
+        LiquorShelfUI shelf = Active;
+        if (shelf == null)
+            return false;
+        if (shelf._bottleReturnFrame == Time.frameCount)
+            return true;
+        if (!shelf.ContainsReturnPoint(screenPosition))
+            return false;
+
+        BusinessBartendingBootstrap bartending =
+            FindFirstObjectByType<BusinessBartendingBootstrap>();
+        if (bartending == null)
+            return false;
+
+        if (!bartending.TryReturnHeldBottleToShelf(out string failure))
+        {
+            if (!string.IsNullOrWhiteSpace(failure))
+            {
+                Debug.LogWarning("[LiquorShelf] " + failure);
+                return true;
+            }
+
+            return false;
+        }
+
+        shelf._bottleReturnFrame = Time.frameCount;
+        shelf.RefreshShelfSlots();
+        return true;
+    }
+
+    private bool ContainsReturnPoint(Vector2 screenPosition)
+    {
+        if (!_isOpen
+            || !_interactable
+            || shelfPanelRect == null
+            || !shelfPanelRect.gameObject.activeInHierarchy)
+        {
+            return false;
+        }
+
+        Canvas canvas = shelfPanelRect.GetComponentInParent<Canvas>();
+        Camera canvasCamera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
+            ? canvas.worldCamera
+            : null;
+        return RectTransformUtility.RectangleContainsScreenPoint(
+            shelfPanelRect,
+            screenPosition,
+            canvasCamera);
     }
 
     private void BuildCategoryButtons()
@@ -288,6 +344,12 @@ public class LiquorShelfUI : MonoBehaviour
             foreach (var slot in entry.container.GetComponentsInChildren<LiquorBottleSlotUI>(true))
                 slot.Refresh();
         }
+    }
+
+    private void OnDestroy()
+    {
+        if (Active == this)
+            Active = null;
     }
 
     private void HandleDeliveryPurchased()

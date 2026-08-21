@@ -175,8 +175,14 @@ namespace Slainte.Bartending
             EnsureComponents();
             if (body != null)
             {
-                body.position += delta;
-                body.WakeUp();
+                Vector2 targetPosition = body.position + delta;
+                body.position = targetPosition;
+                transform.position = new Vector3(
+                    targetPosition.x,
+                    targetPosition.y,
+                    transform.position.z);
+                if (body.simulated)
+                    body.WakeUp();
             }
             else
             {

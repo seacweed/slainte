@@ -23,6 +23,9 @@ public class FrontCameraRig : MonoBehaviour, ICameraInputHandler
     [SerializeField] RectTransform[] verticalFollowPanels;
 
     public bool IsAnimating => _animating;
+    public event System.Action MoveStarted;
+    public event System.Action MoveUpdated;
+    public event System.Action MoveCompleted;
 
     bool  _drawerOpen = false;
     float _focusX     = 0f;
@@ -51,6 +54,7 @@ public class FrontCameraRig : MonoBehaviour, ICameraInputHandler
         float k = ease.Evaluate(Mathf.Clamp01(_t));
         frontWorld.anchoredPosition = Vector2.LerpUnclamped(_fromPos, _toPos, k);
         SyncVerticalFollow();
+        MoveUpdated?.Invoke();
 
         if (_t >= 1f)
         {
@@ -59,6 +63,7 @@ public class FrontCameraRig : MonoBehaviour, ICameraInputHandler
             _animating = false;
             _onMoveComplete?.Invoke();
             _onMoveComplete = null;
+            MoveCompleted?.Invoke();
         }
     }
 
@@ -137,10 +142,23 @@ public class FrontCameraRig : MonoBehaviour, ICameraInputHandler
 
     private void BeginMove(Vector2 target, System.Action onComplete = null)
     {
+        bool wasAnimating = _animating;
         _fromPos        = frontWorld.anchoredPosition;
         _toPos          = target;
         _t              = 0f;
         _animating      = true;
         _onMoveComplete = onComplete;
+        if (!wasAnimating)
+            MoveStarted?.Invoke();
+    }
+
+    private void OnDisable()
+    {
+        if (!_animating)
+            return;
+
+        _animating = false;
+        _onMoveComplete = null;
+        MoveCompleted?.Invoke();
     }
 }

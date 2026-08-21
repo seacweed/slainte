@@ -85,6 +85,12 @@ public class LiquorBottleSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerE
             return;
         }
 
+        if (LiquorShelfUI.TryReturnHeldBottle(eventData.position))
+        {
+            Refresh();
+            return;
+        }
+
         BusinessBartendingBootstrap bartending =
             FindFirstObjectByType<BusinessBartendingBootstrap>();
         if (bartending == null)

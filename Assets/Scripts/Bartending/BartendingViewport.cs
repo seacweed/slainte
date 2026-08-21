@@ -20,6 +20,12 @@ namespace Slainte.Bartending
         private Vector3 baseCameraLocalPosition;
         private bool cameraFramingCaptured;
         private bool updatingViewportGeometry;
+        private bool inputSuspended;
+
+        public void SetInputSuspended(bool suspended)
+        {
+            inputSuspended = suspended;
+        }
 
         public void Initialize(
             Camera camera,
@@ -333,8 +339,24 @@ namespace Slainte.Bartending
             return true;
         }
 
-        private bool TryMapPointerToWorld(Vector2 screenPosition, out Vector3 worldPosition)
+        internal bool TryMapPointerToWorldWhileSuspended(
+            Vector2 screenPosition,
+            out Vector3 worldPosition)
         {
+            return TryMapPointerToWorld(screenPosition, out worldPosition, true);
+        }
+
+        private bool TryMapPointerToWorld(
+            Vector2 screenPosition,
+            out Vector3 worldPosition,
+            bool ignoreInputSuspension = false)
+        {
+            if (inputSuspended && !ignoreInputSuspension)
+            {
+                worldPosition = default;
+                return false;
+            }
+
             RectTransform rectTransform = transform as RectTransform;
             if (worldCamera == null || rectTransform == null)
             {
