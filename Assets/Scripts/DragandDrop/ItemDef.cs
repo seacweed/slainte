@@ -64,8 +64,14 @@ public class ItemDef : ScriptableObject
     [Header("Bottle Geometry Override")]
     [Tooltip("활성화하면 스프라이트 교체 후 병 입구와 클릭 콜라이더를 아래 정규화 좌표로 맞춥니다.")]
     public bool overrideBottleGeometry;
+    [Tooltip("클릭 콜라이더와 별개로 병 입구의 액체 생성 위치만 스프라이트별 좌표로 맞춥니다.")]
+    public bool overrideBottleLiquidSpawn;
+    [Tooltip("병 입구 위치는 유지하고 클릭 콜라이더만 스프라이트별 정규화 좌표로 맞춥니다.")]
+    public bool overrideBottleClickCollider;
     [Tooltip("스프라이트 경계의 왼쪽 아래가 (0, 0), 오른쪽 위가 (1, 1)인 병 입구 좌표입니다.")]
     public Vector2 liquidSpawnNormalized = new Vector2(0.5f, 0.98f);
+    [Tooltip("병 입구에서 스프라이트의 위쪽 방향으로 더 이동할 거리입니다. 픽셀 단위이며 입자가 병 안에서 생성되는 것을 방지합니다.")]
+    [Min(0f)] public float liquidSpawnOutwardPixels = 3f;
     [Tooltip("스프라이트 경계 기준 BoxCollider2D 중심 좌표입니다.")]
     public Vector2 colliderCenterNormalized = new Vector2(0.5f, 0.5f);
     [Tooltip("스프라이트 크기에 곱할 BoxCollider2D 크기 비율입니다.")]

@@ -183,27 +183,37 @@ namespace Slainte.Bartending
 
         private void ApplyBottleGeometryOverride()
         {
-            if (!bottleData.overrideBottleGeometry
-                || spriteRenderer == null
+            if (spriteRenderer == null
                 || spriteRenderer.sprite == null)
             {
                 return;
             }
 
             Bounds spriteBounds = spriteRenderer.sprite.bounds;
-            Vector2 mouthNormalized = ClampNormalized(bottleData.liquidSpawnNormalized);
-            if (spriteRenderer.flipX)
-                mouthNormalized.x = 1f - mouthNormalized.x;
-            if (spriteRenderer.flipY)
-                mouthNormalized.y = 1f - mouthNormalized.y;
-
-            if (liquidSpawnPoint != null)
+            bool useConfiguredLiquidSpawn = bottleData.overrideBottleGeometry
+                || bottleData.overrideBottleLiquidSpawn;
+            if (useConfiguredLiquidSpawn && liquidSpawnPoint != null)
             {
+                Vector2 mouthNormalized = ClampNormalized(bottleData.liquidSpawnNormalized);
+                if (spriteRenderer.flipX)
+                    mouthNormalized.x = 1f - mouthNormalized.x;
+                if (spriteRenderer.flipY)
+                    mouthNormalized.y = 1f - mouthNormalized.y;
+
                 Vector3 localMouth = new Vector3(
                     Mathf.Lerp(spriteBounds.min.x, spriteBounds.max.x, mouthNormalized.x),
                     Mathf.Lerp(spriteBounds.min.y, spriteBounds.max.y, mouthNormalized.y),
                     0f);
-                liquidSpawnPoint.position = transform.TransformPoint(localMouth);
+                if (bottleData.overrideBottleLiquidSpawn)
+                {
+                    float pixelsPerUnit = Mathf.Max(1f, spriteRenderer.sprite.pixelsPerUnit);
+                    float outwardDirection = spriteRenderer.flipY ? -1f : 1f;
+                    localMouth.y += outwardDirection
+                        * Mathf.Max(0f, bottleData.liquidSpawnOutwardPixels)
+                        / pixelsPerUnit;
+                }
+
+                liquidSpawnPoint.position = spriteRenderer.transform.TransformPoint(localMouth);
             }
 
             if (col == null)
@@ -211,13 +221,19 @@ namespace Slainte.Bartending
 
             if (col is BoxCollider2D boxCollider)
             {
-                Vector2 centerNormalized = ClampNormalized(bottleData.colliderCenterNormalized);
+                bool useConfiguredCollider = bottleData.overrideBottleGeometry
+                    || bottleData.overrideBottleClickCollider;
+                Vector2 centerNormalized = useConfiguredCollider
+                    ? ClampNormalized(bottleData.colliderCenterNormalized)
+                    : new Vector2(0.5f, 0.5f);
                 if (spriteRenderer.flipX)
                     centerNormalized.x = 1f - centerNormalized.x;
                 if (spriteRenderer.flipY)
                     centerNormalized.y = 1f - centerNormalized.y;
 
-                Vector2 sizeNormalized = bottleData.colliderSizeNormalized;
+                Vector2 sizeNormalized = useConfiguredCollider
+                    ? bottleData.colliderSizeNormalized
+                    : Vector2.one;
                 boxCollider.offset = new Vector2(
                     Mathf.Lerp(spriteBounds.min.x, spriteBounds.max.x, centerNormalized.x),
                     Mathf.Lerp(spriteBounds.min.y, spriteBounds.max.y, centerNormalized.y));

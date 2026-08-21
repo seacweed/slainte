@@ -171,7 +171,60 @@ namespace Slainte.EditorTools
                 || slopBottle.defaultBottleCount != 6
                 || burnhamSour.price != 307
                 || burnhamSour.strangeCoinPrice != 3
-                || burnhamSour.requiredIceCount != 3;
+                || burnhamSour.requiredIceCount != 3
+                || !slop.overrideBottleClickCollider
+                || HasBrokenPlanningBottleLinks();
+        }
+
+        private static bool HasBrokenPlanningBottleLinks()
+        {
+            const int firstItemNumber = 1001;
+            const int itemCount = 15;
+            var expectedBottles = new List<LiquorBottleDef>(itemCount);
+
+            for (int offset = 0; offset < itemCount; offset++)
+            {
+                string id = $"item_{firstItemNumber + offset}";
+                ItemDef item = AssetDatabase.LoadAssetAtPath<ItemDef>(
+                    $"{ItemOutputFolder}/{id}.asset");
+                LiquorBottleDef bottle = AssetDatabase.LoadAssetAtPath<LiquorBottleDef>(
+                    $"{ShelfOutputFolder}/{id}.asset");
+
+                if (item == null
+                    || bottle == null
+                    || bottle.item != item
+                    || !string.Equals(item.id, id, StringComparison.OrdinalIgnoreCase)
+                    || !string.Equals(bottle.id, id, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+
+                expectedBottles.Add(bottle);
+            }
+
+            LiquorBottleCatalog shelfCatalog =
+                AssetDatabase.LoadAssetAtPath<LiquorBottleCatalog>(LiquorBottleCatalogPath);
+            LiquorShopCatalog shopCatalog =
+                AssetDatabase.LoadAssetAtPath<LiquorShopCatalog>(LiquorShopCatalogPath);
+
+            return !CatalogMatches(shelfCatalog != null ? shelfCatalog.bottles : null, expectedBottles)
+                || !CatalogMatches(shopCatalog != null ? shopCatalog.bottles : null, expectedBottles);
+        }
+
+        private static bool CatalogMatches(
+            IReadOnlyList<LiquorBottleDef> actual,
+            IReadOnlyList<LiquorBottleDef> expected)
+        {
+            if (actual == null || expected == null || actual.Count != expected.Count)
+                return false;
+
+            for (int i = 0; i < expected.Count; i++)
+            {
+                if (actual[i] != expected[i])
+                    return false;
+            }
+
+            return true;
         }
 
         [MenuItem("Slainte/데이터/기준 CSV 바로 임포트")]
@@ -275,6 +328,9 @@ namespace Slainte.EditorTools
                     $"술장 재료 {bottle.id}의 기본 재고가 0입니다.");
                 Require(Mathf.Approximately(bottle.unitVolume, bottle.item.capacityMl),
                     $"술장 재료 {bottle.id}의 병 용량과 ItemDef 용량이 다릅니다.");
+                ValidatePlanningBottleGeometry(
+                    bottle.item,
+                    bottle.GetBarSprite(bottle.item.icon));
             }
 
             int linkedLegacyBottleCount = 0;
@@ -389,6 +445,10 @@ namespace Slainte.EditorTools
 
                     ItemDef item = UpsertItem(row, id, displayName, report);
                     LiquorBottleDef bottle = UpsertShelfDefinition(row, item, id, displayName, report);
+                    ApplySpriteColliderGeometry(
+                        item,
+                        bottle.GetBarSprite(item.icon),
+                        report);
                     importedItems[id] = item;
                     importedBottles[id] = bottle;
                     report.importedItems++;
@@ -1603,6 +1663,81 @@ namespace Slainte.EditorTools
             return fallback;
         }
 
+        private static void ApplySpriteColliderGeometry(
+            ItemDef item,
+            Sprite barSprite,
+            PlanningCsvImportReport report)
+        {
+            if (item == null || item.overrideBottleGeometry)
+                return;
+
+            if (barSprite == null)
+            {
+                report.warnings.Add($"아이템 {item.id}의 barSprite가 없어 클릭 영역을 계산하지 못했습니다.");
+                return;
+            }
+
+            if (!BottleSpriteGeometry.TryCalculate(
+                    barSprite,
+                    out Vector2 centerNormalized,
+                    out Vector2 sizeNormalized,
+                    out string failure))
+            {
+                report.warnings.Add($"아이템 {item.id}의 클릭 영역 계산 실패: {failure}");
+                return;
+            }
+
+            item.overrideBottleClickCollider = true;
+            item.colliderCenterNormalized = centerNormalized;
+            item.colliderSizeNormalized = sizeNormalized;
+            EditorUtility.SetDirty(item);
+        }
+
+        private static void ValidatePlanningBottleGeometry(ItemDef item, Sprite barSprite)
+        {
+            Require(item != null && item.type == ItemType.Bottle,
+                $"Planning ItemDef가 병 데이터가 아닙니다: {item?.name ?? "<null>"}");
+            Require(barSprite != null,
+                $"Planning 병 {item.id}의 barSprite가 없습니다.");
+            Require(item.overrideBottleGeometry || item.overrideBottleClickCollider,
+                $"Planning 병 {item.id}에 스프라이트별 클릭 geometry가 없습니다.");
+
+            Vector2 center = item.colliderCenterNormalized;
+            Vector2 size = item.colliderSizeNormalized;
+            Require(size.x > 0f && size.y > 0f && size.x <= 1f && size.y <= 1f,
+                $"Planning 병 {item.id}의 클릭 geometry 크기가 잘못되었습니다: {size}");
+            Require(center.x - size.x * 0.5f >= -0.0001f
+                && center.x + size.x * 0.5f <= 1.0001f
+                && center.y - size.y * 0.5f >= -0.0001f
+                && center.y + size.y * 0.5f <= 1.0001f,
+                $"Planning 병 {item.id}의 클릭 geometry가 스프라이트 범위를 벗어납니다.");
+
+            if (item.overrideBottleLiquidSpawn)
+            {
+                Vector2 mouth = item.liquidSpawnNormalized;
+                Require(mouth.x >= 0f && mouth.x <= 1f
+                    && mouth.y >= 0f && mouth.y <= 1f,
+                    $"Planning 병 {item.id}의 입구 좌표가 스프라이트 범위를 벗어납니다: {mouth}");
+                Require(item.liquidSpawnOutwardPixels >= 0f,
+                    $"Planning 병 {item.id}의 입구 바깥쪽 오프셋이 음수입니다: "
+                    + item.liquidSpawnOutwardPixels);
+            }
+
+            if (item.overrideBottleGeometry)
+                return;
+
+            Require(BottleSpriteGeometry.TryCalculate(
+                    barSprite,
+                    out Vector2 expectedCenter,
+                    out Vector2 expectedSize,
+                    out string failure),
+                $"Planning 병 {item.id}의 스프라이트 geometry를 검증하지 못했습니다: {failure}");
+            Require(Vector2.Distance(center, expectedCenter) <= 0.0005f
+                && Vector2.Distance(size, expectedSize) <= 0.0005f,
+                $"Planning 병 {item.id}의 클릭 geometry가 현재 barSprite 알파 영역과 다릅니다. "
+                + $"actual={center}/{size}, expected={expectedCenter}/{expectedSize}");
+        }
+
         private static void CopyExistingVisualSettings(string displayName, string importedId, ItemDef destination)
         {
             string[] guids = AssetDatabase.FindAssets("t:ItemDef", new[] { "Assets/Resources/Items" });
@@ -1619,7 +1754,10 @@ namespace Slainte.EditorTools
                 destination.density = source.density;
                 destination.servingTemperatureC = source.servingTemperatureC;
                 destination.overrideBottleGeometry = source.overrideBottleGeometry;
+                destination.overrideBottleLiquidSpawn = source.overrideBottleLiquidSpawn;
+                destination.overrideBottleClickCollider = source.overrideBottleClickCollider;
                 destination.liquidSpawnNormalized = source.liquidSpawnNormalized;
+                destination.liquidSpawnOutwardPixels = source.liquidSpawnOutwardPixels;
                 destination.colliderCenterNormalized = source.colliderCenterNormalized;
                 destination.colliderSizeNormalized = source.colliderSizeNormalized;
                 return;
@@ -1725,6 +1863,110 @@ namespace Slainte.EditorTools
             public string itemId;
             public float targetMl;
             public float toleranceMl;
+        }
+    }
+
+    internal static class BottleSpriteGeometry
+    {
+        private const byte AlphaThreshold = 3;
+        private const int PaddingPixels = 2;
+
+        public static bool TryCalculate(
+            Sprite sprite,
+            out Vector2 centerNormalized,
+            out Vector2 sizeNormalized,
+            out string failure)
+        {
+            centerNormalized = new Vector2(0.5f, 0.5f);
+            sizeNormalized = Vector2.one;
+            failure = string.Empty;
+            if (sprite == null)
+            {
+                failure = "Sprite is null.";
+                return false;
+            }
+
+            string assetPath = AssetDatabase.GetAssetPath(sprite);
+            string projectRoot = Directory.GetParent(Application.dataPath)?.FullName ?? string.Empty;
+            string sourcePath = Path.GetFullPath(Path.Combine(projectRoot, assetPath));
+            if (string.IsNullOrWhiteSpace(assetPath) || !File.Exists(sourcePath))
+            {
+                failure = $"Source image was not found: {assetPath}";
+                return false;
+            }
+
+            Texture2D source = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            try
+            {
+                if (!source.LoadImage(File.ReadAllBytes(sourcePath), false))
+                {
+                    failure = $"Source image could not be decoded: {assetPath}";
+                    return false;
+                }
+
+                Rect spriteRect = sprite.rect;
+                int rectMinX = Mathf.Clamp(Mathf.FloorToInt(spriteRect.xMin), 0, source.width - 1);
+                int rectMinY = Mathf.Clamp(Mathf.FloorToInt(spriteRect.yMin), 0, source.height - 1);
+                int rectMaxX = Mathf.Clamp(Mathf.CeilToInt(spriteRect.xMax) - 1, 0, source.width - 1);
+                int rectMaxY = Mathf.Clamp(Mathf.CeilToInt(spriteRect.yMax) - 1, 0, source.height - 1);
+                if (rectMaxX < rectMinX || rectMaxY < rectMinY)
+                {
+                    failure = $"Sprite rect is empty: {spriteRect}";
+                    return false;
+                }
+
+                Color32[] pixels = source.GetPixels32();
+                int minX = rectMaxX + 1;
+                int minY = rectMaxY + 1;
+                int maxX = rectMinX - 1;
+                int maxY = rectMinY - 1;
+                for (int y = rectMinY; y <= rectMaxY; y++)
+                {
+                    int row = y * source.width;
+                    for (int x = rectMinX; x <= rectMaxX; x++)
+                    {
+                        if (pixels[row + x].a <= AlphaThreshold)
+                            continue;
+
+                        minX = Mathf.Min(minX, x);
+                        minY = Mathf.Min(minY, y);
+                        maxX = Mathf.Max(maxX, x);
+                        maxY = Mathf.Max(maxY, y);
+                    }
+                }
+
+                if (maxX < minX || maxY < minY)
+                {
+                    failure = $"Sprite has no visible pixels above alpha {AlphaThreshold}: {assetPath}";
+                    return false;
+                }
+
+                minX = Mathf.Max(rectMinX, minX - PaddingPixels);
+                minY = Mathf.Max(rectMinY, minY - PaddingPixels);
+                maxX = Mathf.Min(rectMaxX, maxX + PaddingPixels);
+                maxY = Mathf.Min(rectMaxY, maxY + PaddingPixels);
+
+                float normalizedMinX = (minX - spriteRect.xMin) / spriteRect.width;
+                float normalizedMinY = (minY - spriteRect.yMin) / spriteRect.height;
+                float normalizedMaxX = (maxX + 1f - spriteRect.xMin) / spriteRect.width;
+                float normalizedMaxY = (maxY + 1f - spriteRect.yMin) / spriteRect.height;
+                centerNormalized = new Vector2(
+                    (normalizedMinX + normalizedMaxX) * 0.5f,
+                    (normalizedMinY + normalizedMaxY) * 0.5f);
+                sizeNormalized = new Vector2(
+                    normalizedMaxX - normalizedMinX,
+                    normalizedMaxY - normalizedMinY);
+                return sizeNormalized.x > 0f && sizeNormalized.y > 0f;
+            }
+            catch (Exception exception)
+            {
+                failure = exception.Message;
+                return false;
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(source);
+            }
         }
     }
 

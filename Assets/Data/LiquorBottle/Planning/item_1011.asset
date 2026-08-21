@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LiquorBottleDef
   id: item_1011
   displayName: "\uBC88\uD584 \uBC84\uBC88"
-  item: {fileID: 11400000, guid: 6e11be749eb69744eadeb0f814c13d47, type: 2}
+  item: {fileID: 11400000, guid: 16a1a195e8542434aaec6209f214b5ed, type: 2}
   sprite: {fileID: 0}
   useContextImages: 1
   shopBlankSprite: {fileID: 21300000, guid: ba47000000000000000000000000000b, type: 3}

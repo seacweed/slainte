@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using Slainte.Bartending;
 using Slainte.Business;
+using Slainte.EditorTools;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -20,6 +22,8 @@ public static class LiquorShelfSpawnValidator
     private static int phase;
     private static int phaseFrames;
     private static double phaseStartedAt;
+    private static BottleController spawnedBottle;
+    private static LiquorBottleDef spawnedDefinition;
 
     [MenuItem("Slainte/Bartending/Validate Business Shelf Spawn")]
     public static void RunFromMenu()
@@ -70,6 +74,8 @@ public static class LiquorShelfSpawnValidator
         SessionState.SetBool(RunningKey + ".CommandLine", commandLine);
         phase = 0;
         phaseFrames = 0;
+        spawnedBottle = null;
+        spawnedDefinition = null;
         phaseStartedAt = EditorApplication.timeSinceStartup;
         EditorApplication.isPlaying = true;
     }
@@ -190,8 +196,20 @@ public static class LiquorShelfSpawnValidator
                         return;
                     }
 
-                    ValidateShelfClick(bartending);
-                    Finish(true, "BusinessScene shelf click spawned one bottle and rejected a duplicate.");
+                    spawnedBottle = ValidateShelfClick(bartending, out spawnedDefinition);
+                    phase = 2;
+                    phaseFrames = 0;
+                    phaseStartedAt = EditorApplication.timeSinceStartup;
+                    break;
+
+                case 2:
+                    if (phaseFrames < 2)
+                        return;
+
+                    ValidateSpawnedBottleGeometry(spawnedBottle, spawnedDefinition);
+                    Finish(true,
+                        "BusinessScene shelf click spawned one bottle, rejected a duplicate, "
+                        + "and applied the barSprite-specific click collider.");
                     break;
             }
         }
@@ -201,12 +219,24 @@ public static class LiquorShelfSpawnValidator
         }
     }
 
-    private static void ValidateShelfClick(BusinessBartendingBootstrap bartending)
+    private static BottleController ValidateShelfClick(
+        BusinessBartendingBootstrap bartending,
+        out LiquorBottleDef definition)
     {
         LiquorBottleSlotUI slot = FindUsableSlot();
         Require(slot != null, "No unlocked shelf bottle with a matching ItemDef was found.");
+        definition = GetSlotDefinition(slot);
+        Require(definition != null && definition.item != null,
+            "The usable shelf slot has no bottle definition.");
 
         int before = bartending.SessionBottleCount;
+        HashSet<int> existingBottleIds = new HashSet<int>();
+        foreach (BottleController existing in UnityEngine.Object.FindObjectsByType<BottleController>(
+                     FindObjectsSortMode.None))
+        {
+            existingBottleIds.Add(existing.GetInstanceID());
+        }
+
         PointerEventData click = new PointerEventData(EventSystem.current)
         {
             button = PointerEventData.InputButton.Left
@@ -216,9 +246,121 @@ public static class LiquorShelfSpawnValidator
         Require(bartending.SessionBottleCount == before + 1,
             $"Shelf click did not add exactly one bottle: {before} -> {bartending.SessionBottleCount}.");
 
+        BottleController created = null;
+        foreach (BottleController candidate in UnityEngine.Object.FindObjectsByType<BottleController>(
+                     FindObjectsSortMode.None))
+        {
+            if (!existingBottleIds.Contains(candidate.GetInstanceID())
+                && candidate.BottleData == definition.item)
+            {
+                created = candidate;
+                break;
+            }
+        }
+        Require(created != null,
+            $"Shelf click created no runtime BottleController for {definition.id}.");
+
         slot.OnPointerClick(click);
         Require(bartending.SessionBottleCount == before + 1,
             "A duplicate shelf click added the same bottle twice.");
+        return created;
+    }
+
+    private static void ValidateSpawnedBottleGeometry(
+        BottleController bottle,
+        LiquorBottleDef definition)
+    {
+        Require(bottle != null && bottle.gameObject.activeInHierarchy,
+            "The spawned shelf bottle is no longer active.");
+        Require(bottle.GetComponent<BartendingItemOrder>() != null,
+            "The spawned shelf bottle did not initialize its click ordering component.");
+
+        SpriteRenderer renderer = bottle.GetComponent<SpriteRenderer>();
+        BoxCollider2D collider = bottle.GetComponent<BoxCollider2D>();
+        Require(renderer != null && renderer.enabled && renderer.sprite != null,
+            "The spawned shelf bottle has no active barSprite renderer.");
+        Require(collider != null && collider.enabled,
+            "The spawned shelf bottle has no active BoxCollider2D.");
+        Require(definition != null && definition.item == bottle.BottleData,
+            "The spawned shelf bottle is not linked to the clicked shelf ItemDef.");
+        Require(definition.GetBarSprite(bottle.BottleData.icon) == renderer.sprite,
+            "The spawned shelf bottle is not using the definition's barSprite.");
+        Require(BottleSpriteGeometry.TryCalculate(
+                renderer.sprite,
+                out Vector2 expectedCenterNormalized,
+                out Vector2 expectedSizeNormalized,
+                out string failure),
+            "The spawned bottle barSprite geometry could not be calculated: " + failure);
+
+        Bounds spriteBounds = renderer.sprite.bounds;
+        Vector2 expectedOffset = new Vector2(
+            Mathf.Lerp(spriteBounds.min.x, spriteBounds.max.x, expectedCenterNormalized.x),
+            Mathf.Lerp(spriteBounds.min.y, spriteBounds.max.y, expectedCenterNormalized.y));
+        Vector2 expectedSize = new Vector2(
+            spriteBounds.size.x * expectedSizeNormalized.x,
+            spriteBounds.size.y * expectedSizeNormalized.y);
+        Require(Vector2.Distance(collider.offset, expectedOffset) <= 0.0005f,
+            $"Spawned bottle collider offset does not match its barSprite: "
+            + $"actual={collider.offset}, expected={expectedOffset}");
+        Require(Vector2.Distance(collider.size, expectedSize) <= 0.0005f,
+            $"Spawned bottle collider size does not match its barSprite: "
+            + $"actual={collider.size}, expected={expectedSize}");
+
+        ItemDef item = bottle.BottleData;
+        if (item.overrideBottleGeometry || item.overrideBottleLiquidSpawn)
+        {
+            Require(bottle.liquidSpawnPoint != null,
+                "The spawned bottle has no liquid spawn point transform.");
+            Vector2 mouthNormalized = new Vector2(
+                Mathf.Clamp01(item.liquidSpawnNormalized.x),
+                Mathf.Clamp01(item.liquidSpawnNormalized.y));
+            if (renderer.flipX)
+                mouthNormalized.x = 1f - mouthNormalized.x;
+            if (renderer.flipY)
+                mouthNormalized.y = 1f - mouthNormalized.y;
+
+            Vector3 expectedLocalMouth = new Vector3(
+                Mathf.Lerp(spriteBounds.min.x, spriteBounds.max.x, mouthNormalized.x),
+                Mathf.Lerp(spriteBounds.min.y, spriteBounds.max.y, mouthNormalized.y),
+                0f);
+            if (item.overrideBottleLiquidSpawn)
+            {
+                float direction = renderer.flipY ? -1f : 1f;
+                expectedLocalMouth.y += direction
+                    * Mathf.Max(0f, item.liquidSpawnOutwardPixels)
+                    / Mathf.Max(1f, renderer.sprite.pixelsPerUnit);
+            }
+
+            Vector3 expectedWorldMouth = renderer.transform.TransformPoint(expectedLocalMouth);
+            Require(Vector2.Distance(
+                    bottle.liquidSpawnPoint.position,
+                    expectedWorldMouth) <= 0.0005f,
+                $"Spawned bottle liquid point does not match its configured mouth: "
+                + $"actual={bottle.liquidSpawnPoint.position}, expected={expectedWorldMouth}");
+        }
+
+        Physics2D.SyncTransforms();
+        Vector2[] localSamples =
+        {
+            collider.offset,
+            collider.offset + new Vector2(collider.size.x * 0.4f, 0f),
+            collider.offset - new Vector2(collider.size.x * 0.4f, 0f),
+            collider.offset + new Vector2(0f, collider.size.y * 0.4f),
+            collider.offset - new Vector2(0f, collider.size.y * 0.4f)
+        };
+        for (int i = 0; i < localSamples.Length; i++)
+        {
+            Vector3 worldSample = bottle.transform.TransformPoint(localSamples[i]);
+            Require(collider.OverlapPoint(worldSample),
+                $"Spawned bottle click collider missed representative point {i}: {worldSample}");
+        }
+    }
+
+    private static LiquorBottleDef GetSlotDefinition(LiquorBottleSlotUI slot)
+    {
+        SerializedProperty definitionProperty =
+            new SerializedObject(slot).FindProperty("def");
+        return definitionProperty?.objectReferenceValue as LiquorBottleDef;
     }
 
     private static LiquorBottleSlotUI FindUsableSlot()
@@ -232,10 +374,7 @@ public static class LiquorShelfSpawnValidator
                 continue;
             }
 
-            SerializedProperty definitionProperty =
-                new SerializedObject(slot).FindProperty("def");
-            LiquorBottleDef definition =
-                definitionProperty?.objectReferenceValue as LiquorBottleDef;
+            LiquorBottleDef definition = GetSlotDefinition(slot);
             if (definition == null
                 || string.IsNullOrWhiteSpace(definition.id)
                 || definition.item == null
@@ -271,6 +410,8 @@ public static class LiquorShelfSpawnValidator
         SessionState.EraseBool(RunningKey);
         bool commandLine = SessionState.GetBool(RunningKey + ".CommandLine", false);
         SessionState.EraseBool(RunningKey + ".CommandLine");
+        spawnedBottle = null;
+        spawnedDefinition = null;
 
         if (success)
             Debug.Log("[LiquorShelfSpawnValidator] PASS: " + message);

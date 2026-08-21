@@ -27,8 +27,9 @@ MonoBehaviour:
   density: 1
   servingTemperatureC: 20
   overrideBottleGeometry: 0
+  overrideBottleClickCollider: 1
   liquidSpawnNormalized: {x: 0.5, y: 0.98}
-  colliderCenterNormalized: {x: 0.5, y: 0.5}
-  colliderSizeNormalized: {x: 1, y: 1}
+  colliderCenterNormalized: {x: 0.4983871, y: 0.2211864}
+  colliderSizeNormalized: {x: 0.4741935, y: 0.4423729}
   dragMovesObject: 1
   toolPlaceableOnTable: 0
