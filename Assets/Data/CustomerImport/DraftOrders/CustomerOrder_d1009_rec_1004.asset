@@ -15,12 +15,48 @@ MonoBehaviour:
   key: d1009_rec_1004
   requestedRecipeId: rec_1004
   orderType: 0
+  paymentCurrency: 0
   tags: []
   characterKey: jorika
   expressionKeyMid: mid
   expressionKeyGood: good
   expressionKeyBad: bad
-  lines: []
-  feedbackLinesGood: []
+  orderDialogueAuthored: 1
+  lines:
+  - speakerName: "\uC694\uB9AC\uCE74"
+    text: "\uC5EC\uAE30\uAC00 \uB3D9\uC0DD\uC774 \uB9D0\uD55C \uACF3\uC774\uAD70\uC694"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  - speakerName: "\uC694\uB9AC\uCE74"
+    text: "\uC81C \uB3D9\uC0DD\uC774 \uAC13\uB85C\uB4DC\uB97C \uCD94\uCC9C\uD558\uB354\uB77C\uACE0\uC694"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesGood:
+  - speakerName: "\uC694\uB9AC\uCE74"
+    text: "\uC65C \uADF8\uB807\uAC8C \uADF9\uCC2C\uD588\uB294\uC9C0 \uC54C\uACA0\uB124\uC694"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
   feedbackLinesMid: []
-  feedbackLinesBad: []
+  feedbackLinesBad:
+  - speakerName: "\uC694\uB9AC\uCE74"
+    text: "\uC74C..\uC624\uB298\uC740 \uCEE8\uB514\uC158\uC774 \uC880 \uBCC4\uB860\uAC00
+      \uBCF4\uB124\uC694"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  authoredFeedback: 63
+  feedbackLinesMidIce:
+  - speakerName: "\uC694\uB9AC\uCE74"
+    text: "\uC5BC\uC74C\uC740 \uC880 \uC544\uC27D\uC9C0\uB9CC, \uD655\uC2E4\uD788
+      \uCD94\uCC9C\uD560\uB9CC \uD558\uB124\uC694"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidGlass:
+  - speakerName: "\uC694\uB9AC\uCE74"
+    text: "\uC794\uC740 \uC880 \uC544\uC27D\uC9C0\uB9CC, \uD655\uC2E4\uD788 \uCD94\uCC9C\uD560\uB9CC
+      \uD558\uB124\uC694"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidIceGlass:
+  - speakerName: "\uC694\uB9AC\uCE74"
+    text: "\uC794\uC774\uB791 \uC5BC\uC74C\uC740 \uC880 \uC544\uC27D\uC9C0\uB9CC,
+      \uB9DB\uC740 \uCD94\uCC9C\uD560\uB9CC \uD558\uB124\uC694"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidWrongMenu:
+  - speakerName: "\uC694\uB9AC\uCE74"
+    text: "\uC0DD\uAC01\uBCF4\uB2E8 \uC544\uC27D\uC9C0\uB9CC \uB9C8\uC2E4\uB9CC\uC740
+      \uD558\uB124\uC694"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}

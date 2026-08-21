@@ -15,12 +15,28 @@ MonoBehaviour:
   key: d1021_rec_1005
   requestedRecipeId: rec_1005
   orderType: 0
+  paymentCurrency: 0
   tags: []
   characterKey: vago
   expressionKeyMid: mid
   expressionKeyGood: good
   expressionKeyBad: bad
-  lines: []
-  feedbackLinesGood: []
+  orderDialogueAuthored: 1
+  lines:
+  - speakerName: "\uBC14\uACE0"
+    text: "\uC170\uC774\uB514\uC815\uB3C4\uBA74 \uC911\uBD84\uD558\uACA0\uC5B4"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesGood:
+  - speakerName: "\uBC14\uACE0"
+    text: "\uC774\uC815\uB3C4\uBA74 \uD569\uACA9\uC810\uC774\uC57C."
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
   feedbackLinesMid: []
   feedbackLinesBad: []
+  authoredFeedback: 63
+  feedbackLinesMidIce:
+  - speakerName: "\uBC14\uACE0"
+    text: "\uC170\uC774\uB514\uC5D4 \uC5BC\uC74C. \uC0C1\uC2DD \uC544\uB2C8\uC57C?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidGlass: []
+  feedbackLinesMidIceGlass: []
+  feedbackLinesMidWrongMenu: []

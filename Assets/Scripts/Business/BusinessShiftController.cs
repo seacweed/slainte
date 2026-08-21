@@ -73,6 +73,7 @@ namespace Slainte.Business
         private bool randomCustomerSpawningStopped;
         private int orderSequence;
         private int completedOrderCount;
+        private int startedSequenceCount;
         private float remainingSeconds;
         private float activeBusinessSeconds;
 
@@ -84,6 +85,7 @@ namespace Slainte.Business
         public int FrozenCustomerPoolCount => frozenCustomerPool.Count;
         public int FrozenEncounterPoolCount => frozenEncounterPool.Count;
         public int CompletedOrderCount => completedOrderCount;
+        public int StartedSequenceCount => startedSequenceCount;
         public int TotalStartedCustomerCount { get; private set; }
         public int TotalStartedEncounterCount { get; private set; }
         public bool IsRandomCustomerSpawningStopped => randomCustomerSpawningStopped;
@@ -236,6 +238,17 @@ namespace Slainte.Business
                 return;
             }
 
+            BusinessRequiredActionRule sequenceRequired = PickRequiredAction(
+                progress,
+                BusinessRequiredActionTiming.SequenceSlot,
+                includeAllTimings: false,
+                sequenceSlot: startedSequenceCount + 1);
+            if (sequenceRequired != null)
+            {
+                ExecuteRequiredAction(sequenceRequired);
+                return;
+            }
+
             if (!initialRequiredPhaseComplete)
             {
                 BusinessRequiredActionRule initialRequired = PickRequiredAction(
@@ -293,7 +306,8 @@ namespace Slainte.Business
         private BusinessRequiredActionRule PickRequiredAction(
             GameProgress progress,
             BusinessRequiredActionTiming timing,
-            bool includeAllTimings)
+            bool includeAllTimings,
+            int sequenceSlot = 0)
         {
             return BusinessSequencePlanner.PickNextRequiredAction(
                 settings.requiredActions,
@@ -301,7 +315,8 @@ namespace Slainte.Business
                 timing,
                 includeAllTimings,
                 executedRuleIds,
-                executedTargetKeys);
+                executedTargetKeys,
+                sequenceSlot);
         }
 
         private void ExecuteRequiredAction(BusinessRequiredActionRule rule)
@@ -356,6 +371,12 @@ namespace Slainte.Business
                 customerOrderKey = order.key,
                 customerVisitKey = visit.visitKey,
                 requestedRecipeId = order.requestedRecipeId,
+                requestedConditionLabel = order.tags != null && order.tags.Count > 0
+                    ? order.tags[0]
+                    : string.Empty,
+                requestedTags = order.tags != null
+                    ? new List<string>(order.tags)
+                    : new List<string>(),
                 ticketKey = order.key,
                 orderType = order.orderType,
                 paymentCurrency = order.paymentCurrency,
@@ -381,6 +402,8 @@ namespace Slainte.Business
                 SetState(BusinessShiftState.Running);
                 return;
             }
+
+            startedSequenceCount++;
 
             if (orderActive)
             {
@@ -521,6 +544,7 @@ namespace Slainte.Business
                     HandleBusinessEncounterCompleted);
             if (started)
             {
+                startedSequenceCount++;
                 startedEncounterIds.Add(episodeId);
                 executedTargetKeys.Add("episode:" + episodeId);
                 TotalStartedEncounterCount++;
@@ -624,6 +648,7 @@ namespace Slainte.Business
             randomCustomerSpawningStopped = false;
             orderSequence = 0;
             completedOrderCount = 0;
+            startedSequenceCount = 0;
             TotalStartedCustomerCount = 0;
             TotalStartedEncounterCount = 0;
             LastSelectedVisitKey = string.Empty;
@@ -654,6 +679,14 @@ namespace Slainte.Business
 
                 if (string.IsNullOrWhiteSpace(rule.TargetKey))
                     Debug.LogError($"[BusinessShift] 필수 액션 '{rule.ruleId}'의 대상이 비어 있습니다.");
+
+                if (rule.timing == BusinessRequiredActionTiming.SequenceSlot
+                    && rule.sequenceSlot <= 0)
+                {
+                    Debug.LogError(
+                        $"[BusinessShift] 고정 슬롯 필수 액션 '{rule.ruleId}'의 슬롯이 올바르지 않습니다: "
+                        + rule.sequenceSlot);
+                }
             }
         }
 
@@ -671,6 +704,9 @@ namespace Slainte.Business
                     || (rule.exactDay > 0 && rule.exactDay != progress.CurrentDay)
                     || !ProgressConditionEvaluator.IsMet(rule.condition, progress)
                     || rule.encounterEpisode == null
+                    || !ProgressConditionEvaluator.IsMet(
+                        rule.encounterEpisode.triggerCondition,
+                        progress)
                     || progress.IsEpisodeCompleted(rule.encounterEpisode.episodeId)
                     || string.IsNullOrWhiteSpace(rule.TargetKey))
                     continue;

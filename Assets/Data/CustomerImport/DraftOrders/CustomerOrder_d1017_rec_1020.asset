@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 596ac274de286b84aaa5c1510f09601f, type: 3}
+  m_Name: CustomerOrder_d1017_rec_1020
+  m_EditorClassIdentifier: Assembly-CSharp::CustomerOrderData
+  key: d1017_rec_1020
+  requestedRecipeId: rec_1020
+  orderType: 0
+  paymentCurrency: 0
+  tags: []
+  characterKey: brock
+  expressionKeyMid: mid
+  expressionKeyGood: good
+  expressionKeyBad: bad
+  orderDialogueAuthored: 1
+  lines:
+  - speakerName: "\uBE0C\uB85D"
+    text: "\uBE0C\uB9AC\uC988 \uB2C8\uD2B8. \uB450 \uBC88 \uB9D0 \uC548\uD574."
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesGood:
+  - speakerName: "\uBE0C\uB85D"
+    text: "\uB9DB\uC774 \uC544\uC8FC \uD6CC\uB96D\uD55C\uB370."
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMid: []
+  feedbackLinesBad:
+  - speakerName: "\uBE0C\uB85D"
+    text: "\uC774\uAC78 \uB3C8 \uBC1B\uACE0 \uD30C\uB294 \uAC74 \uBC94\uC8C4\uC57C"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  authoredFeedback: 63
+  feedbackLinesMidIce:
+  - speakerName: "\uBE0C\uB85D"
+    text: "\uC5EC\uAE34 \uB2C8\uD2B8\uC5D0 \uC5BC\uC74C\uB3C4 \uB123\uB098?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidGlass:
+  - speakerName: "\uBE0C\uB85D"
+    text: "\uC5EC\uAE34 \uC774\uAC78 \uC774\uB7F0 \uC794\uC5D0 \uC8FC\uB098?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidIceGlass:
+  - speakerName: "\uBE0C\uB85D"
+    text: "\uC5EC\uAE34 \uC774\uAC78 \uC774\uB7F0 \uC794\uC5D0 \uC8FC\uB098? \uC5BC\uC74C\uC740
+      \uC65C \uB610 \uC774 \uBAA8\uC591\uC774\uC57C?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidWrongMenu:
+  - speakerName: "\uBE0C\uB85D"
+    text: "\uC2DC\uD0A8 \uAC8C \uC65C \uC774 \uBAA8\uC591\uC774\uC57C?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}

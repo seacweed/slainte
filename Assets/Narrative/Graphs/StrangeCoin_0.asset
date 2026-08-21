@@ -227,7 +227,7 @@ MonoBehaviour:
     BgmCommand: 0
     BgmClipName: 
     CraftingTicketKey: sc0_f72
-    CraftingRecipeId: vodka_lemon
+    CraftingRecipeId: rec_1003
     CraftingFlagGood: sc0_true
     CraftingFlagBad: sc0_false
     CraftingVarChangesGood: []
@@ -396,7 +396,7 @@ MonoBehaviour:
   EpisodeType: 2
   MandatorySlot: 0
   TriggerCondition:
-    minDay: 0
+    minDay: 5
     requiredFlags: []
     blockedFlags: []
     prerequisiteEpisodeIds: []

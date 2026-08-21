@@ -94,7 +94,11 @@ namespace Slainte.EditorTools
         public static void ImportAndPublishDefaultFromCommandLine()
         {
             ImportDefaultFromCommandLine();
-            PublishValidatedDraftsFromMenu();
+            CustomerDialogueImportReport dialogueReport =
+                CustomerDialogueCsvImporter.Import(showDialog: false);
+            if (dialogueReport.errors.Count > 0)
+                throw new InvalidDataException(string.Join("\n", dialogueReport.errors));
+            PublishValidatedDrafts(showDialog: false);
         }
 
         public static CustomerCsvImportReport Import(string csvPath, bool showDialog)
@@ -180,12 +184,17 @@ namespace Slainte.EditorTools
         [MenuItem("Slainte/데이터/검증된 손님 드래프트 게시")]
         public static void PublishValidatedDraftsFromMenu()
         {
+            PublishValidatedDrafts(showDialog: true);
+        }
+
+        public static void PublishValidatedDrafts(bool showDialog)
+        {
             List<string> errors = ValidateDraftsForPublish(out List<CustomerVisitData> visits);
             if (errors.Count > 0)
             {
                 string message = string.Join("\n", errors.Take(20));
                 Debug.LogError("[손님 드래프트 게시] 중단\n" + string.Join("\n", errors));
-                if (Application.isBatchMode)
+                if (Application.isBatchMode || !showDialog)
                     throw new InvalidDataException(message);
                 EditorUtility.DisplayDialog("손님 드래프트 게시 실패", message, "확인");
                 return;
@@ -199,7 +208,7 @@ namespace Slainte.EditorTools
                 AssetDatabase.LoadAssetAtPath<CustomerOrderDatabase>(OrderDatabasePath);
             if (characterDatabase == null || visitDatabase == null || orderDatabase == null)
             {
-                if (Application.isBatchMode)
+                if (Application.isBatchMode || !showDialog)
                     throw new InvalidDataException(
                         "캐릭터, 손님 방문 또는 손님 주문 데이터베이스를 찾을 수 없습니다.");
                 EditorUtility.DisplayDialog(
@@ -269,7 +278,7 @@ namespace Slainte.EditorTools
             Debug.Log(
                 $"[손님 드래프트 게시] 캐릭터 {addedCharacters}개, 방문 {addedVisits}개, "
                 + $"주문 추가/갱신 {addedOrders}/{updatedOrders}개를 등록했습니다.");
-            if (!Application.isBatchMode)
+            if (showDialog && !Application.isBatchMode)
             {
                 EditorUtility.DisplayDialog(
                     "손님 드래프트 게시 완료",
@@ -332,18 +341,22 @@ namespace Slainte.EditorTools
                 }
 
                 int plannedCount = visit.plannedOrderNames?.Count ?? 0;
+                int conditionOrderCount =
+                    (string.IsNullOrWhiteSpace(visit.preferredTasteKey) ? 0 : 1)
+                    + (string.IsNullOrWhiteSpace(visit.preferredAtmosphereKey) ? 0 : 1);
+                int expectedCount = plannedCount + conditionOrderCount;
                 int connectedCount = visit.orders?.Count ?? 0;
                 if (connectedCount == 0)
                 {
                     errors.Add(
-                        $"{visit.visitKey}: 기획 주문 {plannedCount}개 중 {connectedCount}개만 연결됐습니다.");
+                        $"{visit.visitKey}: 기획 주문 {expectedCount}개 중 {connectedCount}개만 연결됐습니다.");
                     continue;
                 }
-                if (plannedCount == 0 || connectedCount != plannedCount)
+                if (expectedCount == 0 || connectedCount != expectedCount)
                 {
-                    Debug.LogWarning(
-                        $"[손님 드래프트 게시] {visit.visitKey}: "
-                        + $"기획 주문 {plannedCount}개 중 {connectedCount}개만 연결됐습니다.");
+                    errors.Add(
+                        $"{visit.visitKey}: 기획 주문 {expectedCount}개 중 "
+                        + $"{connectedCount}개만 연결됐습니다.");
                 }
 
                 for (int orderIndex = 0; orderIndex < visit.orders.Count; orderIndex++)
@@ -366,13 +379,26 @@ namespace Slainte.EditorTools
                         ordersByKey[order.key] = order;
                     }
 
-                    if (!recipes.TryGet(order.requestedRecipeId, out CocktailRecipe recipe)
+                    bool tagOrder = order.orderType == CocktailOrderType.TasteOrder
+                        || order.orderType == CocktailOrderType.MoodOrder;
+                    if (tagOrder)
+                    {
+                        int validTagCount = order.tags?.Count(
+                            tag => !string.IsNullOrWhiteSpace(tag)) ?? 0;
+                        if (validTagCount != 1)
+                        {
+                            errors.Add(
+                                $"{visit.visitKey}: 조건 주문에는 정확히 하나의 태그가 필요합니다.");
+                        }
+                    }
+                    else if (!recipes.TryGet(order.requestedRecipeId, out CocktailRecipe recipe)
                         || recipe == null
                         || !recipe.isOrderable)
                     {
                         errors.Add($"{visit.visitKey}: 주문 레시피 연결이 유효하지 않습니다.");
                     }
-                    else if (order.lines == null || order.lines.Count == 0)
+                    else if (!order.orderDialogueAuthored
+                        && (order.lines == null || order.lines.Count == 0))
                     {
                         Debug.LogWarning(
                             $"[손님 드래프트 게시] {visit.visitKey}/{order.key}: "

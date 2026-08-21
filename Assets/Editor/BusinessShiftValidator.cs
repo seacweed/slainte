@@ -29,6 +29,18 @@ namespace Slainte.EditorTools
             RunValidation();
         }
 
+        public static void RunCustomerDialogueBatchValidation()
+        {
+            ValidatePublishedCustomerOrders();
+            ValidateOrderTicketDialogueMemo();
+            ValidateConditionOrderEvaluation();
+            ValidateCraftingResultMapping();
+            Debug.Log(
+                "[BusinessShiftValidator] 주문 대사 검증 통과: 연결 주문 169개, "
+                + "취향·분위기 주문 27개, 의도적 빈 주문 대사 6개, "
+                + "주문 당시 대사 주문표 반영 및 상세 결과 매핑");
+        }
+
         private static void RunValidation()
         {
             ValidateSettingsAndScene();
@@ -36,7 +48,7 @@ namespace Slainte.EditorTools
             ValidatePlannerRules();
             ValidateEpisodeCraftingCompatibility();
             ValidateTechnicalFailureContract();
-            Debug.Log("[BusinessShiftValidator] 통과: 180초 설정, 손님·주문 DB 무결성, 손님·인카운터 통합 풀, 최근 손님 2명 제한, 인카운터 ID별 일일 1회·완료 제외, 필수 액션, 에피소드 실제 제조 결과·구형 분기 호환, BusinessScene 구성");
+            Debug.Log("[BusinessShiftValidator] 통과: 180초 설정, 손님·주문 DB 무결성, 최근 손님 2명 제한, Day 5 이후 StrangeCoin_0 3번 슬롯·다음 날 재시도·완료 제외, 필수 액션, 에피소드 실제 제조 결과·구형 분기 호환, BusinessScene 구성");
         }
 
         private static void ValidatePublishedCustomerOrders()
@@ -45,9 +57,12 @@ namespace Slainte.EditorTools
                 AssetDatabase.LoadAssetAtPath<BusinessOrderFlowSettings>(SettingsPath);
             CustomerOrderDatabase orderDatabase =
                 AssetDatabase.LoadAssetAtPath<CustomerOrderDatabase>(CustomerOrderDatabasePath);
+            OrderTicketDatabase ticketDatabase =
+                AssetDatabase.LoadAssetAtPath<OrderTicketDatabase>(TicketDatabasePath);
             Require(settings?.customerVisitDatabase != null,
                 "손님 방문 데이터베이스를 불러오지 못했습니다.");
             Require(orderDatabase != null, "손님 주문 데이터베이스를 불러오지 못했습니다.");
+            Require(ticketDatabase != null, "주문표 데이터베이스를 불러오지 못했습니다.");
 
             HashSet<string> registeredKeys = new(StringComparer.OrdinalIgnoreCase);
             for (int i = 0; i < orderDatabase.customers.Count; i++)
@@ -62,6 +77,8 @@ namespace Slainte.EditorTools
             ItemDefCatalog items = ItemDefCatalog.LoadFromResources("Items", null);
             CocktailRecipeCatalog recipes = CocktailRecipeDataLoader.LoadDefault(items);
             int connectedOrderCount = 0;
+            int conditionOrderCount = 0;
+            int intentionallyBlankOrderCount = 0;
             for (int visitIndex = 0;
                  visitIndex < settings.customerVisitDatabase.visits.Count;
                  visitIndex++)
@@ -77,16 +94,52 @@ namespace Slainte.EditorTools
                         $"{visit.visitKey}: 연결 주문이 비어 있거나 키가 없습니다.");
                     Require(orderDatabase.FindByKey(order.key) == order,
                         $"{visit.visitKey}/{order.key}: 방문과 주문 DB의 에셋 참조가 다릅니다.");
-                    Require(recipes.TryGet(order.requestedRecipeId, out CocktailRecipe recipe)
-                            && recipe != null
-                            && recipe.isOrderable,
-                        $"{visit.visitKey}/{order.key}: 주문 가능한 레시피가 없습니다: "
-                        + order.requestedRecipeId);
+                    bool conditionOrder = order.orderType == CocktailOrderType.TasteOrder
+                        || order.orderType == CocktailOrderType.MoodOrder;
+                    if (conditionOrder)
+                    {
+                        int validTags = 0;
+                        if (order.tags != null)
+                        {
+                            for (int tagIndex = 0; tagIndex < order.tags.Count; tagIndex++)
+                            {
+                                if (!string.IsNullOrWhiteSpace(order.tags[tagIndex]))
+                                    validTags++;
+                            }
+                        }
+                        Require(validTags == 1,
+                            $"{visit.visitKey}/{order.key}: 조건 주문 태그가 정확히 하나가 아닙니다.");
+                        conditionOrderCount++;
+                    }
+                    else
+                    {
+                        Require(recipes.TryGet(order.requestedRecipeId, out CocktailRecipe recipe)
+                                && recipe != null
+                                && recipe.isOrderable,
+                            $"{visit.visitKey}/{order.key}: 주문 가능한 레시피가 없습니다: "
+                            + order.requestedRecipeId);
+                    }
+
+                    Require(ticketDatabase.FindByKey(order.key) != null,
+                        $"{visit.visitKey}/{order.key}: 영업 주문표가 없습니다.");
+                    Require(order.authoredFeedback == CustomerOrderFeedbackMask.All,
+                        $"{visit.visitKey}/{order.key}: 상세 결과 대사 정의 상태가 완전하지 않습니다.");
+                    if (order.orderDialogueAuthored
+                        && (order.lines == null || order.lines.Count == 0))
+                    {
+                        intentionallyBlankOrderCount++;
+                    }
                     connectedOrderCount++;
                 }
             }
 
             Require(connectedOrderCount > 0, "검증할 손님 연결 주문이 없습니다.");
+            Require(connectedOrderCount == 169,
+                $"연결 주문 수가 예상과 다릅니다: {connectedOrderCount}/169");
+            Require(conditionOrderCount == 27,
+                $"취향·분위기 주문 수가 예상과 다릅니다: {conditionOrderCount}/27");
+            Require(intentionallyBlankOrderCount == 6,
+                $"의도적으로 비운 주문 대사 수가 예상과 다릅니다: {intentionallyBlankOrderCount}/6");
         }
 
         private static void ValidateSettingsAndScene()
@@ -100,8 +153,7 @@ namespace Slainte.EditorTools
             Require(settings.customerVisitDatabase.visits != null
                     && settings.customerVisitDatabase.visits.Count > 0,
                 "손님 데이터베이스가 비어 있습니다.");
-            Require(settings.randomEncounters != null && settings.randomEncounters.Count > 0,
-                "랜덤 인카운터 풀이 비어 있습니다.");
+            Require(settings.randomEncounters != null, "랜덤 인카운터 목록이 없습니다.");
 
             for (int i = 0; i < settings.randomEncounters.Count; i++)
             {
@@ -110,7 +162,44 @@ namespace Slainte.EditorTools
                         && entry.episode.episodeType == EpisodeType.Encounter
                         && entry.weight > 0f,
                     $"랜덤 인카운터 {i}번이 잘못 설정되었습니다.");
+                Require(!string.Equals(
+                        entry.episode.episodeId,
+                        "StrangeCoin_0",
+                        StringComparison.OrdinalIgnoreCase),
+                    "StrangeCoin_0은 랜덤 인카운터 풀에서 제거되어야 합니다.");
             }
+
+            BusinessRequiredActionRule strangeCoinRule = null;
+            Require(settings.requiredActions != null, "필수 영업 액션 목록이 없습니다.");
+            for (int i = 0; i < settings.requiredActions.Count; i++)
+            {
+                BusinessRequiredActionRule rule = settings.requiredActions[i];
+                if (rule?.encounterEpisode != null
+                    && string.Equals(
+                        rule.encounterEpisode.episodeId,
+                        "StrangeCoin_0",
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    strangeCoinRule = rule;
+                    break;
+                }
+            }
+
+            Require(strangeCoinRule != null,
+                "StrangeCoin_0의 고정 영업 슬롯 규칙이 없습니다.");
+            Require(strangeCoinRule.actionType == BusinessRequiredActionType.EncounterEpisode,
+                "StrangeCoin_0 고정 규칙이 인카운터 액션이 아닙니다.");
+            Require(strangeCoinRule.timing == BusinessRequiredActionTiming.SequenceSlot
+                    && strangeCoinRule.sequenceSlot == 3,
+                "StrangeCoin_0은 3번 영업 슬롯으로 설정되어야 합니다.");
+            Require(strangeCoinRule.condition != null
+                    && strangeCoinRule.condition.minDay == 5,
+                "StrangeCoin_0 고정 규칙은 Day 5부터 활성화되어야 합니다.");
+            Require(strangeCoinRule.encounterEpisode.episodeType == EpisodeType.Encounter,
+                "StrangeCoin_0의 EpisodeType이 Encounter가 아닙니다.");
+            Require(strangeCoinRule.encounterEpisode.triggerCondition != null
+                    && strangeCoinRule.encounterEpisode.triggerCondition.minDay == 5,
+                "StrangeCoin_0 에피소드 자체의 시작 조건도 Day 5여야 합니다.");
 
             for (int i = 0; i < settings.customerVisitDatabase.visits.Count; i++)
             {
@@ -366,6 +455,81 @@ namespace Slainte.EditorTools
                 Require(selected == null, "exactDay가 다른 필수 액션이 선택됐습니다.");
                 progress.SetCurrentDay(5);
 
+                BusinessRequiredActionRule fixedSlot = new()
+                {
+                    ruleId = "validator_fixed_slot_episode",
+                    actionType = BusinessRequiredActionType.EncounterEpisode,
+                    condition = new EpisodeTriggerCondition { minDay = 5 },
+                    priority = 100,
+                    timing = BusinessRequiredActionTiming.SequenceSlot,
+                    sequenceSlot = 3,
+                    encounterEpisode = secondEpisode
+                };
+                List<BusinessRequiredActionRule> fixedSlotRules = new() { fixedSlot };
+
+                progress.SetCurrentDay(4);
+                selected = BusinessSequencePlanner.PickNextRequiredAction(
+                    fixedSlotRules,
+                    progress,
+                    BusinessRequiredActionTiming.SequenceSlot,
+                    false,
+                    null,
+                    null,
+                    3);
+                Require(selected == null, "Day 5 전인데 고정 슬롯 인카운터가 선택됐습니다.");
+
+                progress.SetCurrentDay(5);
+                selected = BusinessSequencePlanner.PickNextRequiredAction(
+                    fixedSlotRules,
+                    progress,
+                    BusinessRequiredActionTiming.SequenceSlot,
+                    false,
+                    null,
+                    null,
+                    2);
+                Require(selected == null, "3번이 아닌 영업 슬롯에서 인카운터가 선택됐습니다.");
+                selected = BusinessSequencePlanner.PickNextRequiredAction(
+                    fixedSlotRules,
+                    progress,
+                    BusinessRequiredActionTiming.SequenceSlot,
+                    false,
+                    null,
+                    null,
+                    3);
+                Require(selected == fixedSlot, "Day 5의 3번 영업 슬롯을 선택하지 못했습니다.");
+                selected = BusinessSequencePlanner.PickNextRequiredAction(
+                    fixedSlotRules,
+                    progress,
+                    BusinessRequiredActionTiming.AfterTimer,
+                    true,
+                    null,
+                    null,
+                    3);
+                Require(selected == null, "시간 종료 후 놓친 고정 슬롯을 강제 실행했습니다.");
+
+                progress.SetCurrentDay(6);
+                selected = BusinessSequencePlanner.PickNextRequiredAction(
+                    fixedSlotRules,
+                    progress,
+                    BusinessRequiredActionTiming.SequenceSlot,
+                    false,
+                    null,
+                    null,
+                    3);
+                Require(selected == fixedSlot,
+                    "미완료 고정 슬롯 인카운터가 다음 날 같은 슬롯에 재등장하지 않았습니다.");
+                progress.MarkEpisodeCompleted(secondEpisode.episodeId);
+                selected = BusinessSequencePlanner.PickNextRequiredAction(
+                    fixedSlotRules,
+                    progress,
+                    BusinessRequiredActionTiming.SequenceSlot,
+                    false,
+                    null,
+                    null,
+                    3);
+                Require(selected == null, "완료한 고정 슬롯 인카운터가 다시 선택됐습니다.");
+                progress.SetCurrentDay(5);
+
                 EpisodeTriggerCondition appearanceCondition = new();
                 appearanceCondition.requiredCustomerAppearances.Add(
                     new CustomerAppearanceCondition { characterId = "validator_customer", count = 1 });
@@ -391,7 +555,128 @@ namespace Slainte.EditorTools
         {
             ValidateLegacyCraftingFields();
             ValidateExistingCraftingNodes();
+            ValidateOrderTicketDialogueMemo();
+            ValidateConditionOrderEvaluation();
             ValidateCraftingResultMapping();
+        }
+
+        private static void ValidateOrderTicketDialogueMemo()
+        {
+            CustomerOrderData order = ScriptableObject.CreateInstance<CustomerOrderData>();
+            GameObject managerObject = new("BusinessShiftValidator_OrderTicketManager");
+
+            try
+            {
+                order.orderDialogueAuthored = true;
+                order.lines = new List<DialogueLine>
+                {
+                    new()
+                    {
+                        speakerName = "첫 화자",
+                        text = "첫 주문 <b>대사</b>"
+                    },
+                    new()
+                    {
+                        speakerName = "둘째 화자",
+                        text = "둘째 주문 대사"
+                    }
+                };
+
+                string authoredMemo = OrderTicketMemoFormatter.Build(order, "공통 주문 대사");
+                Require(
+                    authoredMemo == "첫 주문 <b>대사</b>\n둘째 주문 대사",
+                    "주문표가 주문 당시 말풍선 텍스트를 순서대로 보존하지 않습니다.");
+
+                order.lines.Clear();
+                Require(
+                    OrderTicketMemoFormatter.Build(order, "공통 주문 대사") == string.Empty,
+                    "의도적으로 비운 주문 대사가 주문표에서 비워지지 않습니다.");
+
+                order.orderDialogueAuthored = false;
+                Require(
+                    OrderTicketMemoFormatter.Build(order, "공통 주문 대사") == "공통 주문 대사",
+                    "구형 주문의 실제 공통 대사가 주문표에 반영되지 않습니다.");
+                Require(
+                    OrderTicketMemoFormatter.Build(order, "   ") == string.Empty,
+                    "화면에 출력되지 않는 공백 공통 대사가 주문표에 남습니다.");
+
+                OrderTicketManager manager =
+                    managerObject.AddComponent<OrderTicketManager>();
+                manager.Prepare("customer_order", authoredMemo);
+                manager.Prepare("customer_order");
+
+                FieldInfo hasOverrideField = typeof(OrderTicketManager).GetField(
+                    "_hasPendingMemoOverride",
+                    BindingFlags.Instance | BindingFlags.NonPublic);
+                FieldInfo memoOverrideField = typeof(OrderTicketManager).GetField(
+                    "_pendingMemoOverride",
+                    BindingFlags.Instance | BindingFlags.NonPublic);
+                Require(hasOverrideField != null && memoOverrideField != null,
+                    "주문표 런타임 대사 보존 필드를 찾지 못했습니다.");
+                Require(
+                    (bool)hasOverrideField.GetValue(manager)
+                    && (string)memoOverrideField.GetValue(manager) == authoredMemo,
+                    "같은 주문으로 제조를 시작할 때 주문 당시 대사가 유실됩니다.");
+
+                manager.Prepare("episode_order");
+                Require(
+                    !(bool)hasOverrideField.GetValue(manager),
+                    "다른 에피소드 주문표가 이전 손님 대사를 재사용합니다.");
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(managerObject);
+                UnityEngine.Object.DestroyImmediate(order);
+            }
+        }
+
+        private static void ValidateConditionOrderEvaluation()
+        {
+            CocktailOrderGenerator generator = new(null, null);
+            GeneratedCocktailOrder order = generator.GenerateOrder(
+                CocktailOrderType.TasteOrder,
+                requestedTags: new[] { "화려한" },
+                requestedConditionLabel: "화려한");
+            Require(order != null
+                    && order.requestedRecipe == null
+                    && order.requiredTasteTags.Count == 1
+                    && order.requiredTasteTags.Contains("화려한"),
+                "취향 주문이 레시피 없이 정확한 단일 태그로 생성되지 않았습니다.");
+
+            CocktailRecipe matchingRecipe = new() { id = "matching" };
+            matchingRecipe.tasteTags.Add("화려한");
+            CocktailEvaluationResult matchingResult = new()
+            {
+                matchedRecipe = matchingRecipe,
+                isSuccess = true,
+                score = 1f,
+                iceValid = true,
+                glassValid = true
+            };
+            CocktailOrderEvaluator evaluator = new(null);
+            CocktailOrderEvaluationResult success = evaluator.Evaluate(
+                order,
+                null,
+                matchingResult);
+            Require(success.isSuccess,
+                "취향 태그가 맞는 실제 레시피를 조건 주문 성공으로 판정하지 않았습니다.");
+
+            CocktailRecipe mismatchingRecipe = new() { id = "mismatching" };
+            mismatchingRecipe.tasteTags.Add("씁쓸함");
+            CocktailEvaluationResult mismatchingResult = new()
+            {
+                matchedRecipe = mismatchingRecipe,
+                isSuccess = true,
+                score = 1f,
+                iceValid = true,
+                glassValid = true
+            };
+            CocktailOrderEvaluationResult mismatch = evaluator.Evaluate(
+                order,
+                null,
+                mismatchingResult);
+            Require(!mismatch.isSuccess,
+                "취향 태그가 다른 실제 레시피를 조건 주문 성공으로 판정했습니다.");
         }
 
         private static void ValidateTechnicalFailureContract()
@@ -571,6 +856,33 @@ namespace Slainte.EditorTools
                 detectedOther);
             Require(EpisodeCraftingResultMapper.Map(wrongMenu) == CraftingJobResult.MidWrongMenu,
                 "잘못된 메뉴 제조 결과 매핑에 실패했습니다.");
+
+            CocktailEvaluationResult detectedTagMismatch = new()
+            {
+                matchedRecipe = otherRecipe,
+                isSuccess = true,
+                iceValid = true,
+                glassValid = true
+            };
+            BusinessOrderSessionResult tagMismatch = new()
+            {
+                outcome = OrderSessionOutcome.Served,
+                accepted = true,
+                grade = OrderEvaluationGrade.Mid,
+                evaluation = new CocktailOrderEvaluationResult
+                {
+                    order = new GeneratedCocktailOrder
+                    {
+                        orderType = CocktailOrderType.TasteOrder,
+                        requestedConditionLabel = "쓴맛"
+                    },
+                    requestedRecipeResult = detectedTagMismatch,
+                    detectedRecipeResult = detectedTagMismatch,
+                    isSuccess = false
+                }
+            };
+            Require(CraftingResultMapper.Map(tagMismatch) == CraftingJobResult.MidWrongMenu,
+                "취향 태그 불일치가 잘못된 메뉴 결과로 매핑되지 않았습니다.");
 
             CocktailEvaluationResult iceAndGlass = new()
             {

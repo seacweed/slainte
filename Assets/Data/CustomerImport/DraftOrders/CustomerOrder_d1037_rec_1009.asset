@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 596ac274de286b84aaa5c1510f09601f, type: 3}
+  m_Name: CustomerOrder_d1037_rec_1009
+  m_EditorClassIdentifier: Assembly-CSharp::CustomerOrderData
+  key: d1037_rec_1009
+  requestedRecipeId: rec_1009
+  orderType: 0
+  paymentCurrency: 0
+  tags: []
+  characterKey: f54
+  expressionKeyMid: mid
+  expressionKeyGood: good
+  expressionKeyBad: bad
+  orderDialogueAuthored: 1
+  lines:
+  - speakerName: F54
+    text: "\uC73C\uC544. \uD798\uB4E4\uB2E4..."
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  - speakerName: F54
+    text: "\uB2C8\uAC00 \uB9CC\uB4E0 \uBE14\uB799 \uCEE4\uD53C\uAC00 \uD55C\uC794
+      \uD544\uC694\uD560 \uB54C\uC57C."
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  feedbackLinesGood:
+  - speakerName: F54
+    text: "\uC6D0\uAE30\uCDA9\uC804\uC774\uB77C\uACE0 \uD558\uB358\uAC00? \uC554\uD2BC
+      \uACE0\uB9C8\uC6CC!"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  feedbackLinesMid: []
+  feedbackLinesBad:
+  - speakerName: F54
+    text: "\uC74C...\uD655\uC2E4\uD788 \uC7A0\uC740 \uD655 \uAE7C\uC5B4"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  authoredFeedback: 63
+  feedbackLinesMidIce:
+  - speakerName: F54
+    text: "\uC5BC\uC74C\uC740 \uD55C\uBC88 \uB208\uAC10\uC544 \uC904\uAC8C"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  feedbackLinesMidGlass:
+  - speakerName: F54
+    text: "\uC794\uC740 \uD55C\uBC88 \uB208\uAC10\uC544 \uC904\uAC8C"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  feedbackLinesMidIceGlass:
+  - speakerName: F54
+    text: "\uC794\uC740 \uD55C\uBC88 \uB208\uAC10\uC544 \uC904\uAC8C. \uC5BC\uC74C\uB3C4."
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  feedbackLinesMidWrongMenu:
+  - speakerName: F54
+    text: "\uC7A0\uC5D0 \uCDE8\uD55C \uAC74\uAC00...\uC774\uB7F0 \uB9DB\uC774 \uC544\uB2C8\uC5C8\uB358
+      \uAC83 \uAC19\uC740\uB370?"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}

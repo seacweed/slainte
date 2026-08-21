@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Slainte.Bartending;
 using Slainte.Economy;
 using UnityEngine;
@@ -34,6 +35,8 @@ namespace Slainte.Business
         public string customerOrderKey;
         public string customerVisitKey;
         public string requestedRecipeId;
+        public string requestedConditionLabel;
+        public List<string> requestedTags = new();
         public string ticketKey;
         public CocktailOrderType orderType = CocktailOrderType.RecipeOrder;
         public GameCurrency paymentCurrency = GameCurrency.Money;
@@ -163,6 +166,8 @@ namespace Slainte.Business
 
             if (result != null
                 && result.isSuccess
+                && result.order?.orderType != CocktailOrderType.TasteOrder
+                && result.order?.orderType != CocktailOrderType.MoodOrder
                 && result.requestedRecipeResult?.matchedRecipe != null
                 && result.requestedRecipeResult.matchedRecipe.evaluationGrade
                     == CocktailRecipeEvaluationGrade.Mid)

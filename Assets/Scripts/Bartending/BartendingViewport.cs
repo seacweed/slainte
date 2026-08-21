@@ -237,6 +237,50 @@ namespace Slainte.Bartending
             return Screen.width > 0 && Screen.height > 0;
         }
 
+        public static bool TryConvertActiveCanvasPixelsToWorld(
+            Vector2 canvasPixelSize,
+            out Vector2 worldSize)
+        {
+            if (Active != null)
+                return Active.TryConvertCanvasPixelsToWorld(canvasPixelSize, out worldSize);
+
+            worldSize = default;
+            return false;
+        }
+
+        public bool TryConvertCanvasPixelsToWorld(
+            Vector2 canvasPixelSize,
+            out Vector2 worldSize)
+        {
+            worldSize = default;
+            if (worldCamera == null
+                || canvasPixelSize.x <= Mathf.Epsilon
+                || canvasPixelSize.y <= Mathf.Epsilon
+                || !TryGetScreenRect(out Rect viewportScreenRect))
+            {
+                return false;
+            }
+
+            Canvas canvas = outputImage != null
+                ? outputImage.canvas
+                : GetComponentInParent<Canvas>();
+            float canvasScaleFactor = canvas != null
+                ? Mathf.Max(Mathf.Epsilon, canvas.scaleFactor)
+                : 1f;
+            Vector2 screenPixelSize = canvasPixelSize * canvasScaleFactor;
+            float worldHeight = worldCamera.orthographic
+                ? worldCamera.orthographicSize * 2f
+                : 0f;
+            float worldWidth = worldHeight * worldCamera.aspect;
+            if (worldWidth <= Mathf.Epsilon || worldHeight <= Mathf.Epsilon)
+                return false;
+
+            worldSize = new Vector2(
+                worldWidth * screenPixelSize.x / viewportScreenRect.width,
+                worldHeight * screenPixelSize.y / viewportScreenRect.height);
+            return worldSize.x > Mathf.Epsilon && worldSize.y > Mathf.Epsilon;
+        }
+
         public static bool TryConvertClampedHorizontalScreenDelta(
             Camera fallbackCamera,
             Bounds worldBounds,

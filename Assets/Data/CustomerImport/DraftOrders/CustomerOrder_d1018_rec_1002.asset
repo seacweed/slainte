@@ -15,12 +15,44 @@ MonoBehaviour:
   key: d1018_rec_1002
   requestedRecipeId: rec_1002
   orderType: 0
+  paymentCurrency: 0
   tags: []
   characterKey: skitz
   expressionKeyMid: mid
   expressionKeyGood: good
   expressionKeyBad: bad
-  lines: []
-  feedbackLinesGood: []
+  orderDialogueAuthored: 1
+  lines:
+  - speakerName: "\uC2A4\uD0A4\uCE20"
+    text: "\uB098 \uCF54\uD2BC \uC0AC\uC6CC\uB97C \uC544\uC8FC \uC88B\uC544\uD55C\uB2E4\uACE0."
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesGood:
+  - speakerName: "\uC2A4\uD0A4\uCE20"
+    text: "\uC774\uC815\uB3C4\uBA74 \uD569\uACA9\uC774\uC57C. \uCD95\uD558\uD574."
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
   feedbackLinesMid: []
-  feedbackLinesBad: []
+  feedbackLinesBad:
+  - speakerName: "\uC2A4\uD0A4\uCE20"
+    text: "\uC624\uB298\uBD80\uD130 \uC2EB\uC5B4\uC9C8 \uAC70 \uAC19\uC740\uB370.
+      \uCF54\uD2BC \uC0AC\uC6CC\uB3C4, \uC5EC\uAE30\uB3C4."
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  authoredFeedback: 63
+  feedbackLinesMidIce:
+  - speakerName: "\uC2A4\uD0A4\uCE20"
+    text: "\uD558...\uC124\uB9C8 \uC5BC\uC74C\uC744 \uAE4C\uBA39\uC5C8\uB2E4\uB294
+      \uAC74 \uC544\uB2C8\uACA0\uC9C0?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidGlass:
+  - speakerName: "\uC2A4\uD0A4\uCE20"
+    text: "\uD558...\uC124\uB9C8 \uC794\uC744 \uD5F7\uAC08\uB838\uB2E4\uB294 \uAC74
+      \uC544\uB2C8\uACA0\uC9C0?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidIceGlass:
+  - speakerName: "\uC2A4\uD0A4\uCE20"
+    text: "\uD558...\uC124\uB9C8 \uC794\uB3C4 \uD5F7\uAC08\uB9AC\uACE0 \uC5BC\uC74C\uB3C4
+      \uAE4C\uBA39\uC5C8\uB2E4\uB294 \uAC74 \uC544\uB2C8\uACA0\uC9C0?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidWrongMenu:
+  - speakerName: "\uC2A4\uD0A4\uCE20"
+    text: "\uB0B4 \uBA54\uB274\uB294 \uC5B4\uB530 \uD314\uC544\uBA39\uC5C8\uC5B4?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}

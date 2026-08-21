@@ -43,7 +43,7 @@ MonoBehaviour:
   - "\uC170\uC774\uB514"
   - "\uD56B \uD14C\uB514"
   orders:
-  - order: {fileID: 11400000, guid: 9841f1ee7b561374b8f268c86146e945, type: 2}
+  - order: {fileID: 11400000, guid: 2a9180309a6c28044a41acc5b884bf67, type: 2}
     weight: 1
     condition:
       minDay: 0
@@ -53,6 +53,24 @@ MonoBehaviour:
       requiredVars: []
       requiredCustomerAppearances: []
   - order: {fileID: 11400000, guid: b3e140a9583b5b34ead1da4f6ea9d6a0, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: 8685148e3f0c2b24c81235063e0d27d7, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: c06c49c99819a6c4192c8ed7d426ea0c, type: 2}
     weight: 1
     condition:
       minDay: 0

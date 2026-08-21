@@ -1,3 +1,1 @@
 id,displayName,minTotalMl,maxTotalMl,toleranceMl,allowExtraIngredients,glassId,iceRequirement,technique,tasteTags,moodTags
-vodka_lemon,보드카 레몬,70,100,8,false,,Any,None,Sour|Neutral,
-whiskey_neat,위스키 니트,40,60,5,false,rock,None,Build,Bitter|Neutral,

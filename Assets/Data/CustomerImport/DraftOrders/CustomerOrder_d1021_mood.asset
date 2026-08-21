@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 596ac274de286b84aaa5c1510f09601f, type: 3}
+  m_Name: CustomerOrder_d1021_mood
+  m_EditorClassIdentifier: Assembly-CSharp::CustomerOrderData
+  key: d1021_mood
+  requestedRecipeId: 
+  orderType: 3
+  paymentCurrency: 0
+  tags:
+  - "\uC815\uC5F4\uC801\uC778"
+  characterKey: vago
+  expressionKeyMid: mid
+  expressionKeyGood: good
+  expressionKeyBad: bad
+  orderDialogueAuthored: 1
+  lines:
+  - speakerName: "\uBC14\uACE0"
+    text: "\uBB50\uB4E0 \uC815\uC5F4\uC801\uC778 \uAC70 \uD558\uB098."
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesGood:
+  - speakerName: "\uBC14\uACE0"
+    text: "\uBB58 \uC880 \uC544\uB294\uAD70"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMid: []
+  feedbackLinesBad: []
+  authoredFeedback: 63
+  feedbackLinesMidIce:
+  - speakerName: "\uBC14\uACE0"
+    text: "\uC5BC\uC74C\uC744 \uB123\uACE0 \uC548 \uB123\uACE0\uB294 \uC548\uBC30\uC6E0\uB098?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidGlass:
+  - speakerName: "\uBC14\uACE0"
+    text: "\uC794 \uC885\uB958\uB294 \uC548\uBC30\uC6E0\uB098?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidIceGlass:
+  - speakerName: "\uBC14\uACE0"
+    text: "\uB9DB\uB9CC \uC788\uB2E4\uACE0 \uB2E4 \uB418\uB294 \uAC8C \uC544\uB2C8\uB77C\uACE0"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidWrongMenu:
+  - speakerName: "\uBC14\uACE0"
+    text: "\uC774\uB7F0 \uAC78 \uC2DC\uD0A8 \uAC83 \uAC19\uC544?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}

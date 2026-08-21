@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 596ac274de286b84aaa5c1510f09601f, type: 3}
+  m_Name: CustomerOrder_d1018_rec_1011
+  m_EditorClassIdentifier: Assembly-CSharp::CustomerOrderData
+  key: d1018_rec_1011
+  requestedRecipeId: rec_1011
+  orderType: 0
+  paymentCurrency: 0
+  tags: []
+  characterKey: skitz
+  expressionKeyMid: mid
+  expressionKeyGood: good
+  expressionKeyBad: bad
+  orderDialogueAuthored: 1
+  lines:
+  - speakerName: "\uC2A4\uD0A4\uCE20"
+    text: "\uAE30\uBD84\uC774 \uC88B\uC73C\uBA74 \uB808\uBAAC\uD53C\uC988, \uAE30\uBD84\uC774
+      \uB098\uC060 \uB550 \uBCF4\uC77C\uB9C1 \uD3EC\uC778\uD2B8."
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  - speakerName: "\uC2A4\uD0A4\uCE20"
+    text: "\uC774 \uB9D0 \uC54C\uC544?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  - speakerName: "\uC2A4\uD0A4\uCE20"
+    text: "\uB0B4\uAC00 \uAE30\uBD84 \uC88B\uC744 \uB54C\uB9C8\uB2E4 \uD558\uB294
+      \uB9D0\uC774\uC57C."
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesGood:
+  - speakerName: "\uC2A4\uD0A4\uCE20"
+    text: "\uB108 \uBCF4\uAE30\uBCF4\uB2E4 \uC798 \uB9CC\uB4DC\uB294\uAD6C\uB098?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMid: []
+  feedbackLinesBad:
+  - speakerName: "\uC2A4\uD0A4\uCE20"
+    text: "\uC74C\uB8CC\uB85C \uC0AC\uB78C \uAE30\uBD84 \uB9DD\uCE58\uB294 \uC7AC\uC8FC\uAC00
+      \uC788\uAD6C\uB098"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  authoredFeedback: 63
+  feedbackLinesMidIce:
+  - speakerName: "\uC2A4\uD0A4\uCE20"
+    text: "\uC5BC\uC74C \uAE4C\uBA39\uB294 \uC560\uC1A1\uC774\uC778\uC904\uC740 \uBAB0\uB790\uB124"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidGlass:
+  - speakerName: "\uC2A4\uD0A4\uCE20"
+    text: "\uC774\uB7F0 \uC794\uC5D0 \uC8FC\uB294 \uC560\uC1A1\uC774\uC778\uC904\uC740
+      \uBAB0\uB790\uB124"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidIceGlass:
+  - speakerName: "\uC2A4\uD0A4\uCE20"
+    text: "\uC5BC\uC74C\uB3C4 \uC548 \uB123\uACE0 \uC794\uB3C4 \uD2C0\uB9AC\uB294
+      \uC560\uC1A1\uC774\uC778\uC904\uC740 \uBAB0\uB790\uB124"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidWrongMenu:
+  - speakerName: "\uC2A4\uD0A4\uCE20"
+    text: "\uB0B4 \uBA54\uB274\uB294 \uC5B4\uB530 \uD314\uC544\uBA39\uC5C8\uC5B4?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}

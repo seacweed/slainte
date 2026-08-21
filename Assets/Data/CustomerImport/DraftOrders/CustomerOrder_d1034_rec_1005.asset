@@ -15,12 +15,51 @@ MonoBehaviour:
   key: d1034_rec_1005
   requestedRecipeId: rec_1005
   orderType: 0
+  paymentCurrency: 0
   tags: []
   characterKey: sally
   expressionKeyMid: mid
   expressionKeyGood: good
   expressionKeyBad: bad
-  lines: []
-  feedbackLinesGood: []
+  orderDialogueAuthored: 1
+  lines:
+  - speakerName: "\uC140\uB9AC"
+    text: "\uC170\uC774\uB514. \uBE60\uB974\uAC8C \uD55C\uC794 \uBD80\uD0C1\uD574"
+    nameColor: {r: 0.81960785, g: 0.36862746, b: 0.7254902, a: 1}
+  feedbackLinesGood:
+  - speakerName: "\uC140\uB9AC"
+    text: "...\uC170\uC774\uB514. \uC774\uB984 \uC815\uB9D0 \uC785\uC5D0 \uC548 \uBD99\uB294\uAD70"
+    nameColor: {r: 0.81960785, g: 0.36862746, b: 0.7254902, a: 1}
+  - speakerName: "\uC140\uB9AC"
+    text: "\uADF8\uB798\uB3C4 \uB9DB\uC740 \uC785\uC5D0 \uCC38 \uC798 \uB9DE\uB294\uB2E8
+      \uB9D0\uC774\uC9C0"
+    nameColor: {r: 0.81960785, g: 0.36862746, b: 0.7254902, a: 1}
   feedbackLinesMid: []
-  feedbackLinesBad: []
+  feedbackLinesBad:
+  - speakerName: "\uC140\uB9AC"
+    text: "\uC5B4\uCA4C\uBA74 \uB2E4\uB978 5\uBC88\uAC00 \uD38D\uC744 \uCC3E\uC544\uBD10\uC57C
+      \uB420\uC9C0\uB3C4."
+    nameColor: {r: 0.81960785, g: 0.36862746, b: 0.7254902, a: 1}
+  authoredFeedback: 63
+  feedbackLinesMidIce:
+  - speakerName: "\uC140\uB9AC"
+    text: "\uAD1C\uCC2E\uB124...\uC5BC\uC74C\uB9CC \uC880 \uB354 \uC2E0\uACBD\uC368
+      \uC918."
+    nameColor: {r: 0.81960785, g: 0.36862746, b: 0.7254902, a: 1}
+  feedbackLinesMidGlass:
+  - speakerName: "\uC140\uB9AC"
+    text: "\uAD1C\uCC2E\uB124...\uC794\uB9CC \uC880 \uB354 \uC2E0\uACBD\uC368 \uC918."
+    nameColor: {r: 0.81960785, g: 0.36862746, b: 0.7254902, a: 1}
+  feedbackLinesMidIceGlass:
+  - speakerName: "\uC140\uB9AC"
+    text: "\uAD1C\uCC2E\uB124...\uC794\uC774\uB791 \uC5BC\uC74C\uB9CC \uC880 \uB354
+      \uC2E0\uACBD\uC368 \uC918."
+    nameColor: {r: 0.81960785, g: 0.36862746, b: 0.7254902, a: 1}
+  feedbackLinesMidWrongMenu:
+  - speakerName: "\uC140\uB9AC"
+    text: "\uADF8\uB807\uAC8C \uC5B4\uB824\uC6B4 \uAC78 \uC2DC\uD0A8 \uAC74 \uC544\uB2CC
+      \uAC83 \uAC19\uC740\uB370"
+    nameColor: {r: 0.81960785, g: 0.36862746, b: 0.7254902, a: 1}
+  - speakerName: "\uC140\uB9AC"
+    text: "\uC880 \uB354 \uC2E0\uACBD\uC368 \uC918."
+    nameColor: {r: 0.81960785, g: 0.36862746, b: 0.7254902, a: 1}

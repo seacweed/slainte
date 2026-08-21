@@ -33,7 +33,7 @@ namespace Slainte.EditorTools
             ValidateImmediateCurrencyPayout();
             ValidatePlanningInventoryMigration();
             Debug.Log(
-                "[BusinessIntegrationRulesValidator] PASS: timer, encounter type, explicit pause, save isolation, "
+                "[BusinessIntegrationRulesValidator] PASS: timer, Day-5 third-slot encounter, explicit pause, save isolation, "
                 + "recipe-price rewards, Money/StrangeCoin immediate payout, detailed sale save, "
                 + "deferred settlement payout and reset");
         }
@@ -62,6 +62,45 @@ namespace Slainte.EditorTools
             Require(episode != null, "StrangeCoin_0 에피소드 데이터를 찾지 못했습니다.");
             Require(episode.episodeType == EpisodeType.Encounter,
                 $"StrangeCoin_0의 EpisodeType이 Encounter가 아닙니다: {episode.episodeType}");
+            Require(episode.triggerCondition != null
+                    && episode.triggerCondition.minDay == 5,
+                "StrangeCoin_0 에피소드는 Day 5부터 등장해야 합니다.");
+
+            BusinessOrderFlowSettings settings =
+                AssetDatabase.LoadAssetAtPath<BusinessOrderFlowSettings>(
+                    "Assets/Resources/Business/BusinessOrderFlowSettings.asset");
+            Require(settings != null, "영업 설정 에셋을 찾지 못했습니다.");
+
+            if (settings.randomEncounters != null)
+            {
+                for (int i = 0; i < settings.randomEncounters.Count; i++)
+                {
+                    Require(settings.randomEncounters[i]?.episode != episode,
+                        "StrangeCoin_0은 랜덤 인카운터 풀에 남아 있으면 안 됩니다.");
+                }
+            }
+
+            BusinessRequiredActionRule fixedRule = null;
+            if (settings.requiredActions != null)
+            {
+                for (int i = 0; i < settings.requiredActions.Count; i++)
+                {
+                    BusinessRequiredActionRule candidate = settings.requiredActions[i];
+                    if (candidate?.encounterEpisode == episode)
+                    {
+                        fixedRule = candidate;
+                        break;
+                    }
+                }
+            }
+
+            Require(fixedRule != null
+                    && fixedRule.actionType == BusinessRequiredActionType.EncounterEpisode
+                    && fixedRule.timing == BusinessRequiredActionTiming.SequenceSlot
+                    && fixedRule.sequenceSlot == 3
+                    && fixedRule.condition != null
+                    && fixedRule.condition.minDay == 5,
+                "StrangeCoin_0은 Day 5 이후 3번 영업 슬롯의 필수 인카운터여야 합니다.");
         }
 
         private static void ValidateSaveSuppressionNesting()
@@ -106,7 +145,7 @@ namespace Slainte.EditorTools
                     accepted = true,
                     customerOrderKey = "validator_order",
                     customerVisitKey = "validator_visit",
-                    requestedRecipeId = "vodka_lemon",
+                    requestedRecipeId = "rec_1003",
                     grade = OrderEvaluationGrade.Good,
                     customerMood = CustomerMood.Satisfied,
                     baseRevenue = 100,

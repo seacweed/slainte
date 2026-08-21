@@ -1,6 +1,14 @@
+using System;
 using System.Collections.Generic;
 using Slainte.Business;
 using UnityEngine;
+
+public enum CustomerDialoguePresentation
+{
+    Missing,
+    Played,
+    IntentionallySkipped
+}
 
 public class CustomerSpawner : MonoBehaviour
 {
@@ -35,7 +43,11 @@ public class CustomerSpawner : MonoBehaviour
         return order != null;
     }
 
-    public bool ShowVisit(string visitKey, string orderKey, string fallbackOrderLine = null)
+    public bool ShowVisit(
+        string visitKey,
+        string orderKey,
+        string fallbackOrderLine = null,
+        Action<bool> onOrderPresentationReady = null)
     {
         CanResolveOrder(orderKey, out _currentOrderData);
         _currentVisitData = visitDB != null ? visitDB.FindByKey(visitKey) : null;
@@ -46,9 +58,17 @@ public class CustomerSpawner : MonoBehaviour
         {
             characterStage?.ShowCharacters(
                 entries,
-                () => OnCharactersShown(_currentOrderData, fallbackOrderLine));
+                () => NotifyOrderPresentationReady(
+                    _currentOrderData,
+                    fallbackOrderLine,
+                    onOrderPresentationReady));
             if (characterStage == null)
-                OnCharactersShown(_currentOrderData, fallbackOrderLine);
+            {
+                NotifyOrderPresentationReady(
+                    _currentOrderData,
+                    fallbackOrderLine,
+                    onOrderPresentationReady);
+            }
             return true;
         }
 
@@ -61,13 +81,24 @@ public class CustomerSpawner : MonoBehaviour
             };
             characterStage?.ShowCharacters(
                 new[] { entry },
-                () => OnCharactersShown(_currentOrderData, fallbackOrderLine));
+                () => NotifyOrderPresentationReady(
+                    _currentOrderData,
+                    fallbackOrderLine,
+                    onOrderPresentationReady));
             if (characterStage == null)
-                OnCharactersShown(_currentOrderData, fallbackOrderLine);
+            {
+                NotifyOrderPresentationReady(
+                    _currentOrderData,
+                    fallbackOrderLine,
+                    onOrderPresentationReady);
+            }
         }
         else
         {
-            OnCharactersShown(_currentOrderData, fallbackOrderLine);
+            NotifyOrderPresentationReady(
+                _currentOrderData,
+                fallbackOrderLine,
+                onOrderPresentationReady);
         }
 
         return true;
@@ -99,6 +130,39 @@ public class CustomerSpawner : MonoBehaviour
         return dialogue != null;
     }
 
+    public CustomerDialoguePresentation ShowFeedback(CraftingJobResult result)
+    {
+        if (_currentOrderData == null)
+            return CustomerDialoguePresentation.Missing;
+
+        OrderEvaluationGrade grade = ToEvaluationGrade(result);
+        ApplyFeedbackExpressions(grade);
+
+        if (_currentOrderData.TryGetAuthoredFeedback(result, out List<DialogueLine> authoredLines))
+        {
+            if (authoredLines == null || authoredLines.Count == 0)
+                return CustomerDialoguePresentation.IntentionallySkipped;
+
+            if (dialogue == null)
+                return CustomerDialoguePresentation.Missing;
+
+            dialogue.StartDialogue(authoredLines);
+            return CustomerDialoguePresentation.Played;
+        }
+
+        List<DialogueLine> legacyLines = grade switch
+        {
+            OrderEvaluationGrade.Good => _currentOrderData.feedbackLinesGood,
+            OrderEvaluationGrade.Mid => _currentOrderData.feedbackLinesMid,
+            _ => _currentOrderData.feedbackLinesBad
+        };
+        if (legacyLines == null || legacyLines.Count == 0 || dialogue == null)
+            return CustomerDialoguePresentation.Missing;
+
+        dialogue.StartDialogue(legacyLines);
+        return CustomerDialoguePresentation.Played;
+    }
+
     public void Clear()
     {
         _currentOrderData = null;
@@ -106,15 +170,23 @@ public class CustomerSpawner : MonoBehaviour
         characterStage?.Clear();
     }
 
-    private void OnCharactersShown(CustomerOrderData data, string fallbackOrderLine)
+    private bool OnCharactersShown(CustomerOrderData data, string fallbackOrderLine)
     {
-        if (data == null) return;
+        if (data == null) return false;
 
-        ticketManager?.Prepare(data.key);
+        ticketManager?.Prepare(
+            data.key,
+            OrderTicketMemoFormatter.Build(data, fallbackOrderLine));
 
         if (data.lines != null && data.lines.Count > 0)
         {
             dialogue?.StartDialogue(data.lines);
+            return dialogue != null;
+        }
+        else if (data.orderDialogueAuthored)
+        {
+            dialogue?.HideImmediate();
+            return false;
         }
         else if (!string.IsNullOrWhiteSpace(fallbackOrderLine))
         {
@@ -126,11 +198,32 @@ public class CustomerSpawner : MonoBehaviour
                 out speakerName,
                 out nameColor);
             dialogue?.ShowSingleLine(speakerName, fallbackOrderLine, nameColor);
+            return dialogue != null;
         }
         else
         {
             dialogue?.HideImmediate();
+            return false;
         }
+    }
+
+    private void NotifyOrderPresentationReady(
+        CustomerOrderData data,
+        string fallbackOrderLine,
+        Action<bool> callback)
+    {
+        bool dialogueStarted = OnCharactersShown(data, fallbackOrderLine);
+        callback?.Invoke(dialogueStarted);
+    }
+
+    private static OrderEvaluationGrade ToEvaluationGrade(CraftingJobResult result)
+    {
+        return result switch
+        {
+            CraftingJobResult.Good => OrderEvaluationGrade.Good,
+            CraftingJobResult.Bad => OrderEvaluationGrade.Bad,
+            _ => OrderEvaluationGrade.Mid
+        };
     }
 
     private string ResolveOrderingCharacterKey(CustomerOrderData data)

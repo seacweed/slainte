@@ -749,6 +749,14 @@ namespace Slainte.Bartending
                 return false;
             }
 
+            CobblerShakerPresentation shakerPresentation =
+                item.GameObject.GetComponent<CobblerShakerPresentation>();
+            if (shakerPresentation != null && !shakerPresentation.IsFullyAssembled)
+            {
+                failure = "Reassemble the shaker before returning it to the cabinet.";
+                return false;
+            }
+
             if (!tag.Store(item))
             {
                 failure = "That cabinet slot is already occupied.";
@@ -786,6 +794,10 @@ namespace Slainte.Bartending
                 failure = "The ice bucket cannot be refilled.";
                 return false;
             }
+            ToolCabinetRuntimeTag bucketTag =
+                cabinetIceBucket.GetComponent<ToolCabinetRuntimeTag>();
+            if (bucketTag != null)
+                toolCabinet?.NotifyAvailability(bucketTag.DefinitionId, true);
             return true;
         }
 

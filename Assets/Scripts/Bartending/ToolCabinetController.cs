@@ -426,6 +426,8 @@ namespace Slainte.Bartending
         private CanvasGroup contentGroup;
         private Image slotBackground;
         private SlotController boundSlot;
+        private readonly List<Image> contentImages = new();
+        private Sprite[] defaultSprites = Array.Empty<Sprite>();
 
         public string DefinitionId { get; private set; } = string.Empty;
 
@@ -493,8 +495,10 @@ namespace Slainte.Bartending
         public void RefreshFromSlot()
         {
             bool occupied = boundSlot != null && boundSlot.IsOccupied;
-            if (occupied && boundSlot.OccupiedItem != null)
-                TryApplyWorldProjectedSize(boundSlot.OccupiedItem);
+            IBartendingItem item = occupied ? boundSlot.OccupiedItem : null;
+            ApplyCabinetVisual(item);
+            if (item != null)
+                TryApplyWorldProjectedSize(item);
             if (contentGroup != null)
                 contentGroup.alpha = occupied ? 1f : 0f;
             if (slotBackground != null)
@@ -531,10 +535,12 @@ namespace Slainte.Bartending
 
         private void BuildImages(Sprite[] sprites, bool flipVertical)
         {
-            for (int i = 0; i < sprites.Length; i++)
+            defaultSprites = sprites != null
+                ? (Sprite[])sprites.Clone()
+                : Array.Empty<Sprite>();
+            contentImages.Clear();
+            for (int i = 0; i < defaultSprites.Length; i++)
             {
-                if (sprites[i] == null)
-                    continue;
                 GameObject layer = new GameObject(
                     "Layer_" + i,
                     typeof(RectTransform),
@@ -548,12 +554,31 @@ namespace Slainte.Bartending
                 rect.offsetMin = Vector2.zero;
                 rect.offsetMax = Vector2.zero;
                 Image image = layer.GetComponent<Image>();
-                image.sprite = sprites[i];
+                image.sprite = defaultSprites[i];
                 image.preserveAspect = true;
                 image.raycastTarget = false;
                 image.rectTransform.localScale = flipVertical
                     ? new Vector3(1f, -1f, 1f)
                     : Vector3.one;
+                contentImages.Add(image);
+            }
+        }
+
+        private void ApplyCabinetVisual(IBartendingItem item)
+        {
+            IBartendingCabinetVisualProvider provider =
+                item as IBartendingCabinetVisualProvider;
+            int count = Mathf.Min(contentImages.Count, defaultSprites.Length);
+            for (int i = 0; i < count; i++)
+            {
+                Image image = contentImages[i];
+                if (image == null)
+                    continue;
+
+                Sprite fallback = defaultSprites[i];
+                image.sprite = provider != null
+                    ? provider.GetCabinetVisualSprite(i, fallback)
+                    : fallback;
             }
         }
 

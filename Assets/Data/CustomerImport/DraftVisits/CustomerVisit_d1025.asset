@@ -43,7 +43,7 @@ MonoBehaviour:
   - "\uC870\uB2C8 \uB3C5\uC2A4 \uC628\uB354\uB77D"
   - "\uAC13\uB85C\uB4DC"
   orders:
-  - order: {fileID: 11400000, guid: c87460ff7d84ecd4aac8480585553611, type: 2}
+  - order: {fileID: 11400000, guid: 99985a8eec8529a48aeb620e163c8a1b, type: 2}
     weight: 1
     condition:
       minDay: 0
@@ -52,7 +52,7 @@ MonoBehaviour:
       prerequisiteEpisodeIds: []
       requiredVars: []
       requiredCustomerAppearances: []
-  - order: {fileID: 11400000, guid: 0188a182c5c37774e98ce5969ea1d334, type: 2}
+  - order: {fileID: 11400000, guid: 0cf6a3877d01eb645902bd435e989b92, type: 2}
     weight: 1
     condition:
       minDay: 0

@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 596ac274de286b84aaa5c1510f09601f, type: 3}
+  m_Name: CustomerOrder_d1030_rec_1019
+  m_EditorClassIdentifier: Assembly-CSharp::CustomerOrderData
+  key: d1030_rec_1019
+  requestedRecipeId: rec_1019
+  orderType: 0
+  paymentCurrency: 0
+  tags: []
+  characterKey: f54
+  expressionKeyMid: mid
+  expressionKeyGood: good
+  expressionKeyBad: bad
+  orderDialogueAuthored: 1
+  lines:
+  - speakerName: F54
+    text: "\uBC14\uD558 \uC628\uB354\uB77D \uB9C8\uC2E4 \uC0DD\uAC01\uC5D0 \uB2EC\uB824\uC654\uB2E4\uACE0!"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  feedbackLinesGood:
+  - speakerName: F54
+    text: "\uD750\uC544, \uB2E4\uC2DC \uB098\uAC00\uACE0 \uC2F6\uC9C0 \uC54A\uC740
+      \uB9DB. \uCD5C\uACE0\uC57C..."
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  feedbackLinesMid: []
+  feedbackLinesBad:
+  - speakerName: F54
+    text: "\uB0B4\uAC00 \uCC3E\uB358 \uCE5C\uAD6C\uAC00 \uC544\uB2C8\uC57C"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  authoredFeedback: 63
+  feedbackLinesMidIce:
+  - speakerName: F54
+    text: "\uC6B0\uB9AC \uC5BC\uC74C\uC774 \uBABB\uBD24\uC5B4?"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  feedbackLinesMidGlass:
+  - speakerName: F54
+    text: "\uC6B0\uB9AC \uB77D\uAE00\uB77C\uC2A4 \uBABB\uBD24\uC5B4?"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  feedbackLinesMidIceGlass:
+  - speakerName: F54
+    text: "\uC6B0\uB9AC \uC5BC\uC74C\uC774\uB791 \uB77D\uAE00\uB77C\uC2A4 \uBABB\uBD24\uC5B4?"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  feedbackLinesMidWrongMenu:
+  - speakerName: F54
+    text: "\uC88B\uC740 \uC704\uC2A4\uD0A4\uC9C0\uB9CC, \uB0B4\uAC00 \uCC3E\uB358
+      \uCE5C\uAD6C\uAC00 \uC544\uB2C8\uC57C"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}

@@ -15,12 +15,58 @@ MonoBehaviour:
   key: d1038_rec_1001
   requestedRecipeId: rec_1001
   orderType: 0
+  paymentCurrency: 0
   tags: []
   characterKey: f72
   expressionKeyMid: mid
   expressionKeyGood: good
   expressionKeyBad: bad
-  lines: []
-  feedbackLinesGood: []
+  orderDialogueAuthored: 1
+  lines:
+  - speakerName: F72
+    text: "\uD6C4. \uC624\uAE30\uC804\uBD80\uD130 \uAF2D \uBC88\uD584 \uC0AC\uC6CC\uB97C
+      \uB9C8\uC2DC\uACE0 \uC2F6\uC5C8\uB2E4\uACE0"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  feedbackLinesGood:
+  - speakerName: F72
+    text: "\uB098\uB3C4 \uB098\uC911\uC5D4 \uC774\uB7F0 \uD38D\uC774\uB098 \uCC28\uB9B4\uAE4C
+      \uC2F6\uC5B4"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  - speakerName: F72
+    text: "\uCE75\uD14C\uC77C\uC744 \uC774\uB807\uAC8C \uB9CC\uB4E4\uC9C4 \uBABB\uD558\uACA0\uC9C0\uB9CC"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
   feedbackLinesMid: []
-  feedbackLinesBad: []
+  feedbackLinesBad:
+  - speakerName: F72
+    text: "\uB9DB\uC774 \uCC38...\uBE61\uBE61\uD55C UPD \uB188\uB4E4 \uBA74\uC0C1\uAC19\uC544."
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  authoredFeedback: 63
+  feedbackLinesMidIce:
+  - speakerName: F72
+    text: "\uB2E8\uACE8\uD55C\uD14C \uC5BC\uC74C \uC544\uB07C\uB294 \uAC70\uC57C?"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  - speakerName: F72
+    text: "\uB18D\uB2F4\uC774\uC57C, \uB18D\uB2F4"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  feedbackLinesMidGlass:
+  - speakerName: F72
+    text: "\uB2E8\uACE8\uD55C\uD14C \uC544\uB07C\uB294 \uC794\uC740 \uC228\uAE30\uB294
+      \uAC70\uC57C?"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  - speakerName: F72
+    text: "\uB18D\uB2F4\uC774\uC57C, \uB18D\uB2F4"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  feedbackLinesMidIceGlass:
+  - speakerName: F72
+    text: "\uB2E8\uACE8\uD55C\uD14C \uB300\uCDA9 \uB9CC\uB4E4\uC5B4\uC8FC\uB294\uAC70\uC57C?"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  - speakerName: F72
+    text: "\uB18D\uB2F4\uC774\uC57C, \uB18D\uB2F4"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  feedbackLinesMidWrongMenu:
+  - speakerName: F72
+    text: "\uB2E8\uACE8\uD55C\uD14C \uC544\uBB34\uAC70\uB098 \uBA39\uC73C\uB77C\uB294\uAC70\uC57C?"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  - speakerName: F72
+    text: "\uB18D\uB2F4\uC774\uC57C, \uB18D\uB2F4"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}

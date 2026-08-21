@@ -15,12 +15,45 @@ MonoBehaviour:
   key: d1003_rec_1006
   requestedRecipeId: rec_1006
   orderType: 0
+  paymentCurrency: 0
   tags: []
   characterKey: valentino_and_berry
   expressionKeyMid: mid
   expressionKeyGood: good
   expressionKeyBad: bad
-  lines: []
-  feedbackLinesGood: []
+  orderDialogueAuthored: 1
+  lines:
+  - speakerName: "\uBC1C\uB80C\uD2F0\uB178"
+    text: "\uD55C\uC5EC\uB984\uC758 \uB098\uB0AD\uB098. \uC774\uAC70 \uC790\uAE30\uD55C\uD14C
+      \uB531\uC774\uB2E4. \uADF8\uCE58?"
+    nameColor: {r: 0, g: 0, b: 1, a: 1}
+  - speakerName: "\uBCA0\uB9AC"
+    text: "\uC65C \uADF8\uB798~ \uC8FC\uCC45\uC774\uC57C \uC9C4\uC9DC"
+    nameColor: {r: 1, g: 0, b: 1, a: 1}
+  feedbackLinesGood:
+  - speakerName: "\uBCA0\uB9AC"
+    text: "\uC5ED\uC2DC \uC6B0\uB9AC \uC790\uAE30\uAC00 \uC548\uBAA9\uC774 \uC788\uB2E4\uB2C8\uAE4C?"
+    nameColor: {r: 1, g: 0, b: 1, a: 1}
+  - speakerName: "\uBC1C\uB80C\uD2F0\uB178"
+    text: "\uADF8\uCE58? \uC790\uAE30\uAC19\uC774 \uC0C1\uD07C\uD55C \uC0AC\uB78C\uC740
+      \uC774\uAC8C \uCD5C\uACE0\uC57C"
+    nameColor: {r: 0, g: 0, b: 1, a: 1}
   feedbackLinesMid: []
-  feedbackLinesBad: []
+  feedbackLinesBad:
+  - speakerName: "\uBC1C\uB80C\uD2F0\uB178"
+    text: "\uC8FC\uBB38 \uC0C1\uD0DC\uAC00..."
+    nameColor: {r: 0, g: 0, b: 1, a: 1}
+  - speakerName: "\uBC1C\uB80C\uD2F0\uB178"
+    text: "\uC790\uAE30\uC57C, \uC5EC\uAE30 \uBCC4\uB85C\uC9C0? \uBBF8\uC548\uD574"
+    nameColor: {r: 0, g: 0, b: 1, a: 1}
+  - speakerName: "\uBCA0\uB9AC"
+    text: "\uC65C \uC790\uAE30\uAC00 \uC0AC\uACFC\uB97C \uD574. \uAD1C\uCC2E\uC544."
+    nameColor: {r: 1, g: 0, b: 1, a: 1}
+  - speakerName: "\uBCA0\uB9AC"
+    text: "\uC790\uAE30 \uC798\uBABB \uC544\uB2C8\uC796\uC544"
+    nameColor: {r: 1, g: 0, b: 1, a: 1}
+  authoredFeedback: 63
+  feedbackLinesMidIce: []
+  feedbackLinesMidGlass: []
+  feedbackLinesMidIceGlass: []
+  feedbackLinesMidWrongMenu: []

@@ -9,10 +9,8 @@ namespace Slainte.Bartending
         [SerializeField] private VesselLiquidTracker targetTracker;
         [SerializeField] private bool autoFindTarget = true;
 
-        [Header("CSV 데이터")]
+        [Header("레시피·주문 데이터")]
         [SerializeField] private string dataFolder = "Data";
-        [SerializeField] private string recipesFileName = "recipes.csv";
-        [SerializeField] private string recipeIngredientsFileName = "recipe_ingredients.csv";
         [SerializeField] private string orderTemplatesFileName = "order_templates.csv";
         [SerializeField] private string itemResourcesPath = "Items";
         [SerializeField] private ItemDef[] additionalItems;
@@ -51,11 +49,7 @@ namespace Slainte.Bartending
         public void Reload()
         {
             ItemDefCatalog itemCatalog = ItemDefCatalog.LoadFromResources(itemResourcesPath, additionalItems);
-            recipeCatalog = CocktailRecipeCsvLoader.LoadFromStreamingAssets(
-                itemCatalog,
-                dataFolder,
-                recipesFileName,
-                recipeIngredientsFileName);
+            recipeCatalog = CocktailRecipeDataLoader.LoadDefault(itemCatalog);
             evaluator = new CocktailEvaluator(recipeCatalog);
             orderTemplateCatalog = CocktailOrderCsvLoader.LoadTemplatesFromStreamingAssets(
                 dataFolder,
@@ -78,11 +72,7 @@ namespace Slainte.Bartending
             if (orderGenerator == null)
             {
                 ItemDefCatalog itemCatalog = ItemDefCatalog.LoadFromResources(itemResourcesPath, additionalItems);
-                recipeCatalog = CocktailRecipeCsvLoader.LoadFromStreamingAssets(
-                    itemCatalog,
-                    dataFolder,
-                    recipesFileName,
-                    recipeIngredientsFileName);
+                recipeCatalog = CocktailRecipeDataLoader.LoadDefault(itemCatalog);
                 evaluator = new CocktailEvaluator(recipeCatalog);
                 orderTemplateCatalog = CocktailOrderCsvLoader.LoadTemplatesFromStreamingAssets(
                     dataFolder,

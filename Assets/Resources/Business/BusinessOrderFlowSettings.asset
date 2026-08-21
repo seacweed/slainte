@@ -15,10 +15,23 @@ MonoBehaviour:
   autoStart: 1
   shiftDurationSeconds: 180
   customerVisitDatabase: {fileID: 11400000, guid: f5a61ed87b8042198be0337bde46a7eb, type: 2}
-  randomEncounters:
-  - episode: {fileID: 11400000, guid: 565cdd3b075026249b49e76ec6df782a, type: 2}
-    weight: 1
-  requiredActions: []
+  randomEncounters: []
+  requiredActions:
+  - ruleId: strange_coin_0_slot_3
+    actionType: 1
+    exactDay: 0
+    condition:
+      minDay: 5
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+    priority: 100
+    timing: 3
+    sequenceSlot: 3
+    customerVisit: {fileID: 0}
+    encounterEpisode: {fileID: 11400000, guid: 565cdd3b075026249b49e76ec6df782a, type: 2}
   midScoreThreshold: 0.45
   goodScoreThreshold: 0.8
   goodMoneyReward: 100

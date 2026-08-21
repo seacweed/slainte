@@ -17,7 +17,8 @@ namespace Slainte.Business
         EncounterWithCrafting,
         Settlement,
         RandomEncounterPool,
-        EncounterAfterFirstOrder
+        EncounterAtThirdSlot,
+        ProductionDay5
     }
 
     [DefaultExecutionOrder(-1000)]
@@ -38,6 +39,7 @@ namespace Slainte.Business
         private readonly StringBuilder panel = new(1600);
 
         private PlaytestProgressIsolation isolation;
+        private BusinessOrderFlowSettings productionSettings;
         private BusinessOrderFlowSettings runtimeSettings;
         private CustomerVisitDatabase runtimeDatabase;
         private BusinessFlowBootstrap flow;
@@ -58,6 +60,12 @@ namespace Slainte.Business
 
         public bool IsReady => ready;
         public bool IsScenarioStarted => scenarioStarted;
+        public bool IsUsingProductionDay5Configuration =>
+            scenarioStarted
+            && ActiveScenario == BusinessPlaytestScenario.ProductionDay5
+            && productionSettings != null
+            && runtimeSettings != null
+            && runtimeSettings.customerVisitDatabase == productionSettings.customerVisitDatabase;
         public BusinessPlaytestScenario ActiveScenario { get; private set; }
         public float MaximumEncounterTimerDecrease => maximumEncounterTimerDecrease;
 
@@ -142,12 +150,22 @@ namespace Slainte.Business
             if (!ready || scenarioStarted || shift == null || shift.IsActive)
                 return false;
 
-            runtimeSettings.requiredActions = new List<BusinessRequiredActionRule>();
-            runtimeSettings.randomEncounters = new List<BusinessRandomEncounterEntry>();
             ActiveScenario = scenario;
             maximumEncounterTimerDecrease = 0f;
             encounterCount = 0;
             appearances.Clear();
+
+            if (scenario == BusinessPlaytestScenario.ProductionDay5)
+            {
+                if (!TryConfigureProductionDay5())
+                    return false;
+            }
+            else
+            {
+                runtimeSettings.customerVisitDatabase = runtimeDatabase;
+                runtimeSettings.requiredActions = new List<BusinessRequiredActionRule>();
+                runtimeSettings.randomEncounters = new List<BusinessRandomEncounterEntry>();
+            }
 
             switch (scenario)
             {
@@ -216,17 +234,19 @@ namespace Slainte.Business
                     if (!TryAddRandomEncounter(SimpleEncounterId, 100000f))
                         return false;
                     break;
-                case BusinessPlaytestScenario.EncounterAfterFirstOrder:
+                case BusinessPlaytestScenario.EncounterAtThirdSlot:
                     runtimeSettings.shiftDurationSeconds = 90f;
-                    runtimeSettings.requiredActions.Add(CreateRequiredCustomerRule(
-                        "playtest_customer_before_random_encounter",
-                        runtimeVisits[0],
-                        100,
-                        BusinessRequiredActionTiming.BeforeFirstCustomer));
-                    for (int i = 0; i < runtimeVisits.Count; i++)
-                        runtimeVisits[i].weight = 0f;
-                    if (!TryAddRandomEncounter(SimpleEncounterId, 1f))
+                    if (!TryAddEncounterRule(
+                            "playtest_encounter_at_third_slot",
+                            SimpleEncounterId,
+                            100,
+                            BusinessRequiredActionTiming.SequenceSlot,
+                            sequenceSlot: 3))
+                    {
                         return false;
+                    }
+                    break;
+                case BusinessPlaytestScenario.ProductionDay5:
                     break;
             }
 
@@ -246,6 +266,8 @@ namespace Slainte.Business
                 status = "ERROR: BusinessOrderFlowSettings was not found.";
                 return false;
             }
+
+            productionSettings = source;
 
             CustomerVisitData template = templateVisit != null
                 ? templateVisit
@@ -288,11 +310,85 @@ namespace Slainte.Business
             return true;
         }
 
+        private bool TryConfigureProductionDay5()
+        {
+            if (productionSettings == null
+                || productionSettings.customerVisitDatabase == null
+                || productionSettings.requiredActions == null)
+            {
+                status = "ERROR: Production business settings are incomplete.";
+                return false;
+            }
+
+            BusinessRequiredActionRule strangeCoinRule = null;
+            for (int i = 0; i < productionSettings.requiredActions.Count; i++)
+            {
+                BusinessRequiredActionRule candidate = productionSettings.requiredActions[i];
+                if (candidate?.encounterEpisode != null
+                    && candidate.encounterEpisode.episodeId == SimpleEncounterId)
+                {
+                    strangeCoinRule = candidate;
+                    break;
+                }
+            }
+
+            if (strangeCoinRule == null
+                || strangeCoinRule.actionType != BusinessRequiredActionType.EncounterEpisode
+                || strangeCoinRule.timing != BusinessRequiredActionTiming.SequenceSlot
+                || strangeCoinRule.sequenceSlot != 3
+                || strangeCoinRule.condition == null
+                || strangeCoinRule.condition.minDay != 5
+                || strangeCoinRule.encounterEpisode.triggerCondition == null
+                || strangeCoinRule.encounterEpisode.triggerCondition.minDay != 5)
+            {
+                status = "ERROR: Production StrangeCoin_0 Day-5 slot-3 rule is invalid.";
+                return false;
+            }
+
+            if (productionSettings.randomEncounters != null)
+            {
+                for (int i = 0; i < productionSettings.randomEncounters.Count; i++)
+                {
+                    if (productionSettings.randomEncounters[i]?.episode?.episodeId
+                        == SimpleEncounterId)
+                    {
+                        status = "ERROR: StrangeCoin_0 remains in the production random pool.";
+                        return false;
+                    }
+                }
+            }
+
+            if (isolation == null || !isolation.PrepareIncompleteEpisode(SimpleEncounterId))
+            {
+                status = "ERROR: Production Day-5 progress could not be isolated.";
+                return false;
+            }
+
+            GameProgress progress = GameProgress.Instance;
+            if (progress == null)
+            {
+                status = "ERROR: GameProgress was not found.";
+                return false;
+            }
+
+            progress.SetCurrentDay(5);
+            runtimeSettings.shiftDurationSeconds = productionSettings.shiftDurationSeconds;
+            runtimeSettings.customerVisitDatabase = productionSettings.customerVisitDatabase;
+            runtimeSettings.requiredActions = new List<BusinessRequiredActionRule>(
+                productionSettings.requiredActions);
+            runtimeSettings.randomEncounters = productionSettings.randomEncounters != null
+                ? new List<BusinessRandomEncounterEntry>(productionSettings.randomEncounters)
+                : new List<BusinessRandomEncounterEntry>();
+            status = "Production settings loaded; current progress copied to Day 5.";
+            return true;
+        }
+
         private bool TryAddEncounterRule(
             string ruleId,
             string episodeId,
             int priority,
-            BusinessRequiredActionTiming timing)
+            BusinessRequiredActionTiming timing,
+            int sequenceSlot = 0)
         {
             if (isolation == null || !isolation.PrepareIncompleteEpisode(episodeId))
             {
@@ -307,13 +403,19 @@ namespace Slainte.Business
                 return false;
             }
 
+            MoveProgressToEncounterMinimumDay(episode);
+
             runtimeSettings.requiredActions.Add(new BusinessRequiredActionRule
             {
                 ruleId = ruleId,
                 actionType = BusinessRequiredActionType.EncounterEpisode,
                 priority = priority,
                 timing = timing,
-                condition = new EpisodeTriggerCondition(),
+                sequenceSlot = sequenceSlot,
+                condition = new EpisodeTriggerCondition
+                {
+                    minDay = episode.triggerCondition?.minDay ?? 0
+                },
                 encounterEpisode = episode
             });
             return true;
@@ -334,12 +436,22 @@ namespace Slainte.Business
                 return false;
             }
 
+            MoveProgressToEncounterMinimumDay(episode);
+
             runtimeSettings.randomEncounters.Add(new BusinessRandomEncounterEntry
             {
                 episode = episode,
                 weight = Mathf.Max(0f, weight)
             });
             return true;
+        }
+
+        private static void MoveProgressToEncounterMinimumDay(EpisodeData episode)
+        {
+            GameProgress progress = GameProgress.Instance;
+            int minimumDay = episode?.triggerCondition?.minDay ?? 0;
+            if (progress != null && progress.CurrentDay < minimumDay)
+                progress.SetCurrentDay(minimumDay);
         }
 
         private static BusinessRequiredActionRule CreateRequiredCustomerRule(
@@ -439,8 +551,10 @@ namespace Slainte.Business
                 BusinessPlaytestScenario.Settlement);
             DrawScenarioButton(392f, 388f, "8. Random encounter pool",
                 BusinessPlaytestScenario.RandomEncounterPool);
-            DrawScenarioButton(32f, 440f, "9. Encounter after first order",
-                BusinessPlaytestScenario.EncounterAfterFirstOrder);
+            DrawScenarioButton(32f, 440f, "9. Encounter at third slot",
+                BusinessPlaytestScenario.EncounterAtThirdSlot);
+            DrawScenarioButton(392f, 440f, "10. Production Day 5",
+                BusinessPlaytestScenario.ProductionDay5);
         }
 
         private void DrawScenarioButton(
@@ -467,7 +581,7 @@ namespace Slainte.Business
             if (!scenarioStarted)
             {
                 panel.AppendLine("Choose one scenario below. Stop Play to select another scenario.");
-                panel.AppendLine("Recommended order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9");
+                panel.AppendLine("Use 10 for the production Day-5 encounter smoke test.");
                 panel.AppendLine();
                 panel.AppendLine("Controls after starting:");
                 panel.AppendLine("  Dialogue: click / Space    Crafting: existing mouse controls");
@@ -481,6 +595,12 @@ namespace Slainte.Business
                 .Append(" | Order state: ").Append(orderSession != null ? orderSession.State.ToString() : "-")
                 .Append(" | Mode: ").Append(mode != null ? mode.CurrentMode.ToString() : "-")
                 .AppendLine();
+            panel.Append("Day: ").Append(progress?.CurrentDay ?? 0)
+                .Append(" | Production config: ")
+                .Append(IsUsingProductionDay5Configuration)
+                .Append(" | StrangeCoin_0 completed: ")
+                .Append(progress?.IsEpisodeCompleted(SimpleEncounterId) ?? false)
+                .AppendLine();
             panel.Append("Remaining: ").Append(shift != null
                     ? shift.RemainingSeconds.ToString("0.00")
                     : "-")
@@ -490,6 +610,7 @@ namespace Slainte.Business
                 .AppendLine("s");
             panel.Append("Customer pool: ").Append(shift?.FrozenCustomerPoolCount ?? 0)
                 .Append(" | Encounter pool: ").Append(shift?.FrozenEncounterPoolCount ?? 0)
+                .Append(" | Sequence slots: ").Append(shift?.StartedSequenceCount ?? 0)
                 .Append(" | Started: ").Append(shift?.TotalStartedCustomerCount ?? 0)
                 .Append(" | Completed: ").Append(shift?.CompletedOrderCount ?? 0)
                 .Append(" | Spawning stopped: ")
@@ -564,10 +685,16 @@ namespace Slainte.Business
                     panel.AppendLine("  - The same encounter ID must not be selected twice in this shift.");
                     panel.AppendLine("  - After completion it must remain excluded on later days.");
                     break;
-                case BusinessPlaytestScenario.EncounterAfterFirstOrder:
-                    panel.AppendLine("  - integration_visit_00 must run first as a required customer.");
-                    panel.AppendLine("  - After that order completes, StrangeCoin_0 must be second.");
+                case BusinessPlaytestScenario.EncounterAtThirdSlot:
+                    panel.AppendLine("  - Complete two ordinary customer orders first.");
+                    panel.AppendLine("  - StrangeCoin_0 must start as the third business slot.");
                     panel.AppendLine("  - The encounter must run in EpisodeMode while the timer decreases.");
+                    break;
+                case BusinessPlaytestScenario.ProductionDay5:
+                    panel.AppendLine("  - Uses production settings and the real eligible customer pool.");
+                    panel.AppendLine("  - Current progress is copied, forced to Day 5, and restored on exit.");
+                    panel.AppendLine("  - Slots 1 and 2 must be real customer orders.");
+                    panel.AppendLine("  - StrangeCoin_0 must start in slot 3, then return to real orders.");
                     break;
             }
         }

@@ -15,12 +15,64 @@ MonoBehaviour:
   key: d1033_rec_1002
   requestedRecipeId: rec_1002
   orderType: 0
+  paymentCurrency: 0
   tags: []
   characterKey: f72
   expressionKeyMid: mid
   expressionKeyGood: good
   expressionKeyBad: bad
-  lines: []
-  feedbackLinesGood: []
+  orderDialogueAuthored: 1
+  lines:
+  - speakerName: F72
+    text: "\uCF54\uD2BC \uC0AC\uC6CC...5\uBC88\uAC00 \uB188\uB4E4\uC740 \uC774\uAC78
+      \uCF54\uD2BC \uBC24\uC774\uB77C\uACE0 \uD558\uB358\uB370,"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  - speakerName: F72
+    text: "\uC598\uB098 \uB098\uB098 \uC774\uB984\uB3C4 \uC5EC\uB7EC\uAC00\uC9C0\uB77C
+      \uD798\uB4E4\uACA0\uC5B4"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  feedbackLinesGood:
+  - speakerName: F72
+    text: "\uC220 \uD55C\uC794\uC5D0 \uC704\uB85C \uBC1B\uB294 \uB140\uC11D\uB4E4\uB3C4
+      \uC788\uB2E4\uB354\uB77C\uB2C8\uAE4C. \uC624\uB298\uC740 \uADF8\uAC8C \uB0B4\uAC00
+      \uB3FC\uB3C4 \uAD1C\uCC2E\uACA0\uC5B4"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
   feedbackLinesMid: []
-  feedbackLinesBad: []
+  feedbackLinesBad:
+  - speakerName: F72
+    text: "\uC74C, 9\uBC88\uAC00\uC5D0 \uC81C\uB300\uB85C \uB41C \uD38D\uC774\uB784\uAC8C
+      \uBCC4\uB85C \uC5C6\uAE34\uD558\uC9C0"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  - speakerName: F72
+    text: "\uC5EC\uAE30\uB3C4...\uB18D\uB2F4\uC774\uC57C"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  - speakerName: F72
+    text: "\uC0B4\uC9DD\uC740 \uC9C4\uC2EC\uC77C\uC218\uB3C4?"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  authoredFeedback: 63
+  feedbackLinesMidIce:
+  - speakerName: F72
+    text: "\uC5BC\uC74C\uB9CC \uC788\uC5C8\uB2E4\uBA74 \uC644\uBCBD\uD588\uC744\uD150\uB370,
+      \uC544\uC27D\uAD6C\uB9CC~"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  feedbackLinesMidGlass:
+  - speakerName: F72
+    text: "\uC794\uB9CC \uB531 \uBC14\uB00C\uC5C8\uC73C\uBA74 \uC644\uBCBD\uD588\uC744\uD150\uB370,
+      \uC544\uC27D\uAD6C\uB9CC~"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  feedbackLinesMidIceGlass:
+  - speakerName: F72
+    text: "\uC644\uBCBD\uD574..."
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  - speakerName: F72
+    text: "\uC5BC\uC74C\uB9CC \uB123\uACE0 \uC794\uB9CC \uC81C\uB300\uB85C \uC92C\uB2E4\uBA74
+      \uB9D0\uC774\uC57C."
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  feedbackLinesMidWrongMenu:
+  - speakerName: F72
+    text: "\uC644\uBCBD\uD574..."
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  - speakerName: F72
+    text: "\uC774\uAC78 \uC2DC\uD0A8 \uC0AC\uB78C\uD55C\uD14C \uC92C\uC5C8\uB2E4\uBA74
+      \uB9D0\uC774\uC57C"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}

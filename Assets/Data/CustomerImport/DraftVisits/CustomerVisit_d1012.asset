@@ -43,7 +43,7 @@ MonoBehaviour:
   - "\uD55C\uC5EC\uB984\uC758 \uC8FC\uC2A4"
   - "\uD55C\uC5EC\uB984\uC758 \uB098\uB0AD\uB098"
   orders:
-  - order: {fileID: 11400000, guid: 06f8b8a1c2bf8c544a8c8d5ba90c1b32, type: 2}
+  - order: {fileID: 11400000, guid: aa27cb960e49d3642a5563fa61f6da7e, type: 2}
     weight: 1
     condition:
       minDay: 0

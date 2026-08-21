@@ -15,12 +15,33 @@ MonoBehaviour:
   key: d1020_rec_1004
   requestedRecipeId: rec_1004
   orderType: 0
+  paymentCurrency: 0
   tags: []
   characterKey: ter
   expressionKeyMid: mid
   expressionKeyGood: good
   expressionKeyBad: bad
-  lines: []
-  feedbackLinesGood: []
+  orderDialogueAuthored: 1
+  lines:
+  - speakerName: "\uD14C\uB974"
+    text: "...\uC139\uD130 0 \uBC14\uAE65\uC744 \uC0C1\uC0C1\uD574 \uBCF8 \uC801
+      \uC788\uB098?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  - speakerName: "\uD14C\uB974"
+    text: "\uB531\uBD10\uB3C4 \uC5C6\uACA0\uC9C0, \uAC13\uB85C\uB4DC \uD55C \uC794."
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesGood:
+  - speakerName: "\uD14C\uB974"
+    text: "...\uC139\uD130 0\uAC00 \uC5B4\uB461\uACE0 \uBD88\uCE5C\uC808\uD574\uBCF4\uC774\uC9C0\uB9CC
+      \uC5EC\uAE30\uB9CC\uD07C \uC0B4\uB9CC\uD55C \uACF3\uB3C4 \uC5C6\uC5B4."
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  - speakerName: "\uD14C\uB974"
+    text: "\uC774 \uCE75\uD14C\uC77C\uCC98\uB7FC \uB9D0\uC774\uC57C"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
   feedbackLinesMid: []
   feedbackLinesBad: []
+  authoredFeedback: 63
+  feedbackLinesMidIce: []
+  feedbackLinesMidGlass: []
+  feedbackLinesMidIceGlass: []
+  feedbackLinesMidWrongMenu: []

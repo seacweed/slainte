@@ -15,12 +15,23 @@ MonoBehaviour:
   key: d1030_rec_1001
   requestedRecipeId: rec_1001
   orderType: 0
+  paymentCurrency: 0
   tags: []
   characterKey: f54
   expressionKeyMid: mid
   expressionKeyGood: good
   expressionKeyBad: bad
-  lines: []
+  orderDialogueAuthored: 1
+  lines:
+  - speakerName: F54
+    text: "\uBC88\uD584 \uC0AC\uC6CC \uC815\uB3C4\uB294 \uC74C\uB8CC\uC9C0. \uC548
+      \uADF8\uB798?"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
   feedbackLinesGood: []
   feedbackLinesMid: []
   feedbackLinesBad: []
+  authoredFeedback: 63
+  feedbackLinesMidIce: []
+  feedbackLinesMidGlass: []
+  feedbackLinesMidIceGlass: []
+  feedbackLinesMidWrongMenu: []

@@ -43,6 +43,24 @@ MonoBehaviour:
   - "\uB808\uBAAC \uD53C\uC988"
   - "\uD55C\uC5EC\uB984\uC758 \uC8FC\uC2A4"
   orders:
+  - order: {fileID: 11400000, guid: 5e2b643e58bc0d24c863891ebbf85937, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: 33ca770bfc1758341be363842e20a69b, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
   - order: {fileID: 11400000, guid: c8187900a515d484da7d7bb549d86e12, type: 2}
     weight: 1
     condition:

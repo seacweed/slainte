@@ -279,7 +279,8 @@ namespace Slainte.Business
             BusinessRequiredActionTiming timing,
             bool includeAllTimings,
             ISet<string> executedRuleIds,
-            ISet<string> executedTargetKeys)
+            ISet<string> executedTargetKeys,
+            int sequenceSlot = 0)
         {
             if (rules == null || progress == null)
                 return null;
@@ -292,7 +293,11 @@ namespace Slainte.Business
                     || (executedRuleIds != null
                         && !string.IsNullOrWhiteSpace(rule.ruleId)
                         && executedRuleIds.Contains(rule.ruleId))
-                    || (!includeAllTimings && rule.timing != timing)
+                    || !MatchesRequiredTiming(
+                        rule,
+                        timing,
+                        includeAllTimings,
+                        sequenceSlot)
                     || (rule.exactDay > 0 && rule.exactDay != progress.CurrentDay)
                     || !ProgressConditionEvaluator.IsMet(rule.condition, progress)
                     || !IsConfiguredRequiredTarget(rule))
@@ -303,14 +308,38 @@ namespace Slainte.Business
                     continue;
 
                 if (rule.actionType == BusinessRequiredActionType.EncounterEpisode
-                    && progress.IsEpisodeCompleted(rule.encounterEpisode.episodeId))
+                    && (progress.IsEpisodeCompleted(rule.encounterEpisode.episodeId)
+                        || !ProgressConditionEvaluator.IsMet(
+                            rule.encounterEpisode.triggerCondition,
+                            progress)))
+                {
                     continue;
+                }
 
                 if (selected == null || rule.priority > selected.priority)
                     selected = rule;
             }
 
             return selected;
+        }
+
+        private static bool MatchesRequiredTiming(
+            BusinessRequiredActionRule rule,
+            BusinessRequiredActionTiming timing,
+            bool includeAllTimings,
+            int sequenceSlot)
+        {
+            if (rule.timing == BusinessRequiredActionTiming.SequenceSlot)
+            {
+                return timing == BusinessRequiredActionTiming.SequenceSlot
+                    && rule.sequenceSlot > 0
+                    && rule.sequenceSlot == sequenceSlot;
+            }
+
+            if (timing == BusinessRequiredActionTiming.SequenceSlot)
+                return false;
+
+            return includeAllTimings || rule.timing == timing;
         }
 
         private static bool IsStructurallyValidVisit(CustomerVisitData visit)

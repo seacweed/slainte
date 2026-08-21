@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 596ac274de286b84aaa5c1510f09601f, type: 3}
+  m_Name: CustomerOrder_d1002_taste
+  m_EditorClassIdentifier: Assembly-CSharp::CustomerOrderData
+  key: d1002_taste
+  requestedRecipeId: 
+  orderType: 2
+  paymentCurrency: 0
+  tags:
+  - "\uC0C8\uCF64\uB2EC\uCF64\uD568_Sweet and Sour"
+  characterKey: varis
+  expressionKeyMid: mid
+  expressionKeyGood: good
+  expressionKeyBad: bad
+  orderDialogueAuthored: 1
+  lines:
+  - speakerName: "\uBC14\uB9AC\uC2A4"
+    text: "...\uC0C8\uCF64\uB2EC\uCF64\uD55C \uAC70 \uC544\uBB34\uAC70\uB098 \uD55C\uC794!"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  - speakerName: "\uBC14\uB9AC\uC2A4"
+    text: "...\uC8FC\uC138\uC694"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesGood:
+  - speakerName: "\uBC14\uB9AC\uC2A4"
+    text: "...\uC88B\uC544\uC694"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMid: []
+  feedbackLinesBad:
+  - speakerName: "\uBC14\uB9AC\uC2A4"
+    text: "\uD558...\uC751\uC6D0\uD560\uAC8C\uC694..."
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  authoredFeedback: 63
+  feedbackLinesMidIce:
+  - speakerName: "\uBC14\uB9AC\uC2A4"
+    text: "...\uC5BC\uC74C...\uC798\uBABB \uB098\uC628\uAC70 \uC544\uB2C8\uC5D0\uC694?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidGlass:
+  - speakerName: "\uBC14\uB9AC\uC2A4"
+    text: "...\uC794...\uC798\uBABB \uB098\uC628\uAC70 \uC544\uB2C8\uC5D0\uC694?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidIceGlass:
+  - speakerName: "\uBC14\uB9AC\uC2A4"
+    text: "...\uC794\uC774\uB791 \uC5BC\uC74C...\uC798\uBABB \uB098\uC628\uAC70 \uC544\uB2C8\uC5D0\uC694?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidWrongMenu:
+  - speakerName: "\uBC14\uB9AC\uC2A4"
+    text: "...\uBA54\uB274\uAC00...\uC798\uBABB \uB098\uC628\uAC70 \uC544\uB2C8\uC5D0\uC694?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}

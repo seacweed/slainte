@@ -253,12 +253,12 @@ public static class BartendingSystemValidator
     {
         ItemDefCatalog items = ItemDefCatalog.LoadFromResources("Items", null);
         CocktailRecipeCatalog recipes = CocktailRecipeDataLoader.LoadDefault(items);
-        Assert(recipes.TryGet("whiskey_neat", out CocktailRecipe whiskey),
-            "recipes.csv에서 whiskey_neat 레시피를 불러오지 못했습니다.");
-        Assert(whiskey.glassId == "rock"
-            && whiskey.iceRequirement == IceRequirement.None
-            && whiskey.requiredTechnique == CocktailTechnique.Build,
-            "recipes.csv에서 잔·얼음·제조법 조건을 불러오지 못했습니다.");
+        Assert(recipes.TryGet("rec_1014", out CocktailRecipe johnnyDogsNeat),
+            "기획 CSV에서 조니 독스 니트 레시피를 불러오지 못했습니다.");
+        Assert(johnnyDogsNeat.glassId == "rock"
+            && johnnyDogsNeat.iceRequirement == IceRequirement.None
+            && johnnyDogsNeat.requiredTechnique == CocktailTechnique.Build,
+            "기획 CSV에서 조니 독스 니트의 잔·얼음·제조법 조건을 불러오지 못했습니다.");
         Assert(recipes.TryGet("rec_1001", out CocktailRecipe burnhamSour)
             && burnhamSour.isOrderable
             && burnhamSour.ingredients.Count == 4,

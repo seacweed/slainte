@@ -5,7 +5,10 @@ using UnityEngine;
 namespace Slainte.Bartending
 {
     [DisallowMultipleComponent]
-    public sealed class IceBinController : MonoBehaviour, IBartendingItem, IPointerAnchoredPickup
+    public sealed class IceBinController : MonoBehaviour,
+        IBartendingItem,
+        IPointerAnchoredPickup,
+        IBartendingCabinetVisualProvider
     {
         private enum BucketState
         {
@@ -22,13 +25,14 @@ namespace Slainte.Bartending
         private const float MaximumTiltAngle = 120f;
         private const float TiltSensitivity = 0.5f;
         private const float UprightReturnDuration = 0.8f;
+        private const int PointerSyncFrameBudget = 6;
 
         private BusinessBartendingSettings settings;
         private Transform cubeParent;
         private Collider2D inputCollider;
         private Camera inputCamera;
         private int renderLayer;
-        private float itemScale = 1f;
+        private float spawnedIceScale = 1f;
         private bool previewOnly;
         private ToolDef definition;
         private ToolCabinetShiftState shiftState;
@@ -49,6 +53,10 @@ namespace Slainte.Bartending
         private float mouthLocalY;
         private float mouthHalfWidth;
         private Coroutine returnCoroutine;
+        private bool pointerSyncPending;
+        private int pointerSyncFramesRemaining;
+        private Vector2 pointerSyncScreenPosition;
+        private Vector3 pointerSyncPivotWorld;
 
         public static IceBinController Active { get; private set; }
         public GameObject GameObject => gameObject;
@@ -57,11 +65,40 @@ namespace Slainte.Bartending
         public int RemainingIce => remainingIce;
         public int MaximumIce => definition != null ? Mathf.Max(0, definition.maxCount) : 0;
 
+        public Sprite GetCabinetVisualSprite(int layerIndex, Sprite fallback)
+        {
+            if (definition == null
+                || definition.cabinetLayers == null
+                || layerIndex != definition.cabinetLayers.Length - 1)
+            {
+                return fallback;
+            }
+
+            return GetBucketStateSprite() ?? fallback;
+        }
+
         public static IceBinController Create(
             Transform parent,
             BusinessBartendingSettings settings,
             int renderLayer,
             float itemScale,
+            bool previewOnly)
+        {
+            return CreateInternal(
+                parent,
+                settings,
+                renderLayer,
+                itemScale,
+                itemScale,
+                previewOnly);
+        }
+
+        private static IceBinController CreateInternal(
+            Transform parent,
+            BusinessBartendingSettings settings,
+            int renderLayer,
+            float bucketScale,
+            float iceScale,
             bool previewOnly)
         {
             if (parent == null || settings == null)
@@ -73,13 +110,13 @@ namespace Slainte.Bartending
             instance.name = "IceBin";
             instance.transform.localPosition = settings.iceBinPosition;
             instance.transform.localRotation = Quaternion.identity;
-            instance.transform.localScale = Vector3.one * itemScale;
+            instance.transform.localScale = Vector3.one * bucketScale;
             BartendingSessionBuilder.SetLayerRecursively(instance, renderLayer);
 
             IceBinController controller = instance.GetComponent<IceBinController>();
             if (controller == null)
                 controller = instance.AddComponent<IceBinController>();
-            controller.Initialize(settings, parent, renderLayer, itemScale, previewOnly);
+            controller.Initialize(settings, parent, renderLayer, iceScale, previewOnly);
             return controller;
         }
 
@@ -88,14 +125,18 @@ namespace Slainte.Bartending
             BusinessBartendingSettings settings,
             ToolDef definition,
             int renderLayer,
-            float itemScale,
+            float sessionScale,
             ToolCabinetShiftState shiftState)
         {
-            IceBinController controller = Create(
+            float bucketScale = sessionScale * Mathf.Max(
+                0.05f,
+                definition != null ? definition.worldScale : 1f);
+            IceBinController controller = CreateInternal(
                 parent,
                 settings,
                 renderLayer,
-                itemScale * Mathf.Max(0.05f, definition != null ? definition.worldScale : 1f),
+                bucketScale,
+                sessionScale,
                 false);
             controller?.ConfigureDefinition(definition, shiftState);
             return controller;
@@ -124,13 +165,13 @@ namespace Slainte.Bartending
             BusinessBartendingSettings sessionSettings,
             Transform sessionCubeParent,
             int sessionRenderLayer,
-            float sessionItemScale,
+            float sessionIceScale,
             bool isPreview)
         {
             settings = sessionSettings;
             cubeParent = sessionCubeParent;
             renderLayer = sessionRenderLayer;
-            itemScale = sessionItemScale;
+            spawnedIceScale = sessionIceScale;
             previewOnly = isPreview;
             inputCollider = GetComponent<Collider2D>();
             if (inputCollider == null)
@@ -170,6 +211,9 @@ namespace Slainte.Bartending
             if (previewOnly || settings == null)
                 return;
 
+            if (UpdatePointerSynchronization())
+                return;
+
             if (Input.GetMouseButtonDown(0))
             {
                 if (currentState == BucketState.Idle
@@ -184,8 +228,11 @@ namespace Slainte.Bartending
                 }
             }
 
-            if (currentState == BucketState.PickedUp)
+            if (currentState == BucketState.PickedUp
+                || currentState == BucketState.Returning)
+            {
                 FollowPointer();
+            }
 
             if (Input.GetMouseButtonDown(1)
                 && currentState == BucketState.PickedUp)
@@ -263,6 +310,8 @@ namespace Slainte.Bartending
                 returnCoroutine = null;
             }
 
+            CancelPointerSynchronization();
+
             currentState = BucketState.PickedUp;
             pointerOffset = transform.position - (Vector3)pointerWorld;
             pointerOffset.z = 0f;
@@ -317,6 +366,7 @@ namespace Slainte.Bartending
                 StopCoroutine(returnCoroutine);
                 returnCoroutine = null;
             }
+            CancelPointerSynchronization();
             currentState = BucketState.Idle;
             pointerOffset = Vector3.zero;
             pourAccumulator = 0f;
@@ -401,6 +451,7 @@ namespace Slainte.Bartending
 
             currentState = BucketState.Returning;
             pourAccumulator = 0f;
+            BeginPointerSynchronization(transform.position);
             if (returnCoroutine != null)
                 StopCoroutine(returnCoroutine);
             returnCoroutine = StartCoroutine(ReturnToUprightRoutine());
@@ -420,19 +471,6 @@ namespace Slainte.Bartending
             }
 
             SetRotationImmediately(0f);
-            BartendingPointerAnchor.UnlockAndWarp(
-                this,
-                inputCamera,
-                transform.position,
-                out _);
-            yield return null;
-
-            if (TryGetPointerWorld(out Vector2 pointerWorld))
-            {
-                pointerOffset = transform.position - (Vector3)pointerWorld;
-                pointerOffset.z = 0f;
-            }
-
             returnCoroutine = null;
             currentState = BucketState.PickedUp;
         }
@@ -460,16 +498,10 @@ namespace Slainte.Bartending
             if (definition != null && remainingIce <= 0)
                 return;
 
-            IceCubeController cube = IceCubeController.Create(
-                cubeParent,
-                settings,
-                renderLayer,
-                itemScale,
-                false);
+            IceCubeController cube = CreateIceCube();
             if (cube == null)
                 return;
 
-            ApplyIceVisual(cube);
             ConsumeOneIce();
             cube.BeginDrag(pointerDown, true);
         }
@@ -505,12 +537,7 @@ namespace Slainte.Bartending
 
         private bool TrySpawnPouredIce()
         {
-            IceCubeController cube = IceCubeController.Create(
-                cubeParent,
-                settings,
-                renderLayer,
-                itemScale,
-                false);
+            IceCubeController cube = CreateIceCube();
             if (cube == null)
                 return false;
 
@@ -528,13 +555,25 @@ namespace Slainte.Bartending
             Vector2 initialVelocity = (Vector2)transform.up * exitSpeed
                 + Vector2.down * 0.15f;
 
-            ApplyIceVisual(cube);
             cube.ReleaseFromSource(
                 spawnPosition,
                 initialVelocity,
                 UnityEngine.Random.Range(-90f, 90f));
             ConsumeOneIce();
             return true;
+        }
+
+        private IceCubeController CreateIceCube()
+        {
+            IceCubeController cube = IceCubeController.Create(
+                cubeParent,
+                settings,
+                renderLayer,
+                spawnedIceScale,
+                false);
+            if (cube != null)
+                ApplyIceVisual(cube);
+            return cube;
         }
 
         private void ApplyIceVisual(IceCubeController cube)
@@ -553,7 +592,7 @@ namespace Slainte.Bartending
                 Sprite sprite = definition.iceSprites[(start + i) % definition.iceSprites.Length];
                 if (sprite == null)
                     continue;
-                cube.ApplyVisualSprite(sprite);
+                cube.ApplyVisualSprite(sprite, true);
                 return;
             }
         }
@@ -630,6 +669,74 @@ namespace Slainte.Bartending
 
             pointer = default;
             return false;
+        }
+
+        private void BeginPointerSynchronization(Vector3 pivotWorld)
+        {
+            pointerSyncPivotWorld = pivotWorld;
+            pointerOffset = Vector3.zero;
+            bool requested = BartendingPointerAnchor.UnlockAndWarp(
+                this,
+                inputCamera,
+                pivotWorld,
+                out pointerSyncScreenPosition);
+            if (!requested)
+            {
+                CompletePointerSynchronization(false);
+                return;
+            }
+
+            pointerSyncFramesRemaining = PointerSyncFrameBudget;
+            pointerSyncPending = true;
+        }
+
+        private bool UpdatePointerSynchronization()
+        {
+            if (!pointerSyncPending)
+                return false;
+
+            if (BartendingPointerAnchor.IsPointerAt(pointerSyncScreenPosition))
+            {
+                CompletePointerSynchronization(true);
+                return true;
+            }
+
+            pointerSyncFramesRemaining--;
+            if (pointerSyncFramesRemaining > 0)
+            {
+                BartendingPointerAnchor.TryWarpToWorld(
+                    inputCamera,
+                    pointerSyncPivotWorld,
+                    out pointerSyncScreenPosition);
+                return true;
+            }
+
+            CompletePointerSynchronization(false);
+            return true;
+        }
+
+        private void CompletePointerSynchronization(bool success)
+        {
+            pointerSyncPending = false;
+            if (!success && TryGetPointerWorld(out Vector2 pointerWorld))
+            {
+                pointerOffset = pointerSyncPivotWorld - (Vector3)pointerWorld;
+                pointerOffset.z = 0f;
+                Debug.LogWarning(
+                    $"[{name}] Cursor warp was not confirmed; preserving the current grab offset.");
+            }
+            else if (success)
+            {
+                pointerOffset = Vector3.zero;
+            }
+        }
+
+        private void CancelPointerSynchronization()
+        {
+            pointerSyncPending = false;
+            pointerSyncFramesRemaining = 0;
+            pointerSyncScreenPosition = Vector2.zero;
+            pointerSyncPivotWorld = Vector3.zero;
         }
 
         private void ConfigureDefinition(
@@ -711,26 +818,33 @@ namespace Slainte.Bartending
 
         private void RefreshBucketVisual()
         {
-            if (bucketFrontRenderer == null
-                || definition == null
+            if (bucketFrontRenderer == null)
+                return;
+
+            Sprite stateSprite = GetBucketStateSprite();
+            if (stateSprite != null)
+                bucketFrontRenderer.sprite = stateSprite;
+        }
+
+        private Sprite GetBucketStateSprite()
+        {
+            if (definition == null
                 || definition.stateSprites == null
                 || definition.stateSprites.Length < 7)
             {
-                return;
+                return null;
             }
 
             int maximum = Mathf.Max(1, MaximumIce);
-            int index;
-            if (remainingIce <= 0)
-                index = 0;
-            else if (remainingIce >= maximum)
-                index = 6;
-            else
-                index = Mathf.Clamp(
-                    Mathf.FloorToInt(remainingIce / (float)maximum * 5f) + 1,
-                    1,
-                    5);
-            bucketFrontRenderer.sprite = definition.stateSprites[index];
+            int index = remainingIce <= 0
+                ? 0
+                : remainingIce >= maximum
+                    ? 6
+                    : Mathf.Clamp(
+                        Mathf.FloorToInt(remainingIce / (float)maximum * 5f) + 1,
+                        1,
+                        5);
+            return definition.stateSprites[index];
         }
 
         private void OnDisable()
@@ -740,6 +854,7 @@ namespace Slainte.Bartending
                 StopCoroutine(returnCoroutine);
                 returnCoroutine = null;
             }
+            CancelPointerSynchronization();
             BartendingPointerAnchor.Release(this);
             StopCharging();
             if (Active == this)

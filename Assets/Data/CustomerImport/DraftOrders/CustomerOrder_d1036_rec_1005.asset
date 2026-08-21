@@ -15,12 +15,46 @@ MonoBehaviour:
   key: d1036_rec_1005
   requestedRecipeId: rec_1005
   orderType: 0
+  paymentCurrency: 0
   tags: []
   characterKey: e43
   expressionKeyMid: mid
   expressionKeyGood: good
   expressionKeyBad: bad
-  lines: []
-  feedbackLinesGood: []
+  orderDialogueAuthored: 1
+  lines:
+  - speakerName: E43
+    text: "\uC170\uC774\uB514 \uBD80\uD0C1\uD569\uB2C8\uB2E4."
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesGood:
+  - speakerName: E43
+    text: "\uC774 \uC794\uC744 \uC644\uBCBD\uD55C \uC794 \uB355\uBD84\uC5D0 \uB9CC\uC871\uC774\uB77C\uB294
+      \uAC10\uC815\uC744 \uB290\uB080\uB2E4\uACE0 \uCC29\uAC01\uD560 \uC218 \uC788\uACA0\uC5B4\uC694"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
   feedbackLinesMid: []
-  feedbackLinesBad: []
+  feedbackLinesBad:
+  - speakerName: E43
+    text: "\uC774\uAC74, \uD655\uC2E4\uD788 \uC88B\uB2E4\uB294 \uD45C\uD604\uC5D0
+      \uC804\uD600 \uC801\uD569\uD558\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  authoredFeedback: 63
+  feedbackLinesMidIce:
+  - speakerName: E43
+    text: "\uC5BC\uC74C\uC744 \uCC29\uAC01\uD55C \uAC83 \uAC19\uB124\uC694. \uB9DB\uC758
+      \uD615\uC2DD\uC740 \uBE44\uC2B7\uD569\uB2C8\uB2E4"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidGlass:
+  - speakerName: E43
+    text: "\uC794\uC744 \uCC29\uAC01\uD55C \uAC83 \uAC19\uB124\uC694. \uB9DB\uC758
+      \uD615\uC2DD\uC740 \uBE44\uC2B7\uD569\uB2C8\uB2E4"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidIceGlass:
+  - speakerName: E43
+    text: "\uC794\uC774\uB791 \uC5BC\uC74C\uC744 \uCC29\uAC01\uD55C \uAC83 \uAC19\uB124\uC694.
+      \uB9DB\uC758 \uD615\uC2DD\uC740 \uBE44\uC2B7\uD569\uB2C8\uB2E4"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidWrongMenu:
+  - speakerName: E43
+    text: "\uC870\uC81C\uD558\uC2DC\uBA74\uC11C \uCC29\uAC01\uD55C \uAC83 \uAC19\uB124\uC694.
+      \uB9DB\uC758 \uD615\uC2DD\uC774 \uC644\uC804\uD788 \uB2E4\uB985\uB2C8\uB2E4"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}

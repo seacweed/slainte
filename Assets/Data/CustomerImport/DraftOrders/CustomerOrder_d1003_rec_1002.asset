@@ -15,12 +15,89 @@ MonoBehaviour:
   key: d1003_rec_1002
   requestedRecipeId: rec_1002
   orderType: 0
+  paymentCurrency: 0
   tags: []
   characterKey: valentino_and_berry
   expressionKeyMid: mid
   expressionKeyGood: good
   expressionKeyBad: bad
-  lines: []
-  feedbackLinesGood: []
+  orderDialogueAuthored: 1
+  lines:
+  - speakerName: "\uBCA0\uB9AC"
+    text: "\uCF54\uD2BC \uC0AC\uC6CC \uD55C\uC794\uC774\uC694"
+    nameColor: {r: 1, g: 0, b: 1, a: 1}
+  - speakerName: "\uBC1C\uB80C\uD2F0\uB178"
+    text: "\uCF54\uD2BC \uC0AC\uC6CC\uAC00 \uC88B\uC544, \uB0B4\uAC00 \uC88B\uC544?"
+    nameColor: {r: 0, g: 0, b: 1, a: 1}
+  - speakerName: "\uBCA0\uB9AC"
+    text: "\uC9C8\uD22C\uD558\uB294 \uAC70\uC57C? \uADC0\uC5FD\uAC8C"
+    nameColor: {r: 1, g: 0, b: 1, a: 1}
+  feedbackLinesGood:
+  - speakerName: "\uBCA0\uB9AC"
+    text: "\uB9DB\uC788\uB2E4!"
+    nameColor: {r: 1, g: 0, b: 1, a: 1}
+  - speakerName: "\uBC1C\uB80C\uD2F0\uB178"
+    text: "\uC9C4\uC9DC? \uB098\uB3C4 \uB9DB \uBCFC\uB798"
+    nameColor: {r: 0, g: 0, b: 1, a: 1}
+  - speakerName: "\uBCA0\uB9AC"
+    text: "\uC548\uB3FC."
+    nameColor: {r: 1, g: 0, b: 1, a: 1}
+  - speakerName: "\uBC1C\uB80C\uD2F0\uB178"
+    text: "\uD79D..."
+    nameColor: {r: 0, g: 0, b: 1, a: 1}
+  - speakerName: "\uBCA0\uB9AC"
+    text: "\uC7A5\uB09C\uC774\uC57C"
+    nameColor: {r: 1, g: 0, b: 1, a: 1}
   feedbackLinesMid: []
-  feedbackLinesBad: []
+  feedbackLinesBad:
+  - speakerName: "\uBC1C\uB80C\uD2F0\uB178"
+    text: "\uC800\uAE30\uC694, \uC774\uB7F0 \uC2DD\uC774\uBA74 \uB2E4\uC2E0 \uC548\uC62C\uAC70\uC5D0\uC694!"
+    nameColor: {r: 0, g: 0, b: 1, a: 1}
+  - speakerName: "\uBCA0\uB9AC"
+    text: "\uC544, \uB410\uC5B4, \uB410\uC5B4. \uBE68\uB9AC \uAC00\uC790."
+    nameColor: {r: 1, g: 0, b: 1, a: 1}
+  authoredFeedback: 63
+  feedbackLinesMidIce:
+  - speakerName: "\uBC1C\uB80C\uD2F0\uB178"
+    text: "\uC800\uAE30\uC694, \uC5BC\uC74C \uC0C1\uD0DC\uAC00...\uC6B0\uB9AC \uC790\uAE30\uB294
+      \uC644\uBCBD\uD55C \uAC83\uB9CC \uBA39\uB294\uB2E4\uAD6C\uC694!"
+    nameColor: {r: 0, g: 0, b: 1, a: 1}
+  - speakerName: "\uBCA0\uB9AC"
+    text: "\uC544, \uAD1C\uCC2E\uC544"
+    nameColor: {r: 1, g: 0, b: 1, a: 1}
+  - speakerName: "\uBCA0\uB9AC"
+    text: "\uC774\uC815\uB3C4 \uAC00\uAC8C\uC5D0\uC11C \uBB58."
+    nameColor: {r: 1, g: 0, b: 1, a: 1}
+  feedbackLinesMidGlass:
+  - speakerName: "\uBC1C\uB80C\uD2F0\uB178"
+    text: "\uC800\uAE30\uC694, \uC794 \uC0C1\uD0DC\uAC00...\uC6B0\uB9AC \uC790\uAE30\uB294
+      \uC644\uBCBD\uD55C \uAC83\uB9CC \uBA39\uB294\uB2E4\uAD6C\uC694!"
+    nameColor: {r: 0, g: 0, b: 1, a: 1}
+  - speakerName: "\uBCA0\uB9AC"
+    text: "\uC544, \uAD1C\uCC2E\uC544"
+    nameColor: {r: 1, g: 0, b: 1, a: 1}
+  - speakerName: "\uBCA0\uB9AC"
+    text: "\uC774\uC815\uB3C4 \uAC00\uAC8C\uC5D0\uC11C \uBB58."
+    nameColor: {r: 1, g: 0, b: 1, a: 1}
+  feedbackLinesMidIceGlass:
+  - speakerName: "\uBC1C\uB80C\uD2F0\uB178"
+    text: "\uC800\uAE30\uC694, \uC794\uC774\uB791 \uC5BC\uC74C \uC0C1\uD0DC\uAC00...\uC6B0\uB9AC
+      \uC790\uAE30\uB294 \uC644\uBCBD\uD55C \uAC83\uB9CC \uBA39\uB294\uB2E4\uAD6C\uC694!"
+    nameColor: {r: 0, g: 0, b: 1, a: 1}
+  - speakerName: "\uBCA0\uB9AC"
+    text: "\uC544, \uAD1C\uCC2E\uC544"
+    nameColor: {r: 1, g: 0, b: 1, a: 1}
+  - speakerName: "\uBCA0\uB9AC"
+    text: "\uC774\uC815\uB3C4 \uAC00\uAC8C\uC5D0\uC11C \uBB58."
+    nameColor: {r: 1, g: 0, b: 1, a: 1}
+  feedbackLinesMidWrongMenu:
+  - speakerName: "\uBC1C\uB80C\uD2F0\uB178"
+    text: "\uC800\uAE30\uC694, \uC6B0\uB9AC \uC790\uAE30\uB294 \uC644\uBCBD\uD55C
+      \uAC83\uB9CC \uBA39\uB294\uB2E4\uAD6C\uC694!"
+    nameColor: {r: 0, g: 0, b: 1, a: 1}
+  - speakerName: "\uBCA0\uB9AC"
+    text: "\uC544, \uAD1C\uCC2E\uC544"
+    nameColor: {r: 1, g: 0, b: 1, a: 1}
+  - speakerName: "\uBCA0\uB9AC"
+    text: "\uC774\uC815\uB3C4 \uAC00\uAC8C\uC5D0\uC11C \uBB58."
+    nameColor: {r: 1, g: 0, b: 1, a: 1}

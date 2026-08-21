@@ -52,7 +52,25 @@ MonoBehaviour:
       prerequisiteEpisodeIds: []
       requiredVars: []
       requiredCustomerAppearances: []
-  - order: {fileID: 11400000, guid: 5bff06fab4c98364fb72d59d4c677a00, type: 2}
+  - order: {fileID: 11400000, guid: efb9b53ea144d27489b760691ad14a4c, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: 1f06df2c8bfa7d542aa074c11e66928e, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: 295d983c6d07d6641ac7d03242a0e652, type: 2}
     weight: 1
     condition:
       minDay: 0

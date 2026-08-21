@@ -15,12 +15,25 @@ MonoBehaviour:
   key: d1025_rec_1004
   requestedRecipeId: rec_1004
   orderType: 0
+  paymentCurrency: 0
   tags: []
   characterKey: f03
   expressionKeyMid: mid
   expressionKeyGood: good
   expressionKeyBad: bad
-  lines: []
-  feedbackLinesGood: []
+  orderDialogueAuthored: 1
+  lines:
+  - speakerName: F03
+    text: "\uAC13\uB85C\uB4DC\uB85C \uD574\uC8FC\uC2DC\uACA0\uC5B4\uC694?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesGood:
+  - speakerName: F03
+    text: "..\uAC10\uB3D9\uC801\uC778 \uB9DB\uC774\uC5D0\uC694."
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
   feedbackLinesMid: []
   feedbackLinesBad: []
+  authoredFeedback: 63
+  feedbackLinesMidIce: []
+  feedbackLinesMidGlass: []
+  feedbackLinesMidIceGlass: []
+  feedbackLinesMidWrongMenu: []

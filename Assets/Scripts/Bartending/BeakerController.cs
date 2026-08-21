@@ -82,9 +82,39 @@ namespace Slainte.Bartending
             rotationHorizontalScreenPadding = Mathf.Max(0f, screenPadding);
         }
 
+        public void ConfigureCollisionGeometry(
+            float configuredBottomWidth,
+            float configuredTopWidth,
+            float configuredHeight,
+            float configuredYOffset,
+            Vector2 triggerSize,
+            Vector2 triggerOffset)
+        {
+            bottomWidth = Mathf.Max(0.05f, configuredBottomWidth);
+            topWidth = Mathf.Max(0.05f, configuredTopWidth);
+            height = Mathf.Max(0.05f, configuredHeight);
+            colliderYOffset = configuredYOffset;
+
+            BoxCollider2D boxCollider = GetComponent<BoxCollider2D>();
+            if (boxCollider != null)
+            {
+                mainCollider = boxCollider;
+                boxCollider.isTrigger = true;
+                boxCollider.size = new Vector2(
+                    Mathf.Max(0.05f, triggerSize.x),
+                    Mathf.Max(0.05f, triggerSize.y));
+                boxCollider.offset = triggerOffset;
+            }
+
+            edgeCollider ??= GetComponent<EdgeCollider2D>();
+            GenerateCurvedCollider();
+            liquidTracker?.RefreshCollisionGeometry();
+        }
+
         private void Start()
         {
-            mainCollider = GetComponent<Collider2D>();
+            mainCollider = GetComponent<BoxCollider2D>();
+            mainCollider ??= GetComponent<Collider2D>();
             mainCamera = Camera.main;
 
             if (Application.isPlaying)

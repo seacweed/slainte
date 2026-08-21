@@ -26,44 +26,87 @@ namespace Slainte.Bartending
             return ResolveRecipe(requestedRecipeId) != null;
         }
 
+        public bool CanGenerateOrder(
+            CocktailOrderType orderType,
+            string requestedRecipeId,
+            IEnumerable<string> requestedTags)
+        {
+            if (IsTagOrder(orderType))
+                return TryGetSingleTag(requestedTags, out _);
+
+            return CanGenerateOrder(requestedRecipeId);
+        }
+
         public GeneratedCocktailOrder GenerateOrder(
             CocktailOrderType orderType,
-            string requestedRecipeId = "")
+            string requestedRecipeId = "",
+            IEnumerable<string> requestedTags = null,
+            string requestedConditionLabel = null)
         {
-            CocktailRecipe recipe = ResolveRecipe(requestedRecipeId);
-            if (recipe == null)
+            bool tagOrder = IsTagOrder(orderType);
+            CocktailRecipe recipe = tagOrder ? null : ResolveRecipe(requestedRecipeId);
+            string requestedTag = string.Empty;
+            if (!tagOrder && recipe == null)
+                return null;
+            if (tagOrder && !TryGetSingleTag(requestedTags, out requestedTag))
                 return null;
 
             CocktailOrderTemplate template = PickTemplate(orderType);
             string lineTemplate = template != null
                 ? template.lineTemplate
-                : "{recipeName} 한 잔 부탁하네.";
+                : tagOrder
+                    ? "{condition} 조건으로 한 잔 부탁하네."
+                    : "{recipeName} 한 잔 부탁하네.";
+            string conditionLabel = tagOrder
+                ? string.IsNullOrWhiteSpace(requestedConditionLabel)
+                    ? requestedTag
+                    : requestedConditionLabel.Trim()
+                : string.Empty;
 
             GeneratedCocktailOrder order = new GeneratedCocktailOrder
             {
-                id = CreateGeneratedId(recipe, template),
+                id = CreateGeneratedId(recipe, template, conditionLabel),
                 orderType = orderType,
-                line = FormatLine(lineTemplate, recipe),
-                requestedRecipeId = recipe.id,
+                line = FormatLine(lineTemplate, recipe, conditionLabel),
+                requestedRecipeId = recipe != null ? recipe.id : string.Empty,
+                requestedConditionLabel = conditionLabel,
                 requestedRecipe = recipe,
                 sourceTemplate = template
             };
 
             if (orderType == CocktailOrderType.TasteOrder)
-                CopyTags(recipe.tasteTags, order.requiredTasteTags);
+                order.requiredTasteTags.Add(requestedTag);
             else if (orderType == CocktailOrderType.MoodOrder)
-                CopyTags(recipe.moodTags, order.requiredMoodTags);
+                order.requiredMoodTags.Add(requestedTag);
 
             return order;
         }
 
-        private static void CopyTags(IEnumerable<string> source, HashSet<string> destination)
+        private static bool IsTagOrder(CocktailOrderType orderType)
         {
-            if (source == null || destination == null)
-                return;
+            return orderType == CocktailOrderType.TasteOrder
+                || orderType == CocktailOrderType.MoodOrder;
+        }
+
+        private static bool TryGetSingleTag(
+            IEnumerable<string> source,
+            out string requestedTag)
+        {
+            requestedTag = string.Empty;
+            if (source == null)
+                return false;
 
             foreach (string tag in source)
-                destination.Add(tag);
+            {
+                if (string.IsNullOrWhiteSpace(tag))
+                    continue;
+                if (!string.IsNullOrEmpty(requestedTag))
+                    return false;
+
+                requestedTag = tag.Trim();
+            }
+
+            return !string.IsNullOrEmpty(requestedTag);
         }
 
         private CocktailRecipe ResolveRecipe(string requestedRecipeId)
@@ -126,19 +169,32 @@ namespace Slainte.Bartending
             return templates[templates.Count - 1];
         }
 
-        private static string FormatLine(string lineTemplate, CocktailRecipe recipe)
+        private static string FormatLine(
+            string lineTemplate,
+            CocktailRecipe recipe,
+            string conditionLabel)
         {
             string recipeName = GetRecipeName(recipe);
             return (string.IsNullOrWhiteSpace(lineTemplate) ? "{recipeName} 한 잔 부탁하네." : lineTemplate)
                 .Replace("{recipeName}", recipeName)
-                .Replace("{recipeId}", recipe != null ? recipe.id : string.Empty);
+                .Replace("{recipeId}", recipe != null ? recipe.id : string.Empty)
+                .Replace("{condition}", conditionLabel ?? string.Empty)
+                .Replace("{tasteTag}", conditionLabel ?? string.Empty)
+                .Replace("{moodTag}", conditionLabel ?? string.Empty);
         }
 
-        private static string CreateGeneratedId(CocktailRecipe recipe, CocktailOrderTemplate template)
+        private static string CreateGeneratedId(
+            CocktailRecipe recipe,
+            CocktailOrderTemplate template,
+            string conditionLabel)
         {
             string templateId = template != null ? template.id : "fallback_recipe_order";
-            string recipeId = recipe != null ? recipe.id : "unknown_recipe";
-            return $"{templateId}:{recipeId}";
+            string targetId = recipe != null
+                ? recipe.id
+                : string.IsNullOrWhiteSpace(conditionLabel)
+                    ? "unknown_condition"
+                    : conditionLabel.Trim();
+            return $"{templateId}:{targetId}";
         }
 
         private static string GetRecipeName(CocktailRecipe recipe)

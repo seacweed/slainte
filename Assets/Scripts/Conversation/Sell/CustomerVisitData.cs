@@ -49,10 +49,10 @@ public sealed class CustomerVisitData : ScriptableObject
     [InspectorName("말투 속성 키")]
     public string speechStyleKey;
     [InspectorName("선호 맛")]
-    [Tooltip("기획 CSV 원문 보존용입니다. 실제 주문 선택 규칙에는 아직 사용하지 않습니다.")]
+    [Tooltip("맛 조건 주문이 있으면 해당 조건의 주문 후보로 연결됩니다.")]
     public string preferredTasteKey;
     [InspectorName("선호 분위기")]
-    [Tooltip("기획 CSV 원문 보존용입니다. 실제 주문 선택 규칙에는 아직 사용하지 않습니다.")]
+    [Tooltip("분위기 조건 주문이 있으면 해당 조건의 주문 후보로 연결됩니다.")]
     public string preferredAtmosphereKey;
     [InspectorName("태그")]
     public List<string> tags = new();

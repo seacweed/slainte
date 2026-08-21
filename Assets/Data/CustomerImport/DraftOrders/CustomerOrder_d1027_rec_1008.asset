@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 596ac274de286b84aaa5c1510f09601f, type: 3}
+  m_Name: CustomerOrder_d1027_rec_1008
+  m_EditorClassIdentifier: Assembly-CSharp::CustomerOrderData
+  key: d1027_rec_1008
+  requestedRecipeId: rec_1008
+  orderType: 0
+  paymentCurrency: 0
+  tags: []
+  characterKey: big_fish
+  expressionKeyMid: mid
+  expressionKeyGood: good
+  expressionKeyBad: bad
+  orderDialogueAuthored: 1
+  lines:
+  - speakerName: "\uBE45-\uD53C\uC26C"
+    text: "\uC19C\uC528 \uC880 \uBCFC\uAE4C? \uC5EC\uAE30 \uC544\uC774\uB9AC\uC2DC
+      \uCEE4\uD53C."
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesGood:
+  - speakerName: "\uBE45-\uD53C\uC26C"
+    text: "\uBA4B\uC9C4 \uD55C \uC794\uC774\uC57C."
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  - speakerName: "\uBE45-\uD53C\uC26C"
+    text: "\uC624\uB298\uC744 \uC990\uAE30\uB77C\uACE0."
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMid: []
+  feedbackLinesBad:
+  - speakerName: "\uBE45-\uD53C\uC26C"
+    text: "...\uBC8C\uC368 \uC0B6\uC744 \uB05D\uB0B4\uACE0 \uC2F6\uC740 \uAC74 \uC544\uB2D0\uD150\uB370
+      \uB9D0\uC774\uC57C"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  authoredFeedback: 63
+  feedbackLinesMidIce:
+  - speakerName: "\uBE45-\uD53C\uC26C"
+    text: "\uC5BC\uC74C\uC774\uB77C...\uB531 \uC774\uC815\uB3C4\uAD70"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidGlass:
+  - speakerName: "\uBE45-\uD53C\uC26C"
+    text: "\uC774\uB7F0 \uC794\uC774\uB77C...\uB531 \uC774\uC815\uB3C4\uAD70"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidIceGlass:
+  - speakerName: "\uBE45-\uD53C\uC26C"
+    text: "\uC774\uB7F0 \uC794\uC5D0 \uC5BC\uC74C\uC774\uB77C...\uB531 \uC774\uC815\uB3C4\uAD70"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidWrongMenu:
+  - speakerName: "\uBE45-\uD53C\uC26C"
+    text: "\uC5B4\uB835\uC9C0 \uC54A\uC740 \uC8FC\uBB38\uC774\uB77C\uACE0 \uC0DD\uAC01\uD588\uB294\uB370...\uB531
+      \uC774\uC815\uB3C4\uAD70"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}

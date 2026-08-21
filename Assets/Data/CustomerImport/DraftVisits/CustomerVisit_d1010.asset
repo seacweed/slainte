@@ -54,7 +54,7 @@ MonoBehaviour:
       prerequisiteEpisodeIds: []
       requiredVars: []
       requiredCustomerAppearances: []
-  - order: {fileID: 11400000, guid: 7942529c6ccb603438919d8033e9c4cf, type: 2}
+  - order: {fileID: 11400000, guid: f7c2dc4877854ec42a3dab9466364a01, type: 2}
     weight: 1
     condition:
       minDay: 0
@@ -63,7 +63,7 @@ MonoBehaviour:
       prerequisiteEpisodeIds: []
       requiredVars: []
       requiredCustomerAppearances: []
-  - order: {fileID: 11400000, guid: 30e9b645e2367014b93b07eae1194f52, type: 2}
+  - order: {fileID: 11400000, guid: d0e32fb6aef28bf478ab79c5a74be988, type: 2}
     weight: 1
     condition:
       minDay: 0
@@ -73,6 +73,15 @@ MonoBehaviour:
       requiredVars: []
       requiredCustomerAppearances: []
   - order: {fileID: 11400000, guid: b12e23b5d1064f94ea791d0525ade434, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: 1dc360fa23ac2444ab39bcc4ed36d60b, type: 2}
     weight: 1
     condition:
       minDay: 0

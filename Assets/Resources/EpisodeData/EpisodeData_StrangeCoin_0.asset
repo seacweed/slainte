@@ -18,7 +18,7 @@ MonoBehaviour:
   episodeType: 2
   mandatorySlot: 0
   triggerCondition:
-    minDay: 0
+    minDay: 5
     requiredFlags: []
     blockedFlags: []
     prerequisiteEpisodeIds: []
@@ -151,7 +151,7 @@ MonoBehaviour:
     requiresCrafting: 1
     craftingTicketKey: sc0_f72
     # TEMP TEST ONLY: 영업 인카운터 실제 제조 검증용. 정식 데이터 확정 전 제거하며 CSV 재임포트 시 유지하지 않는다.
-    craftingRecipeId: vodka_lemon
+    craftingRecipeId: rec_1003
     craftingOutcomes:
     - result: 0
       nextNodeId: 5_1_1

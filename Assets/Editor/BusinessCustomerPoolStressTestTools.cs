@@ -118,7 +118,7 @@ namespace Slainte.EditorTools
                 progress.LoadFrom(new SaveData());
                 progress.SetCurrentDay(1);
                 order.key = "stress_validator_order";
-                order.requestedRecipeId = "vodka_lemon";
+                order.requestedRecipeId = "rec_1003";
 
                 for (int i = 0; i < visitCount; i++)
                 {

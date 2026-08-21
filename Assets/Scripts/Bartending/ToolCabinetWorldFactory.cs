@@ -353,6 +353,16 @@ namespace Slainte.Bartending
 
         public bool ContainsWorldPoint(Vector2 worldPoint)
         {
+            if (!TryGetInteractionLocalRect(out Rect localRect))
+                return false;
+
+            Vector2 local = transform.InverseTransformPoint(worldPoint);
+            return localRect.Contains(local);
+        }
+
+        public bool TryGetInteractionLocalRect(out Rect localRect)
+        {
+            localRect = default;
             if (Role == ShakerVisualRole.Body)
                 return false;
             if (spriteRenderer == null)
@@ -364,13 +374,12 @@ namespace Slainte.Bartending
                 ? new Rect(53f, 271f, 203f, 160f)
                 : new Rect(105f, 370f, 99f, 78f);
             Bounds bounds = spriteRenderer.sprite.bounds;
-            Rect localRect = Rect.MinMaxRect(
+            localRect = Rect.MinMaxRect(
                 Mathf.Lerp(bounds.min.x, bounds.max.x, pixels.xMin / SourceSize.x),
                 Mathf.Lerp(bounds.min.y, bounds.max.y, pixels.yMin / SourceSize.y),
                 Mathf.Lerp(bounds.min.x, bounds.max.x, pixels.xMax / SourceSize.x),
                 Mathf.Lerp(bounds.min.y, bounds.max.y, pixels.yMax / SourceSize.y));
-            Vector2 local = transform.InverseTransformPoint(worldPoint);
-            return localRect.Contains(local);
+            return true;
         }
 
         public void SetTint(Color color)
@@ -390,17 +399,27 @@ namespace Slainte.Bartending
         private ShakerVisualLayer[] layers;
         private ShakerVisualLayer strainerLayer;
         private ShakerVisualLayer capLayer;
-        private Vector3 strainerHome;
-        private Vector3 capHome;
+        private ShakerPartController strainerPart;
+        private ShakerPartController capPart;
         private bool initialized;
-        private bool strainerAttached = true;
-        private bool capAttached = true;
         private TextMesh statusText;
+
+        public bool IsStrainerAttached => strainerPart == null || strainerPart.IsAttached;
+        public bool IsCapAttached => capPart == null || capPart.IsAttached;
+        public bool IsFullyAssembled => IsStrainerAttached && IsCapAttached;
+        internal Transform DetachedPartsParent => transform.parent;
 
         public void Configure()
         {
             shaker = GetComponent<BeakerController>();
             technique = GetComponent<CobblerShakerTechniqueController>();
+            shaker?.ConfigureCollisionGeometry(
+                1.5265f,
+                2.053f,
+                3.25f,
+                -0.57f,
+                new Vector2(1.765f, 3.12f),
+                new Vector2(0f, -0.57f));
             layers = GetComponentsInChildren<ShakerVisualLayer>(true);
             for (int i = 0; i < layers.Length; i++)
             {
@@ -408,19 +427,19 @@ namespace Slainte.Bartending
                 if (layer == null)
                     continue;
                 if (layer.Role == ShakerVisualRole.Strainer)
+                {
                     strainerLayer = layer;
+                    strainerPart = ConfigurePart(layer);
+                }
                 else if (layer.Role == ShakerVisualRole.Cap)
+                {
                     capLayer = layer;
+                    capPart = ConfigurePart(layer);
+                }
             }
 
             if (!initialized)
             {
-                strainerAttached = true;
-                capAttached = true;
-                if (strainerLayer != null)
-                    strainerHome = strainerLayer.transform.localPosition;
-                if (capLayer != null)
-                    capHome = capLayer.transform.localPosition;
                 initialized = true;
             }
 
@@ -454,39 +473,82 @@ namespace Slainte.Bartending
 
             if (capLayer != null && capLayer.ContainsWorldPoint(worldPoint))
             {
-                if (capAttached)
-                    capAttached = false;
-                else if (strainerAttached)
-                    capAttached = true;
-                ApplyClosureState();
-                return true;
+                bool capMovesWithHeldStrainer = capPart != null
+                    && strainerPart != null
+                    && strainerPart.IsPickedUp
+                    && capPart.transform.IsChildOf(strainerPart.transform);
+                if (capPart != null && capPart.IsAttached && !capMovesWithHeldStrainer)
+                {
+                    capPart.DetachAndPickUp(worldPoint);
+                    return true;
+                }
             }
 
             if (strainerLayer != null && strainerLayer.ContainsWorldPoint(worldPoint))
             {
-                if (strainerAttached)
-                {
-                    strainerAttached = false;
-                    capAttached = false;
-                }
-                else
-                {
-                    strainerAttached = true;
-                }
-                ApplyClosureState();
+                if (strainerPart == null || !strainerPart.IsAttached)
+                    return false;
+
+                strainerPart.DetachAndPickUp(worldPoint);
+                if (capPart != null && capPart.IsAttached)
+                    capPart.FollowAttachedCarrier(strainerPart.transform);
                 return true;
             }
 
             return false;
         }
 
+        internal bool TryAttachPart(ShakerPartController part)
+        {
+            if (part == null
+                || part.Owner != this
+                || part.IsAttached
+                || (shaker != null && shaker.IsPickedUp))
+            {
+                return false;
+            }
+            if (part.Role == ShakerVisualRole.Cap && !IsStrainerAttached)
+            {
+                if (strainerPart == null
+                    || strainerPart.IsPickedUp
+                    || !part.IsNearCarrierPose(strainerPart))
+                {
+                    return false;
+                }
+
+                part.AttachToCarrier(strainerPart);
+                return true;
+            }
+
+            if (!part.IsNearAttachmentPose())
+                return false;
+
+            part.AttachToShaker();
+            return true;
+        }
+
+        internal void NotifyPartStateChanged(ShakerPartController part)
+        {
+            ApplyClosureState();
+        }
+
+        private ShakerPartController ConfigurePart(ShakerVisualLayer layer)
+        {
+            if (layer == null)
+                return null;
+
+            ShakerPartController part = layer.GetComponent<ShakerPartController>();
+            if (part == null)
+                part = layer.gameObject.AddComponent<ShakerPartController>();
+            part.Configure(this, layer);
+            return part;
+        }
+
         private void ApplyClosureState()
         {
-            if (!strainerAttached)
-                capAttached = false;
             if (technique == null)
                 technique = GetComponent<CobblerShakerTechniqueController>();
-            technique?.SetClosureState(strainerAttached, capAttached);
+            technique?.SetClosureState(IsStrainerAttached, IsCapAttached);
             RefreshPresentation();
         }
 
@@ -498,10 +560,7 @@ namespace Slainte.Bartending
             if (strainerLayer != null)
             {
                 strainerLayer.gameObject.SetActive(true);
-                strainerLayer.transform.localPosition = strainerAttached
-                    ? strainerHome
-                    : strainerHome + new Vector3(-2.25f, -0.25f, 0f);
-                strainerLayer.SetTint(strainerAttached
+                strainerLayer.SetTint(IsStrainerAttached
                     ? Color.white
                     : new Color(0.88f, 0.95f, 1f, 1f));
             }
@@ -509,10 +568,7 @@ namespace Slainte.Bartending
             if (capLayer != null)
             {
                 capLayer.gameObject.SetActive(true);
-                capLayer.transform.localPosition = capAttached
-                    ? capHome
-                    : capHome + new Vector3(2.1f, -0.15f, 0f);
-                capLayer.SetTint(capAttached
+                capLayer.SetTint(IsCapAttached
                     ? Color.white
                     : new Color(0.88f, 0.95f, 1f, 1f));
             }
@@ -554,7 +610,7 @@ namespace Slainte.Bartending
                 statusText.text = string.Empty;
                 return;
             }
-            if (!strainerAttached || !capAttached)
+            if (!IsFullyAssembled)
                 statusText.text = "CLOSE LIDS";
             else if (technique == null || !technique.HasLiquid)
                 statusText.text = "ADD LIQUID";
@@ -566,6 +622,446 @@ namespace Slainte.Bartending
                 statusText.text = "SHAKE "
                     + Mathf.RoundToInt(technique.ShakeProgress * 100f) + "%";
 
+        }
+
+        private void OnDestroy()
+        {
+            DestroyDetachedPart(strainerPart);
+            DestroyDetachedPart(capPart);
+        }
+
+        private static void DestroyDetachedPart(ShakerPartController part)
+        {
+            if (part != null && !part.IsAttached)
+                Destroy(part.gameObject);
+        }
+    }
+
+    [DisallowMultipleComponent]
+    public sealed class ShakerPartController : MonoBehaviour,
+        IBartendingItem,
+        IPointerAnchoredPickup,
+        IBartendingViewTransitionParticipant
+    {
+        private CobblerShakerPresentation owner;
+        private ShakerVisualLayer visualLayer;
+        private ShakerVisualRole role;
+        private Transform attachedParent;
+        private Vector3 attachedLocalPosition;
+        private Quaternion attachedLocalRotation;
+        private Vector3 attachedLocalScale;
+        private Rect interactionLocalRect;
+        private BoxCollider2D pointerCollider;
+        private Rigidbody2D body;
+        private BartendingItemOrder interactionOrder;
+        private SlotController currentSlot;
+        private Camera inputCamera;
+        private Vector3 pointerOffset;
+        private bool configured;
+        private bool attached = true;
+        private bool pickedUp;
+        private bool viewTransitionSuspended;
+        private int pickupInputFrame = -1;
+
+        public GameObject GameObject => gameObject;
+        public bool IsPickedUp => pickedUp;
+        public bool IsAttached => attached;
+        public ShakerVisualRole Role => role;
+        internal CobblerShakerPresentation Owner => owner;
+
+        internal void Configure(
+            CobblerShakerPresentation assemblyOwner,
+            ShakerVisualLayer layer)
+        {
+            owner = assemblyOwner;
+            visualLayer = layer != null ? layer : GetComponent<ShakerVisualLayer>();
+            role = visualLayer != null ? visualLayer.Role : ShakerVisualRole.Body;
+
+            if (!configured)
+            {
+                attachedParent = transform.parent;
+                attachedLocalPosition = transform.localPosition;
+                attachedLocalRotation = transform.localRotation;
+                attachedLocalScale = transform.localScale;
+                configured = true;
+            }
+
+            if (visualLayer == null
+                || !visualLayer.TryGetInteractionLocalRect(out interactionLocalRect))
+            {
+                return;
+            }
+
+            EnsurePointerCollider();
+            if (interactionOrder == null)
+            {
+                interactionOrder = BartendingItemOrder.Attach(
+                    gameObject,
+                    pointerCollider,
+                    null,
+                    ContainsAsDetachedPart);
+            }
+
+            interactionOrder.enabled = !attached;
+            pointerCollider.enabled = !attached;
+            if (attached)
+            {
+                transform.localPosition = attachedLocalPosition;
+                transform.localRotation = attachedLocalRotation;
+                transform.localScale = attachedLocalScale;
+            }
+        }
+
+        private void Update()
+        {
+            if (!configured || attached || viewTransitionSuspended)
+                return;
+
+            if (pickedUp
+                && TryGetPointerWorld(Input.mousePosition, out Vector3 pointerWorld))
+            {
+                MoveToPointer(pointerWorld);
+            }
+
+            if (!Input.GetMouseButtonDown(0) || pickupInputFrame == Time.frameCount)
+                return;
+
+            if (pickedUp)
+            {
+                TryDrop();
+                return;
+            }
+
+            if (!TryGetPointerWorld(Input.mousePosition, out Vector3 clickWorld)
+                || !ContainsAsDetachedPart(clickWorld)
+                || (interactionOrder != null
+                    && !interactionOrder.IsFrontmostAt(clickWorld)))
+            {
+                return;
+            }
+
+            PickUpAt(clickWorld);
+        }
+
+        internal void DetachAndPickUp(Vector3 pointerWorld)
+        {
+            if (!configured || !attached || owner == null)
+                return;
+
+            Vector3 worldPosition = transform.position;
+            Quaternion worldRotation = transform.rotation;
+            Vector3 worldScale = transform.lossyScale;
+            Transform detachedParent = owner.DetachedPartsParent;
+            transform.SetParent(detachedParent, true);
+            transform.position = worldPosition;
+            transform.rotation = worldRotation;
+            SetWorldScale(worldScale);
+
+            attached = false;
+            EnsureDetachedPhysics();
+            if (interactionOrder != null)
+            {
+                interactionOrder.enabled = true;
+                interactionOrder.BringToFront();
+            }
+
+            owner.NotifyPartStateChanged(this);
+            PickUpAt(pointerWorld);
+        }
+
+        internal bool IsNearAttachmentPose()
+        {
+            if (!configured || attachedParent == null)
+                return false;
+
+            Vector3 homeWorldPosition = attachedParent.TransformPoint(attachedLocalPosition);
+            float worldScale = Mathf.Max(
+                Mathf.Abs(attachedParent.lossyScale.x),
+                Mathf.Abs(attachedParent.lossyScale.y));
+            return Vector2.Distance(transform.position, homeWorldPosition)
+                <= GetLocalAttachmentTolerance() * Mathf.Max(0.01f, worldScale);
+        }
+
+        internal bool IsNearCarrierPose(ShakerPartController carrier)
+        {
+            if (!configured || carrier == null || carrier.IsAttached)
+                return false;
+
+            float worldScale = Mathf.Max(
+                Mathf.Abs(carrier.transform.lossyScale.x),
+                Mathf.Abs(carrier.transform.lossyScale.y));
+            return Vector2.Distance(transform.position, carrier.transform.position)
+                <= GetLocalAttachmentTolerance() * Mathf.Max(0.01f, worldScale);
+        }
+
+        internal void AttachToShaker()
+        {
+            if (!configured || attached || attachedParent == null)
+                return;
+
+            VacateCurrentSlot();
+            pickedUp = false;
+            attached = true;
+            if (interactionOrder != null)
+                interactionOrder.enabled = false;
+            DisableDetachedPhysics();
+
+            transform.SetParent(attachedParent, false);
+            transform.localPosition = attachedLocalPosition;
+            transform.localRotation = attachedLocalRotation;
+            transform.localScale = attachedLocalScale;
+            owner?.NotifyPartStateChanged(this);
+        }
+
+        internal void AttachToCarrier(ShakerPartController carrier)
+        {
+            if (!configured || attached || carrier == null || carrier.IsAttached)
+                return;
+
+            VacateCurrentSlot();
+            pickedUp = false;
+            attached = true;
+            if (interactionOrder != null)
+                interactionOrder.enabled = false;
+            DisableDetachedPhysics();
+
+            // The cap and strainer layers share the same authored pivot, so a zero
+            // local pose restores the original assembled alignment.
+            transform.SetParent(carrier.transform, false);
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.identity;
+            transform.localScale = Vector3.one;
+            owner?.NotifyPartStateChanged(this);
+        }
+
+        internal void FollowAttachedCarrier(Transform carrier)
+        {
+            if (!configured || !attached || carrier == null || transform.parent == carrier)
+                return;
+
+            transform.SetParent(carrier, true);
+        }
+
+        public void SnapToSlot(Transform slotTransform, SlotController slot)
+        {
+            if (attached || slotTransform == null)
+                return;
+
+            if (currentSlot != null && currentSlot != slot)
+                currentSlot.Vacate();
+            currentSlot = slot;
+            if (slot != null && !ReferenceEquals(slot.OccupiedItem, this))
+                slot.Occupy(this);
+
+            EnsureDetachedPhysics();
+            float bottomOffset = pointerCollider != null && pointerCollider.enabled
+                ? transform.position.y - pointerCollider.bounds.min.y
+                : 0f;
+            MoveImmediately(new Vector3(
+                slotTransform.position.x,
+                slotTransform.position.y + bottomOffset,
+                transform.position.z));
+            pickedUp = false;
+        }
+
+        public void OnPickedUp()
+        {
+            if (TryGetPointerWorld(Input.mousePosition, out Vector3 pointerWorld))
+                PickUpAt(pointerWorld);
+        }
+
+        public void OnPickedUpAt(Vector3 pointerWorld)
+        {
+            PickUpAt(pointerWorld);
+        }
+
+        public void OnDropped()
+        {
+            TryDrop();
+        }
+
+        public void SuspendForViewTransition()
+        {
+            viewTransitionSuspended = true;
+        }
+
+        public void UpdateForViewTransition(Vector3 pointerWorld)
+        {
+            if (viewTransitionSuspended && pickedUp && !attached)
+                MoveToPointer(pointerWorld);
+        }
+
+        public void ResumeAfterViewTransition()
+        {
+            viewTransitionSuspended = false;
+            if (!pickedUp || attached
+                || !TryGetPointerWorld(Input.mousePosition, out Vector3 pointerWorld))
+            {
+                return;
+            }
+
+            pointerOffset = transform.position - pointerWorld;
+            pointerOffset.z = 0f;
+        }
+
+        private void PickUpAt(Vector3 pointerWorld)
+        {
+            if (!configured || attached)
+                return;
+
+            VacateCurrentSlot();
+            EnsureDetachedPhysics();
+            pickedUp = true;
+            pickupInputFrame = Time.frameCount;
+            pointerOffset = transform.position - pointerWorld;
+            pointerOffset.z = 0f;
+            interactionOrder?.BringToFront();
+        }
+
+        private void TryDrop()
+        {
+            if (!pickedUp || attached
+                || !TryGetPointerWorld(Input.mousePosition, out Vector3 pointerWorld))
+            {
+                return;
+            }
+
+            if (owner != null && owner.TryAttachPart(this))
+                return;
+
+            Collider2D[] hits = Physics2D.OverlapPointAll(pointerWorld);
+            for (int i = 0; i < hits.Length; i++)
+            {
+                Collider2D hit = hits[i];
+                if (hit == null || hit == pointerCollider)
+                    continue;
+
+                SlotController slot = hit.GetComponent<SlotController>();
+                if (slot == null || (slot.IsOccupied
+                    && !ReferenceEquals(slot.OccupiedItem, this)))
+                {
+                    continue;
+                }
+
+                SnapToSlot(slot.transform, slot);
+                return;
+            }
+        }
+
+        private void MoveToPointer(Vector3 pointerWorld)
+        {
+            Vector3 target = pointerWorld + pointerOffset;
+            target.z = transform.position.z;
+            MoveImmediately(target);
+        }
+
+        private void MoveImmediately(Vector3 targetPosition)
+        {
+            transform.position = targetPosition;
+            if (body != null)
+                body.position = targetPosition;
+        }
+
+        private bool TryGetPointerWorld(Vector2 screenPosition, out Vector3 worldPosition)
+        {
+            if (inputCamera == null)
+                inputCamera = Camera.main;
+            return BartendingViewport.TryGetPointerWorldPosition(
+                inputCamera,
+                screenPosition,
+                out worldPosition);
+        }
+
+        private bool ContainsAsDetachedPart(Vector2 worldPoint)
+        {
+            return !attached
+                && visualLayer != null
+                && visualLayer.ContainsWorldPoint(worldPoint);
+        }
+
+        private void EnsurePointerCollider()
+        {
+            if (pointerCollider == null)
+                pointerCollider = GetComponent<BoxCollider2D>();
+            if (pointerCollider == null)
+                pointerCollider = gameObject.AddComponent<BoxCollider2D>();
+
+            pointerCollider.isTrigger = true;
+            pointerCollider.offset = interactionLocalRect.center;
+            pointerCollider.size = interactionLocalRect.size;
+        }
+
+        private void EnsureDetachedPhysics()
+        {
+            EnsurePointerCollider();
+            pointerCollider.enabled = true;
+            if (body == null)
+                body = GetComponent<Rigidbody2D>();
+            if (body == null)
+                body = gameObject.AddComponent<Rigidbody2D>();
+
+            body.bodyType = RigidbodyType2D.Kinematic;
+            body.gravityScale = 0f;
+            body.useFullKinematicContacts = true;
+            body.linearVelocity = Vector2.zero;
+            body.angularVelocity = 0f;
+            body.simulated = true;
+            body.position = transform.position;
+        }
+
+        private void DisableDetachedPhysics()
+        {
+            if (pointerCollider != null)
+                pointerCollider.enabled = false;
+            if (body == null)
+                body = GetComponent<Rigidbody2D>();
+            if (body == null)
+                return;
+
+            body.linearVelocity = Vector2.zero;
+            body.angularVelocity = 0f;
+            body.simulated = false;
+            Destroy(body);
+            body = null;
+        }
+
+        private void VacateCurrentSlot()
+        {
+            if (currentSlot != null
+                && ReferenceEquals(currentSlot.OccupiedItem, this))
+            {
+                currentSlot.Vacate();
+            }
+            currentSlot = null;
+        }
+
+        private void SetWorldScale(Vector3 worldScale)
+        {
+            Transform parent = transform.parent;
+            Vector3 parentScale = parent != null ? parent.lossyScale : Vector3.one;
+            transform.localScale = new Vector3(
+                SafeScale(worldScale.x, parentScale.x),
+                SafeScale(worldScale.y, parentScale.y),
+                SafeScale(worldScale.z, parentScale.z));
+        }
+
+        private static float SafeScale(float world, float parent)
+        {
+            return Mathf.Abs(parent) > 0.0001f ? world / parent : world;
+        }
+
+        private float GetLocalAttachmentTolerance()
+        {
+            return Mathf.Max(
+                0.4f,
+                Mathf.Max(interactionLocalRect.width, interactionLocalRect.height) * 1.15f);
+        }
+
+        private void OnDisable()
+        {
+            viewTransitionSuspended = false;
+            pickedUp = false;
+            VacateCurrentSlot();
         }
     }
 }

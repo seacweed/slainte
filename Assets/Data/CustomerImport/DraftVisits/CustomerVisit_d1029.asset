@@ -45,7 +45,7 @@ MonoBehaviour:
   - "\uC544\uC774\uB9AC\uC2DC \uCEE4\uD53C"
   - "\uD56B \uD14C\uB514"
   orders:
-  - order: {fileID: 11400000, guid: 6e9bf8013d2dc084fb2da476ac230b2b, type: 2}
+  - order: {fileID: 11400000, guid: 9ae175841ba0a414da45444190860fe5, type: 2}
     weight: 1
     condition:
       minDay: 0
@@ -54,7 +54,7 @@ MonoBehaviour:
       prerequisiteEpisodeIds: []
       requiredVars: []
       requiredCustomerAppearances: []
-  - order: {fileID: 11400000, guid: 2293ddf945497de4b9ed96e6163aae7a, type: 2}
+  - order: {fileID: 11400000, guid: bfd69fede1f40544d9faa9c9a7545195, type: 2}
     weight: 1
     condition:
       minDay: 0
@@ -64,6 +64,33 @@ MonoBehaviour:
       requiredVars: []
       requiredCustomerAppearances: []
   - order: {fileID: 11400000, guid: 297f6aa6e9c6c22478016df3305bc296, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: 4c8b54c909599d9419a61d7e283f19e9, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: 5ff292bfd79b7c84eb1d0924e67795f4, type: 2}
+    weight: 1
+    condition:
+      minDay: 0
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+  - order: {fileID: 11400000, guid: 5664a2ab7199ff3409a73336a8d6c433, type: 2}
     weight: 1
     condition:
       minDay: 0

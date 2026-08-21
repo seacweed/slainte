@@ -93,7 +93,9 @@ namespace Slainte.Bartending
             }
         }
 
-        public void ApplyVisualSprite(Sprite sprite)
+        public void ApplyVisualSprite(
+            Sprite sprite,
+            bool matchNativeCanvasPixelSize = false)
         {
             if (sprite == null)
                 return;
@@ -108,7 +110,75 @@ namespace Slainte.Bartending
             renderer.sprite = sprite;
             renderer.color = Color.white;
             renderer.enabled = true;
+            if (matchNativeCanvasPixelSize)
+                MatchVisualToCanvasPixels(renderer, sprite.rect.size);
             CacheSortingOrders();
+        }
+
+        private void MatchVisualToCanvasPixels(
+            SpriteRenderer renderer,
+            Vector2 canvasPixelSize)
+        {
+            if (renderer == null
+                || !BartendingViewport.TryConvertActiveCanvasPixelsToWorld(
+                    canvasPixelSize,
+                    out Vector2 targetWorldSize))
+            {
+                return;
+            }
+
+            Bounds currentWorldBounds = renderer.bounds;
+            if (currentWorldBounds.size.x <= Mathf.Epsilon
+                || currentWorldBounds.size.y <= Mathf.Epsilon)
+            {
+                return;
+            }
+
+            Vector3 localScale = transform.localScale;
+            localScale.x *= targetWorldSize.x / currentWorldBounds.size.x;
+            localScale.y *= targetWorldSize.y / currentWorldBounds.size.y;
+            transform.localScale = localScale;
+            MatchBoxColliderToRenderer(renderer);
+        }
+
+        private void MatchBoxColliderToRenderer(SpriteRenderer renderer)
+        {
+            if (renderer == null
+                || renderer.sprite == null
+                || cubeCollider is not BoxCollider2D box)
+            {
+                return;
+            }
+
+            Bounds spriteBounds = renderer.sprite.bounds;
+            Vector3 localMin = new Vector3(
+                float.PositiveInfinity,
+                float.PositiveInfinity,
+                0f);
+            Vector3 localMax = new Vector3(
+                float.NegativeInfinity,
+                float.NegativeInfinity,
+                0f);
+            Vector3[] corners =
+            {
+                new Vector3(spriteBounds.min.x, spriteBounds.min.y, 0f),
+                new Vector3(spriteBounds.min.x, spriteBounds.max.y, 0f),
+                new Vector3(spriteBounds.max.x, spriteBounds.min.y, 0f),
+                new Vector3(spriteBounds.max.x, spriteBounds.max.y, 0f)
+            };
+
+            for (int i = 0; i < corners.Length; i++)
+            {
+                Vector3 rootLocal = transform.InverseTransformPoint(
+                    renderer.transform.TransformPoint(corners[i]));
+                localMin = Vector3.Min(localMin, rootLocal);
+                localMax = Vector3.Max(localMax, rootLocal);
+            }
+
+            box.offset = (localMin + localMax) * 0.5f;
+            box.size = new Vector2(
+                Mathf.Abs(localMax.x - localMin.x),
+                Mathf.Abs(localMax.y - localMin.y));
         }
 
         public void ReleaseFromSource(

@@ -75,4 +75,4 @@ MonoBehaviour:
   iceCubeSize: 0.42
   iceGravityScale: 1
   iceDragThreshold: 0.08
-  iceCleanupY: -8
+  iceCleanupY: -15

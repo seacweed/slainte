@@ -103,6 +103,6 @@ namespace Slainte.Bartending
         [Min(0.05f)] public float iceCubeSize = 0.42f;
         [Min(0f)] public float iceGravityScale = 1f;
         [Min(0f)] public float iceDragThreshold = 0.08f;
-        public float iceCleanupY = -8f;
+        public float iceCleanupY = -15f;
     }
 }

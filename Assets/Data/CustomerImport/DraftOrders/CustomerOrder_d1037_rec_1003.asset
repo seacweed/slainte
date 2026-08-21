@@ -15,12 +15,37 @@ MonoBehaviour:
   key: d1037_rec_1003
   requestedRecipeId: rec_1003
   orderType: 0
+  paymentCurrency: 0
   tags: []
   characterKey: f54
   expressionKeyMid: mid
   expressionKeyGood: good
   expressionKeyBad: bad
-  lines: []
-  feedbackLinesGood: []
+  orderDialogueAuthored: 1
+  lines:
+  - speakerName: F54
+    text: "\uC774\uB7F4 \uB54C \uAC13 \uB808\uC774\uB514\uB9CC\uD55C \uAC8C \uB610
+      \uC788\uC744\uAE4C?"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  feedbackLinesGood:
+  - speakerName: F54
+    text: "\uC774\uB807\uAC8C \uD658\uC0C1\uC801\uC778 \uAC78 \uB9C8\uC2E4 \uC218
+      \uC788\uB2E4\uB294\uB370 \uC5C5\uBB34\uAC00 \uB300\uC218\uB0D0\uACE0!"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
   feedbackLinesMid: []
   feedbackLinesBad: []
+  authoredFeedback: 63
+  feedbackLinesMidIce:
+  - speakerName: F54
+    text: "\uC5BC\uC74C\uC5C6\uB294 \uAC83\uB3C4 \uAC00\uB054\uC740 \uAD1C\uCC2E\uC9C0"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  feedbackLinesMidGlass:
+  - speakerName: F54
+    text: "\uC774\uB7F0 \uC794\uB3C4 \uAC00\uB054\uC740 \uAD1C\uCC2E\uC9C0"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  feedbackLinesMidIceGlass:
+  - speakerName: F54
+    text: "\uC774\uB7F0 \uC794\uC5D0 \uC5BC\uC74C\uC5C6\uC774 \uBA39\uB294 \uAC83\uB3C4
+      \uAC00\uB054\uC740 \uAD1C\uCC2E\uC9C0"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  feedbackLinesMidWrongMenu: []

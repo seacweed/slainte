@@ -27,6 +27,7 @@ namespace Slainte.Bartending
         public CocktailOrderType orderType;
         public string line;
         public string requestedRecipeId;
+        public string requestedConditionLabel;
         public CocktailRecipe requestedRecipe;
         public CocktailOrderTemplate sourceTemplate;
         public readonly HashSet<string> requiredTasteTags = new(System.StringComparer.OrdinalIgnoreCase);
@@ -37,7 +38,9 @@ namespace Slainte.Bartending
             get
             {
                 if (requestedRecipe == null)
-                    return requestedRecipeId;
+                    return !string.IsNullOrWhiteSpace(requestedConditionLabel)
+                        ? requestedConditionLabel
+                        : requestedRecipeId;
 
                 if (!string.IsNullOrWhiteSpace(requestedRecipe.displayName))
                     return requestedRecipe.displayName;

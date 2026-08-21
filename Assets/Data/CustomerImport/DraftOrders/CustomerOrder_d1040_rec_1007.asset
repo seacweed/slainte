@@ -15,12 +15,19 @@ MonoBehaviour:
   key: d1040_rec_1007
   requestedRecipeId: rec_1007
   orderType: 0
+  paymentCurrency: 0
   tags: []
   characterKey: cartha
   expressionKeyMid: mid
   expressionKeyGood: good
   expressionKeyBad: bad
+  orderDialogueAuthored: 1
   lines: []
   feedbackLinesGood: []
   feedbackLinesMid: []
   feedbackLinesBad: []
+  authoredFeedback: 63
+  feedbackLinesMidIce: []
+  feedbackLinesMidGlass: []
+  feedbackLinesMidIceGlass: []
+  feedbackLinesMidWrongMenu: []

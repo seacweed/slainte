@@ -19,7 +19,9 @@ namespace Slainte.Business
         [InspectorName("주문 사이")]
         BetweenOrders,
         [InspectorName("영업시간 종료 후")]
-        AfterTimer
+        AfterTimer,
+        [InspectorName("고정 영업 슬롯")]
+        SequenceSlot
     }
 
     [Serializable]
@@ -34,6 +36,8 @@ namespace Slainte.Business
         [Tooltip("여러 필수 규칙이 동시에 활성화되면 큰 값부터 실행합니다.")]
         public int priority;
         public BusinessRequiredActionTiming timing = BusinessRequiredActionTiming.BeforeFirstCustomer;
+        [Tooltip("timing이 SequenceSlot일 때 실행할 1부터 시작하는 영업 슬롯입니다.")]
+        [Min(0)] public int sequenceSlot;
         public CustomerVisitData customerVisit;
         public EpisodeData encounterEpisode;
 

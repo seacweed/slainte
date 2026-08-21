@@ -53,17 +53,22 @@ namespace Slainte.Business
                 return false;
             }
 
-            if (string.IsNullOrWhiteSpace(order.requestedRecipeId))
+            bool tagOrder = IsTagOrder(order.orderType);
+            if (!tagOrder && string.IsNullOrWhiteSpace(order.requestedRecipeId))
             {
                 failureReason = $"주문 {order.key}의 레시피 ID가 비어 있습니다.";
                 return false;
             }
 
             if (orderGenerator == null
-                || !orderGenerator.CanGenerateOrder(order.requestedRecipeId))
+                || !orderGenerator.CanGenerateOrder(
+                    order.orderType,
+                    order.requestedRecipeId,
+                    order.tags))
             {
-                failureReason =
-                    $"주문 가능한 레시피를 불러올 수 없습니다: {order.requestedRecipeId}";
+                failureReason = tagOrder
+                    ? $"주문 {order.key}에는 정확히 하나의 유효한 조건 태그가 필요합니다."
+                    : $"주문 가능한 레시피를 불러올 수 없습니다: {order.requestedRecipeId}";
                 return false;
             }
 
@@ -142,7 +147,7 @@ namespace Slainte.Business
             if (!initialized
                 || request == null
                 || string.IsNullOrWhiteSpace(request.sessionId)
-                || string.IsNullOrWhiteSpace(request.requestedRecipeId))
+                || !HasValidRequestTarget(request))
                 return false;
 
             if (State != BusinessOrderSessionState.Idle && State != BusinessOrderSessionState.Completed)
@@ -153,14 +158,19 @@ namespace Slainte.Business
             completionDispatched = false;
             currentOrder = orderGenerator?.GenerateOrder(
                 currentRequest.orderType,
-                currentRequest.requestedRecipeId);
+                currentRequest.requestedRecipeId,
+                currentRequest.requestedTags,
+                currentRequest.requestedConditionLabel);
             pendingResult = null;
             servingTarget = null;
 
             if (currentOrder == null)
             {
-                string reason = "요청한 레시피를 불러올 수 없습니다: "
-                    + currentRequest.requestedRecipeId;
+                string reason = IsTagOrder(currentRequest.orderType)
+                    ? "요청한 주문 조건을 불러올 수 없습니다: "
+                        + currentRequest.requestedConditionLabel
+                    : "요청한 레시피를 불러올 수 없습니다: "
+                        + currentRequest.requestedRecipeId;
                 ui?.ShowError(reason);
                 CompleteCurrentOrder(new BusinessOrderSessionResult
                 {
@@ -187,7 +197,15 @@ namespace Slainte.Business
                 && customerSpawner.ShowVisit(
                     currentRequest.customerVisitKey,
                     currentRequest.customerOrderKey,
-                    currentOrder.line);
+                    currentOrder.line,
+                    dialogueStarted =>
+                    {
+                        if (!dialogueStarted
+                            && State == BusinessOrderSessionState.PresentingOrder)
+                        {
+                            BeginCrafting();
+                        }
+                    });
 
             if (!visitShown)
             {
@@ -306,7 +324,7 @@ namespace Slainte.Business
 
             OrderEvaluationGrade grade = OrderEvaluationGrader.Resolve(evaluation, settings);
             GameCurrency paymentCurrency = currentRequest.paymentCurrency;
-            int listedPrice = GetListedPrice(paymentCurrency);
+            int listedPrice = GetListedPrice(paymentCurrency, evaluation);
             BusinessOrderReward reward = BusinessOrderRewardCalculator.Calculate(
                 grade,
                 listedPrice,
@@ -350,7 +368,17 @@ namespace Slainte.Business
             SetState(BusinessOrderSessionState.PresentingFeedback);
             ui?.ShowFeedback(pendingResult);
 
-            bool feedbackStarted = customerSpawner != null && customerSpawner.ShowFeedback(grade);
+            CraftingJobResult detailedResult = CraftingResultMapper.Map(pendingResult);
+            CustomerDialoguePresentation feedbackPresentation = customerSpawner != null
+                ? customerSpawner.ShowFeedback(detailedResult)
+                : CustomerDialoguePresentation.Missing;
+            if (feedbackPresentation == CustomerDialoguePresentation.IntentionallySkipped)
+            {
+                CompletePendingResult();
+                return;
+            }
+
+            bool feedbackStarted = feedbackPresentation == CustomerDialoguePresentation.Played;
             if (!feedbackStarted && dialogue != null && settings != null)
             {
                 string fallback = settings.GetFallbackFeedback(grade);
@@ -460,10 +488,40 @@ namespace Slainte.Business
             callback?.Invoke(result);
         }
 
-        private int GetListedPrice(GameCurrency currency)
+        private int GetListedPrice(
+            GameCurrency currency,
+            CocktailOrderEvaluationResult evaluation = null)
         {
-            CocktailRecipe recipe = currentOrder?.requestedRecipe;
+            CocktailRecipe recipe = IsTagOrder(currentOrder?.orderType)
+                ? evaluation?.detectedRecipeResult?.matchedRecipe
+                : currentOrder?.requestedRecipe;
             return recipe != null ? recipe.GetPrice(currency) : -1;
+        }
+
+        private static bool HasValidRequestTarget(OrderSessionRequest request)
+        {
+            if (request == null)
+                return false;
+
+            if (!IsTagOrder(request.orderType))
+                return !string.IsNullOrWhiteSpace(request.requestedRecipeId);
+
+            if (request.requestedTags == null)
+                return false;
+
+            int validTags = 0;
+            for (int i = 0; i < request.requestedTags.Count; i++)
+            {
+                if (!string.IsNullOrWhiteSpace(request.requestedTags[i]))
+                    validTags++;
+            }
+            return validTags == 1;
+        }
+
+        private static bool IsTagOrder(CocktailOrderType? orderType)
+        {
+            return orderType == CocktailOrderType.TasteOrder
+                || orderType == CocktailOrderType.MoodOrder;
         }
 
         private IEnumerator WaitForCraftingPreparation()

@@ -147,7 +147,7 @@ namespace Slainte.Bartending
             snapRoutine = StartCoroutine(SnapAfterInitialization());
 
             ItemDefCatalog itemCatalog = ItemDefCatalog.LoadFromResources("Items", null);
-            CocktailRecipeCatalog recipes = CocktailRecipeCsvLoader.LoadFromStreamingAssets(itemCatalog);
+            CocktailRecipeCatalog recipes = CocktailRecipeDataLoader.LoadDefault(itemCatalog);
             evaluator = new CocktailEvaluator(recipes);
         }
 
@@ -161,8 +161,8 @@ namespace Slainte.Bartending
             {
                 items = new[]
                 {
-                    Resources.Load<ItemDef>("Items/breeze_vodka"),
-                    Resources.Load<ItemDef>("Items/lemon_juice")
+                    Resources.Load<ItemDef>("Items/Planning/item_1006"),
+                    Resources.Load<ItemDef>("Items/Planning/item_1009")
                 };
             }
             if (items == null || session == null)

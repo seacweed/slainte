@@ -55,8 +55,13 @@ public class OrderTicketUI : MonoBehaviour
 
     public void Show(OrderTicketData data)
     {
+        Show(data, data != null ? data.memo : string.Empty);
+    }
+
+    public void Show(OrderTicketData data, string memo)
+    {
         if (customerNameText) customerNameText.text = data.customerName;
-        if (memoText)         memoText.text         = data.memo ?? "";
+        if (memoText)         memoText.text         = memo ?? "";
 
         HideStructuredOrderDetails();
 

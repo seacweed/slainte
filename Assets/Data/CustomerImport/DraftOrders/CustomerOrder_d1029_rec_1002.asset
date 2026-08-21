@@ -15,12 +15,43 @@ MonoBehaviour:
   key: d1029_rec_1002
   requestedRecipeId: rec_1002
   orderType: 0
+  paymentCurrency: 0
   tags: []
   characterKey: eric
   expressionKeyMid: mid
   expressionKeyGood: good
   expressionKeyBad: bad
-  lines: []
-  feedbackLinesGood: []
+  orderDialogueAuthored: 1
+  lines:
+  - speakerName: "\uC5D0\uB9AD"
+    text: "\uB298 \uB9C8\uC2DC\uB358 \uCF54\uD2BC \uC0AC\uC6CC. \uC8FC\uBB38\uD574\uB3C4
+      \uB420\uAE4C?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesGood:
+  - speakerName: "\uC5D0\uB9AD"
+    text: "\uD5A5\uC774 \uC544\uC8FC \uAE4A\uAD6C\uB098."
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
   feedbackLinesMid: []
-  feedbackLinesBad: []
+  feedbackLinesBad:
+  - speakerName: "\uC5D0\uB9AD"
+    text: "\uC11C\uB450\uB97C \uD544\uC698 \uC5C6\uC9C0\uB9CC \uB048\uC9C8\uAE30\uAC8C
+      \uD574\uBCF4\uB294 \uAC83\uB3C4 \uC88B\uC9C0"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  authoredFeedback: 63
+  feedbackLinesMidIce:
+  - speakerName: "\uC5D0\uB9AD"
+    text: "\uC5BC\uC74C\uC744 \uC880 \uB2EC\uB9AC \uD574\uBCF4\uB294 \uAC74 \uC5B4\uB5BB\uACA0\uB2C8?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidGlass:
+  - speakerName: "\uC5D0\uB9AD"
+    text: "\uC794\uC744 \uC880 \uB2EC\uB9AC \uD574\uBCF4\uB294 \uAC74 \uC5B4\uB5BB\uACA0\uB2C8?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidIceGlass:
+  - speakerName: "\uC5D0\uB9AD"
+    text: "\uC5BC\uC74C\uC774\uB791 \uC794\uC744 \uC880 \uB2EC\uB9AC \uD574\uBCF4\uB294
+      \uAC74 \uC5B4\uB5BB\uACA0\uB2C8?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidWrongMenu:
+  - speakerName: "\uC5D0\uB9AD"
+    text: "\uC870\uD569\uC744 \uC880 \uB2EC\uB9AC \uD574\uBCF4\uB294 \uAC74 \uC5B4\uB5BB\uACA0\uB2C8?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}

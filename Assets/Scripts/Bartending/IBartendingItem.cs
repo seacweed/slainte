@@ -18,6 +18,11 @@ namespace Slainte.Bartending
         void OnPickedUpAt(Vector3 pointerWorld);
     }
 
+    public interface IBartendingCabinetVisualProvider
+    {
+        Sprite GetCabinetVisualSprite(int layerIndex, Sprite fallback);
+    }
+
     public interface IBartendingViewTransitionParticipant
     {
         void SuspendForViewTransition();

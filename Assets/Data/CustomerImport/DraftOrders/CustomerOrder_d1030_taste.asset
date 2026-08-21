@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 596ac274de286b84aaa5c1510f09601f, type: 3}
+  m_Name: CustomerOrder_d1030_taste
+  m_EditorClassIdentifier: Assembly-CSharp::CustomerOrderData
+  key: d1030_taste
+  requestedRecipeId: 
+  orderType: 2
+  paymentCurrency: 0
+  tags:
+  - "\uC0C8\uD07C\uD568_Sourness"
+  characterKey: f54
+  expressionKeyMid: mid
+  expressionKeyGood: good
+  expressionKeyBad: bad
+  orderDialogueAuthored: 1
+  lines:
+  - speakerName: F54
+    text: "\uC9DC\uB9BF\uD55C \uAC70 \uBB50 \uC5C6\uC5B4? \uC774\uB97C\uD14C\uBA74...\uC0C8\uD07C\uD55C
+      \uAC70!"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  feedbackLinesGood:
+  - speakerName: F54
+    text: "\uC0C8\uD07C, \uC9DC\uB9BF. \uCD5C\uACE0\uC57C!"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  feedbackLinesMid: []
+  feedbackLinesBad: []
+  authoredFeedback: 63
+  feedbackLinesMidIce:
+  - speakerName: F54
+    text: "\uC5BC\uC74C? \uC774\uBC88\uC5D4 \uC911\uC694\uCE58 \uC54A\uC544"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  feedbackLinesMidGlass:
+  - speakerName: F54
+    text: "\uC794? \uC774\uBC88\uC5D4 \uC911\uC694\uCE58 \uC54A\uC544"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  feedbackLinesMidIceGlass:
+  - speakerName: F54
+    text: "\uC794\uC774\uB791 \uC5BC\uC74C? \uC774\uBC88\uC5D4 \uC911\uC694\uCE58
+      \uC54A\uC544"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
+  feedbackLinesMidWrongMenu:
+  - speakerName: F54
+    text: "\uB2E4\uC74C\uC5D4 \uB354 \uBA4B\uC9C4\uAC78\uB85C \uC8FC\uB77C\uACE0"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}

@@ -70,7 +70,7 @@ namespace Slainte.Business
         }
     }
 
-    public static class EpisodeCraftingResultMapper
+    public static class CraftingResultMapper
     {
         public static CraftingJobResult Map(BusinessOrderSessionResult result)
         {
@@ -88,7 +88,11 @@ namespace Slainte.Business
             CocktailRecipe baseRecipe = evaluation?.order?.requestedRecipe;
             CocktailRecipe matchedRecipe = requested?.matchedRecipe;
 
-            if (IsWrongMenu(result.requestedRecipeId, requested, detected))
+            if (IsWrongMenu(
+                    result.requestedRecipeId,
+                    evaluation,
+                    requested,
+                    detected))
                 return CraftingJobResult.MidWrongMenu;
 
             bool isRequestedVariant = IsRequestedRecipeFamily(
@@ -116,9 +120,21 @@ namespace Slainte.Business
 
         private static bool IsWrongMenu(
             string requestedRecipeId,
+            CocktailOrderEvaluationResult evaluation,
             CocktailEvaluationResult requested,
             CocktailEvaluationResult detected)
         {
+            CocktailOrderType? orderType = evaluation?.order?.orderType;
+            if ((orderType == CocktailOrderType.TasteOrder
+                    || orderType == CocktailOrderType.MoodOrder)
+                && evaluation != null
+                && !evaluation.isSuccess
+                && detected != null
+                && detected.isSuccess)
+            {
+                return true;
+            }
+
             return requested != null
                 && !requested.isSuccess
                 && detected != null
@@ -140,6 +156,14 @@ namespace Slainte.Business
                         recipe.baseRecipeId,
                         requestedRecipeId,
                         StringComparison.OrdinalIgnoreCase));
+        }
+    }
+
+    public static class EpisodeCraftingResultMapper
+    {
+        public static CraftingJobResult Map(BusinessOrderSessionResult result)
+        {
+            return CraftingResultMapper.Map(result);
         }
     }
 }
