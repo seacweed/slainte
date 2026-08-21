@@ -19,6 +19,7 @@ namespace Slainte.Bartending
         [SerializeField, Min(0.02f)] private float strainerThickness = 0.08f;
         [SerializeField, Range(0.5f, 1.1f)] private float capWidthRatio = 1f;
         [SerializeField, Min(0.02f)] private float capThickness = 0.1f;
+        [SerializeField, Min(0f)] private float strainerGuideEdgeRadius = 0.04f;
 
         [Header("Shake Requirement")]
         [SerializeField] private ShakerIceMode iceMode = ShakerIceMode.IcedShake;
@@ -36,6 +37,8 @@ namespace Slainte.Bartending
         private float qualifiedShakeTime;
         private bool barriersConfigured;
         private IceOnlyVesselBarrier strainerBarrier;
+        private EdgeCollider2D leftStrainerGuide;
+        private EdgeCollider2D rightStrainerGuide;
         private BoxCollider2D capBarrier;
         private bool strainerAttached = true;
         private bool capAttached = true;
@@ -199,6 +202,9 @@ namespace Slainte.Bartending
             if (capBarrier == null)
                 capBarrier = capTransform.gameObject.AddComponent<BoxCollider2D>();
 
+            leftStrainerGuide = GetOrCreateStrainerGuide("__CobblerStrainerGuideLeft");
+            rightStrainerGuide = GetOrCreateStrainerGuide("__CobblerStrainerGuideRight");
+
             float top = shaker.colliderYOffset + shaker.height * 0.5f;
             ConfigureBarrier(
                 strainerBarrier.GetComponent<BoxCollider2D>(),
@@ -210,9 +216,161 @@ namespace Slainte.Bartending
                 top + capThickness * 0.5f,
                 shaker.topWidth * capWidthRatio,
                 capThickness);
+            ConfigureStrainerFlowGuides(top);
 
             barriersConfigured = true;
             RefreshPhysicalClosures();
+        }
+
+        private EdgeCollider2D GetOrCreateStrainerGuide(string objectName)
+        {
+            Transform guideTransform = transform.Find(objectName);
+            if (guideTransform == null)
+            {
+                GameObject guideObject = new GameObject(objectName);
+                guideObject.transform.SetParent(transform, false);
+                guideObject.layer = gameObject.layer;
+                guideTransform = guideObject.transform;
+            }
+
+            EdgeCollider2D guide = guideTransform.GetComponent<EdgeCollider2D>();
+            if (guide == null)
+                guide = guideTransform.gameObject.AddComponent<EdgeCollider2D>();
+
+            guideTransform.localPosition = Vector3.zero;
+            guideTransform.localRotation = Quaternion.identity;
+            guideTransform.localScale = Vector3.one;
+            guide.isTrigger = false;
+            guide.edgeRadius = Mathf.Max(0f, strainerGuideEdgeRadius);
+            return guide;
+        }
+
+        private void ConfigureStrainerFlowGuides(float shakerTop)
+        {
+            Vector2[] leftPoints;
+            Vector2[] rightPoints;
+            if (!TryBuildSpriteAlignedGuidePoints(
+                    shakerTop,
+                    out leftPoints,
+                    out rightPoints))
+            {
+                BuildFallbackGuidePoints(shakerTop, out leftPoints, out rightPoints);
+            }
+
+            leftStrainerGuide.points = leftPoints;
+            rightStrainerGuide.points = rightPoints;
+        }
+
+        private bool TryBuildSpriteAlignedGuidePoints(
+            float shakerTop,
+            out Vector2[] leftPoints,
+            out Vector2[] rightPoints)
+        {
+            leftPoints = null;
+            rightPoints = null;
+
+            ShakerVisualLayer strainerLayer = null;
+            ShakerVisualLayer[] visualLayers =
+                GetComponentsInChildren<ShakerVisualLayer>(true);
+            for (int i = 0; i < visualLayers.Length; i++)
+            {
+                if (visualLayers[i] != null
+                    && visualLayers[i].Role == ShakerVisualRole.Strainer)
+                {
+                    strainerLayer = visualLayers[i];
+                    break;
+                }
+            }
+
+            SpriteRenderer renderer = strainerLayer != null
+                ? strainerLayer.GetComponent<SpriteRenderer>()
+                : null;
+            if (renderer == null || renderer.sprite == null)
+                return false;
+
+            // Pixel anchors follow the opaque inner edge of the 310x590
+            // cobbler_strainer sprite: dome shoulder, neck base, then outlet.
+            Vector2[] leftPixels =
+            {
+                new Vector2(67f, 344f),
+                new Vector2(91f, 369f),
+                new Vector2(121f, 383f),
+                new Vector2(121f, 433f)
+            };
+            Vector2[] rightPixels =
+            {
+                new Vector2(243f, 344f),
+                new Vector2(219f, 369f),
+                new Vector2(189f, 383f),
+                new Vector2(189f, 433f)
+            };
+
+            leftPoints = BuildGuidePointsFromPixels(
+                renderer,
+                shakerTop,
+                -shaker.topWidth * 0.5f,
+                leftPixels);
+            rightPoints = BuildGuidePointsFromPixels(
+                renderer,
+                shakerTop,
+                shaker.topWidth * 0.5f,
+                rightPixels);
+            return leftPoints != null && rightPoints != null;
+        }
+
+        private Vector2[] BuildGuidePointsFromPixels(
+            SpriteRenderer renderer,
+            float shakerTop,
+            float rimX,
+            Vector2[] sourcePixels)
+        {
+            const float sourceWidth = 310f;
+            const float sourceHeight = 590f;
+            Bounds bounds = renderer.sprite.bounds;
+            Vector2[] points = new Vector2[sourcePixels.Length + 1];
+            points[0] = new Vector2(rimX, shakerTop);
+
+            for (int i = 0; i < sourcePixels.Length; i++)
+            {
+                Vector2 pixel = sourcePixels[i];
+                Vector3 spriteLocal = new Vector3(
+                    Mathf.Lerp(bounds.min.x, bounds.max.x, pixel.x / sourceWidth),
+                    Mathf.Lerp(bounds.min.y, bounds.max.y, pixel.y / sourceHeight),
+                    0f);
+                Vector3 world = renderer.transform.TransformPoint(spriteLocal);
+                Vector3 shakerLocal = transform.InverseTransformPoint(world);
+                points[i + 1] = new Vector2(shakerLocal.x, shakerLocal.y);
+            }
+
+            return points;
+        }
+
+        private void BuildFallbackGuidePoints(
+            float shakerTop,
+            out Vector2[] leftPoints,
+            out Vector2[] rightPoints)
+        {
+            float halfRim = shaker.topWidth * 0.5f;
+            float halfOutlet = Mathf.Max(0.16f, shaker.topWidth * 0.17f);
+            float shoulderY = shakerTop + shaker.height * 0.16f;
+            float outletY = shakerTop + shaker.height * 0.31f;
+
+            leftPoints = new[]
+            {
+                new Vector2(-halfRim, shakerTop),
+                new Vector2(-shaker.topWidth * 0.41f, shakerTop + shaker.height * 0.06f),
+                new Vector2(-shaker.topWidth * 0.29f, shakerTop + shaker.height * 0.12f),
+                new Vector2(-halfOutlet, shoulderY),
+                new Vector2(-halfOutlet, outletY)
+            };
+            rightPoints = new[]
+            {
+                new Vector2(halfRim, shakerTop),
+                new Vector2(shaker.topWidth * 0.41f, shakerTop + shaker.height * 0.06f),
+                new Vector2(shaker.topWidth * 0.29f, shakerTop + shaker.height * 0.12f),
+                new Vector2(halfOutlet, shoulderY),
+                new Vector2(halfOutlet, outletY)
+            };
         }
 
         private void ConfigureBarrier(
@@ -237,6 +395,8 @@ namespace Slainte.Bartending
                 return;
 
             strainerBarrier.gameObject.SetActive(strainerAttached);
+            leftStrainerGuide.gameObject.SetActive(strainerAttached);
+            rightStrainerGuide.gameObject.SetActive(strainerAttached);
             capBarrier.gameObject.SetActive(capAttached);
             shaker.LiquidTracker?.RefreshCollisionGeometry();
         }

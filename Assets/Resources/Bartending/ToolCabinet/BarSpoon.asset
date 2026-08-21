@@ -25,6 +25,6 @@ MonoBehaviour:
   primaryCapacityMl: 0
   secondaryCapacityMl: 0
   maxCount: 0
-  worldScale: 0.55
+  worldScale: 0.7
   worldVisualOffset: {x: 0, y: 0}
   useDedicatedAnchor: 0

@@ -128,17 +128,24 @@ namespace Slainte.Bartending
             float sessionScale,
             ToolCabinetShiftState shiftState)
         {
-            float bucketScale = sessionScale * Mathf.Max(
-                0.05f,
-                definition != null ? definition.worldScale : 1f);
             IceBinController controller = CreateInternal(
                 parent,
                 settings,
                 renderLayer,
-                bucketScale,
+                sessionScale,
                 sessionScale,
                 false);
             controller?.ConfigureDefinition(definition, shiftState);
+            if (controller != null)
+            {
+                BartendingNativeSpriteSizer.TryMatchRootToSprite(
+                    controller.transform,
+                    BartendingNativeSpriteSizer.FindReferenceRenderer(
+                        controller.gameObject));
+                controller.transform.localScale *= Mathf.Max(
+                    0.05f,
+                    definition != null ? definition.worldScale : 1f);
+            }
             return controller;
         }
 

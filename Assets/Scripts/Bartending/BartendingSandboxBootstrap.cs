@@ -128,7 +128,8 @@ namespace Slainte.Bartending
                 barCounter,
                 tableSlots,
                 settings,
-                BartendingSessionBuildMode.Runtime);
+                BartendingSessionBuildMode.Runtime,
+                useToolCabinetOverride: false);
             if (session == null)
                 return;
 

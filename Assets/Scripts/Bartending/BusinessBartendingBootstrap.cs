@@ -1002,6 +1002,11 @@ namespace Slainte.Bartending
                 ? shelfDefinition.GetBarSprite(item.icon)
                 : item.icon;
             bottle.Init(item, barSprite);
+            BartendingNativeSpriteSizer.TryMatchRootToSprite(
+                bottle.transform,
+                BartendingNativeSpriteSizer.FindReferenceRenderer(
+                    bottle.gameObject));
+            bottle.transform.localScale *= 0.7f;
             RegisterBottle(bottle, defaultInventoryAmount);
             return bottle;
         }

@@ -31,7 +31,7 @@ namespace Slainte.Bartending
                         definition.displayName,
                         Vector3.zero,
                         renderLayer,
-                        sessionScale * Mathf.Max(0.05f, definition.worldScale));
+                        sessionScale);
                     instance = item?.GameObject;
                     if (item == null || instance == null)
                         return null;
@@ -43,6 +43,12 @@ namespace Slainte.Bartending
                         renderLayer,
                         definition.kind == ToolKind.CobblerShaker,
                         definition.worldVisualOffset);
+                    BartendingNativeSpriteSizer.TryMatchRootToSprite(
+                        instance.transform,
+                        BartendingNativeSpriteSizer.FindReferenceRenderer(instance));
+                    instance.transform.localScale *= Mathf.Max(
+                        0.05f,
+                        definition.worldScale);
 
                     if (definition.kind == ToolKind.Jigger)
                     {
@@ -114,7 +120,7 @@ namespace Slainte.Bartending
                 definition.displayName,
                 Vector3.zero,
                 renderLayer,
-                sessionScale * Mathf.Max(0.05f, definition.worldScale));
+                sessionScale);
             GlassController glass = item as GlassController;
             instance = glass != null ? glass.gameObject : null;
             if (glass == null || definition.worldSprite == null)
@@ -137,6 +143,13 @@ namespace Slainte.Bartending
                 glass.ApplyCollisionProfile(profile, renderer);
             }
 
+            BartendingNativeSpriteSizer.TryMatchRootToSprite(
+                glass.transform,
+                renderer);
+            glass.transform.localScale *= Mathf.Max(
+                0.05f,
+                definition.worldScale);
+
             return glass;
         }
 
@@ -151,9 +164,7 @@ namespace Slainte.Bartending
 
             GameObject root = new GameObject(definition.displayName);
             root.transform.SetParent(parent, false);
-            root.transform.localScale = Vector3.one
-                * sessionScale
-                * Mathf.Max(0.05f, definition.worldScale);
+            root.transform.localScale = Vector3.one * sessionScale;
             root.layer = renderLayer;
 
             SpriteRenderer renderer = root.AddComponent<SpriteRenderer>();
@@ -174,6 +185,12 @@ namespace Slainte.Bartending
             body.bodyType = RigidbodyType2D.Kinematic;
             body.useFullKinematicContacts = true;
             root.AddComponent<StirringRodController>();
+            BartendingNativeSpriteSizer.TryMatchRootToSprite(
+                root.transform,
+                renderer);
+            root.transform.localScale *= Mathf.Max(
+                0.05f,
+                definition.worldScale);
             return root;
         }
 

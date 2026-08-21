@@ -285,6 +285,7 @@ public static class LiquorShelfSpawnValidator
             "The spawned shelf bottle is not linked to the clicked shelf ItemDef.");
         Require(definition.GetBarSprite(bottle.BottleData.icon) == renderer.sprite,
             "The spawned shelf bottle is not using the definition's barSprite.");
+        ValidateSpriteSize(bottle.gameObject, renderer, "shelf bottle", 0.7f);
         Require(BottleSpriteGeometry.TryCalculate(
                 renderer.sprite,
                 out Vector2 expectedCenterNormalized,
@@ -361,6 +362,25 @@ public static class LiquorShelfSpawnValidator
         SerializedProperty definitionProperty =
             new SerializedObject(slot).FindProperty("def");
         return definitionProperty?.objectReferenceValue as LiquorBottleDef;
+    }
+
+    private static void ValidateSpriteSize(
+        GameObject itemObject,
+        SpriteRenderer renderer,
+        string label,
+        float scaleMultiplier)
+    {
+        Require(itemObject != null && renderer != null && renderer.sprite != null,
+            $"{label} has no reference sprite renderer.");
+        Require(BartendingViewport.TryConvertActiveCanvasPixelsToWorld(
+                renderer.sprite.rect.size * scaleMultiplier,
+                out Vector2 expectedWorldSize),
+            $"Could not convert the source pixels for {label}.");
+
+        Vector2 actualWorldSize = renderer.bounds.size;
+        Require(Vector2.Distance(actualWorldSize, expectedWorldSize) <= 0.002f,
+            $"{label} has the wrong source-relative size: actual={actualWorldSize}, "
+            + $"expected={expectedWorldSize}, sprite={renderer.sprite.rect.size}.");
     }
 
     private static LiquorBottleSlotUI FindUsableSlot()

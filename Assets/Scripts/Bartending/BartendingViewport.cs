@@ -519,4 +519,77 @@ namespace Slainte.Bartending
             }
         }
     }
+
+    /// <summary>
+    /// Matches a bartending world item's authored sprite rectangle to the same
+    /// number of logical canvas pixels in the active Business bartending view.
+    /// </summary>
+    public static class BartendingNativeSpriteSizer
+    {
+        public static bool TryMatchRootToSprite(
+            Transform itemRoot,
+            SpriteRenderer referenceRenderer)
+        {
+            if (itemRoot == null
+                || referenceRenderer == null
+                || referenceRenderer.sprite == null)
+            {
+                return false;
+            }
+
+            return TryMatchRootToCanvasPixels(
+                itemRoot,
+                referenceRenderer,
+                referenceRenderer.sprite.rect.size);
+        }
+
+        public static bool TryMatchRootToCanvasPixels(
+            Transform itemRoot,
+            SpriteRenderer referenceRenderer,
+            Vector2 canvasPixelSize)
+        {
+            if (itemRoot == null
+                || referenceRenderer == null
+                || referenceRenderer.sprite == null
+                || canvasPixelSize.x <= Mathf.Epsilon
+                || canvasPixelSize.y <= Mathf.Epsilon
+                || !BartendingViewport.TryConvertActiveCanvasPixelsToWorld(
+                    canvasPixelSize,
+                    out Vector2 targetWorldSize))
+            {
+                return false;
+            }
+
+            Bounds currentBounds = referenceRenderer.bounds;
+            if (currentBounds.size.x <= Mathf.Epsilon
+                || currentBounds.size.y <= Mathf.Epsilon)
+            {
+                return false;
+            }
+
+            Vector3 scale = itemRoot.localScale;
+            scale.x *= targetWorldSize.x / currentBounds.size.x;
+            scale.y *= targetWorldSize.y / currentBounds.size.y;
+            itemRoot.localScale = scale;
+            Physics2D.SyncTransforms();
+            return true;
+        }
+
+        public static SpriteRenderer FindReferenceRenderer(GameObject root)
+        {
+            if (root == null)
+                return null;
+
+            SpriteRenderer[] renderers =
+                root.GetComponentsInChildren<SpriteRenderer>(true);
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                SpriteRenderer renderer = renderers[i];
+                if (renderer != null && renderer.enabled && renderer.sprite != null)
+                    return renderer;
+            }
+
+            return null;
+        }
+    }
 }

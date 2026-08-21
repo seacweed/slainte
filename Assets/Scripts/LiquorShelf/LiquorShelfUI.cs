@@ -43,7 +43,6 @@ public class LiquorShelfUI : MonoBehaviour
     [Header("Delivery")]
     [SerializeField] private bool enableDelivery = true;
     [SerializeField] private LiquorShopCatalog deliveryCatalog;
-    [SerializeField] private Sprite deliveryTabIcon;
     [SerializeField] private string deliveryTabLabel = "배송";
     [SerializeField, Min(0f)] private float deliveryPriceMultiplier = 2f;
 
@@ -65,7 +64,6 @@ public class LiquorShelfUI : MonoBehaviour
     private DeliveryShopPanelUI                   _deliveryPanel;
     private DeliveryCharacterPresenter            _deliveryCharacter;
     private LiquorCategoryButtonUI                _deliveryTab;
-    private CanvasGroup                           _deliveryTabCanvasGroup;
     private bool                                  _deliveryAvailable = true;
     private string                                _deliveryUnavailableReason = string.Empty;
     private bool                                  _deliverySessionActive;
@@ -77,9 +75,9 @@ public class LiquorShelfUI : MonoBehaviour
     public bool IsDeliveryOpen => _deliveryPanel != null && _deliveryPanel.IsVisible;
     public bool BlocksRecipeBook => _deliverySessionActive;
     public Button DeliveryTabButton => _deliveryTab != null ? _deliveryTab.Button : null;
-    public float DeliveryTabAlpha => _deliveryTabCanvasGroup != null
-        ? _deliveryTabCanvasGroup.alpha
-        : 0f;
+    public Sprite DeliveryTabSprite => _deliveryTab != null ? _deliveryTab.IconSprite : null;
+    public bool DeliveryTabDisabledOverlayVisible =>
+        _deliveryTab != null && _deliveryTab.DisabledOverlayVisible;
     public int DeliveryVisibleItemCount => _deliveryPanel != null
         ? _deliveryPanel.VisibleItemCount
         : 0;
@@ -301,10 +299,10 @@ public class LiquorShelfUI : MonoBehaviour
 
         _deliveryTab = Instantiate(categoryButtonPrefab, categoryButtonContent);
         _deliveryTab.name = "DeliveryTab";
-        _deliveryTab.Bind(deliveryTabLabel, deliveryTabIcon, () => TryOpenDelivery());
-        _deliveryTabCanvasGroup = _deliveryTab.GetComponent<CanvasGroup>();
-        if (_deliveryTabCanvasGroup == null)
-            _deliveryTabCanvasGroup = _deliveryTab.gameObject.AddComponent<CanvasGroup>();
+        _deliveryTab.Bind(
+            deliveryTabLabel,
+            FindCategoryTabSprite(),
+            () => TryOpenDelivery());
 
         RectTransform shelfRoot = closeButton != null
             ? closeButton.transform.parent as RectTransform
@@ -330,10 +328,22 @@ public class LiquorShelfUI : MonoBehaviour
 
     private void ApplyDeliveryTabState()
     {
-        bool available = _interactable && _deliveryAvailable;
-        if (_deliveryTab != null) _deliveryTab.SetInteractable(available);
-        if (_deliveryTabCanvasGroup != null)
-            _deliveryTabCanvasGroup.alpha = available ? 1f : 0.42f;
+        if (_deliveryTab == null)
+            return;
+
+        _deliveryTab.SetInteractable(_interactable && _deliveryAvailable);
+        _deliveryTab.SetDisabledOverlayVisible(!_deliveryAvailable);
+    }
+
+    private Sprite FindCategoryTabSprite()
+    {
+        foreach (CategoryEntry entry in categoryEntries)
+        {
+            if (entry.def != null && entry.def.icon != null)
+                return entry.def.icon;
+        }
+
+        return categoryButtonPrefab != null ? categoryButtonPrefab.IconSprite : null;
     }
 
     private void RefreshShelfSlots()

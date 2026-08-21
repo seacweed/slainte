@@ -282,7 +282,7 @@ namespace Slainte.Business
                 return;
 
             if (!string.IsNullOrWhiteSpace(currentRequest.ticketKey))
-                ticketManager?.Prepare(currentRequest.ticketKey);
+                PrepareCurrentOrderTicket();
 
             SetState(BusinessOrderSessionState.Crafting);
             ui?.ShowCrafting(CurrentRecipeName);
@@ -297,6 +297,33 @@ namespace Slainte.Business
             StopCraftingPreparationTimeout();
             if (!bartending.IsSessionReady)
                 craftingPreparationRoutine = StartCoroutine(WaitForCraftingPreparation());
+        }
+
+        private void PrepareCurrentOrderTicket()
+        {
+            if (ticketManager == null
+                || currentRequest == null
+                || string.IsNullOrWhiteSpace(currentRequest.ticketKey))
+            {
+                return;
+            }
+
+            CustomerOrderData customerOrder = customerSpawner?.CurrentOrderData;
+            bool matchingPresentedOrder = currentRequest.presentOrder
+                && customerOrder != null
+                && string.Equals(
+                    customerOrder.key,
+                    currentRequest.customerOrderKey,
+                    StringComparison.Ordinal);
+            if (matchingPresentedOrder)
+            {
+                ticketManager.Prepare(
+                    currentRequest.ticketKey,
+                    OrderTicketMemoFormatter.Build(customerOrder, currentOrder?.line));
+                return;
+            }
+
+            ticketManager.Prepare(currentRequest.ticketKey);
         }
 
         private void SubmitOrder()

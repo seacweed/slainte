@@ -66,7 +66,7 @@ namespace Slainte.Editor
                 30f,
                 45f,
                 0,
-                0.65f,
+                0.7f,
                 false,
                 overwriteDefinitions);
 
@@ -106,7 +106,7 @@ namespace Slainte.Editor
                 0f,
                 0f,
                 0,
-                0.55f,
+                0.7f,
                 false,
                 overwriteDefinitions);
 
@@ -132,7 +132,7 @@ namespace Slainte.Editor
                 "Rock",
                 "200rock",
                 200f,
-                0.62f,
+                0.7f,
                 overwriteDefinitions);
             GlassDef martini = EnsureGlass(
                 "Martini",
@@ -140,7 +140,7 @@ namespace Slainte.Editor
                 "Martini",
                 "200coc",
                 200f,
-                0.58f,
+                0.7f,
                 overwriteDefinitions);
             GlassDef highball = EnsureGlass(
                 "Highball",
@@ -148,7 +148,7 @@ namespace Slainte.Editor
                 "Highball",
                 "400high",
                 400f,
-                0.58f,
+                0.7f,
                 overwriteDefinitions);
             GlassDef hurricane = EnsureGlass(
                 "Hurricane",
@@ -156,7 +156,7 @@ namespace Slainte.Editor
                 "Hurricane",
                 "400hurricane",
                 400f,
-                0.58f,
+                0.7f,
                 overwriteDefinitions);
 
             ToolCabinetCatalog catalog =

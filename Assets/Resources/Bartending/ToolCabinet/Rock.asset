@@ -19,4 +19,4 @@ MonoBehaviour:
   worldPrefab: {fileID: 2243653413097636618, guid: 0f545fa15c57b314184f5dc08a58782b, type: 3}
   glassId: rock
   capacityMl: 200
-  worldScale: 0.62
+  worldScale: 0.7

@@ -111,34 +111,15 @@ namespace Slainte.Bartending
             renderer.color = Color.white;
             renderer.enabled = true;
             if (matchNativeCanvasPixelSize)
-                MatchVisualToCanvasPixels(renderer, sprite.rect.size);
+            {
+                BartendingNativeSpriteSizer.TryMatchRootToCanvasPixels(
+                    transform,
+                    renderer,
+                    sprite.rect.size);
+                transform.localScale *= 0.7f;
+                MatchBoxColliderToRenderer(renderer);
+            }
             CacheSortingOrders();
-        }
-
-        private void MatchVisualToCanvasPixels(
-            SpriteRenderer renderer,
-            Vector2 canvasPixelSize)
-        {
-            if (renderer == null
-                || !BartendingViewport.TryConvertActiveCanvasPixelsToWorld(
-                    canvasPixelSize,
-                    out Vector2 targetWorldSize))
-            {
-                return;
-            }
-
-            Bounds currentWorldBounds = renderer.bounds;
-            if (currentWorldBounds.size.x <= Mathf.Epsilon
-                || currentWorldBounds.size.y <= Mathf.Epsilon)
-            {
-                return;
-            }
-
-            Vector3 localScale = transform.localScale;
-            localScale.x *= targetWorldSize.x / currentWorldBounds.size.x;
-            localScale.y *= targetWorldSize.y / currentWorldBounds.size.y;
-            transform.localScale = localScale;
-            MatchBoxColliderToRenderer(renderer);
         }
 
         private void MatchBoxColliderToRenderer(SpriteRenderer renderer)

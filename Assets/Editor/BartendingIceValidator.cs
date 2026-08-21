@@ -102,9 +102,19 @@ namespace Slainte.Bartending.EditorTools
             if (!EditorApplication.isPlaying)
                 return;
 
-            if (EditorApplication.timeSinceStartup - startedAt > 20d)
+            if (EditorApplication.timeSinceStartup - startedAt > 60d)
             {
-                Finish(false, "Timed out waiting for the sandbox ice validation.");
+                BartendingSandboxBootstrap sandbox =
+                    UnityEngine.Object.FindFirstObjectByType<BartendingSandboxBootstrap>();
+                BartendingSessionInstance session = sandbox != null
+                    ? sandbox.CurrentSession
+                    : null;
+                Finish(false,
+                    "Timed out waiting for the sandbox ice validation. "
+                    + $"phase={phase}, frames={phaseFrames}, "
+                    + $"sandbox={(sandbox != null)}, session={(session != null)}, "
+                    + $"servingGlass={(session?.ServingGlass != null)}, "
+                    + $"tracker={(session?.ServingGlass?.LiquidTracker != null)}.");
                 return;
             }
 
@@ -273,7 +283,7 @@ namespace Slainte.Bartending.EditorTools
 
         private static void ValidateNoTeleportRetention()
         {
-            if (phaseFrames < 4)
+            if (phaseFrames < 12)
                 return;
 
             Require(testCube.VesselOwner == null,

@@ -129,8 +129,8 @@ public static class DeliverySystemValidator
                 Require(!shelf.IsDeliveryOpen, "Disabled delivery panel remained open.");
                 Require(!shelf.DeliveryTabButton.interactable,
                     "Disabled delivery tab remained interactable.");
-                Require(Mathf.Approximately(shelf.DeliveryTabAlpha, 0.42f),
-                    "Disabled delivery tab did not become gray/translucent.");
+                Require(shelf.DeliveryTabDisabledOverlayVisible,
+                    "Disabled delivery tab did not show its gray overlay.");
                 Require(!shelf.TryOpenDelivery(), "Disabled delivery tab reopened the panel.");
                 Require(!shelf.BlocksRecipeBook,
                     "Recipe-book input remained blocked after the hidden character session ended.");
@@ -140,6 +140,8 @@ public static class DeliverySystemValidator
                 shelf.SetDeliveryAvailable(true);
                 Require(shelf.DeliveryTabButton.interactable,
                     "Re-enabled delivery tab did not become interactable.");
+                Require(!shelf.DeliveryTabDisabledOverlayVisible,
+                    "Re-enabled delivery tab retained its gray overlay.");
                 Finish(true,
                     "customer coexistence, behind-counter layer, copied shop prefab, success-only purchase presentation, rapid purchases, timer, recipe-book lock, and disabled state passed.");
             }
@@ -180,6 +182,9 @@ public static class DeliverySystemValidator
         Require(shelf.IsDeliveryAvailable, "Delivery did not start in the available state.");
         Require(shelf.DeliveryTabButton.interactable,
             "Available delivery tab is not interactable.");
+        Require(!shelf.DeliveryTabDisabledOverlayVisible,
+            "Available delivery tab unexpectedly shows its gray overlay.");
+        ValidateDeliveryTabSprite(shelf);
 
         CustomerSpawner customerSpawner =
             UnityEngine.Object.FindFirstObjectByType<CustomerSpawner>(FindObjectsInactive.Include);
@@ -276,6 +281,37 @@ public static class DeliverySystemValidator
                 presenter.TargetAnchoredX,
                 presenter.VisibleAnchoredX),
             "Rapid delivery purchase is not targeting the visible position.");
+    }
+
+    private static void ValidateDeliveryTabSprite(LiquorShelfUI shelf)
+    {
+        Require(shelf.DeliveryTabSprite != null,
+            "Delivery tab does not have a sprite.");
+
+        LiquorCategoryButtonUI deliveryTab =
+            shelf.DeliveryTabButton.GetComponentInParent<LiquorCategoryButtonUI>();
+        Require(deliveryTab != null && deliveryTab.transform.parent != null,
+            "Could not resolve the delivery tab hierarchy.");
+
+        Sprite categorySprite = null;
+        Transform tabParent = deliveryTab.transform.parent;
+        for (int i = 0; i < tabParent.childCount; i++)
+        {
+            LiquorCategoryButtonUI tab =
+                tabParent.GetChild(i).GetComponent<LiquorCategoryButtonUI>();
+            if (tab != null
+                && tab != deliveryTab
+                && tab.IconSprite != null)
+            {
+                categorySprite = tab.IconSprite;
+                break;
+            }
+        }
+
+        Require(categorySprite != null,
+            "Could not find a liquor shelf category tab sprite for comparison.");
+        Require(shelf.DeliveryTabSprite == categorySprite,
+            "Delivery tab does not reuse the liquor shelf category tab sprite.");
     }
 
     private static void ValidateZeroPricePurchase(GameProgress progress)

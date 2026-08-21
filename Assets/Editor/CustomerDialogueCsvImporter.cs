@@ -442,6 +442,7 @@ namespace Slainte.EditorTools
                 identity.speakerName,
                 orderType,
                 displayLabel,
+                order,
                 tickets,
                 report);
             generatedTickets.Add(ticket);
@@ -555,6 +556,7 @@ namespace Slainte.EditorTools
             string customerName,
             CocktailOrderType orderType,
             string displayLabel,
+            CustomerOrderData order,
             IDictionary<string, OrderTicketData> tickets,
             CustomerDialogueImportReport report)
         {
@@ -577,12 +579,13 @@ namespace Slainte.EditorTools
 
             ticket.key = orderKey;
             ticket.customerName = customerName ?? string.Empty;
-            ticket.memo = orderType switch
+            string fallbackMemo = orderType switch
             {
                 CocktailOrderType.TasteOrder => $"맛 조건: {displayLabel}",
                 CocktailOrderType.MoodOrder => $"분위기 조건: {displayLabel}",
                 _ => $"주문: {displayLabel}"
             };
+            ticket.memo = OrderTicketMemoFormatter.Build(order, fallbackMemo);
             ticket.items ??= new List<OrderTicketItem>();
             ticket.items.Clear();
             EditorUtility.SetDirty(ticket);
