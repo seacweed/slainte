@@ -71,11 +71,13 @@ public class EpisodeCsvImporter : EditorWindow
                 data.episodeDescription    = existing.episodeDescription;
                 data.iconNameBoard         = existing.iconNameBoard;
                 data.iconNameArchive       = existing.iconNameArchive;
-                data.triggerConditionTexts = existing.triggerConditionTexts;
             }
 
             if (!sections.ContainsKey("BOARD_CHARS"))
                 data.characters = existing.characters;
+
+            if (!sections.ContainsKey("SETTLEMENT_REWARDS"))
+                data.settlementRewards = existing.settlementRewards;
 
             if (!sections.ContainsKey("SELECT_CHARS"))
                 RestoreCharacterOverrides(data, existing);
@@ -127,6 +129,7 @@ public class EpisodeCsvImporter : EditorWindow
         ParseOpeningChars(sections, data);
         ParseBoard(sections, data);
         ParseBoardChars(sections, data);
+        ParseSettlementRewards(sections, data);
 
         Dictionary<string, List<CharacterSlotEntry>>  nodeChars           = BuildNodeCharsLookup(sections);
         Dictionary<string, List<EpisodeChoice>>       nodeChoices         = BuildNodeChoicesLookup(sections);
@@ -196,34 +199,64 @@ public class EpisodeCsvImporter : EditorWindow
         return true;
     }
 
+    // TRIGGER/PLAY_TRIGGER 공통: 행 하나 = 조건 하나(conditionType,conditionValue,text). 여러 행은 AND로 결합된다.
+    private static void ParseConditionEntries(
+        Dictionary<string, List<string[]>> sections,
+        string sectionName,
+        out EpisodeTriggerCondition condition,
+        out List<TriggerConditionEntry> entries)
+    {
+        condition = new EpisodeTriggerCondition();
+        entries = new List<TriggerConditionEntry>();
+
+        if (!sections.TryGetValue(sectionName, out var rows)) return;
+
+        foreach (string[] row in rows)
+        {
+            SelectSingleCondition cond = ParseSingleCondition(Field(row, 0), Field(row, 1));
+            if (cond.type == SelectConditionType.None) continue;
+
+            ApplyToCondition(condition, cond);
+            entries.Add(new TriggerConditionEntry
+            {
+                condition = cond,
+                conditionText = Field(row, 2)
+            });
+        }
+    }
+
+    // 조건 하나를 평가용 EpisodeTriggerCondition(AND 결합 리스트)에 누적한다.
+    private static void ApplyToCondition(EpisodeTriggerCondition target, SelectSingleCondition cond)
+    {
+        switch (cond.type)
+        {
+            case SelectConditionType.MinDay:
+                target.minDay = cond.minDay;
+                break;
+            case SelectConditionType.MinMoney:
+                target.minMoney = cond.minMoney;
+                break;
+            case SelectConditionType.RequiredFlag:
+                if (!string.IsNullOrEmpty(cond.requiredFlag)) target.requiredFlags.Add(cond.requiredFlag);
+                break;
+            case SelectConditionType.PrerequisiteEpisode:
+                if (!string.IsNullOrEmpty(cond.prerequisiteEpisodeId)) target.prerequisiteEpisodeIds.Add(cond.prerequisiteEpisodeId);
+                break;
+            case SelectConditionType.RequiredVar:
+                if (!string.IsNullOrEmpty(cond.varName))
+                    target.requiredVars.Add(new VarCondition { varName = cond.varName, op = cond.varOp, threshold = cond.varThreshold });
+                break;
+        }
+    }
+
     private static void ParseTrigger(Dictionary<string, List<string[]>> sections, EpisodeData data)
     {
-        data.triggerCondition = new EpisodeTriggerCondition();
-
-        if (!sections.TryGetValue("TRIGGER", out var rows) || rows.Count == 0) return;
-
-        string[] row = rows[0];
-        data.triggerCondition.minDay                  = int.TryParse(Field(row, 0), out int d) ? d : 0;
-        data.triggerCondition.requiredFlags            = SplitList(Field(row, 1));
-        data.triggerCondition.blockedFlags             = SplitList(Field(row, 2));
-        data.triggerCondition.prerequisiteEpisodeIds   = SplitList(Field(row, 3));
-        data.triggerCondition.requiredVars             = ParseVarConditionList(Field(row, 4));
-        data.triggerCondition.requiredCustomerAppearances = ParseCustomerAppearanceList(Field(row, 5));
+        ParseConditionEntries(sections, "TRIGGER", out data.triggerCondition, out data.triggerConditionEntries);
     }
 
     private static void ParsePlayCondition(Dictionary<string, List<string[]>> sections, EpisodeData data)
     {
-        data.playCondition = new EpisodeTriggerCondition();
-
-        if (!sections.TryGetValue("PLAY_TRIGGER", out var rows) || rows.Count == 0) return;
-
-        string[] row = rows[0];
-        data.playCondition.minDay                  = int.TryParse(Field(row, 0), out int d) ? d : 0;
-        data.playCondition.requiredFlags            = SplitList(Field(row, 1));
-        data.playCondition.blockedFlags             = SplitList(Field(row, 2));
-        data.playCondition.prerequisiteEpisodeIds   = SplitList(Field(row, 3));
-        data.playCondition.requiredVars             = ParseVarConditionList(Field(row, 4));
-        data.playCondition.requiredCustomerAppearances = ParseCustomerAppearanceList(Field(row, 5));
+        ParseConditionEntries(sections, "PLAY_TRIGGER", out data.playCondition, out data.playConditionEntries);
     }
 
     private static void ParseSelectCondition(Dictionary<string, List<string[]>> sections, EpisodeData data)
@@ -284,7 +317,6 @@ public class EpisodeCsvImporter : EditorWindow
         data.episodeDescription    = Field(row, 0);
         data.iconNameBoard         = Field(row, 1);
         data.iconNameArchive       = Field(row, 2);
-        data.triggerConditionTexts = SplitList(Field(row, 3));
     }
 
     private static void ParseBoardChars(Dictionary<string, List<string[]>> sections, EpisodeData data)
@@ -294,6 +326,22 @@ public class EpisodeCsvImporter : EditorWindow
         data.characters = new List<CharacterDisplay>();
         foreach (string[] row in rows)
             data.characters.Add(ToCharacterDisplay(row, 0));
+    }
+
+    private static void ParseSettlementRewards(Dictionary<string, List<string[]>> sections, EpisodeData data)
+    {
+        if (!sections.TryGetValue("SETTLEMENT_REWARDS", out var rows)) return;
+
+        data.settlementRewards = new List<EpisodeSettlementReward>();
+        foreach (string[] row in rows)
+        {
+            data.settlementRewards.Add(new EpisodeSettlementReward
+            {
+                requiredFlag = Field(row, 0),
+                label        = Field(row, 1),
+                amount       = int.TryParse(Field(row, 2), out int amount) ? amount : 0
+            });
+        }
     }
 
     private static CharacterDisplay ToCharacterDisplay(string[] row, int offset)
@@ -332,6 +380,9 @@ public class EpisodeCsvImporter : EditorWindow
                     cond.varOp = vc.op;
                     cond.varThreshold = vc.threshold;
                 }
+                break;
+            case SelectConditionType.MinMoney:
+                cond.minMoney = int.TryParse(value, out int m) ? m : 0;
                 break;
         }
 
@@ -597,23 +648,6 @@ public class EpisodeCsvImporter : EditorWindow
         return result;
     }
 
-    private static List<VarCondition> ParseVarConditionList(string value)
-    {
-        var result = new List<VarCondition>();
-        if (string.IsNullOrWhiteSpace(value)) return result;
-
-        foreach (string item in value.Split('|'))
-        {
-            string t = item.Trim();
-            if (string.IsNullOrEmpty(t)) continue;
-
-            VarCondition vc = TryParseVarCondition(t);
-            if (vc != null) result.Add(vc);
-        }
-
-        return result;
-    }
-
     private static VarCondition TryParseVarCondition(string token)
     {
         // Supported operators (longest first to avoid partial matches)
@@ -637,29 +671,6 @@ public class EpisodeCsvImporter : EditorWindow
         }
 
         return null;
-    }
-
-    private static List<CustomerAppearanceCondition> ParseCustomerAppearanceList(string value)
-    {
-        var result = new List<CustomerAppearanceCondition>();
-        if (string.IsNullOrWhiteSpace(value)) return result;
-
-        foreach (string item in value.Split('|'))
-        {
-            string t = item.Trim();
-            if (string.IsNullOrEmpty(t)) continue;
-
-            int idx = t.LastIndexOf(':');
-            if (idx <= 0) continue;
-
-            string name   = t.Substring(0, idx).Trim();
-            string numStr = t.Substring(idx + 1).Trim();
-            if (!int.TryParse(numStr, out int count)) continue;
-
-            result.Add(new CustomerAppearanceCondition { characterId = name, count = count });
-        }
-
-        return result;
     }
 
     private static EpisodeType ParseEpisodeType(string value)

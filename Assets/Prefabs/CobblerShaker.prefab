@@ -120,6 +120,12 @@ MonoBehaviour:
   integratedStrainer: 1
   strainerWidthRatio: 0.9
   strainerThickness: 0.08
+  capWidthRatio: 1
+  capThickness: 0.1
+  strainerGuideEdgeRadius: 0.04
+  iceMode: 0
   minimumSpeed: 3.5
-  requiredDirectionChanges: 4
-  gestureTimeout: 0.8
+  requiredShakeDuration: 1.5
+  minimumReversals: 3
+  maximumReversalInterval: 0.65
+  reversalDotThreshold: -0.25

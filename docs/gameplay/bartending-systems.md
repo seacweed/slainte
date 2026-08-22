@@ -93,11 +93,54 @@ LayerMask slotLayer;     // 빈 값이면 "Slot" 레이어를 자동 탐색
 | `CobblerShaker.prefab` | BeakerController + CobblerShakerTechniqueController 부착, 스트레이너 일체형 |
 | `Bottle.prefab` | BottleController 부착 |
 
-코블러 셰이커는 집어 든 상태에서 빠른 왕복 이동의 방향 전환을 감지한다. 기준 횟수를 넘으면 내부 액체 입자에 `CocktailTechnique.Shake`를 기록한다. 스트레이너는 코블러 뚜껑에 일체형인 것으로 취급하므로 별도 스트레이너 도구를 제조 화면에 추가하지 않는다. 현재 얼음은 입자 오브젝트가 아니라 잔의 상태 값이므로 실제 얼음 걸러내기 물리는 얼음 시스템 확정 후 연결한다.
+코블러 셰이커는 집어 든 상태에서 빠른 왕복 이동의 방향 전환을 감지한다. 기준 횟수를 넘으면 내부 액체 입자에 `CocktailTechnique.Shake`를 기록한다. 스트레이너는 코블러 뚜껑에 일체형인 것으로 취급하므로 별도 스트레이너 도구를 제조 화면에 추가하지 않는다.
+
+### 얼음 (`IceCubeController` / `IceBinController`)
+
+얼음은 잔의 상태 값이 아니라 `LiquidParticleData`와 동일한 방식으로 `VesselLiquidTracker`가 소유권을 추적하는 실제 오브젝트다. `IceBinController`는 최대 20개의 `IceCubeController` 인스턴스를 관리하는 제빙 영역이며, 이동 슬롯과 분리된 전용 앵커를 사용한다(위 "영업 도구장" 절 참고).
+
+### 코블러 셰이커 스트레이너 충돌
+
+`CobblerShakerTechniqueController`는 스트레이너·캡 장착 상태에 따라 콜라이더 3종을 조합해 액체·얼음의 통과 여부를 각각 제어한다.
+
+| 콜라이더 | 역할 |
+|---|---|
+| `IceOnlyVesselBarrier`(자식 오브젝트, `BoxCollider2D`) | 얼음만 걸러내고 액체는 통과 |
+| 좌우 `EdgeCollider2D` 가이드 | `cobbler_strainer.png`의 불투명 내부 경계 픽셀 좌표를 기준점으로 정렬. 좌표를 못 찾으면 비율 기반 폴백 사용 |
+| `__CobblerCapBarrier`(`BoxCollider2D`) | 캡 장착 시 출구 자체를 막음 |
+
+스트레이너/캡 장착 상태가 바뀔 때마다 `VesselLiquidTracker.RefreshCollisionGeometry()`를 다시 호출해 입자·얼음의 `Physics2D.IgnoreCollision` 관계를 갱신한다.
+
+### 크기 변환 규칙
+
+QHD(`2560×1440`) 화면에서 도구·잔·병·얼음은 원본 `Sprite` 픽셀 캔버스를 `BartendingNativeSpriteSizer.TryMatchRootToSprite()`로 먼저 월드 크기에 맞춘 뒤, 호출부(병 배치, 얼음 스폰 등)가 공통 배율 `0.7`을 추가로 곱한다. 슬롯 크기에 맞추기 위해 별도로 축소하지 않는다. 필터 모드는 `Bilinear`로 고정한다 — 배율이 정수가 아니고(0.7) 회전도 발생하므로 `Point` 필터는 계단 현상이 두드러진다.
+
+### 병 따르기 (`BottleController`)
+
+프레임 기반 타이머 대신 `pourMlPerSecond`(용기별 필드, `Bottle.prefab` 실제값 `83.33 ml/s`)로 초당 배출량을 계산해 입자를 스폰한다. 프레임당 최대 `maxParticlesPerFrame`(기본 8개)까지만 한 번에 catch-up 스폰해 프레임 드랍 시 순간 폭발적 스폰을 막는다. 병 내부 `currentCapacity`가 소진되면 더 이상 부피를 차감하지 않는다.
 
 ---
 
-## 레시피 에셋과 판정
+## 액체 의미 데이터 계층 (`Assets/Scripts/Bartending/LiquidParticleData.cs`, `VesselLiquidTracker.cs`)
+
+MetaballFluid(아래 절)는 순수 시각 레이어이고, 판정에 쓰이는 실제 재료 구성은 이 계층이 담당한다.
+
+- `LiquidPayload`: 입자 하나가 담는 재료 구성. `portions`(재료별 `volumeMl` 리스트), `temperatureC`, `techniques`(`CocktailTechnique` 플래그), `wasShakenWithIce`를 가진다. **색상은 상태로 저장하지 않고 `EvaluateColor()`가 `portions`의 volume 가중 평균으로 매 호출 계산하는 파생값이다** — 개별 컴포넌트는 이 값을 그대로 `SpriteRenderer.color`에 반영할 뿐 직접 색을 설정하지 않는다.
+- `LiquidPayload.MixPair(left, right, strength)`: 두 입자가 충돌했을 때 온도·기법·재료 비율을 `strength` 세기로 평형에 가깝게 보간한다. `LiquidReaction`(MetaballFluid)이 물리 충돌 시점에 호출한다.
+- `LiquidParticleData`(MonoBehaviour): 입자 하나 = `payload` 하나. `DefaultVolumeMl`은 스폰 시 이 입자가 나타내는 재료 ml. `VesselOwner`로 현재 소속된 `VesselLiquidTracker`를 추적한다.
+- `VesselLiquidTracker`(`[RequireComponent(Collider2D)]`): 잔·비커·셰이커 등 용기에 부착. 트리거 콜라이더 진입/유지 시 입자·얼음(`IceCubeController`)의 소유권을 점유(`TryAssignVesselOwner`)하며, 콜라이더가 겹치는 용기가 여러 개면 `interactionPriority`가 더 높은 쪽이 우선한다. 소유권이 다른 용기 소속 입자·얼음끼리는 `Physics2D.IgnoreCollision`으로 물리 충돌 자체를 차단해 서로 다른 용기의 내용물이 섞이지 않게 격리한다.
+- `VesselLiquidTracker.BuildComposition()`: 현재 추적 중인 입자·얼음을 모아 `CocktailComposition`(재료별 합산 volume, 부피 가중 평균 온도, 잔 종류, 얼음 개수, 기법 플래그, `WasShakenWithIce`)을 생성한다 — 판정과 최종 색 표시는 모두 이 스냅샷을 사용한다.
+- `CocktailComposition.EvaluateFinalColor()`: `LiquidPayload.EvaluateColor()`를 재사용하며, `Add()` 호출 시 dirty 플래그를 세워 다음 조회 때만 재계산한다(캐시).
+
+## 레시피 판정 (`CocktailEvaluator.cs`)
+
+`CocktailEvaluator`는 `CocktailComposition`을 받아 `CocktailRecipeCatalog`의 모든 레시피와 채점하고 최고점 레시피를 고른다.
+
+- 점수 구성: 재료 비율 일치 70% + 총량 10% + 추가 재료(비허용 시) 5% + 잔 종류 5% + 얼음 개수/유무 5% + 기법 5% − 셰이킹 얼음 조건 불일치 5% 감점.
+- 성공(`isSuccess`) 여부는 점수와 별개로 재료 허용오차, 총량 범위, 잔, 얼음, 셰이킹 얼음, 기법 조건을 모두 통과해야 참이 된다 — 최고 점수 레시피라도 `isSuccess`가 거짓일 수 있다.
+- `EvaluateRecipeFamily(recipeId, ...)`: 지정 레시피가 실패하면 같은 `baseRecipeId`를 공유하는 변형(Mid) 레시피까지 점수 비교해 성공하는 쪽을 우선 반환한다 — 아래 "기본 정답 Good / 숨김 변형 Mid" 판정 체계가 여기서 구현된다.
+
+## 레시피 에셋 (`CocktailRecipeDataLoader.cs`)
 
 `CocktailRecipeDataLoader`는 기존 샘플 CSV와 `Resources/Recipes`의 `CocktailRecipeDef`를 합쳐 읽는다. 기존 QA 주문을 유지하면서 기획 CSV로 가져온 레시피를 추가하기 위한 호환 계층이다.
 

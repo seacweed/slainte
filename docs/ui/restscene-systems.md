@@ -112,8 +112,7 @@ public Color buttonInactiveColor;     // 미선택 시
 
 | 메서드 | 설명 |
 |---|---|
-| `GetBoardEpisodes()` | 완료되지 않은 에피소드 중 `IsVisible()` 통과한 목록 반환 |
-| `IsVisible(ep, gp)` | `IsUnlocked()` 가 참이거나, `{episodeId}_Discovered` 플래그가 있으면 true |
+| `GetBoardEpisodes()` | 완료되지 않은 에피소드 중 `IsUnlocked()` 통과한 목록 반환 |
 | `GetAvailableEpisodes()` | `IsUnlocked()`(해금 조건) 통과한 에피소드만 반환 |
 | `IsUnlocked(ep, gp)` | `ep.triggerCondition`(해금 조건) 평가 — 만족하면 작전판에 노출 |
 | `IsPlayable(ep, gp)` | `ep.playCondition`(플레이 조건) 평가 — 만족해야 Play 버튼 활성화. 조건 없으면 항상 true |
@@ -156,22 +155,21 @@ public Color buttonInactiveColor;     // 미선택 시
 **레이아웃 순서 (위 → 아래)**
 1. `boardImage`(작전판 사진과 동일한 idle 스프라이트, `EpisodePhotoTrigger.GetIdleSprite()` 재사용) + `episodeNameText`(제목) — 가로 배치
 2. `descriptionText` — `data.episodeDescription`
-3. **해금 조건** (`triggerSection` + `triggerConditionRows`) — `data.triggerCondition` 기준, 조건이 하나도 없으면 섹션 자체를 숨김
+3. **해금/플레이 조건** (`triggerSection` + `triggerConditionRows`) — `data.triggerConditionEntries` + `data.playConditionEntries` 기준, 조건이 하나도 없으면 섹션 자체를 숨김
 4. **선택 조건** (`selectSection` + `selectConditionGroups`) — `data.selectConditions`(리스트) 기준. 아래 참고
 5. **초상화** (`portraitSlots`) — 선택된 옵션 유무에 따라 결정. 아래 참고
 
-**해금 조건 행 로직** (`ConditionRow { container, lockIcon, label }`, `triggerConditionRows`)
-- `data.triggerCondition`(여러 항목이 AND로 결합되는 다중 필드 타입)을 `BuildConditionEntries()`로 행 여러 개로 풀어서 표시
-- `minDay` → "N일차 이상" / `prerequisiteEpisodeIds` → "선행 에피소드 '제목'"(`EpisodeManager.GetEpisodeData()`로 제목 조회) / `requiredFlags` → 플래그명 그대로 / `requiredVars` → `varName 연산자 threshold`
-- **`requiredCustomerAppearances`(등장 조건)는 툴팁에 표시하지 않음**
-- 항목마다 충족 여부에 따라 `lockIcon.sprite`를 `unlockedSprite`/`lockedSprite`로 교체, `label.text`에 조건 설명 표시
-- 마지막에 작성자가 직접 입력한 커스텀 힌트 문구(`data.triggerConditionTexts`)가 추가로 붙음, 잠금 아이콘은 `EpisodeManager.IsUnlocked()`(전체 충족 여부)로 결정
+**해금/플레이 조건 행 로직** (`ConditionRow { container, lockIcon, label }`, `triggerConditionRows`)
+- `data.triggerConditionEntries`(TRIGGER, 해금 조건)와 `data.playConditionEntries`(PLAY_TRIGGER, 플레이 조건)를 이어붙여 `BuildTriggerConditionEntries()`로 한 목록으로 만들어 표시(TRIGGER 행들 다음 PLAY_TRIGGER 행들 순서)
+- 각 `TriggerConditionEntry { condition: SelectSingleCondition, conditionText }`는 `EpisodeManager.EvaluateSelectCondition(entry.condition, gp)`로 **개별** 평가되어 각자의 충족 여부에 따라 `lockIcon.sprite`가 `unlockedSprite`/`lockedSprite`로 결정됨(전체 해금 여부가 아니라 항목별로 자물쇠가 따로 매겨짐)
+- `label.text`는 `entry.conditionText`가 있으면 그걸, 없으면 `BuildSelectConditionText()`가 조건 타입에서 자동 생성("N일차 이상", 플래그명, "선행 에피소드 '제목'", `varName 연산자 threshold`, "소지금 N원 이상")
+- CSV의 `TRIGGER`/`PLAY_TRIGGER`는 각각 `EpisodeCsvImporter`가 평가용 `data.triggerCondition`/`data.playCondition`(AND 결합, `blockedFlags`/`requiredCustomerAppearances` 포함 — `IsUnlocked`/`IsPlayable` 평가에 계속 사용됨)과 툴팁 표시용 `triggerConditionEntries`/`playConditionEntries`(`MinDay`/`RequiredFlag`/`PrerequisiteEpisode`/`RequiredVar`/`MinMoney` 5종 조건 + 텍스트, CSV 행 순서 보존)를 동시에 채움. `blockedFlags`/`requiredCustomerAppearances`는 CSV 행으로 표현할 수 없어 툴팁에는 표시되지 않음(인스펙터 직접 입력만 가능)
 - 표시할 조건 개수보다 `triggerConditionRows` 배열이 길면 남는 행은 비활성화
 
 **선택 조건 (`data.selectConditions: List<SelectConditionEntry>`)**
 - `SelectConditionEntry { condition, flag, conditionText, revealCondition, hiddenText, characterOverrides }` — 옵션 하나 = 조건 **하나**(`SelectSingleCondition`) + 플래그 + 커스텀 힌트 한 줄 + 공개 조건 + 비공개 시 텍스트 + 초상화 override. 해금 조건과 달리 옵션 하나에 여러 조건을 AND로 걸 수 없음 — 조건을 여러 개 걸고 싶으면 옵션을 여러 개로 나눠서 표현
-- `SelectSingleCondition { type, minDay, requiredFlag, prerequisiteEpisodeId, varName, varOp, varThreshold }` — `SelectConditionType`(`None`/`MinDay`/`RequiredFlag`/`PrerequisiteEpisode`/`RequiredVar`) 하나로 어떤 조건인지 결정, 나머지 필드 중 해당 타입에 대응하는 값만 사용
-- 옵션당 UI도 행 하나(`SelectConditionGroup.conditionRow: ConditionRow`, 배열이 아님) — 자물쇠 아이콘 하나 + 설명 한 줄 + 토글 하나로 고정. 텍스트는 `entry.conditionText`가 있으면 그걸, 없으면 `BuildSelectConditionText()`가 조건 타입에서 자동 생성("N일차 이상", 플래그명, "선행 에피소드 '제목'", `varName 연산자 threshold` 등)
+- `SelectSingleCondition { type, minDay, requiredFlag, prerequisiteEpisodeId, varName, varOp, varThreshold, minMoney }` — `SelectConditionType`(`None`/`MinDay`/`RequiredFlag`/`PrerequisiteEpisode`/`RequiredVar`/`MinMoney`) 하나로 어떤 조건인지 결정, 나머지 필드 중 해당 타입에 대응하는 값만 사용. `MinMoney`는 `gp.CurrentMoney`(affinity가 아니라 `GameProgress`의 별도 소지금 필드)와 비교
+- 옵션당 UI도 행 하나(`SelectConditionGroup.conditionRow: ConditionRow`, 배열이 아님) — 자물쇠 아이콘 하나 + 설명 한 줄 + 토글 하나로 고정. 텍스트는 `entry.conditionText`가 있으면 그걸, 없으면 `BuildSelectConditionText()`가 조건 타입에서 자동 생성("N일차 이상", 플래그명, "선행 에피소드 '제목'", `varName 연산자 threshold`, "소지금 N원 이상" 등)
 - **공개 조건 (`entry.revealCondition: SelectSingleCondition`)** — "선택 조건의 내용이 플레이어에게 공개되는 조건"(선택 가능 여부 `condition`과는 별개 층). 타입과 필드 구조는 `condition`과 동일하고 `EpisodeManager.EvaluateSelectCondition()`을 그대로 재사용해 평가. 기본값(`None`)은 항상 공개(기존 데이터와 동일하게 동작). 미충족이면 `ApplySelectConditionRow()`가 조건 텍스트 대신 `entry.hiddenText`(비어있으면 `"???"`로 폴백)를 보여주고 자물쇠 아이콘도 잠김으로 고정 표시(실제 `condition` 충족 여부와 무관) — 공개 조건이 충족되는 순간 `hiddenText`에서 `conditionText`(또는 자동 생성 문구)로 전환됨
 - `해금 조건`/`playCondition`과 완전히 독립 — **Play 버튼 활성화에는 전혀 영향을 주지 않음**. 어떤 옵션도 미충족/미선택이어도 에피소드는 평소대로 플레이 가능
 - **옵션끼리 상호 배타적** — `selectToggleGroup`(유니티 내장 `ToggleGroup`)에 모든 옵션의 `Toggle`을 묶어서, 하나를 켜면 나머지는 자동으로 꺼짐. `Awake()`에서 `group.toggle.group = selectToggleGroup`로 한 번만 연결
@@ -277,7 +275,7 @@ homePanel (재료/업그레이드/레시피북 3버튼)
 
 - **해금**: 아이콘 원색 표시(`preserveAspect = true`로 원본 비율 유지), 이름/소분류 텍스트, 가격+구매버튼 활성화(재고가 가득 찼거나 잔액이 부족하면 버튼 비활성화)
 - **잠금**: 아이콘을 검정으로 틴트(`Image.color`만 변경, 별도 실루엣 아트 불필요), 이름/소분류 대신 `lockedLabel`("입고예정") 표시, 가격 텍스트 비움 + `currencyIcon` 숨김 + 구매버튼 비활성화
-- **잔액 부족**: 재고 매진/최대 레벨/구매완료 등 다른 비활성 사유와 구분해서, "잔액이 모자라서" 비활성인 경우에만 `priceText.color`를 `priceColorInsufficient`(기본 빨강)로 바꾸고 `buyButtonImage.sprite`를 `buyButtonOffSprite`로 교체(`buyButtonImage`/`buyButtonOnSprite`/`buyButtonOffSprite` 셋 다 인스펙터에 할당된 경우에만 동작, 비워두면 무시됨). 한 슬롯에서 구매해 잔액이 바뀌면 `ShopUIManager`가 현재 들고 있는 모든 슬롯의 `Refresh()`를 다시 호출해 다른 슬롯들의 버튼/색상도 같이 갱신됨
+- **잔액 부족/재고 매진**: `priceText.color`(빨강, `priceColorInsufficient`)는 "재고는 남았는데 잔액만 모자란" 경우에만 바뀌지만, `buyButtonImage.sprite`(`buyButtonOffSprite`)는 재고 매진(`isFull`)이든 잔액 부족이든 **구매 불가능한 경우 전부** 꺼진 모양으로 바뀜(`buyButton.interactable`과 항상 같은 조건) — 원래는 잔액 부족일 때만 버튼 스프라이트를 바꿔서, 이미 가득 찬 재고(예: `defaultBottleCount == bottleCount`로 시작부터 풀스택인 아이템)가 소지금 0원에서도 "구매 가능" 모양으로 보이는 버그가 있었음(2026-08-23 수정). `buyButtonImage`/`buyButtonOnSprite`/`buyButtonOffSprite` 셋 다 인스펙터에 할당된 경우에만 동작, 비워두면 무시됨. 한 슬롯에서 구매해 잔액이 바뀌면 `ShopUIManager`가 현재 들고 있는 모든 슬롯의 `Refresh()`를 다시 호출해 다른 슬롯들의 버튼/색상도 같이 갱신됨
 - **호버**: 해금 시 `LiquorBottleInfoCard.Instance.Show()`(술장과 동일 컴포넌트) — 단 `LiquorBottleInfoCard`는 BusinessScene 전용으로 만들어져 있어 RestScene과 동시 로드되지 않으므로, RestScene에는 프리팹으로 추출한 별도 인스턴스를 배치(이름/소분류 텍스트는 슬롯에 이미 상시 표시되므로 이 인스턴스에서만 제거). 잠금 시 `IngredientUnlockTooltip.Instance.Show()`
 - **구매(`OnBuyClick`)**: `IShopCurrency.TrySpend(price)` 성공 시 `GameProgress.AddBottleAmount(id, unitVolume, MaxAmount)`로 **1병 단위** 충전(가득 리필이 아님), `OnPurchased` 이벤트로 `ShopUIManager`의 소지금 텍스트 갱신을 트리거
 - **`Setup(def, currency)`**: `currency`를 생략하면 `MoneyShopCurrency`(원화)로 동작 — 일반 상점 호출부는 수정 없이 그대로 호환됨. 이상한 상점은 `StrangeCoinShopCurrency`를 넘겨서 같은 슬롯 로직을 재사용(아래 "이상한 상점" 참고)
@@ -361,12 +359,22 @@ public enum ItemType { Alcohol, Liqueur, NonAlcohol, Powder, Tool, Glass }
 `BaseUIManager`를 참조하는 씬 오브젝트 클릭 핸들러.
 두 클래스는 현재 코드가 동일 — `ObjectInteraction`이 보드에도 적용 가능하므로 향후 통합 가능.
 
-**동작**
-- 호버: `highlightOverlay` 활성화
-- 클릭: `targetUIManager`가 열려있으면 `CloseUI()`, 닫혀있으면 `OpenUI()`
-- UI 열림 상태에서도 `highlightOverlay` 유지, `LineRenderer` 테두리 표시
+**배경 오버레이 3종** (`idleOverlay`/`hoverOverlay`/`grayOverlay`): 매 프레임 `UpdateBackgrounds()`가 상태를 재계산해 셋 중 하나만 켠다.
+- `idle`: 평상시(컬러 이미지)
+- `hover`: 이 오브젝트에 마우스가 올라가 있거나(다른 UI가 안 열려 있을 때) 자신의 UI가 열려 있을 때 — 노란 테두리
+- `gray`: 다른 오브젝트의 UI가 열려 있어 이 오브젝트가 비활성 상태이거나, `IsInteractionAvailable()`이 거짓일 때
+
+구버전 단일 `highlightOverlay` 필드도 하위 호환으로 남아있다 — `hoverOverlay`를 연결하지 않은 오브젝트에서만 `useLegacyHighlight` 경로로 동작.
+
+**클릭 가용성** (`disableWhenRestShopRestricted` + `tvDatabase`): 켜져 있으면 `TVBroadcastRuntime.IsRestShopDisabled(GameProgress.Instance, database, out reason)`로 활성 TV 방송의 `DisableRestShop` 효과를 확인해, 제한 중이면 클릭을 막고(`reason`을 로그로만 출력) 배경도 `gray`로 표시한다. 다른 오브젝트(TV, 작전판 등)는 이 플래그를 꺼둔 채로 사용해 제한 대상이 아니게 한다.
+
+**상호배타**: 정적 `ActiveInteractions`/`AnyUIOpen`으로 씬에 있는 모든 `ObjectInteraction` 인스턴스 중 하나라도 UI가 열려 있는지 판단 — 열려 있으면 다른 오브젝트는 클릭이 막히고 회색으로 표시된다.
 
 **아웃라인**: `DrawOutlineShape()`로 `PolygonCollider2D` 또는 `BoxCollider2D` 기반 자동 생성
+
+### RestSceneVisualStateCoordinator
+
+`ObjectInteraction.AnyUIOpen`을 매 프레임 폴링해 씬 전역 배경(`colorBackground`/`grayBackground`)을 켜고 끄는 조율자. 개별 오브젝트(TV/작전판/상점)의 하이라이트·회색 처리는 각자의 `ObjectInteraction`이 담당하고, 이 컴포넌트는 "UI가 하나라도 열려 있으면 화면 전체를 흑백으로" 하는 전역 톤 전환만 맡는다.
 
 ### BoardBackground (`RestScene/Scripts/BoardBackground.cs`)
 

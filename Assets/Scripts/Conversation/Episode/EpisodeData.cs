@@ -3,6 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
+public class EpisodeSettlementReward
+{
+    public string requiredFlag;
+    public string label;
+    public int    amount;
+}
+
+[Serializable]
 public struct CharacterDisplay
 {
     public bool isHidden;       // true면 초상화를 비공개(???)로 표시
@@ -15,7 +23,8 @@ public enum SelectConditionType
     MinDay,              // 최소 일수
     RequiredFlag,        // 이 플래그가 켜져 있어야 함
     PrerequisiteEpisode, // 이 에피소드가 완료되어야 함
-    RequiredVar          // 수치 변수 조건
+    RequiredVar,         // 수치 변수 조건
+    MinMoney             // 최소 소지금
 }
 
 // 선택 조건 옵션 하나가 가질 수 있는 조건은 정확히 하나(자물쇠 아이콘 하나 + 설명 한 줄에 대응).
@@ -30,6 +39,15 @@ public class SelectSingleCondition
     public string varName;
     public CompareOp varOp = CompareOp.GreaterOrEqual;
     public int    varThreshold;
+    public int    minMoney;
+}
+
+// TRIGGER/PLAY_TRIGGER 조건 하나(자물쇠 아이콘 하나 + 설명 한 줄에 대응). 여러 개를 리스트로 두면 AND로 결합된다.
+[Serializable]
+public class TriggerConditionEntry
+{
+    public SelectSingleCondition condition = new();
+    public string conditionText; // 커스텀 힌트 문구. 비어있으면 condition에서 자동 생성한 문구를 사용
 }
 
 // 선택 조건 옵션 하나. 여러 개를 리스트로 두되 동시에 하나만 on 가능(툴팁에서 라디오 버튼처럼 동작).
@@ -68,6 +86,8 @@ public class EpisodeData : ScriptableObject
     [Header("Trigger")]
     public EpisodeTriggerCondition triggerCondition; // 해금 조건 — 만족하면 작전판에 노출
     public EpisodeTriggerCondition playCondition;     // 플레이 조건 — 만족해야 Play 버튼 활성화 (Default 전용)
+    public List<TriggerConditionEntry> triggerConditionEntries = new(); // 해금 조건 항목별 툴팁 표시(순서·커스텀 텍스트 보존)
+    public List<TriggerConditionEntry> playConditionEntries = new();    // 플레이 조건 항목별 툴팁 표시
 
     [Header("Select")]
     public List<SelectConditionEntry> selectConditions = new(); // 선택 조건 목록 — 동시에 하나만 on 가능. Play 버튼 활성화에는 영향 없음
@@ -79,12 +99,15 @@ public class EpisodeData : ScriptableObject
     [Header("Nodes")]
     public List<EpisodeNode> nodes = new();
 
+    [Header("Settlement")]
+    [Tooltip("에피소드 종료 시 requiredFlag가 서 있으면 정산 화면에 label/amount를 커스텀 보상 줄로 추가합니다.")]
+    public List<EpisodeSettlementReward> settlementRewards = new();
+
     [Header("Board Display")]
     [TextArea(3, 5)] public string episodeDescription;
     public string iconNameBoard;
     public string iconNameArchive;
     public List<CharacterDisplay> characters = new(); // 선택 조건 미선택 시(기본) 보여줄 초상화
-    public List<string> triggerConditionTexts = new(); // 해금 조건 커스텀 힌트. 예: "A에게 돈 10000원 지급"
 
     public EpisodeNode FindNode(string nodeId)
     {

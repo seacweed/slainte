@@ -136,26 +136,34 @@ public class SettlementUI : MonoBehaviour
             () => SetLine(dayText, $"Day {data.day} 결과 보고")
         };
 
-        if (data.drinkSales != null)
+        if (data.totalSalesCount != 0)
+            steps.Add(() => InstantiateLine(
+                $"총 판매량 x {data.totalSalesCount}",
+                FormatSigned(data.totalSalesRevenue)));
+
+        if (data.goodCount != 0)
+            steps.Add(() => InstantiateLine(
+                $"팁 x {data.goodCount}",
+                FormatSigned(data.tipTotal)));
+
+        if (data.badCount != 0)
+            steps.Add(() => InstantiateLine(
+                $"실수 x {data.badCount}",
+                FormatSigned(-data.missedRevenue)));
+
+        if (data.deliveryCount != 0)
+            steps.Add(() => InstantiateLine(
+                $"배송 이용 x {data.deliveryCount}",
+                FormatSigned(-data.deliverySpend)));
+
+        if (data.customRewards != null)
         {
-            foreach (DrinkSaleEntry entry in data.drinkSales)
+            foreach (SettlementRewardEntry reward in data.customRewards)
             {
-                DrinkSaleEntry e = entry;
-                steps.Add(() => InstantiateLine(
-                    $"{e.drinkName} x {e.count}"
-                    + (e.currency == Slainte.Economy.GameCurrency.StrangeCoin ? " [이상한 동전]" : string.Empty),
-                    FormatSigned(e.baseRevenue)));
+                SettlementRewardEntry r = reward;
+                steps.Add(() => InstantiateLine(r.label, FormatSigned(r.amount)));
             }
         }
-
-        if (data.tipRevenue != 0)
-            steps.Add(() => InstantiateLine("팁", FormatSigned(data.tipRevenue)));
-        if (data.strangeCoinTipRevenue != 0)
-            steps.Add(() => InstantiateLine("이상한 동전 팁", FormatSigned(data.strangeCoinTipRevenue)));
-        if (data.strangeCoinRevenue != 0)
-            steps.Add(() => InstantiateLine("이상한 동전 수입", FormatSigned(data.strangeCoinRevenue)));
-        if (data.reputationDelta != 0)
-            steps.Add(() => InstantiateLine("명성 변화", FormatSigned(data.reputationDelta)));
 
         steps.Add(() => SetLineView(totalIncomeLine, "총 소득", $"{data.totalIncome:N0}"));
         steps.Add(() => SetLine(dividerText, DividerLine));

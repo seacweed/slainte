@@ -481,6 +481,22 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         cameraRig.PanToWorldCenterX(characterStage.GetActiveGroupCenterWorldX());
     }
 
+    private void ApplySettlementRewards(EpisodeData episode)
+    {
+        if (episode?.settlementRewards == null)
+            return;
+
+        for (int i = 0; i < episode.settlementRewards.Count; i++)
+        {
+            EpisodeSettlementReward reward = episode.settlementRewards[i];
+            if (reward == null || string.IsNullOrWhiteSpace(reward.requiredFlag))
+                continue;
+
+            if (Progress != null && Progress.HasFlag(reward.requiredFlag))
+                Progress.AddSettlementReward(reward.label, reward.amount);
+        }
+    }
+
     private void EndEncounter()
     {
         _isRunning = false;
@@ -492,6 +508,7 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         AudioManager.Instance?.StopBgm();
 
         string episodeId = _episode?.episodeId;
+        ApplySettlementRewards(_episode);
         bool wasBusinessEncounter = _isBusinessEncounter;
         Action businessCompleted = _businessEncounterCompleted;
         _episode = null;

@@ -29,23 +29,12 @@ public class SettlementManager : MonoSingleton<SettlementManager>
         if (gp == null) return;
         settlementActive = true;
 
-        SettlementData data = new SettlementData
-        {
-            chapterName     = ResolveChapterName(gp.CurrentChapterId),
-            day             = gp.CurrentDay,
-            drinkSalesCount = gp.DayDrinkSalesCount,
-            drinkBaseRevenue = gp.DayDrinkBaseRevenue,
-            tipRevenue      = gp.DayDrinkTipRevenue,
-            drinkRevenue    = gp.DayDrinkRevenue,
-            reputationDelta = gp.DayReputationDelta,
-            totalIncome     = gp.DayTotalIncome,
-            strangeCoinBaseRevenue = gp.DayStrangeCoinBaseRevenue,
-            strangeCoinTipRevenue = gp.DayStrangeCoinTipRevenue,
-            strangeCoinRevenue = gp.DayStrangeCoinRevenue,
-            drinkSales      = BuildDrinkSales(gp)
-        };
+        SettlementData data = BuildSettlementSummary(gp);
+        data.chapterName = ResolveChapterName(gp.CurrentChapterId);
+        data.day = gp.CurrentDay;
 
         ApplyRecordedIncome(gp);
+        data.totalIncome = gp.DayTotalIncome;
         data.currentMoney = gp.CurrentMoney;
 
         if (settlementUI != null)
@@ -68,63 +57,39 @@ public class SettlementManager : MonoSingleton<SettlementManager>
         return income;
     }
 
-    private List<DrinkSaleEntry> BuildDrinkSales(GameProgress gp)
+    private SettlementData BuildSettlementSummary(GameProgress gp)
     {
-        List<DrinkSaleEntry> entries = new();
+        SettlementData data = new SettlementData
+        {
+            customRewards = gp.GetDaySettlementRewards()
+        };
+
         List<BusinessSaleRecord> records = gp.GetDayDrinkSales();
-        Dictionary<string, int> indexByDrink = new(System.StringComparer.OrdinalIgnoreCase);
         for (int i = 0; i < records.Count; i++)
         {
             BusinessSaleRecord record = records[i];
             if (record == null)
                 continue;
 
-            string drinkName = !string.IsNullOrWhiteSpace(record.requestedRecipeId)
-                ? record.requestedRecipeId
-                : !string.IsNullOrWhiteSpace(record.customerOrderKey)
-                    ? record.customerOrderKey
-                    : "음료 판매";
+            data.totalSalesCount += 1;
+            data.totalSalesRevenue += record.listedPrice;
 
-            string groupingKey = record.paymentCurrency + ":" + drinkName;
-            if (indexByDrink.TryGetValue(groupingKey, out int entryIndex))
+            if (record.grade == OrderEvaluationGrade.Good)
             {
-                DrinkSaleEntry entry = entries[entryIndex];
-                entry.count += 1;
-                entry.baseRevenue += record.baseRevenue;
-                entry.tipAmount += record.tipAmount;
-                entry.revenue += record.totalRevenue;
-                entries[entryIndex] = entry;
-                continue;
+                data.goodCount += 1;
+                data.tipTotal += record.tipAmount;
             }
-
-            indexByDrink.Add(groupingKey, entries.Count);
-            entries.Add(new DrinkSaleEntry
+            else if (record.grade == OrderEvaluationGrade.Bad)
             {
-                drinkName = drinkName,
-                currency = record.paymentCurrency,
-                count = 1,
-                baseRevenue = record.baseRevenue,
-                tipAmount = record.tipAmount,
-                revenue = record.totalRevenue
-            });
+                data.badCount += 1;
+                data.missedRevenue += record.listedPrice + record.penaltyAmount;
+            }
         }
 
-        if (entries.Count == 0 && gp.DayDrinkSalesCount > 0)
-        {
-            entries.Add(new DrinkSaleEntry
-            {
-                drinkName = "음료 판매",
-                currency = Slainte.Economy.GameCurrency.Money,
-                count = gp.DayDrinkSalesCount,
-                baseRevenue = gp.DayDrinkBaseRevenue != 0
-                    ? gp.DayDrinkBaseRevenue
-                    : gp.DayDrinkRevenue,
-                tipAmount = gp.DayDrinkTipRevenue,
-                revenue = gp.DayDrinkRevenue
-            });
-        }
+        data.deliveryCount = gp.DayDeliveryCount;
+        data.deliverySpend = gp.DayDeliverySpend;
 
-        return entries;
+        return data;
     }
 
     private string ResolveChapterName(string chapterId)

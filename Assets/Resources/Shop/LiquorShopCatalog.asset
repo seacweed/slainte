@@ -35,9 +35,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: fe5fc9d6c089e8f4dbc569a8b1b124cc, type: 2}
   - {fileID: 11400000, guid: 1711e3f151167f3408743e64116ab6c1, type: 2}
   - {fileID: 11400000, guid: bd45194e8a218374eab37f2afe8ae8f3, type: 2}
-  categoryButtonPrefab: {fileID: 3891292751173392382, guid: 00e953edd48a96f4984e0a9f793062b9, type: 3}
-  itemSlotPrefab: {fileID: 4017360452662112547, guid: 18ec5d34d8a718e4385fbfa4fe85ac37, type: 3}
   deliveryPanelPrefab: {fileID: 7086043699049062762, guid: 971ce6f0900076845a1f8840053f916a, type: 3}
+  deliveryItemSlotPrefab: {fileID: 6962774003918184594, guid: 7c6e31e5a21f8224fa7d067f41721ea1, type: 3}
+  deliveryCategoryButtonPrefab: {fileID: 3891292751173392382, guid: fd7ca1647d5cb5446a2f9e7d0aaefaf9, type: 3}
   deliveryPortrait: {fileID: 21300000, guid: e76c8b63bf33448893dd17aa5fab437a, type: 3}
   deliveryBusyPortrait: {fileID: 21300000, guid: f87d9c74c0444599a4ee28bb60bc548b, type: 3}
   deliveryMidPortrait: {fileID: 21300000, guid: 098e0d85d15546aab5ff39cc71cd659c, type: 3}

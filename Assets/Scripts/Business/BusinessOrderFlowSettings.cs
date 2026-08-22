@@ -106,10 +106,12 @@ namespace Slainte.Business
         public int goodReputationReward = 2;
         public int midReputationReward;
         public int badReputationReward = -1;
+        [Tooltip("Bad 판정 시 판매 수익 지급 직후 추가로 차감하는 실수 페널티 비율입니다(정가 대비). 130%면 정가를 다시 지급받고 130%를 차감해 순수익이 -30%가 됩니다.")]
+        [Min(0f)] public float badPenaltyRate = 1.3f;
 
         [Header("팁")]
-        [Range(0f, 1f)] public float satisfiedTipRate = 0.2f;
-        [Range(0f, 1f)] public float neutralTipRate = 0.05f;
+        [Range(0f, 1f)] public float satisfiedTipRate = 0.3f;
+        [Range(0f, 1f)] public float neutralTipRate = 0f;
         [Range(0f, 1f)] public float dissatisfiedTipRate;
 
         [Header("기본 반응 대사")]

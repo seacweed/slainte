@@ -10,12 +10,10 @@ public sealed class LiquorShopCatalog : ScriptableObject
     public List<LiquorCategoryDef> categories = new();
     public List<LiquorBottleDef> bottles = new();
 
-    [Header("Shared Shop UI")]
-    public LiquorCategoryButtonUI categoryButtonPrefab;
-    public ItemSlotUI itemSlotPrefab;
-
     [Header("Delivery UI")]
     public DeliveryShopPanelUI deliveryPanelPrefab;
+    public DeliveryItemSlotUI deliveryItemSlotPrefab;
+    public LiquorCategoryButtonUI deliveryCategoryButtonPrefab;
 
     [Header("Delivery Character")]
     public Sprite deliveryPortrait;

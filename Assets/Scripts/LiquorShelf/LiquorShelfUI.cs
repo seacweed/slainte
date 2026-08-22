@@ -43,8 +43,9 @@ public class LiquorShelfUI : MonoBehaviour
     [Header("Delivery")]
     [SerializeField] private bool enableDelivery = true;
     [SerializeField] private LiquorShopCatalog deliveryCatalog;
-    [SerializeField] private string deliveryTabLabel = "배송";
     [SerializeField, Min(0f)] private float deliveryPriceMultiplier = 2f;
+    [SerializeField] private Button deliveryButton; // 술장 위에 별도로 배치된 배송 진입 버튼(카테고리 버튼 목록과 분리). 비활성 시 회색 표시는 Button의 Disabled Color(Color Tint)로 처리
+    [SerializeField] private ShelfShutterUI shutter; // 배송 진입 시에만 재생되는 위/아래 셔터 연출
 
     [Header("Delivery Character")]
     [SerializeField] private RecipeBookUI recipeBook;
@@ -63,7 +64,6 @@ public class LiquorShelfUI : MonoBehaviour
     private readonly List<LiquorCategoryButtonUI> _categoryButtons = new();
     private DeliveryShopPanelUI                   _deliveryPanel;
     private DeliveryCharacterPresenter            _deliveryCharacter;
-    private LiquorCategoryButtonUI                _deliveryTab;
     private bool                                  _deliveryAvailable = true;
     private string                                _deliveryUnavailableReason = string.Empty;
     private bool                                  _deliverySessionActive;
@@ -74,10 +74,7 @@ public class LiquorShelfUI : MonoBehaviour
     public bool IsDeliveryAvailable => _deliveryAvailable;
     public bool IsDeliveryOpen => _deliveryPanel != null && _deliveryPanel.IsVisible;
     public bool BlocksRecipeBook => _deliverySessionActive;
-    public Button DeliveryTabButton => _deliveryTab != null ? _deliveryTab.Button : null;
-    public Sprite DeliveryTabSprite => _deliveryTab != null ? _deliveryTab.IconSprite : null;
-    public bool DeliveryTabDisabledOverlayVisible =>
-        _deliveryTab != null && _deliveryTab.DisabledOverlayVisible;
+    public Button DeliveryTabButton => deliveryButton;
     public int DeliveryVisibleItemCount => _deliveryPanel != null
         ? _deliveryPanel.VisibleItemCount
         : 0;
@@ -184,9 +181,23 @@ public class LiquorShelfUI : MonoBehaviour
         if (!_interactable) return;
 
         if (_isOpen)
-            Close();
+        {
+            if (IsDeliveryOpen)
+                // 배송 내용/상태는 건드리지 않고 서랍만 슬라이드해서 같이 감춘다.
+                Slide(closedX, () => _isOpen = false);
+            else
+                Close();
+        }
+        else if (IsDeliveryOpen)
+        {
+            // 감춰뒀던 배송 화면을 재생 없이 그대로 되돌린다.
+            _isOpen = true;
+            Slide(openX, null);
+        }
         else
+        {
             OpenCategory(_lastCategory ?? (categoryEntries.Length > 0 ? categoryEntries[0].def : null));
+        }
     }
 
     public void OpenCategory(LiquorCategoryDef def)
@@ -256,18 +267,28 @@ public class LiquorShelfUI : MonoBehaviour
             return false;
         }
 
-        HideAllContainers();
         recipeBook?.SetTemporarilyBlocked(true);
         _deliverySessionActive = true;
         _deliveryTransitionVersion++;
-        _deliveryPanel.Show();
         if (closeButton != null) closeButton.gameObject.SetActive(false);
         if (!_isOpen)
         {
             _isOpen = true;
             Slide(openX, null);
         }
+
+        if (shutter != null)
+            shutter.PlayEnterDelivery(EnterDeliveryScreen);
+        else
+            EnterDeliveryScreen();
+
         return true;
+    }
+
+    private void EnterDeliveryScreen()
+    {
+        HideAllContainers();
+        _deliveryPanel.Show();
     }
 
     public void SetDeliveryAvailable(bool available, string reason = "")
@@ -287,7 +308,7 @@ public class LiquorShelfUI : MonoBehaviour
 
     private void BuildDelivery()
     {
-        if (!enableDelivery || categoryButtonContent == null || categoryButtonPrefab == null)
+        if (!enableDelivery || deliveryButton == null)
             return;
 
         deliveryCatalog ??= LiquorShopCatalog.LoadDefault();
@@ -297,12 +318,8 @@ public class LiquorShelfUI : MonoBehaviour
             return;
         }
 
-        _deliveryTab = Instantiate(categoryButtonPrefab, categoryButtonContent);
-        _deliveryTab.name = "DeliveryTab";
-        _deliveryTab.Bind(
-            deliveryTabLabel,
-            FindCategoryTabSprite(),
-            () => TryOpenDelivery());
+        deliveryButton.onClick.RemoveAllListeners();
+        deliveryButton.onClick.AddListener(() => TryOpenDelivery());
 
         RectTransform shelfRoot = closeButton != null
             ? closeButton.transform.parent as RectTransform
@@ -310,12 +327,11 @@ public class LiquorShelfUI : MonoBehaviour
         _deliveryPanel = Instantiate(deliveryCatalog.deliveryPanelPrefab, shelfRoot);
         if (_deliveryPanel != null)
         {
-            RectTransform deliveryRect = _deliveryPanel.transform as RectTransform;
-            deliveryRect.anchorMin = Vector2.zero;
-            deliveryRect.anchorMax = Vector2.one;
-            deliveryRect.offsetMin = Vector2.zero;
-            deliveryRect.offsetMax = Vector2.zero;
-            deliveryRect.localScale = Vector3.one;
+            // 크기/앵커는 프리팹에 미리 잡아둔 RectTransform 값을 그대로 쓴다(강제로 부모를 꽉 채우지 않음).
+            _deliveryPanel.transform.localScale = Vector3.one;
+            // 셔터가 항상 배송 패널 위에 그려지도록, 셔터 바로 앞(형제 인덱스 기준) 자리에 끼워 넣는다.
+            if (shutter != null)
+                _deliveryPanel.transform.SetSiblingIndex(shutter.transform.GetSiblingIndex());
             _deliveryPanel.Initialize(deliveryCatalog, deliveryPriceMultiplier);
             _deliveryPanel.Purchased += HandleDeliveryPurchased;
             _deliveryPanel.CloseRequested += Close;
@@ -328,22 +344,10 @@ public class LiquorShelfUI : MonoBehaviour
 
     private void ApplyDeliveryTabState()
     {
-        if (_deliveryTab == null)
+        if (deliveryButton == null)
             return;
 
-        _deliveryTab.SetInteractable(_interactable && _deliveryAvailable);
-        _deliveryTab.SetDisabledOverlayVisible(!_deliveryAvailable);
-    }
-
-    private Sprite FindCategoryTabSprite()
-    {
-        foreach (CategoryEntry entry in categoryEntries)
-        {
-            if (entry.def != null && entry.def.icon != null)
-                return entry.def.icon;
-        }
-
-        return categoryButtonPrefab != null ? categoryButtonPrefab.IconSprite : null;
+        deliveryButton.interactable = _interactable && _deliveryAvailable;
     }
 
     private void RefreshShelfSlots()
@@ -362,8 +366,9 @@ public class LiquorShelfUI : MonoBehaviour
             Active = null;
     }
 
-    private void HandleDeliveryPurchased()
+    private void HandleDeliveryPurchased(int price)
     {
+        GameProgress.Instance?.RecordDeliveryPurchase(price);
         RefreshShelfSlots();
         if (_deliveryCharacter == null) return;
 
@@ -425,6 +430,7 @@ public class LiquorShelfUI : MonoBehaviour
 
         _deliveryPanel?.SetInteractable(false);
         _deliveryPanel?.HideImmediate();
+        shutter?.ResetImmediate();
         if (closeButton != null) closeButton.gameObject.SetActive(true);
 
         int transitionVersion = ++_deliveryTransitionVersion;
