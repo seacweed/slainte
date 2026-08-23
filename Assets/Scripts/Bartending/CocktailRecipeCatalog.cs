@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Slainte.Economy;
+using UnityEngine;
 
 namespace Slainte.Bartending
 {
@@ -59,6 +60,8 @@ namespace Slainte.Bartending
         public readonly HashSet<string> tasteTags = new(StringComparer.OrdinalIgnoreCase);
         public readonly HashSet<string> moodTags = new(StringComparer.OrdinalIgnoreCase);
         public readonly List<CocktailRecipeIngredient> ingredients = new();
+        public Sprite icon;
+        public string description;
 
         public int GetPrice(GameCurrency currency)
         {

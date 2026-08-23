@@ -1,39 +1,38 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Slainte.Bartending;
 
 public enum RecipeSearchCategory
 {
     Mood,
-    Taste,
-    Ingredient
+    Taste
 }
 
 public class RecipeSearchUI : MonoBehaviour
 {
-    [Serializable]
-    private class OptionEntry
+    private enum DetailOrigin
     {
-        public string label;
-        public Color  color     = Color.white;
-        public Color  textColor = Color.black;
+        CategoryResults,
+        SearchInline
     }
 
     [Serializable]
-    private class CategoryConfig
+    private class CategoryHeaderConfig
     {
         public RecipeSearchCategory category;
-        public string                title;
-        public Sprite                headerIcon;
-        public List<OptionEntry>     options = new List<OptionEntry>();
+        public string               title;
+        public Sprite               headerIcon;
     }
 
     [Header("Views")]
     [SerializeField] private GameObject mainView;
     [SerializeField] private GameObject categoryView;
     [SerializeField] private GameObject resultsView;
+    [SerializeField] private GameObject detailView;
 
     [Header("Category Header (Category View)")]
     [SerializeField] private TMP_Text categoryTitleText;
@@ -41,120 +40,204 @@ public class RecipeSearchUI : MonoBehaviour
     [SerializeField] private Button   backButton;
 
     [Header("Results Header (Results View)")]
-    [SerializeField] private TMP_Text resultsTitleText;
-    [SerializeField] private Image    resultsTitleBackground;
-    [SerializeField] private Button   resultsBackButton;
+    [SerializeField] private RecipeSearchOptionButton resultsHeaderButton;
+    [SerializeField] private Button                   resultsBackButton;
 
     [Header("Category Buttons (Main View)")]
-    [SerializeField] private Button moodButton;
-    [SerializeField] private Button tasteButton;
-    [SerializeField] private Button ingredientButton;
+    [SerializeField] private GameObject categoryButtonsRoot;
+    [SerializeField] private Button     moodButton;
+    [SerializeField] private Button     tasteButton;
 
     [Header("Category Options (Category View)")]
-    [SerializeField] private Transform                optionsContent;
-    [SerializeField] private RecipeSearchOptionButton  optionButtonPrefab;
+    [SerializeField] private Transform               optionsContent;
+    [SerializeField] private RecipeSearchOptionButton optionButtonPrefab;
 
-    [Header("Category Configs")]
+    [Header("Category Headers")]
     [SerializeField]
-    private List<CategoryConfig> categoryConfigs = new List<CategoryConfig>
+    private List<CategoryHeaderConfig> categoryHeaders = new List<CategoryHeaderConfig>
     {
-        new CategoryConfig { category = RecipeSearchCategory.Mood },
-        new CategoryConfig { category = RecipeSearchCategory.Taste },
-        new CategoryConfig { category = RecipeSearchCategory.Ingredient },
+        new CategoryHeaderConfig { category = RecipeSearchCategory.Mood },
+        new CategoryHeaderConfig { category = RecipeSearchCategory.Taste },
     };
 
-    private readonly List<RecipeSearchOptionButton> _spawnedOptions = new List<RecipeSearchOptionButton>();
+    [Header("Tag Palette")]
+    [SerializeField] private TasteMoodTagPaletteDef tagPalette;
+
+    [Header("Search (Main View)")]
+    [SerializeField] private TMP_InputField searchInputField;
+    [SerializeField] private Button         searchButton;
+    [SerializeField] private GameObject     searchResultsRoot;
+    [SerializeField] private Transform      searchResultsContent;
+
+    [Header("Recipe List")]
+    [SerializeField] private Transform          resultsContent;
+    [SerializeField] private RecipeListItemUI   recipeListItemPrefab;
+
+    [Header("Detail View")]
+    [SerializeField] private RecipeDetailUI recipeDetailUI;
+    [SerializeField] private Button         detailBackButton;
+
     private RecipeSearchCategory _currentCategory;
+    private DetailOrigin         _detailOrigin;
+    private List<CocktailRecipe> _allBookRecipes = new();
 
     void Awake()
     {
-        if (moodButton)       moodButton.onClick.AddListener(() => ShowCategory(RecipeSearchCategory.Mood));
-        if (tasteButton)      tasteButton.onClick.AddListener(() => ShowCategory(RecipeSearchCategory.Taste));
-        if (ingredientButton) ingredientButton.onClick.AddListener(() => ShowCategory(RecipeSearchCategory.Ingredient));
-        if (backButton)       backButton.onClick.AddListener(ShowMain);
+        if (moodButton)  moodButton.onClick.AddListener(() => ShowCategory(RecipeSearchCategory.Mood));
+        if (tasteButton) tasteButton.onClick.AddListener(() => ShowCategory(RecipeSearchCategory.Taste));
+        if (backButton)  backButton.onClick.AddListener(ShowMain);
         if (resultsBackButton) resultsBackButton.onClick.AddListener(BackFromResults);
+        if (detailBackButton)  detailBackButton.onClick.AddListener(BackFromDetail);
+        if (searchButton) searchButton.onClick.AddListener(OnSearchSubmit);
+        if (searchInputField) searchInputField.onSubmit.AddListener(_ => OnSearchSubmit());
 
+        LoadRecipes();
         ShowMain();
     }
 
-    public void ShowMain()
+    private void LoadRecipes()
     {
-        ClearOptions();
-
-        if (mainView)     mainView.SetActive(true);
-        if (categoryView) categoryView.SetActive(false);
-        if (resultsView)  resultsView.SetActive(false);
-    }
-
-    public void ShowCategory(RecipeSearchCategory category)
-    {
-        CategoryConfig config = FindConfig(category);
-        if (config == null) return;
-
-        _currentCategory = category;
-
-        if (categoryTitleText) categoryTitleText.text = config.title;
-        if (categoryHeaderIcon)
-        {
-            categoryHeaderIcon.sprite = config.headerIcon;
-            categoryHeaderIcon.gameObject.SetActive(config.headerIcon != null);
-        }
-        if (mainView)     mainView.SetActive(false);
-        if (categoryView) categoryView.SetActive(true);
-        if (resultsView)  resultsView.SetActive(false);
-
-        PopulateOptions(config);
+        ItemDefCatalog itemCatalog = ItemDefCatalog.LoadFromResources("Items");
+        CocktailRecipeCatalog catalog = CocktailRecipeDataLoader.LoadDefault(itemCatalog);
+        _allBookRecipes = catalog.Recipes
+            .Where(recipe => recipe != null && recipe.appearsInRecipeBook)
+            .OrderBy(recipe => recipe.id, StringComparer.OrdinalIgnoreCase)
+            .ToList();
     }
 
     // Called by RecipeBookUI only when the book transitions from disabled back to enabled
     // (e.g. EpisodeMode -> OrderMode/CraftingMode). Plain Tab-toggle open/close must not reset.
     public void ResetToMain() => ShowMain();
 
-    // An option button was picked -> drill into the cocktail list for that option.
-    // Carries the option's colors over so the results header reads as the same "tag".
-    public void NotifyOptionClicked(string label, Color color, Color textColor)
+    public void ShowMain()
     {
-        if (resultsTitleText)
+        if (searchInputField) searchInputField.text = string.Empty;
+        ClearContent(searchResultsContent);
+        SetSearchActive(false);
+        SetViews(main: true, category: false, results: false, detail: false);
+    }
+
+    public void ShowCategory(RecipeSearchCategory category)
+    {
+        _currentCategory = category;
+
+        CategoryHeaderConfig header = categoryHeaders.FirstOrDefault(c => c.category == category);
+        if (categoryTitleText) categoryTitleText.text = header?.title;
+        if (categoryHeaderIcon)
         {
-            resultsTitleText.text  = label;
-            resultsTitleText.color = textColor;
+            categoryHeaderIcon.sprite = header?.headerIcon;
+            categoryHeaderIcon.gameObject.SetActive(header?.headerIcon != null);
         }
-        if (resultsTitleBackground) resultsTitleBackground.color = color;
-        if (categoryView) categoryView.SetActive(false);
-        if (resultsView)  resultsView.SetActive(true);
+
+        SetViews(main: false, category: true, results: false, detail: false);
+        PopulateOptions(category);
+    }
+
+    private void OnSearchSubmit()
+    {
+        string query = searchInputField ? searchInputField.text.Trim() : string.Empty;
+        if (string.IsNullOrEmpty(query))
+        {
+            ShowMain();
+            return;
+        }
+
+        SetSearchActive(true);
+        List<CocktailRecipe> matches = _allBookRecipes
+            .Where(recipe => !string.IsNullOrEmpty(recipe.displayName)
+                && recipe.displayName.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0)
+            .ToList();
+        PopulateRecipeList(searchResultsContent, matches, recipe => ShowDetail(recipe, DetailOrigin.SearchInline));
+        SetViews(main: true, category: false, results: false, detail: false);
+    }
+
+    private void SetSearchActive(bool active)
+    {
+        if (categoryButtonsRoot) categoryButtonsRoot.SetActive(!active);
+        if (searchResultsRoot)   searchResultsRoot.SetActive(active);
+    }
+
+    private void PopulateOptions(RecipeSearchCategory category)
+    {
+        ClearContent(optionsContent);
+        if (!optionButtonPrefab || !optionsContent || !tagPalette) return;
+
+        List<TasteMoodTagPaletteDef.TagColorEntry> entries =
+            category == RecipeSearchCategory.Mood ? tagPalette.moodEntries : tagPalette.tasteEntries;
+
+        foreach (TasteMoodTagPaletteDef.TagColorEntry entry in entries)
+        {
+            if (entry == null) continue;
+            RecipeSearchOptionButton option = Instantiate(optionButtonPrefab, optionsContent);
+            option.Setup(entry.tag, entry.backgroundColor, entry.textColor, interactable: true,
+                onSelected: _ => OnTagSelected(category, entry));
+        }
+    }
+
+    private void OnTagSelected(RecipeSearchCategory category, TasteMoodTagPaletteDef.TagColorEntry entry)
+    {
+        List<CocktailRecipe> matches = _allBookRecipes
+            .Where(recipe => category == RecipeSearchCategory.Mood
+                ? recipe.moodTags.Contains(entry.tag)
+                : recipe.tasteTags.Contains(entry.tag))
+            .ToList();
+        PopulateRecipeList(resultsContent, matches, recipe => ShowDetail(recipe, DetailOrigin.CategoryResults));
+
+        if (resultsHeaderButton)
+            resultsHeaderButton.Setup(entry.tag, entry.backgroundColor, entry.textColor, interactable: false);
+
+        SetViews(main: false, category: false, results: true, detail: false);
     }
 
     private void BackFromResults()
     {
-        if (resultsView) resultsView.SetActive(false);
         ShowCategory(_currentCategory);
     }
 
-    private CategoryConfig FindConfig(RecipeSearchCategory category)
+    private void ShowDetail(CocktailRecipe recipe, DetailOrigin origin)
     {
-        foreach (CategoryConfig c in categoryConfigs)
-            if (c.category == category) return c;
-        return null;
+        _detailOrigin = origin;
+        recipeDetailUI?.Bind(recipe, tagPalette);
+        SetViews(main: false, category: false, results: false, detail: true);
     }
 
-    private void PopulateOptions(CategoryConfig config)
+    private void BackFromDetail()
     {
-        ClearOptions();
-        if (!optionButtonPrefab || !optionsContent) return;
-
-        foreach (OptionEntry entry in config.options)
+        if (_detailOrigin == DetailOrigin.SearchInline)
         {
-            RecipeSearchOptionButton option = Instantiate(optionButtonPrefab, optionsContent);
-            option.Setup(entry.label, entry.color, entry.textColor, this);
-            _spawnedOptions.Add(option);
+            SetSearchActive(true);
+            SetViews(main: true, category: false, results: false, detail: false);
+        }
+        else
+        {
+            SetViews(main: false, category: false, results: true, detail: false);
         }
     }
 
-    private void ClearOptions()
+    private void PopulateRecipeList(Transform content, List<CocktailRecipe> recipes, Action<CocktailRecipe> onClick)
     {
-        foreach (RecipeSearchOptionButton option in _spawnedOptions)
-            if (option) Destroy(option.gameObject);
+        ClearContent(content);
+        if (!content || !recipeListItemPrefab) return;
 
-        _spawnedOptions.Clear();
+        foreach (CocktailRecipe recipe in recipes)
+        {
+            RecipeListItemUI item = Instantiate(recipeListItemPrefab, content);
+            item.Setup(recipe, onClick);
+        }
+    }
+
+    private void SetViews(bool main, bool category, bool results, bool detail)
+    {
+        if (mainView)     mainView.SetActive(main);
+        if (categoryView) categoryView.SetActive(category);
+        if (resultsView)  resultsView.SetActive(results);
+        if (detailView)   detailView.SetActive(detail);
+    }
+
+    private static void ClearContent(Transform content)
+    {
+        if (!content) return;
+        for (int i = content.childCount - 1; i >= 0; i--)
+            Destroy(content.GetChild(i).gameObject);
     }
 }

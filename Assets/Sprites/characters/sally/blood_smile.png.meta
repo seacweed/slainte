@@ -5,6 +5,9 @@ TextureImporter:
   - first:
       213: -521326214385864486
     second: blood_smile_0
+  - first:
+      213: 8496632061194516391
+    second: blood_smile_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +49,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -103,12 +106,12 @@ TextureImporter:
       name: blood_smile_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 717
-        height: 1440
+        x: 1
+        y: 418
+        width: 671
+        height: 748
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -121,11 +124,33 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: blood_smile_1
+      rect:
+        serializedVersion: 2
+        x: 416
+        y: 121
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7a7b1b2b7d91ae570800000000000000
+      internalID: 8496632061194516391
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 09b38d8279004b0468437db063e9f11b
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -136,6 +161,7 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       blood_smile_0: -521326214385864486
+      blood_smile_1: 8496632061194516391
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

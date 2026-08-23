@@ -12,6 +12,8 @@ Unity 에디터에서 사용할 수 있는 커스텀 툴 목록입니다.
 | 코블러 셰이커 설정 | `CobblerShakerSetup.cs` | Slainte > Business > 코블러 셰이커 설정 적용 |
 | 손님 풀 샘플 설정 | `CustomerPoolSetup.cs` | Slainte > Business > 손님 풀 샘플 설정 적용 |
 | 손님 풀 자동 검증 | `CustomerPoolSetup.cs` | Slainte > 품질 검증 > 손님 풀 검증 |
+| 캐릭터 표정 스프라이트 임포터 | `CharacterExpressionSpriteImporter.cs` | Slainte > 데이터 > 캐릭터 표정 스프라이트 폴더 임포트 |
+| 캐릭터 스프라이트 접두어 제거 | `CharacterSpritePrefixStripper.cs` | Slainte > 데이터 > 캐릭터 스프라이트 접두어 제거 |
 
 ---
 
@@ -61,3 +63,42 @@ CSV 작성 방법은 [../narrative/episode-csv-guide.md](../narrative/episode-cs
 | `#CHOICES` | 플레이어 선택지 |
 | `#NODE_BRANCHES` | 플래그 조건 분기 (`requiredAllFlags` AND / `requiredAnyFlags` OR) |
 | `#NODE_VAR_BRANCHES` | 수치 변수(호감도 등) 조건 분기 |
+
+---
+
+## 캐릭터 표정 스프라이트 임포터
+
+`Assets/Sprites/characters/{key}/` 폴더 안의 png 파일들을 `CharacterData.expressions`에 자동으로 채우는 툴입니다.
+
+### 사용 방법
+
+1. Project 창에서 대상 `CharacterData` 에셋 선택 (예: `CharacterData_f54.asset`)
+2. Unity 메뉴 → **Slainte > 데이터 > 캐릭터 표정 스프라이트 폴더 임포트**
+3. 폴더 선택창에서 스프라이트 폴더 지정 (예: `Assets/Sprites/characters/f54`)
+
+### 동작 규칙
+
+- 폴더 바로 안의 png 파일만 대상 (하위 폴더 미포함)
+- `key`는 파일명(확장자 제외)을 그대로 사용
+- 같은 key의 entry가 이미 있으면 `sprite` 필드만 새 파일로 **항상 덮어씀**
+- 없으면 새 entry를 추가 (다른 필드는 비워둠)
+- 파일명이 `_closed`로 끝나면(예: `mid_closed.png`) **별도 expression을 만들지 않고**, 앞부분(`mid`)과 `{앞부분}_left`, `{앞부분}_right` expression들의 `blinkSprite`에 그 스프라이트를 연결(항상 덮어씀). 대응하는 expression이 하나도 없으면 경고만 남기고 건너뜀
+- 단, 파일명이 정확히 `closed`(접두어 없이 단독)이면 이 규칙에서 제외되어 일반 파일처럼 `key: closed`인 expression을 만들고 `sprite`를 채움
+- `defaultSprite`, `overlaySprite`, `blinkOverlaySprite`는 전혀 건드리지 않음 — 오버레이 연결은 직접 채워야 함
+
+---
+
+## 캐릭터 스프라이트 접두어 제거
+
+선택한 폴더 안 스프라이트 파일명에서 "폴더명_" 접두어(대소문자 무관)를 일괄 제거하는 툴입니다. `AssetDatabase.RenameAsset`을 사용하므로 GUID가 보존되어 기존 참조(CharacterData 등)가 깨지지 않습니다.
+
+### 사용 방법
+
+1. Project 창에서 대상 폴더(들) 선택 (예: `Assets/Sprites/characters/eliot`)
+2. Unity 메뉴 → **Slainte > 데이터 > 캐릭터 스프라이트 접두어 제거**
+
+### 동작 규칙
+
+- 폴더 바로 안의 Sprite만 대상 (하위 폴더 미포함)
+- 파일명이 "폴더명_"으로 시작하면(대소문자 무관) 그 접두어만 제거
+- 접두어가 없는 파일은 건너뜀
