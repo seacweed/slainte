@@ -60,6 +60,11 @@ namespace Slainte.Bartending
         [Min(0.02f)] public float contentsRefreshInterval = 0.1f;
         [Min(0f)] public float contentsMinimumVisibleMl = 0.05f;
 
+        [Header("Runtime Debug")]
+        [Tooltip("Show cached recipe, technique, ice, and volume labels for tracked vessels in Editor or Development Builds.")]
+        public bool showVesselDebugLabels;
+        [Min(0.05f)] public float vesselDebugRefreshInterval = 0.2f;
+
         [Header("Rotation Horizontal Movement")]
         [Min(0f)] public float rotationHorizontalSensitivity = 1f;
         [Min(0f)] public float rotationHorizontalScreenPadding = 12f;

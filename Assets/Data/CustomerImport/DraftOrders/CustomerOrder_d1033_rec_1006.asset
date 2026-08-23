@@ -38,6 +38,7 @@ MonoBehaviour:
       \uC544\uB2C8\uB77C\uACE0!"
     nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
   authoredFeedback: 63
+  intentionallySilentFeedback: 0
   feedbackLinesMidIce:
   - speakerName: F72
     text: "\uC5BC\uC74C\uC774 \uBE60\uC9C0\uB2C8\uAE4C \uC880 \uC544\uC27D\uAE34\uD558\uB124"

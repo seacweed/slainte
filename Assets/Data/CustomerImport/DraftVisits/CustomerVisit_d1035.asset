@@ -29,6 +29,7 @@ MonoBehaviour:
   weight: 3
   condition:
     minDay: 0
+    minMoney: 0
     requiredFlags: []
     blockedFlags: []
     prerequisiteEpisodeIds: []
@@ -39,6 +40,7 @@ MonoBehaviour:
   - enabled: 1
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags: []
       blockedFlags: []
       prerequisiteEpisodeIds:
@@ -55,6 +57,7 @@ MonoBehaviour:
     weight: 1
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags: []
       blockedFlags: []
       prerequisiteEpisodeIds: []
@@ -64,6 +67,7 @@ MonoBehaviour:
     weight: 1
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags: []
       blockedFlags: []
       prerequisiteEpisodeIds: []
@@ -73,6 +77,7 @@ MonoBehaviour:
     weight: 1
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags: []
       blockedFlags: []
       prerequisiteEpisodeIds: []

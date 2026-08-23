@@ -31,8 +31,12 @@ MonoBehaviour:
     text: "\uD06C\uD558, \uC774\uAC70\uC9C0!"
     nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
   feedbackLinesMid: []
-  feedbackLinesBad: []
+  feedbackLinesBad:
+  - speakerName: F72
+    text: "\uC774\uB7F0 \uAC74 \uB534 \uB188\uB4E4\uC774\uB098 \uC8FC\uB77C\uACE0"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
   authoredFeedback: 63
+  intentionallySilentFeedback: 0
   feedbackLinesMidIce:
   - speakerName: F72
     text: "\uC5BC\uC74C \uBE60\uC9C4 \uAC74 \uBABB \uBCF8 \uAC78\uB85C \uD574\uC8FC\uC9C0"

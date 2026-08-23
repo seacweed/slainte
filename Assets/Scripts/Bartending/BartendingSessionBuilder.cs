@@ -791,6 +791,9 @@ namespace Slainte.Bartending
             {
                 VesselLiquidTracker.SetLiquidIceCollisionEnabled(
                     settings.liquidIceCollisionEnabled);
+                VesselLiquidTracker.SetRuntimeDebugLabelDefaults(
+                    settings.showVesselDebugLabels,
+                    settings.vesselDebugRefreshInterval);
             }
 
             bool useToolCabinet = useToolCabinetOverride ?? settings.useToolCabinet;
@@ -851,21 +854,24 @@ namespace Slainte.Bartending
                     "Beaker",
                     settings.beakerPosition,
                     renderLayer,
-                    itemScale);
+                    itemScale,
+                    isPreview ? null : settings);
                 session.CobblerShaker = CreateItem(
                     settings.cobblerShakerPrefab,
                     world.transform,
                     "CobblerShaker",
                     settings.cobblerShakerPosition,
                     renderLayer,
-                    itemScale);
+                    itemScale,
+                    isPreview ? null : settings);
                 session.ServingGlass = CreateItem(
                     settings.glassPrefab,
                     world.transform,
                     "Glass",
                     settings.glassPosition,
                     renderLayer,
-                    itemScale) as GlassController;
+                    itemScale,
+                    isPreview ? null : settings) as GlassController;
 
                 ConfigureRotatingMovement(session.Beaker, settings);
                 ConfigureRotatingMovement(session.CobblerShaker, settings);
@@ -1259,7 +1265,8 @@ namespace Slainte.Bartending
             string instanceName,
             Vector3 position,
             int renderLayer,
-            float itemScale)
+            float itemScale,
+            BusinessBartendingSettings runtimeSettings = null)
         {
             if (prefab == null)
             {
@@ -1276,7 +1283,11 @@ namespace Slainte.Bartending
             foreach (VesselLiquidTracker tracker
                      in item.GetComponentsInChildren<VesselLiquidTracker>(true))
             {
-                tracker.SetDebugViewEnabled(false);
+                tracker.ConfigureRuntimeDebugLabel(
+                    runtimeSettings != null && runtimeSettings.showVesselDebugLabels,
+                    runtimeSettings != null
+                        ? runtimeSettings.vesselDebugRefreshInterval
+                        : 0.2f);
             }
 
             return item.GetComponent<IBartendingItem>();

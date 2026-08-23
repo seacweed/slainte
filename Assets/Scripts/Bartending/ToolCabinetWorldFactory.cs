@@ -31,7 +31,8 @@ namespace Slainte.Bartending
                         definition.displayName,
                         Vector3.zero,
                         renderLayer,
-                        sessionScale);
+                        sessionScale,
+                        settings);
                     instance = item?.GameObject;
                     if (item == null || instance == null)
                         return null;
@@ -120,7 +121,8 @@ namespace Slainte.Bartending
                 definition.displayName,
                 Vector3.zero,
                 renderLayer,
-                sessionScale);
+                sessionScale,
+                settings);
             GlassController glass = item as GlassController;
             instance = glass != null ? glass.gameObject : null;
             if (glass == null || definition.worldSprite == null)

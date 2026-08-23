@@ -17,7 +17,7 @@ MonoBehaviour:
   orderType: 0
   paymentCurrency: 0
   tags: []
-  characterKey: cartha
+  characterKey: kartha
   expressionKeyMid: mid
   expressionKeyGood: good
   expressionKeyBad: bad
@@ -36,6 +36,7 @@ MonoBehaviour:
     text: "\uC774\uAC70 \uC774\uC0C1\uD574"
     nameColor: {r: 1, g: 1, b: 1, a: 1}
   authoredFeedback: 63
+  intentionallySilentFeedback: 0
   feedbackLinesMidIce:
   - speakerName: "\uCE74\uC0AC"
     text: "\uC6D0\uB798 \uCEE4\uD53C\uAC00 \uCC28\uAC00\uC6B4 \uAC70\uC57C...?"

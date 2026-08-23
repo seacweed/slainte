@@ -37,7 +37,7 @@ namespace Slainte.EditorTools
             ValidateCraftingResultMapping();
             Debug.Log(
                 "[BusinessShiftValidator] 주문 대사 검증 통과: 연결 주문 169개, "
-                + "취향·분위기 주문 27개, 의도적 빈 주문 대사 6개, "
+                + "취향·분위기 주문 27개, 의도적 빈 주문 대사 0개, "
                 + "주문 당시 대사 주문표 반영, 상세 결과 매핑 및 누락 대사 dummy fallback");
         }
 
@@ -156,8 +156,8 @@ namespace Slainte.EditorTools
                 $"연결 주문 수가 예상과 다릅니다: {connectedOrderCount}/169");
             Require(conditionOrderCount == 27,
                 $"취향·분위기 주문 수가 예상과 다릅니다: {conditionOrderCount}/27");
-            Require(intentionallyBlankOrderCount == 6,
-                $"의도적으로 비운 주문 대사 수가 예상과 다릅니다: {intentionallyBlankOrderCount}/6");
+            Require(intentionallyBlankOrderCount == 0,
+                $"의도적으로 비운 주문 대사 수가 예상과 다릅니다: {intentionallyBlankOrderCount}/0");
 
             List<string> missingFeedbackSummary = new();
             for (int resultIndex = 0;

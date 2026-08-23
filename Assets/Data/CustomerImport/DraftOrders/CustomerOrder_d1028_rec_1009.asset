@@ -38,6 +38,7 @@ MonoBehaviour:
       \uD55C\uB2E4\uACE0?"
     nameColor: {r: 1, g: 1, b: 1, a: 1}
   authoredFeedback: 63
+  intentionallySilentFeedback: 0
   feedbackLinesMidIce:
   - speakerName: N8
     text: "\uC5BC\uC74C\uC774 \uBB34\uC784\uC2B9\uCC28 \uD588\uC796\uC544?"

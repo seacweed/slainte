@@ -29,6 +29,7 @@ MonoBehaviour:
   weight: 5
   condition:
     minDay: 0
+    minMoney: 0
     requiredFlags: []
     blockedFlags: []
     prerequisiteEpisodeIds: []
@@ -39,6 +40,7 @@ MonoBehaviour:
   - enabled: 1
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags: []
       blockedFlags: []
       prerequisiteEpisodeIds:
@@ -48,6 +50,7 @@ MonoBehaviour:
   - enabled: 0
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags:
       - sc2_1_false
       blockedFlags: []
@@ -65,6 +68,7 @@ MonoBehaviour:
     weight: 1
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags: []
       blockedFlags: []
       prerequisiteEpisodeIds: []
@@ -74,6 +78,7 @@ MonoBehaviour:
     weight: 1
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags: []
       blockedFlags: []
       prerequisiteEpisodeIds: []
@@ -83,6 +88,7 @@ MonoBehaviour:
     weight: 1
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags: []
       blockedFlags: []
       prerequisiteEpisodeIds: []

@@ -16,8 +16,23 @@ MonoBehaviour:
   displayName: "\uBE45-\uD53C\uC26C"
   englishName: Big Fish
   nameColor: {r: 1, g: 1, b: 1, a: 1}
-  defaultSprite: {fileID: 0}
+  defaultSprite: {fileID: 21300000, guid: 1ba37b4e92b54a1d8fbe498e95661c85, type: 3}
   defaultOverlaySprite: {fileID: 0}
   defaultBlinkSprite: {fileID: 0}
   defaultBlinkOverlaySprite: {fileID: 0}
-  expressions: []
+  expressions:
+  - key: mid
+    sprite: {fileID: 21300000, guid: 1ba37b4e92b54a1d8fbe498e95661c85, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
+  - key: good
+    sprite: {fileID: 21300000, guid: 6a020e4afd474f978d1d4a4e6492aa8b, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
+  - key: bad
+    sprite: {fileID: 21300000, guid: 828f076ed6e44ad4838f36c55d19ea87, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}

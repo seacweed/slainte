@@ -195,6 +195,10 @@ namespace Slainte.Bartending
         private static readonly HashSet<LiquidParticleData> activeParticles = new();
         private static readonly HashSet<IceCubeController> activeIceCubes = new();
         private static bool liquidIceCollisionEnabled;
+        private static CocktailEvaluator debugCocktailEvaluator;
+        private static bool debugEvaluatorInitialized;
+        private static bool runtimeDebugLabelsEnabled;
+        private static float runtimeDebugLabelsRefreshInterval = 0.2f;
         private readonly HashSet<LiquidParticleData> particles = new();
         private readonly HashSet<LiquidParticleData> ownedParticles = new();
         private readonly HashSet<LiquidParticleData> pendingParticleReleases = new();
@@ -224,6 +228,10 @@ namespace Slainte.Bartending
         [SerializeField] private Color particleDebugColor = new Color(1f, 0.92f, 0.25f, 0.9f);
         [SerializeField] private Color connectionDebugColor = new Color(0.5f, 1f, 0.65f, 0.45f);
         [SerializeField, Min(0.01f)] private float debugParticleRadius = 0.06f;
+        [SerializeField, Min(0.05f)] private float runtimeDebugRefreshInterval = 0.2f;
+
+        private float nextRuntimeDebugRefreshTime;
+        private string cachedRuntimeDebugText = string.Empty;
 
         public int ParticleCount
         {
@@ -286,6 +294,21 @@ namespace Slainte.Bartending
             RefreshLiquidIceCollisions();
         }
 
+        public static void SetRuntimeDebugLabelDefaults(
+            bool enabled,
+            float refreshInterval)
+        {
+            runtimeDebugLabelsEnabled = enabled;
+            runtimeDebugLabelsRefreshInterval = Mathf.Max(0.05f, refreshInterval);
+
+            foreach (VesselLiquidTracker vessel in activeVessels)
+            {
+                vessel?.ConfigureRuntimeDebugLabel(
+                    runtimeDebugLabelsEnabled,
+                    runtimeDebugLabelsRefreshInterval);
+            }
+        }
+
         internal void SetInteractionPriority(int priority)
         {
             interactionPriority = priority;
@@ -298,10 +321,17 @@ namespace Slainte.Bartending
             activeParticles.Clear();
             activeIceCubes.Clear();
             liquidIceCollisionEnabled = false;
+            debugCocktailEvaluator = null;
+            debugEvaluatorInitialized = false;
+            runtimeDebugLabelsEnabled = false;
+            runtimeDebugLabelsRefreshInterval = 0.2f;
         }
 
         private void OnEnable()
         {
+            ConfigureRuntimeDebugLabel(
+                runtimeDebugLabelsEnabled,
+                runtimeDebugLabelsRefreshInterval);
             RegisterVessel(this);
         }
 
@@ -1145,6 +1175,14 @@ namespace Slainte.Bartending
         {
             drawDebugGizmos = enabled;
             drawRuntimeLabel = enabled;
+            InvalidateRuntimeDebugSnapshot();
+        }
+
+        public void ConfigureRuntimeDebugLabel(bool enabled, float refreshInterval)
+        {
+            drawRuntimeLabel = enabled && (Application.isEditor || Debug.isDebugBuild);
+            runtimeDebugRefreshInterval = Mathf.Max(0.05f, refreshInterval);
+            InvalidateRuntimeDebugSnapshot();
         }
 
         private void OnDrawGizmos()
@@ -1165,23 +1203,22 @@ namespace Slainte.Bartending
 
         private void OnGUI()
         {
-            if (!Application.isPlaying || !drawDebugGizmos || !drawRuntimeLabel)
+            if (!Application.isPlaying || !drawRuntimeLabel)
                 return;
 
             Camera camera = Camera.main;
-            if (camera == null)
+            if (camera == null && BartendingViewport.Active == null)
                 return;
 
-            CocktailComposition composition = BuildComposition();
-            Vector3 screenPosition = camera.WorldToScreenPoint(GetDebugLabelWorldPosition());
-            if (screenPosition.z < 0f)
-                return;
+            RefreshRuntimeDebugSnapshot();
+            Vector2 screenPosition = BartendingViewport.GetPointerScreenPosition(
+                camera,
+                GetDebugLabelWorldPosition());
 
             EnsureDebugBoxStyle();
 
-            const float width = 220f;
-            string text = BuildDebugText(composition);
-            GUIContent content = new GUIContent(text);
+            const float width = 280f;
+            GUIContent content = new GUIContent(cachedRuntimeDebugText);
             float height = debugBoxStyle.CalcHeight(content, width);
             Rect rect = new Rect(
                 screenPosition.x + 8f,
@@ -1226,7 +1263,10 @@ namespace Slainte.Bartending
                 }
 
 #if UNITY_EDITOR
-                UnityEditor.Handles.Label(origin, BuildDebugText(BuildComposition()));
+                CocktailComposition composition = BuildComposition();
+                UnityEditor.Handles.Label(
+                    origin,
+                    BuildDebugText(composition, EvaluateForDebug(composition)));
 #endif
             }
 
@@ -1287,35 +1327,120 @@ namespace Slainte.Bartending
             return new Vector3(combinedBounds.center.x, combinedBounds.max.y + 0.25f, transform.position.z);
         }
 
-        private string BuildDebugText(CocktailComposition composition)
+        private void RefreshRuntimeDebugSnapshot()
+        {
+            float now = Time.unscaledTime;
+            if (!string.IsNullOrEmpty(cachedRuntimeDebugText)
+                && now < nextRuntimeDebugRefreshTime)
+            {
+                return;
+            }
+
+            CocktailComposition composition = BuildComposition();
+            cachedRuntimeDebugText = BuildDebugText(
+                composition,
+                EvaluateForDebug(composition));
+            nextRuntimeDebugRefreshTime = now
+                + Mathf.Max(0.05f, runtimeDebugRefreshInterval);
+        }
+
+        private void InvalidateRuntimeDebugSnapshot()
+        {
+            cachedRuntimeDebugText = string.Empty;
+            nextRuntimeDebugRefreshTime = 0f;
+        }
+
+        private static CocktailEvaluationResult EvaluateForDebug(
+            CocktailComposition composition)
+        {
+            if (composition == null || composition.TotalVolumeMl <= 0.0001f)
+                return null;
+
+            CocktailEvaluator evaluator = GetDebugCocktailEvaluator();
+            return evaluator != null ? evaluator.Evaluate(composition) : null;
+        }
+
+        private static CocktailEvaluator GetDebugCocktailEvaluator()
+        {
+            if (debugEvaluatorInitialized)
+                return debugCocktailEvaluator;
+
+            debugEvaluatorInitialized = true;
+            ItemDefCatalog itemCatalog = ItemDefCatalog.LoadFromResources("Items", null);
+            CocktailRecipeCatalog recipeCatalog =
+                CocktailRecipeDataLoader.LoadDefault(itemCatalog);
+            if (recipeCatalog != null && recipeCatalog.Count > 0)
+                debugCocktailEvaluator = new CocktailEvaluator(recipeCatalog);
+            return debugCocktailEvaluator;
+        }
+
+        private string BuildDebugText(
+            CocktailComposition composition,
+            CocktailEvaluationResult evaluation)
         {
             debugTextBuilder.Clear();
             debugTextBuilder.Append(name);
             debugTextBuilder.AppendLine(" 액체 추적기");
-            debugTextBuilder.Append("입자: ");
-            debugTextBuilder.Append(particles.Count);
-            debugTextBuilder.Append("  총량: ");
-            debugTextBuilder.Append(composition.TotalVolumeMl.ToString("0.##"));
-            debugTextBuilder.AppendLine(" ml");
-            debugTextBuilder.Append("온도: ");
-            debugTextBuilder.Append(composition.AverageTemperatureC.ToString("0.#"));
-            debugTextBuilder.Append(" C  잔: ");
+
+            debugTextBuilder.Append("분류: ");
+            if (composition.TotalVolumeMl <= 0.0001f)
+            {
+                debugTextBuilder.AppendLine("빈 잔");
+            }
+            else if (evaluation != null
+                && evaluation.isSuccess
+                && evaluation.matchedRecipe != null)
+            {
+                debugTextBuilder.AppendLine(GetRecipeLabel(evaluation.matchedRecipe));
+            }
+            else
+            {
+                debugTextBuilder.AppendLine("미분류");
+                if (evaluation != null
+                    && !string.IsNullOrWhiteSpace(evaluation.failureReason))
+                {
+                    debugTextBuilder.Append("사유: ");
+                    debugTextBuilder.AppendLine(evaluation.failureReason);
+                }
+            }
+
+            CocktailTechnique effectiveTechniques = composition.GetEffectiveTechniques();
+            CocktailTechnique observedTechniques = composition.Techniques;
+            bool stirCompleted = (effectiveTechniques & CocktailTechnique.Stir) != 0;
+            bool shakeCompleted = (effectiveTechniques & CocktailTechnique.Shake) != 0;
+            bool shakeObserved = (observedTechniques & CocktailTechnique.Shake) != 0;
+            bool anyShakenWithIce = !composition.MatchesShakeIceRequirement(
+                IceRequirement.None);
+
+            debugTextBuilder.Append("판정 기법: ");
+            debugTextBuilder.AppendLine(GetTechniqueLabel(effectiveTechniques));
+            debugTextBuilder.Append("Stir: ");
+            debugTextBuilder.Append(stirCompleted
+                ? "완료"
+                : composition.StirAttempted ? "시도(미완료)" : "사용 안 함");
+            debugTextBuilder.Append("  Shake: ");
+            debugTextBuilder.Append(shakeCompleted
+                ? "완료"
+                : shakeObserved ? "일부만 적용" : "사용 안 함");
+            if (shakeObserved || shakeCompleted)
+                debugTextBuilder.Append(anyShakenWithIce ? "(얼음 사용)" : "(얼음 없음)");
+            debugTextBuilder.AppendLine();
+
+            debugTextBuilder.Append("잔: ");
             debugTextBuilder.Append(GetGlassLabel(composition.GlassId));
             debugTextBuilder.Append("  얼음: ");
-            debugTextBuilder.Append(composition.HasIce ? "있음" : "없음");
-            debugTextBuilder.Append(" (");
-            debugTextBuilder.Append(iceCubes.Count);
-            debugTextBuilder.AppendLine(")");
+            debugTextBuilder.Append(composition.IceCount);
+            debugTextBuilder.AppendLine("개");
+            debugTextBuilder.Append("총량: ");
+            debugTextBuilder.Append(composition.TotalVolumeMl.ToString("0.##"));
+            debugTextBuilder.Append(" ml  입자: ");
+            debugTextBuilder.Append(particles.Count);
+            debugTextBuilder.Append("  온도: ");
+            debugTextBuilder.Append(composition.AverageTemperatureC.ToString("0.#"));
+            debugTextBuilder.AppendLine(" C");
 
-            int lineCount = 0;
             foreach (KeyValuePair<ItemDef, float> pair in composition.Volumes)
             {
-                if (lineCount >= 4)
-                {
-                    debugTextBuilder.AppendLine("...");
-                    break;
-                }
-
                 float ratio = composition.TotalVolumeMl > 0f
                     ? pair.Value / composition.TotalVolumeMl * 100f
                     : 0f;
@@ -1326,13 +1451,36 @@ namespace Slainte.Bartending
                 debugTextBuilder.Append(" ml / ");
                 debugTextBuilder.Append(ratio.ToString("0.#"));
                 debugTextBuilder.AppendLine("%");
-                lineCount++;
             }
 
-            if (lineCount == 0)
+            if (composition.Volumes.Count == 0)
                 debugTextBuilder.AppendLine("비어 있음");
 
             return debugTextBuilder.ToString();
+        }
+
+        private static string GetRecipeLabel(CocktailRecipe recipe)
+        {
+            if (recipe == null)
+                return "미분류";
+            if (!string.IsNullOrWhiteSpace(recipe.displayName))
+                return recipe.displayName;
+            if (!string.IsNullOrWhiteSpace(recipe.id))
+                return recipe.id;
+            return "이름 없는 레시피";
+        }
+
+        private static string GetTechniqueLabel(CocktailTechnique techniques)
+        {
+            bool hasStir = (techniques & CocktailTechnique.Stir) != 0;
+            bool hasShake = (techniques & CocktailTechnique.Shake) != 0;
+            if (hasStir && hasShake)
+                return "Stir + Shake";
+            if (hasStir)
+                return "Stir";
+            if (hasShake)
+                return "Shake";
+            return "Build";
         }
 
         private static string GetGlassLabel(string glassId)

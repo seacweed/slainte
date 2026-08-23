@@ -48,11 +48,7 @@ namespace Slainte.EditorTools
         private const string SilentDialogueToken = "__SILENT__";
 
         private static readonly HashSet<string> IntentionallyBlankProfiles = new(
-            StringComparer.OrdinalIgnoreCase)
-        {
-            "카사_아이들_셀리",
-            "카사_아이들_F54"
-        };
+            StringComparer.OrdinalIgnoreCase);
 
         private static readonly Dictionary<string, string> RecipeNameAliases = new(
             StringComparer.OrdinalIgnoreCase)
@@ -66,6 +62,10 @@ namespace Slainte.EditorTools
         {
             { SpeakerKey(1, DialogueColumn.Order), "VB" },
             { SpeakerKey(1, DialogueColumn.Good), "BV" },
+            { SpeakerKey(1, DialogueColumn.MidIce), "VBB" },
+            { SpeakerKey(1, DialogueColumn.MidGlass), "VBB" },
+            { SpeakerKey(1, DialogueColumn.MidIceGlass), "VBB" },
+            { SpeakerKey(1, DialogueColumn.MidWrongMenu), "VBB" },
             { SpeakerKey(1, DialogueColumn.Bad), "VVBB" },
 
             { SpeakerKey(2, DialogueColumn.Order), "BVB" },
@@ -94,6 +94,7 @@ namespace Slainte.EditorTools
 
             { SpeakerKey(7, DialogueColumn.Order), "BB" },
             { SpeakerKey(7, DialogueColumn.Good), "BV" },
+            { SpeakerKey(7, DialogueColumn.Bad), "VB" },
             { SpeakerKey(7, DialogueColumn.MidIce), "BV" },
             { SpeakerKey(7, DialogueColumn.MidGlass), "BV" },
             { SpeakerKey(7, DialogueColumn.MidIceGlass), "BV" },
@@ -568,11 +569,14 @@ namespace Slainte.EditorTools
                     SpeakerKey(entry.slot, column),
                     out speakerSequence);
                 if (string.IsNullOrEmpty(speakerSequence)
-                    || speakerSequence.Length != sourceLines.Length)
+                    || speakerSequence.Length != sourceLines.Length
+                    || speakerSequence.Any(speaker => speaker != 'V' && speaker != 'B'))
                 {
-                    report.warnings.Add(
-                        $"발렌티노/베리 화자 수가 대사 줄 수와 다릅니다: "
-                        + $"slot={entry.slot}, column={column}, lines={sourceLines.Length}");
+                    report.errors.Add(
+                        $"발렌티노/베리 화자 매핑이 PDF 원본과 맞지 않습니다: "
+                        + $"slot={entry.slot}, column={column}, "
+                        + $"lines={sourceLines.Length}, mapping={speakerSequence ?? "<없음>"}");
+                    speakerSequence = null;
                 }
             }
 
@@ -890,7 +894,7 @@ namespace Slainte.EditorTools
             {
                 string key = visit.members[i]?.characterKey;
                 if (!string.IsNullOrWhiteSpace(key))
-                    return key;
+                    return CustomerPlanningCsvImporter.NormalizeCharacterKey(key);
             }
             return string.Empty;
         }

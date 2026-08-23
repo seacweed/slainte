@@ -32,9 +32,26 @@ MonoBehaviour:
     text: "\uBA39\uACE0 \uD798\uB0B4\uAE30\uC5D0 \uCDA9\uBD84\uD574\uC694! \uAC10\uC0AC\uD569\uB2C8\uB2E4"
     nameColor: {r: 1, g: 1, b: 1, a: 1}
   feedbackLinesMid: []
-  feedbackLinesBad: []
+  feedbackLinesBad:
+  - speakerName: "\uCF00\uC2A4"
+    text: "\uB2E4\uC2DC \uC62C \uB54C\uB294 \uC880 \uB354 \uD655\uC2E4\uD558\uAC8C
+      \uBD80\uD0C1\uB4DC\uB824\uC694"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
   authoredFeedback: 63
-  feedbackLinesMidIce: []
-  feedbackLinesMidGlass: []
-  feedbackLinesMidIceGlass: []
-  feedbackLinesMidWrongMenu: []
+  intentionallySilentFeedback: 0
+  feedbackLinesMidIce:
+  - speakerName: "\uCF00\uC2A4"
+    text: "\uC0B4\uC9DD \uB2EC\uB77C\uC9C0\uAE34 \uD588\uC9C0\uB9CC, \uAD1C\uCC2E\uC544\uC694!"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidGlass:
+  - speakerName: "\uCF00\uC2A4"
+    text: "\uC0B4\uC9DD \uB2EC\uB77C\uC9C0\uAE34 \uD588\uC9C0\uB9CC, \uAD1C\uCC2E\uC544\uC694!"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidIceGlass:
+  - speakerName: "\uCF00\uC2A4"
+    text: "\uC0B4\uC9DD \uB2EC\uB77C\uC9C0\uAE34 \uD588\uC9C0\uB9CC, \uAD1C\uCC2E\uC544\uC694!"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidWrongMenu:
+  - speakerName: "\uCF00\uC2A4"
+    text: "\uC74C, \uC880 \uB2EC\uB77C\uC9C0\uAE34 \uD588\uC9C0\uB9CC, \uAD1C\uCC2E\uC544\uC694!"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
