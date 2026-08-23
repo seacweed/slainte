@@ -412,9 +412,15 @@ namespace Slainte.Business
             bool feedbackStarted = feedbackPresentation == CustomerDialoguePresentation.Played;
             if (!feedbackStarted && dialogue != null && settings != null)
             {
-                string fallback = settings.GetFallbackFeedback(grade);
+                string fallback = settings.GetMissingFeedbackDummy(detailedResult);
+                if (string.IsNullOrWhiteSpace(fallback))
+                    fallback = settings.GetFallbackFeedback(grade);
                 if (!string.IsNullOrWhiteSpace(fallback))
                 {
+                    Debug.LogWarning(
+                        "[CustomerFeedback] 결과 대사가 없어 임시 대사를 출력합니다. "
+                        + $"order={currentRequest?.customerOrderKey ?? pendingResult?.customerOrderKey}, "
+                        + $"result={detailedResult}, fallback={fallback}");
                     dialogue.ShowSingleLine(settings.feedbackSpeakerName, fallback, Color.white);
                     feedbackStarted = true;
                 }

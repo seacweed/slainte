@@ -50,8 +50,10 @@ public class CustomerOrderData : ScriptableObject
     public List<DialogueLine> feedbackLinesBad  = new();
 
     [Header("결과 대사 (상세 판정)")]
-    [Tooltip("체크된 결과의 대사가 비어 있으면 공통 대사로 대체하지 않고 바로 완료합니다.")]
+    [Tooltip("실제 대사가 작성된 결과입니다. 체크되어 있어도 대사 목록이 비어 있으면 누락으로 간주합니다.")]
     public CustomerOrderFeedbackMask authoredFeedback;
+    [Tooltip("대사를 의도적으로 재생하지 않을 결과입니다. 빈 대사 누락과 명시적 침묵을 구분합니다.")]
+    public CustomerOrderFeedbackMask intentionallySilentFeedback;
     public List<DialogueLine> feedbackLinesMidIce = new();
     public List<DialogueLine> feedbackLinesMidGlass = new();
     public List<DialogueLine> feedbackLinesMidIceGlass = new();
@@ -61,26 +63,23 @@ public class CustomerOrderData : ScriptableObject
         CraftingJobResult result,
         out List<DialogueLine> feedbackLines)
     {
-        CustomerOrderFeedbackMask mask = ToFeedbackMask(result);
+        CustomerOrderFeedbackMask mask = GetFeedbackMask(result);
         if ((authoredFeedback & mask) == 0)
         {
             feedbackLines = null;
             return false;
         }
 
-        feedbackLines = result switch
-        {
-            CraftingJobResult.Good => feedbackLinesGood,
-            CraftingJobResult.MidIce => feedbackLinesMidIce,
-            CraftingJobResult.MidGlass => feedbackLinesMidGlass,
-            CraftingJobResult.MidIceGlass => feedbackLinesMidIceGlass,
-            CraftingJobResult.MidWrongMenu => feedbackLinesMidWrongMenu,
-            _ => feedbackLinesBad
-        };
-        return true;
+        feedbackLines = GetFeedbackLines(result);
+        return feedbackLines != null && feedbackLines.Count > 0;
     }
 
-    private static CustomerOrderFeedbackMask ToFeedbackMask(CraftingJobResult result)
+    public bool IsFeedbackIntentionallySilent(CraftingJobResult result)
+    {
+        return (intentionallySilentFeedback & GetFeedbackMask(result)) != 0;
+    }
+
+    public static CustomerOrderFeedbackMask GetFeedbackMask(CraftingJobResult result)
     {
         return result switch
         {
@@ -90,6 +89,19 @@ public class CustomerOrderData : ScriptableObject
             CraftingJobResult.MidIceGlass => CustomerOrderFeedbackMask.MidIceGlass,
             CraftingJobResult.MidWrongMenu => CustomerOrderFeedbackMask.MidWrongMenu,
             _ => CustomerOrderFeedbackMask.Bad
+        };
+    }
+
+    private List<DialogueLine> GetFeedbackLines(CraftingJobResult result)
+    {
+        return result switch
+        {
+            CraftingJobResult.Good => feedbackLinesGood,
+            CraftingJobResult.MidIce => feedbackLinesMidIce,
+            CraftingJobResult.MidGlass => feedbackLinesMidGlass,
+            CraftingJobResult.MidIceGlass => feedbackLinesMidIceGlass,
+            CraftingJobResult.MidWrongMenu => feedbackLinesMidWrongMenu,
+            _ => feedbackLinesBad
         };
     }
 }

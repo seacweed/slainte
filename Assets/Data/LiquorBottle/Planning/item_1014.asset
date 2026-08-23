@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LiquorBottleDef
   id: item_1014
   displayName: "\uB728\uAC70\uC6B4 \uBB3C"
-  item: {fileID: 11400000, guid: fa28e672248e14f4ab032a67047dfd9b, type: 2}
+  item: {fileID: 11400000, guid: ab899d4420175d24982b2a2d35aa9f0b, type: 2}
   sprite: {fileID: 0}
   useContextImages: 1
   shopBlankSprite: {fileID: 21300000, guid: ba470000000000000000000000000016, type: 3}
   shelfLidSprite: {fileID: 21300000, guid: ba470000000000000000000000000016, type: 3}
   barSprite: {fileID: 21300000, guid: ba470000000000000000000000000016, type: 3}
-  unlockFlagKey:
+  unlockFlagKey: 
   subCategory: "\uAE30\uD0C0"
   bottleCount: 6
   defaultBottleCount: 4
@@ -30,4 +30,4 @@ MonoBehaviour:
   strangeCoinPrice: 10
   unlockHintType: 0
   recipeBookIcon: {fileID: 0}
-  recipeBookName:
+  recipeBookName: 

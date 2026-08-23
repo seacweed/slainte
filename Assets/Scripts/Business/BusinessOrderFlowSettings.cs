@@ -89,10 +89,6 @@ namespace Slainte.Business
         [Header("필수 영업 액션")]
         public List<BusinessRequiredActionRule> requiredActions = new();
 
-        [Header("판정")]
-        [Range(0f, 1f)] public float midScoreThreshold = 0.45f;
-        [Range(0f, 1f)] public float goodScoreThreshold = 0.8f;
-
         [Header("보상")]
         public int goodMoneyReward = 100;
         public int midMoneyReward = 50;
@@ -119,6 +115,14 @@ namespace Slainte.Business
         [TextArea(2, 4)] public string goodFeedbackText = "완벽해. 딱 원하던 맛이야.";
         [TextArea(2, 4)] public string midFeedbackText = "비슷하긴 한데, 뭔가 조금 아쉬워.";
         [TextArea(2, 4)] public string badFeedbackText = "이건 내가 주문한 술이 아니야.";
+
+        [Header("누락 결과 임시 대사")]
+        public string missingGoodFeedbackText = "goodjob_result_dummy";
+        public string missingMidIceFeedbackText = "midjob_ice_result_dummy";
+        public string missingMidGlassFeedbackText = "midjob_glass_result_dummy";
+        public string missingMidIceGlassFeedbackText = "midjob_ice_glass_result_dummy";
+        public string missingMidWrongMenuFeedbackText = "midjob_wrongmenu_result_dummy";
+        public string missingBadFeedbackText = "badjob_result_dummy";
 
         public int GetMoneyReward(OrderEvaluationGrade grade)
         {
@@ -179,6 +183,19 @@ namespace Slainte.Business
                 OrderEvaluationGrade.Good => goodFeedbackText,
                 OrderEvaluationGrade.Mid => midFeedbackText,
                 _ => badFeedbackText
+            };
+        }
+
+        public string GetMissingFeedbackDummy(CraftingJobResult result)
+        {
+            return result switch
+            {
+                CraftingJobResult.Good => missingGoodFeedbackText,
+                CraftingJobResult.MidIce => missingMidIceFeedbackText,
+                CraftingJobResult.MidGlass => missingMidGlassFeedbackText,
+                CraftingJobResult.MidIceGlass => missingMidIceGlassFeedbackText,
+                CraftingJobResult.MidWrongMenu => missingMidWrongMenuFeedbackText,
+                _ => missingBadFeedbackText
             };
         }
     }

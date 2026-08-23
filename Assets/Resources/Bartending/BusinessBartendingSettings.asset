@@ -37,7 +37,7 @@ MonoBehaviour:
   serveTargetFadeDuration: 0.2
   serveTargetNormalized: {x: 0.35, y: 0.48, z: 0.3, w: 0.42}
   contentsLabelBackgroundColor: {r: 0.04, g: 0.05, b: 0.06, a: 0.82}
-  contentsLabelFont: {fileID: 11400000, guid: 02ac221e0dadb2049b479c49b5f840b4, type: 2}
+  contentsLabelFont: {fileID: 11400000, guid: 8be9d5407d167644e9540752364be580, type: 2}
   contentsLabelTextColor: {r: 1, g: 0.82, b: 0.05, a: 1}
   contentsLabelSizePixels: {x: 220, y: 150}
   contentsLabelOffsetPixels: {x: 28, y: 45}
@@ -69,10 +69,11 @@ MonoBehaviour:
   liquidMetaballEdgeSoftness: 0.03
   liquidMinimumVisibleAlpha: 0.05
   liquidSortingOrder: 12
-  liquidIceCollisionEnabled: 1
+  liquidIceCollisionEnabled: 0
   iceBinWidth: 2.2
   iceBinHeight: 1.2
   iceCubeSize: 0.42
+  iceOpacity: 0.6
   iceGravityScale: 1
   iceDragThreshold: 0.08
   iceCleanupY: -15

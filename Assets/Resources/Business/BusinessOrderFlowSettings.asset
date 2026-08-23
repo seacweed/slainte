@@ -32,8 +32,6 @@ MonoBehaviour:
     sequenceSlot: 3
     customerVisit: {fileID: 0}
     encounterEpisode: {fileID: 11400000, guid: 565cdd3b075026249b49e76ec6df782a, type: 2}
-  midScoreThreshold: 0.45
-  goodScoreThreshold: 0.8
   goodMoneyReward: 100
   midMoneyReward: 50
   badMoneyReward: 0
@@ -45,3 +43,9 @@ MonoBehaviour:
   midFeedbackText: "\uBE44\uC2B7\uD558\uAE34 \uD55C\uB370, \uBB54\uAC00 \uC870\uAE08
     \uC544\uC26C\uC6CC."
   badFeedbackText: "\uC774\uAC74 \uB0B4\uAC00 \uC8FC\uBB38\uD55C \uC220\uC774 \uC544\uB2C8\uC57C."
+  missingGoodFeedbackText: goodjob_result_dummy
+  missingMidIceFeedbackText: midjob_ice_result_dummy
+  missingMidGlassFeedbackText: midjob_glass_result_dummy
+  missingMidIceGlassFeedbackText: midjob_ice_glass_result_dummy
+  missingMidWrongMenuFeedbackText: midjob_wrongmenu_result_dummy
+  missingBadFeedbackText: badjob_result_dummy

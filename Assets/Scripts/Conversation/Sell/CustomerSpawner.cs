@@ -138,11 +138,11 @@ public class CustomerSpawner : MonoBehaviour
         OrderEvaluationGrade grade = ToEvaluationGrade(result);
         ApplyFeedbackExpressions(grade);
 
+        if (_currentOrderData.IsFeedbackIntentionallySilent(result))
+            return CustomerDialoguePresentation.IntentionallySkipped;
+
         if (_currentOrderData.TryGetAuthoredFeedback(result, out List<DialogueLine> authoredLines))
         {
-            if (authoredLines == null || authoredLines.Count == 0)
-                return CustomerDialoguePresentation.IntentionallySkipped;
-
             if (dialogue == null)
                 return CustomerDialoguePresentation.Missing;
 

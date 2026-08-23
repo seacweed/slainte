@@ -95,12 +95,13 @@ namespace Slainte.Bartending
 
         [Header("Liquid/Ice Interaction")]
         [Tooltip("Whether liquid particles physically collide with ice cubes during bartending.")]
-        public bool liquidIceCollisionEnabled = true;
+        public bool liquidIceCollisionEnabled;
 
         [Header("Ice")]
         [Min(0.1f)] public float iceBinWidth = 2.2f;
         [Min(0.1f)] public float iceBinHeight = 1.2f;
         [Min(0.05f)] public float iceCubeSize = 0.42f;
+        [Range(0f, 1f)] public float iceOpacity = 1f;
         [Min(0f)] public float iceGravityScale = 1f;
         [Min(0f)] public float iceDragThreshold = 0.08f;
         public float iceCleanupY = -15f;

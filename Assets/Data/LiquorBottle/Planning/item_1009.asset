@@ -20,7 +20,7 @@ MonoBehaviour:
   shopBlankSprite: {fileID: 21300000, guid: ba470000000000000000000000000008, type: 3}
   shelfLidSprite: {fileID: 21300000, guid: ba470000000000000000000000000009, type: 3}
   barSprite: {fileID: 21300000, guid: ba470000000000000000000000000007, type: 3}
-  unlockFlagKey:
+  unlockFlagKey: 
   subCategory: "\uBCF4\uB4DC\uCE74"
   bottleCount: 6
   defaultBottleCount: 4
@@ -30,4 +30,4 @@ MonoBehaviour:
   strangeCoinPrice: 35
   unlockHintType: 0
   recipeBookIcon: {fileID: 0}
-  recipeBookName:
+  recipeBookName: 

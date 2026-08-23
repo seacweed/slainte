@@ -173,25 +173,18 @@ namespace Slainte.Business
             CocktailOrderEvaluationResult result,
             BusinessOrderFlowSettings settings)
         {
-            float score = result?.requestedRecipeResult != null
-                ? result.requestedRecipeResult.score
-                : result?.detectedRecipeResult != null ? result.detectedRecipeResult.score : 0f;
-            float goodThreshold = settings != null ? settings.goodScoreThreshold : 0.8f;
-            float midThreshold = settings != null ? settings.midScoreThreshold : 0.45f;
+            if (result == null)
+                return OrderEvaluationGrade.Bad;
 
-            if (result != null
-                && result.isSuccess
-                && result.order?.orderType != CocktailOrderType.TasteOrder
-                && result.order?.orderType != CocktailOrderType.MoodOrder
-                && result.requestedRecipeResult?.matchedRecipe != null
-                && result.requestedRecipeResult.matchedRecipe.evaluationGrade
-                    == CocktailRecipeEvaluationGrade.Mid)
-                return OrderEvaluationGrade.Mid;
-
-            if (result != null && result.isSuccess && score >= goodThreshold)
-                return OrderEvaluationGrade.Good;
-
-            return score >= midThreshold ? OrderEvaluationGrade.Mid : OrderEvaluationGrade.Bad;
+            return result.outcome switch
+            {
+                CocktailOrderEvaluationOutcome.Good => OrderEvaluationGrade.Good,
+                CocktailOrderEvaluationOutcome.MidIce => OrderEvaluationGrade.Mid,
+                CocktailOrderEvaluationOutcome.MidGlass => OrderEvaluationGrade.Mid,
+                CocktailOrderEvaluationOutcome.MidIceGlass => OrderEvaluationGrade.Mid,
+                CocktailOrderEvaluationOutcome.MidWrongMenu => OrderEvaluationGrade.Mid,
+                _ => OrderEvaluationGrade.Bad
+            };
         }
     }
 

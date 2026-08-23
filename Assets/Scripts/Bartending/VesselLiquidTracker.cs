@@ -12,6 +12,12 @@ namespace Slainte.Bartending
         private LiquidPayload finalColorPayload;
         private Color cachedFinalColor;
         private bool finalColorDirty = true;
+        private CocktailTechnique explicitTechniques;
+        private bool explicitShakenWithIce;
+        private float stirAttemptedVolumeMl;
+        private float stirredVolumeMl;
+        private float shakenVolumeMl;
+        private float shakenWithIceVolumeMl;
 
         public IReadOnlyDictionary<ItemDef, float> Volumes => volumes;
         public float TotalVolumeMl { get; private set; }
@@ -21,8 +27,22 @@ namespace Slainte.Bartending
         public string GlassId { get; private set; } = string.Empty;
         public bool HasIce { get; private set; }
         public int IceCount { get; private set; }
-        public bool WasShakenWithIce { get; private set; }
-        public CocktailTechnique Techniques { get; private set; } = CocktailTechnique.None;
+        public bool StirAttempted => (explicitTechniques & CocktailTechnique.Stir) != 0
+            || stirAttemptedVolumeMl > 0.0001f;
+        public bool WasShakenWithIce => explicitShakenWithIce
+            || CoversAllContents(shakenWithIceVolumeMl);
+        public CocktailTechnique Techniques
+        {
+            get
+            {
+                CocktailTechnique techniques = explicitTechniques;
+                if (stirredVolumeMl > 0.0001f)
+                    techniques |= CocktailTechnique.Stir;
+                if (shakenVolumeMl > 0.0001f)
+                    techniques |= CocktailTechnique.Shake;
+                return techniques;
+            }
+        }
 
         public void Add(ItemDef item, float volumeMl)
         {
@@ -55,12 +75,31 @@ namespace Slainte.Bartending
 
         public void RecordTechnique(CocktailTechnique technique)
         {
-            Techniques |= technique;
+            explicitTechniques |= technique;
         }
 
         public void RecordShakenWithIce(bool value)
         {
-            WasShakenWithIce |= value;
+            explicitShakenWithIce |= value;
+        }
+
+        public void RecordParticleTechniqueState(
+            float volumeMl,
+            CocktailTechnique techniques,
+            bool stirAttempted,
+            bool wasShakenWithIce)
+        {
+            if (volumeMl <= 0f)
+                return;
+
+            if (stirAttempted)
+                stirAttemptedVolumeMl += volumeMl;
+            if ((techniques & CocktailTechnique.Stir) != 0)
+                stirredVolumeMl += volumeMl;
+            if ((techniques & CocktailTechnique.Shake) != 0)
+                shakenVolumeMl += volumeMl;
+            if (wasShakenWithIce)
+                shakenWithIceVolumeMl += volumeMl;
         }
 
         public void SetServingStyle(string glassId, bool hasIce)
@@ -77,7 +116,51 @@ namespace Slainte.Bartending
 
         public CocktailTechnique GetEffectiveTechniques()
         {
-            return Techniques == CocktailTechnique.None ? CocktailTechnique.Build : Techniques;
+            CocktailTechnique completed = explicitTechniques;
+            if (CoversAllContents(stirredVolumeMl))
+                completed |= CocktailTechnique.Stir;
+            if (CoversAllContents(shakenVolumeMl))
+                completed |= CocktailTechnique.Shake;
+            return completed == CocktailTechnique.None ? CocktailTechnique.Build : completed;
+        }
+
+        public bool MatchesRequiredTechnique(CocktailTechnique required)
+        {
+            if (required == CocktailTechnique.None)
+                return true;
+
+            bool anyShake = (explicitTechniques & CocktailTechnique.Shake) != 0
+                || shakenVolumeMl > 0.0001f;
+            if (required == CocktailTechnique.Build)
+                return !StirAttempted && !anyShake;
+
+            if (required == CocktailTechnique.Stir)
+                return StirAttempted
+                    && ((explicitTechniques & CocktailTechnique.Stir) != 0
+                        || CoversAllContents(stirredVolumeMl))
+                    && !anyShake;
+
+            if (required == CocktailTechnique.Shake)
+                return !StirAttempted
+                    && ((explicitTechniques & CocktailTechnique.Shake) != 0
+                        || CoversAllContents(shakenVolumeMl));
+
+            return GetEffectiveTechniques() == required;
+        }
+
+        public bool MatchesShakeIceRequirement(IceRequirement requirement)
+        {
+            if (requirement == IceRequirement.Any)
+                return true;
+            if (requirement == IceRequirement.Required)
+                return explicitShakenWithIce || CoversAllContents(shakenWithIceVolumeMl);
+            return !explicitShakenWithIce && shakenWithIceVolumeMl <= 0.0001f;
+        }
+
+        private bool CoversAllContents(float coveredVolumeMl)
+        {
+            return TotalVolumeMl > 0.0001f
+                && coveredVolumeMl >= TotalVolumeMl - 0.0001f;
         }
 
         public Color EvaluateFinalColor()
@@ -111,7 +194,7 @@ namespace Slainte.Bartending
         private static readonly HashSet<VesselLiquidTracker> activeVessels = new();
         private static readonly HashSet<LiquidParticleData> activeParticles = new();
         private static readonly HashSet<IceCubeController> activeIceCubes = new();
-        private static bool liquidIceCollisionEnabled = true;
+        private static bool liquidIceCollisionEnabled;
         private readonly HashSet<LiquidParticleData> particles = new();
         private readonly HashSet<LiquidParticleData> ownedParticles = new();
         private readonly HashSet<LiquidParticleData> pendingParticleReleases = new();
@@ -131,6 +214,7 @@ namespace Slainte.Bartending
         private bool hasIce;
         private int interactionPriority;
         private bool externalMotionContentsCaptured;
+        private int contentVersion;
 
         [Header("Debug View")]
         [SerializeField] private bool drawDebugGizmos = false;
@@ -191,6 +275,7 @@ namespace Slainte.Bartending
         internal int InteractionPriority => interactionPriority;
         internal static HashSet<LiquidParticleData> ActiveParticles => activeParticles;
         public static bool LiquidIceCollisionEnabled => liquidIceCollisionEnabled;
+        public int ContentVersion => contentVersion;
 
         public static void SetLiquidIceCollisionEnabled(bool enabled)
         {
@@ -212,7 +297,7 @@ namespace Slainte.Bartending
             activeVessels.Clear();
             activeParticles.Clear();
             activeIceCubes.Clear();
-            liquidIceCollisionEnabled = true;
+            liquidIceCollisionEnabled = false;
         }
 
         private void OnEnable()
@@ -313,11 +398,85 @@ namespace Slainte.Bartending
                 composition.AddThermalSample(
                     particle.payload.TotalVolumeMl,
                     particle.payload.temperatureC);
-                composition.RecordTechnique(particle.payload.techniques);
-                composition.RecordShakenWithIce(particle.payload.wasShakenWithIce);
+                composition.RecordParticleTechniqueState(
+                    particle.payload.TotalVolumeMl,
+                    particle.payload.techniques,
+                    particle.payload.stirAttempted,
+                    particle.payload.wasShakenWithIce);
             }
 
             return composition;
+        }
+
+        public void MarkContentsAsStirAttempted()
+        {
+            Cleanup();
+            RefreshTrackedParticles();
+            foreach (LiquidParticleData particle in particles)
+                particle?.RecordStirAttempt();
+        }
+
+        public void MarkContentsAsStirred()
+        {
+            Cleanup();
+            RefreshTrackedParticles();
+            foreach (LiquidParticleData particle in particles)
+            {
+                if (particle == null)
+                    continue;
+                particle.RecordStirAttempt();
+                particle.RecordTechnique(CocktailTechnique.Stir);
+            }
+        }
+
+        public float CalculateMeanCompositionDeviation()
+        {
+            Cleanup();
+            RefreshTrackedParticles();
+
+            Dictionary<ItemDef, float> totalByItem = new();
+            float totalVolumeMl = 0f;
+            foreach (LiquidParticleData particle in particles)
+            {
+                LiquidPayload payload = particle != null ? particle.payload : null;
+                if (payload == null)
+                    continue;
+
+                for (int i = 0; i < payload.portions.Count; i++)
+                {
+                    LiquidPortion portion = payload.portions[i];
+                    if (portion.sourceItem == null || portion.volumeMl <= 0f)
+                        continue;
+
+                    totalByItem.TryGetValue(portion.sourceItem, out float currentMl);
+                    totalByItem[portion.sourceItem] = currentMl + portion.volumeMl;
+                    totalVolumeMl += portion.volumeMl;
+                }
+            }
+
+            if (totalVolumeMl <= 0.0001f)
+                return 1f;
+
+            float weightedDeviation = 0f;
+            foreach (LiquidParticleData particle in particles)
+            {
+                LiquidPayload payload = particle != null ? particle.payload : null;
+                float particleVolumeMl = payload != null ? payload.TotalVolumeMl : 0f;
+                if (particleVolumeMl <= 0.0001f)
+                    continue;
+
+                float particleDeviation = 0f;
+                foreach (KeyValuePair<ItemDef, float> pair in totalByItem)
+                {
+                    float vesselRatio = pair.Value / totalVolumeMl;
+                    float particleRatio = payload.GetVolume(pair.Key) / particleVolumeMl;
+                    particleDeviation += Mathf.Abs(particleRatio - vesselRatio);
+                }
+
+                weightedDeviation += particleDeviation * 0.5f * particleVolumeMl;
+            }
+
+            return Mathf.Clamp01(weightedDeviation / totalVolumeMl);
         }
 
         public void ConfigureServingStyle(string glassId, bool containsIce = false)
@@ -636,15 +795,16 @@ namespace Slainte.Bartending
 
         internal void RegisterOwnedParticle(LiquidParticleData particle)
         {
-            if (particle != null)
-                ownedParticles.Add(particle);
+            if (particle != null && ownedParticles.Add(particle))
+                contentVersion++;
         }
 
         internal void UnregisterOwnedParticle(LiquidParticleData particle)
         {
             if (particle != null)
             {
-                ownedParticles.Remove(particle);
+                if (ownedParticles.Remove(particle))
+                    contentVersion++;
                 particles.Remove(particle);
                 pendingParticleReleases.Remove(particle);
             }
