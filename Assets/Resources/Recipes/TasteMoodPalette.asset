@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7aafafbe13e4e1148afea1e425df7509, type: 3}
+  m_Name: TasteMoodPalette
+  m_EditorClassIdentifier: Assembly-CSharp::TasteMoodTagPaletteDef
+  tasteEntries:
+  - tag: "\uB2EC\uCF64\uD568"
+    backgroundColor: {r: 1, g: 0.7843138, b: 0.6666667, a: 1}
+    textColor: {r: 0.5921569, g: 0.35686275, b: 0.16470589, a: 1}
+  - tag: "\uB2EC\uD070\uD568"
+    backgroundColor: {r: 0.90196085, g: 0.8117648, b: 0.9490197, a: 1}
+    textColor: {r: 0.427451, g: 0.2784314, b: 0.5803922, a: 1}
+  - tag: "\uC0C8\uD07C\uD568"
+    backgroundColor: {r: 0.8313726, g: 0.9294118, b: 0.7372549, a: 1}
+    textColor: {r: 0.15686275, g: 0.5058824, b: 0.34509805, a: 1}
+  - tag: "\uC0C8\uCF64\uB2EC\uCF64\uD568"
+    backgroundColor: {r: 0.9416387, g: 0.9433962, b: 0.6452474, a: 1}
+    textColor: {r: 1, g: 0.57665074, b: 0.2028302, a: 1}
+  - tag: "\uC501\uC4F8\uD568"
+    backgroundColor: {r: 0.454902, g: 0.21960786, b: 0, a: 1}
+    textColor: {r: 0.9333334, g: 0.7176471, b: 0.58431375, a: 1}
+  - tag: "\uBB34\uB9DB"
+    backgroundColor: {r: 1, g: 1, b: 1, a: 1}
+    textColor: {r: 0, g: 0, b: 0, a: 1}
+  moodEntries:
+  - tag: "\uCCAD\uB7C9\uD55C"
+    backgroundColor: {r: 0.7490196, g: 0.882353, b: 0.96470594, a: 1}
+    textColor: {r: 0.121568635, g: 0.3921569, b: 0.69411767, a: 1}
+  - tag: "\uACE0\uAE09\uC2A4\uB7EC\uC6B4"
+    backgroundColor: {r: 0.90196085, g: 0.8117648, b: 0.9490197, a: 1}
+    textColor: {r: 0.9528302, g: 0.29214135, b: 0.9238792, a: 1}
+  - tag: "\uD3EC\uADFC\uD55C"
+    backgroundColor: {r: 1, g: 0.7843138, b: 0.6666667, a: 1}
+    textColor: {r: 0.8396226, g: 0.74912924, b: 0.1544589, a: 1}
+  - tag: "\uAE54\uB054\uD55C"
+    backgroundColor: {r: 1, g: 1, b: 1, a: 1}
+    textColor: {r: 0, g: 0.8182446, b: 0.8962264, a: 1}
+  - tag: "\uD654\uB824\uD55C"
+    backgroundColor: {r: 0.5330188, g: 0.55824405, b: 1, a: 1}
+    textColor: {r: 0.51795864, g: 0, b: 0.745283, a: 1}
+  - tag: "\uC815\uC5F4\uC801\uC778"
+    backgroundColor: {r: 1, g: 0.6, b: 0.6, a: 1}
+    textColor: {r: 0.9725491, g: 0.14117648, b: 0.14117648, a: 1}

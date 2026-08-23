@@ -3,8 +3,8 @@ guid: 094bec022f573754ca33074dc670dfb7
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3385262541752826656
-    second: mid_left_0
+      213: -2505837874829062208
+    second: MID_left_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -100,23 +100,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: mid_left_0
+      name: MID_left_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 548
-        height: 1440
+        x: 98
+        y: 419
+        width: 412
+        height: 697
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 02bfc98885edafe20800000000000000
-      internalID: 3385262541752826656
+      spriteID: 0cf0816bab9793dd0800000000000000
+      internalID: -2505837874829062208
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 842cec509ec642f4890d766739180a3f
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      mid_left_0: 3385262541752826656
+      MID_left_0: -2505837874829062208
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

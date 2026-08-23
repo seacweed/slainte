@@ -5,6 +5,9 @@ TextureImporter:
   - first:
       213: 8580352971482666360
     second: smile_0
+  - first:
+      213: 5164886467990576518
+    second: smile_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +49,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -103,12 +106,12 @@ TextureImporter:
       name: smile_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 717
-        height: 1440
+        x: 1
+        y: 418
+        width: 671
+        height: 748
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -121,11 +124,33 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: smile_1
+      rect:
+        serializedVersion: 2
+        x: 416
+        y: 121
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68ddccdb0ec5da740800000000000000
+      internalID: 5164886467990576518
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: c305b1e3fd6822a47ab1e81eabc4cb41
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -136,6 +161,7 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       smile_0: 8580352971482666360
+      smile_1: 5164886467990576518
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

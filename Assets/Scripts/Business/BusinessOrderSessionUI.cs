@@ -74,9 +74,12 @@ namespace Slainte.Business
                 return;
             }
 
+            string penaltyPart = result.penaltyAmount > 0
+                ? $" | 실수 {FormatDelta(-result.penaltyAmount)}"
+                : string.Empty;
             SetStatus(
                 $"{GetMoodLabel(result.customerMood)} | 판매금 {result.baseRevenue:N0}"
-                + $" | 팁 {FormatDelta(result.tipAmount)} | 명성 {FormatDelta(result.reputationDelta)}");
+                + $" | 팁 {FormatDelta(result.tipAmount)}{penaltyPart} | 명성 {FormatDelta(result.reputationDelta)}");
         }
 
         public void ShowSequenceProgress(int currentIndex, int totalCount)

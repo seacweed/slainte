@@ -14,20 +14,37 @@
 - `GlassController`는 플레이어가 잔을 끌어 전방 기준선을 넘겼을 때만 제출을 요청합니다. 주문 대사가 끝나면 바로 제조로 진입하며 거절, 포기, 버리기, 제출 버튼은 제공하지 않습니다.
 - 술병 오브젝트는 현재 병의 잔량을 추적하고 `GameProgress`는 전체 재고를 저장합니다. 제출해도 사용한 양은 복구되지 않습니다.
 
+### 판매 보상 공식 (`BusinessOrderRewardCalculator.Calculate`)
+
+`listedPrice`(주문 레시피의 정가)를 기준으로 Good·Mid·Bad 모두 판매 수익 자체는 항상 전액이 즉시 지급됩니다. Bad일 때만 추가로 실수 페널티가 차감되어 순손실이 납니다.
+
+| 등급 | 판매 수익 | 팁 | 실수 페널티 | 순수익 |
+|---|---|---|---|---|
+| Good | `listedPrice` | `round(listedPrice × satisfiedTipRate)`(기본 30%) | — | 약 130% |
+| Mid | `listedPrice` | 없음(`neutralTipRate` 기본 0%) | — | 100% |
+| Bad | `listedPrice` | 없음 | `round(listedPrice × badPenaltyRate)`(기본 130%) | 약 -30% |
+
+- 모든 소수점은 반올림(`Mathf.RoundToInt`).
+- Bad 페널티는 판매 수익이 지급된 직후 잔액을 기준으로 차감되며, 소지금이 페널티보다 적으면 0 밑으로 내려가지 않도록 `min(지급 직후 소지금, 페널티)`로 클램프됩니다.
+- 비율은 `Assets/Resources/Business/BusinessOrderFlowSettings.asset`에서 조정합니다.
+- 정산 화면에는 "총 판매량"(전체 건수+`listedPrice` 합) / "팁"(Good 건수+팁 합) / "실수"(Bad 건수+`listedPrice`+실제 차감액 합)로 요약 표시됩니다 — 자세한 화면 구성은 [corescene-systems.md](../core/corescene-systems.md#settlementmanager--settlementui-coreScenescriptssettlementmanagercs-settlementuics) 참고.
+
 ### 시간 기반 손님 진행
 
-`BusinessShiftController`는 영업 시작 시 진행 조건을 통과한 일반 손님 풀을 고정하고, 주문 사이마다 쿨다운이 끝난 손님 중 하나를 가중치로 추첨합니다. 모든 유효 손님이 쿨다운 중이면 영업이 멈추지 않도록 쿨다운을 이번 추첨에만 무시하고 전체 유효 후보 중 하나를 같은 가중치 방식으로 선택합니다. 손님 수 제한은 없으며 제한시간 동안 주문이 계속 이어집니다. 필수 손님과 필수 인카운터는 `BusinessOrderFlowSettings.requiredActions`에서 일차·진행 조건과 `priority`를 지정합니다. 제한시간이 끝나면 일반 손님은 더 생성하지 않지만 진행 중인 주문과 남은 필수 액션은 모두 마친 뒤 정산합니다.
+`BusinessShiftController`는 영업 시작 시 진행 조건을 통과한 일반 손님 풀을 고정하고, 주문 사이마다 재등장 제한을 통과한 손님 중 하나를 가중치로 추첨합니다(`BusinessSequencePlanner.PickWeightedSequence`). 재등장 제한은 초 단위 쿨다운이 아니라 **최근 등장 손님 최대 2명**을 `Queue`+`HashSet`(`recentCustomerKeySet`)으로 기억해 다음 추첨 후보에서만 제외하는 방식입니다. 유효 후보가 이 제한 때문에 모두 소진되면(예: 서로 다른 손님이 2명뿐인 풀) 쿨다운을 무시하는 폴백 없이 해당 영업의 무작위 손님 생성을 멈춥니다(`StopRandomCustomerSpawning()`) — 단, 남은 영업시간과 진행 중인 주문·필수 액션은 그대로 이어집니다. 손님 수 제한은 없으며 제한시간 동안 주문이 계속 이어집니다. 필수 손님과 필수 인카운터는 `BusinessOrderFlowSettings.requiredActions`에서 일차·진행 조건과 `priority`를 지정합니다. 제한시간이 끝나면 일반 손님은 더 생성하지 않지만 진행 중인 주문과 남은 필수 액션은 모두 마친 뒤 정산합니다.
 
 영업 인카운터는 `EpisodeRunner`를 같은 `BusinessScene` 안에서 실행합니다. 시작 전에 주문 세션이 끝난 상태임을 보장하고, 완료 시 일반 `DayFlowController.OnEpisodeCompleted()` 경로를 타지 않고 남아 있는 영업시간으로 복귀합니다.
 
 에피소드 제조 노드에 직렬화된 `craftingRecipeId`가 있으면 `EpisodeCraftingBridge`가 일반 영업과 같은 실제 제조·판정 세션을 실행합니다. 실제 제조 중에는 기존 수동 `CraftingJudgeUI`를 숨기며, 레시피·제조 화면·잔 추적기 등 기술적인 초기화가 실패한 경우에만 같은 노드의 수동 판정으로 폴백합니다. `craftingRecipeId`가 없는 기존 제조 노드는 처음부터 수동 판정 경로를 유지합니다. 상세 Mid 분기가 없으면 기존 Bad 분기를 사용하며, 에피소드 제조는 판매 수익이나 손님 쿨다운에 포함되지 않습니다.
 
-## 에피소드 제조 노드 (현재: 수동 판정)
+## 에피소드 제조 노드 판정 (`EpisodeCraftingBridge`)
 
-- 에피소드 제조 노드는 `EpisodeRunner.HandleCraftingStart()`에서 처리되며, 기존 방식대로 `OrderTicketManager.Prepare(node.craftingTicketKey)` + `GameModeManager.RequestModeChange(GameMode.CraftingMode)`로 진입해 `CraftingJudgeUI`의 버튼 6개로 수동 판정합니다.
-- 영업과 같은 `BusinessOrderSessionController`(레시피 기반 자동 판정, `BusinessFlowBootstrap.StartEpisodeOrder()` 경유)로 연동해서 수동 판정을 대체하려던 시도가 있었으나(그래프 노드에 `craftingRecipeId` 컬럼과 `CraftingRecipeId` 필드 추가) 컴파일 문제로 되돌려졌습니다. 재통합 예정입니다.
-- 그 흔적으로 `StrangeCoin_0.asset`/`StrangeCoin_1.asset` 그래프에는 `CraftingRecipeId: vodka_lemon`/`whiskey_neat` 값이 여전히 남아 있고, `EpisodeCsvImporter.cs`도 CSV의 `craftingRecipeId` 컬럼을 계속 파싱합니다. 하지만 `EpisodeNode`/`EpisodeEventData` 클래스엔 이 필드가 없어서 지금은 그래프를 저장할 때마다 버려지는 고아 값입니다. 재통합 시 `EpisodeNode.craftingRecipeId` 필드부터 다시 추가해야 합니다.
-- 또 다른 흔적으로 `BusinessFlowBootstrap`이 `CraftingJudgeUI`를 "legacy"로 취급해 `gameObject.SetActive(false)`로 강제로 꺼버리는 코드가 여러 군데(특히 `OrderSessionState` 변화 시마다) 남아있었음 — `GameModeManager.RefreshPanels()`가 `CraftingMode`에서 `CanvasGroup`으로 정상적으로 패널을 켜려 해도 이 강제 비활성화가 덮어써서 크래프팅 진행 중 판정 패널이 안 보이는 버그가 있었음. 해당 코드는 모두 제거되었고, 이제 `CraftingJudgePanel`의 표시 여부는 `GameModeManager`의 모드 전환 하나로만 결정됨.
+`EpisodeRunner.HandleCraftingNode()`가 노드에 `craftingRecipeId`가 있고 브리지가 주입돼 있으면 `EpisodeCraftingBridge.TryStart()`를 먼저 시도합니다. 브리지는 `OrderSessionRequest`(`owner = Episode`, `applyProgressRewards = false`, `clearCustomerOnComplete = false` 등 영업과 분리된 옵션)를 만들어 `BusinessFlowBootstrap.StartEpisodeOrder()`로 영업과 동일한 `BusinessOrderSessionController` 판정 세션을 실행합니다.
+
+- **결과 매핑** (`CraftingResultMapper.Map()`): `BusinessOrderSessionResult` → `CraftingJobResult`(`Good` / `Bad` / `MidWrongMenu` / `MidIce` / `MidGlass` / `MidIceGlass`). 요청한 레시피가 아니라 다른 성공 레시피가 감지되면 `MidWrongMenu`, 요청 레시피 계열(`baseRecipeId` 포함)은 맞지만 얼음·잔 조건만 어긋나면 `MidIce`/`MidGlass`/`MidIceGlass`로 세분화합니다.
+- **분기 반영**: `EpisodeRunner.GoToNextFromCrafting()`이 `EpisodeNode.GetCraftingFlag(result)`/`GetCraftingVarChanges(result)`/`GetNextNodeId(result)`로 결과별 플래그·변수·다음 노드를 조회합니다. `craftingOutcomes`(신규)가 채워져 있으면 우선 사용하고, 비어 있으면 레거시 필드(`craftingFlagGood/Bad`, `nextNodeIdGood/Bad` 등)로 폴백합니다 — 상세 Mid 분기가 없는 기존 데이터는 자동으로 Bad 분기를 탑니다.
+- **수동 판정 폴백**: 레시피·제조 화면·잔 추적기 등 기술적인 초기화가 실패했을 때(`onTechnicalFailure`)만 같은 노드를 `BeginManualCrafting()`으로 전환해 기존 `OrderTicketManager.Prepare(node.craftingTicketKey)` + `GameModeManager.RequestModeChange(GameMode.CraftingMode)` + `CraftingJudgeUI` 6버튼 수동 판정으로 진행합니다. `craftingRecipeId`가 비어 있는 기존 제조 노드는 처음부터 이 수동 경로만 사용합니다.
+- 에피소드 제조는 `applyProgressRewards = false`이므로 판매 수익이나 손님 재등장 제한에 포함되지 않습니다.
 
 ## 영업 씬 손님 & 주문 (`Assets/Scripts/Conversation/Sell/`, `Assets/Scripts/OrderTicket/`)
 
@@ -38,19 +55,24 @@
 손님 풀 구조:
 ```
 CustomerVisitData
- ├── visitKey             (방문 고유 식별자)
- ├── tags                 (검색·연출용 보조 정보)
- ├── members[]            (캐릭터 키, 슬롯, 결과별 표정)
- ├── weight               (방문 추첨 가중치)
- ├── condition            (날짜·플래그·변수·완료 에피소드 조건)
+ ├── visitKey                  (방문 고유 식별자)
+ ├── tags                      (검색·연출용 보조 정보)
+ ├── preferredTasteKey         (기획 CSV 원문 보존, 맛 조건 주문의 후보 연결용)
+ ├── preferredAtmosphereKey    (기획 CSV 원문 보존, 분위기 조건 주문의 후보 연결용)
+ ├── members[]                 (캐릭터 키, 슬롯, 결과별 표정)
+ ├── weight                    (방문 추첨 가중치)
+ ├── condition                 (날짜·플래그·변수·완료 에피소드 조건)
+ ├── initiallyAvailable        (시작 시 활성 여부)
+ ├── availabilityTransitions[] (조건 충족 시 활성/비활성으로 전환)
  ├── maxDay
- ├── cooldownSeconds       (주문 완료 뒤 재등장까지의 유효 영업시간, 기본 100초)
- └── orders[]             (주문 데이터, 가중치, 조건)
+ ├── reappearanceGroupKey      (재등장 제한을 공유할 키, 비어있으면 visitKey 사용 — `GetReappearanceKey()`)
+ └── orders[]                  (주문 데이터, 가중치, 조건)
 
 CustomerOrderData
  ├── key                  (주문 고유 식별자)
  ├── requestedRecipeId    (화면에 표시하지 않는 내부 판정 ID)
  ├── orderType            (레시피 지정 등 주문 판정 유형)
+ ├── orderDialogueAuthored (켜져 있고 lines가 비어있으면 주문 대사를 의도적으로 생략)
  ├── lines                (주문 대사)
  ├── feedbackLinesGood    (제조 성공 피드백 대사)
  ├── feedbackLinesMid     (중간 결과 피드백 대사)
@@ -59,7 +81,15 @@ CustomerOrderData
 
 커플과 단체는 별도 유형으로 나누지 않습니다. `members`가 한 명이면 1인 방문, 두 명이면 커플이나 2인 방문, 세 명 이상이면 단체 방문으로 자연스럽게 표현됩니다. 런타임은 인원 유형이 아니라 구성원 목록만 처리합니다.
 
-일반 손님 풀의 진행 조건은 영업 시작 시 평가합니다. 주문이 끝나면 해당 방문에 `cooldownSeconds`를 적용하고, 쿨다운은 인카운터와 게임 일시정지 중에는 흐르지 않습니다. 주문 후보 조건과 필수 액션 조건은 주문 사이의 안전 구간에서 다시 평가하므로 인카운터가 설정한 플래그나 완료 에피소드로 같은 날 후속 필수 액션을 열 수 있습니다.
+일반 손님 풀의 진행 조건(`condition`, `initiallyAvailable`+`availabilityTransitions`)은 영업 시작 시 평가합니다. 주문이 끝나면 `RecordRecentCustomer()`가 `GetReappearanceKey()` 값을 최근 등장 큐에 기록합니다(위 "시간 기반 손님 진행" 참고). 주문 후보 조건과 필수 액션 조건은 주문 사이의 안전 구간에서 다시 평가하므로 인카운터가 설정한 플래그나 완료 에피소드로 같은 날 후속 필수 액션을 열 수 있습니다.
+
+### 주문 유효성 검증
+
+`CocktailOrderGenerator.CanGenerateOrder(recipeId)`는 실제 주문 생성 전에 요청 레시피 ID가 카탈로그에서 해석되는지 확인합니다. 영업 시작 시 이 검증을 통과하지 못하는 방문은 그날의 고정 손님 풀(`frozenCustomerPool`)에서 제외됩니다. `CustomerSpawner.ShowVisit(...)`는 `bool`을 반환해 정상적인 플레이 실패(예: 조건 불충족)와 데이터 누락 같은 기술적 실패를 서로 다른 로그 심각도로 구분합니다.
+
+### 주문표 대사 데이터 흐름
+
+`BusinessOrderSessionController`가 제조 화면(CraftingMode)으로 진입할 때, 현재 주문이 실제 손님 주문(`CustomerOrderData`)인지 확인한 뒤 `OrderTicketMemoFormatter.Build()`로 해당 주문의 `lines`를 주문표 본문으로 조립해 `OrderTicketManager.Prepare(ticketKey, memoOverride)`에 전달합니다. `orderDialogueAuthored`가 켜져 있고 `lines`가 비어있는 주문은 칵테일명 등으로 폴백하지 않고 빈 본문을 그대로 유지하는 것이 현재 데이터 계약입니다 — 대사가 의도적으로 비어있는 주문임을 뜻합니다.
 
 ## 드래그-드롭 바텐딩 (`Assets/Scripts/DragandDrop/`)
 

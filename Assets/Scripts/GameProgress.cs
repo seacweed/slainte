@@ -56,6 +56,9 @@ public class GameProgress : MonoSingleton<GameProgress>
     [SerializeField] private int dayPaidStrangeCoinIncome  = 0;
     [SerializeField] private int dayReputationDelta  = 0;
     [SerializeField] private List<BusinessSaleRecord> dayDrinkSales = new();
+    [SerializeField] private int dayDeliveryCount = 0;
+    [SerializeField] private int dayDeliverySpend = 0;
+    [SerializeField] private List<SettlementRewardEntry> daySettlementRewards = new();
 
     [Header("TV")]
     [SerializeField] private string tvForecastBroadcastId = "";
@@ -86,6 +89,8 @@ public class GameProgress : MonoSingleton<GameProgress>
     public int    DayStrangeCoinRevenue => dayStrangeCoinRevenue;
     public int    DayPaidStrangeCoinIncome => dayPaidStrangeCoinIncome;
     public int    DayReputationDelta => dayReputationDelta;
+    public int    DayDeliveryCount => dayDeliveryCount;
+    public int    DayDeliverySpend => dayDeliverySpend;
     public string TVForecastBroadcastId => tvForecastBroadcastId;
     public bool   TVForecastRevealed => tvForecastRevealed;
     public string TVActiveBroadcastId => tvActiveBroadcastId;
@@ -162,6 +167,10 @@ public class GameProgress : MonoSingleton<GameProgress>
         dayPaidStrangeCoinIncome = data.dayPaidStrangeCoinIncome;
         dayReputationDelta  = data.dayReputationDelta;
         dayDrinkSales       = CloneSaleRecords(data.dayDrinkSales);
+        dayDeliveryCount    = data.dayDeliveryCount;
+        dayDeliverySpend    = data.dayDeliverySpend;
+        daySettlementRewards = new List<SettlementRewardEntry>(
+            data.daySettlementRewards ?? new List<SettlementRewardEntry>());
         tvForecastBroadcastId = data.tvForecastBroadcastId ?? "";
         tvForecastRevealed = data.tvForecastRevealed;
         tvActiveBroadcastId = data.tvActiveBroadcastId ?? "";
@@ -594,10 +603,10 @@ public class GameProgress : MonoSingleton<GameProgress>
             return;
 
         BusinessSaleRecord stored = record.Clone();
-        if (stored.baseRevenue == 0 && stored.tipAmount == 0 && stored.totalRevenue != 0)
+        if (stored.baseRevenue == 0 && stored.tipAmount == 0 && stored.penaltyAmount == 0 && stored.totalRevenue != 0)
             stored.baseRevenue = stored.totalRevenue;
         else
-            stored.totalRevenue = stored.baseRevenue + stored.tipAmount;
+            stored.totalRevenue = stored.baseRevenue + stored.tipAmount - stored.penaltyAmount;
 
         if (stored.customerMood == CustomerMood.Unknown)
             stored.customerMood = BusinessOrderRewardCalculator.ResolveMood(stored.grade);
@@ -630,6 +639,36 @@ public class GameProgress : MonoSingleton<GameProgress>
         dayTotalIncome += amount;
     }
 
+    public void RecordDeliveryPurchase(int amount)
+    {
+        if (amount <= 0)
+            return;
+
+        dayDeliveryCount += 1;
+        dayDeliverySpend += amount;
+    }
+
+    // dayPaidMoneyIncome은 올리지 않고 dayTotalIncome만 올려서, 정산 시점의
+    // SettlementManager.ApplyRecordedIncome()이 그 차액을 지갑에 실제로 지급하게 한다.
+    public void AddSettlementReward(string label, int amount)
+    {
+        if (string.IsNullOrWhiteSpace(label) || amount == 0)
+            return;
+
+        daySettlementRewards ??= new List<SettlementRewardEntry>();
+        daySettlementRewards.Add(new SettlementRewardEntry
+        {
+            label = label.Trim(),
+            amount = amount
+        });
+        dayTotalIncome += amount;
+    }
+
+    public List<SettlementRewardEntry> GetDaySettlementRewards()
+    {
+        return new List<SettlementRewardEntry>(daySettlementRewards ?? new List<SettlementRewardEntry>());
+    }
+
     public void ResetDaySettlement()
     {
         dayDrinkSalesCount = 0;
@@ -644,6 +683,9 @@ public class GameProgress : MonoSingleton<GameProgress>
         dayPaidStrangeCoinIncome = 0;
         dayReputationDelta = 0;
         dayDrinkSales?.Clear();
+        dayDeliveryCount = 0;
+        dayDeliverySpend = 0;
+        daySettlementRewards?.Clear();
     }
 
     private static List<BusinessSaleRecord> CloneSaleRecords(

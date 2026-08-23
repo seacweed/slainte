@@ -21,43 +21,88 @@ MonoBehaviour:
   defaultBlinkSprite: {fileID: 0}
   defaultBlinkOverlaySprite: {fileID: 0}
   expressions:
-  - key: mid
-    sprite: {fileID: -7963430592884048618, guid: 4d310ee0a1329f841922b53174e162a2, type: 3}
-    overlaySprite: {fileID: 0}
-    blinkSprite: {fileID: -2973031717827081531, guid: 445df34af18b0cf41bbacd3d51717a32, type: 3}
-    blinkOverlaySprite: {fileID: 0}
   - key: angry
-    sprite: {fileID: -9082789242079819192, guid: dd947b3fb6646394d8600e9a5b086832, type: 3}
+    sprite: {fileID: 21300000, guid: dd947b3fb6646394d8600e9a5b086832, type: 3}
     overlaySprite: {fileID: 0}
-    blinkSprite: {fileID: 6615453753646093957, guid: aa0d2cc032dba1444a8396f0b9487e27, type: 3}
-    blinkOverlaySprite: {fileID: 0}
-  - key: frust
-    sprite: {fileID: -9110267390277040692, guid: 82f01000fecef16408b3b7adf9e08058, type: 3}
-    overlaySprite: {fileID: 0}
-    blinkSprite: {fileID: 0}
-    blinkOverlaySprite: {fileID: 0}
-  - key: laugh
-    sprite: {fileID: 3329039666740383113, guid: 20926e55f4f636e479bdc63aca56e744, type: 3}
-    overlaySprite: {fileID: 0}
-    blinkSprite: {fileID: 0}
-    blinkOverlaySprite: {fileID: 0}
-  - key: serious
-    sprite: {fileID: -8196591245953746782, guid: 70a555a3df542d84bb2a150a92ab294a, type: 3}
-    overlaySprite: {fileID: 0}
-    blinkSprite: {fileID: 0}
-    blinkOverlaySprite: {fileID: 0}
-  - key: shame
-    sprite: {fileID: -6991104958293179531, guid: aa23b2bd2e96bbc4fbed54c442a68f84, type: 3}
-    overlaySprite: {fileID: 0}
-    blinkSprite: {fileID: 0}
-    blinkOverlaySprite: {fileID: 0}
-  - key: smile
-    sprite: {fileID: 8580352971482666360, guid: 13a2c8126088b0c438ac13b383bc2763, type: 3}
-    overlaySprite: {fileID: 0}
-    blinkSprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: aa0d2cc032dba1444a8396f0b9487e27, type: 3}
     blinkOverlaySprite: {fileID: 0}
   - key: angry_left
-    sprite: {fileID: 4053281868181025459, guid: 2b74444c764e4444d84c15bc66e2760f, type: 3}
+    sprite: {fileID: 21300000, guid: 2b74444c764e4444d84c15bc66e2760f, type: 3}
     overlaySprite: {fileID: 0}
-    blinkSprite: {fileID: 6615453753646093957, guid: aa0d2cc032dba1444a8396f0b9487e27, type: 3}
+    blinkSprite: {fileID: 21300000, guid: aa0d2cc032dba1444a8396f0b9487e27, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: angry_right
+    sprite: {fileID: 21300000, guid: 0f1a3398e86feee46b844af4f4590f74, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: aa0d2cc032dba1444a8396f0b9487e27, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: frust
+    sprite: {fileID: 21300000, guid: 82f01000fecef16408b3b7adf9e08058, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: fff91d5a82eef3c429f9577b8f6ccf52, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: frust_left
+    sprite: {fileID: 21300000, guid: 28b29f5f9a11d0e409dd26b5343cf878, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: fff91d5a82eef3c429f9577b8f6ccf52, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: frust_right
+    sprite: {fileID: 21300000, guid: e734abcb6482da94f8144cd092497b43, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: fff91d5a82eef3c429f9577b8f6ccf52, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: laugh
+    sprite: {fileID: 21300000, guid: 20926e55f4f636e479bdc63aca56e744, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
+  - key: mid
+    sprite: {fileID: 21300000, guid: 4d310ee0a1329f841922b53174e162a2, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 445df34af18b0cf41bbacd3d51717a32, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: mid_left
+    sprite: {fileID: 21300000, guid: 094bec022f573754ca33074dc670dfb7, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 445df34af18b0cf41bbacd3d51717a32, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: mid_right
+    sprite: {fileID: 21300000, guid: 67081628c7a742347a07bb15a7870528, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 445df34af18b0cf41bbacd3d51717a32, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: serious
+    sprite: {fileID: 21300000, guid: 70a555a3df542d84bb2a150a92ab294a, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 353d4f25002b9fb4eb426a973af2360a, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: serious_left
+    sprite: {fileID: 21300000, guid: f4c8db1258568ec44967fde6bbc1f84d, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 353d4f25002b9fb4eb426a973af2360a, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: serious_right
+    sprite: {fileID: 21300000, guid: e99bb8af617da3d41827da6c54d1d23e, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 353d4f25002b9fb4eb426a973af2360a, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: shame
+    sprite: {fileID: 21300000, guid: aa23b2bd2e96bbc4fbed54c442a68f84, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 46b69bb10caf7874eb0e5df3de49853c, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: shame_left
+    sprite: {fileID: 21300000, guid: 4b069c08c0cbdd043bc805397177b394, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 46b69bb10caf7874eb0e5df3de49853c, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: shame_right
+    sprite: {fileID: 21300000, guid: 3b956db19f360ca4f9bb5bd3bed005d7, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 46b69bb10caf7874eb0e5df3de49853c, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: smile
+    sprite: {fileID: 21300000, guid: 13a2c8126088b0c438ac13b383bc2763, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
     blinkOverlaySprite: {fileID: 0}

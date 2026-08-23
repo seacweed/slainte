@@ -30,13 +30,11 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private LiquorBottleDef _def;
     private IShopCurrency   _currency;
     private RectTransform   _rectTransform;
-    private float           _priceMultiplier = 1f;
     private Func<int, bool> _trySpendMoney;
     private float           _defaultInventoryAmount;
 
     public LiquorBottleDef Definition => _def;
-    public float PriceMultiplier => _priceMultiplier;
-    public int CurrentPrice => CalculatePrice(GetBasePrice(), _priceMultiplier);
+    public int CurrentPrice => GetBasePrice();
 
     void Awake()
     {
@@ -48,7 +46,6 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         Configure(
             def,
             currency ?? new MoneyShopCurrency(),
-            1f,
             null,
             def != null ? def.DefaultAmount : 0f);
     }
@@ -56,29 +53,12 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     public void Setup(
         LiquorBottleDef def,
         IShopCurrency currency,
-        float priceMultiplier,
         Func<int, bool> trySpendMoney,
         float defaultInventoryAmount)
     {
         Configure(
             def,
             currency ?? new MoneyShopCurrency(),
-            priceMultiplier,
-            trySpendMoney,
-            defaultInventoryAmount);
-    }
-
-    // 배송 상점
-    public void Setup(
-        LiquorBottleDef def,
-        float priceMultiplier,
-        Func<int, bool> trySpendMoney = null,
-        float defaultInventoryAmount = 0f)
-    {
-        Configure(
-            def,
-            new MoneyShopCurrency(),
-            priceMultiplier,
             trySpendMoney,
             defaultInventoryAmount);
     }
@@ -86,13 +66,11 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     private void Configure(
         LiquorBottleDef def,
         IShopCurrency currency,
-        float priceMultiplier,
         Func<int, bool> trySpendMoney,
         float defaultInventoryAmount)
     {
         _def = def;
         _currency = currency ?? new MoneyShopCurrency();
-        _priceMultiplier = Mathf.Max(0f, priceMultiplier);
         _trySpendMoney = trySpendMoney;
         _defaultInventoryAmount = Mathf.Max(0f, defaultInventoryAmount);
 
@@ -132,15 +110,15 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         }
 
         GameProgress progress = GameProgress.Instance;
-        int  basePrice = GetBasePrice();
-        int  price = CalculatePrice(basePrice, _priceMultiplier);
-        bool hasValidPrice = basePrice >= 0;
+        int  price = GetBasePrice();
+        bool hasValidPrice = price >= 0;
         bool isFull = progress != null
             && progress.EnsureBottleAmount(_def.InventoryId, _defaultInventoryAmount) >= _def.MaxAmount;
         bool canAfford = hasValidPrice
             && progress != null
             && (price == 0 || _currency.CurrentAmount >= price);
         bool insufficientFunds = unlocked && !isFull && !canAfford;
+        bool notBuyable = unlocked && (isFull || !canAfford);
 
         if (priceText)
         {
@@ -151,7 +129,7 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         if (buyButton)    buyButton.interactable = unlocked && !isFull && canAfford;
 
         if (buyButtonImage != null && buyButtonOnSprite != null && buyButtonOffSprite != null)
-            buyButtonImage.sprite = insufficientFunds ? buyButtonOffSprite : buyButtonOnSprite;
+            buyButtonImage.sprite = notBuyable ? buyButtonOffSprite : buyButtonOnSprite;
     }
 
     private bool IsUnlocked()
@@ -175,10 +153,9 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         if (progress.EnsureBottleAmount(inventoryId, _defaultInventoryAmount) >= _def.MaxAmount)
             return false;
 
-        int basePrice = GetBasePrice();
-        if (basePrice < 0) return false;
+        int price = GetBasePrice();
+        if (price < 0) return false;
 
-        int price = CalculatePrice(basePrice, _priceMultiplier);
         if (price > 0)
         {
             bool spent = _trySpendMoney != null
@@ -200,13 +177,6 @@ public class ItemSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         if (_currency != null)
             return _currency.GetPrice(_def);
         return _def != null ? _def.price : 0;
-    }
-
-    public static int CalculatePrice(int basePrice, float multiplier)
-    {
-        return Mathf.Max(
-            0,
-            Mathf.CeilToInt(Mathf.Max(0, basePrice) * Mathf.Max(0f, multiplier)));
     }
 
     public void OnPointerEnter(PointerEventData eventData)

@@ -27,6 +27,7 @@
 - **RestScene 팝업 상호배타**: `BaseUIManager`를 상속하는 RestScene 팝업은 `OpenUI()` 호출 시 자기 자신을 제외한 나머지가 자동으로 닫힘 — 새 팝업을 추가해도 상속만 하면 자동 적용됨. 로딩 연출처럼 진행 중 다른 팝업으로 전환되면 안 되는 구간은 `LockTransitions()`/`UnlockTransitions()`로 잠글 수 있음
 - **상점/술장 데이터 공유**: 상점의 재료 마스터 데이터는 임시 `ItemData`가 아니라 술장과 동일한 `LiquorBottleDef`/`LiquorCategoryDef`를 그대로 사용 — 잔량이 같은 `GameProgress` 저장소를 공유해 두 화면이 자동 동기화됨. 레시피북 구매처럼 새 해금 흐름을 추가할 땐 `GameProgress`에 새 저장소를 만들지 않고 기존 flag 시스템(`SetFlag`/`HasFlag`)을 재사용하는 패턴을 따를 것
 - **상점 화폐 추상화**: 상점 슬롯(`ItemSlotUI`)은 `IShopCurrency`로 결제 수단을 주입받음(`MoneyShopCurrency`/`StrangeCoinShopCurrency`) — 새 화폐나 특수 상점을 추가할 때 슬롯/카테고리 로직을 복제하지 말고 `IShopCurrency` 구현체만 추가하는 패턴을 따를 것
+- **화면 전용 UI는 공유 컴포넌트에 옵션을 얹지 말고 포크**: 기존 슬롯(`ItemSlotUI`)을 다른 화면(배송)에서 쓰되 그 화면만의 필드로 프리팹 크기/레이아웃 자체가 바뀌어야 하면, 공유 프리팹에 조건부 필드를 추가하지 말고 스크립트+프리팹을 통째로 복제한 전용 클래스를 만들 것(예: `ItemSlotUI` → `DeliveryItemSlotUI`). 그런 화면 전용 프리팹 참조들은 개별 UI 컴포넌트가 아니라 공용 카탈로그 SO(`LiquorShopCatalog`)에 모아두고 `Initialize()` 시점에 주입하는 패턴을 따를 것
 
 ## 문서
 
@@ -38,11 +39,11 @@
 | **core** |||
 | [docs/core/architecture.md](docs/core/architecture.md) | GameMode/패널 구조, 입력 처리, GameProgress, 데이터 패턴, 공용 UI 유틸리티 |
 | [docs/core/scene-structure.md](docs/core/scene-structure.md) | 씬 계층 구조 (Canvas, Panel, GameObject) |
-| [docs/core/corescene-systems.md](docs/core/corescene-systems.md) | CoreScene 매니저 구조, 게임 흐름, 저장/로드 |
+| [docs/core/corescene-systems.md](docs/core/corescene-systems.md) | CoreScene 매니저 구조, 게임 흐름, 정산(SettlementManager/SettlementUI) 로직, 저장/로드 |
 | [docs/core/game-flow-design.md](docs/core/game-flow-design.md) | Day 흐름 설계(영업/에피소드/정산), 필수 에피소드 큐, 챕터·해금 데이터 모델 |
 | [docs/core/unity-build.md](docs/core/unity-build.md) | Unity 버전, 빌드 방법, 개발 환경 |
 | **narrative** |||
-| [docs/narrative/episode-engine.md](docs/narrative/episode-engine.md) | 에피소드 오케스트레이션(EpisodeRunner, 분기, 제조 트리거), 오디오/BGM |
+| [docs/narrative/episode-engine.md](docs/narrative/episode-engine.md) | 에피소드 오케스트레이션(EpisodeRunner, 분기, 제조 판정 연동, 정산 커스텀 보상), 오디오/BGM |
 | [docs/narrative/episode-csv-guide.md](docs/narrative/episode-csv-guide.md) | 에피소드 CSV 작성법 (섹션 구조, 열 설명, 예시) |
 | [docs/narrative/narrative-graph-editor.md](docs/narrative/narrative-graph-editor.md) | 그래프 에디터 아키텍처, 데이터 구조, 컴파일/임포트/ID 할당 |
 | [docs/narrative/narrative-graph-guide.md](docs/narrative/narrative-graph-guide.md) | 그래프 에디터 사용 가이드 (노드 생성·연결·시퀀스 편집·컴파일) |
@@ -52,11 +53,15 @@
 | [docs/ui/recipe-book-search.md](docs/ui/recipe-book-search.md) | 도감 검색 UI(RecipeSearchUI/RecipeSearchOptionButton), 화면 전환 흐름 |
 | [docs/ui/notification-system.md](docs/ui/notification-system.md) | 알림 시스템(NotificationManager/AffinityNotificationUI/AnimatedSpriteUI), 씬 설정 |
 | [docs/ui/liquor-shelf.md](docs/ui/liquor-shelf.md) | 술장 시스템 (LiquorShelfUI, 카테고리/슬롯 구조, 씬 세팅) |
+| [docs/ui/tv-broadcast-system.md](docs/ui/tv-broadcast-system.md) | TV 방송 시스템 (예보→활성 하루 지연 구조, 5종 효과, 휴식 화면 표시) |
 | [docs/ui/mainmenu-intro.md](docs/ui/mainmenu-intro.md) | 메인메뉴 인트로 연출(팀 로고/타이틀 깜박임·발광/배경 레이어/캐릭터 스포너), 씬 세팅 |
 | **gameplay** |||
 | [docs/gameplay/character-presentation.md](docs/gameplay/character-presentation.md) | 캐릭터 표시(CharacterView/CharacterStage/CharacterData), 대화 렌더링 |
-| [docs/gameplay/bartending-systems.md](docs/gameplay/bartending-systems.md) | 바텐딩 도구(GlassController 등), MetaballFluid 액체 입자 시스템 |
-| [docs/gameplay/business-interactions.md](docs/gameplay/business-interactions.md) | 영업 씬 손님&주문, 드래그-드롭 바텐딩 |
+| [docs/gameplay/bartending-systems.md](docs/gameplay/bartending-systems.md) | 바텐딩 도구(GlassController 등), 액체 의미 데이터 계층(LiquidPayload/VesselLiquidTracker)과 레시피 판정(CocktailEvaluator), MetaballFluid 시각 시스템 |
+| [docs/gameplay/business-interactions.md](docs/gameplay/business-interactions.md) | 영업 씬 손님&주문, 손님 재등장 규칙, 주문표 대사 흐름, 판매 보상 공식(팁/실수 페널티), 드래그-드롭 바텐딩 |
 | [docs/gameplay/item-data-table-guide.md](docs/gameplay/item-data-table-guide.md) | 기획자용 상점 아이템 CSV 컬럼 정의와 작성 규칙 |
+| [docs/gameplay/known-issues.md](docs/gameplay/known-issues.md) | 재조사·재검증이 필요한 미해결 버그와 보류 결정 목록 |
+| [docs/bartending-art-data-mismatches.md](docs/bartending-art-data-mismatches.md) | 병 아트 세트와 LiquorBottleDef/ItemDef 연결 현황, 데이터·아트 누락 목록 |
+| [docs/customer-availability-missing-data.md](docs/customer-availability-missing-data.md) | 손님 등장조건 CSV 반영 현황, 누락된 에피소드·플래그·이미지 목록 |
 | **tools** |||
 | [docs/tools/editor-tools.md](docs/tools/editor-tools.md) | 에디터 툴 목록 및 사용법 |

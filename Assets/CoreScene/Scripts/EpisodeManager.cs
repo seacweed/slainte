@@ -44,7 +44,7 @@ public class EpisodeManager : MonoSingleton<EpisodeManager>
         {
             if (ep.episodeType != EpisodeType.Default) continue;
             if (gp != null && gp.IsEpisodeCompleted(ep.episodeId)) continue;
-            if (IsVisible(ep, gp)) visible.Add(ep);
+            if (IsUnlocked(ep, gp)) visible.Add(ep);
         }
         return visible;
     }
@@ -67,21 +67,6 @@ public class EpisodeManager : MonoSingleton<EpisodeManager>
     }
 
     public bool HasPendingMandatoryEpisode() => GetNextMandatoryEpisode() != null;
-
-    public bool IsVisible(EpisodeData ep, GameProgress gp)
-    {
-        if (ep == null) return false;
-        
-        // 해금 조건이 참이라면 무조건 보입니다.
-        if (IsUnlocked(ep, gp)) return true;
-
-        if (gp == null) return false;
-
-        // 해금 조건은 못 채웠지만, 플레이 중 에피소드 정보를 얻은 경우(플래그 존재 시) 보드에 표시됩니다.
-        if (gp.HasFlag($"{ep.episodeId}_Discovered")) return true;
-
-        return false;
-    }
 
     // 해금 조건 — 만족하면 작전판에 노출됨
     public bool IsUnlocked(EpisodeData ep, GameProgress gp)
@@ -109,6 +94,7 @@ public class EpisodeManager : MonoSingleton<EpisodeManager>
             SelectConditionType.RequiredFlag => gp.HasFlag(cond.requiredFlag),
             SelectConditionType.PrerequisiteEpisode => gp.IsEpisodeCompleted(cond.prerequisiteEpisodeId),
             SelectConditionType.RequiredVar => new VarCondition { varName = cond.varName, op = cond.varOp, threshold = cond.varThreshold }.Evaluate(gp.GetAffinity(cond.varName)),
+            SelectConditionType.MinMoney => gp.CurrentMoney >= cond.minMoney,
             _ => true
         };
     }
@@ -120,6 +106,7 @@ public class EpisodeManager : MonoSingleton<EpisodeManager>
         if (gp == null) return false;
 
         if (gp.CurrentDay < cond.minDay) return false;
+        if (gp.CurrentMoney < cond.minMoney) return false;
 
         for (int i = 0; i < cond.requiredFlags.Count; i++)
             if (!gp.HasFlag(cond.requiredFlags[i])) return false;

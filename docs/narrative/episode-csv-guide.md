@@ -13,6 +13,7 @@
   - [OPENING_CHARS](#opening_chars)
   - [BOARD](#board)
   - [BOARD_CHARS](#board_chars)
+  - [SETTLEMENT_REWARDS](#settlement_rewards)
   - [SELECT_CHARS](#select_chars)
   - [NODES](#nodes)
   - [NODE_CRAFTING_BRANCHES](#node_crafting_branches)
@@ -39,7 +40,7 @@
 
 ## 전체 구조
 
-파일은 `#섹션명` 으로 구분된 최대 15개 섹션으로 이루어집니다.  
+파일은 `#섹션명` 으로 구분된 최대 16개 섹션으로 이루어집니다.  
 각 섹션은 **헤더 행(열 이름)** → **데이터 행** 순서로 작성합니다.
 
 ```
@@ -66,6 +67,9 @@
 ...
 
 #BOARD_CHARS
+...
+
+#SETTLEMENT_REWARDS
 ...
 
 #NODES
@@ -123,41 +127,44 @@ StrangeCoin_0,이상한 동전 - 0,0,Encounter,None,chapter_1
 
 ### TRIGGER
 
-이 에피소드가 작전판(Rest 화면)에 **해금(노출)**되는 조건입니다. **데이터 행은 반드시 1개** 작성합니다.
+이 에피소드가 작전판(Rest 화면)에 **해금(노출)**되는 조건입니다. **행 하나 = 조건 하나**이며, 여러 행을 작성하면 **AND로 결합**됩니다(`SELECT_TRIGGER`와 같은 행 방식이지만, 옵션이 아니라 항목이 전부 AND로 묶인다는 점이 다릅니다). 작전판 툴팁에는 이 행들이 **작성한 순서 그대로, 행별 텍스트와 함께** 표시됩니다.
 
-| 열 | 설명 | 예시 |
+- 컬럼: `conditionType`(`MinDay`/`RequiredFlag`/`PrerequisiteEpisode`/`RequiredVar`/`MinMoney` 중 하나), `conditionValue`(타입에 따라 의미가 다름 — 아래 표), `text`(툴팁에 표시할 커스텀 힌트. 비우면 조건에서 문구를 자동 생성)
+- **생략 가능** — 섹션 자체를 안 쓰면 "해금 조건 없음"(항상 노출)으로 처리됩니다.
+- `blockedFlags`/`requiredCustomerAppearances` 조건은 CSV로 작성할 수 없습니다 — 필요하면 에셋 인스펙터에서 `triggerCondition` 필드에 직접 입력하세요(그 경우 툴팁에는 표시되지 않습니다).
+
+| `conditionType` | `conditionValue` 형식 | 예시 |
 |---|---|---|
-| `minDay` | 발동 가능한 최소 일수 | `3` |
-| `requiredFlags` | 이 플래그가 **모두 켜져있어야** 발동 | `flag_a\|flag_b` |
-| `blockedFlags` | 이 플래그 중 **하나라도 켜져있으면** 발동 안 함 | `flag_ended` |
-| `prerequisiteEpisodeIds` | 이 에피소드들이 **모두 완료되어야** 발동 | `Intro_0\|Intro_1` |
-| `requiredVars` | 수치 변수 조건이 **모두 충족되어야** 발동 | `sally_affinity>=10` |
-| `requiredCustomerAppearances` | 손님이 **이 횟수 이상 등장해야** 발동 (`캐릭터ID:횟수`, `\|` 구분) | `himiko:3` |
-
-- 조건이 없는 열은 **비워두면** 됩니다.
-- 여러 값은 `|` 로 구분합니다.
-- `requiredVars` 지원 연산자: `>=` `>` `==` `<` `<=`
+| `MinDay` | 숫자 | `3` |
+| `RequiredFlag` | 플래그 이름 | `flag_met_customer` |
+| `PrerequisiteEpisode` | 에피소드 ID | `Intro_0` |
+| `RequiredVar` | `varName연산자값` (연산자: `>=` `>` `==` `<` `<=`) | `sally_affinity>=5` |
+| `MinMoney` | 숫자(소지금 이 값 이상이어야 함) | `500000` |
 
 ```csv
 #TRIGGER
-minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCustomerAppearances
-3,flag_met_customer,,Intro_0,sally_affinity>=5,himiko:3
+conditionType,conditionValue,text
+MinDay,3,3일차 이후
+RequiredFlag,flag_met_customer,손님과 첫 만남
 ```
 
 ---
 
 ### PLAY_TRIGGER
 
-`TRIGGER`(해금 조건)와 컬럼 구성이 완전히 동일하지만 의미가 다릅니다 — 이 조건을 만족해야 작전판에서 **Play 버튼이 활성화**됩니다. 해금은 됐지만 아직 플레이는 못 하는 상태(예: 사진은 작전판에 떴지만 눌러보면 버튼이 비활성)를 표현할 때 씁니다.
+`TRIGGER`(해금 조건)와 컬럼 구성·문법이 완전히 동일하지만 의미가 다릅니다 — 이 조건을 만족해야 작전판에서 **Play 버튼이 활성화**됩니다. 해금은 됐지만 아직 플레이는 못 하는 상태(예: 사진은 작전판에 떴지만 눌러보면 버튼이 비활성)를 표현할 때 씁니다.
 
 - **생략 가능** — 섹션 자체를 안 쓰면 "플레이 조건 없음"(해금되면 바로 플레이 가능)으로 처리됩니다.
-- 열 구성과 문법은 `TRIGGER`와 동일합니다.
+- 작전판 툴팁에는 `TRIGGER`와 `PLAY_TRIGGER`의 모든 행이 **한 목록에 합쳐져서** 표시됩니다(순서는 TRIGGER 행들 다음 PLAY_TRIGGER 행들).
 
 ```csv
 #PLAY_TRIGGER
-minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCustomerAppearances
-0,,,,,
+conditionType,conditionValue,text
+RequiredVar,sally_affinity>=5,사라 호감도 5 이상
+PrerequisiteEpisode,Intro_0,'인트로' 에피소드 완료
 ```
+
+> **주의**: `TRIGGER`/`PLAY_TRIGGER`는 `SELECT_TRIGGER`와 마찬가지로 재임포트 시 항상 CSV 내용으로 전체 교체됩니다(섹션이 있으면 없는 행은 사라짐). 섹션 자체를 안 쓰면 "조건 없음"으로 처리될 뿐, 기존 값이 유지되지는 않습니다.
 
 ---
 
@@ -170,7 +177,7 @@ minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCu
 - **옵션 하나당 조건은 딱 하나**입니다(`TRIGGER`/`PLAY_TRIGGER`처럼 여러 조건을 AND로 걸 수 없음). 조건을 여러 개 걸고 싶으면 옵션(행)을 여러 개로 나눠서 작성하세요
 - 그 조건이 충족된 옵션만 토글 인터랙션이 가능(미충족이면 off로 고정, 비활성 표시)
 - 켜진 옵션의 on/off 값은 Play 버튼 클릭(에피소드 시작) 시점에 그 행의 `selectFlag` 열 플래그로 반영됨(켜진 옵션 → `SetFlag`, 나머지 옵션 → `ClearFlag`) — 에피소드 노드의 `flagBranches` 등에서 분기 조건으로 사용
-- 컬럼: `conditionType`(`None`/`MinDay`/`RequiredFlag`/`PrerequisiteEpisode`/`RequiredVar` 중 하나), `conditionValue`(타입에 따라 의미가 다름 — 아래 표), `selectFlag`(반영할 플래그 이름), `selectText`(이 옵션 조건 뒤에 표시할 커스텀 힌트 한 줄. 비우면 조건에서 문구를 자동 생성), `revealConditionType`/`revealConditionValue`(이 옵션의 내용을 플레이어에게 공개하는 조건 — 형식은 `conditionType`/`conditionValue`와 동일. 비우면 항상 공개), `hiddenText`(`revealConditionType`/`revealConditionValue` 미충족일 때 `selectText` 대신 표시할 텍스트. **비우면 `"???"`로 표시** — 미충족 시 항상 `"???"`가 아니라, 여기 채워둔 다른 문구를 보여주다가 reveal 조건이 충족되면 `selectText`로 바뀌는 것도 가능)
+- 컬럼: `conditionType`(`None`/`MinDay`/`RequiredFlag`/`PrerequisiteEpisode`/`RequiredVar`/`MinMoney` 중 하나), `conditionValue`(타입에 따라 의미가 다름 — 아래 표), `selectFlag`(반영할 플래그 이름), `selectText`(이 옵션 조건 뒤에 표시할 커스텀 힌트 한 줄. 비우면 조건에서 문구를 자동 생성), `revealConditionType`/`revealConditionValue`(이 옵션의 내용을 플레이어에게 공개하는 조건 — 형식은 `conditionType`/`conditionValue`와 동일. 비우면 항상 공개), `hiddenText`(`revealConditionType`/`revealConditionValue` 미충족일 때 `selectText` 대신 표시할 텍스트. **비우면 `"???"`로 표시** — 미충족 시 항상 `"???"`가 아니라, 여기 채워둔 다른 문구를 보여주다가 reveal 조건이 충족되면 `selectText`로 바뀌는 것도 가능)
 
 | `conditionType` / `revealConditionType` | `conditionValue` / `revealConditionValue` 형식 | 예시 |
 |---|---|---|
@@ -179,6 +186,7 @@ minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCu
 | `RequiredFlag` | 플래그 이름 | `flag_got_hint` |
 | `PrerequisiteEpisode` | 에피소드 ID | `Intro_0` |
 | `RequiredVar` | `varName연산자값`(`TRIGGER`의 `requiredVars` 문법과 동일) | `sally_affinity>=5` |
+| `MinMoney` | 숫자(소지금 이 값 이상이어야 함) | `500000` |
 
 ```csv
 #SELECT_TRIGGER
@@ -247,13 +255,14 @@ f72,frust,-1
 | `episodeDescription` | 작전판에 표시될 에피소드 설명(여러 줄 가능) | `이상한 동전을 주운 손님이 찾아온다.` |
 | `iconNameBoard` | 작전판 카드에 쓸 아이콘 이름 | `icon_coin` |
 | `iconNameArchive` | 아카이브(다시보기)에 쓸 아이콘 이름 | `icon_coin_archive` |
-| `triggerConditionTexts` | 해금 조건 커스텀 힌트 목록(`\|` 구분). 비우면 `TRIGGER` 조건에서 문구를 자동 생성 | `A에게 돈 10000원 지급\|3일차 이후` |
 
 ```csv
 #BOARD
-episodeDescription,iconNameBoard,iconNameArchive,triggerConditionTexts
-"이상한 동전을 주운 손님이 찾아온다.",icon_coin,icon_coin_archive,A에게 돈 10000원 지급
+episodeDescription,iconNameBoard,iconNameArchive
+"이상한 동전을 주운 손님이 찾아온다.",icon_coin,icon_coin_archive
 ```
+
+> 해금 조건 커스텀 힌트는 `BOARD`가 아니라 `TRIGGER`/`PLAY_TRIGGER` 각 행의 `text` 열에 작성합니다.
 
 > **주의**: 설명에 쉼표가 있으면 `NODES`의 `text`와 마찬가지로 큰따옴표로 감싸야 합니다.
 
@@ -274,6 +283,28 @@ episodeDescription,iconNameBoard,iconNameArchive,triggerConditionTexts
 #BOARD_CHARS
 isHidden,characterName
 false,f72
+```
+
+---
+
+### SETTLEMENT_REWARDS
+
+에피소드가 끝날 때 특정 플래그가 서 있으면 정산 화면에 커스텀 보상 줄을 추가합니다. **선택 사항** — 비워두면(섹션 자체를 안 쓰면) 기존 에셋 값을 유지합니다. 0개, 1개, 여러 개 모두 가능합니다.
+
+- **행 하나 = 보상 조건 하나**입니다.
+- 에피소드 종료 시점에 `requiredFlag`가 켜져 있는 행만 정산 화면에 반영됩니다(예: 특정 선택지의 `setFlags`나 제조 결과의 `flag`로 미리 세워둔 플래그).
+- 지급은 **정산 시점**에 이루어집니다(음료 판매처럼 그 자리에서 바로 지급되지 않습니다).
+
+| 열 | 설명 | 예시 |
+|---|---|---|
+| `requiredFlag` | 이 플래그가 서 있어야 보상이 지급됨 | `celi_apology_paid` |
+| `label` | 정산 화면에 표시할 문구 | `소란 피워서 미안해 - 셀리` |
+| `amount` | 지급 금액(음수면 차감) | `150` |
+
+```csv
+#SETTLEMENT_REWARDS
+requiredFlag,label,amount
+celi_apology_paid,소란 피워서 미안해 - 셀리,150
 ```
 
 ---
@@ -501,17 +532,13 @@ flag_a|flag_b|flag_c
 episodeId,episodeTitle,firstNodeId,episodeType,mandatorySlot,chapterId
 Example_0,예시 에피소드,0,Default,None,chapter_1
 
-#TRIGGER
-minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCustomerAppearances
-0,,,,,
-
 #OPENING_CHARS
 characterKey,expressionKey,slotIndex
 f72,neutral,-1
 
 #BOARD
-episodeDescription,iconNameBoard,iconNameArchive,triggerConditionTexts
-"작전판에 표시될 짧은 설명입니다.",icon_example,icon_example_archive,
+episodeDescription,iconNameBoard,iconNameArchive
+"작전판에 표시될 짧은 설명입니다.",icon_example,icon_example_archive
 
 #BOARD_CHARS
 isHidden,characterName

@@ -51,6 +51,10 @@ namespace Slainte.Bartending
         [Header("Ingredients")]
         public List<CocktailRecipeIngredientDef> ingredients = new();
 
+        [Header("Recipe Book")]
+        public Sprite icon;
+        [TextArea] public string description;
+
         public CocktailRecipe ToRuntime(ItemDefCatalog itemCatalog)
         {
             CocktailRecipe recipe = new CocktailRecipe
@@ -72,7 +76,9 @@ namespace Slainte.Bartending
                 iceRequirement = iceRequirement,
                 requiredIceCount = requiredIceCount,
                 shakeIceRequirement = shakeIceRequirement,
-                requiredTechnique = requiredTechnique
+                requiredTechnique = requiredTechnique,
+                icon = icon,
+                description = description
             };
 
             CopyTags(ingredientPropertyTags, recipe.ingredientPropertyTags);

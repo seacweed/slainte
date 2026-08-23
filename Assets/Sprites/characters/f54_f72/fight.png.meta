@@ -5,6 +5,9 @@ TextureImporter:
   - first:
       213: -1747210058070165492
     second: fight_0
+  - first:
+      213: 5129681175526685144
+    second: fight_1
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +49,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -103,12 +106,12 @@ TextureImporter:
       name: fight_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1244
-        height: 1440
+        x: 1149
+        y: 1426
+        width: 16
+        height: 14
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -121,11 +124,33 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: fight_1
+      rect:
+        serializedVersion: 2
+        x: 12
+        y: 367
+        width: 1247
+        height: 903
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8d9b646d9d9403740800000000000000
+      internalID: 5129681175526685144
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: b72a931ecc653a44f9605abc4a458d1c
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -136,6 +161,7 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       fight_0: -1747210058070165492
+      fight_1: 5129681175526685144
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

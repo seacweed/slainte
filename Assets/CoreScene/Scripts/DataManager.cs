@@ -73,6 +73,9 @@ public class DataManager : MonoSingleton<DataManager>
             CurrentData.dayPaidStrangeCoinIncome = gp.DayPaidStrangeCoinIncome;
             CurrentData.dayReputationDelta  = gp.DayReputationDelta;
             CurrentData.dayDrinkSales       = gp.GetDayDrinkSales();
+            CurrentData.dayDeliveryCount    = gp.DayDeliveryCount;
+            CurrentData.dayDeliverySpend    = gp.DayDeliverySpend;
+            CurrentData.daySettlementRewards = gp.GetDaySettlementRewards();
             CurrentData.tvForecastBroadcastId = gp.TVForecastBroadcastId;
             CurrentData.tvForecastRevealed = gp.TVForecastRevealed;
             CurrentData.tvActiveBroadcastId = gp.TVActiveBroadcastId;

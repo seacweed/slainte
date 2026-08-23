@@ -366,25 +366,23 @@ namespace NarrativeFlow.Editor
             sb.AppendLine($"{data.episodeId},{data.episodeTitle},{data.firstNodeId},{data.episodeType},{data.mandatorySlot},{data.chapterId}");
             sb.AppendLine();
 
-            if (data.triggerCondition != null)
+            var triggerExportEntries = ResolveExportEntries(data.triggerConditionEntries, data.triggerCondition);
+            if (triggerExportEntries.Count > 0)
             {
-                var tc = data.triggerCondition;
                 sb.AppendLine("#TRIGGER");
-                sb.AppendLine("minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCustomerAppearances");
-                string reqVars = string.Join("|", tc.requiredVars.Select(v => $"{v.varName}{CompareOpToString(v.op)}{v.threshold}"));
-                string reqAppearances = string.Join("|", tc.requiredCustomerAppearances.Select(a => $"{a.characterId}:{a.count}"));
-                sb.AppendLine($"{tc.minDay},{string.Join("|", tc.requiredFlags)},{string.Join("|", tc.blockedFlags)},{string.Join("|", tc.prerequisiteEpisodeIds)},{reqVars},{reqAppearances}");
+                sb.AppendLine("conditionType,conditionValue,text");
+                foreach (var entry in triggerExportEntries)
+                    sb.AppendLine(ConditionEntryToCsvRow(entry));
                 sb.AppendLine();
             }
 
-            if (data.playCondition != null)
+            var playExportEntries = ResolveExportEntries(data.playConditionEntries, data.playCondition);
+            if (playExportEntries.Count > 0)
             {
-                var pc = data.playCondition;
                 sb.AppendLine("#PLAY_TRIGGER");
-                sb.AppendLine("minDay,requiredFlags,blockedFlags,prerequisiteEpisodeIds,requiredVars,requiredCustomerAppearances");
-                string reqVars = string.Join("|", pc.requiredVars.Select(v => $"{v.varName}{CompareOpToString(v.op)}{v.threshold}"));
-                string reqAppearances = string.Join("|", pc.requiredCustomerAppearances.Select(a => $"{a.characterId}:{a.count}"));
-                sb.AppendLine($"{pc.minDay},{string.Join("|", pc.requiredFlags)},{string.Join("|", pc.blockedFlags)},{string.Join("|", pc.prerequisiteEpisodeIds)},{reqVars},{reqAppearances}");
+                sb.AppendLine("conditionType,conditionValue,text");
+                foreach (var entry in playExportEntries)
+                    sb.AppendLine(ConditionEntryToCsvRow(entry));
                 sb.AppendLine();
             }
 
@@ -514,12 +512,42 @@ namespace NarrativeFlow.Editor
             _                        => "=="
         };
 
+        // triggerConditionEntries/playConditionEntries는 CSV로 임포트된 에피소드에만 채워진다.
+        // 그래프 에디터로 컴파일된 에피소드는 이 목록이 비어있으므로, 평가용 EpisodeTriggerCondition에서 대신 합성한다(커스텀 텍스트 없이 4종 조건만).
+        private static List<TriggerConditionEntry> ResolveExportEntries(List<TriggerConditionEntry> entries, EpisodeTriggerCondition cond)
+        {
+            if (entries != null && entries.Count > 0) return entries;
+
+            var result = new List<TriggerConditionEntry>();
+            if (cond == null) return result;
+
+            if (cond.minDay > 0)
+                result.Add(new TriggerConditionEntry { condition = new SelectSingleCondition { type = SelectConditionType.MinDay, minDay = cond.minDay } });
+            if (cond.minMoney > 0)
+                result.Add(new TriggerConditionEntry { condition = new SelectSingleCondition { type = SelectConditionType.MinMoney, minMoney = cond.minMoney } });
+            foreach (var flag in cond.requiredFlags)
+                result.Add(new TriggerConditionEntry { condition = new SelectSingleCondition { type = SelectConditionType.RequiredFlag, requiredFlag = flag } });
+            foreach (var epId in cond.prerequisiteEpisodeIds)
+                result.Add(new TriggerConditionEntry { condition = new SelectSingleCondition { type = SelectConditionType.PrerequisiteEpisode, prerequisiteEpisodeId = epId } });
+            foreach (var v in cond.requiredVars)
+                result.Add(new TriggerConditionEntry { condition = new SelectSingleCondition { type = SelectConditionType.RequiredVar, varName = v.varName, varOp = v.op, varThreshold = v.threshold } });
+
+            return result;
+        }
+
+        private static string ConditionEntryToCsvRow(TriggerConditionEntry entry)
+        {
+            var cond = entry.condition ?? new SelectSingleCondition();
+            return $"{cond.type},{ConditionValueString(cond)},{Csv(entry.conditionText)}";
+        }
+
         private static string ConditionValueString(SelectSingleCondition cond) => cond.type switch
         {
             SelectConditionType.MinDay => cond.minDay.ToString(),
             SelectConditionType.RequiredFlag => cond.requiredFlag,
             SelectConditionType.PrerequisiteEpisode => cond.prerequisiteEpisodeId,
             SelectConditionType.RequiredVar => $"{cond.varName}{CompareOpToString(cond.varOp)}{cond.varThreshold}",
+            SelectConditionType.MinMoney => cond.minMoney.ToString(),
             _ => ""
         };
     }

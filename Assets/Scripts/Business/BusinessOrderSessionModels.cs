@@ -69,18 +69,21 @@ namespace Slainte.Business
             CustomerMood mood,
             int baseRevenue,
             int tipAmount,
+            int penaltyAmount,
             int reputationDelta)
         {
             Mood = mood;
             BaseRevenue = baseRevenue;
             TipAmount = tipAmount;
+            PenaltyAmount = penaltyAmount;
             ReputationDelta = reputationDelta;
         }
 
         public CustomerMood Mood { get; }
         public int BaseRevenue { get; }
         public int TipAmount { get; }
-        public int TotalRevenue => BaseRevenue + TipAmount;
+        public int PenaltyAmount { get; }
+        public int TotalRevenue => BaseRevenue + TipAmount - PenaltyAmount;
         public int ReputationDelta { get; }
     }
 
@@ -98,25 +101,36 @@ namespace Slainte.Business
             OrderEvaluationGrade grade,
             int listedRecipePrice,
             BusinessOrderFlowSettings settings,
-            float externalTipMultiplier = 1f)
+            float externalTipMultiplier = 1f,
+            int currentMoney = 0)
         {
             CustomerMood mood = ResolveMood(grade);
-            int baseRevenue = listedRecipePrice >= 0
-                ? Mathf.FloorToInt(
-                    Mathf.Max(0, listedRecipePrice)
-                    * (settings != null
-                        ? settings.GetRecipePriceMultiplier(grade)
-                        : grade == OrderEvaluationGrade.Good ? 1f
-                        : grade == OrderEvaluationGrade.Mid ? 0.5f
-                        : 0f))
-                : settings != null ? settings.GetMoneyReward(grade) : 0;
+            int baseRevenue;
+            int penaltyAmount = 0;
+            if (listedRecipePrice >= 0)
+            {
+                int price = Mathf.Max(0, listedRecipePrice);
+                baseRevenue = price;
+                if (grade == OrderEvaluationGrade.Bad)
+                {
+                    float penaltyRate = settings != null ? Mathf.Max(0f, settings.badPenaltyRate) : 1.3f;
+                    int rawPenalty = Mathf.RoundToInt(price * penaltyRate);
+                    int moneyAfterCredit = Mathf.Max(0, currentMoney) + price;
+                    penaltyAmount = Mathf.Clamp(rawPenalty, 0, moneyAfterCredit);
+                }
+            }
+            else
+            {
+                baseRevenue = settings != null ? settings.GetMoneyReward(grade) : 0;
+            }
+
             float tipRate = settings != null ? settings.GetTipRate(mood) : 0f;
-            int tipAmount = Mathf.FloorToInt(
+            int tipAmount = Mathf.RoundToInt(
                 Mathf.Max(0, baseRevenue)
                 * Mathf.Clamp01(tipRate)
                 * Mathf.Max(0f, externalTipMultiplier));
             int reputationDelta = settings != null ? settings.GetReputationReward(mood) : 0;
-            return new BusinessOrderReward(mood, baseRevenue, tipAmount, reputationDelta);
+            return new BusinessOrderReward(mood, baseRevenue, tipAmount, penaltyAmount, reputationDelta);
         }
 
         public static CustomerMood ResolveMood(OrderEvaluationGrade grade)
@@ -142,6 +156,7 @@ namespace Slainte.Business
         public CustomerMood customerMood;
         public int baseRevenue;
         public int tipAmount;
+        public int penaltyAmount;
         public int totalRevenue;
         public int reputationDelta;
         public bool paymentApplied;
@@ -195,6 +210,7 @@ namespace Slainte.Business
         public CustomerMood customerMood;
         public int baseRevenue;
         public int tipAmount;
+        public int penaltyAmount;
         public int moneyDelta;
         public int strangeCoinDelta;
         public int totalPayment;
@@ -220,6 +236,7 @@ namespace Slainte.Business
                 customerMood = customerMood,
                 baseRevenue = baseRevenue,
                 tipAmount = tipAmount,
+                penaltyAmount = penaltyAmount,
                 totalRevenue = PaymentAmount,
                 reputationDelta = reputationDelta
             };

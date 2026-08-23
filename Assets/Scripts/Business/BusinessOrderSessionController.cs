@@ -253,7 +253,8 @@ namespace Slainte.Business
                 settings,
                 TVBroadcastRuntime.GetTipMultiplier(
                     GameProgress.Instance,
-                    tvBroadcastDatabase));
+                    tvBroadcastDatabase),
+                GameProgress.Instance != null ? GameProgress.Instance.CurrentMoney : 0);
             CompleteCurrentOrder(new BusinessOrderSessionResult
             {
                 outcome = OrderSessionOutcome.Served,
@@ -267,6 +268,7 @@ namespace Slainte.Business
                 customerMood = reward.Mood,
                 baseRevenue = reward.BaseRevenue,
                 tipAmount = reward.TipAmount,
+                penaltyAmount = reward.PenaltyAmount,
                 moneyDelta = paymentCurrency == GameCurrency.Money ? reward.TotalRevenue : 0,
                 strangeCoinDelta = paymentCurrency == GameCurrency.StrangeCoin ? reward.TotalRevenue : 0,
                 totalPayment = reward.TotalRevenue,
@@ -358,7 +360,8 @@ namespace Slainte.Business
                 settings,
                 TVBroadcastRuntime.GetTipMultiplier(
                     GameProgress.Instance,
-                    tvBroadcastDatabase));
+                    tvBroadcastDatabase),
+                GameProgress.Instance != null ? GameProgress.Instance.CurrentMoney : 0);
             pendingResult = new BusinessOrderSessionResult
             {
                 outcome = OrderSessionOutcome.Served,
@@ -372,6 +375,7 @@ namespace Slainte.Business
                 customerMood = reward.Mood,
                 baseRevenue = reward.BaseRevenue,
                 tipAmount = reward.TipAmount,
+                penaltyAmount = reward.PenaltyAmount,
                 moneyDelta = paymentCurrency == GameCurrency.Money ? reward.TotalRevenue : 0,
                 strangeCoinDelta = paymentCurrency == GameCurrency.StrangeCoin ? reward.TotalRevenue : 0,
                 totalPayment = reward.TotalRevenue,

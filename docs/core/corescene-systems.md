@@ -85,9 +85,9 @@ public enum GameState { None, Episode, Business, Settlement, Rest }
 
 `SettlementManager`(`MonoSingleton`, CoreScene의 `Managers` 루트 오브젝트에 배치)는 `GameManager.ChangeState(GameState.Settlement)`에서 호출되는 `BeginSettlement()`을 통해 당일 정산을 처리합니다.
 
-- 당일 집계값(`GameProgress.DayDrinkSalesCount/DayDrinkRevenue/DayTotalIncome`) + `ChapterData` 조회로 챕터명을 모아 `SettlementData` 구성. 음료 종류별 판매 내역(`drinkSales: List<DrinkSaleEntry>`)은 영업 시스템이 아직 종류별로 기록하지 않아 `SettlementManager.BuildDrinkSalesPlaceholder()`가 집계값을 한 줄짜리 placeholder로 채움 (실제 종류별 데이터가 생기면 이 메서드만 교체하면 됨)
-- `GameProgress.AddMoney(dayTotalIncome)`로 누적 보유금 반영 후 `SettlementUI.Show(data, onClosed)` 호출
-- `SettlementUI` 연출 순서: 셔터 슬라이드 → 모니터 슬라이드(`SlideTo` 공용 코루틴, 셔터와 동일 로직 재사용) → 헤더(챕터명, `Day {n} 결과 보고`, 고정 TMP)·음료 판매 줄(`ScrollRect` 안에 `SettlementLineView` 좌측 라벨/우측 값 프리팹으로 동적 생성)·푸터(총 소득/구분선/보유 자산, 고정 `SettlementLineView`)를 한 스텝씩 순차 표시
+- `BuildSettlementSummary()`가 `GameProgress.GetDayDrinkSales()`(주문 1건당 등급·정가·페널티가 기록된 `BusinessSaleRecord` 리스트)를 순회해 `SettlementData`를 구성: 총 판매량(전체 건수+`listedPrice` 합), 팁(Good 건수+팁 합), 실수(Bad 건수+`listedPrice+penaltyAmount` 합), 배송 이용(`GameProgress.DayDeliveryCount/DayDeliverySpend`), 에피소드 커스텀 보상(`GameProgress.GetDaySettlementRewards()`)
+- `ApplyRecordedIncome()`이 `DayTotalIncome - DayPaidMoneyIncome`(아직 지갑에 반영되지 않은 차액 — 음료 판매는 즉시 지급이라 보통 0, 에피소드 커스텀 보상만 여기서 실제 지급됨)만큼 `AddMoney()`한 뒤 `SettlementUI.Show(data, onClosed)` 호출. 보상/판정 공식 자체는 [business-interactions.md](../gameplay/business-interactions.md)와 `Assets/Scripts/Business/BusinessOrderSessionModels.cs`(`BusinessOrderRewardCalculator`) 참고
+- `SettlementUI` 연출 순서: 셔터 슬라이드 → 모니터 슬라이드(`SlideTo` 공용 코루틴, 셔터와 동일 로직 재사용) → 헤더(챕터명, `Day {n} 결과 보고`) → 스크롤 줄("총 판매량 x N +revenue" → "팁 x N +tip" → "실수 x N -missed" → "배송 이용 x N -spend" → 0개 이상의 커스텀 보상 줄, 값이 0인 항목은 줄 자체를 생략) → 푸터(총 소득/구분선/보유 자산)를 한 스텝씩 순차 표시
 - 순차 표시 도중 클릭/스페이스 입력 시 남은 스텝 전부 즉시 표시(스킵), 다 표시된 후 "아무 키나 눌러 진행" 표시 상태에서 다시 입력하면 `SettlementUI.Close()` 호출 — 확인 버튼 없음, 입력 관례는 `InputRouter`의 대화 진행(`Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)`)과 동일
 - `Close()`는 UI를 바로 감추지 않고 `onClosed` 콜백만 호출 → `SettlementManager.OnSettlementClosed()`가 `GameProgress.ResetDaySettlement()` → `DataManager.Save()` → `GameManager.ChangeState(GameState.Rest)` 순으로 진행. `GameState.Rest` 전환은 항상 정산 화면을 닫으면서 진입하므로, `GameManager`가 `SceneTransitionManager.TransitionToSubScene()`에 `onFadeOutComplete` 콜백으로 `SettlementManager.OnFadeOutComplete()`를 넘김 — 화면이 완전히 검게 된 직후(씬 언로드 전) 호출되어 `SettlementUI.HideAndReset()`으로 셔터/모니터를 원위치로 되돌리고 UI를 비활성화. 즉 셔터/모니터/보고서는 페이드아웃이 끝날 때까지 화면에 그대로 유지되고, 리셋은 화면이 안 보이는 시점에만 일어나 티가 나지 않음
 - 씬 배치: `SettlementUI`(비주얼)는 CoreScene의 영속 오버레이 Canvas(페이드 캔버스와 같은 위치)에 두어야 어느 씬에서 전환되든 위에 표시됨. `SettlementManager`(로직)는 다른 `MonoSingleton`과 함께 `Managers` 오브젝트에 배치
@@ -113,7 +113,9 @@ public enum GameState { None, Episode, Business, Settlement, Rest }
 | `GetCustomerAppearance` / `IncrementCustomerAppearance` | 손님 등장 횟수 (affinity와 동일한 key/value 리스트 패턴). 실제 증가 호출은 영업 시스템(별도 담당자) 책임 |
 | `SetCurrentChapter` / `CurrentChapterId` | 현재 챕터 ID. 들어온 chapterId가 기존과 다르면 `currentDay`를 1로 리셋(챕터가 바뀌면 Day 1부터 재시작). 최초 게임 시작 시 `MainMenuManager`가 비어있으면 `ChapterData.LoadFirst()`로 채움 — 게임 중 챕터 전환 트리거 자체는 미정, 훅만 존재 |
 | `AddMoney` / `CurrentMoney` | 누적 보유 금액 (세이브 영속) |
-| `RecordDrinkSale` / `AddDayIncome` / `ResetDaySettlement` | 당일 집계(`DayDrinkSalesCount`/`DayDrinkRevenue`/`DayTotalIncome`) 갱신 및 정산 후 리셋 |
+| `RecordDrinkSale` / `AddDayIncome` / `ResetDaySettlement` | 주문 1건 결과(`BusinessSaleRecord`, 등급·정가·팁·페널티 포함)를 당일 리스트(`dayDrinkSales`)와 집계 필드에 누적, 정산 후 전체 당일 집계 리셋 |
+| `RecordDeliveryPurchase` | 배송 탭 구매 1건마다 `DayDeliveryCount`/`DayDeliverySpend` 누적 |
+| `AddSettlementReward` / `GetDaySettlementRewards` | 에피소드 종료 시 조건을 만족한 커스텀 보상(라벨+금액)을 `dayTotalIncome`에는 즉시 더하되(정산 시점 실지급) 목록에 기록 — `EpisodeRunner.EndEncounter()`가 호출 |
 
 ## DataManager (`CoreScene/Scripts/DataManager.cs`)
 
@@ -143,11 +145,33 @@ public class SaveData
     public List<float>  bottleAmountValues;
     public List<string> customerAppearanceKeys;  // 손님 등장 횟수
     public List<int>    customerAppearanceValues;
+    public List<string> upgradeKeys;     // 상점 업그레이드 레벨
+    public List<int>    upgradeValues;
     public string currentChapterId;
     public int    currentMoney;          // 누적 보유 금액
-    public int    dayDrinkSalesCount;    // 당일 집계 (정산 후 리셋)
+    public int    reputation;
+
+    // 당일 집계 (정산 후 ResetDaySettlement()로 리셋)
+    public int    dayDrinkSalesCount;
+    public int    dayDrinkBaseRevenue;
+    public int    dayDrinkTipRevenue;
     public int    dayDrinkRevenue;
     public int    dayTotalIncome;
+    public int    dayPaidMoneyIncome;
+    public int    dayStrangeCoinBaseRevenue;
+    public int    dayStrangeCoinTipRevenue;
+    public int    dayStrangeCoinRevenue;
+    public int    dayPaidStrangeCoinIncome;
+    public int    dayReputationDelta;
+    public List<BusinessSaleRecord> dayDrinkSales;       // 주문 1건당 등급·정가·팁·페널티
+    public int    dayDeliveryCount;
+    public int    dayDeliverySpend;
+    public List<SettlementRewardEntry> daySettlementRewards; // 에피소드 커스텀 정산 보상
+
+    public string tvForecastBroadcastId;
+    public bool   tvForecastRevealed;
+    public string tvActiveBroadcastId;
+    public int    tvActiveBusinessDay;
 }
 ```
 

@@ -97,9 +97,8 @@ public class EpisodeInfoUI : MonoBehaviour
         GameProgress gp = GameProgress.Instance;
         bool hasManager = gp != null && EpisodeManager.Instance != null;
 
-        var triggerEntries = BuildConditionEntries(data.triggerCondition, gp);
-        if (hasManager)
-            AppendCustomTexts(triggerEntries, data.triggerConditionTexts, EpisodeManager.Instance.IsUnlocked(data, gp));
+        var triggerEntries = BuildTriggerConditionEntries(data.triggerConditionEntries, gp);
+        triggerEntries.AddRange(BuildTriggerConditionEntries(data.playConditionEntries, gp));
         ApplyConditionRows(triggerConditionRows, triggerEntries);
         if (triggerSection != null) triggerSection.SetActive(triggerEntries.Count > 0);
 
@@ -192,16 +191,9 @@ public class EpisodeInfoUI : MonoBehaviour
             SelectConditionType.PrerequisiteEpisode =>
                 $"선행 에피소드 '{EpisodeManager.Instance?.GetEpisodeData(cond.prerequisiteEpisodeId)?.episodeTitle ?? cond.prerequisiteEpisodeId}'",
             SelectConditionType.RequiredVar => $"{cond.varName} {GetOpString(cond.varOp)} {cond.varThreshold}",
+            SelectConditionType.MinMoney => $"소지금 {cond.minMoney}원 이상",
             _ => null
         };
-    }
-
-    // 작성자가 직접 입력한 힌트 문구(flag/var 원문 대신 사람이 읽을 수 있는 설명)를 조건 목록 뒤에 덧붙인다.
-    private void AppendCustomTexts(List<(string text, bool met)> entries, List<string> customTexts, bool overallMet)
-    {
-        if (customTexts == null) return;
-        foreach (string text in customTexts)
-            entries.Add((text, overallMet));
     }
 
     private void ApplyConditionRows(ConditionRow[] rows, List<(string text, bool met)> entries)
@@ -222,31 +214,22 @@ public class EpisodeInfoUI : MonoBehaviour
         }
     }
 
-    // 등장 조건(requiredCustomerAppearances)은 툴팁에 표시하지 않는다.
-    private List<(string text, bool met)> BuildConditionEntries(EpisodeTriggerCondition cond, GameProgress gp)
+    // TRIGGER/PLAY_TRIGGER 항목 목록을 각각 개별 평가해 (텍스트, 충족 여부) 쌍으로 변환한다.
+    private List<(string text, bool met)> BuildTriggerConditionEntries(List<TriggerConditionEntry> entries, GameProgress gp)
     {
-        var entries = new List<(string, bool)>();
-        if (cond == null || gp == null) return entries;
+        var result = new List<(string, bool)>();
+        if (entries == null || gp == null || EpisodeManager.Instance == null) return result;
 
-        if (cond.minDay > 0)
-            entries.Add(($"{cond.minDay}일차 이상", gp.CurrentDay >= cond.minDay));
-
-        foreach (string epId in cond.prerequisiteEpisodeIds)
+        foreach (TriggerConditionEntry entry in entries)
         {
-            string title = EpisodeManager.Instance?.GetEpisodeData(epId)?.episodeTitle ?? epId;
-            entries.Add(($"선행 에피소드 '{title}'", gp.IsEpisodeCompleted(epId)));
+            bool met = EpisodeManager.Instance.EvaluateSelectCondition(entry.condition, gp);
+            string text = !string.IsNullOrEmpty(entry.conditionText)
+                ? entry.conditionText
+                : BuildSelectConditionText(entry.condition);
+            result.Add((text, met));
         }
 
-        foreach (string flag in cond.requiredFlags)
-            entries.Add((flag, gp.HasFlag(flag)));
-
-        foreach (var vc in cond.requiredVars)
-        {
-            bool met = vc.Evaluate(gp.GetAffinity(vc.varName));
-            entries.Add(($"{vc.varName} {GetOpString(vc.op)} {vc.threshold}", met));
-        }
-
-        return entries;
+        return result;
     }
 
     private void UpdatePortraits(EpisodeData data)

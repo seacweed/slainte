@@ -21,58 +21,113 @@ MonoBehaviour:
   defaultBlinkSprite: {fileID: 0}
   defaultBlinkOverlaySprite: {fileID: 0}
   expressions:
-  - key: mid
-    sprite: {fileID: -4509229159563578660, guid: 5fe8253a33a1c914eb8395b5be472275, type: 3}
-    overlaySprite: {fileID: 0}
-    blinkSprite: {fileID: 0}
-    blinkOverlaySprite: {fileID: 0}
   - key: aim
-    sprite: {fileID: 58537775430694542, guid: cd25eadb51322a341aad1a0fe95d0e2c, type: 3}
+    sprite: {fileID: 21300000, guid: cd25eadb51322a341aad1a0fe95d0e2c, type: 3}
     overlaySprite: {fileID: 0}
-    blinkSprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 676e99d4d9168f44a8cfd550d6149a0a, type: 3}
     blinkOverlaySprite: {fileID: 0}
   - key: angry
-    sprite: {fileID: -9082789242079819192, guid: d75ff4c98af32164299458ecf76ff6b4, type: 3}
+    sprite: {fileID: 21300000, guid: d75ff4c98af32164299458ecf76ff6b4, type: 3}
     overlaySprite: {fileID: 0}
-    blinkSprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 59ae4d6d0bfceae42b1902cca22c9ff5, type: 3}
     blinkOverlaySprite: {fileID: 0}
-  - key: smile
-    sprite: {fileID: 8580352971482666360, guid: 21c780eda21af25458182e93a00a920b, type: 3}
+  - key: angry_left
+    sprite: {fileID: 21300000, guid: 9c03a537daceb52489b5e437577d5894, type: 3}
     overlaySprite: {fileID: 0}
-    blinkSprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 59ae4d6d0bfceae42b1902cca22c9ff5, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: angry_right
+    sprite: {fileID: 21300000, guid: 64c179eb7d5607548b002524def37891, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 59ae4d6d0bfceae42b1902cca22c9ff5, type: 3}
     blinkOverlaySprite: {fileID: 0}
   - key: blood_angry
-    sprite: {fileID: -816692220500740878, guid: fd76f46fe03483a408889ed0b78c95ef, type: 3}
+    sprite: {fileID: 21300000, guid: fd76f46fe03483a408889ed0b78c95ef, type: 3}
     overlaySprite: {fileID: 0}
-    blinkSprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 774f8c638168ef04486167c62d66ebe2, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: blood_angry_left
+    sprite: {fileID: 21300000, guid: a546ccb4304f5ff46a5bbf4ec6fed2ea, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 774f8c638168ef04486167c62d66ebe2, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: blood_angry_right
+    sprite: {fileID: 21300000, guid: 8ad8256d807a1ac4dbe6acef087f978c, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 774f8c638168ef04486167c62d66ebe2, type: 3}
     blinkOverlaySprite: {fileID: 0}
   - key: blood_mid
-    sprite: {fileID: 3374994579945756278, guid: 9439ea3471839ca429b5dca4aefe99fd, type: 3}
+    sprite: {fileID: 21300000, guid: 9439ea3471839ca429b5dca4aefe99fd, type: 3}
     overlaySprite: {fileID: 0}
-    blinkSprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: cd5b0e8de93400d4580a7d1bad7c7dc2, type: 3}
     blinkOverlaySprite: {fileID: 0}
-  - key: blood_tired
-    sprite: {fileID: 1620443861845200053, guid: fc530715f5483da4da2175c742682fd3, type: 3}
+  - key: blood_mid_left
+    sprite: {fileID: 21300000, guid: 0a9210e6c971ad64486bd5bbeead2b56, type: 3}
     overlaySprite: {fileID: 0}
-    blinkSprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: cd5b0e8de93400d4580a7d1bad7c7dc2, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: blood_mid_right
+    sprite: {fileID: 21300000, guid: dba4cdfae1f0cad42adb5ac12173f8e0, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: cd5b0e8de93400d4580a7d1bad7c7dc2, type: 3}
     blinkOverlaySprite: {fileID: 0}
   - key: blood_smile
-    sprite: {fileID: -521326214385864486, guid: aa236632e89b4c34fbb7b920e690bb90, type: 3}
+    sprite: {fileID: 21300000, guid: aa236632e89b4c34fbb7b920e690bb90, type: 3}
     overlaySprite: {fileID: 0}
-    blinkSprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 327fb91a49eb7fd41a823ef65472d1d6, type: 3}
     blinkOverlaySprite: {fileID: 0}
-  - key: blood_smileClosed
-    sprite: {fileID: -4027058767215579801, guid: 7f619780fd466d44681d5fa7a905475f, type: 3}
+  - key: blood_smile_left
+    sprite: {fileID: 21300000, guid: aa88cd81104152246b98a23b6ea70b0c, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 327fb91a49eb7fd41a823ef65472d1d6, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: blood_smile_right
+    sprite: {fileID: 21300000, guid: b27ff6e72d518a848ae0008361764b02, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 327fb91a49eb7fd41a823ef65472d1d6, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: blood_tired
+    sprite: {fileID: 21300000, guid: fc530715f5483da4da2175c742682fd3, type: 3}
     overlaySprite: {fileID: 0}
     blinkSprite: {fileID: 0}
     blinkOverlaySprite: {fileID: 0}
   - key: closed
-    sprite: {fileID: 3910119953844233957, guid: e19ce6e96b667244da5ef1ddfe88528c, type: 3}
+    sprite: {fileID: 21300000, guid: 4dd9e1251c799704db4e0cfadd53843c, type: 3}
     overlaySprite: {fileID: 0}
     blinkSprite: {fileID: 0}
     blinkOverlaySprite: {fileID: 0}
-  - key: blood_closed
-    sprite: {fileID: 3206553586366147522, guid: 25092c95e6129744b828317320bd9287, type: 3}
+  - key: mid
+    sprite: {fileID: 21300000, guid: 5fe8253a33a1c914eb8395b5be472275, type: 3}
     overlaySprite: {fileID: 0}
-    blinkSprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 7aa96e6be53099849b7f4225073d5cb0, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: mid_left
+    sprite: {fileID: 21300000, guid: 9b33f1dfc54e4494ead46b9c083225c6, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 7aa96e6be53099849b7f4225073d5cb0, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: mid_right
+    sprite: {fileID: 21300000, guid: 03bd5be25d188c74495f6951d14ac13c, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 7aa96e6be53099849b7f4225073d5cb0, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: smile
+    sprite: {fileID: 21300000, guid: 21c780eda21af25458182e93a00a920b, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: cec5b8ec7e6d7a94dab9f597169a6e45, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: smile_left
+    sprite: {fileID: 21300000, guid: 72ba632b5fc1ac342b4a5eb5cb2e41e8, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: cec5b8ec7e6d7a94dab9f597169a6e45, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: smile_right
+    sprite: {fileID: 21300000, guid: 65630a66e606d754faaa658a29b8c4a5, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: cec5b8ec7e6d7a94dab9f597169a6e45, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: smile_right
+    sprite: {fileID: 21300000, guid: 65630a66e606d754faaa658a29b8c4a5, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: cec5b8ec7e6d7a94dab9f597169a6e45, type: 3}
     blinkOverlaySprite: {fileID: 0}

@@ -34,6 +34,9 @@ public class SaveData
     public int    dayPaidStrangeCoinIncome = 0;
     public int    dayReputationDelta = 0;
     public List<BusinessSaleRecord> dayDrinkSales = new();
+    public int    dayDeliveryCount = 0;
+    public int    dayDeliverySpend = 0;
+    public List<SettlementRewardEntry> daySettlementRewards = new();
     public string tvForecastBroadcastId = "";
     public bool   tvForecastRevealed = false;
     public string tvActiveBroadcastId = "";
