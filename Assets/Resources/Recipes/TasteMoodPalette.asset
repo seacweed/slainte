@@ -40,7 +40,7 @@ MonoBehaviour:
     textColor: {r: 0.9528302, g: 0.29214135, b: 0.9238792, a: 1}
   - tag: "\uD3EC\uADFC\uD55C"
     backgroundColor: {r: 1, g: 0.7843138, b: 0.6666667, a: 1}
-    textColor: {r: 0.8396226, g: 0.74912924, b: 0.1544589, a: 1}
+    textColor: {r: 0.6981132, g: 0.2986042, b: 0.009878943, a: 1}
   - tag: "\uAE54\uB054\uD55C"
     backgroundColor: {r: 1, g: 1, b: 1, a: 1}
     textColor: {r: 0, g: 0.8182446, b: 0.8962264, a: 1}

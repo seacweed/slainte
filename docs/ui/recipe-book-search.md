@@ -47,20 +47,32 @@ DetailView — 뒤로가기만 존재(제목 없음)
 
 ## 공용 버튼: `RecipeSearchOptionButton`
 
-`Setup(string tag, Color backgroundColor, Color textColor, bool interactable, Action<string> onSelected = null)` 하나로 세 용도를 모두 처리한다:
+`Setup(string tag, Color backgroundColor, Color textColor, bool interactable, Action<string> onSelected = null, float? fontSize = null, float? preferredHeight = null)` 하나로 세 용도를 모두 처리한다:
 
-1. CategoryView 옵션 목록 — `interactable: true`
-2. ResultsView 제목 자리(고정 인스턴스, 클릭할 때마다 `Setup` 갱신) — `interactable: false`
-3. DetailView 맛/분위기 태그 칩(레시피당 동적 Instantiate) — `interactable: false`
+1. CategoryView 옵션 목록 — `interactable: true`, 프리팹 기본 크기·글씨 그대로
+2. ResultsView 제목 자리 — `interactable: false`, 태그 클릭마다 `optionsContent`가 아니라 `resultsHeaderContent`에 **동적으로 `Instantiate`**(고정 인스턴스 아님 — 처음엔 이렇게 설계했다가 "생성 로직 자체가 없어서 안 나옴" 버그가 나서 CategoryView 옵션·DetailView 칩과 동일한 동적 생성 방식으로 통일함)
+3. DetailView 맛/분위기 태그 칩(레시피당 동적 Instantiate) — `interactable: false`, `RecipeDetailUI`의 `chipFontSize`/`chipHeight`(Inspector 설정)를 전달해 CategoryView보다 작게 표시
+
+`fontSize`/`preferredHeight`를 안 넘기면(`null`) 프리팹 자체 값을 그대로 씀 — 위치별로 프리팹을 포크하지 않고 하나의 프리팹을 재사용하면서 크기만 다르게 주는 방식.
+
+**내부적으로 고친 버그 2가지** (`Awake()`/`Setup()`):
+- `button.transition = Selectable.Transition.None`을 강제로 꺼야 함 — 안 그러면 `interactable: false`로 설정하는 순간 Unity가 Target Graphic(=`background`)에 `disabledColor`(흐린 회색)를 자동으로 덮어써서, `Setup()`으로 넣은 고유 배경색이 사라짐(CategoryView처럼 `interactable: true`인 경우는 `normalColor`가 흰색·배율 1이라 티가 안 났을 뿐 같은 문제였음).
+- `LayoutElement`가 없으면 프리팹 자신의 원래 높이(`RectTransform.sizeDelta.y`)를 `minHeight`/`preferredHeight`로 자동 채워 넣어야 함 — 안 그러면 DetailView처럼 다른 Vertical Layout Group 밑에 놓일 때 높이가 거의 0으로 찌그러짐.
+- 이 초기화(`EnsureInitialized()`)는 `Awake()`뿐 아니라 `Setup()` 진입 시에도 호출한다 — 비활성 부모(예: 아직 `SetActive(false)`인 `ResultsView`/`DetailView`) 밑에서 `Instantiate`되면 Unity가 `Awake()` 호출을 활성화될 때까지 미루기 때문에, `Setup()`이 먼저 실행될 수 있음.
 
 ## RecipeBookUI 연동
 
 `RecipeBookUI.SetInteractable(bool)`이 **disabled → enabled로 전환될 때만**(예: `EpisodeMode` 진입 후 `OrderMode`/`CraftingMode`로 복귀) `RecipeSearchUI.ResetToMain()`을 호출해 검색 화면을 초기 상태(검색어 비움, 카테고리 버튼 표시)로 되돌린다. Tab 키로 단순히 열고 닫는 동작(`Toggle()`)은 리셋되지 않는다.
 
+## 재료명 색상 (`RecipeDetailUI`)
+
+`RecipeDetailUI.bottleCatalog`(`LiquorBottleCatalog`, `LiquorShelfUI`가 쓰는 것과 동일한 에셋)를 참조해, 재료 목록의 각 재료명 색을 그 재료가 속한 `LiquorCategoryDef.color`(술장/상점과 같은 카테고리 고유색)로 칠한다. `ItemDef` 참조 우선 매칭, 없으면 `LiquorBottleDef.InventoryId` 문자열로 폴백 매칭. 카탈로그에 없는 재료(병으로 등록 안 된 아이템)는 `RecipeIngredientRowUI` 텍스트의 기본 색 유지.
+
 ## 씬 배치 시 주의
 
-- 기존 씬에는 제거된 필드(`ingredientButton`, `resultsTitleText`, `resultsTitleBackground` 등)의 직렬화 값이 남아있을 수 있으나 Unity가 무시하므로 컴파일/실행에는 문제 없음. `RecipeSearchUI` 컴포넌트를 다시 열어 새 필드(`tagPalette`, `searchInputField`, `searchButton`, `categoryButtonsRoot`, `searchResultsRoot`, `searchResultsContent`, `resultsHeaderButton`, `resultsContent`, `recipeListItemPrefab`, `detailView`, `recipeDetailUI`, `detailBackButton`)를 재배선해야 함.
-- `RecipeSearchOptionButton`은 기존 `SearchOption.prefab`을 그대로 재사용(스크립트 API만 확장됨).
+- `RecipeSearchUI` 필드: `tagPalette`, `searchInputField`, `searchButton`, `categoryButtonsRoot`, `searchResultsRoot`, `searchResultsContent`, `resultsHeaderContent`(빈 컨테이너 — 태그 클릭마다 여기에 `optionButtonPrefab`을 동적 생성), `resultsContent`, `recipeListItemPrefab`, `detailView`, `recipeDetailUI`, `detailBackButton`.
+- `RecipeDetailUI` 필드에 `bottleCatalog`(위 항목), `chipFontSize`/`chipHeight`(태그 칩 크기, Inspector 조절 가능) 추가됨.
+- `RecipeSearchOptionButton`은 `SearchOption.prefab` 하나만 그대로 재사용(스크립트 API만 확장됨) — 위치별 프리팹 분리 없음.
 
 ## 추후 작업
 

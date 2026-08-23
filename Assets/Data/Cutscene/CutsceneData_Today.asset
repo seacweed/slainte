@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45490a5e9b47789428bf7abf8b3b65f2, type: 3}
+  m_Name: CutsceneData_Today
+  m_EditorClassIdentifier: Assembly-CSharp::CutsceneData
+  cutsceneId: Cutscene_Today
+  slides:
+  - image: {fileID: 4084024915765311163, guid: cd518a304a0e12042b7179df5c89eb01, type: 3}
+    text: 
+  - image: {fileID: 651112069384815035, guid: 1d57b7346e940dc498683e82e13e43f3, type: 3}
+    text: "\uC11C\uAE30 2984\uB144.\n\uC6B0\uB9AC \uC9C0\uAD6C\uC778\uB4E4\uC740
+      \uB354 \uC774\uC0C1 \uC6B0\uC8FC\uC758 \uC911\uC2EC\uC774 \uC544\uB2C8\uB2E4."
+  - image: {fileID: -6139628550562803090, guid: f4e4b77643ced1b4e8a8e699263575ed, type: 3}
+    text: "\uC548\uB4DC\uB85C\uBA54\uB2E4 \uBCC0\uB450\uB9AC. \uC6B0\uB9AC \uC740\uD558\uB85C
+      \uBD80\uD130 250\uB9CC \uAD11\uB144. \n\uC778\uAC04\uB4E4\uC774 \uC774\uACF3
+      \"\uC139\uD130 0\" \uC5D0 \uC720\uBC30\uB418\uC5B4 \uC0B4\uC544\uAC04\uB2E4."
+  - image: {fileID: 651112069384815035, guid: 1d57b7346e940dc498683e82e13e43f3, type: 3}
+    text: "\uC774\uACF3\uC5D4 \uC544\uC9C1 \uC778\uAC04\uC758 \uB530\uB73B\uD55C
+      \uC628\uAE30\uB97C \uC9C0\uD0A4\uB294 \n\uC791\uC740 \uD38D\uC774 \uB0A8\uC544\uC788\uB2E4. "
+  - image: {fileID: 651112069384815035, guid: 1d57b7346e940dc498683e82e13e43f3, type: 3}
+    text: "\uB098\uC758 \uC544\uBC84\uC9C0. \uD328\uD2B8\uB9AD \uC624\uB3C4\uB12C\uC758
+      \uD38D. \n\"\uC2AC\uB7F0\uCC60\""
+  - image: {fileID: -1497248124280272340, guid: 18e4ad4f62d84d140964e9f9d97ac0e1, type: 3}
+    text: "\uB0B4 \uC774\uB984\uC740 \uC158 \uC624\uB3C4\uB12C."
+  - image: {fileID: -6579967724501718053, guid: bed026107e5d2d848861e181f3958b11, type: 3}
+    text: "\uC774 \uCC28\uAC00\uC6B4 \uC6B0\uC8FC\uC5D0\uC11C, \uD640\uB85C \uC5BC\uB9C8\uB098
+      \uBC84\uD2F8 \uC218 \uC788\uC744\uAE4C."

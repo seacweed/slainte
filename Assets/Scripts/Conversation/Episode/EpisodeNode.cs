@@ -54,6 +54,10 @@ public class EpisodeNode
     public BgmCommand bgmCommand = BgmCommand.None;
     public string bgmClipName;
 
+    [Header("SFX (optional)")]
+    public SfxCommand sfxCommand = SfxCommand.None;
+    public string sfxClipName;
+
     public CraftingOutcome GetCraftingOutcome(CraftingJobResult result) =>
         craftingOutcomes?.Find(o => o.result == result);
 

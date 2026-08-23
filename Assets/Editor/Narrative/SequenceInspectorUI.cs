@@ -36,6 +36,7 @@ namespace NarrativeFlow.Editor
                     DrawCharacterAppearances(container, ev, nodeView, epNode, graph);
                     container.Add(NarrativeUIHelper.CreateDivider());
                     container.Add(DrawBgmSection(ev, epNode, graph));
+                    container.Add(DrawSfxSection(ev, epNode, graph));
                     break;
                 case EpisodeEventType.Choice:
                     container.Add(CreateField("Speaker", ev.SpeakerKey, "none", nodeView, v => ev.SpeakerKey = v, graph));
@@ -87,6 +88,26 @@ namespace NarrativeFlow.Editor
             clipRow.Add(NarrativeUIHelper.CreateLabel("Clip", "field-label").With(l => l.style.width = 70));
             clipRow.Add(new TextField { value = ev.BgmClipName }.SetFlex(1).With(x =>
                 x.RegisterValueChangedCallback(e => { ev.BgmClipName = e.newValue; EditorUtility.SetDirty(epNode); graph.RefreshMainGraphVisuals(); })));
+            sec.Add(clipRow);
+
+            return sec;
+        }
+
+        private static VisualElement DrawSfxSection(EpisodeEvent ev, EpisodeNodeSO epNode, SequenceGraphView graph)
+        {
+            var sec = new VisualElement();
+            sec.Add(NarrativeUIHelper.CreateLabel("SFX", "field-label"));
+
+            var cmdRow = NarrativeUIHelper.CreateRow();
+            cmdRow.Add(NarrativeUIHelper.CreateLabel("Command", "field-label").With(l => l.style.width = 70));
+            cmdRow.Add(new EnumField(ev.SfxCommand).SetFlex(1).With(x =>
+                x.RegisterValueChangedCallback(e => { ev.SfxCommand = (SfxCommand)e.newValue; EditorUtility.SetDirty(epNode); graph.RefreshMainGraphVisuals(); })));
+            sec.Add(cmdRow);
+
+            var clipRow = NarrativeUIHelper.CreateRow();
+            clipRow.Add(NarrativeUIHelper.CreateLabel("Clip", "field-label").With(l => l.style.width = 70));
+            clipRow.Add(new TextField { value = ev.SfxClipName }.SetFlex(1).With(x =>
+                x.RegisterValueChangedCallback(e => { ev.SfxClipName = e.newValue; EditorUtility.SetDirty(epNode); graph.RefreshMainGraphVisuals(); })));
             sec.Add(clipRow);
 
             return sec;

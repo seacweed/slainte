@@ -36,6 +36,10 @@ namespace NarrativeFlow
         public BgmCommand BgmCommand;
         public string BgmClipName;
 
+        // SFX Fields (applied on any event, usually Dialogue)
+        public SfxCommand SfxCommand;
+        public string SfxClipName;
+
         // Business Fields
         public string CraftingTicketKey;
         public List<CraftingOutcomeData> CraftingOutcomes = new();

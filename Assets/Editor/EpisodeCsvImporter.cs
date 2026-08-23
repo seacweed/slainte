@@ -582,6 +582,8 @@ public class EpisodeCsvImporter : EditorWindow
                 craftingTicketKey   = Field(row, 6),
                 bgmCommand          = ParseBgmCommand(Field(row, 7)),
                 bgmClipName         = Field(row, 8),
+                sfxCommand          = ParseSfxCommand(Field(row, 9)),
+                sfxClipName         = Field(row, 10),
                 craftingOutcomes = nodeCraftingBranches.TryGetValue(nid, out var craftBr)
                     ? craftBr : new List<CraftingOutcome>(),
                 characters = nodeChars.TryGetValue(nid, out var chars)
@@ -690,6 +692,15 @@ public class EpisodeCsvImporter : EditorWindow
             "play" => BgmCommand.Play,
             "stop" => BgmCommand.Stop,
             _      => BgmCommand.None
+        };
+    }
+
+    private static SfxCommand ParseSfxCommand(string value)
+    {
+        return value.Trim().ToLowerInvariant() switch
+        {
+            "play" => SfxCommand.Play,
+            _      => SfxCommand.None
         };
     }
 

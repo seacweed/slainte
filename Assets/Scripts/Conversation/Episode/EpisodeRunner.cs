@@ -161,6 +161,7 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         }
 
         ApplyBgmCommand(_currentNode);
+        ApplySfxCommand(_currentNode);
 
         if (_currentNode.characters != null && _currentNode.characters.Count > 0)
         {
@@ -429,6 +430,13 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
             AudioManager.Instance.PlayBgm(node.bgmClipName);
         else if (node.bgmCommand == BgmCommand.Stop)
             AudioManager.Instance.StopBgm();
+    }
+
+    private void ApplySfxCommand(EpisodeNode node)
+    {
+        if (node.sfxCommand != SfxCommand.Play || AudioManager.Instance == null) return;
+
+        AudioManager.Instance.PlaySfx(node.sfxClipName);
     }
 
     private string ResolveSpeakerName(EpisodeNode node)

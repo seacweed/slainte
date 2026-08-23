@@ -59,3 +59,21 @@
 `EpisodeRunner`가 노드 진입 시 `ApplyBgmCommand()`를 호출해 `AudioManager`에 위임합니다.
 
 BGM 클립은 `Assets/Resources/BGM/` 폴더에 배치해야 합니다.
+
+### SFX
+
+BGM과 완전히 분리된 채널이다 — BGM은 무한 반복 + 크로스페이드(교체 시 이전 곡이 페이드아웃되며 끊김), SFX는 원샷 재생(반복 없음, 여러 개 겹쳐도 서로 안 끊김, BGM을 전혀 건드리지 않음). SFX를 재생하려고 `bgmCommand`를 같이 쓰면 안 됨 — BGM 크로스페이드가 발동해 기존 BGM이 멈추고 그 클립이 무한 반복되어 버림.
+
+`AudioManager`:
+- `PlaySfx(string clipName, float volume = 1f)` — `Resources/SFX/{clipName}` 클립을 로드해 BGM과 별도인 전용 `AudioSource`(`sfxSource`)에서 `PlayOneShot`으로 재생
+- `sfxSource`는 `bgmSourceA`/`B`와 마찬가지로 Inspector에서 직접 연결하거나 비워두면 자동 생성(단, `loop = false`로 생성됨)
+
+`EpisodeNode` SFX 필드:
+- `sfxCommand: SfxCommand` — `None`(기본값) / `Play`. `Stop`은 없음(원샷은 알아서 끝남)
+- `sfxClipName: string` — `Play`일 때만 사용. 확장자 없는 파일명(`Resources/SFX/` 기준)
+
+`EpisodeRunner`가 노드 진입 시 `ApplyBgmCommand()`와 같은 자리에서 `ApplySfxCommand()`도 호출.
+
+SFX 클립은 `Assets/Resources/SFX/` 폴더에 배치해야 합니다(BGM 폴더와 별도).
+
+CSV/노드 그래프 에디터에서의 작성법은 [episode-csv-guide.md](episode-csv-guide.md#nodes), [narrative-graph-editor.md](narrative-graph-editor.md) 참고.

@@ -8,6 +8,9 @@ public class AudioManager : MonoSingleton<AudioManager>
     [SerializeField] private AudioSource bgmSourceB;
     [SerializeField] private float defaultFadeDuration = 1.5f;
 
+    [Header("SFX")]
+    [SerializeField] private AudioSource sfxSource;
+
     private AudioSource _activeSource;
     private AudioSource _inactiveSource;
     private Coroutine   _fadeRoutine;
@@ -16,11 +19,28 @@ public class AudioManager : MonoSingleton<AudioManager>
     {
         base.Awake();
 
-        if (bgmSourceA == null) bgmSourceA = CreateAudioSource("BGM_A");
-        if (bgmSourceB == null) bgmSourceB = CreateAudioSource("BGM_B");
+        if (bgmSourceA == null) bgmSourceA = CreateAudioSource("BGM_A", loop: true);
+        if (bgmSourceB == null) bgmSourceB = CreateAudioSource("BGM_B", loop: true);
+        if (sfxSource == null) sfxSource = CreateAudioSource("SFX", loop: false);
 
         _activeSource   = bgmSourceA;
         _inactiveSource = bgmSourceB;
+    }
+
+    // BGM(크로스페이드 채널)과 완전히 독립된 소스에서 원샷으로 재생한다.
+    // 루프하지 않고, 다른 SFX/BGM과 서로 끊거나 멈추지 않는다.
+    public void PlaySfx(string clipName, float volume = 1f)
+    {
+        if (string.IsNullOrWhiteSpace(clipName)) return;
+
+        AudioClip clip = Resources.Load<AudioClip>($"SFX/{clipName}");
+        if (clip == null)
+        {
+            Debug.LogWarning($"[AudioManager] SFX clip not found: Resources/SFX/{clipName}");
+            return;
+        }
+
+        sfxSource.PlayOneShot(clip, volume);
     }
 
     public void PlayBgm(string clipName, float fadeDuration = -1f)
@@ -95,13 +115,13 @@ public class AudioManager : MonoSingleton<AudioManager>
         _fadeRoutine  = null;
     }
 
-    private AudioSource CreateAudioSource(string sourceName)
+    private AudioSource CreateAudioSource(string sourceName, bool loop)
     {
         GameObject go = new GameObject(sourceName);
         go.transform.SetParent(transform);
         AudioSource src = go.AddComponent<AudioSource>();
         src.playOnAwake = false;
-        src.loop        = true;
+        src.loop        = loop;
         return src;
     }
 }
