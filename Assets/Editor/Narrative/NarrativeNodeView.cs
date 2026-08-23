@@ -180,6 +180,10 @@ namespace NarrativeFlow.Editor
             if (ev.BgmCommand != BgmCommand.None)
                 card.Add(NarrativeUIHelper.CreateLabel($"BGM {ev.BgmCommand} {ev.BgmClipName}", "info-label")
                     .With(l => l.style.color = new Color(1f, 0.7f, 1f)));
+
+            if (ev.SfxCommand != SfxCommand.None)
+                card.Add(NarrativeUIHelper.CreateLabel($"SFX {ev.SfxCommand} {ev.SfxClipName}", "info-label")
+                    .With(l => l.style.color = new Color(0.7f, 0.9f, 1f)));
         }
 
         private static void AddChoiceInfo(VisualElement card, EpisodeEvent ev)

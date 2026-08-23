@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45490a5e9b47789428bf7abf8b3b65f2, type: 3}
+  m_Name: CutsceneData_Ending
+  m_EditorClassIdentifier: Assembly-CSharp::CutsceneData
+  cutsceneId: Cutscene_Ending
+  slides:
+  - image: {fileID: 651112069384815035, guid: 1d57b7346e940dc498683e82e13e43f3, type: 3}
+    text: "\uB370\uBAA8\uB294 \uC5EC\uAE30\uAE4C\uC9C0 \uC785\uB2C8\uB2E4. \n\uB05D\uAE4C\uC9C0
+      \uD50C\uB808\uC774\uD574\uC8FC\uC154\uC11C \uC9C4\uC2EC\uC73C\uB85C \uAC10\uC0AC\uD569\uB2C8\uB2E4!"
+  - image: {fileID: 651112069384815035, guid: 1d57b7346e940dc498683e82e13e43f3, type: 3}
+    text: "<b>\uAE30\uD68D:</b> \n\uC724\uC815\uBB35"
+  - image: {fileID: 651112069384815035, guid: 1d57b7346e940dc498683e82e13e43f3, type: 3}
+    text: "<b>\uC544\uD2B8 \uAC10\uB3C5, \uCE90\uB9AD\uD130 \uC544\uD2B8:</b> \n\uC870\uC608\uC9C4"
+  - image: {fileID: 651112069384815035, guid: 1d57b7346e940dc498683e82e13e43f3, type: 3}
+    text: "<b>\uBCF4\uC870 \uAE30\uD68D:</b> \n\uAE40\uAE30\uD64D"
+  - image: {fileID: 651112069384815035, guid: 1d57b7346e940dc498683e82e13e43f3, type: 3}
+    text: "<b>\uD504\uB85C\uADF8\uB798\uBC0D:</b> \n\uAE40\uC7AC\uD615, \uAE40\uBCF4\uAD6D"
+  - image: {fileID: 651112069384815035, guid: 1d57b7346e940dc498683e82e13e43f3, type: 3}
+    text: "<b>\uB0B4\uB7EC\uD2F0\uBE0C: </b>\n\uAD8C\uB098\uC740, \uC724\uC815\uBB35"
+  - image: {fileID: 651112069384815035, guid: 1d57b7346e940dc498683e82e13e43f3, type: 3}
+    text: "<b>UI\uC544\uD2B8:</b> \n\uBC15\uC18C\uC5F0   \uBC30\uACBD \uC544\uD2B8:
+      \uAE40\uC11C\uC601"
+  - image: {fileID: 651112069384815035, guid: 1d57b7346e940dc498683e82e13e43f3, type: 3}
+    text: "<b>\uC74C\uC545:</b>\n\uC544\uBE44\uC2A4(Abyss), \uAE40\uD604\uBBFC"
+  - image: {fileID: 651112069384815035, guid: 1d57b7346e940dc498683e82e13e43f3, type: 3}
+    text: "<b>SFX:</b>\n\uC544\uBE44\uC2A4(Abyss)"
+  - image: {fileID: 651112069384815035, guid: 1d57b7346e940dc498683e82e13e43f3, type: 3}
+    text: "\uADF8\uB9AC\uACE0..."
+  - image: {fileID: 651112069384815035, guid: 1d57b7346e940dc498683e82e13e43f3, type: 3}
+    text: "<b>Special Thanks: </b>\n\uCC9C\uBB38\uD559 \uC790\uBB38: \uC784\uBCD1\uBB34\n\uB370\uBAA8
+      \uC544\uD2B8: \uAD8C\uBBFC\uC11C"
+  - image: {fileID: 7043716195235948364, guid: 49dfe177e71be41428ed77d7a87b8232, type: 3}
+    text: 

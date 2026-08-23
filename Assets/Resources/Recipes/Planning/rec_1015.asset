@@ -41,3 +41,6 @@ MonoBehaviour:
   - itemId: item_1010
     targetMl: 30
     toleranceMl: 5
+  icon: {fileID: 21300000, guid: efbd2320fb9f2964ea2b44efc3fae9ff, type: 3}
+  description: "\uC704\uC2A4\uD0A4\uB97C \uC794 <b>\uB77D \uAE00\uB77C\uC2A4</b>\uC5D0
+    \uB530\uB77C <b>\uC5BC\uC74C</b>\uACFC \uD568\uAED8 \uC11C\uBE59. "

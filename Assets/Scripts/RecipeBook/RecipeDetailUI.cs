@@ -20,11 +20,15 @@ public class RecipeDetailUI : MonoBehaviour
     [Header("Ingredients")]
     [SerializeField] private Transform ingredientListContent;
     [SerializeField] private RecipeIngredientRowUI ingredientRowPrefab;
+    [Tooltip("재료명 색을 그 재료가 속한 LiquorCategoryDef의 고유색으로 칠하기 위한 참조(술장 LiquorShelfUI와 동일한 카탈로그).")]
+    [SerializeField] private LiquorBottleCatalog bottleCatalog;
 
     [Header("Tags")]
     [SerializeField] private Transform tasteChipContent;
     [SerializeField] private Transform moodChipContent;
     [SerializeField] private RecipeSearchOptionButton tagButtonPrefab;
+    [SerializeField] private float chipFontSize = 24f;
+    [SerializeField] private float chipHeight = 48f;
 
     [Header("Description")]
     [SerializeField] private TMP_Text descriptionText;
@@ -61,9 +65,26 @@ public class RecipeDetailUI : MonoBehaviour
             if (ingredient == null) continue;
             RecipeIngredientRowUI row = Instantiate(ingredientRowPrefab, ingredientListContent);
             string ingredientName = ingredient.item != null ? ingredient.item.displayName : ingredient.ingredientId;
-            row.Setup(ingredientName, ingredient.targetMl);
+            row.Setup(ingredientName, ingredient.targetMl, ResolveCategoryColor(ingredient));
             _spawned.Add(row.gameObject);
         }
+    }
+
+    private Color? ResolveCategoryColor(CocktailRecipeIngredient ingredient)
+    {
+        if (bottleCatalog == null || bottleCatalog.bottles == null) return null;
+
+        foreach (LiquorBottleDef bottle in bottleCatalog.bottles)
+        {
+            if (bottle == null || bottle.category == null) continue;
+
+            bool matches = ingredient.item != null
+                ? bottle.item == ingredient.item
+                : string.Equals(bottle.InventoryId, ingredient.ingredientId, System.StringComparison.OrdinalIgnoreCase);
+            if (matches) return bottle.category.color;
+        }
+
+        return null;
     }
 
     private void PopulateChips(
@@ -83,7 +104,8 @@ public class RecipeDetailUI : MonoBehaviour
             tryGetColor?.Invoke(tag, out backgroundColor, out textColor);
 
             RecipeSearchOptionButton chip = Instantiate(tagButtonPrefab, content);
-            chip.Setup(tag, backgroundColor, textColor, interactable: false);
+            chip.Setup(tag, backgroundColor, textColor, interactable: false,
+                fontSize: chipFontSize, preferredHeight: chipHeight);
             _spawned.Add(chip.gameObject);
             count++;
         }

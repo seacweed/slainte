@@ -134,7 +134,9 @@ namespace NarrativeFlow.Editor
             {
                 nodeId      = nodeId,
                 bgmCommand  = ev.BgmCommand,
-                bgmClipName = ev.BgmClipName
+                bgmClipName = ev.BgmClipName,
+                sfxCommand  = ev.SfxCommand,
+                sfxClipName = ev.SfxClipName
             };
 
             switch (ev.Type)
@@ -409,9 +411,9 @@ namespace NarrativeFlow.Editor
             }
 
             sb.AppendLine("#NODES");
-            sb.AppendLine("nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,bgmCommand,bgmClipName");
+            sb.AppendLine("nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,bgmCommand,bgmClipName,sfxCommand,sfxClipName");
             foreach (var n in data.nodes)
-                sb.AppendLine($"{n.nodeId},{n.speakerKey},{n.overrideSpeakerName},{Csv(n.text)},{n.nextNodeId},{n.requiresCrafting.ToString().ToLower()},{n.craftingTicketKey},{n.bgmCommand},{n.bgmClipName}");
+                sb.AppendLine($"{n.nodeId},{n.speakerKey},{n.overrideSpeakerName},{Csv(n.text)},{n.nextNodeId},{n.requiresCrafting.ToString().ToLower()},{n.craftingTicketKey},{n.bgmCommand},{n.bgmClipName},{n.sfxCommand},{n.sfxClipName}");
             sb.AppendLine();
 
             bool hasCraftingOutcomes = data.nodes.Any(n => n.craftingOutcomes.Count > 0);

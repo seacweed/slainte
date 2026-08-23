@@ -8,9 +8,13 @@ public class RecipeIngredientRowUI : MonoBehaviour
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private TMP_Text amountText;
 
-    public void Setup(string ingredientName, float ml)
+    public void Setup(string ingredientName, float ml, Color? nameColor = null)
     {
-        if (nameText) nameText.text = ingredientName;
+        if (nameText)
+        {
+            nameText.text = ingredientName;
+            if (nameColor.HasValue) nameText.color = nameColor.Value;
+        }
         if (amountText) amountText.text = $"{ml:0.#}ml";
     }
 }

@@ -40,8 +40,8 @@ public class RecipeSearchUI : MonoBehaviour
     [SerializeField] private Button   backButton;
 
     [Header("Results Header (Results View)")]
-    [SerializeField] private RecipeSearchOptionButton resultsHeaderButton;
-    [SerializeField] private Button                   resultsBackButton;
+    [SerializeField] private Transform resultsHeaderContent;
+    [SerializeField] private Button    resultsBackButton;
 
     [Header("Category Buttons (Main View)")]
     [SerializeField] private GameObject categoryButtonsRoot;
@@ -183,8 +183,12 @@ public class RecipeSearchUI : MonoBehaviour
             .ToList();
         PopulateRecipeList(resultsContent, matches, recipe => ShowDetail(recipe, DetailOrigin.CategoryResults));
 
-        if (resultsHeaderButton)
-            resultsHeaderButton.Setup(entry.tag, entry.backgroundColor, entry.textColor, interactable: false);
+        ClearContent(resultsHeaderContent);
+        if (resultsHeaderContent && optionButtonPrefab)
+        {
+            RecipeSearchOptionButton header = Instantiate(optionButtonPrefab, resultsHeaderContent);
+            header.Setup(entry.tag, entry.backgroundColor, entry.textColor, interactable: false);
+        }
 
         SetViews(main: false, category: false, results: true, detail: false);
     }

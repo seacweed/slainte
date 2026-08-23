@@ -324,6 +324,10 @@ celi_apology_paid,소란 피워서 미안해 - 셀리,150
 | `craftingTicketKey` | 사용할 제조 티켓 ID (`requiresCrafting=true` 일 때만 작성) | `sc0_f72` |
 | `bgmCommand` | BGM 명령 (`none` / `play` / `stop`, 비우면 `none`) | `play` |
 | `bgmClipName` | 재생할 BGM 파일명 (`bgmCommand=play` 일 때만 작성, 확장자 제외) | `bgm_tension` |
+| `sfxCommand` | 효과음 명령 (`none` / `play`, 비우면 `none`) | `play` |
+| `sfxClipName` | 재생할 효과음 파일명 (`sfxCommand=play` 일 때만 작성, 확장자 제외, `Resources/SFX/` 폴더 기준) | `sfx_bell` |
+
+BGM은 무한 반복 재생되며 새로 재생하면 이전 BGM과 크로스페이드로 교체됩니다. SFX는 BGM과 별도 채널에서 한 번만 재생되고(반복 없음), BGM을 멈추지 않으며 여러 개가 겹쳐 재생될 수 있습니다.
 
 **제조 판정 노드** 작성 시: `text`와 `nextNodeId`는 비우고, `requiresCrafting=true` + `craftingTicketKey`만 작성합니다. 제조 결과별(goodjob/badjob/midjob 4종) 이동 노드·플래그·변수 변경은 `#NODE_CRAFTING_BRANCHES` 섹션에 작성합니다.
 
@@ -333,9 +337,9 @@ celi_apology_paid,소란 피워서 미안해 - 셀리,150
 
 ```csv
 #NODES
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,bgmCommand,bgmClipName
-0,f72,???,흘..크흘…,1,false,,play,bgm_tension
-5,f72,???,,,true,sc0_f72,,
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,bgmCommand,bgmClipName,sfxCommand,sfxClipName
+0,f72,???,흘..크흘…,1,false,,play,bgm_tension,,
+5,f72,???,,,true,sc0_f72,,,play,sfx_bell
 ```
 
 > **주의**: 대사에 쉼표(`,`)가 포함된 경우 반드시 큰따옴표로 감싸야 합니다.  
@@ -545,8 +549,8 @@ isHidden,characterName
 false,f72
 
 #NODES
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,bgmCommand,bgmClipName
-0,f72,???,뭘 마시겠어?,1,false,,play,bgm_bar
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,bgmCommand,bgmClipName,sfxCommand,sfxClipName
+0,f72,???,뭘 마시겠어?,1,false,,play,bgm_bar,,
 1,shaun,,추천해줘.,2,false,,none,
 2,f72,,그럼 선택해.,,false,,none,
 3a,f72,,좋은 선택이야.,4,false,,none,

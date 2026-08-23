@@ -34,7 +34,10 @@ public class GameManager : MonoSingleton<GameManager>
     {
         string sceneName = "";
         Action onTransitionComplete = null;
-        Action onFadeOutComplete = null;
+
+        // 컷씬 직후 진입일 수 있으므로, 새 화면이 완전히 화면을 덮은 시점(onFadeOutComplete)에
+        // 항상 컷씬 패널을 감춘다. 컷씬이 재생 중이 아니었다면 안전하게 무시된다.
+        Action onFadeOutComplete = () => CutsceneManager.Instance?.HideImmediate();
 
         switch (state)
         {
@@ -61,8 +64,12 @@ public class GameManager : MonoSingleton<GameManager>
             case GameState.Rest:
                 sceneName = "RestScene";
                 // Rest는 항상 정산 화면을 닫으면서 진입하므로, 화면이 완전히 검게 된 시점에
-                // 정산 화면(셔터/모니터)을 원위치로 리셋한다.
-                onFadeOutComplete = () => SettlementManager.Instance?.OnFadeOutComplete();
+                // 정산 화면(셔터/모니터)을 원위치로 리셋하고, 컷씬 패널도 함께 감춘다.
+                onFadeOutComplete = () =>
+                {
+                    CutsceneManager.Instance?.HideImmediate();
+                    SettlementManager.Instance?.OnFadeOutComplete();
+                };
                 break;
         }
 

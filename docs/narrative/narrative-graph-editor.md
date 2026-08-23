@@ -64,7 +64,7 @@ OutgoingBranches: List<string>  — 출력 포트 레이블 (포트 인덱스 = 
 
 | Type | 주요 필드 |
 |---|---|
-| Dialogue | SpeakerKey, OverrideSpeakerName, Text, CharacterAppearances, BgmCommand/BgmClipName |
+| Dialogue | SpeakerKey, OverrideSpeakerName, Text, CharacterAppearances, BgmCommand/BgmClipName, SfxCommand/SfxClipName |
 | Choice | SpeakerKey, Text (선택지 전 대사), Choices[].ButtonText/SetFlags/ClearFlags/VarChanges |
 | BusinessStart | CraftingTicketKey, `CraftingOutcomes: List<CraftingOutcomeData>`(결과별 Flag/VarChanges, `Get/SetCraftingFlag(result)` 등 접근자로 조회) |
 | BusinessEnd | (포트만 사용) |

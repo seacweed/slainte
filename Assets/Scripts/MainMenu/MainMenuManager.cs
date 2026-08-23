@@ -21,6 +21,7 @@ public class MainMenuManager : MonoBehaviour
                 gp.SetCurrentChapter(firstChapter.chapterId);
         }
 
-        EpisodeManager.Instance?.StartEpisode("StrangeCoin_0");
+        CutsceneManager.Instance?.Play(CutsceneIds.Today, () =>
+            DayFlowController.Instance?.StartFirstDay());
     }
 }

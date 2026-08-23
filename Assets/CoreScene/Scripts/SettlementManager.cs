@@ -108,7 +108,28 @@ public class SettlementManager : MonoSingleton<SettlementManager>
         settlementActive = false;
         GameProgress.Instance?.ResetDaySettlement();
         DataManager.Instance?.Save();
-        GameManager.Instance?.ChangeState(GameState.Rest);
+
+        string cutsceneId = DayFlowController.Instance?.ConsumePendingSettlementCutscene();
+        if (string.IsNullOrEmpty(cutsceneId))
+        {
+            GameManager.Instance?.ChangeState(GameState.Rest);
+            return;
+        }
+
+        // 컷씬이 화면을 곧바로 덮으므로, 원래 화면이 완전히 검게 된 후(OnFadeOutComplete)
+        // 정리하던 정산 UI(셔터/모니터)를 여기서 먼저 리셋해둔다.
+        settlementUI?.HideAndReset();
+
+        bool isEnding = cutsceneId == CutsceneIds.Ending;
+        CutsceneManager.Instance?.Play(cutsceneId, () =>
+        {
+            if (isEnding)
+                SceneTransitionManager.Instance?.TransitionToSubScene(
+                    "MainMenuScene",
+                    onFadeOutComplete: () => CutsceneManager.Instance?.HideImmediate());
+            else
+                GameManager.Instance?.ChangeState(GameState.Rest);
+        });
     }
 
     // GameManager -> SceneTransitionManager가 Rest씬으로 페이드아웃을 마친 직후 호출됨.
