@@ -59,6 +59,8 @@ MonoBehaviour:
       requiredCustomerAppearances: []
   maxDay: 0
   reappearanceGroupKey: f72
+  overridePaymentCurrency: 1
+  paymentCurrency: 1
   plannedOrderNames:
   - "\uD55C\uC5EC\uB984\uC758 \uB098\uB0AD\uB098"
   - "\uBC88\uD584 \uC0AC\uC6CC"

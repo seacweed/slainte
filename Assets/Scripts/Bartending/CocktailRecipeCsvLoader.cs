@@ -61,6 +61,10 @@ namespace Slainte.Bartending
                         IceRequirement.Any),
                     requiredTechnique = ParseEnum(row.Get("technique"), CocktailTechnique.None)
                 };
+                recipe.iceRequirement = IceRequirementRules.ResolvePresenceRule(
+                    recipe.iceRequirement,
+                    recipe.requiredIceCount);
+                recipe.requiredIceCount = -1;
 
                 AddTags(recipe.tasteTags, row.Get("tasteTags"));
                 AddTags(recipe.moodTags, row.Get("moodTags"));

@@ -118,6 +118,30 @@ namespace Slainte.TV
                     : 1f;
         }
 
+        public static float GetCustomerWeightMultiplier(
+            GameProgress progress,
+            TVBroadcastDatabase database,
+            CustomerVisitData visit)
+        {
+            TVBroadcastEntry active = GetActiveBroadcast(progress, database);
+            return active != null
+                && active.effectType == TVBroadcastEffectType.BoostCustomerTagWeight
+                && MatchesCustomer(active, visit)
+                    ? Math.Max(0f, active.effectMultiplier)
+                    : 1f;
+        }
+
+        public static bool IsCustomerAllowedByActivePool(
+            GameProgress progress,
+            TVBroadcastDatabase database,
+            CustomerVisitData visit)
+        {
+            TVBroadcastEntry active = GetActiveBroadcast(progress, database);
+            return active == null
+                || !active.exclusiveCustomerPool
+                || MatchesCustomer(active, visit);
+        }
+
         public static bool OrderMatchesActiveBoost(
             GameProgress progress,
             TVBroadcastDatabase database,
@@ -139,6 +163,17 @@ namespace Slainte.TV
                 && active.effectType == TVBroadcastEffectType.BoostCustomerTagWeight
                 && !string.IsNullOrWhiteSpace(active.targetTag)
                 && ContainsTag(tags, active.targetTag);
+        }
+
+        public static bool CustomerMatchesActiveBoost(
+            GameProgress progress,
+            TVBroadcastDatabase database,
+            CustomerVisitData visit)
+        {
+            TVBroadcastEntry active = GetActiveBroadcast(progress, database);
+            return active != null
+                && active.effectType == TVBroadcastEffectType.BoostCustomerTagWeight
+                && MatchesCustomer(active, visit);
         }
 
         public static bool IsRestShopDisabled(
@@ -165,6 +200,33 @@ namespace Slainte.TV
             }
 
             return false;
+        }
+
+        private static bool MatchesCustomer(
+            TVBroadcastEntry active,
+            CustomerVisitData visit)
+        {
+            if (active == null || visit == null || string.IsNullOrWhiteSpace(active.targetTag))
+                return false;
+
+            if (ContainsTag(visit.tags, active.targetTag))
+                return true;
+
+            const string attributePrefix = "customer_attribute:";
+            if (!active.targetTag.StartsWith(
+                    attributePrefix,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
+            string targetAttribute = active.targetTag.Substring(attributePrefix.Length).Trim();
+            string visitAttribute = visit.customerAttributeKey?.Trim();
+            return !string.IsNullOrWhiteSpace(targetAttribute)
+                && !string.IsNullOrWhiteSpace(visitAttribute)
+                && visitAttribute.StartsWith(
+                    targetAttribute,
+                    StringComparison.OrdinalIgnoreCase);
         }
 
         private static bool MatchesOrder(TVBroadcastEntry active, CustomerOrderData order)

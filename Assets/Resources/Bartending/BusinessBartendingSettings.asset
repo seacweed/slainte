@@ -41,7 +41,7 @@ MonoBehaviour:
   contentsLabelTextColor: {r: 1, g: 0.82, b: 0.05, a: 1}
   contentsLabelSizePixels: {x: 220, y: 150}
   contentsLabelOffsetPixels: {x: 28, y: 45}
-  contentsLabelFontSize: 18
+  contentsLabelFontSize: 25
   contentsRefreshInterval: 0.1
   contentsMinimumVisibleMl: 0.05
   showVesselDebugLabels: 1

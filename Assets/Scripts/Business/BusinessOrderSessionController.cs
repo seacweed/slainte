@@ -254,7 +254,8 @@ namespace Slainte.Business
                 TVBroadcastRuntime.GetTipMultiplier(
                     GameProgress.Instance,
                     tvBroadcastDatabase),
-                GameProgress.Instance != null ? GameProgress.Instance.CurrentMoney : 0);
+                GameProgress.Instance != null ? GameProgress.Instance.CurrentMoney : 0,
+                currentRequest.rewardProfile);
             CompleteCurrentOrder(new BusinessOrderSessionResult
             {
                 outcome = OrderSessionOutcome.Served,
@@ -361,7 +362,8 @@ namespace Slainte.Business
                 TVBroadcastRuntime.GetTipMultiplier(
                     GameProgress.Instance,
                     tvBroadcastDatabase),
-                GameProgress.Instance != null ? GameProgress.Instance.CurrentMoney : 0);
+                GameProgress.Instance != null ? GameProgress.Instance.CurrentMoney : 0,
+                currentRequest.rewardProfile);
             pendingResult = new BusinessOrderSessionResult
             {
                 outcome = OrderSessionOutcome.Served,

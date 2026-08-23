@@ -14,7 +14,7 @@ namespace Slainte.EditorTools
             RunValidation();
             EditorUtility.DisplayDialog(
                 "Business Integration Rules",
-                "타이머, 저장 격리, 판매 기록, 정산 지급 검증을 통과했습니다.",
+                "타이머, 팁, 실제 손님 일반 돈/이상한 동전 결제, 판매 기록과 정산 지급 검증을 통과했습니다.",
                 "확인");
         }
 
@@ -29,12 +29,13 @@ namespace Slainte.EditorTools
             ValidateEncounterEpisodeType();
             ValidateSaveSuppressionNesting();
             ValidateRewardCalculation();
+            ValidateCustomerPaymentRouting();
             ValidateDeferredSettlement();
             ValidateImmediateCurrencyPayout();
             ValidatePlanningInventoryMigration();
             Debug.Log(
                 "[BusinessIntegrationRulesValidator] PASS: timer, Day-5 third-slot encounter, explicit pause, save isolation, "
-                + "recipe-price rewards, Money/StrangeCoin immediate payout, detailed sale save, "
+                + "recipe-price rewards/tips, real-customer Money/StrangeCoin routing and immediate payout, detailed sale save, "
                 + "deferred settlement payout and reset");
         }
 
@@ -207,17 +208,20 @@ namespace Slainte.EditorTools
                 settings.goodReputationReward = 2;
                 settings.midReputationReward = 0;
                 settings.badReputationReward = -1;
-                settings.satisfiedTipRate = 0.2f;
-                settings.neutralTipRate = 0.05f;
+                settings.satisfiedTipRate = 0.3f;
+                settings.neutralTipRate = 0f;
                 settings.dissatisfiedTipRate = 0f;
+                settings.badPenaltyRate = 1.3f;
+                settings.bigFishGoodBonusRate = 2f;
+                settings.bigFishFailurePenaltyRate = 3f;
 
                 BusinessOrderReward good = BusinessOrderRewardCalculator.Calculate(
                     OrderEvaluationGrade.Good,
                     settings);
                 Require(good.Mood == CustomerMood.Satisfied,
                     "Good 결과가 만족 상태로 변환되지 않았습니다.");
-                Require(good.BaseRevenue == 100 && good.TipAmount == 20
-                    && good.TotalRevenue == 120 && good.ReputationDelta == 2,
+                Require(good.BaseRevenue == 100 && good.TipAmount == 30
+                    && good.TotalRevenue == 130 && good.ReputationDelta == 2,
                     "만족 보상 계산이 잘못됐습니다.");
 
                 BusinessOrderReward mid = BusinessOrderRewardCalculator.Calculate(
@@ -225,9 +229,9 @@ namespace Slainte.EditorTools
                     settings);
                 Require(mid.Mood == CustomerMood.Neutral,
                     "Mid 결과가 보통 상태로 변환되지 않았습니다.");
-                Require(mid.BaseRevenue == 50 && mid.TipAmount == 2
-                    && mid.TotalRevenue == 52 && mid.ReputationDelta == 0,
-                    "보통 팁의 1원 미만 버림 계산이 잘못됐습니다.");
+                Require(mid.BaseRevenue == 50 && mid.TipAmount == 0
+                    && mid.TotalRevenue == 50 && mid.ReputationDelta == 0,
+                    "보통 보상 계산이 잘못됐습니다.");
 
                 BusinessOrderReward bad = BusinessOrderRewardCalculator.Calculate(
                     OrderEvaluationGrade.Bad,
@@ -238,21 +242,50 @@ namespace Slainte.EditorTools
 
                 BusinessOrderReward pricedGood = BusinessOrderRewardCalculator.Calculate(
                     OrderEvaluationGrade.Good,
-                    125,
+                    100,
                     settings);
-                Require(pricedGood.BaseRevenue == 125
-                    && pricedGood.TipAmount == 25
-                    && pricedGood.TotalRevenue == 150,
-                    "Good 결과가 CSV 레시피 가격 100%와 팁에 연결되지 않았습니다.");
+                Require(pricedGood.BaseRevenue == 100
+                    && pricedGood.TipAmount == 30
+                    && pricedGood.TotalRevenue == 130,
+                    "Good 결과가 정가 130%에 연결되지 않았습니다.");
 
                 BusinessOrderReward pricedMid = BusinessOrderRewardCalculator.Calculate(
                     OrderEvaluationGrade.Mid,
-                    125,
+                    100,
                     settings);
-                Require(pricedMid.BaseRevenue == 62
-                    && pricedMid.TipAmount == 3
-                    && pricedMid.TotalRevenue == 65,
-                    "Mid 결과가 CSV 레시피 가격 50%와 팁에 연결되지 않았습니다.");
+                Require(pricedMid.BaseRevenue == 100
+                    && pricedMid.TipAmount == 0
+                    && pricedMid.TotalRevenue == 100,
+                    "Mid 결과가 정가 100%에 연결되지 않았습니다.");
+
+                BusinessOrderReward pricedBad = BusinessOrderRewardCalculator.Calculate(
+                    OrderEvaluationGrade.Bad,
+                    100,
+                    settings,
+                    currentMoney: 0);
+                Require(pricedBad.BaseRevenue == 100
+                    && pricedBad.PenaltyAmount == 130
+                    && pricedBad.TotalRevenue == -30,
+                    "Bad 결과가 정가 -30% 또는 음수 잔액 허용 규칙에 연결되지 않았습니다.");
+
+                BusinessOrderReward bigFishGood = BusinessOrderRewardCalculator.Calculate(
+                    OrderEvaluationGrade.Good,
+                    100,
+                    settings,
+                    rewardProfile: BusinessCustomerRewardProfile.BigFish);
+                Require(bigFishGood.TipAmount == 200
+                    && bigFishGood.TotalRevenue == 300,
+                    "거물 Good 결과가 정가 300%에 연결되지 않았습니다.");
+
+                BusinessOrderReward bigFishMid = BusinessOrderRewardCalculator.Calculate(
+                    OrderEvaluationGrade.Mid,
+                    100,
+                    settings,
+                    currentMoney: 0,
+                    rewardProfile: BusinessCustomerRewardProfile.BigFish);
+                Require(bigFishMid.PenaltyAmount == 300
+                    && bigFishMid.TotalRevenue == -200,
+                    "거물 Mid/Bad 결과가 정가 -200%에 연결되지 않았습니다.");
 
                 BusinessOrderReward free = BusinessOrderRewardCalculator.Calculate(
                     OrderEvaluationGrade.Good,
@@ -293,44 +326,77 @@ namespace Slainte.EditorTools
                     affinityValues = new System.Collections.Generic.List<int> { 10 }
                 });
 
+                BusinessOrderFlowSettings settings =
+                    AssetDatabase.LoadAssetAtPath<BusinessOrderFlowSettings>(
+                        "Assets/Resources/Business/BusinessOrderFlowSettings.asset");
+                Require(settings != null, "실제 영업 보상 설정을 찾지 못했습니다.");
+                CustomerVisitData moneyVisit = LoadVisit("d1001");
+                CustomerVisitData strangeCoinVisit = LoadVisit("d1016");
+                GameCurrency moneyCurrency = ResolveVisitCurrency(moneyVisit);
+                GameCurrency strangeCoinCurrency = ResolveVisitCurrency(strangeCoinVisit);
+                BusinessOrderReward moneyReward = BusinessOrderRewardCalculator.Calculate(
+                    OrderEvaluationGrade.Good,
+                    100,
+                    settings);
+                BusinessOrderReward strangeCoinReward = BusinessOrderRewardCalculator.Calculate(
+                    OrderEvaluationGrade.Good,
+                    10,
+                    settings);
+
                 ImmediateSalePayoutPolicy policy = new();
                 policy.Apply(new BusinessOrderSessionResult
                 {
                     outcome = OrderSessionOutcome.Served,
                     accepted = true,
-                    paymentCurrency = GameCurrency.Money,
+                    customerVisitKey = moneyVisit.visitKey,
+                    paymentCurrency = moneyCurrency,
                     listedPrice = 100,
-                    baseRevenue = 100,
-                    tipAmount = 20,
-                    moneyDelta = 120,
-                    totalPayment = 120
+                    grade = OrderEvaluationGrade.Good,
+                    customerMood = moneyReward.Mood,
+                    baseRevenue = moneyReward.BaseRevenue,
+                    tipAmount = moneyReward.TipAmount,
+                    moneyDelta = moneyReward.TotalRevenue,
+                    totalPayment = moneyReward.TotalRevenue
                 }, progress);
 
-                Require(progress.CurrentMoney == 620,
-                    "일반 화폐 판매 대금이 주문 완료 즉시 지급되지 않았습니다.");
-                Require(progress.DayPaidMoneyIncome == 120,
-                    "즉시 지급된 일반 화폐가 정산 중복 지급 방지값에 기록되지 않았습니다.");
+                Require(moneyCurrency == GameCurrency.Money,
+                    "일반 손님이 일반 화폐로 라우팅되지 않았습니다.");
+                Require(moneyReward.TipAmount == 30 && progress.CurrentMoney == 630,
+                    "일반 손님의 정가 100+팁 30이 일반 화폐로 즉시 지급되지 않았습니다.");
+                Require(GameCurrencyWallet.GetBalance(progress, GameCurrency.StrangeCoin) == 10,
+                    "일반 화폐 판매가 이상한 동전 잔액을 변경했습니다.");
+                Require(progress.DayPaidMoneyIncome == 130,
+                    "즉시 지급된 일반 화폐와 팁이 정산 중복 지급 방지값에 기록되지 않았습니다.");
                 Require(SettlementManager.ApplyRecordedIncome(progress) == 0
-                    && progress.CurrentMoney == 620,
+                    && progress.CurrentMoney == 630,
                     "즉시 지급된 일반 화폐가 정산에서 중복 지급됐습니다.");
 
                 policy.Apply(new BusinessOrderSessionResult
                 {
                     outcome = OrderSessionOutcome.Served,
                     accepted = true,
-                    paymentCurrency = GameCurrency.StrangeCoin,
-                    listedPrice = 40,
-                    baseRevenue = 40,
-                    strangeCoinDelta = 40,
-                    totalPayment = 40
+                    customerVisitKey = strangeCoinVisit.visitKey,
+                    paymentCurrency = strangeCoinCurrency,
+                    listedPrice = 10,
+                    grade = OrderEvaluationGrade.Good,
+                    customerMood = strangeCoinReward.Mood,
+                    baseRevenue = strangeCoinReward.BaseRevenue,
+                    tipAmount = strangeCoinReward.TipAmount,
+                    strangeCoinDelta = strangeCoinReward.TotalRevenue,
+                    totalPayment = strangeCoinReward.TotalRevenue
                 }, progress);
 
-                Require(GameCurrencyWallet.GetBalance(progress, GameCurrency.StrangeCoin) == 50,
-                    "이상한 동전 판매 대금이 주문 완료 즉시 같은 화폐로 지급되지 않았습니다.");
-                Require(progress.DayPaidStrangeCoinIncome == 40,
-                    "즉시 지급된 이상한 동전이 정산 중복 지급 방지값에 기록되지 않았습니다.");
+                Require(strangeCoinCurrency == GameCurrency.StrangeCoin,
+                    "이상한 동전 손님이 이상한 동전으로 라우팅되지 않았습니다.");
+                Require(strangeCoinReward.TipAmount == 3
+                    && GameCurrencyWallet.GetBalance(progress, GameCurrency.StrangeCoin) == 23,
+                    "이상한 동전 손님의 정가 10+팁 3이 이상한 동전으로 즉시 지급되지 않았습니다.");
+                Require(progress.CurrentMoney == 630,
+                    "이상한 동전 판매가 일반 화폐 잔액을 변경했습니다.");
+                Require(progress.DayPaidStrangeCoinIncome == 13,
+                    "즉시 지급된 이상한 동전과 팁이 정산 중복 지급 방지값에 기록되지 않았습니다.");
                 SettlementManager.ApplyRecordedIncome(progress);
-                Require(GameCurrencyWallet.GetBalance(progress, GameCurrency.StrangeCoin) == 50,
+                Require(GameCurrencyWallet.GetBalance(progress, GameCurrency.StrangeCoin) == 23,
                     "즉시 지급된 이상한 동전이 정산에서 중복 지급됐습니다.");
                 Require(progress.GetDayDrinkSales().Count == 2
                     && progress.GetDayDrinkSales()[1].paymentCurrency == GameCurrency.StrangeCoin,
@@ -343,6 +409,51 @@ namespace Slainte.EditorTools
                 if (host != null)
                     UnityEngine.Object.DestroyImmediate(host);
             }
+        }
+
+        private static void ValidateCustomerPaymentRouting()
+        {
+            string[] strangeCoinVisitIds =
+            {
+                "d1016", "d1017", "d1018", "d1019",
+                "d1020", "d1021", "d1033", "d1034"
+            };
+            for (int i = 0; i < strangeCoinVisitIds.Length; i++)
+            {
+                CustomerVisitData visit = LoadVisit(strangeCoinVisitIds[i]);
+                Require(ResolveVisitCurrency(visit) == GameCurrency.StrangeCoin,
+                    $"이상한 동전 대상 방문이 일반 화폐로 라우팅됩니다: {visit.visitKey}");
+            }
+
+            string[] moneyVisitIds = { "d1001", "d1038", "d1040" };
+            for (int i = 0; i < moneyVisitIds.Length; i++)
+            {
+                CustomerVisitData visit = LoadVisit(moneyVisitIds[i]);
+                Require(ResolveVisitCurrency(visit) == GameCurrency.Money,
+                    $"일반 화폐 대상 방문이 이상한 동전으로 라우팅됩니다: {visit.visitKey}");
+            }
+
+            Require(BusinessCustomerRules.ResolveRewardProfile(LoadVisit("d1027"))
+                    == BusinessCustomerRewardProfile.BigFish,
+                "big_fish 방문이 거물 보상 프로필로 라우팅되지 않았습니다.");
+        }
+
+        private static CustomerVisitData LoadVisit(string visitKey)
+        {
+            CustomerVisitData visit = AssetDatabase.LoadAssetAtPath<CustomerVisitData>(
+                $"Assets/Data/CustomerImport/DraftVisits/CustomerVisit_{visitKey}.asset");
+            Require(visit != null, $"실제 손님 방문 에셋을 찾지 못했습니다: {visitKey}");
+            return visit;
+        }
+
+        private static GameCurrency ResolveVisitCurrency(CustomerVisitData visit)
+        {
+            GameCurrency fallback = visit?.orders != null
+                && visit.orders.Count > 0
+                && visit.orders[0]?.order != null
+                    ? visit.orders[0].order.paymentCurrency
+                    : GameCurrency.Money;
+            return BusinessCustomerRules.ResolvePaymentCurrency(visit, fallback);
         }
 
         private static void ValidatePlanningInventoryMigration()

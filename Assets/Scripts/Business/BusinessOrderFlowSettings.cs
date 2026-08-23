@@ -73,6 +73,8 @@ namespace Slainte.Business
     [CreateAssetMenu(menuName = "Slainte/Business/Order Flow Settings", fileName = "BusinessOrderFlowSettings")]
     public sealed class BusinessOrderFlowSettings : ScriptableObject
     {
+        public const string ResourcePath = "Business/BusinessOrderFlowSettings";
+
         [Header("영업 진행")]
         public bool autoStart = true;
         [InspectorName("영업 제한시간(초)")]
@@ -89,6 +91,12 @@ namespace Slainte.Business
         [Header("필수 영업 액션")]
         public List<BusinessRequiredActionRule> requiredActions = new();
 
+        [Header("기능 해금")]
+        [Tooltip("이 에피소드를 완료하면 배송 버튼이 생성됩니다. 비어 있거나 아직 존재하지 않는 ID는 잠금 상태로 처리합니다.")]
+        public string deliveryUnlockEpisodeId;
+        [Tooltip("이 에피소드를 완료하면 TV를 클릭할 수 있습니다. 비어 있거나 아직 존재하지 않는 ID는 잠금 상태로 처리합니다.")]
+        public string tvUnlockEpisodeId;
+
         [Header("보상")]
         public int goodMoneyReward = 100;
         public int midMoneyReward = 50;
@@ -104,6 +112,10 @@ namespace Slainte.Business
         public int badReputationReward = -1;
         [Tooltip("Bad 판정 시 판매 수익 지급 직후 추가로 차감하는 실수 페널티 비율입니다(정가 대비). 130%면 정가를 다시 지급받고 130%를 차감해 순수익이 -30%가 됩니다.")]
         [Min(0f)] public float badPenaltyRate = 1.3f;
+        [Tooltip("거물(big_fish) Good 판정 시 정가에 더하는 보너스 비율입니다. 200%면 최종 수익은 정가의 300%입니다.")]
+        [Min(0f)] public float bigFishGoodBonusRate = 2f;
+        [Tooltip("거물(big_fish) Mid/Bad 판정 시 정가 수익에서 차감하는 페널티 비율입니다. 300%면 최종 수익은 정가의 -200%입니다.")]
+        [Min(0f)] public float bigFishFailurePenaltyRate = 3f;
 
         [Header("팁")]
         [Range(0f, 1f)] public float satisfiedTipRate = 0.3f;
@@ -123,6 +135,30 @@ namespace Slainte.Business
         public string missingMidIceGlassFeedbackText = "midjob_ice_glass_result_dummy";
         public string missingMidWrongMenuFeedbackText = "midjob_wrongmenu_result_dummy";
         public string missingBadFeedbackText = "badjob_result_dummy";
+
+        public static BusinessOrderFlowSettings LoadDefault()
+        {
+            return Resources.Load<BusinessOrderFlowSettings>(ResourcePath);
+        }
+
+        public bool IsDeliveryUnlocked(GameProgress progress)
+        {
+            return IsEpisodeFeatureUnlocked(progress, deliveryUnlockEpisodeId);
+        }
+
+        public bool IsTVUnlocked(GameProgress progress)
+        {
+            return IsEpisodeFeatureUnlocked(progress, tvUnlockEpisodeId);
+        }
+
+        private static bool IsEpisodeFeatureUnlocked(
+            GameProgress progress,
+            string episodeId)
+        {
+            return progress != null
+                && !string.IsNullOrWhiteSpace(episodeId)
+                && progress.IsEpisodeCompleted(episodeId.Trim());
+        }
 
         public int GetMoneyReward(OrderEvaluationGrade grade)
         {

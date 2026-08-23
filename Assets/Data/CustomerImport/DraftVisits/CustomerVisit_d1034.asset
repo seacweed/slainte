@@ -49,6 +49,8 @@ MonoBehaviour:
       requiredCustomerAppearances: []
   maxDay: 0
   reappearanceGroupKey: sally
+  overridePaymentCurrency: 1
+  paymentCurrency: 1
   plannedOrderNames:
   - "\uC170\uC774\uB514"
   - "\uC544\uC774\uB9AC\uC2DC \uCEE4\uD53C"

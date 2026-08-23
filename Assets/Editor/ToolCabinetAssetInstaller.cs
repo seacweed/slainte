@@ -13,6 +13,7 @@ namespace Slainte.Editor
         private const string ArtRoot = "Assets/Art/Bartending/ToolCabinet/";
         private const string ToolRoot = ArtRoot + "Tools/";
         private const string IceRoot = ArtRoot + "Ice/";
+        private const string GlassRoot = "Assets/Art/Bartending/Glasses/";
         private const string DefinitionRoot = "Assets/Resources/Bartending/ToolCabinet";
         private const string CatalogPath = DefinitionRoot + "/ToolCabinetCatalog.asset";
 
@@ -64,7 +65,7 @@ namespace Slainte.Editor
                 Array.Empty<string>(),
                 "Assets/Prefabs/Beaker.prefab",
                 30f,
-                45f,
+                0f,
                 0,
                 0.7f,
                 false,
@@ -130,7 +131,14 @@ namespace Slainte.Editor
                 "Rock",
                 "glass_rock",
                 "Rock",
-                "200rock",
+                new[]
+                {
+                    "rock_back_white",
+                    "rock_back_line",
+                    "rock_front_white",
+                    "rock_front_line"
+                },
+                "rock_front_line",
                 200f,
                 0.7f,
                 overwriteDefinitions);
@@ -138,7 +146,14 @@ namespace Slainte.Editor
                 "Martini",
                 "glass_martini",
                 "Martini",
-                "200coc",
+                new[]
+                {
+                    "cocktail_back_white",
+                    "cocktail_back_line",
+                    "cocktail_front_white",
+                    "cocktail_front_line"
+                },
+                "cocktail_front_line",
                 200f,
                 0.7f,
                 overwriteDefinitions);
@@ -146,7 +161,14 @@ namespace Slainte.Editor
                 "Highball",
                 "glass_highball",
                 "Highball",
-                "400high",
+                new[]
+                {
+                    "highball_back_white",
+                    "highball_back_line",
+                    "highball_front_color",
+                    "highball_front_white"
+                },
+                "highball_front_white",
                 400f,
                 0.7f,
                 overwriteDefinitions);
@@ -154,7 +176,14 @@ namespace Slainte.Editor
                 "Hurricane",
                 "glass_hurricane",
                 "Hurricane",
-                "400hurricane",
+                new[]
+                {
+                    "hurricane_back_white",
+                    "hurricane_back_line",
+                    "hurricane_front_white",
+                    "hurricane_front_line"
+                },
+                "hurricane_front_line",
                 400f,
                 0.7f,
                 overwriteDefinitions);
@@ -247,7 +276,8 @@ namespace Slainte.Editor
             string assetName,
             string id,
             string displayName,
-            string spriteName,
+            string[] layerNames,
+            string collisionReferenceName,
             float capacityMl,
             float worldScale,
             bool overwrite)
@@ -264,12 +294,16 @@ namespace Slainte.Editor
             if (!overwrite)
                 return definition;
 
-            Sprite sprite = LoadSprite(
-                "Assets/Art/Bartending/GlassCollisionTests/" + spriteName + ".png");
+            Sprite[] layers = LoadSprites(GlassRoot, layerNames);
+            Sprite collisionReference = LoadSprite(
+                GlassRoot + collisionReferenceName + ".png");
             definition.id = id;
             definition.displayName = displayName;
-            definition.cabinetSprite = sprite;
-            definition.worldSprite = sprite;
+            definition.cabinetSprite = collisionReference;
+            definition.worldSprite = collisionReference;
+            definition.cabinetLayers = layers;
+            definition.worldLayers = (Sprite[])layers.Clone();
+            definition.collisionReferenceSprite = collisionReference;
             definition.worldPrefab =
                 AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Glass.prefab");
             definition.glassId = id.Replace("glass_", string.Empty);
@@ -282,7 +316,9 @@ namespace Slainte.Editor
         private static void ReimportArt()
         {
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
-            string[] paths = AssetDatabase.FindAssets("t:Texture2D", new[] { ArtRoot });
+            string[] paths = AssetDatabase.FindAssets(
+                "t:Texture2D",
+                new[] { ArtRoot, GlassRoot });
             for (int i = 0; i < paths.Length; i++)
             {
                 string path = AssetDatabase.GUIDToAssetPath(paths[i]);
@@ -302,7 +338,7 @@ namespace Slainte.Editor
         {
             Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
             if (sprite == null)
-                throw new InvalidOperationException("Missing tool-cabinet sprite: " + path);
+                throw new InvalidOperationException("Missing bartending sprite: " + path);
             return sprite;
         }
 
@@ -344,6 +380,15 @@ namespace Slainte.Editor
                 ValidateTexture(path, 70, 70, 2048, failures);
             }
 
+            string[] glassFiles = Directory.GetFiles(Path.GetFullPath(GlassRoot), "*.png");
+            if (glassFiles.Length != 16)
+                failures.Add("Expected 16 layered glass textures but found " + glassFiles.Length + ".");
+            for (int i = 0; i < glassFiles.Length; i++)
+            {
+                string path = GlassRoot + Path.GetFileName(glassFiles[i]);
+                ValidateTexture(path, 310, 590, 2048, failures);
+            }
+
             ToolCabinetCatalog catalog =
                 AssetDatabase.LoadAssetAtPath<ToolCabinetCatalog>(CatalogPath);
             if (catalog == null || catalog.tools.Length != 4 || catalog.glasses.Length != 4)
@@ -366,6 +411,30 @@ namespace Slainte.Editor
                 ToolDef bucket = catalog.tools[3];
                 if (bucket != null && bucket.useDedicatedAnchor)
                     failures.Add("Ice Bucket must use a normal cabinet slot, not a dedicated anchor.");
+
+                ToolDef jigger = catalog.tools[0];
+                if (jigger != null
+                    && (!Mathf.Approximately(
+                            jigger.primaryCapacityMl,
+                            JiggerCollisionProfiles.FixedCapacityMl)
+                        || jigger.secondaryCapacityMl > 0f))
+                {
+                    failures.Add("Jigger must use one fixed 30 ml capacity.");
+                }
+
+                for (int i = 0; i < catalog.glasses.Length; i++)
+                {
+                    GlassDef glass = catalog.glasses[i];
+                    if (glass == null
+                        || glass.cabinetLayers == null
+                        || glass.cabinetLayers.Length != 4
+                        || glass.worldLayers == null
+                        || glass.worldLayers.Length != 4
+                        || glass.collisionReferenceSprite == null)
+                    {
+                        failures.Add("ToolCabinetCatalog glass layers are invalid at index " + i + ".");
+                    }
+                }
 
                 ValidateCabinetRect(catalog, catalog.toolStoragePixels, "tool storage", failures);
                 ValidateCabinetRect(catalog, catalog.glassStoragePixels, "glass storage", failures);

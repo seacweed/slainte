@@ -316,7 +316,8 @@ namespace Slainte.EditorTools
                 Entry("district_9_patrol", "[UPD] 9번가 대규모 순찰", 10f,
                     TVBroadcastEffectType.BoostCustomerTagWeight,
                     "9번가 일대의 대규모 순찰로 특정 손님들의 이동이 증가합니다.",
-                    "customer_attribute:야간순찰", 2f)
+                    "customer_attribute:야간순찰", 2f,
+                    exclusiveCustomerPool: true)
             };
         }
 
@@ -328,7 +329,8 @@ namespace Slainte.EditorTools
             string ticker,
             string targetTag = "",
             float multiplier = 1f,
-            string reason = "")
+            string reason = "",
+            bool exclusiveCustomerPool = false)
         {
             return new TVBroadcastEntry
             {
@@ -339,6 +341,7 @@ namespace Slainte.EditorTools
                 effectType = effect,
                 targetTag = targetTag,
                 effectMultiplier = multiplier,
+                exclusiveCustomerPool = exclusiveCustomerPool,
                 minimumAbvPercent = -1f,
                 restrictionReason = reason
             };

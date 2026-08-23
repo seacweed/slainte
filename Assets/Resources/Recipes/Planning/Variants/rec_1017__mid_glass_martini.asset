@@ -27,7 +27,7 @@ MonoBehaviour:
   allowExtraIngredients: 0
   glassId: martini
   iceRequirement: 2
-  requiredIceCount: 3
+  requiredIceCount: -1
   shakeIceRequirement: 0
   requiredTechnique: 1
   abvOverridePercent: 45

@@ -338,14 +338,14 @@ namespace Slainte.Bartending
 
         private static bool IsIceValid(CocktailRecipe recipe, CocktailComposition composition)
         {
-            if (recipe.requiredIceCount >= 0)
-                return composition != null && composition.IceCount == recipe.requiredIceCount;
-
-            if (recipe.iceRequirement == IceRequirement.Any)
+            IceRequirement requirement = IceRequirementRules.ResolvePresenceRule(
+                recipe.iceRequirement,
+                recipe.requiredIceCount);
+            if (requirement == IceRequirement.Any)
                 return true;
 
             bool hasIce = composition != null && composition.HasIce;
-            return recipe.iceRequirement == IceRequirement.Required ? hasIce : !hasIce;
+            return requirement == IceRequirement.Required ? hasIce : !hasIce;
         }
 
         private static bool IsTechniqueValid(CocktailRecipe recipe, CocktailComposition composition)

@@ -59,6 +59,8 @@ MonoBehaviour:
       requiredCustomerAppearances: []
   maxDay: 0
   reappearanceGroupKey: brock
+  overridePaymentCurrency: 1
+  paymentCurrency: 1
   plannedOrderNames:
   - "\uBE0C\uB9AC\uC988 \uB2C8\uD2B8"
   - "\uBE0C\uB9AC\uC988 \uC628\uB354\uB77D"

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Slainte.Bartending;
+using Slainte.Economy;
 using Slainte.TV;
 using UnityEditor;
 using UnityEngine;
@@ -628,6 +629,10 @@ namespace Slainte.EditorTools
             visit.preferredAtmosphereKey = row.preferredAtmosphere;
             visit.weight = row.weight;
             visit.reappearanceGroupKey = row.characterKey;
+            visit.overridePaymentCurrency = RequiresStrangeCoinPayment(row.attribute);
+            visit.paymentCurrency = visit.overridePaymentCurrency
+                ? GameCurrency.StrangeCoin
+                : GameCurrency.Money;
             ConfigureAvailability(row, visit);
             if (visit.initiallyAvailable && !HasPresentationSprite(character))
             {
@@ -804,6 +809,9 @@ namespace Slainte.EditorTools
                 order.requestedRecipeId = recipe.id;
                 order.orderType = CocktailOrderType.RecipeOrder;
                 order.characterKey = row.characterKey;
+                order.paymentCurrency = RequiresStrangeCoinPayment(row.attribute)
+                    ? GameCurrency.StrangeCoin
+                    : GameCurrency.Money;
                 if (string.IsNullOrWhiteSpace(order.expressionKeyMid))
                     order.expressionKeyMid = "mid";
                 if (string.IsNullOrWhiteSpace(order.expressionKeyGood))
@@ -832,6 +840,13 @@ namespace Slainte.EditorTools
 
             visit.orders = connected;
             EditorUtility.SetDirty(visit);
+        }
+
+        private static bool RequiresStrangeCoinPayment(string attribute)
+        {
+            return string.Equals(attribute, "아무개들", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(attribute, "F72", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(attribute, "셀리", StringComparison.OrdinalIgnoreCase);
         }
 
         private static Dictionary<string, CocktailRecipeDef> BuildRecipeNameMap(

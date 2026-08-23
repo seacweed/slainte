@@ -21,6 +21,20 @@ namespace Slainte.Bartending
         Required
     }
 
+    public static class IceRequirementRules
+    {
+        public static IceRequirement ResolvePresenceRule(
+            IceRequirement configured,
+            int legacyExactCount)
+        {
+            if (legacyExactCount == 0)
+                return IceRequirement.None;
+            if (legacyExactCount > 0)
+                return IceRequirement.Required;
+            return configured;
+        }
+    }
+
     public enum CocktailRecipeEvaluationGrade
     {
         Good,

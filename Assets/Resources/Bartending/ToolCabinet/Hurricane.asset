@@ -14,8 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.GlassDef
   id: glass_hurricane
   displayName: Hurricane
-  cabinetSprite: {fileID: 21300000, guid: ba47000000000000000000000000002f, type: 3}
-  worldSprite: {fileID: 21300000, guid: ba47000000000000000000000000002f, type: 3}
+  cabinetSprite: {fileID: 21300000, guid: 3f05e188b4064bf2be2a1f0c018aa73d, type: 3}
+  worldSprite: {fileID: 21300000, guid: 3f05e188b4064bf2be2a1f0c018aa73d, type: 3}
+  cabinetLayers:
+  - {fileID: 21300000, guid: 39b7546cf485479f885c13d3bb5347ae, type: 3}
+  - {fileID: 21300000, guid: 94272f0a7b1242f6b94710d057c2dd51, type: 3}
+  - {fileID: 21300000, guid: 652438536af348a09ecb71003ef6f2be, type: 3}
+  - {fileID: 21300000, guid: 3f05e188b4064bf2be2a1f0c018aa73d, type: 3}
+  worldLayers:
+  - {fileID: 21300000, guid: 39b7546cf485479f885c13d3bb5347ae, type: 3}
+  - {fileID: 21300000, guid: 94272f0a7b1242f6b94710d057c2dd51, type: 3}
+  - {fileID: 21300000, guid: 652438536af348a09ecb71003ef6f2be, type: 3}
+  - {fileID: 21300000, guid: 3f05e188b4064bf2be2a1f0c018aa73d, type: 3}
+  collisionReferenceSprite: {fileID: 21300000, guid: 3f05e188b4064bf2be2a1f0c018aa73d, type: 3}
   worldPrefab: {fileID: 2243653413097636618, guid: 0f545fa15c57b314184f5dc08a58782b, type: 3}
   glassId: hurricane
   capacityMl: 400

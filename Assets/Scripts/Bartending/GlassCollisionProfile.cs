@@ -206,48 +206,62 @@ namespace Slainte.Bartending
 
     public static class GlassCollisionProfiles
     {
-        public static readonly Vector2Int TemporarySourcePixelSize = new(310, 590);
+        public static readonly Vector2Int SourcePixelSize = new(310, 590);
 
         private static readonly GlassCollisionProfileDefinition[] profiles =
         {
             new(
-                "200rock",
+                "rock_front_line",
                 "rock",
                 200f,
-                TemporarySourcePixelSize,
+                SourcePixelSize,
                 2f,
                 new[]
                 {
-                    new Vector2(33f, 247f), new Vector2(36f, 190f),
-                    new Vector2(42f, 89f), new Vector2(45f, 30f),
-                    new Vector2(54f, 9f), new Vector2(84f, 6f),
-                    new Vector2(155f, 4f), new Vector2(219f, 6f),
-                    new Vector2(255f, 9f), new Vector2(263f, 30f),
-                    new Vector2(267f, 89f), new Vector2(273f, 190f),
-                    new Vector2(276f, 247f)
+                    new Vector2(34f, 274f), new Vector2(34f, 240f),
+                    new Vector2(36f, 210f), new Vector2(38f, 180f),
+                    new Vector2(39f, 150f), new Vector2(41f, 120f),
+                    new Vector2(42f, 90f), new Vector2(44f, 60f),
+                    new Vector2(45f, 45f), new Vector2(48f, 30f),
+                    new Vector2(54f, 20f), new Vector2(63f, 15f),
+                    new Vector2(84f, 9f), new Vector2(110f, 4f),
+                    new Vector2(155f, 3f), new Vector2(200f, 4f),
+                    new Vector2(228f, 9f), new Vector2(246f, 15f),
+                    new Vector2(255f, 20f), new Vector2(261f, 30f),
+                    new Vector2(263f, 45f), new Vector2(264f, 60f),
+                    new Vector2(266f, 90f), new Vector2(267f, 120f),
+                    new Vector2(269f, 150f), new Vector2(270f, 180f),
+                    new Vector2(272f, 210f), new Vector2(274f, 240f),
+                    new Vector2(276f, 274f)
                 },
-                new[] { new Rect(52f, 20f, 205f, 215f) },
-                new[] { new Rect(25f, 0f, 260f, 255f) }),
+                new[] { new Rect(60f, 20f, 190f, 240f) },
+                new[] { new Rect(25f, 0f, 260f, 280f) }),
             new(
-                "200coc",
+                "cocktail_front_line",
                 "martini",
                 200f,
-                TemporarySourcePixelSize,
-                9f,
+                SourcePixelSize,
+                1f,
                 new[]
                 {
-                    new Vector2(10f, 341f), new Vector2(49f, 283f),
-                    new Vector2(90f, 233f), new Vector2(127f, 193f),
-                    new Vector2(154f, 159f), new Vector2(182f, 193f),
-                    new Vector2(219f, 233f), new Vector2(260f, 283f),
-                    new Vector2(298f, 341f)
+                    new Vector2(8f, 345f), new Vector2(27f, 320f),
+                    new Vector2(44f, 300f), new Vector2(60f, 280f),
+                    new Vector2(75f, 260f), new Vector2(92f, 240f),
+                    new Vector2(108f, 220f), new Vector2(124f, 200f),
+                    new Vector2(138f, 180f), new Vector2(143f, 165f),
+                    new Vector2(154f, 155f), new Vector2(166f, 165f),
+                    new Vector2(170f, 180f), new Vector2(184f, 200f),
+                    new Vector2(200f, 220f), new Vector2(216f, 240f),
+                    new Vector2(232f, 260f), new Vector2(248f, 280f),
+                    new Vector2(265f, 300f), new Vector2(281f, 320f),
+                    new Vector2(300f, 345f)
                 },
                 new[]
                 {
-                    new Rect(50f, 290f, 210f, 35f),
-                    new Rect(80f, 240f, 150f, 50f),
-                    new Rect(115f, 200f, 80f, 40f),
-                    new Rect(145f, 165f, 19f, 35f)
+                    new Rect(60f, 290f, 190f, 35f),
+                    new Rect(100f, 240f, 110f, 50f),
+                    new Rect(130f, 200f, 50f, 40f),
+                    new Rect(148f, 165f, 12f, 35f)
                 },
                 new[]
                 {
@@ -256,26 +270,36 @@ namespace Slainte.Bartending
                     new Rect(50f, 5f, 210f, 25f)
                 }),
             new(
-                "400high",
+                "highball_front_white",
                 "highball",
                 400f,
-                TemporarySourcePixelSize,
+                SourcePixelSize,
                 2f,
                 new[]
                 {
-                    new Vector2(62f, 386f), new Vector2(62f, 207f),
-                    new Vector2(65f, 9f), new Vector2(155f, 2f),
-                    new Vector2(244f, 9f), new Vector2(247f, 207f),
-                    new Vector2(246f, 386f)
+                    new Vector2(62f, 400f), new Vector2(62f, 350f),
+                    new Vector2(63f, 300f), new Vector2(64f, 250f),
+                    new Vector2(64f, 200f), new Vector2(65f, 150f),
+                    new Vector2(65f, 100f), new Vector2(66f, 60f),
+                    new Vector2(66f, 30f), new Vector2(67f, 20f),
+                    new Vector2(72f, 15f), new Vector2(88f, 9f),
+                    new Vector2(110f, 5f), new Vector2(155f, 2f),
+                    new Vector2(200f, 5f), new Vector2(222f, 9f),
+                    new Vector2(237f, 15f), new Vector2(242f, 20f),
+                    new Vector2(242f, 30f), new Vector2(242f, 60f),
+                    new Vector2(243f, 100f), new Vector2(243f, 150f),
+                    new Vector2(244f, 200f), new Vector2(244f, 250f),
+                    new Vector2(245f, 300f), new Vector2(245f, 350f),
+                    new Vector2(247f, 400f)
                 },
-                new[] { new Rect(70f, 20f, 170f, 355f) },
-                new[] { new Rect(55f, 0f, 200f, 395f) }),
+                new[] { new Rect(70f, 20f, 168f, 370f) },
+                new[] { new Rect(55f, 0f, 200f, 405f) }),
             new(
-                "400hurricane",
+                "hurricane_front_line",
                 "hurricane",
                 400f,
-                TemporarySourcePixelSize,
-                3f,
+                SourcePixelSize,
+                2f,
                 new[]
                 {
                     new Vector2(43f, 430f), new Vector2(55f, 404f),
@@ -292,12 +316,12 @@ namespace Slainte.Bartending
                 },
                 new[]
                 {
-                    new Rect(65f, 380f, 180f, 35f),
+                    new Rect(70f, 380f, 168f, 35f),
                     new Rect(85f, 330f, 140f, 50f),
                     new Rect(85f, 280f, 140f, 50f),
-                    new Rect(65f, 230f, 180f, 50f),
+                    new Rect(75f, 230f, 160f, 50f),
                     new Rect(65f, 180f, 180f, 50f),
-                    new Rect(85f, 140f, 140f, 40f),
+                    new Rect(85f, 140f, 137f, 40f),
                     new Rect(132f, 110f, 45f, 25f)
                 },
                 new[]

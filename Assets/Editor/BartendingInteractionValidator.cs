@@ -9,6 +9,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 namespace Slainte.Bartending.EditorTools
 {
@@ -137,14 +138,18 @@ namespace Slainte.Bartending.EditorTools
             Require(session.CobblerShaker is BeakerController,
                 "Cobbler shaker is not using the common beaker controller.");
             Require(session.Slots.Count == 8, "Expected exactly eight functional bartending slots.");
-            Require(session.InteractionOverlay.VisibleVesselLabelCount >= 3,
-                "Glass, beaker and shaker content labels were not created after slot snap.");
+            Require(session.InteractionOverlay.VisibleVesselLabelCount == 2,
+                "Only beaker-family capacity labels should exist after slot snap.");
             Require(!session.InteractionOverlay.IsServingTargetVisible,
                 "Serving target is visible while the serving glass is not held.");
 
-            ValidateEmptyContentsLabel(session.InteractionOverlay, session.ServingGlass, "glass");
+            Require(!session.InteractionOverlay.TryGetVesselContentsText(
+                    session.ServingGlass,
+                    out _),
+                "Serving glass incorrectly received a world capacity label.");
             ValidateEmptyContentsLabel(session.InteractionOverlay, session.Beaker, "beaker");
             ValidateEmptyContentsLabel(session.InteractionOverlay, session.CobblerShaker, "shaker");
+            ValidateCapacityLabelPresentation(session.InteractionOverlay);
 
             session.ServingGlass.ServeRequested += HandleServeRequested;
             session.ServingGlass.OnPickedUp();
@@ -165,8 +170,8 @@ namespace Slainte.Bartending.EditorTools
                 "Sandbox serving target rect could not be resolved.");
             Require(targetRect.width > 0f && targetRect.height > 0f,
                 "Sandbox serving target rect has no area.");
-            Require(overlay.VisibleVesselLabelCount >= 2,
-                "Picking up the glass removed unrelated beaker or shaker labels.");
+            Require(overlay.VisibleVesselLabelCount == 2,
+                "Picking up the glass changed beaker-family capacity labels.");
 
             Vector2 outside = new Vector2(targetRect.xMin - 10f, targetRect.center.y);
             Require(!glass.TryRequestServeAtScreenPosition(outside, true),
@@ -341,8 +346,8 @@ namespace Slainte.Bartending.EditorTools
                 "Session reset reused the destroyed interaction overlay.");
             Require(oldOverlay == null,
                 "Old interaction overlay survived session destruction.");
-            Require(session.InteractionOverlay.VisibleVesselLabelCount >= 3,
-                "Recreated session did not restore vessel labels.");
+            Require(session.InteractionOverlay.VisibleVesselLabelCount == 2,
+                "Recreated session did not restore only the beaker-family labels.");
             Require(session.InteractionOverlay.TryGetServeTargetScreenRect(out Rect targetRect)
                     && targetRect.width > 0f
                     && targetRect.height > 0f,
@@ -409,7 +414,8 @@ namespace Slainte.Bartending.EditorTools
             snappingBeaker = null;
 
             Finish(true,
-                "serving boundary, one-shot click, logical target, glass/beaker/shaker labels, "
+                "serving boundary, one-shot click, logical target, beaker/shaker labels, "
+                + "glass-label exclusion, inspector label styling, "
                 + "world-physics liquid and ice ownership, horizontal tilt, two-axis return movement, "
                 + "bottle/glass/beaker/shaker return behavior, "
                 + "cursor unlock, slot-only contents transport, immediate slot snap, "
@@ -920,6 +926,45 @@ namespace Slainte.Bartending.EditorTools
                 label + " contents label is missing.");
             Require(text.Contains("합계 0 ml", StringComparison.Ordinal),
                 label + " empty contents label is incorrect: " + text);
+        }
+
+        private static void ValidateCapacityLabelPresentation(
+            BartendingInteractionOverlay overlay)
+        {
+            BusinessBartendingSettings settings =
+                Resources.Load<BusinessBartendingSettings>(
+                    "Bartending/BusinessBartendingSettings");
+            Require(settings != null, "Business bartending settings are missing.");
+
+            TMP_FontAsset expectedFont = settings.contentsLabelFont != null
+                ? settings.contentsLabelFont
+                : TMP_Settings.defaultFontAsset;
+            TextMeshProUGUI[] texts = overlay.GetComponentsInChildren<TextMeshProUGUI>(true);
+            int capacityTextCount = 0;
+            for (int i = 0; i < texts.Length; i++)
+            {
+                TextMeshProUGUI text = texts[i];
+                if (text == null
+                    || text.transform.parent == null
+                    || !text.transform.parent.name.StartsWith(
+                        "VesselContents_",
+                        StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                capacityTextCount++;
+                Require(text.font == expectedFont,
+                    "World capacity label did not use the inspector-selected TMP font.");
+                RequireApproximately(
+                    settings.contentsLabelFontSize,
+                    text.fontSize,
+                    0.01f,
+                    "World capacity label did not use the inspector-selected font size.");
+            }
+
+            Require(capacityTextCount == 2,
+                "Exactly two beaker-family capacity text objects are required.");
         }
 
         private static void HandleServeRequested(GlassController glass)

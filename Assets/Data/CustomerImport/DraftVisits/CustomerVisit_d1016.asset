@@ -59,6 +59,8 @@ MonoBehaviour:
       requiredCustomerAppearances: []
   maxDay: 0
   reappearanceGroupKey: disty
+  overridePaymentCurrency: 1
+  paymentCurrency: 1
   plannedOrderNames:
   - "\uC170\uC774\uB514"
   - "\uAC13\uB85C\uB4DC"

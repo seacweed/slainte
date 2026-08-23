@@ -26,6 +26,8 @@ namespace Slainte.TV
         public TVBroadcastEffectType effectType;
         public string targetTag;
         [Min(0f)] public float effectMultiplier = 1f;
+        [Tooltip("활성화 중 대상 손님만 영업 추첨 풀에 남깁니다.")]
+        public bool exclusiveCustomerPool;
         [Tooltip("고도수 주문 효과 전용입니다. 음수이면 자동 도수 판정을 사용하지 않습니다.")]
         public float minimumAbvPercent = -1f;
         [TextArea(1, 3)] public string restrictionReason;

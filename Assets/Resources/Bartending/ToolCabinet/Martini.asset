@@ -14,8 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.GlassDef
   id: glass_martini
   displayName: Martini
-  cabinetSprite: {fileID: 21300000, guid: ba47000000000000000000000000002c, type: 3}
-  worldSprite: {fileID: 21300000, guid: ba47000000000000000000000000002c, type: 3}
+  cabinetSprite: {fileID: 21300000, guid: 191dd2c164e4429dbc1082ff670a556c, type: 3}
+  worldSprite: {fileID: 21300000, guid: 191dd2c164e4429dbc1082ff670a556c, type: 3}
+  cabinetLayers:
+  - {fileID: 21300000, guid: 2ccd23f7bd3e4b0cb08ed295cf8e14a1, type: 3}
+  - {fileID: 21300000, guid: 57157149578344e684d36a08f258721a, type: 3}
+  - {fileID: 21300000, guid: 5bcd350d5df14cbe8c901797c0c70449, type: 3}
+  - {fileID: 21300000, guid: 191dd2c164e4429dbc1082ff670a556c, type: 3}
+  worldLayers:
+  - {fileID: 21300000, guid: 2ccd23f7bd3e4b0cb08ed295cf8e14a1, type: 3}
+  - {fileID: 21300000, guid: 57157149578344e684d36a08f258721a, type: 3}
+  - {fileID: 21300000, guid: 5bcd350d5df14cbe8c901797c0c70449, type: 3}
+  - {fileID: 21300000, guid: 191dd2c164e4429dbc1082ff670a556c, type: 3}
+  collisionReferenceSprite: {fileID: 21300000, guid: 191dd2c164e4429dbc1082ff670a556c, type: 3}
   worldPrefab: {fileID: 2243653413097636618, guid: 0f545fa15c57b314184f5dc08a58782b, type: 3}
   glassId: martini
   capacityMl: 200

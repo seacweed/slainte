@@ -83,5 +83,6 @@ MonoBehaviour:
     effectType: 5
     targetTag: "customer_attribute:\uC57C\uAC04\uC21C\uCC30"
     effectMultiplier: 2
+    exclusiveCustomerPool: 1
     minimumAbvPercent: -1
     restrictionReason: 

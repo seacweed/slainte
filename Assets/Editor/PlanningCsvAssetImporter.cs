@@ -171,7 +171,8 @@ namespace Slainte.EditorTools
                 || slopBottle.defaultBottleCount != 6
                 || burnhamSour.price != 307
                 || burnhamSour.strangeCoinPrice != 3
-                || burnhamSour.requiredIceCount != 3
+                || burnhamSour.iceRequirement != IceRequirement.Required
+                || burnhamSour.requiredIceCount != -1
                 || !slop.overrideBottleClickCollider
                 || HasBrokenPlanningBottleLinks();
         }
@@ -264,8 +265,9 @@ namespace Slainte.EditorTools
                 "번햄 사워 배합 또는 주문 가능 상태가 잘못되었습니다.");
             Require(burnhamSour.price == 307 && burnhamSour.strangeCoinPrice == 3,
                 $"번햄 사워 가격 연결이 잘못되었습니다: {burnhamSour.price}/{burnhamSour.strangeCoinPrice}");
-            Require(burnhamSour.requiredIceCount == 3,
-                $"번햄 사워 얼음 개수가 3개가 아닙니다: {burnhamSour.requiredIceCount}");
+            Require(burnhamSour.iceRequirement == IceRequirement.Required
+                    && burnhamSour.requiredIceCount == -1,
+                "번햄 사워 얼음 판정이 개수가 아닌 유무 기준이 아닙니다.");
             Require(Mathf.Abs(burnhamSour.expectedAbvPercent - 15f) < 0.01f,
                 $"번햄 사워 계산 도수가 15%가 아닙니다: {burnhamSour.expectedAbvPercent:0.##}%");
 
@@ -372,8 +374,10 @@ namespace Slainte.EditorTools
                     $"구형 술장 에셋 {path}의 재고/가격이 기준 CSV와 다릅니다.");
                 linkedLegacyBottleCount++;
             }
-            Require(linkedLegacyBottleCount == 14,
-                $"새 재료에 연결된 구형 술장 에셋이 14개가 아닙니다: {linkedLegacyBottleCount}개");
+            int expectedLegacyBottleCount = shopCatalog.bottles.Count;
+            Require(linkedLegacyBottleCount == expectedLegacyBottleCount,
+                $"새 재료에 연결된 구형 술장 에셋 수가 기준 카탈로그와 다릅니다: "
+                + $"{linkedLegacyBottleCount}/{expectedLegacyBottleCount}개");
             LiquorBottleDef tropical = shopCatalog.bottles.FirstOrDefault(
                 bottle => bottle != null
                     && string.Equals(bottle.id, "item_1001", StringComparison.OrdinalIgnoreCase));
@@ -925,9 +929,7 @@ namespace Slainte.EditorTools
             recipe.allowExtraIngredients = false;
             recipe.glassId = ParseGlass(First(row, "잔 Glass", "glass"));
             recipe.iceRequirement = ParseIce(First(row, "얼음 유무 Ice", "ice"));
-            recipe.requiredIceCount = iceCountsByRecipe.TryGetValue(id, out int requiredIceCount)
-                ? requiredIceCount
-                : recipe.iceRequirement == IceRequirement.None ? 0 : -1;
+            recipe.requiredIceCount = recipe.iceRequirement == IceRequirement.None ? 0 : -1;
             recipe.requiredTechnique = ParseTechnique(First(row, "제작 방식 Skill", "technique"));
             recipe.shakeIceRequirement =
                 (recipe.requiredTechnique & CocktailTechnique.Shake) != 0
@@ -1086,7 +1088,7 @@ namespace Slainte.EditorTools
             variant.allowExtraIngredients = source.allowExtraIngredients;
             variant.glassId = source.glassId;
             variant.iceRequirement = source.iceRequirement;
-            variant.requiredIceCount = source.requiredIceCount;
+            variant.requiredIceCount = source.iceRequirement == IceRequirement.None ? 0 : -1;
             variant.shakeIceRequirement = source.shakeIceRequirement;
             variant.requiredTechnique = source.requiredTechnique;
             variant.abvOverridePercent = source.abvOverridePercent;

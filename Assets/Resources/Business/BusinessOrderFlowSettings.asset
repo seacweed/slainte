@@ -32,12 +32,23 @@ MonoBehaviour:
     sequenceSlot: 3
     customerVisit: {fileID: 0}
     encounterEpisode: {fileID: 11400000, guid: 565cdd3b075026249b49e76ec6df782a, type: 2}
+  deliveryUnlockEpisodeId:
+  tvUnlockEpisodeId:
   goodMoneyReward: 100
   midMoneyReward: 50
   badMoneyReward: 0
+  goodRecipePriceMultiplier: 1
+  midRecipePriceMultiplier: 0.5
+  badRecipePriceMultiplier: 0
   goodReputationReward: 2
   midReputationReward: 0
   badReputationReward: -1
+  badPenaltyRate: 1.3
+  bigFishGoodBonusRate: 2
+  bigFishFailurePenaltyRate: 3
+  satisfiedTipRate: 0.3
+  neutralTipRate: 0
+  dissatisfiedTipRate: 0
   feedbackSpeakerName: "\uC190\uB2D8"
   goodFeedbackText: "\uC644\uBCBD\uD574. \uB531 \uC6D0\uD558\uB358 \uB9DB\uC774\uC57C."
   midFeedbackText: "\uBE44\uC2B7\uD558\uAE34 \uD55C\uB370, \uBB54\uAC00 \uC870\uAE08

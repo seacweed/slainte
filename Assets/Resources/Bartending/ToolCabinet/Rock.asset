@@ -14,8 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.GlassDef
   id: glass_rock
   displayName: Rock
-  cabinetSprite: {fileID: 21300000, guid: ba47000000000000000000000000002d, type: 3}
-  worldSprite: {fileID: 21300000, guid: ba47000000000000000000000000002d, type: 3}
+  cabinetSprite: {fileID: 21300000, guid: 4a185f75d3c048ccbbb61b72716eb922, type: 3}
+  worldSprite: {fileID: 21300000, guid: 4a185f75d3c048ccbbb61b72716eb922, type: 3}
+  cabinetLayers:
+  - {fileID: 21300000, guid: 67a6d70af577449c9eb7d4c41b2754d6, type: 3}
+  - {fileID: 21300000, guid: 4fa063f0747d41319cea0135636f8845, type: 3}
+  - {fileID: 21300000, guid: 3501ec8fe23c4777b7d144dc92e4dcb5, type: 3}
+  - {fileID: 21300000, guid: 4a185f75d3c048ccbbb61b72716eb922, type: 3}
+  worldLayers:
+  - {fileID: 21300000, guid: 67a6d70af577449c9eb7d4c41b2754d6, type: 3}
+  - {fileID: 21300000, guid: 4fa063f0747d41319cea0135636f8845, type: 3}
+  - {fileID: 21300000, guid: 3501ec8fe23c4777b7d144dc92e4dcb5, type: 3}
+  - {fileID: 21300000, guid: 4a185f75d3c048ccbbb61b72716eb922, type: 3}
+  collisionReferenceSprite: {fileID: 21300000, guid: 4a185f75d3c048ccbbb61b72716eb922, type: 3}
   worldPrefab: {fileID: 2243653413097636618, guid: 0f545fa15c57b314184f5dc08a58782b, type: 3}
   glassId: rock
   capacityMl: 200

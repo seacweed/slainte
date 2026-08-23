@@ -463,7 +463,9 @@ namespace Slainte.Bartending
         private void HandleSlotOccupancyChanged(SlotController slot, IBartendingItem item)
         {
             RemoveLabel(slot);
-            if (slot == null || item == null)
+            if (slot == null
+                || item == null
+                || item is not BeakerController)
                 return;
 
             VesselLiquidTracker tracker = item.GameObject != null
