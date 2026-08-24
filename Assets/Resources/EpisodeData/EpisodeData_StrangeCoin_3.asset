@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ada6baddb75540a4ba25d31b476b855a, type: 3}
-  m_Name: 
+  m_Name: EpisodeData_StrangeCoin_3
   m_EditorClassIdentifier: Assembly-CSharp::EpisodeData
   episodeId: StrangeCoin_3
   episodeTitle: "\uC774\uC0C1\uD55C \uB3D9\uC804 3\uBD80"
@@ -46,38 +46,8 @@ MonoBehaviour:
       minMoney: 0
     conditionText: 
   playConditionEntries: []
-  selectConditions:
-  - condition:
-      type: 0
-      minDay: 0
-      requiredFlag: 
-      prerequisiteEpisodeId: 
-      varName: 
-      varOp: 0
-      varThreshold: 0
-      minMoney: 0
-    flag: 
-    conditionText: 
-    revealCondition:
-      type: 0
-      minDay: 0
-      requiredFlag: 
-      prerequisiteEpisodeId: 
-      varName: 
-      varOp: 0
-      varThreshold: 0
-      minMoney: 0
-    hiddenText: 
-    characterOverrides:
-    - isHidden: 0
-      characterName: 
-  openingCharacters:
-  - characterKey: sally
-    expressionKey: blood_tired
-    slotIndex: 1
-  - characterKey: 
-    expressionKey: 
-    slotIndex: -1
+  selectConditions: []
+  openingCharacters: []
   firstNodeId: 1
   nodes:
   - nodeId: 1
@@ -6918,109 +6888,16 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 
-    speakerKey: 
-    overrideSpeakerName: 
-    text: 
-    nextNodeId: 
-    choices:
-    - buttonText: 
-      nextNodeId: 
-      setFlags: []
-      clearFlags: []
-      varChanges: []
-    - buttonText: 
-      nextNodeId: 
-      setFlags: []
-      clearFlags: []
-      varChanges: []
-    - buttonText: 
-      nextNodeId: 
-      setFlags: []
-      clearFlags: []
-      varChanges: []
-    - buttonText: 
-      nextNodeId: 
-      setFlags: []
-      clearFlags: []
-      varChanges: []
-    - buttonText: 
-      nextNodeId: 
-      setFlags: []
-      clearFlags: []
-      varChanges: []
-    - buttonText: 
-      nextNodeId: 
-      setFlags: []
-      clearFlags: []
-      varChanges: []
-    - buttonText: 
-      nextNodeId: 
-      setFlags: []
-      clearFlags: []
-      varChanges: []
-    - buttonText: 
-      nextNodeId: 
-      setFlags: []
-      clearFlags: []
-      varChanges: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
-    characters:
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    requiresCrafting: 0
-    craftingTicketKey: 
-    craftingOrderType: 6
-    craftingOrderTarget: 
-    craftingPaymentEnabled: 0
-    craftingPaymentCurrency: 0
-    craftingOutcomes: []
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
-    sfxCommand: 0
-    sfxClipName: 
   settlementRewards:
   - requiredFlag: sc2_1_true
     label: 4500
     amount: 0
-  - requiredFlag: 
-    label: 
-    amount: 0
-  - requiredFlag: 
-    label: 
-    amount: 0
-  - requiredFlag: 
-    label: 
-    amount: 0
   episodeDescription: "\uC140\uB9AC\uAC00 \uAE09\uD788 \uCC3E\uC544\uC628\uB2E4.
     \uD53C\uBC94\uBC85\uC778 \uCC44\uB85C."
-  iconNameBoard: Strange Coin
+  iconNameBoard: StrangeCoin
   iconNameArchive: 
   characters:
   - isHidden: 0
     characterName: sally
   - isHidden: 1
-    characterName: 
-  - isHidden: 0
     characterName: 

@@ -183,17 +183,29 @@ public class EpisodeCsvImporter : EditorWindow
 
             if (current == null) continue;
 
+            string[] fields = ParseLine(line);
+            if (IsBlankRow(fields)) continue; // 시각적 여백용으로 콤마만 있는 행은 데이터로 취급하지 않음
+
             if (!headerRead)
             {
-                sectionHeaders[current] = ParseLine(line);
+                sectionHeaders[current] = fields;
                 headerRead = true;
                 continue;
             }
 
-            sections[current].Add(ParseLine(line));
+            sections[current].Add(fields);
         }
 
         return sections;
+    }
+
+    private static bool IsBlankRow(string[] fields)
+    {
+        for (int i = 0; i < fields.Length; i++)
+        {
+            if (!string.IsNullOrWhiteSpace(fields[i])) return false;
+        }
+        return true;
     }
 
     private static bool ParseMeta(Dictionary<string, List<string[]>> sections, EpisodeData data)

@@ -45,38 +45,8 @@ MonoBehaviour:
       minMoney: 0
     conditionText: 
   playConditionEntries: []
-  selectConditions:
-  - condition:
-      type: 0
-      minDay: 0
-      requiredFlag: 
-      prerequisiteEpisodeId: 
-      varName: 
-      varOp: 0
-      varThreshold: 0
-      minMoney: 0
-    flag: 
-    conditionText: 
-    revealCondition:
-      type: 0
-      minDay: 0
-      requiredFlag: 
-      prerequisiteEpisodeId: 
-      varName: 
-      varOp: 0
-      varThreshold: 0
-      minMoney: 0
-    hiddenText: 
-    characterOverrides:
-    - isHidden: 0
-      characterName: 
-  openingCharacters:
-  - characterKey: eliud
-    expressionKey: hide
-    slotIndex: 0
-  - characterKey: 
-    expressionKey: 
-    slotIndex: -1
+  selectConditions: []
+  openingCharacters: []
   firstNodeId: 1
   nodes:
   - nodeId: 1
@@ -896,57 +866,8 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 
-    speakerKey: 
-    overrideSpeakerName: 
-    text: 
-    nextNodeId: 
-    choices:
-    - buttonText: 
-      nextNodeId: 
-      setFlags: []
-      clearFlags: []
-      varChanges: []
-    flagBranches:
-    - requiredAllFlags: []
-      requiredAnyFlags: []
-      nextNodeId: 
-    varBranches: []
-    episodeBranches: []
-    characters:
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    requiresCrafting: 0
-    craftingTicketKey: 
-    craftingOrderType: 6
-    craftingOrderTarget: 
-    craftingPaymentEnabled: 0
-    craftingPaymentCurrency: 0
-    craftingOutcomes: []
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
-    sfxCommand: 0
-    sfxClipName: 
-  settlementRewards:
-  - requiredFlag: 
-    label: 
-    amount: 0
-  - requiredFlag: 
-    label: 
-    amount: 0
-  - requiredFlag: 
-    label: 
-    amount: 0
+  settlementRewards: []
   episodeDescription: 
   iconNameBoard: 
   iconNameArchive: 
-  characters:
-  - isHidden: 0
-    characterName: 
+  characters: []

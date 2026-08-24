@@ -32,7 +32,7 @@ MonoBehaviour:
     sequenceSlot: 3
     customerVisit: {fileID: 0}
     encounterEpisode: {fileID: 11400000, guid: 565cdd3b075026249b49e76ec6df782a, type: 2}
-  deliveryUnlockEpisodeId:
+  deliveryUnlockEpisodeId: LocalClusterExpress
   tvUnlockEpisodeId:
   goodMoneyReward: 100
   midMoneyReward: 50

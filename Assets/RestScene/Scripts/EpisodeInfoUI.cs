@@ -43,8 +43,29 @@ public class EpisodeInfoUI : MonoBehaviour
     public Sprite lockedSprite;
     public Sprite unlockedSprite;
 
+    [Header("Condition Text Colors")]
+    [Tooltip("해금 조건 충족 / 선택 조건이 해금+선택된 상태의 텍스트 색")]
+    public Color conditionMetTextColor = Color.yellow;
+    [Tooltip("해금 조건 미충족 / 선택 조건이 미해금이거나 선택 안 된 상태의 텍스트 색")]
+    public Color conditionUnmetTextColor = Color.gray;
+
+    [System.Serializable]
+    public struct PortraitSlot
+    {
+        public GameObject container;   // 배경 포함 슬롯 루트. 캐릭터 없으면 통째로 비활성화
+        public Image characterImage;   // 캐릭터 스프라이트를 넣을 자식 Image
+    }
+
+    [System.Serializable]
+    public struct CharacterPortraitSprite
+    {
+        public string characterKey;
+        public Sprite sprite;
+    }
+
     [Header("Portraits")]
-    public Image[] portraitSlots;
+    public PortraitSlot[] portraitSlots;
+    public CharacterPortraitSprite[] characterPortraitSprites; // Sprites/UI/episode_board/character의 slot_* 이미지를 캐릭터 키별로 등록
     public Sprite unknownPortrait;
 
     [Header("Rendering")]
@@ -52,6 +73,9 @@ public class EpisodeInfoUI : MonoBehaviour
 
     private RectTransform rectTransform;
     private EpisodeData currentData;
+    private Dictionary<string, Sprite> characterPortraitLookup;
+    private Sprite[] selectIconDefaultSprites;
+    private UnityEngine.Events.UnityAction<bool>[] selectToggleListeners;
 
     private void Awake()
     {
@@ -66,13 +90,33 @@ public class EpisodeInfoUI : MonoBehaviour
         tooltipCanvas.overrideSorting = true;
         tooltipCanvas.sortingOrder = tooltipSortingOrder;
 
+        characterPortraitLookup = new Dictionary<string, Sprite>(System.StringComparer.OrdinalIgnoreCase);
+        if (characterPortraitSprites != null)
+        {
+            foreach (var entry in characterPortraitSprites)
+            {
+                if (string.IsNullOrEmpty(entry.characterKey) || entry.sprite == null) continue;
+                characterPortraitLookup[entry.characterKey] = entry.sprite;
+            }
+        }
+
         if (selectConditionGroups != null)
         {
-            foreach (var group in selectConditionGroups)
+            selectIconDefaultSprites = new Sprite[selectConditionGroups.Length];
+            selectToggleListeners = new UnityEngine.Events.UnityAction<bool>[selectConditionGroups.Length];
+
+            for (int i = 0; i < selectConditionGroups.Length; i++)
             {
+                SelectConditionGroup group = selectConditionGroups[i];
+                if (group.conditionRow.lockIcon != null)
+                    selectIconDefaultSprites[i] = group.conditionRow.lockIcon.sprite;
+
                 if (group.toggle == null) continue;
                 group.toggle.group = selectToggleGroup;
-                group.toggle.onValueChanged.AddListener(OnSelectToggleChanged);
+
+                int index = i;
+                selectToggleListeners[i] = isOn => OnSelectToggleChanged(index, isOn);
+                group.toggle.onValueChanged.AddListener(selectToggleListeners[i]);
             }
         }
 
@@ -123,9 +167,20 @@ public class EpisodeInfoUI : MonoBehaviour
         return t != null && t.isOn;
     }
 
-    private void OnSelectToggleChanged(bool isOn)
+    private void OnSelectToggleChanged(int index, bool isOn)
     {
         if (currentData != null) UpdatePortraits(currentData);
+
+        if (selectConditionGroups == null || index < 0 || index >= selectConditionGroups.Length) return;
+        if (currentData?.selectConditions == null || index >= currentData.selectConditions.Count) return;
+
+        GameProgress gp = GameProgress.Instance;
+        bool hasManager = gp != null && EpisodeManager.Instance != null;
+        SelectConditionEntry entry = currentData.selectConditions[index];
+        bool available = hasManager && EpisodeManager.Instance.EvaluateSelectCondition(entry.condition, gp);
+        bool revealed = hasManager && EpisodeManager.Instance.EvaluateSelectCondition(entry.revealCondition, gp);
+
+        ApplySelectIconAndText(index, selectConditionGroups[index], entry, available, revealed);
     }
 
     private void UpdateSelectGroups(EpisodeData data, GameProgress gp, bool hasManager)
@@ -150,17 +205,19 @@ public class EpisodeInfoUI : MonoBehaviour
                 bool available = hasManager && EpisodeManager.Instance.EvaluateSelectCondition(entry.condition, gp);
                 bool revealed = hasManager && EpisodeManager.Instance.EvaluateSelectCondition(entry.revealCondition, gp);
 
-                ApplySelectConditionRow(group.conditionRow, entry, available, revealed);
-
                 if (group.toggle != null)
                 {
                     bool hasFlag = !string.IsNullOrEmpty(entry.flag);
                     group.toggle.gameObject.SetActive(hasFlag);
-                    group.toggle.onValueChanged.RemoveListener(OnSelectToggleChanged);
+                    if (selectToggleListeners != null && i < selectToggleListeners.Length && selectToggleListeners[i] != null)
+                        group.toggle.onValueChanged.RemoveListener(selectToggleListeners[i]);
                     group.toggle.isOn = available && hasFlag && gp != null && gp.HasFlag(entry.flag);
                     group.toggle.interactable = available && hasFlag;
-                    group.toggle.onValueChanged.AddListener(OnSelectToggleChanged);
+                    if (selectToggleListeners != null && i < selectToggleListeners.Length && selectToggleListeners[i] != null)
+                        group.toggle.onValueChanged.AddListener(selectToggleListeners[i]);
                 }
+
+                ApplySelectIconAndText(i, group, entry, available, revealed);
             }
         }
 
@@ -170,14 +227,31 @@ public class EpisodeInfoUI : MonoBehaviour
     // 선택 조건 옵션 하나(= 행 하나)를 채운다. conditionText가 있으면 그걸, 없으면 condition에서 자동 생성한 문구를 사용.
     // 옵션에는 항상 조건이 하나 있다고 가정하므로(기획상 "조건 없음" 옵션은 없음) 행을 숨길 필요가 없다.
     // revealCondition이 미충족이면 구체적인 문구 대신 hiddenText(비어있으면 "???")로 가려서 표시한다.
-    private void ApplySelectConditionRow(ConditionRow row, SelectConditionEntry entry, bool met, bool revealed)
+    // 아이콘은 토글 컴포넌트에 설정된 3-상태 스프라이트(미해금=disabled/해금+on=selected)를 그대로 읽어 쓰고,
+    // 해금+off 상태는 Awake에서 캐싱해둔 프리팹 원본 스프라이트로 복원한다.
+    private void ApplySelectIconAndText(int index, SelectConditionGroup group, SelectConditionEntry entry, bool available, bool revealed)
     {
+        bool isOn = group.toggle != null && group.toggle.isOn;
+
         string text = revealed
             ? (!string.IsNullOrEmpty(entry.conditionText) ? entry.conditionText : BuildSelectConditionText(entry.condition))
             : (!string.IsNullOrEmpty(entry.hiddenText) ? entry.hiddenText : "???");
 
-        if (row.label != null) row.label.text = text;
-        if (row.lockIcon != null) row.lockIcon.sprite = (met && revealed) ? unlockedSprite : lockedSprite;
+        if (group.conditionRow.label != null)
+        {
+            group.conditionRow.label.text = text;
+            group.conditionRow.label.color = (available && isOn) ? conditionMetTextColor : conditionUnmetTextColor;
+        }
+
+        if (group.conditionRow.lockIcon != null && group.toggle != null)
+        {
+            if (!available)
+                group.conditionRow.lockIcon.sprite = group.toggle.spriteState.disabledSprite;
+            else if (isOn)
+                group.conditionRow.lockIcon.sprite = group.toggle.spriteState.selectedSprite;
+            else if (selectIconDefaultSprites != null && index < selectIconDefaultSprites.Length)
+                group.conditionRow.lockIcon.sprite = selectIconDefaultSprites[index];
+        }
     }
 
     private string BuildSelectConditionText(SelectSingleCondition cond)
@@ -209,7 +283,11 @@ public class EpisodeInfoUI : MonoBehaviour
             if (!hasEntry) continue;
 
             (string text, bool met) = entries[i];
-            if (row.label != null) row.label.text = text;
+            if (row.label != null)
+            {
+                row.label.text = text;
+                row.label.color = met ? conditionMetTextColor : conditionUnmetTextColor;
+            }
             if (row.lockIcon != null) row.lockIcon.sprite = met ? unlockedSprite : lockedSprite;
         }
     }
@@ -232,6 +310,7 @@ public class EpisodeInfoUI : MonoBehaviour
         return result;
     }
 
+    // 캐릭터가 3개 이하면 왼쪽(0번 슬롯)부터 채우고, 남는 슬롯은 배경까지 통째로 비활성화한다.
     private void UpdatePortraits(EpisodeData data)
     {
         if (portraitSlots == null) return;
@@ -240,24 +319,24 @@ public class EpisodeInfoUI : MonoBehaviour
 
         for (int i = 0; i < portraitSlots.Length; i++)
         {
-            Image img = portraitSlots[i];
-            if (img == null) continue;
-
+            PortraitSlot slot = portraitSlots[i];
             bool hasCharacter = list != null && i < list.Count;
-            img.gameObject.SetActive(hasCharacter);
-            if (!hasCharacter) continue;
+
+            if (slot.container != null) slot.container.SetActive(hasCharacter);
+            if (!hasCharacter || slot.characterImage == null) continue;
 
             CharacterDisplay display = list[i];
 
             if (display.isHidden || string.IsNullOrEmpty(display.characterName))
             {
-                img.sprite = unknownPortrait;
+                slot.characterImage.sprite = unknownPortrait;
                 continue;
             }
 
-            Sprite s = Resources.Load<Sprite>($"Sprites/{display.characterName}");
-            if (s == null) s = Resources.Load<Sprite>($"Portraits/{display.characterName}");
-            img.sprite = s != null ? s : unknownPortrait;
+            Sprite s = characterPortraitLookup != null && characterPortraitLookup.TryGetValue(display.characterName, out Sprite found)
+                ? found
+                : null;
+            slot.characterImage.sprite = s != null ? s : unknownPortrait;
         }
     }
 
