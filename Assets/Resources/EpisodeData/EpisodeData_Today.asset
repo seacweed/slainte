@@ -95,7 +95,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -107,8 +108,8 @@ MonoBehaviour:
     craftingVarChangesBad: []
     bgmCommand: 1
     bgmClipName: Ep_main_0
-    sfxCommand: 0
-    sfxClipName: 
+    sfxCommand: 1
+    sfxClipName: sfx_come_in
   - nodeId: 1
     speakerKey: shaun
     overrideSpeakerName: 
@@ -124,7 +125,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -153,7 +155,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -184,7 +187,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -215,7 +219,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -246,7 +251,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -277,7 +283,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -306,7 +313,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -350,7 +358,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -380,7 +389,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -412,7 +422,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -443,7 +454,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -474,7 +486,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -504,7 +517,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -534,7 +548,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -564,7 +579,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -593,7 +609,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -622,7 +639,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 1
     craftingTicketKey: td0_F54
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: rec_1019
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes:
@@ -675,7 +693,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -705,7 +724,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -731,7 +751,8 @@ MonoBehaviour:
     characters: []
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -760,7 +781,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -789,7 +811,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -818,7 +841,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -847,7 +871,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -876,7 +901,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -906,7 +932,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -935,7 +962,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -964,7 +992,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -993,7 +1022,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1023,7 +1053,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1052,7 +1083,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1081,7 +1113,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1110,7 +1143,8 @@ MonoBehaviour:
       slotIndex: 0
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1142,7 +1176,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1175,7 +1210,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1208,7 +1244,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1241,7 +1278,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1274,7 +1312,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1308,7 +1347,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1342,7 +1382,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1374,7 +1415,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1407,7 +1449,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1440,7 +1483,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1472,7 +1516,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1505,7 +1550,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1537,7 +1583,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 1
     craftingTicketKey: td0_eric
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: rec_1002
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes:
@@ -1593,7 +1640,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1626,7 +1674,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1659,7 +1708,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1692,7 +1742,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1726,7 +1777,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1758,7 +1810,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1792,7 +1845,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1825,7 +1879,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1858,7 +1913,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1890,7 +1946,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1923,7 +1980,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1956,7 +2014,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -1989,7 +2048,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -2021,7 +2081,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -2055,7 +2116,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -2088,7 +2150,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -2121,7 +2184,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -2153,7 +2217,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -2186,7 +2251,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -2218,7 +2284,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -2252,7 +2319,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -2281,7 +2349,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -2311,7 +2380,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -2341,7 +2411,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -2370,7 +2441,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -2400,7 +2472,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -2430,7 +2503,8 @@ MonoBehaviour:
       slotIndex: 1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -2467,7 +2541,8 @@ MonoBehaviour:
       slotIndex: -1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []
@@ -2504,7 +2579,8 @@ MonoBehaviour:
       slotIndex: -1
     requiresCrafting: 0
     craftingTicketKey: 
-    craftingRecipeId: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingOutcomes: []

@@ -50,7 +50,8 @@ public class EpisodeManager : MonoSingleton<EpisodeManager>
     }
 
     // 챕터 스코프로 다음에 진행해야 할 미완료 필수 에피소드 1개를 반환 (없으면 null).
-    public EpisodeData GetNextMandatoryEpisode()
+    // dayOffset: 0 = 오늘(발동 체크, AdvanceDay 이후 시점), 1 = 내일(게이트 lookahead, 보드가 열리는 AdvanceDay 이전 시점)
+    public EpisodeData GetNextMandatoryEpisode(int dayOffset = 0)
     {
         GameProgress gp = GameProgress.Instance;
         if (gp == null) return null;
@@ -60,19 +61,24 @@ public class EpisodeManager : MonoSingleton<EpisodeManager>
             if (ep.episodeType != EpisodeType.Mandatory) continue;
             if (gp.IsEpisodeCompleted(ep.episodeId)) continue;
             if (!string.IsNullOrEmpty(gp.CurrentChapterId) && ep.chapterId != gp.CurrentChapterId) continue;
-            if (!IsUnlocked(ep, gp)) continue;
+            if (!IsUnlocked(ep, gp, dayOffset)) continue;
             return ep;
         }
         return null;
     }
 
-    public bool HasPendingMandatoryEpisode() => GetNextMandatoryEpisode() != null;
+    public bool HasPendingMandatoryEpisode() => GetNextMandatoryEpisode(0) != null;
+
+    // 다음 영업 시작(day+1) 시점에 발동될 필수 에피소드가 있는지 — 작전판 게이트를 하루 앞당겨 걸기 위한 lookahead
+    public bool HasUpcomingMandatoryEpisode() => GetNextMandatoryEpisode(1) != null;
 
     // 해금 조건 — 만족하면 작전판에 노출됨
-    public bool IsUnlocked(EpisodeData ep, GameProgress gp)
+    public bool IsUnlocked(EpisodeData ep, GameProgress gp) => IsUnlocked(ep, gp, 0);
+
+    public bool IsUnlocked(EpisodeData ep, GameProgress gp, int dayOffset)
     {
         if (ep == null || gp == null) return false;
-        return EvaluateCondition(ep.triggerCondition, gp);
+        return EvaluateCondition(ep.triggerCondition, gp, gp.CurrentDay + dayOffset);
     }
 
     // 플레이 조건 — 만족해야 Play 버튼이 활성화됨 (보드에 이미 뜬 에피소드 대상)
@@ -101,11 +107,15 @@ public class EpisodeManager : MonoSingleton<EpisodeManager>
 
     // 해금/플레이 조건(여러 항목이 AND로 결합) 평가에 재사용
     public bool EvaluateCondition(EpisodeTriggerCondition cond, GameProgress gp)
+        => EvaluateCondition(cond, gp, gp != null ? gp.CurrentDay : 0);
+
+    // effectiveDay: day 비교에 쓸 기준일(게이트 lookahead용으로 gp.CurrentDay와 다를 수 있음). 그 외 조건은 gp 실시간 상태를 그대로 사용.
+    public bool EvaluateCondition(EpisodeTriggerCondition cond, GameProgress gp, int effectiveDay)
     {
         if (cond == null) return true;
         if (gp == null) return false;
 
-        if (gp.CurrentDay < cond.minDay) return false;
+        if (effectiveDay < cond.minDay) return false;
         if (gp.CurrentMoney < cond.minMoney) return false;
 
         for (int i = 0; i < cond.requiredFlags.Count; i++)
