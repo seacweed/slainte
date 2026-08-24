@@ -902,10 +902,11 @@ MonoBehaviour:
     episodeBranches: []
     characters: []
     requiresCrafting: 1
+    craftingOrderTicket: {fileID: 11400000, guid: 1c4039458202452ab2ba41f2e2b9b1af, type: 2}
     craftingTicketKey: np0_f03
     craftingOrderType: 6
     craftingOrderTarget: rec_1014
-    craftingPaymentEnabled: 0
+    craftingPaymentEnabled: 1
     craftingPaymentCurrency: 0
     craftingOutcomes:
     - result: 0

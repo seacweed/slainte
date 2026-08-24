@@ -61,6 +61,15 @@ namespace Slainte.Business
             return started;
         }
 
+        public void AbortForEpisodeRecovery()
+        {
+            if (!craftingActive)
+                return;
+
+            businessFlow?.TryAbortEpisodeOrderForRecovery();
+            craftingActive = false;
+        }
+
         public static bool TryBuildRequest(
             EpisodeNode node,
             string sessionId,
@@ -92,6 +101,7 @@ namespace Slainte.Business
                 requestedTags = tagOrder
                     ? new List<string> { normalizedTag }
                     : new List<string>(),
+                ticketData = node.craftingOrderTicket,
                 ticketKey = node.craftingTicketKey,
                 orderType = orderType,
                 paymentCurrency = node.craftingPaymentCurrency,
@@ -99,6 +109,7 @@ namespace Slainte.Business
                 presentFeedback = false,
                 applyProgressRewards = false,
                 applyPayment = node.craftingPaymentEnabled,
+                recordSale = node.craftingPaymentEnabled,
                 clearCustomerOnComplete = false
             };
             return true;

@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: F54
   englishName: F54
   nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
-  defaultSprite: {fileID: 0}
+  defaultSprite: {fileID: 21300000, guid: 4d310ee0a1329f841922b53174e162a2, type: 3}
   defaultOverlaySprite: {fileID: 0}
   defaultBlinkSprite: {fileID: 0}
   defaultBlinkOverlaySprite: {fileID: 0}
@@ -105,4 +105,14 @@ MonoBehaviour:
     sprite: {fileID: 21300000, guid: 13a2c8126088b0c438ac13b383bc2763, type: 3}
     overlaySprite: {fileID: 0}
     blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
+  - key: good
+    sprite: {fileID: 21300000, guid: 13a2c8126088b0c438ac13b383bc2763, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
+  - key: bad
+    sprite: {fileID: 21300000, guid: dd947b3fb6646394d8600e9a5b086832, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: aa0d2cc032dba1444a8396f0b9487e27, type: 3}
     blinkOverlaySprite: {fileID: 0}

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b074092a6424ed548be557aa3efb3794, type: 3}
+  m_Name: OrderTicketData_td0_eric
+  m_EditorClassIdentifier: Assembly-CSharp::OrderTicketData
+  key: td0_eric
+  customerName: "에릭"
+  memo: "늘 마시던 코튼 사워. 주문 가능할까?"
+  items:
+  - name: "코튼 사워"
+    qty: 1
+    price: 347

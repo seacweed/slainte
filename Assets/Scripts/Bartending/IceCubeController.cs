@@ -72,8 +72,11 @@ namespace Slainte.Bartending
             return controller;
         }
 
-        public void BeginDrag(Vector2 pointerWorld, bool centerOnPointer = false)
+        public bool BeginDrag(Vector2 pointerWorld, bool centerOnPointer = false)
         {
+            if (!BartendingSelection.TryAcquire(this))
+                return false;
+
             EnsureComponents();
             ReleaseVesselOwner(vesselOwner);
             isDragging = true;
@@ -96,6 +99,8 @@ namespace Slainte.Bartending
             {
                 transform.position = pointerWorld + dragOffset;
             }
+
+            return true;
         }
 
         public void ApplyVisualSprite(
@@ -175,6 +180,7 @@ namespace Slainte.Bartending
             EnsureComponents();
             ReleaseVesselOwner(vesselOwner);
             isDragging = false;
+            BartendingSelection.Release(this);
             dragOffset = Vector2.zero;
             colliderWasTrigger = false;
             if (cubeCollider != null)
@@ -323,6 +329,7 @@ namespace Slainte.Bartending
         private void OnDisable()
         {
             activeCubes.Remove(this);
+            BartendingSelection.Release(this);
             ReleaseVesselOwner(vesselOwner);
             VesselLiquidTracker.UnregisterIceCube(this);
         }
@@ -367,6 +374,7 @@ namespace Slainte.Bartending
         private void EndDrag()
         {
             isDragging = false;
+            BartendingSelection.Release(this);
             if (IceBinController.Active != null
                 && IceBinController.Active.ContainsWorldPoint(PhysicsPosition))
             {

@@ -87,6 +87,7 @@ namespace Slainte.Bartending
         private void OnDisable()
         {
             BartendingPointerAnchor.Release(this);
+            BartendingSelection.Release(this);
             ResetStirProgress();
         }
 
@@ -147,6 +148,9 @@ namespace Slainte.Bartending
 
         private void PickupRod(Vector3 pointerWorld)
         {
+            if (!BartendingSelection.TryAcquire(this))
+                return;
+
             currentState = StirringRodState.PickedUp;
             currentSlot?.Vacate();
             currentSlot = null;
@@ -223,6 +227,7 @@ namespace Slainte.Bartending
             pointerOffset = Vector3.zero;
             ResetStirProgress();
             RestoreSortingOrder();
+            BartendingSelection.Release(this);
         }
 
         private void FollowMousePosition()

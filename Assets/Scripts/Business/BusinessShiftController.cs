@@ -71,6 +71,7 @@ namespace Slainte.Business
         private bool initialRequiredPhaseComplete;
         private bool beginOrderCallInProgress;
         private bool randomCustomerSpawningStopped;
+        private bool forceCompletionRequested;
         private int orderSequence;
         private int completedOrderCount;
         private int startedSequenceCount;
@@ -89,6 +90,7 @@ namespace Slainte.Business
         public int TotalStartedCustomerCount { get; private set; }
         public int TotalStartedEncounterCount { get; private set; }
         public bool IsRandomCustomerSpawningStopped => randomCustomerSpawningStopped;
+        public bool IsForceCompletionPending => forceCompletionRequested;
         public string LastSelectedVisitKey { get; private set; } = string.Empty;
 
         public event Action<BusinessShiftState, BusinessShiftState> StateChanged;
@@ -171,6 +173,28 @@ namespace Slainte.Business
             explicitlyPaused = paused;
         }
 
+        public bool TryForceCompleteShift()
+        {
+            if (!shiftActive)
+                return false;
+
+            forceCompletionRequested = true;
+            explicitlyPaused = false;
+            randomCustomerSpawningStopped = true;
+            remainingSeconds = 0f;
+            sessionUi?.SetShiftTime(0f, false);
+
+            if (orderActive || encounterActive)
+            {
+                Debug.LogWarning(
+                    "[BusinessShift] 영업 강제 완료가 예약되었습니다. 현재 주문 또는 인카운터 종료 후 정산합니다.");
+                return true;
+            }
+
+            CompleteShift();
+            return true;
+        }
+
         public bool TrySetSalePayoutPolicy(IBusinessSalePayoutPolicy policy)
         {
             if (shiftActive || policy == null)
@@ -212,6 +236,12 @@ namespace Slainte.Business
 
         private void AdvanceAtSafePoint()
         {
+            if (forceCompletionRequested)
+            {
+                CompleteShift();
+                return;
+            }
+
             GameProgress progress = GameProgress.Instance;
             if (progress == null)
             {
@@ -456,6 +486,12 @@ namespace Slainte.Business
                     Debug.LogWarning(message);
             }
 
+            if (forceCompletionRequested)
+            {
+                CompleteShift();
+                return;
+            }
+
             SetState(remainingSeconds <= 0f
                 ? BusinessShiftState.CompletingRequiredActions
                 : BusinessShiftState.Running);
@@ -568,6 +604,12 @@ namespace Slainte.Business
         {
             encounterActive = false;
             modeManager?.RequestModeChange(GameMode.OrderMode);
+            if (forceCompletionRequested)
+            {
+                CompleteShift();
+                return;
+            }
+
             SetState(remainingSeconds <= 0f
                 ? BusinessShiftState.CompletingRequiredActions
                 : BusinessShiftState.Running);
@@ -626,6 +668,7 @@ namespace Slainte.Business
 
             remainingSeconds = 0f;
             shiftActive = false;
+            forceCompletionRequested = false;
             SetState(BusinessShiftState.Completed);
             sessionUi?.SetShiftTime(0f, false);
             sessionUi?.ShowDayComplete();
@@ -649,6 +692,7 @@ namespace Slainte.Business
             initialRequiredPhaseComplete = false;
             beginOrderCallInProgress = false;
             randomCustomerSpawningStopped = false;
+            forceCompletionRequested = false;
             orderSequence = 0;
             completedOrderCount = 0;
             startedSequenceCount = 0;

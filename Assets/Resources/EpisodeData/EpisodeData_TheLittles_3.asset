@@ -639,10 +639,11 @@ MonoBehaviour:
       expressionKey: mid
       slotIndex: 0
     requiresCrafting: 1
+    craftingOrderTicket: {fileID: 11400000, guid: b02bf147308540628943a365a8f503a1, type: 2}
     craftingTicketKey: tl3_eliud
     craftingOrderType: 6
     craftingOrderTarget: rec_1007
-    craftingPaymentEnabled: 0
+    craftingPaymentEnabled: 1
     craftingPaymentCurrency: 0
     craftingOutcomes:
     - result: 0
@@ -1777,10 +1778,11 @@ MonoBehaviour:
       expressionKey: fear_bruise
       slotIndex: 1
     requiresCrafting: 1
+    craftingOrderTicket: {fileID: 11400000, guid: 1995ea4eecd94da490ca4d49ced489ab, type: 2}
     craftingTicketKey: tl3_cartha
     craftingOrderType: 6
     craftingOrderTarget: rec_1007
-    craftingPaymentEnabled: 0
+    craftingPaymentEnabled: 1
     craftingPaymentCurrency: 0
     craftingOutcomes:
     - result: 0

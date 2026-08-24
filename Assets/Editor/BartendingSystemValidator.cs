@@ -22,6 +22,7 @@ public static class BartendingSystemValidator
             ValidateLiquidPoolIsolation();
             ValidateVesselLiquidTransfer();
             ValidateBottleGeometryProfile();
+            ValidateSingleSelectionCoordinator();
             ValidateOrderEvaluation(spirit);
             ValidateCsvData();
             ValidateBusinessBottleData();
@@ -55,6 +56,7 @@ public static class BartendingSystemValidator
             ValidateVesselLiquidTransfer();
             ValidateBottleGeometryProfile();
             ValidatePointerAnchorMath();
+            ValidateSingleSelectionCoordinator();
             ValidateOrderEvaluation(spirit);
             ValidateCsvData();
             ValidateSteamSetup();
@@ -293,6 +295,39 @@ public static class BartendingSystemValidator
         finally
         {
             UnityEngine.Object.DestroyImmediate(modifier);
+        }
+    }
+
+    private static void ValidateSingleSelectionCoordinator()
+    {
+        GameObject root = new GameObject("단일 선택 검증 루트");
+        GameObject first = new GameObject("첫 번째 선택 대상");
+        GameObject second = new GameObject("두 번째 선택 대상");
+        try
+        {
+            first.transform.SetParent(root.transform, false);
+            second.transform.SetParent(root.transform, false);
+            BartendingSelectionCoordinator coordinator =
+                root.AddComponent<BartendingSelectionCoordinator>();
+
+            Assert(BartendingSelection.TryAcquire(first.transform),
+                "비어 있는 영업 선택 잠금을 획득하지 못했습니다.");
+            Assert(coordinator.HasSelection,
+                "선택 잠금이 현재 선택 대상을 기록하지 못했습니다.");
+            Assert(!BartendingSelection.TryAcquire(second.transform),
+                "다른 대상이 이미 점유된 선택 잠금을 획득했습니다.");
+
+            BartendingSelection.Release(first.transform);
+            Assert(!coordinator.HasSelection,
+                "선택 대상을 내려놓은 뒤 잠금이 해제되지 않았습니다.");
+            Assert(!BartendingSelection.TryAcquire(second.transform),
+                "같은 프레임에 다른 대상이 선택되었습니다.");
+            Assert(BartendingSelection.TryAcquire(first.transform),
+                "같은 대상의 내부 재선택까지 차단되었습니다.");
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(root);
         }
     }
 

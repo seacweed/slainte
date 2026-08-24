@@ -17,17 +17,11 @@ namespace Slainte.TV
         public Image frameImage;
         public Image headlineImage;
         public Image cardBackgroundImage;
-        public Image presenterImage;
         public Image eventImage;
-        public TextMeshProUGUI presenterPlaceholderText;
         public TextMeshProUGUI eventPlaceholderText;
         public TextMeshProUGUI titleText;
         public TVTicker ticker;
         public Button closeButton;
-
-        [Header("Temporary Artwork")]
-        [Tooltip("최종 진행자 에셋이 들어오기 전까지 사용하는 임시 이미지입니다.")]
-        public Sprite fallbackPresenterSprite;
 
         [Header("Animation")]
         [Min(0.01f)] public float animationDuration = 0.25f;
@@ -116,10 +110,6 @@ namespace Slainte.TV
             string title = entry != null ? entry.title : "방송 데이터 없음";
             if (titleText != null) titleText.text = title;
             ticker?.SetMessage(entry != null ? entry.tickerText : "방송 정보를 불러올 수 없습니다.");
-            Sprite presenter = entry?.presenterSprite != null
-                ? entry.presenterSprite
-                : fallbackPresenterSprite;
-            SetImage(presenterImage, presenterPlaceholderText, presenter, "진행자 임시 영역\n(최종 에셋 대기)");
             SetImage(eventImage, eventPlaceholderText, entry?.eventSprite, title + "\n(카드 에셋 누락)");
         }
 
@@ -132,7 +122,6 @@ namespace Slainte.TV
             if (image != null)
             {
                 image.sprite = sprite;
-                image.preserveAspect = true;
                 image.color = sprite != null ? Color.white : new Color(0.18f, 0.24f, 0.14f, 1f);
             }
 

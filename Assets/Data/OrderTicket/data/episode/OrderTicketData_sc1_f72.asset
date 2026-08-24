@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OrderTicketData
   key: sc1_f72
   customerName: F72
-  memo: "\uC800\uBC88\uACFC \uAC19\uC740 \uAC78\uB85C."
+  memo: "저번에 시켰던걸로 한 잔! 기억하지?"
   items:
-  - name: God Lady
+  - name: "한여름의 나낭나"
     qty: 1
-    price: 50
+    price: 189

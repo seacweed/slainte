@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b074092a6424ed548be557aa3efb3794, type: 3}
+  m_Name: OrderTicketData_bf0_bf
+  m_EditorClassIdentifier: Assembly-CSharp::OrderTicketData
+  key: bf0_bf
+  customerName: "빅-피쉬"
+  memo: "거친 밤에 어울리는 고급스러운 걸로 한 잔 주겠나? 겉치레만 번지르르한 싸구려는 사양하네"
+  items: []

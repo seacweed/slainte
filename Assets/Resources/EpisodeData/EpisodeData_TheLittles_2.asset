@@ -584,10 +584,11 @@ MonoBehaviour:
       expressionKey: mid
       slotIndex: 1
     requiresCrafting: 1
+    craftingOrderTicket: {fileID: 11400000, guid: c1d5bc18f5204b47a703ba481137c66a, type: 2}
     craftingTicketKey: tl2_eliud
     craftingOrderType: 6
     craftingOrderTarget: rec_1007
-    craftingPaymentEnabled: 0
+    craftingPaymentEnabled: 1
     craftingPaymentCurrency: 0
     craftingOutcomes:
     - result: 0
@@ -977,10 +978,11 @@ MonoBehaviour:
       expressionKey: smile
       slotIndex: 1
     requiresCrafting: 1
+    craftingOrderTicket: {fileID: 11400000, guid: 590800b95c5c44ea9b20cc056355a5b4, type: 2}
     craftingTicketKey: tl2_cartha
     craftingOrderType: 6
     craftingOrderTarget: rec_1007
-    craftingPaymentEnabled: 0
+    craftingPaymentEnabled: 1
     craftingPaymentCurrency: 0
     craftingOutcomes:
     - result: 0

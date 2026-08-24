@@ -310,6 +310,7 @@ namespace Slainte.Bartending
             CancelPendingPhysicsMotion();
             CancelPointerSynchronization();
             BartendingPointerAnchor.Release(this);
+            BartendingSelection.Release(this);
         }
 
         private void HandleInput()
@@ -373,15 +374,20 @@ namespace Slainte.Bartending
 
         private void PickupBeaker()
         {
-            PreparePickup();
+            if (!PreparePickup())
+                return;
+
             BeginPointerSynchronization(
                 transform.position,
                 unlockCursor: false,
                 completeReturn: false);
         }
 
-        private void PreparePickup()
+        private bool PreparePickup()
         {
+            if (!BartendingSelection.TryAcquire(this))
+                return false;
+
             CancelPointerSynchronization();
             CancelPendingPhysicsMotion();
             currentState = BeakerState.PickedUp;
@@ -399,6 +405,8 @@ namespace Slainte.Bartending
                 StopCoroutine(returnCoroutine);
                 returnCoroutine = null;
             }
+
+            return true;
         }
 
         private void FollowMousePosition()
@@ -539,7 +547,9 @@ namespace Slainte.Bartending
 
         public void OnPickedUpAt(Vector3 pointerWorld)
         {
-            PreparePickup();
+            if (!PreparePickup())
+                return;
+
             pointerPivotOffset = transform.position - pointerWorld;
             pointerPivotOffset.z = 0f;
         }
@@ -555,6 +565,7 @@ namespace Slainte.Bartending
             CancelPendingPhysicsMotion();
             CancelPointerSynchronization();
             BartendingPointerAnchor.Release(this);
+            BartendingSelection.Release(this);
             
             if (returnCoroutine != null)
             {

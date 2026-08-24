@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Slainte.Bartending;
+using Slainte.Economy;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -47,7 +48,39 @@ namespace NarrativeFlow.Editor
                     DrawChoices(container, ev, nodeView, epNode, graph);
                     break;
                 case EpisodeEventType.BusinessStart:
-                    container.Add(CreateField("Ticket", ev.CraftingTicketKey, "ticket", nodeView, v => ev.CraftingTicketKey = v, graph));
+                    if (ev.CraftingOrderTicket == null
+                        && !string.IsNullOrWhiteSpace(ev.CraftingTicketKey))
+                    {
+                        OrderTicketDatabase ticketDatabase =
+                            AssetDatabase.LoadAssetAtPath<OrderTicketDatabase>(
+                                "Assets/Data/OrderTicket/OrderTicketDatabase.asset");
+                        ev.CraftingOrderTicket =
+                            ticketDatabase != null
+                                ? ticketDatabase.FindByKey(ev.CraftingTicketKey)
+                                : null;
+                        if (ev.CraftingOrderTicket != null)
+                            EditorUtility.SetDirty(epNode);
+                    }
+
+                    var ticketRow = NarrativeUIHelper.CreateRow();
+                    ticketRow.Add(NarrativeUIHelper.CreateLabel("Order Ticket", "field-label"));
+                    ticketRow.Add(new ObjectField
+                    {
+                        objectType = typeof(OrderTicketData),
+                        value = ev.CraftingOrderTicket,
+                        allowSceneObjects = false
+                    }.SetFlex(1).With(x => x.RegisterValueChangedCallback(e =>
+                    {
+                        ev.CraftingOrderTicket = e.newValue as OrderTicketData;
+                        if (ev.CraftingOrderTicket != null)
+                            ev.CraftingTicketKey = ev.CraftingOrderTicket.key;
+                        EditorUtility.SetDirty(epNode);
+                        nodeView.UpdateVisuals();
+                        graph.ValidateAllNodes();
+                        graph.RefreshMainGraphVisuals();
+                    })));
+                    container.Add(ticketRow);
+                    container.Add(CreateField("Ticket Key", ev.CraftingTicketKey, "ticket", nodeView, v => ev.CraftingTicketKey = v, graph));
                     var orderTypeRow = NarrativeUIHelper.CreateRow();
                     orderTypeRow.Add(NarrativeUIHelper.CreateLabel("Order Type", "field-label"));
                     orderTypeRow.Add(new EnumField(ev.CraftingOrderType).SetFlex(1).With(x =>
@@ -67,6 +100,28 @@ namespace NarrativeFlow.Editor
                         nodeView,
                         v => ev.CraftingOrderTarget = v,
                         graph));
+                    var paymentRow = NarrativeUIHelper.CreateRow();
+                    paymentRow.Add(NarrativeUIHelper.CreateLabel("Pay Recipe Price", "field-label"));
+                    paymentRow.Add(new Toggle
+                    {
+                        value = ev.CraftingPaymentEnabled
+                    }.SetFlex(1).With(x => x.RegisterValueChangedCallback(e =>
+                    {
+                        ev.CraftingPaymentEnabled = e.newValue;
+                        EditorUtility.SetDirty(epNode);
+                        nodeView.UpdateVisuals();
+                    })));
+                    container.Add(paymentRow);
+                    var currencyRow = NarrativeUIHelper.CreateRow();
+                    currencyRow.Add(NarrativeUIHelper.CreateLabel("Payment Currency", "field-label"));
+                    currencyRow.Add(new EnumField(ev.CraftingPaymentCurrency).SetFlex(1).With(x =>
+                        x.RegisterValueChangedCallback(e =>
+                        {
+                            ev.CraftingPaymentCurrency = (GameCurrency)e.newValue;
+                            EditorUtility.SetDirty(epNode);
+                            nodeView.UpdateVisuals();
+                        })));
+                    container.Add(currencyRow);
                     container.Add(NarrativeUIHelper.CreateDivider());
                     foreach (var result in CraftingJobResultPorts.Order)
                     {

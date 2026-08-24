@@ -37,6 +37,7 @@ namespace Slainte.Business
         public string requestedRecipeId;
         public string requestedConditionLabel;
         public List<string> requestedTags = new();
+        public OrderTicketData ticketData;
         public string ticketKey;
         public CocktailOrderType orderType = CocktailOrderType.RecipeOrder;
         public GameCurrency paymentCurrency = GameCurrency.Money;
@@ -46,6 +47,7 @@ namespace Slainte.Business
         public bool presentFeedback = true;
         public bool applyProgressRewards = true;
         public bool applyPayment;
+        public bool recordSale;
         public bool applyReputation;
         public bool clearCustomerOnComplete = true;
     }

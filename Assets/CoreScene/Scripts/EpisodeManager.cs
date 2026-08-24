@@ -212,6 +212,55 @@ public class EpisodeManager : MonoSingleton<EpisodeManager>
         callback?.Invoke();
     }
 
+    public bool TryForceCompleteCurrentEpisode(out string completedEpisodeId)
+    {
+        completedEpisodeId = CurrentPlayingEpisodeID;
+        EpisodeRunner runner = UnityEngine.Object.FindFirstObjectByType<EpisodeRunner>();
+        GameProgress progress = GameProgress.Instance;
+
+        if (progress == null)
+        {
+            Debug.LogError("[EpisodeManager] GameProgress가 없어 현재 에피소드를 강제 완료할 수 없습니다.");
+            return false;
+        }
+
+        if (string.IsNullOrWhiteSpace(completedEpisodeId))
+            completedEpisodeId = runner?.CurrentEpisodeId;
+        if (string.IsNullOrWhiteSpace(completedEpisodeId))
+            return false;
+
+        if (runner != null && runner.IsRunning)
+        {
+            if (!string.Equals(
+                    runner.CurrentEpisodeId,
+                    completedEpisodeId,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                Debug.LogError(
+                    "[EpisodeManager] 현재 에피소드 ID와 EpisodeRunner 상태가 달라 강제 완료하지 않습니다: "
+                    + $"manager={completedEpisodeId}, runner={runner.CurrentEpisodeId}");
+                return false;
+            }
+
+            if (!runner.TryForceCompleteForRecovery())
+                return false;
+        }
+        else if (IsBusinessEncounterActive)
+        {
+            CompleteBusinessEncounter(completedEpisodeId);
+        }
+        else
+        {
+            ClearEpisode(completedEpisodeId, saveImmediately: false);
+            DayFlowController.Instance?.OnEpisodeCompleted();
+        }
+
+        DataManager.Instance?.Save();
+        Debug.LogWarning(
+            $"[EpisodeManager] 복구 명령으로 에피소드를 강제 완료했습니다: {completedEpisodeId}");
+        return progress.IsEpisodeCompleted(completedEpisodeId);
+    }
+
     public void ClearEpisode(string episodeId)
     {
         ClearEpisode(episodeId, saveImmediately: true);

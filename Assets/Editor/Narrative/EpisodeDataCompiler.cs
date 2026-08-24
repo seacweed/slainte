@@ -9,6 +9,9 @@ namespace NarrativeFlow.Editor
 {
     public class EpisodeDataCompiler
     {
+        private const string OrderTicketDatabasePath =
+            "Assets/Data/OrderTicket/OrderTicketDatabase.asset";
+
         [MenuItem("Narrative/Compile Selected Graph to EpisodeData")]
         public static void CompileSelected()
         {
@@ -152,9 +155,14 @@ namespace NarrativeFlow.Editor
 
                 case EpisodeEventType.BusinessStart:
                     n.requiresCrafting     = true;
+                    n.craftingOrderTicket = ev.CraftingOrderTicket != null
+                        ? ev.CraftingOrderTicket
+                        : ResolveOrderTicket(ev.CraftingTicketKey);
                     n.craftingTicketKey    = ev.CraftingTicketKey;
                     n.craftingOrderType    = ev.CraftingOrderType;
                     n.craftingOrderTarget  = ev.CraftingOrderTarget;
+                    n.craftingPaymentEnabled = ev.CraftingPaymentEnabled;
+                    n.craftingPaymentCurrency = ev.CraftingPaymentCurrency;
                     foreach (var result in CraftingJobResultPorts.Order)
                     {
                         string flag = ev.GetCraftingFlag(result);
@@ -181,6 +189,16 @@ namespace NarrativeFlow.Editor
                     break;
             }
             return n;
+        }
+
+        private static OrderTicketData ResolveOrderTicket(string ticketKey)
+        {
+            if (string.IsNullOrWhiteSpace(ticketKey))
+                return null;
+
+            OrderTicketDatabase database =
+                AssetDatabase.LoadAssetAtPath<OrderTicketDatabase>(OrderTicketDatabasePath);
+            return database != null ? database.FindByKey(ticketKey) : null;
         }
 
         // ── Link last event → outer graph edges ───────────────────────────────────

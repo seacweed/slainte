@@ -1381,10 +1381,11 @@ MonoBehaviour:
       expressionKey: down
       slotIndex: 2
     requiresCrafting: 1
+    craftingOrderTicket: {fileID: 11400000, guid: 5691ea17ff704ba897389499b227e78f, type: 2}
     craftingTicketKey: sc3_sally
     craftingOrderType: 6
     craftingOrderTarget: rec_1020
-    craftingPaymentEnabled: 0
+    craftingPaymentEnabled: 1
     craftingPaymentCurrency: 0
     craftingOutcomes:
     - result: 0
@@ -3821,10 +3822,11 @@ MonoBehaviour:
       expressionKey: injured_mid
       slotIndex: 2
     requiresCrafting: 1
+    craftingOrderTicket: {fileID: 11400000, guid: a9799ad00f4f4838ac0d72544bc0d7ae, type: 2}
     craftingTicketKey: sc3_sally_1
-    craftingOrderType: 6
+    craftingOrderType: 2
     craftingOrderTarget: "\uC501\uC4F8\uD568"
-    craftingPaymentEnabled: 0
+    craftingPaymentEnabled: 1
     craftingPaymentCurrency: 0
     craftingOutcomes:
     - result: 0
@@ -4310,10 +4312,11 @@ MonoBehaviour:
       expressionKey: injured_smile
       slotIndex: 2
     requiresCrafting: 1
+    craftingOrderTicket: {fileID: 11400000, guid: 138ade0f0c3b415ba99b02063beb9b13, type: 2}
     craftingTicketKey: sc3_e12
     craftingOrderType: 6
     craftingOrderTarget: rec_1005
-    craftingPaymentEnabled: 0
+    craftingPaymentEnabled: 1
     craftingPaymentCurrency: 0
     craftingOutcomes:
     - result: 0

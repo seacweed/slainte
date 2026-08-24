@@ -48,7 +48,7 @@ public class OrderTicketUI : MonoBehaviour
         if (!canvasGroup) canvasGroup = GetComponent<CanvasGroup>();
 
         _visiblePos = ticketRect.anchoredPosition;
-        HideStructuredOrderDetails();
+        ClearContent();
         ApplyClosedState();
         SetButtonInteractable(true);
     }
@@ -60,6 +60,12 @@ public class OrderTicketUI : MonoBehaviour
 
     public void Show(OrderTicketData data, string memo)
     {
+        if (data == null)
+        {
+            ClearContent();
+            return;
+        }
+
         if (customerNameText) customerNameText.text = data.customerName;
         if (memoText)         memoText.text         = memo ?? "";
 
@@ -70,6 +76,14 @@ public class OrderTicketUI : MonoBehaviour
         if (scrollRect)  scrollRect.verticalNormalizedPosition = 1f;
 
         BeginOpen();
+    }
+
+    public void ClearContent()
+    {
+        if (customerNameText) customerNameText.text = string.Empty;
+        if (memoText) memoText.text = string.Empty;
+        HideStructuredOrderDetails();
+        if (scrollRect) scrollRect.verticalNormalizedPosition = 1f;
     }
 
     public void Toggle()

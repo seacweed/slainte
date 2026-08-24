@@ -147,15 +147,25 @@ namespace Slainte.Bartending
         public Color EvaluateColor(float minimumAlpha = 0f)
         {
             float validTotal = 0f;
+            float colorSourceTotal = 0f;
             for (int i = 0; i < portions.Count; i++)
             {
                 LiquidPortion portion = portions[i];
                 if (portion.sourceItem != null && portion.volumeMl > 0f)
+                {
                     validTotal += portion.volumeMl;
+                    if (!portion.sourceItem.inheritMixedLiquidColor)
+                        colorSourceTotal += portion.volumeMl;
+                }
             }
 
             if (validTotal <= 0f)
                 return Color.clear;
+
+            // Water and soda-like mixers keep their own color while alone, but once
+            // another liquid is present they inherit that liquid's color exactly.
+            bool hasIndependentColorSource = colorSourceTotal > 0f;
+            float colorWeightTotal = hasIndependentColorSource ? colorSourceTotal : validTotal;
 
             float r = 0f;
             float g = 0f;
@@ -167,8 +177,10 @@ namespace Slainte.Bartending
                 LiquidPortion portion = portions[i];
                 if (portion.sourceItem == null || portion.volumeMl <= 0f)
                     continue;
+                if (hasIndependentColorSource && portion.sourceItem.inheritMixedLiquidColor)
+                    continue;
 
-                float weight = portion.volumeMl / validTotal;
+                float weight = portion.volumeMl / colorWeightTotal;
                 Color sourceColor = portion.sourceItem.liquidColor;
 
                 r += sourceColor.r * weight;

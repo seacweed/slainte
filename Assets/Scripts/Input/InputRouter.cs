@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 
 public class InputRouter : MonoBehaviour
 {
@@ -19,24 +21,25 @@ public class InputRouter : MonoBehaviour
 
     void Update()
     {
-        bool advancePressed = Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space);
-        bool bookPressed    = Input.GetKeyDown(KeyCode.Tab);
-        bool ticketPressed  = Input.GetKeyDown(KeyCode.E);
-        bool shelfPressed   = Input.GetKeyDown(KeyCode.R);
+        Keyboard keyboard   = Keyboard.current;
+        bool advancePressed = Input.GetMouseButtonDown(0) || WasPressed(keyboard?.spaceKey, KeyCode.Space);
+        bool bookPressed    = WasPressed(keyboard?.tabKey, KeyCode.Tab);
+        bool ticketPressed  = WasPressed(keyboard?.eKey, KeyCode.E);
+        bool shelfPressed   = WasPressed(keyboard?.rKey, KeyCode.R);
 
         GameMode mode = modeManager != null ? modeManager.CurrentMode : GameMode.OrderMode;
 
         switch (mode)
         {
             case GameMode.OrderMode:
-                if (dialogue == null || !dialogue.IsOpen) HandleCameraInput();
+                HandleCameraInput(keyboard);
                 if (advancePressed) dialogue?.Advance();
                 if (bookPressed)    recipeBook?.Toggle();
                 if (ticketPressed)  orderTicketManager?.ToggleTicket();
                 if (shelfPressed)   liquorShelf?.Toggle();
-                if (Input.GetKeyDown(KeyCode.Alpha1))
+                if (WasPressed(keyboard?.digit1Key, KeyCode.Alpha1))
                     customerSpawner?.ShowCustomers(new[] { "yukari" });
-                if (Input.GetKeyDown(KeyCode.Alpha2) && testEpisode != null)
+                if (WasPressed(keyboard?.digit2Key, KeyCode.Alpha2) && testEpisode != null)
                 {
                     modeManager?.RequestModeChange(GameMode.EpisodeMode);
                     episodeRunner?.Begin(testEpisode);
@@ -48,7 +51,7 @@ public class InputRouter : MonoBehaviour
                 break;
 
             case GameMode.CraftingMode:
-                HandleCameraInput();
+                HandleCameraInput(keyboard);
                 if (advancePressed) RouteAdvanceToEncounter();
                 if (bookPressed)    recipeBook?.Toggle();
                 if (ticketPressed)  orderTicketManager?.ToggleTicket();
@@ -57,24 +60,32 @@ public class InputRouter : MonoBehaviour
         }
     }
 
-    private void HandleCameraInput()
+    private void HandleCameraInput(Keyboard keyboard)
     {
         if (cameraRig == null || cameraRig.IsAnimating) return;
 
-        if (Input.GetKeyDown(KeyCode.S)) cameraRig.OnCameraInput(CameraDirection.DrawerOpen);
-        if (Input.GetKeyDown(KeyCode.W)) cameraRig.OnCameraInput(CameraDirection.DrawerClose);
+        if (WasPressed(keyboard?.sKey, KeyCode.S)) cameraRig.OnCameraInput(CameraDirection.DrawerOpen);
+        if (WasPressed(keyboard?.wKey, KeyCode.W)) cameraRig.OnCameraInput(CameraDirection.DrawerClose);
+    }
+
+    private static bool WasPressed(KeyControl inputSystemKey, KeyCode legacyKey)
+    {
+        bool pressed = inputSystemKey != null && inputSystemKey.wasPressedThisFrame;
+#if ENABLE_LEGACY_INPUT_MANAGER
+        pressed |= Input.GetKeyDown(legacyKey);
+#endif
+        return pressed;
     }
 
     private void RouteAdvanceToEncounter()
     {
-        if (episodeRunner != null && episodeRunner.CanReceiveAdvanceInput)
+        if (episodeRunner != null && episodeRunner.IsRunning)
         {
-            episodeRunner.OnAdvanceInput();
+            if (episodeRunner.CanReceiveAdvanceInput)
+                episodeRunner.OnAdvanceInput();
+
             return;
         }
-
-        if (episodeRunner != null && episodeRunner.IsWaitingForChoice)
-            return;
 
         dialogue?.Advance();
     }

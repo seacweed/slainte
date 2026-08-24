@@ -318,6 +318,16 @@ public class GameProgress : MonoSingleton<GameProgress>
         if (_completedSet.Add(episodeId)) completedEpisodeIds.Add(episodeId);
     }
 
+    public bool UnmarkEpisodeCompleted(string episodeId)
+    {
+        if (string.IsNullOrWhiteSpace(episodeId)) return false;
+
+        bool removed = _completedSet.Remove(episodeId);
+        removed |= completedEpisodeIds.RemoveAll(
+            id => string.Equals(id, episodeId, StringComparison.OrdinalIgnoreCase)) > 0;
+        return removed;
+    }
+
     public void SetCurrentDay(int day)
     {
         currentDay = Mathf.Max(0, day);

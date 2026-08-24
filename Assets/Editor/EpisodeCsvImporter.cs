@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Slainte.Bartending;
+using Slainte.Economy;
 using UnityEditor;
 using UnityEngine;
 
 public class EpisodeCsvImporter : EditorWindow
 {
+    private const string OrderTicketDatabasePath =
+        "Assets/Data/OrderTicket/OrderTicketDatabase.asset";
     private string _csvPath = "";
     private string _outputFolder = "Assets/Resources/EpisodeData";
 
@@ -586,6 +589,8 @@ public class EpisodeCsvImporter : EditorWindow
                          || craftingValue == "1";
             string orderTypeValue = NamedField(row, nodeHeaders, "craftingOrderType", -1);
             CocktailOrderType craftingOrderType = ParseCraftingOrderType(orderTypeValue);
+            string craftingTicketKey =
+                NamedField(row, nodeHeaders, "craftingTicketKey", 6);
             string craftingOrderTarget = NamedField(row, nodeHeaders, "craftingOrderTarget", -1);
             if (string.IsNullOrWhiteSpace(craftingOrderTarget))
             {
@@ -595,6 +600,13 @@ public class EpisodeCsvImporter : EditorWindow
                     "craftingRecipeId",
                     -1);
             }
+            bool defaultPaymentEnabled = crafting
+                && !string.IsNullOrWhiteSpace(craftingOrderTarget);
+            bool craftingPaymentEnabled = ParseBoolean(
+                NamedField(row, nodeHeaders, "craftingPaymentEnabled", -1),
+                defaultPaymentEnabled);
+            GameCurrency craftingPaymentCurrency = ParseGameCurrency(
+                NamedField(row, nodeHeaders, "craftingPaymentCurrency", -1));
 
             data.nodes.Add(new EpisodeNode
             {
@@ -604,9 +616,12 @@ public class EpisodeCsvImporter : EditorWindow
                 text                = NamedField(row, nodeHeaders, "text", 3),
                 nextNodeId          = NamedField(row, nodeHeaders, "nextNodeId", 4),
                 requiresCrafting    = crafting,
-                craftingTicketKey   = NamedField(row, nodeHeaders, "craftingTicketKey", 6),
+                craftingOrderTicket = ResolveOrderTicket(craftingTicketKey),
+                craftingTicketKey   = craftingTicketKey,
                 craftingOrderType   = craftingOrderType,
                 craftingOrderTarget = craftingOrderTarget,
+                craftingPaymentEnabled = craftingPaymentEnabled,
+                craftingPaymentCurrency = craftingPaymentCurrency,
                 bgmCommand          = ParseBgmCommand(NamedField(row, nodeHeaders, "bgmCommand", 7)),
                 bgmClipName         = NamedField(row, nodeHeaders, "bgmClipName", 8),
                 sfxCommand          = ParseSfxCommand(NamedField(row, nodeHeaders, "sfxCommand", 9)),
@@ -629,6 +644,16 @@ public class EpisodeCsvImporter : EditorWindow
 
     // -------------------------------------------------------------------------
     // Helpers
+
+    private static OrderTicketData ResolveOrderTicket(string ticketKey)
+    {
+        if (string.IsNullOrWhiteSpace(ticketKey))
+            return null;
+
+        OrderTicketDatabase database =
+            AssetDatabase.LoadAssetAtPath<OrderTicketDatabase>(OrderTicketDatabasePath);
+        return database != null ? database.FindByKey(ticketKey) : null;
+    }
     // -------------------------------------------------------------------------
 
     private static CharacterSlotEntry ToSlotEntry(string[] row, int offset)
@@ -740,6 +765,30 @@ public class EpisodeCsvImporter : EditorWindow
         return Enum.TryParse(value?.Trim(), true, out CocktailOrderType result)
             ? result
             : CocktailOrderType.EpisodeOrder;
+    }
+
+    private static bool ParseBoolean(string value, bool defaultValue)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return defaultValue;
+
+        string normalized = value.Trim();
+        if (bool.TryParse(normalized, out bool parsed))
+            return parsed;
+        if (normalized == "1")
+            return true;
+        if (normalized == "0")
+            return false;
+
+        return defaultValue;
+    }
+
+    private static GameCurrency ParseGameCurrency(string value)
+    {
+        return Enum.TryParse(value?.Trim(), true, out GameCurrency result)
+            && Enum.IsDefined(typeof(GameCurrency), result)
+                ? result
+                : GameCurrency.Money;
     }
 
     private static BgmCommand ParseBgmCommand(string value)

@@ -31,7 +31,7 @@ isHidden,characterName,,,,,,,,,,
 ,,,,,,,,,,,
 ,,,,,,,,,,,
 #NODES,,,,,,,,,,,
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,craftingOrderTarget,bgmCommand,bgmClipName,sfxCommand,sfxClipName
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,craftingOrderTarget,bgmCommand,bgmClipName,sfxCommand,sfxClipName,craftingOrderType
 0,bigFish,???,"흠, 소문대로 분위기는 괜찮군.",1,FALSE,,,,,play,sfx_come_in
 1,shaun,,어서 오십시… 어…,2,FALSE,,,,,,
 2,bigFish,???,"하하, 그렇게 굳어있을 것 없네, 젊은 바텐더. 사람 잡아먹으러 온 건 아니니까.",3,FALSE,,,,,,
@@ -48,7 +48,7 @@ nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingT
 13,bigFish,,"자, 잡담은 이쯤 하고. 먼 길을 걸어왔으니 목을 좀 축이고 싶군.",14,FALSE,,,,,,
 14,shaun,,"물론입니다. 어떤 삶을 살아오셨건, 슬런챠에선 모두가 손님입니다.",15,FALSE,,,,,,
 15,bigFish,,거친 밤에 어울리는 <b>고급스러운 </b>걸로 한 잔 주겠나? 겉치레만 번지르르한 싸구려는 사양하네,16,FALSE,,,,,,
-16,,,,,TRUE,bf0_bf,고급스러운,,,,
+16,,,,,TRUE,bf0_bf,고급스러운,,,,,MoodOrder
 17_1_1,bigFish,,아주 훌륭해. 목구멍을 타고 넘어가는 이 묵직한 온도… 합격일세.,17_1_2,FALSE,,,,,,
 17_1_2,bigFish,,솜씨가 제법이군. 팁일세. 자네 펍은 앞으로 종종 들르게 될 것 같아. ,17_1_3,FALSE,,,,,,
 17_1_3,shaun,,ㅅ-손님? 이렇게 큰 돈을…,17_1_4,FALSE,,,,,,

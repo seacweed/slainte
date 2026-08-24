@@ -16,7 +16,7 @@ MonoBehaviour:
   displayName: F72
   englishName: F72
   nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
-  defaultSprite: {fileID: 0}
+  defaultSprite: {fileID: 21300000, guid: 1f3256da7257a764497a343154377fde, type: 3}
   defaultOverlaySprite: {fileID: 0}
   defaultBlinkSprite: {fileID: 0}
   defaultBlinkOverlaySprite: {fileID: 0}
@@ -100,4 +100,19 @@ MonoBehaviour:
     sprite: {fileID: 21300000, guid: ff0a987cba8d60b41b4da55856d6fee5, type: 3}
     overlaySprite: {fileID: 0}
     blinkSprite: {fileID: 21300000, guid: 69ddde9ec7fad724fb60466081e1bb28, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: good
+    sprite: {fileID: 21300000, guid: a7daee908fc43d74382b2909f5552ba7, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 69ddde9ec7fad724fb60466081e1bb28, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: angry
+    sprite: {fileID: 21300000, guid: 5bc86edc36b05624db0ccfeff561f4ef, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 5046fb2c6ee76b047ac9896b19213038, type: 3}
+    blinkOverlaySprite: {fileID: 0}
+  - key: bad
+    sprite: {fileID: 21300000, guid: 5bc86edc36b05624db0ccfeff561f4ef, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 21300000, guid: 5046fb2c6ee76b047ac9896b19213038, type: 3}
     blinkOverlaySprite: {fileID: 0}

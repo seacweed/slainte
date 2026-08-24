@@ -230,8 +230,11 @@ namespace NarrativeFlow.Editor
         {
             var header = NarrativeUIHelper.CreateRow();
             header.Add(NarrativeUIHelper.CreateLabel("CRAFTING", "field-label").With(l => l.style.color = new Color(1f, 0.6f, 0.4f)));
-            if (!string.IsNullOrEmpty(ev.CraftingTicketKey))
-                header.Add(NarrativeUIHelper.CreateLabel($"  {ev.CraftingTicketKey}", "info-label").With(l => l.style.color = new Color(0.9f, 0.9f, 0.9f)));
+            string ticketKey = ev.CraftingOrderTicket != null
+                ? ev.CraftingOrderTicket.key
+                : ev.CraftingTicketKey;
+            if (!string.IsNullOrEmpty(ticketKey))
+                header.Add(NarrativeUIHelper.CreateLabel($"  {ticketKey}", "info-label").With(l => l.style.color = new Color(0.9f, 0.9f, 0.9f)));
             card.Add(header);
             card.Add(NarrativeUIHelper.CreateLabel(
                 $"{ev.CraftingOrderType}: {ev.CraftingOrderTarget}",

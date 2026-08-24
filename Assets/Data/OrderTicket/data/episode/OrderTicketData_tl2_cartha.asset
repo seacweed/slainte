@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b074092a6424ed548be557aa3efb3794, type: 3}
+  m_Name: OrderTicketData_tl2_cartha
+  m_EditorClassIdentifier: Assembly-CSharp::OrderTicketData
+  key: tl2_cartha
+  customerName: "카사"
+  memo: "카사도 한 잔 줄까? 걱정하지마, 알콜은 안 들어있어.\n응… 궁금해."
+  items:
+  - name: "한여름의 주스"
+    qty: 1
+    price: 97

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Slainte.Bartending;
 using Slainte.Business;
+using Slainte.Economy;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -16,6 +17,12 @@ namespace Slainte.EditorTools
         private const string TicketDatabasePath = "Assets/Data/OrderTicket/OrderTicketDatabase.asset";
         private const string CustomerOrderDatabasePath =
             "Assets/Data/CustomerOrder/CustomerOrderDatabase.asset";
+        private const string CharacterDatabasePath =
+            "Assets/Data/CharacterData/CharacterDatabase.asset";
+        private const string F54CharacterPath =
+            "Assets/Data/CharacterData/data/CharacterData_f54.asset";
+        private const string F72CharacterPath =
+            "Assets/Data/CharacterData/data/CharacterData_f72.asset";
 
         [MenuItem("Slainte/품질 검증/시간 기반 영업 검증")]
         public static void ValidateFromMenu()
@@ -32,6 +39,7 @@ namespace Slainte.EditorTools
         public static void RunCustomerDialogueBatchValidation()
         {
             ValidatePublishedCustomerOrders();
+            ValidateF54F72EvaluationSprites();
             ValidateOrderTicketDialogueMemo();
             ValidateConditionOrderEvaluation();
             ValidateCraftingResultMapping();
@@ -45,10 +53,11 @@ namespace Slainte.EditorTools
         {
             ValidateSettingsAndScene();
             ValidatePublishedCustomerOrders();
+            ValidateF54F72EvaluationSprites();
             ValidatePlannerRules();
             ValidateEpisodeCraftingCompatibility();
             ValidateTechnicalFailureContract();
-            Debug.Log("[BusinessShiftValidator] 통과: 180초 설정, 손님·주문 DB 무결성, 최근 손님 2명 제한, Day 5 이후 StrangeCoin_0 3번 슬롯·다음 날 재시도·완료 제외, 필수 액션, 에피소드 실제 제조 결과·구형 분기 호환, BusinessScene 구성");
+            Debug.Log("[BusinessShiftValidator] 통과: 180초 설정, 손님·주문 DB 무결성, 최근 손님 2명 제한, Day 5 이후 StrangeCoin_0 3번 슬롯·TheLittles_0 6번 슬롯·다음 날 재시도·완료 제외, 필수 액션, 에피소드 실제 제조 결과·구형 분기 호환, BusinessScene 구성");
         }
 
         private static void ValidatePublishedCustomerOrders()
@@ -183,6 +192,80 @@ namespace Slainte.EditorTools
                 + string.Join(", ", missingFeedbackSummary));
         }
 
+        private static void ValidateF54F72EvaluationSprites()
+        {
+            CharacterDatabase database =
+                AssetDatabase.LoadAssetAtPath<CharacterDatabase>(CharacterDatabasePath);
+            Require(database != null, "캐릭터 데이터베이스를 불러오지 못했습니다.");
+
+            ValidateEvaluationSpriteAliases(database, "f54", F54CharacterPath);
+            ValidateEvaluationSpriteAliases(database, "f72", F72CharacterPath);
+
+            BusinessOrderFlowSettings settings =
+                AssetDatabase.LoadAssetAtPath<BusinessOrderFlowSettings>(SettingsPath);
+            Require(settings?.customerVisitDatabase != null,
+                "평가 표정을 검증할 손님 방문 데이터베이스를 불러오지 못했습니다.");
+
+            HashSet<string> validatedCharacters = new(StringComparer.OrdinalIgnoreCase);
+            for (int visitIndex = 0;
+                 visitIndex < settings.customerVisitDatabase.visits.Count;
+                 visitIndex++)
+            {
+                CustomerVisitData visit = settings.customerVisitDatabase.visits[visitIndex];
+                if (visit?.members == null)
+                    continue;
+
+                for (int memberIndex = 0; memberIndex < visit.members.Count; memberIndex++)
+                {
+                    CustomerVisitMember member = visit.members[memberIndex];
+                    if (member == null
+                        || (!string.Equals(member.characterKey, "f54", StringComparison.OrdinalIgnoreCase)
+                            && !string.Equals(member.characterKey, "f72", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        continue;
+                    }
+
+                    Require(string.Equals(
+                            member.expressionKeyGood,
+                            "smile",
+                            StringComparison.OrdinalIgnoreCase),
+                        $"Good 평가 키가 smile이 아닙니다: {visit.visitKey}/{member.characterKey}");
+                    Require(string.Equals(
+                            member.expressionKeyBad,
+                            "angry",
+                            StringComparison.OrdinalIgnoreCase),
+                        $"Bad 평가 키가 angry가 아닙니다: {visit.visitKey}/{member.characterKey}");
+                    validatedCharacters.Add(member.characterKey);
+                }
+            }
+
+            Require(validatedCharacters.Contains("f54") && validatedCharacters.Contains("f72"),
+                "F54/F72 손님 방문 평가 표정을 검증하지 못했습니다.");
+        }
+
+        private static void ValidateEvaluationSpriteAliases(
+            CharacterDatabase database,
+            string characterKey,
+            string assetPath)
+        {
+            CharacterData character =
+                AssetDatabase.LoadAssetAtPath<CharacterData>(assetPath);
+            Require(character != null,
+                $"평가 표정을 검증할 캐릭터 에셋이 없습니다: {characterKey}");
+            Require(database.FindByKey(characterKey) == character,
+                $"캐릭터 DB가 평가 표정 에셋을 가리키지 않습니다: {characterKey}");
+
+            Sprite mid = character.GetSprite("mid");
+            Sprite smile = character.GetSprite("smile");
+            Sprite angry = character.GetSprite("angry");
+            Require(mid != null && character.defaultSprite == mid,
+                $"기본 표정 폴백이 mid가 아닙니다: {characterKey}");
+            Require(smile != null && character.GetSprite("good") == smile,
+                $"Good 평가 표정이 smile에 연결되지 않았습니다: {characterKey}");
+            Require(angry != null && character.GetSprite("bad") == angry,
+                $"Bad 평가 표정이 angry에 연결되지 않았습니다: {characterKey}");
+        }
+
         private static void ValidateSettingsAndScene()
         {
             BusinessOrderFlowSettings settings =
@@ -206,11 +289,16 @@ namespace Slainte.EditorTools
                 Require(!string.Equals(
                         entry.episode.episodeId,
                         "StrangeCoin_0",
-                        StringComparison.OrdinalIgnoreCase),
-                    "StrangeCoin_0은 랜덤 인카운터 풀에서 제거되어야 합니다.");
+                        StringComparison.OrdinalIgnoreCase)
+                        && !string.Equals(
+                            entry.episode.episodeId,
+                            "TheLittles_0",
+                            StringComparison.OrdinalIgnoreCase),
+                    "고정 슬롯 인카운터는 랜덤 인카운터 풀에서 제거되어야 합니다.");
             }
 
             BusinessRequiredActionRule strangeCoinRule = null;
+            BusinessRequiredActionRule theLittlesRule = null;
             Require(settings.requiredActions != null, "필수 영업 액션 목록이 없습니다.");
             for (int i = 0; i < settings.requiredActions.Count; i++)
             {
@@ -222,7 +310,14 @@ namespace Slainte.EditorTools
                         StringComparison.OrdinalIgnoreCase))
                 {
                     strangeCoinRule = rule;
-                    break;
+                }
+                else if (rule?.encounterEpisode != null
+                    && string.Equals(
+                        rule.encounterEpisode.episodeId,
+                        "TheLittles_0",
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    theLittlesRule = rule;
                 }
             }
 
@@ -241,6 +336,30 @@ namespace Slainte.EditorTools
             Require(strangeCoinRule.encounterEpisode.triggerCondition != null
                     && strangeCoinRule.encounterEpisode.triggerCondition.minDay == 5,
                 "StrangeCoin_0 에피소드 자체의 시작 조건도 Day 5여야 합니다.");
+            Require(!string.IsNullOrWhiteSpace(strangeCoinRule.encounterEpisode.firstNodeId)
+                    && strangeCoinRule.encounterEpisode.FindNode(
+                        strangeCoinRule.encounterEpisode.firstNodeId) != null,
+                "StrangeCoin_0의 시작 노드를 찾지 못했습니다.");
+
+            Require(theLittlesRule != null,
+                "TheLittles_0의 고정 영업 슬롯 규칙이 없습니다.");
+            Require(theLittlesRule.actionType == BusinessRequiredActionType.EncounterEpisode,
+                "TheLittles_0 고정 규칙이 인카운터 액션이 아닙니다.");
+            Require(theLittlesRule.timing == BusinessRequiredActionTiming.SequenceSlot
+                    && theLittlesRule.sequenceSlot == 6,
+                "TheLittles_0은 6번 영업 슬롯으로 설정되어야 합니다.");
+            Require(theLittlesRule.condition != null
+                    && theLittlesRule.condition.minDay == 5,
+                "TheLittles_0 고정 규칙은 Day 5부터 활성화되어야 합니다.");
+            Require(theLittlesRule.encounterEpisode.episodeType == EpisodeType.Encounter,
+                "TheLittles_0의 EpisodeType이 Encounter가 아닙니다.");
+            Require(theLittlesRule.encounterEpisode.triggerCondition != null
+                    && theLittlesRule.encounterEpisode.triggerCondition.minDay == 5,
+                "TheLittles_0 에피소드 자체의 시작 조건도 Day 5여야 합니다.");
+            Require(!string.IsNullOrWhiteSpace(theLittlesRule.encounterEpisode.firstNodeId)
+                    && theLittlesRule.encounterEpisode.FindNode(
+                        theLittlesRule.encounterEpisode.firstNodeId) != null,
+                "TheLittles_0의 시작 노드를 찾지 못했습니다.");
 
             for (int i = 0; i < settings.customerVisitDatabase.visits.Count; i++)
             {
@@ -273,6 +392,7 @@ namespace Slainte.EditorTools
             CustomerOrderData tagOrder = ScriptableObject.CreateInstance<CustomerOrderData>();
             EpisodeData episode = ScriptableObject.CreateInstance<EpisodeData>();
             EpisodeData secondEpisode = ScriptableObject.CreateInstance<EpisodeData>();
+            EpisodeData sixthEpisode = ScriptableObject.CreateInstance<EpisodeData>();
 
             try
             {
@@ -393,6 +513,9 @@ namespace Slainte.EditorTools
                 secondEpisode.episodeId = "validator_second_episode";
                 secondEpisode.episodeType = EpisodeType.Encounter;
                 secondEpisode.triggerCondition = new EpisodeTriggerCondition();
+                sixthEpisode.episodeId = "validator_sixth_episode";
+                sixthEpisode.episodeType = EpisodeType.Encounter;
+                sixthEpisode.triggerCondition = new EpisodeTriggerCondition();
                 BusinessRandomEncounterEntry encounterEntry = new()
                 {
                     episode = episode,
@@ -553,7 +676,21 @@ namespace Slainte.EditorTools
                     sequenceSlot = 3,
                     encounterEpisode = secondEpisode
                 };
-                List<BusinessRequiredActionRule> fixedSlotRules = new() { fixedSlot };
+                BusinessRequiredActionRule sixthSlot = new()
+                {
+                    ruleId = "validator_sixth_slot_episode",
+                    actionType = BusinessRequiredActionType.EncounterEpisode,
+                    condition = new EpisodeTriggerCondition { minDay = 5 },
+                    priority = 100,
+                    timing = BusinessRequiredActionTiming.SequenceSlot,
+                    sequenceSlot = 6,
+                    encounterEpisode = sixthEpisode
+                };
+                List<BusinessRequiredActionRule> fixedSlotRules = new()
+                {
+                    fixedSlot,
+                    sixthSlot
+                };
 
                 progress.SetCurrentDay(4);
                 selected = BusinessSequencePlanner.PickNextRequiredAction(
@@ -585,6 +722,15 @@ namespace Slainte.EditorTools
                     null,
                     3);
                 Require(selected == fixedSlot, "Day 5의 3번 영업 슬롯을 선택하지 못했습니다.");
+                selected = BusinessSequencePlanner.PickNextRequiredAction(
+                    fixedSlotRules,
+                    progress,
+                    BusinessRequiredActionTiming.SequenceSlot,
+                    false,
+                    null,
+                    null,
+                    6);
+                Require(selected == sixthSlot, "Day 5의 6번 영업 슬롯을 선택하지 못했습니다.");
                 selected = BusinessSequencePlanner.PickNextRequiredAction(
                     fixedSlotRules,
                     progress,
@@ -629,6 +775,7 @@ namespace Slainte.EditorTools
             }
             finally
             {
+                UnityEngine.Object.DestroyImmediate(sixthEpisode);
                 UnityEngine.Object.DestroyImmediate(secondEpisode);
                 UnityEngine.Object.DestroyImmediate(episode);
                 UnityEngine.Object.DestroyImmediate(tagOrder);
@@ -788,6 +935,60 @@ namespace Slainte.EditorTools
             Require(pricedRecipe == matchingRecipe,
                 "잔·얼음 오류가 있는 조건 주문의 가격 기준 레시피를 보존하지 못했습니다.");
 
+            CocktailRecipe orderedRecipe = new() { id = "ordered" };
+            CocktailRecipe actualRecipe = new() { id = "actual" };
+            GeneratedCocktailOrder recipeOrder = new()
+            {
+                orderType = CocktailOrderType.EpisodeOrder,
+                requestedRecipe = orderedRecipe,
+                requestedRecipeId = orderedRecipe.id
+            };
+            CocktailRecipe actualPricedRecipe = (CocktailRecipe)resolveListedRecipe.Invoke(
+                null,
+                new object[]
+                {
+                    recipeOrder,
+                    new CocktailOrderEvaluationResult
+                    {
+                        order = recipeOrder,
+                        requestedRecipeResult = new CocktailEvaluationResult
+                        {
+                            matchedRecipe = orderedRecipe
+                        },
+                        detectedRecipeResult = new CocktailEvaluationResult
+                        {
+                            matchedRecipe = actualRecipe,
+                            isSuccess = true
+                        }
+                    }
+                });
+            Require(actualPricedRecipe == actualRecipe,
+                "다른 칵테일을 제출했을 때 주문 레시피가 아닌 실제 결과 레시피를 가격 기준으로 사용하지 않았습니다.");
+
+            CocktailRecipe servingStylePricedRecipe = (CocktailRecipe)resolveListedRecipe.Invoke(
+                null,
+                new object[]
+                {
+                    recipeOrder,
+                    new CocktailOrderEvaluationResult
+                    {
+                        order = recipeOrder,
+                        requestedRecipeResult = new CocktailEvaluationResult
+                        {
+                            matchedRecipe = orderedRecipe,
+                            ingredientsValid = true,
+                            extrasValid = true,
+                            glassValid = false,
+                            iceValid = true,
+                            shakeIceValid = true,
+                            techniqueValid = true
+                        },
+                        detectedRecipeResult = new CocktailEvaluationResult()
+                    }
+                });
+            Require(servingStylePricedRecipe == orderedRecipe,
+                "재료는 맞고 잔·얼음만 틀린 결과 칵테일의 가격을 찾지 못했습니다.");
+
             GeneratedCocktailOrder moodOrder = generator.GenerateOrder(
                 CocktailOrderType.MoodOrder,
                 requestedTags: new[] { "고급스러운_Luxurious" },
@@ -845,6 +1046,35 @@ namespace Slainte.EditorTools
                 if (recipe == null
                     || recipe.evaluationGrade != CocktailRecipeEvaluationGrade.Good
                     || !string.IsNullOrWhiteSpace(recipe.baseRecipeId))
+                {
+                    continue;
+                }
+
+                HashSet<string> tags = orderType == CocktailOrderType.TasteOrder
+                    ? recipe.tasteTags
+                    : recipe.moodTags;
+                if (tags != null && tags.Contains(requestedTag))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool HasPricedOrderableRecipeForCondition(
+            CocktailRecipeCatalog recipes,
+            CocktailOrderType orderType,
+            string requestedTag,
+            GameCurrency currency)
+        {
+            if (recipes == null || string.IsNullOrWhiteSpace(requestedTag))
+                return false;
+
+            foreach (CocktailRecipe recipe in recipes.OrderableRecipes)
+            {
+                if (recipe == null
+                    || recipe.evaluationGrade != CocktailRecipeEvaluationGrade.Good
+                    || !string.IsNullOrWhiteSpace(recipe.baseRecipeId)
+                    || recipe.GetPrice(currency) <= 0)
                 {
                     continue;
                 }
@@ -983,6 +1213,12 @@ namespace Slainte.EditorTools
                     else
                     {
                         actualCraftingNodes++;
+                        Require(node.craftingPaymentEnabled,
+                            $"실제 에피소드 제조 노드의 가격 지급이 비활성화되어 있습니다: "
+                            + $"{episode.episodeId}/{node.nodeId}");
+                        Require(Enum.IsDefined(typeof(GameCurrency), node.craftingPaymentCurrency),
+                            $"실제 에피소드 제조 노드의 지급 통화가 유효하지 않습니다: "
+                            + $"{episode.episodeId}/{node.nodeId}/{node.craftingPaymentCurrency}");
                         bool tagOrder = node.craftingOrderType == CocktailOrderType.TasteOrder
                             || node.craftingOrderType == CocktailOrderType.MoodOrder;
                         bool supportedOrderType = tagOrder
@@ -994,26 +1230,37 @@ namespace Slainte.EditorTools
                         {
                             string requestedTag = CocktailOrderTagRules.Normalize(
                                 node.craftingOrderTarget);
-                            Require(HasOrderableRecipeForCondition(
+                            Require(HasPricedOrderableRecipeForCondition(
                                     recipeCatalog,
                                     node.craftingOrderType,
-                                    requestedTag),
-                                $"에피소드 조건 주문 태그에 대응하는 주문 가능한 레시피가 없습니다: "
-                                + $"{episode.episodeId}/{node.nodeId}/{requestedTag}");
+                                    requestedTag,
+                                    node.craftingPaymentCurrency),
+                                $"에피소드 조건 주문 태그에 대응하는 가격이 설정된 레시피가 없습니다: "
+                                + $"{episode.episodeId}/{node.nodeId}/{requestedTag}/"
+                                + $"{node.craftingPaymentCurrency}");
                         }
                         else
                         {
-                            Require(recipeCatalog.TryGet(
-                                        node.craftingOrderTarget,
-                                        out CocktailRecipe recipe)
-                                    && recipe != null
-                                    && recipe.isOrderable,
-                                $"실제 제조 노드의 주문 가능한 레시피가 없습니다: "
-                                + $"{episode.episodeId}/{node.nodeId}/{node.craftingOrderTarget}");
+                            bool hasPricedRecipe = recipeCatalog.TryGet(
+                                    node.craftingOrderTarget,
+                                    out CocktailRecipe recipe)
+                                && recipe != null
+                                && recipe.isOrderable
+                                && recipe.GetPrice(node.craftingPaymentCurrency) > 0;
+                            Require(hasPricedRecipe,
+                                $"실제 제조 노드의 주문 가능한 레시피 또는 가격이 없습니다: "
+                                + $"{episode.episodeId}/{node.nodeId}/{node.craftingOrderTarget}/"
+                                + $"{node.craftingPaymentCurrency}");
                         }
+                        OrderTicketData registeredTicket =
+                            ticketDatabase.FindByKey(node.craftingTicketKey);
                         Require(!string.IsNullOrWhiteSpace(node.craftingTicketKey)
-                                && ticketDatabase.FindByKey(node.craftingTicketKey) != null,
+                                && registeredTicket != null,
                             $"실제 제조 노드의 주문표가 없습니다: "
+                            + $"{episode.episodeId}/{node.nodeId}/{node.craftingTicketKey}");
+                        Require(node.craftingOrderTicket != null
+                                && node.craftingOrderTicket == registeredTicket,
+                            $"실제 제조 노드에 주문표 에셋이 직접 연결되지 않았습니다: "
                             + $"{episode.episodeId}/{node.nodeId}/{node.craftingTicketKey}");
                     }
 
@@ -1032,11 +1279,16 @@ namespace Slainte.EditorTools
 
         private static void ValidateEpisodeCraftingRequestTargets()
         {
+            OrderTicketData recipeTicket = ScriptableObject.CreateInstance<OrderTicketData>();
+            recipeTicket.key = "validator_recipe_ticket";
             EpisodeNode recipeNode = new()
             {
                 craftingOrderType = CocktailOrderType.EpisodeOrder,
                 craftingOrderTarget = "rec_1003",
-                craftingTicketKey = "validator_recipe_ticket"
+                craftingOrderTicket = recipeTicket,
+                craftingTicketKey = "validator_recipe_ticket",
+                craftingPaymentEnabled = true,
+                craftingPaymentCurrency = GameCurrency.StrangeCoin
             };
             Require(EpisodeCraftingBridge.TryBuildRequest(
                     recipeNode,
@@ -1044,8 +1296,13 @@ namespace Slainte.EditorTools
                     out OrderSessionRequest recipeRequest)
                     && recipeRequest.orderType == CocktailOrderType.EpisodeOrder
                     && recipeRequest.requestedRecipeId == "rec_1003"
+                    && recipeRequest.ticketData == recipeTicket
+                    && recipeRequest.applyPayment
+                    && recipeRequest.recordSale
+                    && recipeRequest.paymentCurrency == GameCurrency.StrangeCoin
                     && recipeRequest.requestedTags.Count == 0,
                 "에피소드 레시피 target을 지정 레시피 주문으로 변환하지 못했습니다.");
+            UnityEngine.Object.DestroyImmediate(recipeTicket);
 
             EpisodeNode tasteNode = new()
             {

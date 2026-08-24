@@ -24,8 +24,8 @@ MonoBehaviour:
   - characterKey: f72
     slotIndex: -1
     expressionKeyMid: mid
-    expressionKeyGood: good
-    expressionKeyBad: bad
+    expressionKeyGood: smile
+    expressionKeyBad: angry
   weight: 3
   condition:
     minDay: 0

@@ -35,7 +35,7 @@ sc2_1_true,4500,또 소란 피워서 미안하군 -셀리,,,,,,,,,
 ,,,,,,,,,,,
 ,,,,,,,,,,,
 #NODES,,,,,,,,,,,
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,craftingOrderTarget,bgmCommand,bgmClipName,sfxCommand,sfxClipName
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,craftingOrderTarget,bgmCommand,bgmClipName,sfxCommand,sfxClipName,craftingOrderType
 1,sally,,... 바텐더... 도와줘!,2,FALSE,,,play,Ep_tension,play,sfx_come_in
 2,shaun,,셀리씨? 이게 무슨... 온몸이 피투성이잖아요!,3,FALSE,,,,,,
 3,sally,,걱정 마. 내 피는 아니니까.,4,FALSE,,,,,,
@@ -148,7 +148,7 @@ nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingT
 81,sally,,"젠장, <b>대가리 꽃밭</b>이랑 머리가 지끈거려서 못 참겠군. 위로조차 교과서를 읊네",82,FALSE,,,,,,
 82,sally,,"바텐더, <b> 씁쓸한거</b> 아무거나 하나 부탁할게",83,FALSE,,,,,,
 83,shaun,,기다리던 바입니다. 바로 대령해 드리죠,84,FALSE,,,,,,
-84,,,,,TRUE,sc3_sally_1,씁쓸함,,,,
+84,,,,,TRUE,sc3_sally_1,씁쓸함,,,,,TasteOrder
 85_1_1,sally,,하아.. 좀 살겠군,85_1_2,FALSE,,,,,,
 85_1_2,sally,,시끄러운 곳이지만 술맛은 변함없네.,86,FALSE,,,,,,
 85_2_1,sally,,…저번엔 맛이 더 괜찮았던 것 같은데,85_2_2,FALSE,,,,,,

@@ -9,6 +9,7 @@ public class OrderTicketManager : MonoBehaviour
     [SerializeField] private OrderTicketDatabase ticketDb;
     [SerializeField] private OrderTicketUI       ticketUI;
 
+    private OrderTicketData _pendingTicketData;
     private string _pendingTicketKey;
     private bool _hasPendingMemoOverride;
     private string _pendingMemoOverride;
@@ -27,6 +28,7 @@ public class OrderTicketManager : MonoBehaviour
 
     public void Prepare(string ticketKey)
     {
+        _pendingTicketData = null;
         if (!string.Equals(_pendingTicketKey, ticketKey, StringComparison.Ordinal))
             ClearMemoOverride();
         _pendingTicketKey = ticketKey;
@@ -34,22 +36,42 @@ public class OrderTicketManager : MonoBehaviour
 
     public void Prepare(string ticketKey, string memoOverride)
     {
+        _pendingTicketData = null;
         _pendingTicketKey = ticketKey;
+        _pendingMemoOverride = memoOverride ?? string.Empty;
+        _hasPendingMemoOverride = true;
+    }
+
+    public void Prepare(OrderTicketData ticketData)
+    {
+        if (_pendingTicketData != ticketData)
+            ClearMemoOverride();
+        _pendingTicketData = ticketData;
+        _pendingTicketKey = ticketData != null ? ticketData.key : null;
+    }
+
+    public void Prepare(OrderTicketData ticketData, string memoOverride)
+    {
+        _pendingTicketData = ticketData;
+        _pendingTicketKey = ticketData != null ? ticketData.key : null;
         _pendingMemoOverride = memoOverride ?? string.Empty;
         _hasPendingMemoOverride = true;
     }
 
     public void ClearTicket()
     {
+        _pendingTicketData = null;
         _pendingTicketKey = null;
         ClearMemoOverride();
+        ticketUI?.ClearContent();
         ticketUI?.HideAnimated();
     }
 
     // Ignored when no ticket has been prepared yet, so an empty ticket can't be toggled into view.
     public void ToggleTicket()
     {
-        if (string.IsNullOrWhiteSpace(_pendingTicketKey)) return;
+        if (_pendingTicketData == null
+            && string.IsNullOrWhiteSpace(_pendingTicketKey)) return;
         ticketUI?.Toggle();
     }
 
@@ -69,25 +91,34 @@ public class OrderTicketManager : MonoBehaviour
         }
         else if (newMode == GameMode.EpisodeMode)
         {
+            _pendingTicketData = null;
             _pendingTicketKey = null;
             ClearMemoOverride();
+            ticketUI?.ClearContent();
             ticketUI?.HideAnimated();
         }
     }
 
     private void ShowPendingTicket()
     {
-        if (string.IsNullOrWhiteSpace(_pendingTicketKey)) return;
+        if (_pendingTicketData == null
+            && string.IsNullOrWhiteSpace(_pendingTicketKey)) return;
 
         dialogue?.HideImmediate();
 
-        OrderTicketData data = ticketDb != null ? ticketDb.FindByKey(_pendingTicketKey) : null;
+        OrderTicketData data = _pendingTicketData != null
+            ? _pendingTicketData
+            : ticketDb != null ? ticketDb.FindByKey(_pendingTicketKey) : null;
         if (data != null && ticketUI != null)
         {
             string memo = _hasPendingMemoOverride
                 ? _pendingMemoOverride
                 : data.memo;
             ticketUI.Show(data, memo);
+        }
+        else
+        {
+            ticketUI?.ClearContent();
         }
     }
 

@@ -360,6 +360,7 @@ namespace Slainte.Bartending
         {
             CancelPointerSynchronization();
             BartendingPointerAnchor.Release(this);
+            BartendingSelection.Release(this);
         }
 
         private void HandlePouring()
@@ -479,6 +480,9 @@ namespace Slainte.Bartending
 
         private void PickupBottle()
         {
+            if (!BartendingSelection.TryAcquire(this))
+                return;
+
             currentState = BottleState.PickedUp;
             hasRotationPivotAnchor = false;
             interactionOrder?.BringToFront();
@@ -786,6 +790,7 @@ namespace Slainte.Bartending
             hasRotationPivotAnchor = false;
             CancelPointerSynchronization();
             BartendingPointerAnchor.Release(this);
+            BartendingSelection.Release(this);
             
             if (returnCoroutine != null)
             {

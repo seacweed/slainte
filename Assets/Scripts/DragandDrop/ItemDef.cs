@@ -57,6 +57,8 @@ public class ItemDef : ScriptableObject
     public BottleLiquidType liquidType;
     public float capacityMl = 700f;
     public Color liquidColor = Color.white;
+    [Tooltip("다른 색상 액체와 섞일 때 자신의 색은 혼합에 반영하지 않고, 함께 섞인 액체의 색을 따릅니다.")]
+    public bool inheritMixedLiquidColor;
     public float density = 1f;
     [Tooltip("새로 생성되는 액체 입자에 적용할 온도입니다.")]
     public float servingTemperatureC = 20f;

@@ -31,7 +31,7 @@ requiredFlag,amount,label,,,,,,,,,
 ,,,,,,,,,,,
 ,,,,,,,,,,,
 #NODES,,,,,,,,,,,
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,craftingOrderTarget,bgmCommand,bgmClipName,sfxCommand,sfxClipName
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,craftingOrderTarget,bgmCommand,bgmClipName,sfxCommand,sfxClipName,craftingPaymentEnabled,craftingPaymentCurrency
 1,eliud,???,크흠- 여기 술 하나 주쇼.,2,FALSE,,,,,,
 2,shaun,,저희 펍에는 다양한 칵테일들이 있답니다. 어떤 걸 찾으시는 걸까요?,3,FALSE,,,,,,
 3,eliud,???,그-그래! 칵테일! 그걸로 하나 줘,4,FALSE,,,,,,
@@ -45,7 +45,7 @@ nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingT
 11,shaun,,아버지가 계셨어도 똑같이 하셨을걸? 너희 아버지한테 들키면 그땐 우리 펍 문 닫아야 해.,12,FALSE,,,,,,
 12,eliud,,나도 곧 성인인데…,13,FALSE,,,,,,
 13,shaun,,*엘리엇 한테 줄 만한 게 뭐가 있더라…알콜 안 들어간 거면 되겠는데*,14,FALSE,,,,,,
-14,,,,,TRUE,tl0_eliud,rec_1007,,,,
+14,,,,,TRUE,tl0_eliud,rec_1007,,,,,TRUE,Money
 14_1_1,eliud,,오! 이건 뭐야?,14_1_2,FALSE,,,,,,
 14_1_2,shaun,,술은 아니니까 기대하지는 마,14_1_3,FALSE,,,,,,
 14_1_3,eliud,,"뭐야, 이거 왜 맛있어? 술보다 이게 더 나은 것 같은데!",14_1_4,FALSE,,,,,,

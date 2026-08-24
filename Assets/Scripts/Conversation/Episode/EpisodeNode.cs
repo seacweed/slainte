@@ -37,14 +37,16 @@ public class EpisodeNode
 
     [Header("Crafting (optional)")]
     public bool   requiresCrafting = false;
+    [Tooltip("제조 중 표시할 주문서 에셋입니다. 기존 데이터는 craftingTicketKey로 폴백합니다.")]
+    public OrderTicketData craftingOrderTicket;
     public string craftingTicketKey;
     [Tooltip("EpisodeOrder는 레시피 ID, TasteOrder/MoodOrder는 단일 태그를 대상으로 사용합니다.")]
     public CocktailOrderType craftingOrderType = CocktailOrderType.EpisodeOrder;
     [FormerlySerializedAs("craftingRecipeId")]
     [Tooltip("주문 유형에 따라 레시피 ID 또는 맛/분위기 태그를 입력합니다.")]
     public string craftingOrderTarget;
-    [Tooltip("활성화하면 이 제조 주문 완료 시 선택한 통화로 레시피 가격을 지급합니다.")]
-    public bool craftingPaymentEnabled;
+    [Tooltip("실제 제조 주문 완료 시 선택한 통화로 레시피 가격을 지급합니다. 무료 제공 에피소드만 비활성화합니다.")]
+    public bool craftingPaymentEnabled = true;
     public GameCurrency craftingPaymentCurrency = GameCurrency.Money;
     public List<CraftingOutcome> craftingOutcomes = new();
 

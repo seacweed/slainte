@@ -1061,10 +1061,11 @@ MonoBehaviour:
       expressionKey: smile
       slotIndex: 1
     requiresCrafting: 1
+    craftingOrderTicket: {fileID: 11400000, guid: b58f1e7c88bd44fc94b2515abfedb591, type: 2}
     craftingTicketKey: sc4_f72
     craftingOrderType: 6
     craftingOrderTarget: rec_1006
-    craftingPaymentEnabled: 0
+    craftingPaymentEnabled: 1
     craftingPaymentCurrency: 0
     craftingOutcomes:
     - result: 0
@@ -2070,10 +2071,11 @@ MonoBehaviour:
       expressionKey: mid
       slotIndex: 1
     requiresCrafting: 1
+    craftingOrderTicket: {fileID: 11400000, guid: 90411400c3ed449fa20e917509fc1f27, type: 2}
     craftingTicketKey: sc4_sally
     craftingOrderType: 6
     craftingOrderTarget: rec_1005
-    craftingPaymentEnabled: 0
+    craftingPaymentEnabled: 1
     craftingPaymentCurrency: 0
     craftingOutcomes:
     - result: 0
@@ -3653,10 +3655,11 @@ MonoBehaviour:
       expressionKey: smile
       slotIndex: 2
     requiresCrafting: 1
+    craftingOrderTicket: {fileID: 11400000, guid: e70914d7106945549e104b8e9efbcacf, type: 2}
     craftingTicketKey: sc4_e12
-    craftingOrderType: 6
+    craftingOrderType: 2
     craftingOrderTarget: "\uB2EC\uCF64\uD568"
-    craftingPaymentEnabled: 0
+    craftingPaymentEnabled: 1
     craftingPaymentCurrency: 0
     craftingOutcomes:
     - result: 0

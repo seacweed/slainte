@@ -336,10 +336,11 @@ MonoBehaviour:
     episodeBranches: []
     characters: []
     requiresCrafting: 1
+    craftingOrderTicket: {fileID: 11400000, guid: ea64fae61c614528ba9f82a7a51cec69, type: 2}
     craftingTicketKey: tl1_eliud
     craftingOrderType: 6
     craftingOrderTarget: rec_1007
-    craftingPaymentEnabled: 0
+    craftingPaymentEnabled: 1
     craftingPaymentCurrency: 0
     craftingOutcomes:
     - result: 0

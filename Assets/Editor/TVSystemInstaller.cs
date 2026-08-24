@@ -137,14 +137,13 @@ namespace Slainte.EditorTools
                 new Color(0.18f, 0.24f, 0.14f, 1f));
             RectTransform presenterRect = presenter.GetComponent<RectTransform>();
             SetAnchoredRect(presenterRect, new Vector2(0.04f, 0.3f), new Vector2(0.42f, 0.88f));
-            manager.presenterImage = presenter.GetComponent<Image>();
-            manager.presenterPlaceholderText = CreateText(
+            CreateText(
                 "PresenterPlaceholder",
                 presenterRect,
                 "진행자 이미지\n(에셋 대기)",
                 28f,
                 TextAlignmentOptions.Center,
-                Color.white).GetComponent<TextMeshProUGUI>();
+                Color.white);
 
             GameObject eventVisual = CreateImage(
                 "EventImage",

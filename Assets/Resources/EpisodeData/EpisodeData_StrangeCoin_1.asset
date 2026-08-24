@@ -337,10 +337,11 @@ MonoBehaviour:
       expressionKey: mid
       slotIndex: 2
     requiresCrafting: 1
+    craftingOrderTicket: {fileID: 11400000, guid: 6e1d2b3c7f3d3a74cbc4e655b72fc5d2, type: 2}
     craftingTicketKey: sc1_f54
     craftingOrderType: 6
     craftingOrderTarget: rec_1019
-    craftingPaymentEnabled: 0
+    craftingPaymentEnabled: 1
     craftingPaymentCurrency: 0
     craftingOutcomes:
     - result: 0
@@ -3912,10 +3913,11 @@ MonoBehaviour:
       expressionKey: mid
       slotIndex: 1
     requiresCrafting: 1
+    craftingOrderTicket: {fileID: 11400000, guid: d0f6c45e87d54feb9e69783f76d5b241, type: 2}
     craftingTicketKey: sc1_f72
     craftingOrderType: 6
     craftingOrderTarget: rec_1006
-    craftingPaymentEnabled: 0
+    craftingPaymentEnabled: 1
     craftingPaymentCurrency: 0
     craftingOutcomes:
     - result: 0
