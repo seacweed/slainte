@@ -272,8 +272,8 @@ namespace Slainte.EditorTools
             BusinessOrderFlowSettings settings =
                 AssetDatabase.LoadAssetAtPath<BusinessOrderFlowSettings>(SettingsPath);
             Require(settings != null, "영업 설정 에셋이 없습니다.");
-            Require(Mathf.Approximately(settings.shiftDurationSeconds, 180f),
-                $"기본 영업시간이 180초가 아닙니다: {settings.shiftDurationSeconds}");
+            Require(settings.shiftDurationSeconds >= 1f,
+                $"영업시간은 1초 이상이어야 합니다: {settings.shiftDurationSeconds}");
             Require(settings.customerVisitDatabase != null, "영업 설정에 손님 데이터베이스가 연결되지 않았습니다.");
             Require(settings.customerVisitDatabase.visits != null
                     && settings.customerVisitDatabase.visits.Count > 0,

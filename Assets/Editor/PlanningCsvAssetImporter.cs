@@ -93,6 +93,9 @@ namespace Slainte.EditorTools
 
     public static class PlanningCsvAssetImporter
     {
+        // Inspector에서 조정한 런타임 에셋을 에디터 시작 시 CSV가 되돌리지 않도록 한다.
+        // CSV 반영은 위의 명시적 임포트 메뉴를 통해서만 수행한다.
+        private const bool AutomaticAuthoritativeCsvImportEnabled = false;
         private static bool automaticImportAttempted;
 
         public const string ItemOutputFolder = "Assets/Resources/Items/Planning";
@@ -114,7 +117,9 @@ namespace Slainte.EditorTools
         [InitializeOnLoadMethod]
         private static void QueueAuthoritativeCsvImport()
         {
-            if (Application.isBatchMode || automaticImportAttempted)
+            if (!AutomaticAuthoritativeCsvImportEnabled
+                || Application.isBatchMode
+                || automaticImportAttempted)
                 return;
 
             EditorApplication.delayCall += TryAutomaticAuthoritativeImport;

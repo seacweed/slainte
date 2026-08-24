@@ -9,6 +9,7 @@ Unity 에디터에서 사용할 수 있는 커스텀 툴 목록입니다.
 | 아이템 데이터 임포터 | `ItemDataImporter.cs` | Tools > Import Item Data (CSV) |
 | 기획 CSV 에셋 임포터 | `PlanningCsvAssetImporter.cs` | Slainte > 데이터 > 기획 CSV 임포트 |
 | 기획 CSV 자동 검증 | `PlanningCsvAssetImporter.cs` | Slainte > 품질 검증 > 기획 CSV 에셋 검증 |
+| 기획 밸런스 Inspector | `BalanceTuningInspector.cs` | Slainte > 데이터 > 밸런스 설정 열기 |
 | 코블러 셰이커 설정 | `CobblerShakerSetup.cs` | Slainte > Business > 코블러 셰이커 설정 적용 |
 | 손님 풀 샘플 설정 | `CustomerPoolSetup.cs` | Slainte > Business > 손님 풀 샘플 설정 적용 |
 | 손님 풀 자동 검증 | `CustomerPoolSetup.cs` | Slainte > 품질 검증 > 손님 풀 검증 |
@@ -62,6 +63,21 @@ Unity 에디터에서 사용할 수 있는 커스텀 툴 목록입니다.
 - 재임포트는 ID 기준 갱신 방식이므로 중복 에셋을 만들지 않는다.
 
 자동 검증은 에셋 수, 재료 참조, 번햄 사워 계산 도수, 정확 제조 Good, 잔 변형 Mid를 확인한다.
+
+에디터 시작 시 기획 CSV를 자동으로 재임포트하는 동작은 비활성화되어 있다. CSV 반영이 필요할 때만 위 메뉴를 명시적으로 실행한다. Inspector 중심 밸런스 조정 방법은 [기획자용 밸런스 조정 안내서](../gameplay/balance-tuning-guide.md)를 참고한다.
+
+---
+
+## 기획 밸런스 Inspector
+
+`Slainte > 데이터 > 밸런스 설정 열기`를 실행하면 실제 런타임 영업 설정 에셋을 선택한다. Inspector 아래의 빠른 편집 영역에서 기존 칵테일, 재료, TV 방송, 손님 가중치, 업그레이드 가격 에셋을 검색하고 직접 수정할 수 있다.
+
+- 별도의 밸런스 사본을 만들지 않고 기존 원본 에셋을 수정한다.
+- 칵테일 총용량, 재료 원가, 일반·TV Good 수익을 미리 계산한다.
+- 재료의 ml당 원가, 기본·최대 재고를 미리 계산한다.
+- TV 방송별 실제 가중치 확률을 표시한다.
+- `밸런스 유효성 검사`는 고정 기획값이 아니라 현재 Inspector 값의 범위와 참조를 검사한다.
+- 상세 사용법과 현재값 표는 [기획자용 밸런스 조정 안내서](../gameplay/balance-tuning-guide.md)를 참고한다.
 
 ---
 

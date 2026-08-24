@@ -30,32 +30,40 @@ namespace Slainte.EditorTools
         {
             TVBroadcastDatabase database = TVBroadcastDatabase.LoadDefault();
             Require(database != null, "기본 TV 방송 데이터베이스가 없습니다.");
-            Require(database.broadcasts != null && database.broadcasts.Count == 6,
-                "TV 방송이 6개가 아닙니다.");
-            Require(Mathf.Approximately(database.broadcasts.Sum(entry => entry.weight), 100f),
-                "TV 방송 가중치 합계가 100이 아닙니다.");
-            Require(Mathf.Approximately(database.FindById("none").weight, 55f),
-                "이상 없음 가중치가 55가 아닙니다.");
-            Require(Mathf.Approximately(database.FindById("tip_bonus").effectMultiplier, 1.5f),
-                "팁 방송 배율이 1.5가 아닙니다.");
-            Require(Mathf.Approximately(database.FindById("high_abv_orders").effectMultiplier, 2f),
-                "고도수 주문 가중치 배율이 2가 아닙니다.");
-            Require(string.Equals(
-                    database.FindById("district_9_patrol").targetTag,
-                    CustomerPlanningCsvImporter.NightPatrolAttributeTag,
-                    StringComparison.OrdinalIgnoreCase),
-                "특정 손님 방송이 야간순찰 속성을 대상으로 하지 않습니다.");
-            Require(database.FindById("district_9_patrol").exclusiveCustomerPool,
-                "야간순찰 방송이 전용 손님 풀로 설정되지 않았습니다.");
+            Require(database.broadcasts != null && database.broadcasts.Count > 0,
+                "TV 방송 목록이 비어 있습니다.");
+            Require(database.broadcasts.All(entry => entry != null && entry.weight >= 0f),
+                "TV 방송 항목이 비어 있거나 음수 가중치를 사용합니다.");
+            Require(database.broadcasts.Sum(entry => entry.weight) > 0f,
+                "TV 방송 유효 가중치 합계가 0입니다.");
+            Require(database.FindById("none") != null,
+                "이상 없음 방송이 없습니다.");
+            Require(database.FindById("tip_bonus") != null
+                    && database.FindById("tip_bonus").effectType == TVBroadcastEffectType.BoostTips
+                    && database.FindById("tip_bonus").effectMultiplier >= 0f,
+                "팁 방송의 효과 종류 또는 배율이 유효하지 않습니다.");
+            Require(database.FindById("high_abv_orders") != null
+                    && database.FindById("high_abv_orders").effectType
+                        == TVBroadcastEffectType.BoostOrderTagWeight
+                    && database.FindById("high_abv_orders").effectMultiplier >= 0f,
+                "고도수 주문 방송의 효과 종류 또는 배율이 유효하지 않습니다.");
+            Require(database.FindById("district_9_patrol") != null
+                    && database.FindById("district_9_patrol").effectType
+                        == TVBroadcastEffectType.BoostCustomerTagWeight
+                    && database.FindById("district_9_patrol").effectMultiplier >= 0f,
+                "특정 손님 방송의 효과 종류 또는 배율이 유효하지 않습니다.");
+            string configuredCustomerTag = database.FindById("district_9_patrol").targetTag;
+            Require(!string.IsNullOrWhiteSpace(configuredCustomerTag),
+                "특정 손님 방송의 대상 태그가 비어 있습니다.");
             Require(HasCustomerTargetTag(
-                    CustomerPlanningCsvImporter.NightPatrolAttributeTag),
-                "프로젝트에 야간순찰 TV 대상 손님 데이터가 없습니다.");
+                    configuredCustomerTag),
+                $"프로젝트에 TV 대상 손님 데이터가 없습니다: {configuredCustomerTag}");
 
             ValidateRuntime(database);
             ValidatePrefabAndScene();
             RestSceneFinalArtValidator.ValidateOrThrow();
             Debug.Log(
-                "[TVSystemValidator] PASS: six broadcasts/100 weight, persistent forecast, "
+                "[TVSystemValidator] PASS: valid broadcasts/weights, persistent forecast, "
                 + "delivery/shop restrictions, tip/tag multipliers, world TV prefab and Canvas panel.");
         }
 
@@ -95,7 +103,7 @@ namespace Slainte.EditorTools
                     "예고 방송이 다음 영업 효과로 활성화되지 않았습니다.");
                 Require(Mathf.Approximately(
                         TVBroadcastRuntime.GetTipMultiplier(progress, database),
-                        1.5f),
+                        database.FindById("tip_bonus").effectMultiplier),
                     "팁 방송 배율을 읽지 못했습니다.");
 
                 BusinessOrderFlowSettings settings =
@@ -106,8 +114,13 @@ namespace Slainte.EditorTools
                     OrderEvaluationGrade.Good,
                     settings,
                     TVBroadcastRuntime.GetTipMultiplier(progress, database));
-                Require(reward.TipAmount == 30 && reward.TotalRevenue == 130,
-                    "TV 팁 1.5배가 영업 보상 계산에 적용되지 않았습니다.");
+                int expectedTip = Mathf.RoundToInt(
+                    settings.goodMoneyReward
+                    * settings.satisfiedTipRate
+                    * database.FindById("tip_bonus").effectMultiplier);
+                Require(reward.TipAmount == expectedTip
+                        && reward.TotalRevenue == settings.goodMoneyReward + expectedTip,
+                    "설정된 TV 팁 배율이 영업 보상 계산에 적용되지 않았습니다.");
                 UnityEngine.Object.DestroyImmediate(settings);
 
                 progress.SetTVForecast("high_abv_orders");
@@ -118,7 +131,7 @@ namespace Slainte.EditorTools
                             database,
                             TVBroadcastEffectType.BoostOrderTagWeight,
                             new[] { "high_abv" }),
-                        2f),
+                        database.FindById("high_abv_orders").effectMultiplier),
                     "고도수 주문 태그 배율을 읽지 못했습니다.");
 
                 ValidateAutomaticAbvAndGlobalOrderWeight(progress, database);
@@ -130,8 +143,8 @@ namespace Slainte.EditorTools
                             progress,
                             database,
                             TVBroadcastEffectType.BoostCustomerTagWeight,
-                            new[] { "customer_attribute:야간순찰" }),
-                        2f),
+                            new[] { database.FindById("district_9_patrol").targetTag }),
+                        database.FindById("district_9_patrol").effectMultiplier),
                     "특정 손님 태그 배율을 읽지 못했습니다.");
 
                 progress.SetTVForecast("delivery_outage");
@@ -180,7 +193,7 @@ namespace Slainte.EditorTools
                             progress,
                             database,
                             calculatedOrder),
-                        2f),
+                        entry.effectMultiplier),
                     "계산 도수 기준으로 고도수 주문을 판정하지 못했습니다.");
             }
             finally
@@ -215,8 +228,16 @@ namespace Slainte.EditorTools
                     else if (selection?.Visit == normalVisit) normalCount++;
                 }
 
-                Require(boostedCount > normalCount * 1.5f,
-                    $"고도수 주문의 전체 등장 확률이 충분히 증가하지 않았습니다: {boostedCount}/{normalCount}");
+                if (entry.effectMultiplier > 1.05f)
+                {
+                    Require(boostedCount > normalCount,
+                        $"설정된 배율만큼 고도수 주문 등장 확률이 증가하지 않았습니다: {boostedCount}/{normalCount}");
+                }
+                else if (entry.effectMultiplier < 0.95f)
+                {
+                    Require(boostedCount < normalCount,
+                        $"설정된 배율만큼 고도수 주문 등장 확률이 감소하지 않았습니다: {boostedCount}/{normalCount}");
+                }
 
                 boostedVisit.reappearanceGroupKey = "shared_person";
                 normalVisit.reappearanceGroupKey = "shared_person";
