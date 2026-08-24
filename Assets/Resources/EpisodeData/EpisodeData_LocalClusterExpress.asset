@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ada6baddb75540a4ba25d31b476b855a, type: 3}
-  m_Name: 
+  m_Name: EpisodeData_LocalClusterExpress
   m_EditorClassIdentifier: Assembly-CSharp::EpisodeData
   episodeId: LocalClusterExpress
   episodeTitle: "\uAD6D\uBD80 \uC740\uD558 \uBB3C\uB958 \uD2B9\uAE09"
@@ -18,7 +18,7 @@ MonoBehaviour:
   episodeType: 1
   mandatorySlot: 1
   triggerCondition:
-    minDay: 2
+    minDay: 3
     minMoney: 0
     requiredFlags: []
     blockedFlags: []
@@ -36,7 +36,7 @@ MonoBehaviour:
   triggerConditionEntries:
   - condition:
       type: 1
-      minDay: 2
+      minDay: 3
       requiredFlag: 
       prerequisiteEpisodeId: 
       varName: 

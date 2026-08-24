@@ -18,7 +18,7 @@ MonoBehaviour:
   episodeType: 1
   mandatorySlot: 1
   triggerCondition:
-    minDay: 3
+    minDay: 4
     minMoney: 0
     requiredFlags: []
     blockedFlags: []
@@ -36,7 +36,7 @@ MonoBehaviour:
   triggerConditionEntries:
   - condition:
       type: 1
-      minDay: 3
+      minDay: 4
       requiredFlag: 
       prerequisiteEpisodeId: 
       varName: 

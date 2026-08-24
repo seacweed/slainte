@@ -21,8 +21,12 @@ public class EpisodeBoardManager : BaseUIManager
     public Button startButton;                    // 시작 버튼
     public Image startButtonImage;                // 버튼 색상 변경용
 
-    public Color buttonActiveColor = Color.red;   
-    public Color buttonInactiveColor = Color.gray; 
+    public Color buttonActiveColor = Color.red;
+    public Color buttonInactiveColor = Color.gray;
+
+    [Header("Day 1 Exception")]
+    [Tooltip("1일차 보드에서 영업 대신 강제로 진행시킬 기본 에피소드 ID. 비워두면 이 예외 로직은 비활성화됨.")]
+    public string day1ForcedEpisodeId = "FathersNote";
 
     // 현재 클릭(고정)된 사진 트리거
     public EpisodePhotoTrigger PinnedPhoto { get; private set; }
@@ -42,9 +46,11 @@ public class EpisodeBoardManager : BaseUIManager
     // 창이 열릴 때 자동으로 실행되는 함수
     protected override void OnOpen()
     {
-        if (EpisodeManager.Instance != null && EpisodeManager.Instance.HasPendingMandatoryEpisode())
+        if (EpisodeManager.Instance != null &&
+            (EpisodeManager.Instance.HasPendingMandatoryEpisode()
+                || EpisodeManager.Instance.HasUpcomingMandatoryEpisode()))
         {
-            ShowMandatoryGate(); // 미완료 필수 에피소드가 있으면 보드 선택 자체를 막음
+            ShowMandatoryGate(); // 미완료 필수 에피소드가 오늘 또는 내일(다음 영업 시작 시점) 발동 예정이면 보드 선택 자체를 막음
             return;
         }
 
@@ -62,6 +68,25 @@ public class EpisodeBoardManager : BaseUIManager
         if (bottomEpisodeNameText) bottomEpisodeNameText.text = "먼저 영업을 통해 필수 에피소드를 진행해주세요.";
         if (startButton) startButton.interactable = false;
         if (startButtonImage) startButtonImage.color = buttonInactiveColor;
+    }
+
+    // 1일차에 영업 대신 지정된 기본 에피소드를 강제해야 하는지 확인.
+    // 보드에 해당 에피소드가 없거나 아직 플레이 불가 상태면 소프트락 방지를 위해 false 반환(기존 동작=영업 허용으로 폴백).
+    private bool TryGetForcedDay1Episode(out EpisodePhotoTrigger forcedPhoto)
+    {
+        forcedPhoto = null;
+        if (string.IsNullOrEmpty(day1ForcedEpisodeId)) return false;
+        if (GameProgress.Instance == null || GameProgress.Instance.CurrentDay != 1) return false;
+        if (EpisodeManager.Instance == null) return false;
+
+        foreach (var photo in GetComponentsInChildren<EpisodePhotoTrigger>(true))
+        {
+            if (photo.episodeData == null || photo.episodeData.episodeId != day1ForcedEpisodeId) continue;
+            if (!EpisodeManager.Instance.IsPlayable(photo.episodeData, GameProgress.Instance)) return false;
+            forcedPhoto = photo;
+            return true;
+        }
+        return false;
     }
 
     // 6자리 슬롯에 맞게 에피소드를 랜덤 배치하고 위치 유지
@@ -239,6 +264,8 @@ public class EpisodeBoardManager : BaseUIManager
         }
         else
         {
+            if (TryGetForcedDay1Episode(out _)) return; // 방어적 재확인: 정상 흐름에선 버튼이 이미 비활성화되어 있어야 함
+
             // 아무것도 선택하지 않은 기본 상태 = 영업 시작
             DayFlowController.Instance.StartBusinessDay();
         }
@@ -292,6 +319,14 @@ public class EpisodeBoardManager : BaseUIManager
         {
             PinnedPhoto.Unpin(); // 이전 사진 테두리 및 정보창 끄기
             PinnedPhoto = null;
+        }
+
+        if (TryGetForcedDay1Episode(out var forcedPhoto))
+        {
+            if (bottomEpisodeNameText) bottomEpisodeNameText.text = $"오늘은 {forcedPhoto.episodeData.episodeTitle}를 먼저 확인해주세요.";
+            if (startButton) startButton.interactable = false;
+            if (startButtonImage) startButtonImage.color = buttonInactiveColor;
+            return;
         }
 
         if (bottomEpisodeNameText) bottomEpisodeNameText.text = "영업";
