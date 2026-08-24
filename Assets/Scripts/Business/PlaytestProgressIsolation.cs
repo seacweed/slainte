@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Slainte.Business
@@ -73,6 +74,42 @@ namespace Slainte.Business
             capturedProgress.LoadFrom(isolatedData);
             Debug.Log(
                 $"[PlaytestIsolation] 테스트를 위해 완료 상태를 임시 해제했습니다: {episodeId}");
+            return true;
+        }
+
+        public bool PrepareEpisodeCompletionState(
+            IReadOnlyCollection<string> completedEpisodeIds,
+            IReadOnlyCollection<string> incompleteEpisodeIds)
+        {
+            if (!IsReady || capturedProgress == null)
+                return false;
+
+            SaveData isolatedData = Capture(capturedProgress);
+            HashSet<string> completed = new HashSet<string>(
+                isolatedData.completedEpisodeIds,
+                StringComparer.OrdinalIgnoreCase);
+
+            if (completedEpisodeIds != null)
+            {
+                foreach (string episodeId in completedEpisodeIds)
+                {
+                    if (!string.IsNullOrWhiteSpace(episodeId))
+                        completed.Add(episodeId);
+                }
+            }
+
+            if (incompleteEpisodeIds != null)
+            {
+                foreach (string episodeId in incompleteEpisodeIds)
+                {
+                    if (!string.IsNullOrWhiteSpace(episodeId))
+                        completed.Remove(episodeId);
+                }
+            }
+
+            isolatedData.completedEpisodeIds = new List<string>(completed);
+            capturedProgress.LoadFrom(isolatedData);
+            Debug.Log("[PlaytestIsolation] Episode completion baseline prepared.");
             return true;
         }
 

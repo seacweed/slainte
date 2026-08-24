@@ -14,6 +14,39 @@ Unity 에디터에서 사용할 수 있는 커스텀 툴 목록입니다.
 | 손님 풀 자동 검증 | `CustomerPoolSetup.cs` | Slainte > 품질 검증 > 손님 풀 검증 |
 | 캐릭터 표정 스프라이트 임포터 | `CharacterExpressionSpriteImporter.cs` | Slainte > 데이터 > 캐릭터 표정 스프라이트 폴더 임포트 |
 | 캐릭터 스프라이트 접두어 제거 | `CharacterSpritePrefixStripper.cs` | Slainte > 데이터 > 캐릭터 스프라이트 접두어 제거 |
+| 에피소드·일자 플레이테스트 런처 | `PlaytestLauncherWindow.cs` | Slainte > Playtest Launcher |
+
+---
+
+## 에피소드·일자 플레이테스트 런처
+
+`Slainte > Playtest Launcher`에서 에피소드 단독 테스트와 특정 Day의 전체 흐름 테스트를 시작한다.
+
+### 에피소드 테스트
+
+1. `Episode` 탭에서 제목이나 ID를 검색하고 에피소드를 선택한다.
+2. 테스트에 적용할 `Progress Day`를 입력한다.
+3. 해금·플레이 조건과 무관하게 내용을 확인하려면 `Bypass trigger and play conditions`를 켠다.
+4. `Start Isolated Episode Test`를 누른다.
+
+- Default와 Mandatory는 에피소드 내용을 바로 실행한다. Mandatory의 Before/After Business 배치까지 검증하려면 Day 테스트를 사용한다.
+- Encounter는 BusinessScene 진입 후 실제 `TryStartBusinessEncounter()` 경로로 실행하며, 완료 후 영업으로 복귀한다.
+- 조건 무시를 끄면 현재 저장의 플래그, 선행 에피소드, 재화, 호감도와 지정한 Day를 기준으로 조건을 검사한다.
+
+### Day 테스트
+
+1. `Day` 탭에서 테스트할 `Target Day`를 입력한다.
+2. `Prepare previous Mandatory episodes as completed` 사용 여부를 정한다.
+3. `Start Isolated Day Test`를 누른다.
+
+- Day 1은 `StartFirstDay()`로 시작한다.
+- Day 2 이상은 내부 진행도를 Day N-1로 맞춘 뒤 `StartBusinessDay()`를 호출하므로 실제 실행 Day는 정확히 N이 된다.
+- 필수 에피소드 기준 상태를 사용하면 이전 Day의 Mandatory는 완료, 해당 Day 이후의 Mandatory는 미완료로 임시 구성한다. 선택형 에피소드, 플래그, 재화, 호감도는 현재 저장 상태를 유지한다.
+- 이후 흐름은 필수 에피소드 → 영업 → 영업 후 필수 에피소드 → 정산 → 휴식의 실제 런타임 경로를 사용한다.
+
+### 저장 격리
+
+런처는 Play Mode가 시작되면 현재 `GameProgress`를 메모리에 스냅샷으로 보관하고 디스크 저장과 저장 파일 삭제를 차단한다. Play Mode 종료 시 메모리 상태를 복원하며 `autosave.json`은 변경하지 않는다. 강제 종료가 발생해도 디스크 쓰기 자체가 차단되어 원래 저장 파일은 유지된다.
 
 ---
 
