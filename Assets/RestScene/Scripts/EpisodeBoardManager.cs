@@ -307,7 +307,9 @@ public class EpisodeBoardManager : BaseUIManager
         }
         else
         {
-            if (IsMandatoryGateActive() || TryGetForcedDay1Episode(out _)) return; // 방어적 재확인: 정상 흐름에선 버튼이 이미 비활성화되어 있어야 함
+            // 필수 에피소드 게이트는 기본 에피소드 선택만 막을 뿐 영업 자체는 항상 허용해야 한다
+            // (영업 시작 시 DayFlowController가 필수 에피소드를 자동으로 먼저 끼워 넣음).
+            if (TryGetForcedDay1Episode(out _)) return; // 방어적 재확인: 정상 흐름에선 버튼이 이미 비활성화되어 있어야 함
 
             // 아무것도 선택하지 않은 기본 상태 = 영업 시작
             DayFlowController.Instance.StartBusinessDay();
@@ -360,7 +362,8 @@ public class EpisodeBoardManager : BaseUIManager
             PinnedPhoto = null;
         }
 
-        if (IsMandatoryGateActive() || TryGetForcedDay1Episode(out _))
+        // 필수 에피소드 게이트는 기본 에피소드 선택만 막을 뿐(PinEpisode) 영업 자체는 항상 허용해야 한다.
+        if (TryGetForcedDay1Episode(out _))
         {
             ApplyBoardVisualState(BoardVisualState.Inactive, string.Empty, interactable: false);
             return;
