@@ -23,7 +23,7 @@ MonoBehaviour:
   evaluationGrade: 0
   minTotalMl: 175
   maxTotalMl: 185
-  toleranceMl: 5
+  toleranceMl: 10
   allowExtraIngredients: 0
   glassId: highball
   iceRequirement: 1
@@ -41,10 +41,10 @@ MonoBehaviour:
   ingredients:
   - itemId: item_1015
     targetMl: 30
-    toleranceMl: 5
+    toleranceMl: 10
   - itemId: item_1014
     targetMl: 150
-    toleranceMl: 5
+    toleranceMl: 10
   icon: {fileID: 21300000, guid: 69e0c3d5e51625747a72c1cf0ac102ba, type: 3}
   description: "\uC7AC\uB8CC\uB97C \uBAA8\uB450 <b>\uC2A4\uD130</b> \uD55C \uD6C4
     <b>\uD558\uC774\uBCFC \uAE00\uB77C\uC2A4</b>\uC5D0 \uB2F4\uC744 \uAC83."

@@ -51,7 +51,7 @@ namespace Slainte.Bartending
                     strangeCoinPrice = ParseInt(row.Get("strangeCoinPrice")),
                     minTotalMl = ParseFloat(row.Get("minTotalMl")),
                     maxTotalMl = ParseFloat(row.Get("maxTotalMl")),
-                    toleranceMl = ParseFloat(row.Get("toleranceMl"), 5f),
+                    toleranceMl = ParseFloat(row.Get("toleranceMl"), 10f),
                     allowExtraIngredients = ParseBool(row.Get("allowExtraIngredients")),
                     glassId = row.Get("glassId").Trim(),
                     iceRequirement = ParseEnum(row.Get("iceRequirement"), IceRequirement.Any),

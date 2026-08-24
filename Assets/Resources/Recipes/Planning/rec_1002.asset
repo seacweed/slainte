@@ -23,7 +23,7 @@ MonoBehaviour:
   evaluationGrade: 0
   minTotalMl: 100
   maxTotalMl: 110
-  toleranceMl: 5
+  toleranceMl: 10
   allowExtraIngredients: 0
   glassId: rock
   iceRequirement: 2
@@ -42,13 +42,13 @@ MonoBehaviour:
   ingredients:
   - itemId: item_1006
     targetMl: 60
-    toleranceMl: 5
+    toleranceMl: 10
   - itemId: item_1004
     targetMl: 30
-    toleranceMl: 5
+    toleranceMl: 10
   - itemId: item_1003
     targetMl: 15
-    toleranceMl: 5
+    toleranceMl: 10
   icon: {fileID: 21300000, guid: 82bcb905b08a00f4990a26d2221aa040, type: 3}
   description: "\uC7AC\uB8CC\uB97C \uBAA8\uB450 <b>\uC170\uC774\uD0B9</b> \uD55C
     \uD6C4 <b>\uB77D \uAE00\uB77C\uC2A4</b>\uC5D0 \uB2F4\uC744 \uAC83.  <b>\uC5BC\uC74C</b>\uACFC

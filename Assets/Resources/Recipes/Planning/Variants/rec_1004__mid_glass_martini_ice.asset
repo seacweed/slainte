@@ -23,7 +23,7 @@ MonoBehaviour:
   evaluationGrade: 1
   minTotalMl: 55
   maxTotalMl: 65
-  toleranceMl: 5
+  toleranceMl: 10
   allowExtraIngredients: 0
   glassId: martini
   iceRequirement: 2
@@ -42,9 +42,9 @@ MonoBehaviour:
   ingredients:
   - itemId: item_1006
     targetMl: 30
-    toleranceMl: 5
+    toleranceMl: 10
   - itemId: item_1010
     targetMl: 30
-    toleranceMl: 5
+    toleranceMl: 10
   icon: {fileID: 0}
   description: 

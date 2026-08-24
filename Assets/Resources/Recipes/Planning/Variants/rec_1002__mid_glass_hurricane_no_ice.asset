@@ -23,7 +23,7 @@ MonoBehaviour:
   evaluationGrade: 1
   minTotalMl: 100
   maxTotalMl: 110
-  toleranceMl: 5
+  toleranceMl: 10
   allowExtraIngredients: 0
   glassId: hurricane
   iceRequirement: 1
@@ -42,12 +42,12 @@ MonoBehaviour:
   ingredients:
   - itemId: item_1006
     targetMl: 60
-    toleranceMl: 5
+    toleranceMl: 10
   - itemId: item_1004
     targetMl: 30
-    toleranceMl: 5
+    toleranceMl: 10
   - itemId: item_1003
     targetMl: 15
-    toleranceMl: 5
+    toleranceMl: 10
   icon: {fileID: 0}
   description: 

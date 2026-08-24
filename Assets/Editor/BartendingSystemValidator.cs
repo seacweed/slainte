@@ -183,58 +183,117 @@ public static class BartendingSystemValidator
 
     private static void ValidateOrderEvaluation(ItemDef spirit)
     {
-        CocktailRecipe recipe = new CocktailRecipe
-        {
-            id = "qa_recipe",
-            displayName = "검증용 레시피",
-            minTotalMl = 45f,
-            maxTotalMl = 55f,
-            toleranceMl = 2f,
-            glassId = "rock",
-            iceRequirement = IceRequirement.None,
-            requiredTechnique = CocktailTechnique.Build
-        };
-        recipe.ingredients.Add(new CocktailRecipeIngredient
-        {
-            ingredientId = spirit.id,
-            item = spirit,
-            targetMl = 50f,
-            toleranceMl = 2f
-        });
+        ItemDef modifier = ScriptableObject.CreateInstance<ItemDef>();
+        modifier.id = "qa_modifier";
+        modifier.displayName = "검증용 부재료";
 
-        CocktailRecipeCatalog catalog = new CocktailRecipeCatalog();
-        catalog.Add(recipe);
-        CocktailEvaluator evaluator = new CocktailEvaluator(catalog);
-
-        CocktailComposition correct = new CocktailComposition();
-        correct.Add(spirit, 50f);
-        correct.SetServingStyle("rock", false);
-        CocktailEvaluationResult good = evaluator.EvaluateRecipe(recipe.id, correct);
-        Assert(good.isSuccess, "정확한 레시피와 제출 조건이 좋음으로 판정되지 않았습니다.");
-
-        CocktailComposition wrongGlass = new CocktailComposition();
-        wrongGlass.Add(spirit, 50f);
-        wrongGlass.SetServingStyle("highball", false);
-        GeneratedCocktailOrder wrongGlassOrder = new GeneratedCocktailOrder
+        try
         {
-            orderType = CocktailOrderType.RecipeOrder,
-            requestedRecipeId = recipe.id,
-            requestedRecipe = recipe
-        };
-        CocktailOrderEvaluationResult mid =
-            new CocktailOrderEvaluator(evaluator).Evaluate(wrongGlassOrder, wrongGlass);
-        Assert(mid.outcome == CocktailOrderEvaluationOutcome.MidGlass,
-            "잔 종류가 틀린 결과가 MidGlass로 판정되지 않았습니다.");
+            CocktailRecipe recipe = new CocktailRecipe
+            {
+                id = "qa_recipe",
+                displayName = "검증용 레시피",
+                minTotalMl = 69f,
+                maxTotalMl = 71f,
+                toleranceMl = 10f,
+                glassId = "rock",
+                iceRequirement = IceRequirement.None,
+                requiredTechnique = CocktailTechnique.Build
+            };
+            recipe.ingredients.Add(new CocktailRecipeIngredient
+            {
+                ingredientId = spirit.id,
+                item = spirit,
+                targetMl = 50f,
+                toleranceMl = 10f
+            });
+            recipe.ingredients.Add(new CocktailRecipeIngredient
+            {
+                ingredientId = modifier.id,
+                item = modifier,
+                targetMl = 20f,
+                toleranceMl = 10f
+            });
 
-        GeneratedCocktailOrder episodeOrder = new GeneratedCocktailOrder
+            CocktailRecipeCatalog catalog = new CocktailRecipeCatalog();
+            catalog.Add(recipe);
+            CocktailEvaluator evaluator = new CocktailEvaluator(catalog);
+            CocktailOrderEvaluator orderEvaluator = new CocktailOrderEvaluator(evaluator);
+            GeneratedCocktailOrder recipeOrder = new GeneratedCocktailOrder
+            {
+                orderType = CocktailOrderType.RecipeOrder,
+                requestedRecipeId = recipe.id,
+                requestedRecipe = recipe
+            };
+
+            CocktailComposition correct = new CocktailComposition();
+            correct.Add(spirit, 50f);
+            correct.Add(modifier, 20f);
+            correct.SetServingStyle("rock", false);
+            CocktailEvaluationResult good = evaluator.EvaluateRecipe(recipe.id, correct);
+            Assert(good.isSuccess, "정확한 레시피와 제출 조건이 좋음으로 판정되지 않았습니다.");
+
+            CocktailComposition toleranceBoundary = new CocktailComposition();
+            toleranceBoundary.Add(spirit, 60f);
+            toleranceBoundary.Add(modifier, 30f);
+            toleranceBoundary.SetServingStyle("rock", false);
+            CocktailEvaluationResult boundaryResult =
+                evaluator.EvaluateRecipe(recipe.id, toleranceBoundary);
+            Assert(boundaryResult.isSuccess,
+                "각 재료의 +10ml 허용 경계가 성공으로 판정되지 않았습니다.");
+            AssertApproximately(90f, boundaryResult.actualTotalMl,
+                "총량 범위를 벗어난 검증 조합의 실제 총량이 올바르지 않습니다.");
+
+            CocktailComposition overTolerance = new CocktailComposition();
+            overTolerance.Add(spirit, 60.01f);
+            overTolerance.Add(modifier, 20f);
+            overTolerance.SetServingStyle("rock", false);
+            CocktailEvaluationResult overToleranceResult =
+                evaluator.EvaluateRecipe(recipe.id, overTolerance);
+            Assert(!overToleranceResult.isSuccess && !overToleranceResult.ingredientsValid,
+                "재료별 +10ml 초과가 실패로 판정되지 않았습니다.");
+
+            CocktailComposition offsettingErrors = new CocktailComposition();
+            offsettingErrors.Add(spirit, 65f);
+            offsettingErrors.Add(modifier, 5f);
+            offsettingErrors.SetServingStyle("rock", false);
+            CocktailEvaluationResult offsettingResult =
+                evaluator.EvaluateRecipe(recipe.id, offsettingErrors);
+            Assert(!offsettingResult.isSuccess && !offsettingResult.ingredientsValid,
+                "서로 상쇄되어 총량만 맞는 재료 오차가 실패로 판정되지 않았습니다.");
+
+            CocktailComposition wrongGlass = new CocktailComposition();
+            wrongGlass.Add(spirit, 50f);
+            wrongGlass.Add(modifier, 20f);
+            wrongGlass.SetServingStyle("highball", false);
+            CocktailOrderEvaluationResult midGlass =
+                orderEvaluator.Evaluate(recipeOrder, wrongGlass);
+            Assert(midGlass.outcome == CocktailOrderEvaluationOutcome.MidGlass,
+                "잔 종류가 틀린 결과가 MidGlass로 판정되지 않았습니다.");
+
+            CocktailComposition wrongIce = new CocktailComposition();
+            wrongIce.Add(spirit, 50f);
+            wrongIce.Add(modifier, 20f);
+            wrongIce.SetServingStyle("rock", true);
+            CocktailOrderEvaluationResult midIce =
+                orderEvaluator.Evaluate(recipeOrder, wrongIce);
+            Assert(midIce.outcome == CocktailOrderEvaluationOutcome.MidIce,
+                "얼음 조건만 틀린 결과가 MidIce로 판정되지 않았습니다.");
+
+            GeneratedCocktailOrder episodeOrder = new GeneratedCocktailOrder
+            {
+                orderType = CocktailOrderType.EpisodeOrder,
+                requestedRecipeId = recipe.id,
+                requestedRecipe = recipe
+            };
+            CocktailOrderEvaluationResult episodeResult =
+                orderEvaluator.Evaluate(episodeOrder, correct);
+            Assert(episodeResult.isSuccess, "에피소드 주문이 공용 레시피 판정기를 사용하지 않습니다.");
+        }
+        finally
         {
-            orderType = CocktailOrderType.EpisodeOrder,
-            requestedRecipeId = recipe.id,
-            requestedRecipe = recipe
-        };
-        CocktailOrderEvaluationResult episodeResult =
-            new CocktailOrderEvaluator(evaluator).Evaluate(episodeOrder, correct);
-        Assert(episodeResult.isSuccess, "에피소드 주문이 공용 레시피 판정기를 사용하지 않습니다.");
+            UnityEngine.Object.DestroyImmediate(modifier);
+        }
     }
 
     private static void ValidateSteamSetup()
@@ -270,6 +329,19 @@ public static class BartendingSystemValidator
             && burnhamSour.isOrderable
             && burnhamSour.ingredients.Count == 4,
             "기획 CSV에서 가져온 번햄 사워 레시피 에셋이 올바르지 않습니다.");
+
+        foreach (CocktailRecipe recipe in recipes.Recipes)
+        {
+            if (recipe == null)
+                continue;
+
+            for (int i = 0; i < recipe.ingredients.Count; i++)
+            {
+                CocktailRecipeIngredient ingredient = recipe.ingredients[i];
+                AssertApproximately(10f, ingredient.toleranceMl,
+                    $"레시피 {recipe.id}의 재료별 허용 오차가 10ml가 아닙니다.");
+            }
+        }
 
         CocktailOrderTemplateCatalog templates =
             CocktailOrderCsvLoader.LoadTemplatesFromStreamingAssets();

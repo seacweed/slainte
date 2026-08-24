@@ -10,7 +10,7 @@ namespace Slainte.Bartending
     {
         public string itemId;
         [Min(0f)] public float targetMl;
-        [Min(0f)] public float toleranceMl = 5f;
+        [Min(0f)] public float toleranceMl = 10f;
     }
 
     [CreateAssetMenu(menuName = "Slainte/Bartending/Cocktail Recipe", fileName = "CocktailRecipe_")]
@@ -32,7 +32,8 @@ namespace Slainte.Bartending
         [Header("Evaluation")]
         [Min(0f)] public float minTotalMl;
         [Min(0f)] public float maxTotalMl;
-        [Min(0f)] public float toleranceMl = 5f;
+        [Tooltip("재료별 허용 오차가 비어 있을 때 사용하는 기본값입니다.")]
+        [Min(0f)] public float toleranceMl = 10f;
         public bool allowExtraIngredients;
         public string glassId;
         public IceRequirement iceRequirement = IceRequirement.Any;

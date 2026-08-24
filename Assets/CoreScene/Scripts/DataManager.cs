@@ -90,6 +90,12 @@ public class DataManager : MonoSingleton<DataManager>
     [ContextMenu("Delete Save File")]
     public void DeleteSaveFile()
     {
+        if (AreDiskWritesSuppressed)
+        {
+            Debug.Log("[DataManager] Playtest isolation is active; save deletion skipped.");
+            return;
+        }
+
         string path = string.IsNullOrEmpty(savePath)
             ? Path.Combine(Application.persistentDataPath, "autosave.json")
             : savePath;

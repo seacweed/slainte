@@ -925,7 +925,7 @@ namespace Slainte.EditorTools
             recipe.appearsInRecipeBook = true;
             recipe.baseRecipeId = string.Empty;
             recipe.evaluationGrade = CocktailRecipeEvaluationGrade.Good;
-            recipe.toleranceMl = 5f;
+            recipe.toleranceMl = 10f;
             recipe.allowExtraIngredients = false;
             recipe.glassId = ParseGlass(First(row, "잔 Glass", "glass"));
             recipe.iceRequirement = ParseIce(First(row, "얼음 유무 Ice", "ice"));
@@ -1225,7 +1225,7 @@ namespace Slainte.EditorTools
             {
                 itemId = itemId,
                 targetMl = targetMl,
-                toleranceMl = Mathf.Max(0f, ParseFloat(toleranceText, 5f))
+                toleranceMl = Mathf.Max(0f, ParseFloat(toleranceText, 10f))
             });
             report.importedIngredientRows++;
         }

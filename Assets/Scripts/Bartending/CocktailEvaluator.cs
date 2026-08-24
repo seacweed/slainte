@@ -30,7 +30,6 @@ namespace Slainte.Bartending
         public string failureReason;
         public bool ingredientsValid;
         public bool extrasValid;
-        public bool totalValid;
         public bool hasUnresolvedIngredient;
         public bool glassValid = true;
         public bool iceValid = true;
@@ -41,7 +40,6 @@ namespace Slainte.Bartending
 
         public bool coreValid => ingredientsValid
             && extrasValid
-            && totalValid
             && shakeIceValid
             && techniqueValid
             && !hasUnresolvedIngredient;
@@ -292,7 +290,6 @@ namespace Slainte.Bartending
 
             float extraVolume = CollectExtras(recipe, composition, recipeItems, result);
             bool extrasValid = recipe.allowExtraIngredients || extraVolume <= 0.0001f;
-            bool totalValid = IsTotalWithinRange(recipe, result.actualTotalMl);
             bool glassValid = IsGlassValid(recipe, composition);
             bool iceValid = IsIceValid(recipe, composition);
             bool shakeIceValid = IsShakeIceValid(recipe, composition);
@@ -300,7 +297,6 @@ namespace Slainte.Bartending
 
             result.ingredientsValid = allIngredientsValid;
             result.extrasValid = extrasValid;
-            result.totalValid = totalValid;
             result.hasUnresolvedIngredient = hasUnresolvedIngredient;
             result.glassValid = glassValid;
             result.iceValid = iceValid;
@@ -308,7 +304,6 @@ namespace Slainte.Bartending
             result.techniqueValid = techniqueValid;
             result.isSuccess = allIngredientsValid
                 && extrasValid
-                && totalValid
                 && glassValid
                 && iceValid
                 && shakeIceValid
@@ -318,7 +313,6 @@ namespace Slainte.Bartending
                 hasUnresolvedIngredient,
                 allIngredientsValid,
                 extrasValid,
-                totalValid,
                 glassValid,
                 iceValid,
                 shakeIceValid,
@@ -391,22 +385,10 @@ namespace Slainte.Bartending
             return extraVolume;
         }
 
-        private static bool IsTotalWithinRange(CocktailRecipe recipe, float actualTotalMl)
-        {
-            if (recipe.minTotalMl > 0f && actualTotalMl < recipe.minTotalMl)
-                return false;
-
-            if (recipe.maxTotalMl > 0f && actualTotalMl > recipe.maxTotalMl)
-                return false;
-
-            return true;
-        }
-
         private static string BuildFailureReason(
             bool hasUnresolvedIngredient,
             bool allIngredientsValid,
             bool extrasValid,
-            bool totalValid,
             bool glassValid,
             bool iceValid,
             bool shakeIceValid,
@@ -415,7 +397,6 @@ namespace Slainte.Bartending
             if (!hasUnresolvedIngredient
                 && allIngredientsValid
                 && extrasValid
-                && totalValid
                 && glassValid
                 && iceValid
                 && shakeIceValid
@@ -429,8 +410,6 @@ namespace Slainte.Bartending
                 reasons.Add("재료 용량 불일치");
             if (!extrasValid)
                 reasons.Add("허용되지 않은 추가 재료");
-            if (!totalValid)
-                reasons.Add("총용량 범위 초과");
             if (!glassValid)
                 reasons.Add("잔 종류 불일치");
             if (!iceValid)
