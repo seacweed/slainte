@@ -343,6 +343,7 @@ MonoBehaviour:
     craftingOrderTarget: rec_1019
     craftingPaymentEnabled: 1
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes:
     - result: 0
       nextNodeId: 8_1_1
@@ -3717,7 +3718,7 @@ MonoBehaviour:
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uD38D\uC5D0\uC11C \uC18C\uB780 \uD53C\uC6B0\uC2E0 \uAC12\uC785\uB2C8\uB2E4."
-    nextNodeId: 65
+    nextNodeId: 65_money
     choices: []
     flagBranches: []
     varBranches: []
@@ -3861,7 +3862,7 @@ MonoBehaviour:
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uB09C \uBAA8\uB978\uB2E4. \uB4B7\uAC10\uB2F9\uC740 \uB124\uAC00 \uD574\uB77C."
-    nextNodeId: 65
+    nextNodeId: 65_coin
     choices: []
     flagBranches: []
     varBranches: []
@@ -3893,11 +3894,11 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 65
-    speakerKey: 
-    overrideSpeakerName: 
-    text: 
-    nextNodeId: 
+  - nodeId: 65_money
+    speakerKey:
+    overrideSpeakerName:
+    text:
+    nextNodeId:
     choices: []
     flagBranches: []
     varBranches: []
@@ -3919,41 +3920,104 @@ MonoBehaviour:
     craftingOrderTarget: rec_1006
     craftingPaymentEnabled: 1
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 2
     craftingOutcomes:
     - result: 0
       nextNodeId: 65_1_1
-      flag: 
+      flag:
       varChanges: []
     - result: 5
       nextNodeId: 65_2_1
-      flag: 
+      flag:
       varChanges: []
     - result: 1
       nextNodeId: 65_3_1
-      flag: 
+      flag:
       varChanges: []
     - result: 2
       nextNodeId: 65_4_1
-      flag: 
+      flag:
       varChanges: []
     - result: 3
       nextNodeId: 65_5_1
-      flag: 
+      flag:
       varChanges: []
     - result: 4
       nextNodeId: 65_6_1
-      flag: 
+      flag:
       varChanges: []
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
+    nextNodeIdGood:
+    nextNodeIdBad:
+    craftingFlagGood:
+    craftingFlagBad:
     craftingVarChangesGood: []
     craftingVarChangesBad: []
     bgmCommand: 0
-    bgmClipName: 
+    bgmClipName:
     sfxCommand: 0
-    sfxClipName: 
+    sfxClipName:
+  - nodeId: 65_coin
+    speakerKey:
+    overrideSpeakerName:
+    text:
+    nextNodeId:
+    choices: []
+    flagBranches: []
+    varBranches: []
+    episodeBranches: []
+    characters:
+    - characterKey: f54
+      expressionKey: mid
+      slotIndex: 2
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: 0
+    - characterKey: sally
+      expressionKey: mid
+      slotIndex: 1
+    requiresCrafting: 1
+    craftingOrderTicket: {fileID: 11400000, guid: d0f6c45e87d54feb9e69783f76d5b241, type: 2}
+    craftingTicketKey: sc1_f72
+    craftingOrderType: 6
+    craftingOrderTarget: rec_1006
+    craftingPaymentEnabled: 1
+    craftingPaymentCurrency: 1
+    craftingPaymentMultiplier: 2
+    craftingOutcomes:
+    - result: 0
+      nextNodeId: 65_1_1
+      flag:
+      varChanges: []
+    - result: 5
+      nextNodeId: 65_2_1
+      flag:
+      varChanges: []
+    - result: 1
+      nextNodeId: 65_3_1
+      flag:
+      varChanges: []
+    - result: 2
+      nextNodeId: 65_4_1
+      flag:
+      varChanges: []
+    - result: 3
+      nextNodeId: 65_5_1
+      flag:
+      varChanges: []
+    - result: 4
+      nextNodeId: 65_6_1
+      flag:
+      varChanges: []
+    nextNodeIdGood:
+    nextNodeIdBad:
+    craftingFlagGood:
+    craftingFlagBad:
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName:
+    sfxCommand: 0
+    sfxClipName:
   - nodeId: 65_1_1
     speakerKey: f72
     overrideSpeakerName: 

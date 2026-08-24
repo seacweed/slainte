@@ -70,10 +70,7 @@ public class OrderTicketUI : MonoBehaviour
         if (memoText)         memoText.text         = memo ?? "";
 
         HideStructuredOrderDetails();
-
-        Canvas.ForceUpdateCanvases();
-        if (contentRect) LayoutRebuilder.ForceRebuildLayoutImmediate(contentRect);
-        if (scrollRect)  scrollRect.verticalNormalizedPosition = 1f;
+        ResetScrollToTop();
 
         BeginOpen();
     }
@@ -83,7 +80,7 @@ public class OrderTicketUI : MonoBehaviour
         if (customerNameText) customerNameText.text = string.Empty;
         if (memoText) memoText.text = string.Empty;
         HideStructuredOrderDetails();
-        if (scrollRect) scrollRect.verticalNormalizedPosition = 1f;
+        ResetScrollToTop();
     }
 
     public void Toggle()
@@ -176,6 +173,18 @@ public class OrderTicketUI : MonoBehaviour
             : null;
         if (header != null)
             header.gameObject.SetActive(false);
+    }
+
+    private void ResetScrollToTop()
+    {
+        if (!scrollRect)
+            return;
+
+        scrollRect.StopMovement();
+        Canvas.ForceUpdateCanvases();
+        if (contentRect)
+            LayoutRebuilder.ForceRebuildLayoutImmediate(contentRect);
+        scrollRect.verticalNormalizedPosition = 1f;
     }
 
     private void Slide(Vector2 target, Action onComplete)

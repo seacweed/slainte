@@ -302,7 +302,9 @@ namespace Slainte.Business
             };
             OrderEvaluationGrade grade = OrderEvaluationGrader.Resolve(evaluation, settings);
             GameCurrency paymentCurrency = currentRequest.paymentCurrency;
-            int listedPrice = GetListedPrice(paymentCurrency);
+            int listedPrice = BusinessOrderPriceRules.ApplyPaymentMultiplier(
+                GetListedPrice(paymentCurrency),
+                currentRequest.paymentMultiplier);
             BusinessOrderReward reward = BusinessOrderRewardCalculator.Calculate(
                 grade,
                 listedPrice,
@@ -425,7 +427,9 @@ namespace Slainte.Business
 
             OrderEvaluationGrade grade = OrderEvaluationGrader.Resolve(evaluation, settings);
             GameCurrency paymentCurrency = currentRequest.paymentCurrency;
-            int listedPrice = GetListedPrice(paymentCurrency, evaluation);
+            int listedPrice = BusinessOrderPriceRules.ApplyPaymentMultiplier(
+                GetListedPrice(paymentCurrency, evaluation),
+                currentRequest.paymentMultiplier);
             BusinessOrderReward reward = BusinessOrderRewardCalculator.Calculate(
                 grade,
                 listedPrice,

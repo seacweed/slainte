@@ -120,8 +120,20 @@ namespace NarrativeFlow.Editor
                             ev.CraftingPaymentCurrency = (GameCurrency)e.newValue;
                             EditorUtility.SetDirty(epNode);
                             nodeView.UpdateVisuals();
-                        })));
+                    })));
                     container.Add(currencyRow);
+                    var multiplierRow = NarrativeUIHelper.CreateRow();
+                    multiplierRow.Add(NarrativeUIHelper.CreateLabel("Payment Multiplier", "field-label"));
+                    multiplierRow.Add(new FloatField
+                    {
+                        value = ev.CraftingPaymentMultiplier
+                    }.SetFlex(1).With(x => x.RegisterValueChangedCallback(e =>
+                    {
+                        ev.CraftingPaymentMultiplier = Mathf.Max(0.01f, e.newValue);
+                        EditorUtility.SetDirty(epNode);
+                        nodeView.UpdateVisuals();
+                    })));
+                    container.Add(multiplierRow);
                     container.Add(NarrativeUIHelper.CreateDivider());
                     foreach (var result in CraftingJobResultPorts.Order)
                     {

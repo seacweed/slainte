@@ -211,6 +211,7 @@ namespace Slainte.Bartending
                     screenRect.y = lowerBoundaryRect.yMax;
                 }
 
+                screenRect = FitRectToSpriteAspect(screenRect, settings.serveTargetSprite);
                 return screenRect.width > Mathf.Epsilon
                     && screenRect.height > Mathf.Epsilon;
             }
@@ -218,6 +219,7 @@ namespace Slainte.Bartending
             if (useFallbackServingTarget)
             {
                 screenRect = GetFixedServingTargetScreenRect();
+                screenRect = FitRectToSpriteAspect(screenRect, settings.serveTargetSprite);
                 return screenRect.width > Mathf.Epsilon && screenRect.height > Mathf.Epsilon;
             }
 
@@ -234,6 +236,35 @@ namespace Slainte.Bartending
                 Mathf.Clamp01(normalized.z) * Screen.width,
                 Mathf.Clamp01(normalized.w) * Screen.height);
             return ExpandRect(screenRect, settings.serveTargetPaddingPixels);
+        }
+
+        private static Rect FitRectToSpriteAspect(Rect rect, Sprite sprite)
+        {
+            if (sprite == null
+                || rect.width <= Mathf.Epsilon
+                || rect.height <= Mathf.Epsilon
+                || sprite.rect.width <= Mathf.Epsilon
+                || sprite.rect.height <= Mathf.Epsilon)
+            {
+                return rect;
+            }
+
+            float spriteAspect = sprite.rect.width / sprite.rect.height;
+            float rectAspect = rect.width / rect.height;
+            if (rectAspect > spriteAspect)
+            {
+                float fittedWidth = rect.height * spriteAspect;
+                rect.x += (rect.width - fittedWidth) * 0.5f;
+                rect.width = fittedWidth;
+            }
+            else
+            {
+                float fittedHeight = rect.width / spriteAspect;
+                rect.y += (rect.height - fittedHeight) * 0.5f;
+                rect.height = fittedHeight;
+            }
+
+            return rect;
         }
 
         private void Initialize(

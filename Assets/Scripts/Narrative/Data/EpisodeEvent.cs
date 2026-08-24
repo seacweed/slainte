@@ -50,6 +50,7 @@ namespace NarrativeFlow
         public string CraftingOrderTarget;
         public bool CraftingPaymentEnabled = true;
         public GameCurrency CraftingPaymentCurrency = GameCurrency.Money;
+        [Min(0.01f)] public float CraftingPaymentMultiplier = 1f;
         public List<CraftingOutcomeData> CraftingOutcomes = new();
 
         // Branch Exit

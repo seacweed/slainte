@@ -48,6 +48,8 @@ public class EpisodeNode
     [Tooltip("실제 제조 주문 완료 시 선택한 통화로 레시피 가격을 지급합니다. 무료 제공 에피소드만 비활성화합니다.")]
     public bool craftingPaymentEnabled = true;
     public GameCurrency craftingPaymentCurrency = GameCurrency.Money;
+    [Tooltip("제조 주문의 통화별 레시피 가격에 적용할 배율입니다. 비어 있거나 0 이하인 기존 데이터는 1배로 처리합니다.")]
+    [Min(0.01f)] public float craftingPaymentMultiplier = 1f;
     public List<CraftingOutcome> craftingOutcomes = new();
 
     [HideInInspector, SerializeField] private string nextNodeIdGood;

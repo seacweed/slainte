@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using Slainte.Bartending;
@@ -607,6 +608,9 @@ public class EpisodeCsvImporter : EditorWindow
                 defaultPaymentEnabled);
             GameCurrency craftingPaymentCurrency = ParseGameCurrency(
                 NamedField(row, nodeHeaders, "craftingPaymentCurrency", -1));
+            float craftingPaymentMultiplier = ParsePositiveFloat(
+                NamedField(row, nodeHeaders, "craftingPaymentMultiplier", -1),
+                1f);
 
             data.nodes.Add(new EpisodeNode
             {
@@ -622,6 +626,7 @@ public class EpisodeCsvImporter : EditorWindow
                 craftingOrderTarget = craftingOrderTarget,
                 craftingPaymentEnabled = craftingPaymentEnabled,
                 craftingPaymentCurrency = craftingPaymentCurrency,
+                craftingPaymentMultiplier = craftingPaymentMultiplier,
                 bgmCommand          = ParseBgmCommand(NamedField(row, nodeHeaders, "bgmCommand", 7)),
                 bgmClipName         = NamedField(row, nodeHeaders, "bgmClipName", 8),
                 sfxCommand          = ParseSfxCommand(NamedField(row, nodeHeaders, "sfxCommand", 9)),
@@ -789,6 +794,18 @@ public class EpisodeCsvImporter : EditorWindow
             && Enum.IsDefined(typeof(GameCurrency), result)
                 ? result
                 : GameCurrency.Money;
+    }
+
+    private static float ParsePositiveFloat(string value, float defaultValue)
+    {
+        return float.TryParse(
+                value?.Trim(),
+                NumberStyles.Float,
+                CultureInfo.InvariantCulture,
+                out float result)
+            && result > 0f
+                ? result
+                : defaultValue;
     }
 
     private static BgmCommand ParseBgmCommand(string value)

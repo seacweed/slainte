@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Slainte.Business;
 using UnityEditor;
 using UnityEngine;
 
@@ -186,6 +187,9 @@ namespace NarrativeFlow.Editor
                 ev.CraftingOrderTarget = rNode.craftingOrderTarget;
                 ev.CraftingPaymentEnabled = rNode.craftingPaymentEnabled;
                 ev.CraftingPaymentCurrency = rNode.craftingPaymentCurrency;
+                ev.CraftingPaymentMultiplier =
+                    BusinessOrderPriceRules.NormalizePaymentMultiplier(
+                        rNode.craftingPaymentMultiplier);
 
                 foreach (var result in CraftingJobResultPorts.Order)
                 {

@@ -105,6 +105,8 @@ namespace Slainte.Business
                 ticketKey = node.craftingTicketKey,
                 orderType = orderType,
                 paymentCurrency = node.craftingPaymentCurrency,
+                paymentMultiplier = BusinessOrderPriceRules.NormalizePaymentMultiplier(
+                    node.craftingPaymentMultiplier),
                 presentOrder = false,
                 presentFeedback = false,
                 applyProgressRewards = false,

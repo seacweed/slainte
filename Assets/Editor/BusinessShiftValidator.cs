@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using Slainte.Bartending;
 using Slainte.Business;
@@ -792,6 +793,7 @@ namespace Slainte.EditorTools
         {
             ValidateLegacyCraftingFields();
             ValidateEpisodeCraftingRequestTargets();
+            ValidateStrangeCoinOneChoicePayment();
             ValidateExistingCraftingNodes();
             ValidateOrderTicketDialogueMemo();
             ValidateConditionOrderEvaluation();
@@ -900,7 +902,7 @@ namespace Slainte.EditorTools
                 "취향 태그가 맞는 실제 레시피를 조건 주문 성공으로 판정하지 않았습니다.");
 
             CocktailRecipe mismatchingRecipe = new() { id = "mismatching" };
-            mismatchingRecipe.tasteTags.Add("씁쓸함");
+            mismatchingRecipe.tasteTags.Add("달콤함");
             CocktailEvaluationResult mismatchingResult = new()
             {
                 matchedRecipe = mismatchingRecipe,
@@ -1288,7 +1290,8 @@ namespace Slainte.EditorTools
                 craftingOrderTicket = recipeTicket,
                 craftingTicketKey = "validator_recipe_ticket",
                 craftingPaymentEnabled = true,
-                craftingPaymentCurrency = GameCurrency.StrangeCoin
+                craftingPaymentCurrency = GameCurrency.StrangeCoin,
+                craftingPaymentMultiplier = 2f
             };
             Require(EpisodeCraftingBridge.TryBuildRequest(
                     recipeNode,
@@ -1300,6 +1303,7 @@ namespace Slainte.EditorTools
                     && recipeRequest.applyPayment
                     && recipeRequest.recordSale
                     && recipeRequest.paymentCurrency == GameCurrency.StrangeCoin
+                    && Mathf.Approximately(recipeRequest.paymentMultiplier, 2f)
                     && recipeRequest.requestedTags.Count == 0,
                 "에피소드 레시피 target을 지정 레시피 주문으로 변환하지 못했습니다.");
             UnityEngine.Object.DestroyImmediate(recipeTicket);
@@ -1316,7 +1320,8 @@ namespace Slainte.EditorTools
                     && string.IsNullOrEmpty(tasteRequest.requestedRecipeId)
                     && tasteRequest.requestedTags.Count == 1
                     && tasteRequest.requestedTags[0] == "씁쓸함"
-                    && tasteRequest.requestedConditionLabel == "씁쓸함",
+                    && tasteRequest.requestedConditionLabel == "씁쓸함"
+                    && Mathf.Approximately(tasteRequest.paymentMultiplier, 1f),
                 "에피소드 맛 target을 단일 정규화 태그 주문으로 변환하지 못했습니다.");
 
             EpisodeNode moodNode = new()
@@ -1339,6 +1344,80 @@ namespace Slainte.EditorTools
                     "validator_unsupported",
                     out _),
                 "에피소드에서 지원하지 않는 주문 유형을 허용했습니다.");
+        }
+
+        private static void ValidateStrangeCoinOneChoicePayment()
+        {
+            const string episodePath =
+                "Assets/Resources/EpisodeData/EpisodeData_StrangeCoin_1.asset";
+            const string csvPath =
+                "Assets/Data/EpisodeData/에피소드 - EpisodeData_StrangeCoin_1.csv.csv";
+
+            EpisodeData episode = AssetDatabase.LoadAssetAtPath<EpisodeData>(episodePath);
+            Require(episode != null, "StrangeCoin_1 에피소드 데이터를 찾지 못했습니다.");
+
+            EpisodeNode moneyPath = episode.FindNode("65_money");
+            EpisodeNode coinPath = episode.FindNode("65_coin");
+            Require(moneyPath != null && coinPath != null,
+                "StrangeCoin_1의 선택지별 결제 제조 노드가 없습니다.");
+            Require(episode.FindNode("64_1_3")?.nextNodeId == "65_money",
+                "공식 화폐 선택 경로가 Money 제조 노드로 이어지지 않습니다.");
+            Require(episode.FindNode("64_2_4")?.nextNodeId == "65_coin",
+                "동전 선택 경로가 StrangeCoin 제조 노드로 이어지지 않습니다.");
+            Require(episode.FindNode("65") == null,
+                "StrangeCoin_1에 통화를 구분하지 않는 기존 65 제조 노드가 남아 있습니다.");
+
+            Require(moneyPath.craftingPaymentEnabled
+                    && moneyPath.craftingPaymentCurrency == GameCurrency.Money
+                    && Mathf.Approximately(moneyPath.craftingPaymentMultiplier, 2f),
+                "StrangeCoin_1 공식 화폐 선택이 Money 2배 결제로 설정되지 않았습니다.");
+            Require(coinPath.craftingPaymentEnabled
+                    && coinPath.craftingPaymentCurrency == GameCurrency.StrangeCoin
+                    && Mathf.Approximately(coinPath.craftingPaymentMultiplier, 2f),
+                "StrangeCoin_1 동전 선택이 StrangeCoin 2배 결제로 설정되지 않았습니다.");
+            Require(moneyPath.craftingOrderTarget == "rec_1006"
+                    && coinPath.craftingOrderTarget == "rec_1006"
+                    && moneyPath.craftingTicketKey == "sc1_f72"
+                    && coinPath.craftingTicketKey == "sc1_f72",
+                "StrangeCoin_1 선택지별 제조 노드의 주문 대상이 서로 다릅니다.");
+            Require(moneyPath.GetNextNodeId(CraftingJobResult.Good) == "65_1_1"
+                    && coinPath.GetNextNodeId(CraftingJobResult.Good) == "65_1_1"
+                    && moneyPath.GetNextNodeId(CraftingJobResult.Bad) == "65_2_1"
+                    && coinPath.GetNextNodeId(CraftingJobResult.Bad) == "65_2_1",
+                "StrangeCoin_1 선택지별 제조 결과 분기가 기존 대사로 합류하지 않습니다.");
+
+            Require(EpisodeCraftingBridge.TryBuildRequest(
+                    moneyPath,
+                    "validator_sc1_money",
+                    out OrderSessionRequest moneyRequest)
+                    && moneyRequest.paymentCurrency == GameCurrency.Money
+                    && Mathf.Approximately(moneyRequest.paymentMultiplier, 2f),
+                "StrangeCoin_1 공식 화폐 제조 요청을 Money 2배로 만들지 못했습니다.");
+            Require(EpisodeCraftingBridge.TryBuildRequest(
+                    coinPath,
+                    "validator_sc1_coin",
+                    out OrderSessionRequest coinRequest)
+                    && coinRequest.paymentCurrency == GameCurrency.StrangeCoin
+                    && Mathf.Approximately(coinRequest.paymentMultiplier, 2f),
+                "StrangeCoin_1 동전 제조 요청을 StrangeCoin 2배로 만들지 못했습니다.");
+            Require(BusinessOrderPriceRules.ApplyPaymentMultiplier(189, 2f) == 378
+                    && BusinessOrderPriceRules.ApplyPaymentMultiplier(3, 2f) == 6,
+                "StrangeCoin_1의 통화별 2배 가격 계산이 올바르지 않습니다.");
+            Require(BusinessOrderPriceRules.ApplyPaymentMultiplier(189, 0f) == 189,
+                "결제 배율이 없는 기존 주문이 1배 가격으로 호환되지 않습니다.");
+
+            EpisodeNode f54Order = episode.FindNode("8");
+            Require(f54Order != null
+                    && f54Order.craftingPaymentCurrency == GameCurrency.Money
+                    && Mathf.Approximately(f54Order.craftingPaymentMultiplier, 1f),
+                "StrangeCoin_1의 F54 주문에 선택지 전용 2배 결제가 적용됐습니다.");
+
+            Require(File.Exists(csvPath), "StrangeCoin_1 원본 CSV를 찾지 못했습니다.");
+            string sourceCsv = File.ReadAllText(csvPath);
+            Require(sourceCsv.Contains("craftingPaymentMultiplier")
+                    && sourceCsv.Contains("65_money,,,,,TRUE,sc1_f72,rec_1006,,,,,TRUE,Money,2")
+                    && sourceCsv.Contains("65_coin,,,,,TRUE,sc1_f72,rec_1006,,,,,TRUE,StrangeCoin,2"),
+                "StrangeCoin_1의 선택지별 통화/2배 설정이 원본 CSV에 보존되지 않았습니다.");
         }
 
         private static void ValidateCraftingResultMapping()
