@@ -48,11 +48,10 @@ public class SettlementManager : MonoSingleton<SettlementManager>
         if (progress == null)
             return 0;
 
-        int income = Mathf.Max(0, progress.DayTotalIncome - progress.DayPaidMoneyIncome);
+        int income = progress.DayTotalIncome - progress.DayPaidMoneyIncome;
         progress.AddMoney(income);
-        int strangeCoinIncome = Mathf.Max(
-            0,
-            progress.DayStrangeCoinRevenue - progress.DayPaidStrangeCoinIncome);
+        int strangeCoinIncome =
+            progress.DayStrangeCoinRevenue - progress.DayPaidStrangeCoinIncome;
         GameCurrencyWallet.Add(progress, GameCurrency.StrangeCoin, strangeCoinIncome);
         return income;
     }
@@ -68,21 +67,22 @@ public class SettlementManager : MonoSingleton<SettlementManager>
         for (int i = 0; i < records.Count; i++)
         {
             BusinessSaleRecord record = records[i];
-            if (record == null)
+            if (record == null || record.paymentCurrency != GameCurrency.Money)
                 continue;
 
             data.totalSalesCount += 1;
             data.totalSalesRevenue += record.listedPrice;
 
-            if (record.grade == OrderEvaluationGrade.Good)
+            if (record.tipAmount != 0)
             {
                 data.goodCount += 1;
                 data.tipTotal += record.tipAmount;
             }
-            else if (record.grade == OrderEvaluationGrade.Bad)
+
+            if (record.penaltyAmount != 0)
             {
                 data.badCount += 1;
-                data.missedRevenue += record.listedPrice + record.penaltyAmount;
+                data.missedRevenue += record.penaltyAmount;
             }
         }
 

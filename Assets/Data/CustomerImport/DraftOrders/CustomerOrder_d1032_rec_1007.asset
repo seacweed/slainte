@@ -17,7 +17,7 @@ MonoBehaviour:
   orderType: 0
   paymentCurrency: 0
   tags: []
-  characterKey: eliud
+  characterKey: eliot
   expressionKeyMid: mid
   expressionKeyGood: good
   expressionKeyBad: bad
@@ -39,6 +39,7 @@ MonoBehaviour:
     text: "\uC774\uAC70 \uBA39\uC5B4\uB3C4 \uB418\uB294\uAC70 \uB9DE\uC544?"
     nameColor: {r: 1, g: 1, b: 1, a: 1}
   authoredFeedback: 63
+  intentionallySilentFeedback: 0
   feedbackLinesMidIce:
   - speakerName: "\uC5D8\uB9AC\uC5C7"
     text: "\uC5BC\uC74C\uC774 \uC880 \uBE60\uC9C4 \uAC83 \uAC19\uC740\uB370? \uADF8\uB798\uB3C4

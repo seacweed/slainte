@@ -27,7 +27,7 @@ MonoBehaviour:
   allowExtraIngredients: 0
   glassId: hurricane
   iceRequirement: 2
-  requiredIceCount: 3
+  requiredIceCount: -1
   shakeIceRequirement: 0
   requiredTechnique: 1
   abvOverridePercent: 40
@@ -41,3 +41,5 @@ MonoBehaviour:
   - itemId: item_1009
     targetMl: 30
     toleranceMl: 5
+  icon: {fileID: 0}
+  description: 

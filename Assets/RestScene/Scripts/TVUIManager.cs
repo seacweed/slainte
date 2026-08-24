@@ -1,4 +1,5 @@
 using System.Collections;
+using Slainte.Business;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -48,6 +49,12 @@ namespace Slainte.TV
                 progress.MarkTVForecastRevealed();
             DataManager.Instance?.Save();
             Bind(entry);
+        }
+
+        protected override bool CanOpen()
+        {
+            BusinessOrderFlowSettings settings = BusinessOrderFlowSettings.LoadDefault();
+            return settings != null && settings.IsTVUnlocked(GameProgress.Instance);
         }
 
         protected override IEnumerator AnimateOpen()

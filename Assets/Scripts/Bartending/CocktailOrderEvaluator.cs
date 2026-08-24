@@ -2,11 +2,22 @@ using System.Text;
 
 namespace Slainte.Bartending
 {
+    public enum CocktailOrderEvaluationOutcome
+    {
+        Bad,
+        MidWrongMenu,
+        MidIce,
+        MidGlass,
+        MidIceGlass,
+        Good
+    }
+
     public sealed class CocktailOrderEvaluationResult
     {
         public GeneratedCocktailOrder order;
         public CocktailEvaluationResult detectedRecipeResult;
         public CocktailEvaluationResult requestedRecipeResult;
+        public CocktailOrderEvaluationOutcome outcome = CocktailOrderEvaluationOutcome.Bad;
         public bool isSuccess;
         public string failureReason;
 
@@ -14,6 +25,8 @@ namespace Slainte.Bartending
         {
             StringBuilder builder = new StringBuilder();
             builder.Append(isSuccess ? "주문 성공" : "주문 실패");
+            builder.Append(" | ");
+            builder.Append(outcome);
             builder.Append(" | ");
             builder.Append(order != null ? order.line : "진행 중인 주문 없음");
             builder.AppendLine();
@@ -36,9 +49,7 @@ namespace Slainte.Bartending
                 builder.Append(GetRecipeLabel(detectedRecipeResult));
                 builder.Append(" | ");
                 builder.Append(detectedRecipeResult.isSuccess ? "레시피 일치" : "레시피 불일치");
-                builder.Append(" | 점수 ");
-                builder.Append((detectedRecipeResult.score * 100f).ToString("0.#"));
-                builder.AppendLine("%");
+                builder.AppendLine();
             }
 
             if (requestedRecipeResult != null)
@@ -105,9 +116,9 @@ namespace Slainte.Bartending
                 case CocktailOrderType.EpisodeOrder:
                     return EvaluateRecipeOrder(order, composition, detectedRecipeResult);
                 case CocktailOrderType.TasteOrder:
-                    return EvaluateTagOrder(order, detectedRecipeResult, true);
+                    return EvaluateTagOrder(order, composition, detectedRecipeResult, true);
                 case CocktailOrderType.MoodOrder:
-                    return EvaluateTagOrder(order, detectedRecipeResult, false);
+                    return EvaluateTagOrder(order, composition, detectedRecipeResult, false);
                 default:
                     return new CocktailOrderEvaluationResult
                     {
@@ -119,46 +130,56 @@ namespace Slainte.Bartending
             }
         }
 
-        private static CocktailOrderEvaluationResult EvaluateTagOrder(
+        private CocktailOrderEvaluationResult EvaluateTagOrder(
             GeneratedCocktailOrder order,
+            CocktailComposition composition,
             CocktailEvaluationResult detectedRecipeResult,
             bool tasteOrder)
         {
             System.Collections.Generic.HashSet<string> required = tasteOrder
                 ? order.requiredTasteTags
                 : order.requiredMoodTags;
-            System.Collections.Generic.HashSet<string> actual = tasteOrder
-                ? detectedRecipeResult?.matchedRecipe?.tasteTags
-                : detectedRecipeResult?.matchedRecipe?.moodTags;
-
             bool hasRequirement = required != null && required.Count > 0;
-            bool tagsValid = hasRequirement && actual != null;
-            if (tagsValid)
+            CocktailEvaluationResult requestedResult = null;
+            if (hasRequirement && cocktailEvaluator != null && composition != null)
             {
-                foreach (string tag in required)
-                {
-                    if (!actual.Contains(tag))
-                    {
-                        tagsValid = false;
-                        break;
-                    }
-                }
+                requestedResult = cocktailEvaluator.EvaluateFirstOrderable(
+                    composition,
+                    recipe => HasRequiredTags(recipe, required, tasteOrder),
+                    true);
+            }
+            else if (hasRequirement
+                && detectedRecipeResult != null
+                && HasRequiredTags(detectedRecipeResult.matchedRecipe, required, tasteOrder))
+            {
+                requestedResult = detectedRecipeResult;
             }
 
-            bool success = detectedRecipeResult != null
-                && detectedRecipeResult.isSuccess
-                && tagsValid;
+            CocktailOrderEvaluationOutcome outcome = hasRequirement
+                ? ClassifyRequestedOutcome(requestedResult)
+                : CocktailOrderEvaluationOutcome.Bad;
+            if (outcome == CocktailOrderEvaluationOutcome.Bad
+                && detectedRecipeResult != null
+                && detectedRecipeResult.isSuccess)
+            {
+                outcome = CocktailOrderEvaluationOutcome.MidWrongMenu;
+            }
+
+            bool success = IsRequestedOrderSuccess(outcome);
             string label = tasteOrder ? "맛" : "분위기";
             return new CocktailOrderEvaluationResult
             {
                 order = order,
                 detectedRecipeResult = detectedRecipeResult,
-                requestedRecipeResult = detectedRecipeResult,
+                requestedRecipeResult = requestedResult ?? detectedRecipeResult,
+                outcome = outcome,
                 isSuccess = success,
                 failureReason = success
                     ? string.Empty
                     : !hasRequirement
                         ? $"이 주문에 {label} 태그가 설정되지 않았습니다."
+                        : outcome == CocktailOrderEvaluationOutcome.MidWrongMenu
+                            ? $"제출한 칵테일이 요청한 {label} 조건과 일치하지 않습니다."
                         : detectedRecipeResult == null || !detectedRecipeResult.isSuccess
                             ? "제출한 칵테일이 알려진 레시피와 일치하지 않습니다."
                             : $"제출한 칵테일이 요청한 {label} 조건과 일치하지 않습니다."
@@ -171,20 +192,110 @@ namespace Slainte.Bartending
             CocktailEvaluationResult detectedRecipeResult)
         {
             CocktailEvaluationResult requestedRecipeResult = cocktailEvaluator != null
-                ? cocktailEvaluator.EvaluateRecipeFamily(order.requestedRecipeId, composition)
+                ? cocktailEvaluator.EvaluateRecipe(order.requestedRecipeId, composition)
                 : null;
 
-            bool success = requestedRecipeResult != null && requestedRecipeResult.isSuccess;
+            CocktailOrderEvaluationOutcome outcome = ClassifyRequestedOutcome(requestedRecipeResult);
+            if (outcome == CocktailOrderEvaluationOutcome.Bad
+                && IsDifferentDetectedMenu(order, detectedRecipeResult))
+            {
+                outcome = CocktailOrderEvaluationOutcome.MidWrongMenu;
+            }
+
+            bool success = IsRequestedOrderSuccess(outcome);
             return new CocktailOrderEvaluationResult
             {
                 order = order,
                 detectedRecipeResult = detectedRecipeResult,
                 requestedRecipeResult = requestedRecipeResult,
+                outcome = outcome,
                 isSuccess = success,
                 failureReason = success
                     ? string.Empty
                     : BuildRecipeOrderFailure(order, detectedRecipeResult, requestedRecipeResult)
             };
+        }
+
+        private CocktailOrderEvaluationOutcome ClassifyRequestedOutcome(
+            CocktailEvaluationResult result)
+        {
+            if (result == null || result.matchedRecipe == null)
+                return CocktailOrderEvaluationOutcome.Bad;
+            if (result.isSuccess)
+                return CocktailOrderEvaluationOutcome.Good;
+            if (!result.coreValid)
+                return CocktailOrderEvaluationOutcome.Bad;
+
+            bool glassInvalid = !result.glassValid;
+            bool iceInvalid = !result.iceValid;
+            if (glassInvalid
+                && (cocktailEvaluator == null
+                    || !cocktailEvaluator.IsKnownGlass(result.actualGlassId)))
+            {
+                return CocktailOrderEvaluationOutcome.Bad;
+            }
+
+            if (glassInvalid && iceInvalid)
+                return CocktailOrderEvaluationOutcome.MidIceGlass;
+            if (iceInvalid)
+                return CocktailOrderEvaluationOutcome.MidIce;
+            if (glassInvalid)
+                return CocktailOrderEvaluationOutcome.MidGlass;
+            return CocktailOrderEvaluationOutcome.Bad;
+        }
+
+        private static bool HasRequiredTags(
+            CocktailRecipe recipe,
+            System.Collections.Generic.HashSet<string> required,
+            bool tasteOrder)
+        {
+            if (recipe == null || required == null || required.Count == 0)
+                return false;
+
+            System.Collections.Generic.HashSet<string> actual = tasteOrder
+                ? recipe.tasteTags
+                : recipe.moodTags;
+            if (actual == null)
+                return false;
+
+            foreach (string tag in required)
+            {
+                if (!actual.Contains(tag))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static bool IsDifferentDetectedMenu(
+            GeneratedCocktailOrder order,
+            CocktailEvaluationResult detectedRecipeResult)
+        {
+            if (order == null
+                || detectedRecipeResult == null
+                || !detectedRecipeResult.isSuccess
+                || detectedRecipeResult.matchedRecipe == null)
+            {
+                return false;
+            }
+
+            CocktailRecipe detected = detectedRecipeResult.matchedRecipe;
+            return !string.Equals(
+                    detected.id,
+                    order.requestedRecipeId,
+                    System.StringComparison.OrdinalIgnoreCase)
+                && !string.Equals(
+                    detected.baseRecipeId,
+                    order.requestedRecipeId,
+                    System.StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsRequestedOrderSuccess(CocktailOrderEvaluationOutcome outcome)
+        {
+            return outcome == CocktailOrderEvaluationOutcome.Good
+                || outcome == CocktailOrderEvaluationOutcome.MidIce
+                || outcome == CocktailOrderEvaluationOutcome.MidGlass
+                || outcome == CocktailOrderEvaluationOutcome.MidIceGlass;
         }
 
         private static string BuildRecipeOrderFailure(

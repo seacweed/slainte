@@ -64,6 +64,7 @@ public class LiquorShelfUI : MonoBehaviour
     private readonly List<LiquorCategoryButtonUI> _categoryButtons = new();
     private DeliveryShopPanelUI                   _deliveryPanel;
     private DeliveryCharacterPresenter            _deliveryCharacter;
+    private bool                                  _deliveryUnlocked;
     private bool                                  _deliveryAvailable = true;
     private string                                _deliveryUnavailableReason = string.Empty;
     private bool                                  _deliverySessionActive;
@@ -71,7 +72,8 @@ public class LiquorShelfUI : MonoBehaviour
     private Coroutine                             _deliveryCharacterPresentation;
     private int                                   _bottleReturnFrame = -1;
 
-    public bool IsDeliveryAvailable => _deliveryAvailable;
+    public bool IsDeliveryUnlocked => _deliveryUnlocked;
+    public bool IsDeliveryAvailable => _deliveryUnlocked && _deliveryAvailable;
     public bool IsDeliveryOpen => _deliveryPanel != null && _deliveryPanel.IsVisible;
     public bool BlocksRecipeBook => _deliverySessionActive;
     public Button DeliveryTabButton => deliveryButton;
@@ -260,7 +262,10 @@ public class LiquorShelfUI : MonoBehaviour
 
     public bool TryOpenDelivery()
     {
-        if (!_interactable || !_deliveryAvailable || _deliveryPanel == null)
+        if (!_interactable
+            || !_deliveryUnlocked
+            || !_deliveryAvailable
+            || _deliveryPanel == null)
         {
             if (!_deliveryAvailable && !string.IsNullOrWhiteSpace(_deliveryUnavailableReason))
                 Debug.LogWarning("[Delivery] " + _deliveryUnavailableReason);
@@ -298,6 +303,20 @@ public class LiquorShelfUI : MonoBehaviour
         ApplyDeliveryTabState();
 
         if (!available && IsDeliveryOpen)
+        {
+            EndDeliverySession();
+            LiquorCategoryDef fallback = _lastCategory
+                ?? (categoryEntries.Length > 0 ? categoryEntries[0].def : null);
+            if (fallback != null) ShowCategory(fallback);
+        }
+    }
+
+    public void SetDeliveryUnlocked(bool unlocked)
+    {
+        _deliveryUnlocked = unlocked;
+        ApplyDeliveryTabState();
+
+        if (!unlocked && IsDeliveryOpen)
         {
             EndDeliverySession();
             LiquorCategoryDef fallback = _lastCategory
@@ -347,7 +366,10 @@ public class LiquorShelfUI : MonoBehaviour
         if (deliveryButton == null)
             return;
 
-        deliveryButton.interactable = _interactable && _deliveryAvailable;
+        deliveryButton.gameObject.SetActive(enableDelivery && _deliveryUnlocked);
+        deliveryButton.interactable = _interactable
+            && _deliveryUnlocked
+            && _deliveryAvailable;
     }
 
     private void RefreshShelfSlots()

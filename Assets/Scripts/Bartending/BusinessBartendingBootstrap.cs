@@ -989,7 +989,8 @@ namespace Slainte.Bartending
                 string.IsNullOrWhiteSpace(item.displayName) ? item.id : item.displayName,
                 settings.bottlePosition,
                 sessionRenderLayer,
-                sessionItemScale);
+                sessionItemScale,
+                settings);
             BartendingSessionBuilder.ConfigureRotatingMovement(bottleItem, settings);
             if (bottleItem is not BottleController bottle)
             {
@@ -1399,7 +1400,7 @@ namespace Slainte.Bartending
             return slots;
         }
 
-        private static IBartendingItem CreateItem(
+        private IBartendingItem CreateItem(
             GameObject prefab,
             Transform parent,
             string instanceName,
@@ -1422,7 +1423,9 @@ namespace Slainte.Bartending
             foreach (VesselLiquidTracker tracker
                      in item.GetComponentsInChildren<VesselLiquidTracker>(true))
             {
-                tracker.SetDebugViewEnabled(false);
+                tracker.ConfigureRuntimeDebugLabel(
+                    settings != null && settings.showVesselDebugLabels,
+                    settings != null ? settings.vesselDebugRefreshInterval : 0.2f);
             }
             return item.GetComponent<IBartendingItem>();
         }

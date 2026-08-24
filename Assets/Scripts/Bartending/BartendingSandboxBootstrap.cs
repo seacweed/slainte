@@ -181,7 +181,8 @@ namespace Slainte.Bartending
                     string.IsNullOrWhiteSpace(item.displayName) ? item.id : item.displayName,
                     settings.bottlePosition,
                     session.RenderLayer,
-                    session.ItemScale);
+                    session.ItemScale,
+                    settings);
                 BartendingSessionBuilder.ConfigureRotatingMovement(created, settings);
                 if (created is BottleController bottle)
                 {

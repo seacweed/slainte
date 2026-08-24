@@ -41,6 +41,7 @@ MonoBehaviour:
     text: "\uB9DB\uC774 \uCC38...\uBE61\uBE61\uD55C UPD \uB188\uB4E4 \uBA74\uC0C1\uAC19\uC544."
     nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
   authoredFeedback: 63
+  intentionallySilentFeedback: 0
   feedbackLinesMidIce:
   - speakerName: F72
     text: "\uB2E8\uACE8\uD55C\uD14C \uC5BC\uC74C \uC544\uB07C\uB294 \uAC70\uC57C?"

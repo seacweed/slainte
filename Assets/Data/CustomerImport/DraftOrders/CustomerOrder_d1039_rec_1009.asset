@@ -42,6 +42,7 @@ MonoBehaviour:
       \uAC74 \uC544\uB2C8\uB77C\uACE0 \uC0DD\uAC01\uD569\uB2C8\uB2E4"
     nameColor: {r: 0.6117647, g: 0.9843137, b: 0.93333334, a: 1}
   authoredFeedback: 63
+  intentionallySilentFeedback: 0
   feedbackLinesMidIce:
   - speakerName: E12
     text: "\uC5EC\uAE30\uC5D0 \uC5BC\uC74C\uC774 \uB4E4\uC5B4\uAC04\uB2E4\uB294 \uAC74

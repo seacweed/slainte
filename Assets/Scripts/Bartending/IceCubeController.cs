@@ -16,6 +16,7 @@ namespace Slainte.Bartending
         private VesselLiquidTracker vesselOwner;
         private Vector2 dragOffset;
         private float configuredGravityScale = 1f;
+        private float configuredOpacity = 1f;
         private float cleanupY = -8f;
         private bool colliderWasTrigger;
         private bool isDragging;
@@ -63,7 +64,11 @@ namespace Slainte.Bartending
             IceCubeController controller = instance.GetComponent<IceCubeController>();
             if (controller == null)
                 controller = instance.AddComponent<IceCubeController>();
-            controller.Initialize(settings.iceGravityScale, settings.iceCleanupY, previewOnly);
+            controller.Initialize(
+                settings.iceGravityScale,
+                settings.iceCleanupY,
+                settings.iceOpacity,
+                previewOnly);
             return controller;
         }
 
@@ -108,7 +113,7 @@ namespace Slainte.Bartending
                 renderer.sortingOrder = 18;
             }
             renderer.sprite = sprite;
-            renderer.color = Color.white;
+            renderer.color = new Color(1f, 1f, 1f, configuredOpacity);
             renderer.enabled = true;
             if (matchNativeCanvasPixelSize)
             {
@@ -241,11 +246,17 @@ namespace Slainte.Bartending
             }
         }
 
-        private void Initialize(float gravityScale, float destroyBelowY, bool previewOnly)
+        private void Initialize(
+            float gravityScale,
+            float destroyBelowY,
+            float opacity,
+            bool previewOnly)
         {
             configuredGravityScale = Mathf.Max(0f, gravityScale);
+            configuredOpacity = Mathf.Clamp01(opacity);
             cleanupY = destroyBelowY;
             EnsureComponents();
+            ApplyConfiguredOpacity();
             if (body != null)
             {
                 body.gravityScale = configuredGravityScale;
@@ -255,6 +266,21 @@ namespace Slainte.Bartending
             enabled = !previewOnly;
             if (!previewOnly)
                 VesselLiquidTracker.RegisterIceCube(this);
+        }
+
+        private void ApplyConfiguredOpacity()
+        {
+            SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>(true);
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                SpriteRenderer renderer = renderers[i];
+                if (renderer == null)
+                    continue;
+
+                Color color = renderer.color;
+                color.a = configuredOpacity;
+                renderer.color = color;
+            }
         }
 
         private void Awake()

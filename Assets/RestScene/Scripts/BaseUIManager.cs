@@ -40,7 +40,7 @@ public abstract class BaseUIManager : MonoBehaviour
 
     public void OpenUI()
     {
-        if (_transitionLocked) return;
+        if (_transitionLocked || !CanOpen()) return;
 
         CloseOtherPanels();
 
@@ -87,6 +87,7 @@ public abstract class BaseUIManager : MonoBehaviour
     protected abstract IEnumerator AnimateClose();
 
     // (선택) 오버라이드용 빈 함수
+    protected virtual bool CanOpen() => true;
     protected virtual void OnOpen() { }
     protected virtual void OnClose() { }
 }

@@ -171,7 +171,8 @@ namespace Slainte.EditorTools
                 || slopBottle.defaultBottleCount != 6
                 || burnhamSour.price != 307
                 || burnhamSour.strangeCoinPrice != 3
-                || burnhamSour.requiredIceCount != 3
+                || burnhamSour.iceRequirement != IceRequirement.Required
+                || burnhamSour.requiredIceCount != -1
                 || !slop.overrideBottleClickCollider
                 || HasBrokenPlanningBottleLinks();
         }
@@ -264,8 +265,9 @@ namespace Slainte.EditorTools
                 "번햄 사워 배합 또는 주문 가능 상태가 잘못되었습니다.");
             Require(burnhamSour.price == 307 && burnhamSour.strangeCoinPrice == 3,
                 $"번햄 사워 가격 연결이 잘못되었습니다: {burnhamSour.price}/{burnhamSour.strangeCoinPrice}");
-            Require(burnhamSour.requiredIceCount == 3,
-                $"번햄 사워 얼음 개수가 3개가 아닙니다: {burnhamSour.requiredIceCount}");
+            Require(burnhamSour.iceRequirement == IceRequirement.Required
+                    && burnhamSour.requiredIceCount == -1,
+                "번햄 사워 얼음 판정이 개수가 아닌 유무 기준이 아닙니다.");
             Require(Mathf.Abs(burnhamSour.expectedAbvPercent - 15f) < 0.01f,
                 $"번햄 사워 계산 도수가 15%가 아닙니다: {burnhamSour.expectedAbvPercent:0.##}%");
 
@@ -277,8 +279,8 @@ namespace Slainte.EditorTools
                     && recipe.evaluationGrade == CocktailRecipeEvaluationGrade.Mid)
                     midVariantCount++;
             }
-            Require(midVariantCount == 87,
-                $"숨은 Mid 판정 레시피가 87개가 아닙니다: {midVariantCount}개");
+            Require(midVariantCount == 73,
+                $"숨은 잔·얼음 Mid 판정 레시피가 73개가 아닙니다: {midVariantCount}개");
 
             GeneratedCocktailOrder order =
                 new CocktailOrderGenerator(recipes, null).GenerateRecipeOrder("rec_1001");
@@ -293,9 +295,8 @@ namespace Slainte.EditorTools
             CocktailComposition midComposition = BuildBurnhamSourComposition(items, "martini", true);
             CocktailOrderEvaluationResult midResult = evaluator.Evaluate(order, midComposition);
             Require(midResult.isSuccess
-                && midResult.requestedRecipeResult?.matchedRecipe?.evaluationGrade
-                    == CocktailRecipeEvaluationGrade.Mid,
-                "마티니 잔 변형이 숨은 Mid 레시피와 일치하지 않았습니다.");
+                && midResult.outcome == CocktailOrderEvaluationOutcome.MidGlass,
+                "마티니 잔 변형이 MidGlass로 판정되지 않았습니다.");
             Require(OrderEvaluationGrader.Resolve(midResult, null) == OrderEvaluationGrade.Mid,
                 "숨은 변형 레시피가 Mid로 판정되지 않았습니다.");
 
@@ -373,8 +374,10 @@ namespace Slainte.EditorTools
                     $"구형 술장 에셋 {path}의 재고/가격이 기준 CSV와 다릅니다.");
                 linkedLegacyBottleCount++;
             }
-            Require(linkedLegacyBottleCount == 14,
-                $"새 재료에 연결된 구형 술장 에셋이 14개가 아닙니다: {linkedLegacyBottleCount}개");
+            int expectedLegacyBottleCount = shopCatalog.bottles.Count;
+            Require(linkedLegacyBottleCount == expectedLegacyBottleCount,
+                $"새 재료에 연결된 구형 술장 에셋 수가 기준 카탈로그와 다릅니다: "
+                + $"{linkedLegacyBottleCount}/{expectedLegacyBottleCount}개");
             LiquorBottleDef tropical = shopCatalog.bottles.FirstOrDefault(
                 bottle => bottle != null
                     && string.Equals(bottle.id, "item_1001", StringComparison.OrdinalIgnoreCase));
@@ -385,7 +388,7 @@ namespace Slainte.EditorTools
                 && Mathf.Approximately(tropical.MaxAmount, 6000f),
                 "열대 주스의 가격/이상한 동전 가격/기본 3병/최대 6병 연결이 잘못되었습니다.");
 
-            Debug.Log("[기획 CSV 에셋 검증] 통과: 재료·술장 15종, 주문 가능 21종, 숨은 Mid 87종, 가격/재고/도수/얼음/Good/Mid 판정");
+            Debug.Log("[기획 CSV 에셋 검증] 통과: 재료·술장 15종, 주문 가능 21종, 숨은 잔·얼음 Mid 73종, 가격/재고/도수/얼음/Good/Mid 판정");
         }
 
         public static PlanningCsvImportReport Import(
@@ -926,9 +929,7 @@ namespace Slainte.EditorTools
             recipe.allowExtraIngredients = false;
             recipe.glassId = ParseGlass(First(row, "잔 Glass", "glass"));
             recipe.iceRequirement = ParseIce(First(row, "얼음 유무 Ice", "ice"));
-            recipe.requiredIceCount = iceCountsByRecipe.TryGetValue(id, out int requiredIceCount)
-                ? requiredIceCount
-                : recipe.iceRequirement == IceRequirement.None ? 0 : -1;
+            recipe.requiredIceCount = recipe.iceRequirement == IceRequirement.None ? 0 : -1;
             recipe.requiredTechnique = ParseTechnique(First(row, "제작 방식 Skill", "technique"));
             recipe.shakeIceRequirement =
                 (recipe.requiredTechnique & CocktailTechnique.Shake) != 0
@@ -1031,29 +1032,6 @@ namespace Slainte.EditorTools
                     }
                 }
 
-                CocktailTechnique technique = GetTechniqueVariant(source.id);
-                UpsertVariant(
-                    source,
-                    $"{source.id}__mid_technique_{technique.ToString().ToLowerInvariant()}",
-                    $"제조법 {technique}",
-                    variant =>
-                    {
-                        variant.requiredTechnique = technique;
-                        variant.shakeIceRequirement =
-                            (technique & CocktailTechnique.Shake) != 0
-                                ? variant.iceRequirement
-                                : IceRequirement.Any;
-                    },
-                    generatedVariantIds);
-                count++;
-
-                UpsertVariant(
-                    source,
-                    $"{source.id}__mid_ingredient",
-                    "지정 재료 변형",
-                    variant => ApplyIngredientVariant(source.id, variant),
-                    generatedVariantIds);
-                count++;
             }
 
             for (int number = 1014; number <= 1021; number++)
@@ -1110,7 +1088,7 @@ namespace Slainte.EditorTools
             variant.allowExtraIngredients = source.allowExtraIngredients;
             variant.glassId = source.glassId;
             variant.iceRequirement = source.iceRequirement;
-            variant.requiredIceCount = source.requiredIceCount;
+            variant.requiredIceCount = source.iceRequirement == IceRequirement.None ? 0 : -1;
             variant.shakeIceRequirement = source.shakeIceRequirement;
             variant.requiredTechnique = source.requiredTechnique;
             variant.abvOverridePercent = source.abvOverridePercent;
@@ -1148,87 +1126,6 @@ namespace Slainte.EditorTools
             }
 
             return result;
-        }
-
-        private static CocktailTechnique GetTechniqueVariant(string recipeId)
-        {
-            return recipeId switch
-            {
-                "rec_1001" => CocktailTechnique.Stir,
-                "rec_1002" => CocktailTechnique.Stir,
-                "rec_1003" => CocktailTechnique.Shake,
-                "rec_1004" => CocktailTechnique.Stir,
-                "rec_1005" => CocktailTechnique.Build,
-                "rec_1006" => CocktailTechnique.Build,
-                "rec_1007" => CocktailTechnique.Shake,
-                _ => CocktailTechnique.None
-            };
-        }
-
-        private static void ApplyIngredientVariant(string recipeId, CocktailRecipeDef recipe)
-        {
-            switch (recipeId)
-            {
-                case "rec_1001":
-                    ReplaceIngredient(recipe, "item_1011", "item_1010");
-                    break;
-                case "rec_1002":
-                case "rec_1003":
-                    AddIngredient(recipe, "item_1002", 15f);
-                    break;
-                case "rec_1004":
-                    ReplaceIngredient(recipe, "item_1010", "item_1012");
-                    break;
-                case "rec_1005":
-                    ReplaceIngredient(recipe, "item_1011", "item_1010");
-                    break;
-                case "rec_1006":
-                    SetIngredientAmount(recipe, "item_1005", 60f);
-                    break;
-                case "rec_1007":
-                    recipe.ingredients.RemoveAll(ingredient =>
-                        ingredient != null
-                        && string.Equals(ingredient.itemId, "item_1003", StringComparison.OrdinalIgnoreCase));
-                    break;
-            }
-        }
-
-        private static void ReplaceIngredient(CocktailRecipeDef recipe, string oldId, string newId)
-        {
-            for (int i = 0; i < recipe.ingredients.Count; i++)
-            {
-                CocktailRecipeIngredientDef ingredient = recipe.ingredients[i];
-                if (ingredient != null
-                    && string.Equals(ingredient.itemId, oldId, StringComparison.OrdinalIgnoreCase))
-                {
-                    ingredient.itemId = newId;
-                    return;
-                }
-            }
-        }
-
-        private static void AddIngredient(CocktailRecipeDef recipe, string itemId, float targetMl)
-        {
-            recipe.ingredients.Add(new CocktailRecipeIngredientDef
-            {
-                itemId = itemId,
-                targetMl = targetMl,
-                toleranceMl = recipe.toleranceMl
-            });
-        }
-
-        private static void SetIngredientAmount(CocktailRecipeDef recipe, string itemId, float targetMl)
-        {
-            for (int i = 0; i < recipe.ingredients.Count; i++)
-            {
-                CocktailRecipeIngredientDef ingredient = recipe.ingredients[i];
-                if (ingredient != null
-                    && string.Equals(ingredient.itemId, itemId, StringComparison.OrdinalIgnoreCase))
-                {
-                    ingredient.targetMl = targetMl;
-                    return;
-                }
-            }
         }
 
         private static void RecalculateTotalRange(CocktailRecipeDef recipe)

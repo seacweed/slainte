@@ -33,8 +33,12 @@ MonoBehaviour:
     text: "\uC0C8\uD07C, \uC9DC\uB9BF. \uCD5C\uACE0\uC57C!"
     nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
   feedbackLinesMid: []
-  feedbackLinesBad: []
+  feedbackLinesBad:
+  - speakerName: F54
+    text: "\uB0B4\uAC00 \uCC3E\uB358 \uCE5C\uAD6C\uAC00 \uC544\uB2C8\uC57C"
+    nameColor: {r: 0.1882353, g: 0.5882353, b: 1, a: 1}
   authoredFeedback: 63
+  intentionallySilentFeedback: 0
   feedbackLinesMidIce:
   - speakerName: F54
     text: "\uC5BC\uC74C? \uC774\uBC88\uC5D4 \uC911\uC694\uCE58 \uC54A\uC544"

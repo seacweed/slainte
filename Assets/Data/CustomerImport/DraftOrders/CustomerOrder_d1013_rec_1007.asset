@@ -40,6 +40,7 @@ MonoBehaviour:
       \uAC00\uC838\uC8FC\uAC8C"
     nameColor: {r: 1, g: 1, b: 1, a: 1}
   authoredFeedback: 63
+  intentionallySilentFeedback: 0
   feedbackLinesMidIce:
   - speakerName: "\uB370\uBBF8\uC2A4"
     text: "\uC5BC\uC74C\uC740 \uC77C\uBD80\uB7EC \uBE80 \uAC74\uAC00?"

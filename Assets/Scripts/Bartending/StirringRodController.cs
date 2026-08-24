@@ -27,6 +27,10 @@ namespace Slainte.Bartending
         [SerializeField] private float maxInjectedSpeed = 2.5f;
         [SerializeField] private float stirMinimumSpeed = 0.04f;
         [SerializeField] private float stirMinimumAngularSpeed = 5f;
+        [SerializeField, Min(0.05f)] private float stirAttemptDuration = 0.35f;
+        [SerializeField, Min(0.1f)] private float stirCompletionDuration = 1f;
+        [SerializeField, Range(0f, 1f)] private float maximumCompositionDeviation = 0.1f;
+        [SerializeField, Min(0.05f)] private float compositionCheckInterval = 0.2f;
 
         [Header("Generated Visual Fallback")]
         [SerializeField] private float generatedVisualLength = 3f;
@@ -48,6 +52,12 @@ namespace Slainte.Bartending
         private float previousAngle;
         private float rodAngularVelocity;
         private Vector3 pointerOffset;
+        private VesselLiquidTracker activeStirVessel;
+        private int activeStirContentVersion = -1;
+        private float activeStirTime;
+        private float nextCompositionCheckTime;
+        private float lastStirSampleFixedTime = float.MinValue;
+        private bool stirAttemptRecorded;
 
         public GameObject GameObject => gameObject;
         public bool IsPickedUp => currentState == StirringRodState.PickedUp || currentState == StirringRodState.Rotating;
@@ -77,6 +87,7 @@ namespace Slainte.Bartending
         private void OnDisable()
         {
             BartendingPointerAnchor.Release(this);
+            ResetStirProgress();
         }
 
         private void Update()
@@ -210,6 +221,7 @@ namespace Slainte.Bartending
         {
             currentState = StirringRodState.Idle;
             pointerOffset = Vector3.zero;
+            ResetStirProgress();
             RestoreSortingOrder();
         }
 
@@ -352,6 +364,60 @@ namespace Slainte.Bartending
 
             if (other.TryGetComponent(out LiquidReaction reaction))
                 reaction.WakeUp();
+
+            RegisterStirActivity(particle.VesselOwner);
+        }
+
+        private void RegisterStirActivity(VesselLiquidTracker vessel)
+        {
+            if (vessel == null)
+                return;
+
+            if (activeStirVessel != vessel
+                || activeStirContentVersion != vessel.ContentVersion)
+            {
+                activeStirVessel = vessel;
+                activeStirContentVersion = vessel.ContentVersion;
+                activeStirTime = 0f;
+                nextCompositionCheckTime = Time.unscaledTime;
+                lastStirSampleFixedTime = float.MinValue;
+                stirAttemptRecorded = false;
+            }
+
+            if (Mathf.Approximately(lastStirSampleFixedTime, Time.fixedTime))
+                return;
+
+            lastStirSampleFixedTime = Time.fixedTime;
+            activeStirTime += Time.fixedDeltaTime;
+            if (activeStirTime >= stirAttemptDuration && !stirAttemptRecorded)
+            {
+                vessel.MarkContentsAsStirAttempted();
+                stirAttemptRecorded = true;
+            }
+
+            if (activeStirTime < stirCompletionDuration
+                || Time.unscaledTime < nextCompositionCheckTime)
+            {
+                return;
+            }
+
+            nextCompositionCheckTime = Time.unscaledTime
+                + Mathf.Max(0.05f, compositionCheckInterval);
+            if (vessel.CalculateMeanCompositionDeviation()
+                <= Mathf.Clamp01(maximumCompositionDeviation))
+            {
+                vessel.MarkContentsAsStirred();
+            }
+        }
+
+        private void ResetStirProgress()
+        {
+            activeStirVessel = null;
+            activeStirContentVersion = -1;
+            activeStirTime = 0f;
+            nextCompositionCheckTime = 0f;
+            lastStirSampleFixedTime = float.MinValue;
+            stirAttemptRecorded = false;
         }
 
         private void EnsureRigidbody()

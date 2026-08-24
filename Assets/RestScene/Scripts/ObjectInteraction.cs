@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Slainte.Business;
 using Slainte.TV;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -117,6 +118,16 @@ public class ObjectInteraction : MonoBehaviour, IPointerEnterHandler, IPointerEx
     public bool IsInteractionAvailable(out string reason)
     {
         reason = string.Empty;
+        if (targetUIManager is TVUIManager)
+        {
+            BusinessOrderFlowSettings settings = BusinessOrderFlowSettings.LoadDefault();
+            if (settings == null || !settings.IsTVUnlocked(GameProgress.Instance))
+            {
+                reason = "야간근무 에피소드 완료 후 TV를 이용할 수 있습니다.";
+                return false;
+            }
+        }
+
         if (!disableWhenRestShopRestricted)
             return true;
 

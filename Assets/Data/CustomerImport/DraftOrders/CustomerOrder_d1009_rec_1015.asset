@@ -35,9 +35,30 @@ MonoBehaviour:
     text: "\uC0C1\uC778\uB4E4\uC774 \uBB58 \uC880 \uC544\uB294\uAD70\uC694"
     nameColor: {r: 1, g: 1, b: 1, a: 1}
   feedbackLinesMid: []
-  feedbackLinesBad: []
+  feedbackLinesBad:
+  - speakerName: "\uC694\uB9AC\uCE74"
+    text: "\uC74C..\uC624\uB298\uC740 \uCEE8\uB514\uC158\uC774 \uC880 \uBCC4\uB860\uAC00
+      \uBCF4\uB124\uC694"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
   authoredFeedback: 63
-  feedbackLinesMidIce: []
-  feedbackLinesMidGlass: []
-  feedbackLinesMidIceGlass: []
-  feedbackLinesMidWrongMenu: []
+  intentionallySilentFeedback: 0
+  feedbackLinesMidIce:
+  - speakerName: "\uC694\uB9AC\uCE74"
+    text: "\uC5BC\uC74C\uC740 \uC880 \uC544\uC27D\uC9C0\uB9CC, \uD655\uC2E4\uD788
+      \uCD94\uCC9C\uD560\uB9CC \uD558\uB124\uC694"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidGlass:
+  - speakerName: "\uC694\uB9AC\uCE74"
+    text: "\uC794\uC740 \uC880 \uC544\uC27D\uC9C0\uB9CC, \uD655\uC2E4\uD788 \uCD94\uCC9C\uD560\uB9CC
+      \uD558\uB124\uC694"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidIceGlass:
+  - speakerName: "\uC694\uB9AC\uCE74"
+    text: "\uC794\uC774\uB791 \uC5BC\uC74C\uC740 \uC880 \uC544\uC27D\uC9C0\uB9CC,
+      \uB9DB\uC740 \uCD94\uCC9C\uD560\uB9CC \uD558\uB124\uC694"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidWrongMenu:
+  - speakerName: "\uC694\uB9AC\uCE74"
+    text: "\uC0DD\uAC01\uBCF4\uB2E8 \uC544\uC27D\uC9C0\uB9CC \uB9C8\uC2E4\uB9CC\uC740
+      \uD558\uB124\uC694"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}

@@ -40,7 +40,21 @@ MonoBehaviour:
       \uAC83 \uAC19\uB124"
     nameColor: {r: 1, g: 1, b: 1, a: 1}
   authoredFeedback: 63
-  feedbackLinesMidIce: []
-  feedbackLinesMidGlass: []
-  feedbackLinesMidIceGlass: []
-  feedbackLinesMidWrongMenu: []
+  intentionallySilentFeedback: 0
+  feedbackLinesMidIce:
+  - speakerName: N8
+    text: "\uC5BC\uC74C\uC774 \uBB34\uC784\uC2B9\uCC28 \uD588\uC796\uC544?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidGlass:
+  - speakerName: N8
+    text: "\uBABB\uBCF4\uB358 \uC794\uC5D0 \uB2F4\uACA8 \uC788\uC796\uC544?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidIceGlass:
+  - speakerName: N8
+    text: "\uBABB\uBCF4\uB358 \uC794\uC5D0 \uC5BC\uC74C\uAE4C\uC9C0 \uB2F4\uACA8
+      \uC788\uC796\uC544?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidWrongMenu:
+  - speakerName: N8
+    text: "\uBABB\uBCF4\uB358 \uBA54\uB274\uC778\uB370?"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}

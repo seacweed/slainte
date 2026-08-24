@@ -303,15 +303,12 @@ namespace Slainte.Bartending
                 if (definition == null || string.IsNullOrWhiteSpace(definition.StableId))
                     continue;
 
-                Sprite[] sprites = definition.cabinetSprite != null
-                    ? new[] { definition.cabinetSprite }
-                    : Array.Empty<Sprite>();
                 ToolCabinetItemView view = ToolCabinetItemView.Create(
                     parent,
                     this,
                     definition.StableId,
                     definition.displayName,
-                    sprites,
+                    definition.GetCabinetLayers(),
                     slotIndex++,
                     CabinetGlassOrder.Length,
                     false);

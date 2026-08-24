@@ -45,6 +45,8 @@ namespace Slainte.EditorTools
                     CustomerPlanningCsvImporter.NightPatrolAttributeTag,
                     StringComparison.OrdinalIgnoreCase),
                 "특정 손님 방송이 야간순찰 속성을 대상으로 하지 않습니다.");
+            Require(database.FindById("district_9_patrol").exclusiveCustomerPool,
+                "야간순찰 방송이 전용 손님 풀로 설정되지 않았습니다.");
             Require(HasCustomerTargetTag(
                     CustomerPlanningCsvImporter.NightPatrolAttributeTag),
                 "프로젝트에 야간순찰 TV 대상 손님 데이터가 없습니다.");

@@ -27,7 +27,7 @@ MonoBehaviour:
   allowExtraIngredients: 0
   glassId: rock
   iceRequirement: 2
-  requiredIceCount: 3
+  requiredIceCount: -1
   shakeIceRequirement: 2
   requiredTechnique: 4
   abvOverridePercent: 30

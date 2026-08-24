@@ -21,7 +21,7 @@ MonoBehaviour:
   tags:
   - "customer_attribute:\uCE74\uC0AC_\uC544\uC774\uB4E4_F54"
   members:
-  - characterKey: cartha
+  - characterKey: kartha
     slotIndex: -1
     expressionKeyMid: mid
     expressionKeyGood: good
@@ -29,6 +29,7 @@ MonoBehaviour:
   weight: 3
   condition:
     minDay: 0
+    minMoney: 0
     requiredFlags: []
     blockedFlags: []
     prerequisiteEpisodeIds: []
@@ -39,6 +40,7 @@ MonoBehaviour:
   - enabled: 1
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags:
       - tl3_2_2_true
       blockedFlags: []
@@ -46,7 +48,7 @@ MonoBehaviour:
       requiredVars: []
       requiredCustomerAppearances: []
   maxDay: 0
-  reappearanceGroupKey: cartha
+  reappearanceGroupKey: kartha
   plannedOrderNames:
   - "\uD55C\uC5EC\uB984\uC758 \uC8FC\uC2A4"
   - "\uBE14\uB799 \uCEE4\uD53C"
@@ -56,6 +58,7 @@ MonoBehaviour:
     weight: 1
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags: []
       blockedFlags: []
       prerequisiteEpisodeIds: []
@@ -65,6 +68,7 @@ MonoBehaviour:
     weight: 1
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags: []
       blockedFlags: []
       prerequisiteEpisodeIds: []
@@ -74,6 +78,7 @@ MonoBehaviour:
     weight: 1
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags: []
       blockedFlags: []
       prerequisiteEpisodeIds: []

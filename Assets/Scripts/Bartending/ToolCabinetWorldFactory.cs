@@ -6,6 +6,7 @@ namespace Slainte.Bartending
     {
         private static readonly int[] JiggerOrders = { 10, 13 };
         private static readonly int[] ShakerOrders = { 10, 11, 14, 15, 16, 17 };
+        private static readonly int[] GlassOrders = { 10, 11, 14, 15 };
 
         public static IBartendingItem CreateTool(
             ToolDef definition,
@@ -31,21 +32,29 @@ namespace Slainte.Bartending
                         definition.displayName,
                         Vector3.zero,
                         renderLayer,
-                        sessionScale);
+                        sessionScale,
+                        settings);
                     instance = item?.GameObject;
                     if (item == null || instance == null)
                         return null;
 
-                    ConfigureLayeredVisuals(
+                    Sprite collisionReference = definition.kind == ToolKind.Jigger
+                        && definition.worldLayers != null
+                        && definition.worldLayers.Length > 1
+                            ? definition.worldLayers[1]
+                            : null;
+                    SpriteRenderer referenceRenderer = ConfigureLayeredVisuals(
                         instance,
                         definition.worldLayers,
                         definition.kind == ToolKind.Jigger ? JiggerOrders : ShakerOrders,
                         renderLayer,
                         definition.kind == ToolKind.CobblerShaker,
-                        definition.worldVisualOffset);
+                        definition.worldVisualOffset,
+                        collisionReference);
                     BartendingNativeSpriteSizer.TryMatchRootToSprite(
                         instance.transform,
-                        BartendingNativeSpriteSizer.FindReferenceRenderer(instance));
+                        referenceRenderer
+                            ?? BartendingNativeSpriteSizer.FindReferenceRenderer(instance));
                     instance.transform.localScale *= Mathf.Max(
                         0.05f,
                         definition.worldScale);
@@ -56,9 +65,13 @@ namespace Slainte.Bartending
                             instance.GetComponent<JiggerMeasureController>();
                         if (jigger == null)
                             jigger = instance.AddComponent<JiggerMeasureController>();
-                        jigger.Configure(
-                            definition.primaryCapacityMl,
-                            definition.secondaryCapacityMl);
+                        jigger.Configure();
+                        if (referenceRenderer != null)
+                        {
+                            jigger.ApplyCollisionProfile(
+                                JiggerCollisionProfiles.Standard30Ml,
+                                referenceRenderer);
+                        }
                     }
                     else
                     {
@@ -120,32 +133,41 @@ namespace Slainte.Bartending
                 definition.displayName,
                 Vector3.zero,
                 renderLayer,
-                sessionScale);
+                sessionScale,
+                settings);
             GlassController glass = item as GlassController;
             instance = glass != null ? glass.gameObject : null;
-            if (glass == null || definition.worldSprite == null)
-                return glass;
+            if (glass == null)
+                return null;
 
             glass.ConfigureServingIdentity(definition.glassId, definition.capacityMl);
 
-            DisableExistingVisuals(glass.gameObject);
-            GameObject visualObject = new GameObject("__ToolCabinetGlassVisual");
-            visualObject.transform.SetParent(glass.transform, false);
-            visualObject.layer = renderLayer;
-            SpriteRenderer renderer = visualObject.AddComponent<SpriteRenderer>();
-            renderer.sprite = definition.worldSprite;
-            renderer.sortingOrder = 13;
+            Sprite[] worldLayers = definition.GetWorldLayers();
+            if (worldLayers.Length == 0)
+                return glass;
+
+            SpriteRenderer referenceRenderer = ConfigureLayeredVisuals(
+                glass.gameObject,
+                worldLayers,
+                GlassOrders,
+                renderLayer,
+                false,
+                Vector2.zero,
+                definition.GetCollisionReferenceSprite(),
+                "__ToolCabinetGlassLayer_");
+            if (referenceRenderer == null)
+                return glass;
 
             if (GlassCollisionProfiles.TryGetByGlassId(
                     definition.glassId,
                     out GlassCollisionProfileDefinition profile))
             {
-                glass.ApplyCollisionProfile(profile, renderer);
+                glass.ApplyCollisionProfile(profile, referenceRenderer);
             }
 
             BartendingNativeSpriteSizer.TryMatchRootToSprite(
                 glass.transform,
-                renderer);
+                referenceRenderer);
             glass.transform.localScale *= Mathf.Max(
                 0.05f,
                 definition.worldScale);
@@ -194,27 +216,34 @@ namespace Slainte.Bartending
             return root;
         }
 
-        private static void ConfigureLayeredVisuals(
+        private static SpriteRenderer ConfigureLayeredVisuals(
             GameObject root,
             Sprite[] sprites,
             int[] sortingOrders,
             int renderLayer,
             bool markShakerLayers,
-            Vector2 visualOffset)
+            Vector2 visualOffset,
+            Sprite referenceSprite = null,
+            string layerNamePrefix = "__ToolCabinetLayer_")
         {
             DisableExistingVisuals(root);
+            SpriteRenderer firstRenderer = null;
+            SpriteRenderer referenceRenderer = null;
             for (int i = 0; i < sprites.Length; i++)
             {
                 Sprite sprite = sprites[i];
                 if (sprite == null)
                     continue;
 
-                GameObject layerObject = new GameObject("__ToolCabinetLayer_" + i);
+                GameObject layerObject = new GameObject(layerNamePrefix + i);
                 layerObject.transform.SetParent(root.transform, false);
                 layerObject.transform.localPosition = visualOffset;
                 layerObject.layer = renderLayer;
                 SpriteRenderer renderer = layerObject.AddComponent<SpriteRenderer>();
                 renderer.sprite = sprite;
+                firstRenderer ??= renderer;
+                if (sprite == referenceSprite)
+                    referenceRenderer = renderer;
                 renderer.sortingOrder = i < sortingOrders.Length
                     ? sortingOrders[i]
                     : 10 + i;
@@ -232,6 +261,8 @@ namespace Slainte.Bartending
                                 : ShakerVisualRole.Body);
                 }
             }
+
+            return referenceRenderer ?? firstRenderer;
         }
 
         private static void DisableExistingVisuals(GameObject root)
@@ -245,27 +276,64 @@ namespace Slainte.Bartending
     [DisallowMultipleComponent]
     public sealed class JiggerMeasureController : MonoBehaviour
     {
-        private float smallCapacityMl = 30f;
-        private float largeCapacityMl = 45f;
-        private bool useLargeSide = true;
-        private Collider2D pointerCollider;
+        private const string ContentTriggerPrefix = "__JiggerContentTrigger_";
         private BeakerController beaker;
         private VesselLiquidTracker tracker;
         private BoxCollider2D capacityStop;
         private bool capacityStopClosed;
+        private JiggerCollisionProfileDefinition activeCollisionProfile;
+        private SpriteRenderer collisionVisual;
 
-        public float ActiveCapacityMl => useLargeSide ? largeCapacityMl : smallCapacityMl;
+        public float ActiveCapacityMl => JiggerCollisionProfiles.FixedCapacityMl;
+        public JiggerCollisionProfileDefinition ActiveCollisionProfile =>
+            activeCollisionProfile;
+        public SpriteRenderer CollisionVisual => collisionVisual;
 
-        public void Configure(float smallMl, float largeMl)
+        public void Configure()
         {
-            smallCapacityMl = Mathf.Max(1f, smallMl);
-            largeCapacityMl = Mathf.Max(smallCapacityMl, largeMl);
             RefreshName();
+        }
+
+        public void ApplyCollisionProfile(
+            JiggerCollisionProfileDefinition profile,
+            SpriteRenderer visual)
+        {
+            if (profile == null || visual == null || visual.sprite == null)
+                return;
+
+            activeCollisionProfile = profile;
+            collisionVisual = visual;
+            beaker = GetComponent<BeakerController>();
+            if (beaker == null)
+                return;
+
+            Vector2[] spritePoints = profile.BuildEdgePath(visual.sprite);
+            Vector2[] rootPoints = new Vector2[spritePoints.Length];
+            for (int i = 0; i < spritePoints.Length; i++)
+            {
+                Vector3 worldPoint = visual.transform.TransformPoint(spritePoints[i]);
+                rootPoints[i] = transform.InverseTransformPoint(worldPoint);
+            }
+
+            float spriteRadius = profile.GetEdgeRadiusLocal(visual.sprite);
+            Vector3 radiusStartWorld = visual.transform.TransformPoint(Vector3.zero);
+            Vector3 radiusEndWorld = visual.transform.TransformPoint(
+                new Vector3(spriteRadius, 0f, 0f));
+            float rootRadius = Vector2.Distance(
+                transform.InverseTransformPoint(radiusStartWorld),
+                transform.InverseTransformPoint(radiusEndWorld));
+            beaker.ConfigureCustomCollisionGeometry(
+                rootPoints,
+                rootRadius,
+                ContainsInteractionPoint);
+
+            ConfigureContentTriggers(profile, visual);
+            tracker = beaker.LiquidTracker;
+            tracker?.RefreshCollisionGeometry();
         }
 
         private void Start()
         {
-            pointerCollider = GetComponent<Collider2D>();
             beaker = GetComponent<BeakerController>();
             tracker = beaker != null ? beaker.LiquidTracker : GetComponent<VesselLiquidTracker>();
             CreateCapacityStop();
@@ -275,24 +343,66 @@ namespace Slainte.Bartending
         private void Update()
         {
             RefreshCapacityStop();
-            if (!Input.GetMouseButtonDown(1)
-                || pointerCollider == null
-                || !BartendingViewport.TryGetPointerWorldPosition(
-                    Camera.main,
-                    Input.mousePosition,
-                    out Vector3 world)
-                || !pointerCollider.OverlapPoint(world))
+        }
+
+        private bool ContainsInteractionPoint(Vector2 worldPoint)
+        {
+            return activeCollisionProfile != null
+                && collisionVisual != null
+                && collisionVisual.sprite != null
+                && activeCollisionProfile.ContainsInteractionPoint(
+                    collisionVisual.sprite,
+                    collisionVisual.transform,
+                    worldPoint);
+        }
+
+        private void ConfigureContentTriggers(
+            JiggerCollisionProfileDefinition profile,
+            SpriteRenderer visual)
+        {
+            int triggerCount = profile.ContentTriggerPixels.Count;
+            for (int i = 0; i < triggerCount; i++)
             {
-                return;
+                string triggerName = ContentTriggerPrefix + i;
+                Transform triggerTransform = visual.transform.Find(triggerName);
+                if (triggerTransform == null)
+                {
+                    GameObject triggerObject = new GameObject(triggerName);
+                    triggerObject.layer = gameObject.layer;
+                    triggerTransform = triggerObject.transform;
+                    triggerTransform.SetParent(visual.transform, false);
+                }
+
+                triggerTransform.localPosition = Vector3.zero;
+                triggerTransform.localRotation = Quaternion.identity;
+                triggerTransform.localScale = Vector3.one;
+                triggerTransform.gameObject.SetActive(true);
+
+                BoxCollider2D trigger = triggerTransform.GetComponent<BoxCollider2D>();
+                if (trigger == null)
+                    trigger = triggerTransform.gameObject.AddComponent<BoxCollider2D>();
+
+                Rect localRect = profile.BuildContentTrigger(visual.sprite, i);
+                trigger.enabled = true;
+                trigger.isTrigger = true;
+                trigger.offset = localRect.center;
+                trigger.size = localRect.size;
             }
 
-            if (beaker != null && beaker.IsPickedUp)
-                return;
-            if (tracker != null && tracker.BuildComposition().TotalVolumeMl > 0.05f)
-                return;
+            for (int i = 0; i < visual.transform.childCount; i++)
+            {
+                Transform child = visual.transform.GetChild(i);
+                if (!child.name.StartsWith(ContentTriggerPrefix))
+                    continue;
 
-            useLargeSide = !useLargeSide;
-            RefreshName();
+                string suffix = child.name.Substring(ContentTriggerPrefix.Length);
+                if (!int.TryParse(suffix, out int index)
+                    || index < 0
+                    || index >= triggerCount)
+                {
+                    child.gameObject.SetActive(false);
+                }
+            }
         }
 
         private void CreateCapacityStop()
@@ -303,13 +413,36 @@ namespace Slainte.Bartending
             GameObject stop = new GameObject("__JiggerCapacityStop");
             stop.layer = gameObject.layer;
             stop.transform.SetParent(transform, false);
-            stop.transform.localPosition = new Vector3(
-                0f,
-                beaker.colliderYOffset + beaker.height * 0.5f - 0.03f,
-                0f);
             capacityStop = stop.AddComponent<BoxCollider2D>();
             capacityStop.isTrigger = false;
-            capacityStop.size = new Vector2(Mathf.Max(0.1f, beaker.topWidth * 0.92f), 0.06f);
+            if (activeCollisionProfile != null
+                && collisionVisual != null
+                && collisionVisual.sprite != null)
+            {
+                Rect spriteRect = activeCollisionProfile.BuildCapacityStop(
+                    collisionVisual.sprite);
+                Vector2 rootMin = transform.InverseTransformPoint(
+                    collisionVisual.transform.TransformPoint(spriteRect.min));
+                Vector2 rootMax = transform.InverseTransformPoint(
+                    collisionVisual.transform.TransformPoint(spriteRect.max));
+                stop.transform.localPosition = new Vector3(
+                    (rootMin.x + rootMax.x) * 0.5f,
+                    (rootMin.y + rootMax.y) * 0.5f,
+                    0f);
+                capacityStop.size = new Vector2(
+                    Mathf.Max(0.01f, Mathf.Abs(rootMax.x - rootMin.x)),
+                    Mathf.Max(0.01f, Mathf.Abs(rootMax.y - rootMin.y)));
+            }
+            else
+            {
+                stop.transform.localPosition = new Vector3(
+                    0f,
+                    beaker.colliderYOffset + beaker.height * 0.5f - 0.03f,
+                    0f);
+                capacityStop.size = new Vector2(
+                    Mathf.Max(0.1f, beaker.topWidth * 0.92f),
+                    0.06f);
+            }
             stop.SetActive(false);
             tracker?.RefreshCollisionGeometry();
         }
@@ -343,7 +476,7 @@ namespace Slainte.Bartending
 
         private void RefreshName()
         {
-            gameObject.name = "Jigger_" + ActiveCapacityMl.ToString("0") + "ml";
+            gameObject.name = "Jigger_30ml";
         }
     }
 

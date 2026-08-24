@@ -1,4 +1,5 @@
 using System.Collections;
+using Slainte.Business;
 using UnityEngine;
 
 namespace Slainte.TV
@@ -11,6 +12,10 @@ namespace Slainte.TV
         {
             while (GameProgress.Instance == null || DataManager.Instance == null)
                 yield return null;
+
+            BusinessOrderFlowSettings settings = BusinessOrderFlowSettings.LoadDefault();
+            if (settings == null || !settings.IsTVUnlocked(GameProgress.Instance))
+                yield break;
 
             bool hadForecast = !string.IsNullOrWhiteSpace(
                 GameProgress.Instance.TVForecastBroadcastId);

@@ -83,79 +83,15 @@ namespace Slainte.Business
                 return CraftingJobResult.Good;
 
             CocktailOrderEvaluationResult evaluation = result.evaluation;
-            CocktailEvaluationResult requested = evaluation?.requestedRecipeResult;
-            CocktailEvaluationResult detected = evaluation?.detectedRecipeResult;
-            CocktailRecipe baseRecipe = evaluation?.order?.requestedRecipe;
-            CocktailRecipe matchedRecipe = requested?.matchedRecipe;
-
-            if (IsWrongMenu(
-                    result.requestedRecipeId,
-                    evaluation,
-                    requested,
-                    detected))
-                return CraftingJobResult.MidWrongMenu;
-
-            bool isRequestedVariant = IsRequestedRecipeFamily(
-                matchedRecipe,
-                result.requestedRecipeId);
-            bool iceInvalid = requested != null && !requested.iceValid;
-            bool glassInvalid = requested != null && !requested.glassValid;
-            if (isRequestedVariant && baseRecipe != null && matchedRecipe != null)
+            return evaluation?.outcome switch
             {
-                iceInvalid |= matchedRecipe.iceRequirement != baseRecipe.iceRequirement;
-                glassInvalid |= !string.Equals(
-                    matchedRecipe.glassId,
-                    baseRecipe.glassId,
-                    StringComparison.OrdinalIgnoreCase);
-            }
-            if (iceInvalid && glassInvalid)
-                return CraftingJobResult.MidIceGlass;
-            if (iceInvalid)
-                return CraftingJobResult.MidIce;
-            if (glassInvalid)
-                return CraftingJobResult.MidGlass;
-
-            return CraftingJobResult.Bad;
-        }
-
-        private static bool IsWrongMenu(
-            string requestedRecipeId,
-            CocktailOrderEvaluationResult evaluation,
-            CocktailEvaluationResult requested,
-            CocktailEvaluationResult detected)
-        {
-            CocktailOrderType? orderType = evaluation?.order?.orderType;
-            if ((orderType == CocktailOrderType.TasteOrder
-                    || orderType == CocktailOrderType.MoodOrder)
-                && evaluation != null
-                && !evaluation.isSuccess
-                && detected != null
-                && detected.isSuccess)
-            {
-                return true;
-            }
-
-            return requested != null
-                && !requested.isSuccess
-                && detected != null
-                && detected.isSuccess
-                && detected.matchedRecipe != null
-                && !IsRequestedRecipeFamily(detected.matchedRecipe, requestedRecipeId);
-        }
-
-        private static bool IsRequestedRecipeFamily(
-            CocktailRecipe recipe,
-            string requestedRecipeId)
-        {
-            return recipe != null
-                && (string.Equals(
-                        recipe.id,
-                        requestedRecipeId,
-                        StringComparison.OrdinalIgnoreCase)
-                    || string.Equals(
-                        recipe.baseRecipeId,
-                        requestedRecipeId,
-                        StringComparison.OrdinalIgnoreCase));
+                CocktailOrderEvaluationOutcome.Good => CraftingJobResult.Good,
+                CocktailOrderEvaluationOutcome.MidIce => CraftingJobResult.MidIce,
+                CocktailOrderEvaluationOutcome.MidGlass => CraftingJobResult.MidGlass,
+                CocktailOrderEvaluationOutcome.MidIceGlass => CraftingJobResult.MidIceGlass,
+                CocktailOrderEvaluationOutcome.MidWrongMenu => CraftingJobResult.MidWrongMenu,
+                _ => CraftingJobResult.Bad
+            };
         }
     }
 

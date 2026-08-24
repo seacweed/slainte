@@ -27,7 +27,7 @@ MonoBehaviour:
   allowExtraIngredients: 0
   glassId: highball
   iceRequirement: 2
-  requiredIceCount: 4
+  requiredIceCount: -1
   shakeIceRequirement: 0
   requiredTechnique: 2
   abvOverridePercent: 8.4

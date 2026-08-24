@@ -36,8 +36,7 @@ namespace Slainte.Bartending
         public bool allowExtraIngredients;
         public string glassId;
         public IceRequirement iceRequirement = IceRequirement.Any;
-        [Tooltip("Exact serving-glass ice count. -1 keeps the legacy presence-only rule.")]
-        [Min(-1)] public int requiredIceCount = -1;
+        [HideInInspector] public int requiredIceCount = -1;
         public IceRequirement shakeIceRequirement = IceRequirement.Any;
         public CocktailTechnique requiredTechnique = CocktailTechnique.None;
         [Tooltip("0 이상이면 이 값을 사용하고, 음수이면 재료의 도수와 용량으로 계산합니다.")]
@@ -73,8 +72,10 @@ namespace Slainte.Bartending
                 toleranceMl = toleranceMl,
                 allowExtraIngredients = allowExtraIngredients,
                 glassId = glassId != null ? glassId.Trim() : string.Empty,
-                iceRequirement = iceRequirement,
-                requiredIceCount = requiredIceCount,
+                iceRequirement = IceRequirementRules.ResolvePresenceRule(
+                    iceRequirement,
+                    requiredIceCount),
+                requiredIceCount = -1,
                 shakeIceRequirement = shakeIceRequirement,
                 requiredTechnique = requiredTechnique,
                 icon = icon,

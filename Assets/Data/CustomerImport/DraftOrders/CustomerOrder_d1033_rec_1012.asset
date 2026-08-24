@@ -32,9 +32,26 @@ MonoBehaviour:
     text: "\uCEAC\uD558- \uC774\uAC70\uC9C0!"
     nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
   feedbackLinesMid: []
-  feedbackLinesBad: []
+  feedbackLinesBad:
+  - speakerName: F72
+    text: "\uB098\uB3C4 \uC544\uBB34\uAC70\uB098 \uB9C8\uC2DC\uB294 \uC0AC\uB78C\uC740
+      \uC544\uB2C8\uB77C\uACE0!"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
   authoredFeedback: 63
-  feedbackLinesMidIce: []
-  feedbackLinesMidGlass: []
-  feedbackLinesMidIceGlass: []
-  feedbackLinesMidWrongMenu: []
+  intentionallySilentFeedback: 0
+  feedbackLinesMidIce:
+  - speakerName: F72
+    text: "\uC5BC\uC74C\uC774 \uBE60\uC9C0\uB2C8\uAE4C \uC880 \uC544\uC27D\uAE34\uD558\uB124"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  feedbackLinesMidGlass:
+  - speakerName: F72
+    text: "\uC794\uC774 \uBC14\uB00C\uB2C8\uAE4C \uC880 \uC544\uC27D\uAE34\uD558\uB124"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  feedbackLinesMidIceGlass:
+  - speakerName: F72
+    text: "\uC5BC\uC74C\uC774\uB791 \uC794\uC774 \uC880 \uC544\uC27D\uAE34\uD558\uB124"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}
+  feedbackLinesMidWrongMenu:
+  - speakerName: F72
+    text: "\uC774\uAC74...\uB0B4\uAC00 \uC2DC\uD0A8\uAC8C \uC544\uB2CC \uAC70 \uAC19\uC740\uB370?"
+    nameColor: {r: 0.69803923, g: 0.99607843, b: 0.46666667, a: 1}

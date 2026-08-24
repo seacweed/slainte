@@ -24,31 +24,32 @@ MonoBehaviour:
   orderDialogueAuthored: 1
   lines:
   - speakerName: F73
-    text: "\uC870\uB2C8 \uB3C5\uC2A4...\uB2C8\uD2B8\uB85C \uC8FC\uBB38\uD560\uAC8C\uC694."
+    text: "\uC870\uB2C8 \uB3C5\uC2A4...\uB2C8\uD2B8\uB85C \uC8FC\uBB38\uD558\uC9C0."
     nameColor: {r: 1, g: 1, b: 1, a: 1}
   feedbackLinesGood:
   - speakerName: F73
-    text: "\uAE54\uB054\uD55C \uB2C8\uD2B8\uB124\uC694."
+    text: "\uAE54\uB054\uD55C \uB2C8\uD2B8\uAD70. \uD6CC\uB96D\uD574."
     nameColor: {r: 1, g: 1, b: 1, a: 1}
   feedbackLinesMid: []
   feedbackLinesBad:
   - speakerName: F73
-    text: "\uC81C\uAC00 \uC8FC\uBB38\uC744 \uC798\uBABB \uB9D0\uD588\uC5C8\uB098\uC694?"
+    text: "\uB0B4\uAC00 \uC8FC\uBB38\uC744 \uC798\uBABB \uB9D0\uD588\uC5C8\uB098?"
     nameColor: {r: 1, g: 1, b: 1, a: 1}
   authoredFeedback: 63
+  intentionallySilentFeedback: 0
   feedbackLinesMidIce:
   - speakerName: F73
-    text: "\uC74C...\uC5BC\uC74C\uC774...\uAD1C\uCC2E\uC544\uC694."
+    text: "\uC74C...\uC5BC\uC74C\uC774...\uC544\uB2C8\uC57C, \uB410\uC5B4."
     nameColor: {r: 1, g: 1, b: 1, a: 1}
   feedbackLinesMidGlass:
   - speakerName: F73
-    text: "\uC74C...\uC794\uC774...\uAD1C\uCC2E\uC544\uC694."
+    text: "\uC74C...\uC794\uC774...\uC544\uB2C8\uC57C, \uB410\uC5B4."
     nameColor: {r: 1, g: 1, b: 1, a: 1}
   feedbackLinesMidIceGlass:
   - speakerName: F73
-    text: "\uC74C...\uC5BC\uC74C\uD558\uACE0 \uC794\uC774...\uAD1C\uCC2E\uC544\uC694."
+    text: "\uC74C...\uC5BC\uC74C\uD558\uACE0 \uC794\uC774...\uC544\uB2C8\uC57C, \uB410\uC5B4."
     nameColor: {r: 1, g: 1, b: 1, a: 1}
   feedbackLinesMidWrongMenu:
   - speakerName: F73
-    text: "\uC74C...\uB9DB\uC774...\uAD1C\uCC2E\uC544\uC694."
+    text: "\uC74C...\uB9DB\uC774...\uC544\uB2C8\uC57C, \uB410\uC5B4."
     nameColor: {r: 1, g: 1, b: 1, a: 1}

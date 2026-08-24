@@ -29,6 +29,7 @@ MonoBehaviour:
   weight: 3
   condition:
     minDay: 0
+    minMoney: 0
     requiredFlags: []
     blockedFlags: []
     prerequisiteEpisodeIds: []
@@ -39,6 +40,7 @@ MonoBehaviour:
   - enabled: 1
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags:
       - sc2_1_true
       blockedFlags: []
@@ -47,6 +49,8 @@ MonoBehaviour:
       requiredCustomerAppearances: []
   maxDay: 0
   reappearanceGroupKey: sally
+  overridePaymentCurrency: 1
+  paymentCurrency: 1
   plannedOrderNames:
   - "\uC170\uC774\uB514"
   - "\uC544\uC774\uB9AC\uC2DC \uCEE4\uD53C"
@@ -55,6 +59,7 @@ MonoBehaviour:
     weight: 1
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags: []
       blockedFlags: []
       prerequisiteEpisodeIds: []
@@ -64,6 +69,7 @@ MonoBehaviour:
     weight: 1
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags: []
       blockedFlags: []
       prerequisiteEpisodeIds: []
@@ -73,6 +79,7 @@ MonoBehaviour:
     weight: 1
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags: []
       blockedFlags: []
       prerequisiteEpisodeIds: []
@@ -82,6 +89,7 @@ MonoBehaviour:
     weight: 1
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags: []
       blockedFlags: []
       prerequisiteEpisodeIds: []

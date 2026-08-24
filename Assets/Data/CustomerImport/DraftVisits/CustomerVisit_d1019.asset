@@ -29,6 +29,7 @@ MonoBehaviour:
   weight: 5
   condition:
     minDay: 0
+    minMoney: 0
     requiredFlags: []
     blockedFlags: []
     prerequisiteEpisodeIds: []
@@ -39,6 +40,7 @@ MonoBehaviour:
   - enabled: 1
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags: []
       blockedFlags: []
       prerequisiteEpisodeIds:
@@ -48,6 +50,7 @@ MonoBehaviour:
   - enabled: 0
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags:
       - sc2_1_false
       blockedFlags: []
@@ -56,6 +59,8 @@ MonoBehaviour:
       requiredCustomerAppearances: []
   maxDay: 0
   reappearanceGroupKey: vygor
+  overridePaymentCurrency: 1
+  paymentCurrency: 1
   plannedOrderNames:
   - "\uC170\uC774\uB514"
   - "\uAC13\uB85C\uB4DC"
@@ -65,6 +70,7 @@ MonoBehaviour:
     weight: 1
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags: []
       blockedFlags: []
       prerequisiteEpisodeIds: []
@@ -74,6 +80,7 @@ MonoBehaviour:
     weight: 1
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags: []
       blockedFlags: []
       prerequisiteEpisodeIds: []
@@ -83,6 +90,7 @@ MonoBehaviour:
     weight: 1
     condition:
       minDay: 0
+      minMoney: 0
       requiredFlags: []
       blockedFlags: []
       prerequisiteEpisodeIds: []

@@ -215,9 +215,16 @@ public static class BartendingSystemValidator
         CocktailComposition wrongGlass = new CocktailComposition();
         wrongGlass.Add(spirit, 50f);
         wrongGlass.SetServingStyle("highball", false);
-        CocktailEvaluationResult mid = evaluator.EvaluateRecipe(recipe.id, wrongGlass);
-        Assert(!mid.isSuccess && !mid.glassValid && mid.score >= 0.45f,
-            "잔 종류가 틀린 결과가 보통 판정 범위로 처리되지 않았습니다.");
+        GeneratedCocktailOrder wrongGlassOrder = new GeneratedCocktailOrder
+        {
+            orderType = CocktailOrderType.RecipeOrder,
+            requestedRecipeId = recipe.id,
+            requestedRecipe = recipe
+        };
+        CocktailOrderEvaluationResult mid =
+            new CocktailOrderEvaluator(evaluator).Evaluate(wrongGlassOrder, wrongGlass);
+        Assert(mid.outcome == CocktailOrderEvaluationOutcome.MidGlass,
+            "잔 종류가 틀린 결과가 MidGlass로 판정되지 않았습니다.");
 
         GeneratedCocktailOrder episodeOrder = new GeneratedCocktailOrder
         {

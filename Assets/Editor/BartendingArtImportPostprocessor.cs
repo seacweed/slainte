@@ -14,7 +14,8 @@ namespace Slainte.Editor
     public sealed class BartendingArtImportPostprocessor : AssetPostprocessor
     {
         public const string BottleRoot = "Assets/Art/Bartending/Bottles/";
-        public const string GlassRoot = "Assets/Art/Bartending/GlassCollisionTests/";
+        public const string GlassRoot = "Assets/Art/Bartending/Glasses/";
+        public const string LegacyGlassRoot = "Assets/Art/Bartending/GlassCollisionTests/";
         public const string ToolCabinetRoot = "Assets/Art/Bartending/ToolCabinet/";
 
         private void OnPreprocessTexture()
@@ -71,6 +72,7 @@ namespace Slainte.Editor
             string normalized = path.Replace('\\', '/');
             return normalized.StartsWith(BottleRoot, StringComparison.Ordinal)
                 || normalized.StartsWith(GlassRoot, StringComparison.Ordinal)
+                || normalized.StartsWith(LegacyGlassRoot, StringComparison.Ordinal)
                 || normalized.StartsWith(ToolCabinetRoot, StringComparison.Ordinal);
         }
 
@@ -112,17 +114,29 @@ namespace Slainte.Editor
 
         private static readonly string[] GlassFiles =
         {
-            "200coc.png",
-            "200rock.png",
-            "400high.png",
-            "400hurricane.png"
+            "cocktail_back_line.png",
+            "cocktail_back_white.png",
+            "cocktail_front_line.png",
+            "cocktail_front_white.png",
+            "highball_back_line.png",
+            "highball_back_white.png",
+            "highball_front_color.png",
+            "highball_front_white.png",
+            "hurricane_back_line.png",
+            "hurricane_back_white.png",
+            "hurricane_front_line.png",
+            "hurricane_front_white.png",
+            "rock_back_line.png",
+            "rock_back_white.png",
+            "rock_front_line.png",
+            "rock_front_white.png"
         };
 
         [MenuItem("Tools/Slainte/Validate Bartending Art Contract")]
         public static void ValidateFromMenu()
         {
             ValidateAllOrThrow();
-            Debug.Log("[BartendingArt] 43 bottle and 4 temporary-glass textures preserve the 310x590 source contract.");
+            Debug.Log("[BartendingArt] 43 bottle and 16 layered-glass textures preserve the 310x590 source contract.");
         }
 
         public static void ValidateAllOrThrow()
@@ -154,8 +168,8 @@ namespace Slainte.Editor
                     failures);
             }
 
-            if (validated != 47)
-                failures.Add($"Expected 47 textures but validated {validated}.");
+            if (validated != 59)
+                failures.Add($"Expected 59 textures but validated {validated}.");
 
             if (failures.Count > 0)
                 throw new InvalidOperationException(

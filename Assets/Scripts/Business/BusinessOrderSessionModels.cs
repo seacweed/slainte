@@ -40,6 +40,8 @@ namespace Slainte.Business
         public string ticketKey;
         public CocktailOrderType orderType = CocktailOrderType.RecipeOrder;
         public GameCurrency paymentCurrency = GameCurrency.Money;
+        public BusinessCustomerRewardProfile rewardProfile =
+            BusinessCustomerRewardProfile.Standard;
         public bool presentOrder = true;
         public bool presentFeedback = true;
         public bool applyProgressRewards = true;
@@ -61,6 +63,54 @@ namespace Slainte.Business
         Dissatisfied,
         Neutral,
         Satisfied
+    }
+
+    public enum BusinessCustomerRewardProfile
+    {
+        Standard,
+        BigFish
+    }
+
+    public static class BusinessCustomerRules
+    {
+        private const string BigFishCharacterKey = "big_fish";
+
+        public static GameCurrency ResolvePaymentCurrency(
+            CustomerVisitData visit,
+            GameCurrency fallback)
+        {
+            if (visit == null)
+                return fallback;
+            if (visit.overridePaymentCurrency)
+                return visit.paymentCurrency;
+
+            string attribute = visit.customerAttributeKey?.Trim();
+            return string.Equals(attribute, "아무개들", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(attribute, "F72", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(attribute, "셀리", StringComparison.OrdinalIgnoreCase)
+                    ? GameCurrency.StrangeCoin
+                    : fallback;
+        }
+
+        public static BusinessCustomerRewardProfile ResolveRewardProfile(
+            CustomerVisitData visit)
+        {
+            if (visit?.members != null)
+            {
+                for (int i = 0; i < visit.members.Count; i++)
+                {
+                    if (string.Equals(
+                            visit.members[i]?.characterKey,
+                            BigFishCharacterKey,
+                            StringComparison.OrdinalIgnoreCase))
+                    {
+                        return BusinessCustomerRewardProfile.BigFish;
+                    }
+                }
+            }
+
+            return BusinessCustomerRewardProfile.Standard;
+        }
     }
 
     public readonly struct BusinessOrderReward
@@ -102,33 +152,64 @@ namespace Slainte.Business
             int listedRecipePrice,
             BusinessOrderFlowSettings settings,
             float externalTipMultiplier = 1f,
-            int currentMoney = 0)
+            int currentMoney = 0,
+            BusinessCustomerRewardProfile rewardProfile =
+                BusinessCustomerRewardProfile.Standard)
         {
             CustomerMood mood = ResolveMood(grade);
             int baseRevenue;
             int penaltyAmount = 0;
+            int tipAmount;
             if (listedRecipePrice >= 0)
             {
                 int price = Mathf.Max(0, listedRecipePrice);
                 baseRevenue = price;
-                if (grade == OrderEvaluationGrade.Bad)
+                if (rewardProfile == BusinessCustomerRewardProfile.BigFish)
                 {
-                    float penaltyRate = settings != null ? Mathf.Max(0f, settings.badPenaltyRate) : 1.3f;
-                    int rawPenalty = Mathf.RoundToInt(price * penaltyRate);
-                    int moneyAfterCredit = Mathf.Max(0, currentMoney) + price;
-                    penaltyAmount = Mathf.Clamp(rawPenalty, 0, moneyAfterCredit);
+                    if (grade == OrderEvaluationGrade.Good)
+                    {
+                        float bonusRate = settings != null
+                            ? Mathf.Max(0f, settings.bigFishGoodBonusRate)
+                            : 2f;
+                        tipAmount = Mathf.RoundToInt(
+                            price * bonusRate * Mathf.Max(0f, externalTipMultiplier));
+                    }
+                    else
+                    {
+                        float penaltyRate = settings != null
+                            ? Mathf.Max(0f, settings.bigFishFailurePenaltyRate)
+                            : 3f;
+                        tipAmount = 0;
+                        penaltyAmount = Mathf.RoundToInt(price * penaltyRate);
+                    }
+                }
+                else
+                {
+                    if (grade == OrderEvaluationGrade.Bad)
+                    {
+                        float penaltyRate = settings != null
+                            ? Mathf.Max(0f, settings.badPenaltyRate)
+                            : 1.3f;
+                        penaltyAmount = Mathf.RoundToInt(price * penaltyRate);
+                    }
+
+                    float tipRate = settings != null ? settings.GetTipRate(mood) : 0f;
+                    tipAmount = Mathf.RoundToInt(
+                        price
+                        * Mathf.Clamp01(tipRate)
+                        * Mathf.Max(0f, externalTipMultiplier));
                 }
             }
             else
             {
                 baseRevenue = settings != null ? settings.GetMoneyReward(grade) : 0;
+                float tipRate = settings != null ? settings.GetTipRate(mood) : 0f;
+                tipAmount = Mathf.RoundToInt(
+                    Mathf.Max(0, baseRevenue)
+                    * Mathf.Clamp01(tipRate)
+                    * Mathf.Max(0f, externalTipMultiplier));
             }
 
-            float tipRate = settings != null ? settings.GetTipRate(mood) : 0f;
-            int tipAmount = Mathf.RoundToInt(
-                Mathf.Max(0, baseRevenue)
-                * Mathf.Clamp01(tipRate)
-                * Mathf.Max(0f, externalTipMultiplier));
             int reputationDelta = settings != null ? settings.GetReputationReward(mood) : 0;
             return new BusinessOrderReward(mood, baseRevenue, tipAmount, penaltyAmount, reputationDelta);
         }
@@ -173,25 +254,18 @@ namespace Slainte.Business
             CocktailOrderEvaluationResult result,
             BusinessOrderFlowSettings settings)
         {
-            float score = result?.requestedRecipeResult != null
-                ? result.requestedRecipeResult.score
-                : result?.detectedRecipeResult != null ? result.detectedRecipeResult.score : 0f;
-            float goodThreshold = settings != null ? settings.goodScoreThreshold : 0.8f;
-            float midThreshold = settings != null ? settings.midScoreThreshold : 0.45f;
+            if (result == null)
+                return OrderEvaluationGrade.Bad;
 
-            if (result != null
-                && result.isSuccess
-                && result.order?.orderType != CocktailOrderType.TasteOrder
-                && result.order?.orderType != CocktailOrderType.MoodOrder
-                && result.requestedRecipeResult?.matchedRecipe != null
-                && result.requestedRecipeResult.matchedRecipe.evaluationGrade
-                    == CocktailRecipeEvaluationGrade.Mid)
-                return OrderEvaluationGrade.Mid;
-
-            if (result != null && result.isSuccess && score >= goodThreshold)
-                return OrderEvaluationGrade.Good;
-
-            return score >= midThreshold ? OrderEvaluationGrade.Mid : OrderEvaluationGrade.Bad;
+            return result.outcome switch
+            {
+                CocktailOrderEvaluationOutcome.Good => OrderEvaluationGrade.Good,
+                CocktailOrderEvaluationOutcome.MidIce => OrderEvaluationGrade.Mid,
+                CocktailOrderEvaluationOutcome.MidGlass => OrderEvaluationGrade.Mid,
+                CocktailOrderEvaluationOutcome.MidIceGlass => OrderEvaluationGrade.Mid,
+                CocktailOrderEvaluationOutcome.MidWrongMenu => OrderEvaluationGrade.Mid,
+                _ => OrderEvaluationGrade.Bad
+            };
         }
     }
 

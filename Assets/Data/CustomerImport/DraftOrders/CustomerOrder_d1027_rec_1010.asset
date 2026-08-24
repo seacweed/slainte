@@ -37,10 +37,25 @@ MonoBehaviour:
   feedbackLinesMid: []
   feedbackLinesBad:
   - speakerName: "\uBE45-\uD53C\uC26C"
-    text: "\uD639\uC2DC \uC7A5\uC0AC\uD558\uAE30\uAC00 \uC2EB\uC740\uAC00?"
+    text: "\uAE30\uB300\uAC00 \uCEF8\uB098\uBCF4\uAD70...\uBB34\uC2A8 \uB9D0\uC774\uC9C0
+      \uC54C\uACA0\uC9C0?"
     nameColor: {r: 1, g: 1, b: 1, a: 1}
   authoredFeedback: 63
-  feedbackLinesMidIce: []
-  feedbackLinesMidGlass: []
-  feedbackLinesMidIceGlass: []
-  feedbackLinesMidWrongMenu: []
+  intentionallySilentFeedback: 0
+  feedbackLinesMidIce:
+  - speakerName: "\uBE45-\uD53C\uC26C"
+    text: "\uC5BC\uC74C\uC740 \uBE7C\uACE0\uC11C\uB77C\uB3C4 \uB098\uC058\uC9C0 \uC54A\uAD70"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidGlass:
+  - speakerName: "\uBE45-\uD53C\uC26C"
+    text: "\uC794\uC740 \uBE7C\uACE0\uC11C\uB77C\uB3C4 \uB098\uC058\uC9C0 \uC54A\uAD70"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidIceGlass:
+  - speakerName: "\uBE45-\uD53C\uC26C"
+    text: "\uD2C0\uB9B0 \uC794\uC5D0 \uC5BC\uC74C\uC740 \uBE7C\uACE0\uC11C\uB77C\uB3C4
+      \uB098\uC058\uC9C0 \uC54A\uAD70"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}
+  feedbackLinesMidWrongMenu:
+  - speakerName: "\uBE45-\uD53C\uC26C"
+    text: "\uB9DB\uB9CC\uC740 \uB098\uC058\uC9C0 \uC54A\uAD70"
+    nameColor: {r: 1, g: 1, b: 1, a: 1}

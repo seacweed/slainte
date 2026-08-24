@@ -12,23 +12,27 @@ namespace Slainte.Editor
 {
     public static class GlassCollisionProfileValidator
     {
-        private const string AssetRoot = "Assets/Art/Bartending/GlassCollisionTests/";
+        private const string AssetRoot = "Assets/Art/Bartending/Glasses/";
+        private const string DefinitionRoot = "Assets/Resources/Bartending/ToolCabinet/";
+        private const string SettingsPath =
+            "Assets/Resources/Bartending/BusinessBartendingSettings.asset";
         private const float FloatTolerance = 0.01f;
+        private static readonly int[] ExpectedLayerOrders = { 10, 11, 14, 15 };
 
         private static readonly Dictionary<string, ExpectedProfile> ExpectedProfiles = new(
             StringComparer.OrdinalIgnoreCase)
         {
-            { "200rock", new ExpectedProfile("rock", 200f) },
-            { "200coc", new ExpectedProfile("martini", 200f) },
-            { "400high", new ExpectedProfile("highball", 400f) },
-            { "400hurricane", new ExpectedProfile("hurricane", 400f) }
+            { "rock_front_line", new ExpectedProfile("rock", 200f) },
+            { "cocktail_front_line", new ExpectedProfile("martini", 200f) },
+            { "highball_front_white", new ExpectedProfile("highball", 400f) },
+            { "hurricane_front_line", new ExpectedProfile("hurricane", 400f) }
         };
 
-        [MenuItem("Tools/Slainte/Validate Temporary Glass Collision Profiles")]
+        [MenuItem("Tools/Slainte/Validate Layered Glass Collision Profiles")]
         public static void ValidateFromMenu()
         {
             ValidateAll();
-            Debug.Log("[GlassCollisionProfileValidator] All temporary glass profiles passed.");
+            Debug.Log("[GlassCollisionProfileValidator] All layered glass profiles passed.");
         }
 
         public static void RunCommandLine()
@@ -50,7 +54,7 @@ namespace Slainte.Editor
         {
             Require(
                 GlassCollisionProfiles.All.Count == ExpectedProfiles.Count,
-                "Exactly four temporary glass profiles are required.");
+                "Exactly four layered glass profiles are required.");
 
             for (int i = 0; i < GlassCollisionProfiles.All.Count; i++)
             {
@@ -61,6 +65,7 @@ namespace Slainte.Editor
 
             ValidatePlanningRecipeCapacity();
             ValidateProductionFallback();
+            ValidateLayeredFactoryOutput();
         }
 
         private static void ValidateDefinition(GlassCollisionProfileDefinition profile)
@@ -77,7 +82,7 @@ namespace Slainte.Editor
                 Mathf.Approximately(profile.CapacityMl, expected.CapacityMl),
                 profile.SourceSpriteName + " has the wrong capacity: " + profile.CapacityMl);
             Require(
-                profile.SourcePixelSize == GlassCollisionProfiles.TemporarySourcePixelSize,
+                profile.SourcePixelSize == GlassCollisionProfiles.SourcePixelSize,
                 profile.SourceSpriteName + " must retain the 310 x 590 source dimensions.");
 
             IReadOnlyList<Vector2> edge = profile.EdgePathPixels;
@@ -101,8 +106,8 @@ namespace Slainte.Editor
         {
             string assetPath = AssetRoot + profile.SourceSpriteName + ".png";
             Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(assetPath);
-            Require(sprite != null, "Temporary glass sprite is not imported: " + assetPath);
-            Require(sprite.texture != null, "Temporary glass sprite has no source texture: " + assetPath);
+            Require(sprite != null, "Layered glass reference sprite is not imported: " + assetPath);
+            Require(sprite.texture != null, "Layered glass reference sprite has no source texture: " + assetPath);
             Require(
                 sprite.texture.width == profile.SourcePixelSize.x
                     && sprite.texture.height == profile.SourcePixelSize.y,
@@ -507,7 +512,7 @@ namespace Slainte.Editor
                     GlassCollisionProfiles.TryGetByGlassId(
                         recipe.glassId,
                         out GlassCollisionProfileDefinition profile),
-                    "No temporary glass profile supports recipe glass id '"
+                    "No layered glass profile supports recipe glass id '"
                         + recipe.glassId + "' in " + path);
 
                 float ingredientTotal = 0f;
@@ -543,11 +548,105 @@ namespace Slainte.Editor
                 Require(Mathf.Approximately(glass.CapacityMl, 200f),
                     "The production glass fallback capacity must remain 200 ml.");
                 Require(glass.ActiveCollisionProfile == null,
-                    "A production glass without temporary art received a temporary profile.");
+                    "A production glass without layered art received a collision profile.");
             }
             finally
             {
                 UnityEngine.Object.DestroyImmediate(root);
+            }
+        }
+
+        private static void ValidateLayeredFactoryOutput()
+        {
+            BusinessBartendingSettings settings =
+                AssetDatabase.LoadAssetAtPath<BusinessBartendingSettings>(SettingsPath);
+            Require(settings != null, "Business bartending settings are missing: " + SettingsPath);
+
+            string[] definitionNames = { "Rock", "Martini", "Highball", "Hurricane" };
+            GameObject parent = new GameObject("LayeredGlassFactoryValidation");
+            try
+            {
+                for (int definitionIndex = 0;
+                    definitionIndex < definitionNames.Length;
+                    definitionIndex++)
+                {
+                    string path = DefinitionRoot + definitionNames[definitionIndex] + ".asset";
+                    GlassDef definition = AssetDatabase.LoadAssetAtPath<GlassDef>(path);
+                    Require(definition != null, "Glass definition is missing: " + path);
+
+                    Sprite[] cabinetLayers = definition.GetCabinetLayers();
+                    Sprite[] worldLayers = definition.GetWorldLayers();
+                    Require(cabinetLayers.Length == ExpectedLayerOrders.Length,
+                        path + " must provide four cabinet layers.");
+                    Require(worldLayers.Length == ExpectedLayerOrders.Length,
+                        path + " must provide four world layers.");
+                    Require(definition.GetCollisionReferenceSprite() != null,
+                        path + " has no collision reference sprite.");
+
+                    for (int layerIndex = 0; layerIndex < worldLayers.Length; layerIndex++)
+                    {
+                        Require(cabinetLayers[layerIndex] != null,
+                            path + " has a missing cabinet layer at index " + layerIndex + ".");
+                        Require(worldLayers[layerIndex] != null,
+                            path + " has a missing world layer at index " + layerIndex + ".");
+                        Require(worldLayers[layerIndex].rect.size == GlassCollisionProfiles.SourcePixelSize,
+                            path + " world layer " + layerIndex + " does not use the 310x590 canvas.");
+                    }
+
+                    GlassController glass = ToolCabinetWorldFactory.CreateGlass(
+                        definition,
+                        parent.transform,
+                        settings,
+                        0,
+                        1f,
+                        out GameObject instance);
+                    Require(glass != null && instance != null,
+                        path + " could not be created by ToolCabinetWorldFactory.");
+                    try
+                    {
+                        int activeLayerCount = 0;
+                        for (int layerIndex = 0;
+                            layerIndex < ExpectedLayerOrders.Length;
+                            layerIndex++)
+                        {
+                            Transform layer = instance.transform.Find(
+                                "__ToolCabinetGlassLayer_" + layerIndex);
+                            SpriteRenderer renderer = layer != null
+                                ? layer.GetComponent<SpriteRenderer>()
+                                : null;
+                            Require(renderer != null && renderer.enabled,
+                                path + " did not create active glass layer " + layerIndex + ".");
+                            Require(renderer.sprite == worldLayers[layerIndex],
+                                path + " created the wrong sprite at layer " + layerIndex + ".");
+                            Require(renderer.sortingOrder == ExpectedLayerOrders[layerIndex],
+                                path + " created the wrong sorting order at layer " + layerIndex + ".");
+                        }
+
+                        SpriteRenderer[] renderers =
+                            instance.GetComponentsInChildren<SpriteRenderer>(true);
+                        for (int i = 0; i < renderers.Length; i++)
+                        {
+                            if (renderers[i] != null && renderers[i].enabled)
+                                activeLayerCount++;
+                        }
+                        Require(activeLayerCount == ExpectedLayerOrders.Length,
+                            path + " must have exactly four active glass SpriteRenderers.");
+                        Require(glass.ActiveCollisionProfile != null
+                            && string.Equals(
+                                glass.ActiveCollisionProfile.GlassId,
+                                definition.glassId,
+                                StringComparison.OrdinalIgnoreCase),
+                            path + " did not receive its collision profile.");
+                    }
+                    finally
+                    {
+                        UnityEngine.Object.DestroyImmediate(instance);
+                    }
+                }
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(parent);
             }
         }
 
@@ -595,7 +694,7 @@ namespace Slainte.Editor
                     {
                         Vector2 sample = Vector2.Lerp(a, b, step / (float)steps);
                         Require(
-                            HasDarkPixelNear(
+                            HasVisiblePixelNear(
                                 pixels,
                                 source.width,
                                 source.height,
@@ -613,7 +712,7 @@ namespace Slainte.Editor
             }
         }
 
-        private static bool HasDarkPixelNear(
+        private static bool HasVisiblePixelNear(
             Color32[] pixels,
             int width,
             int height,
@@ -637,7 +736,7 @@ namespace Slainte.Editor
                         continue;
 
                     Color32 color = pixels[y * width + x];
-                    if (color.a >= 100 && color.r < 100 && color.g < 100 && color.b < 100)
+                    if (color.a >= 100)
                         return true;
                 }
             }

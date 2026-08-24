@@ -50,15 +50,24 @@ namespace Slainte.Bartending
         [Tooltip("Fixed serving target as normalized x, y, width, height at every resolution.")]
         public Vector4 serveTargetNormalized = new Vector4(0.35f, 0.48f, 0.3f, 0.42f);
 
-        [Header("Vessel Contents UI")]
+        [Header("World Capacity Text")]
+        [Tooltip("Background color for capacity labels shown on beakers, jiggers, and cobbler shakers.")]
         public Color contentsLabelBackgroundColor = new Color(0.04f, 0.05f, 0.06f, 0.82f);
+        [Tooltip("TMP font used by world capacity labels. The TMP default font is used when empty.")]
         public TMP_FontAsset contentsLabelFont;
+        [Tooltip("Text color for world capacity labels.")]
         public Color contentsLabelTextColor = new Color(1f, 0.82f, 0.05f, 1f);
         public Vector2 contentsLabelSizePixels = new Vector2(220f, 150f);
         public Vector2 contentsLabelOffsetPixels = new Vector2(28f, 45f);
-        [Min(8)] public int contentsLabelFontSize = 18;
+        [Tooltip("Font size shared by beaker, jigger, and cobbler-shaker capacity labels.")]
+        [Range(8, 96)] public int contentsLabelFontSize = 18;
         [Min(0.02f)] public float contentsRefreshInterval = 0.1f;
         [Min(0f)] public float contentsMinimumVisibleMl = 0.05f;
+
+        [Header("Runtime Debug")]
+        [Tooltip("Show cached recipe, technique, ice, and volume labels for tracked vessels in Editor or Development Builds.")]
+        public bool showVesselDebugLabels;
+        [Min(0.05f)] public float vesselDebugRefreshInterval = 0.2f;
 
         [Header("Rotation Horizontal Movement")]
         [Min(0f)] public float rotationHorizontalSensitivity = 1f;
@@ -95,12 +104,13 @@ namespace Slainte.Bartending
 
         [Header("Liquid/Ice Interaction")]
         [Tooltip("Whether liquid particles physically collide with ice cubes during bartending.")]
-        public bool liquidIceCollisionEnabled = true;
+        public bool liquidIceCollisionEnabled;
 
         [Header("Ice")]
         [Min(0.1f)] public float iceBinWidth = 2.2f;
         [Min(0.1f)] public float iceBinHeight = 1.2f;
         [Min(0.05f)] public float iceCubeSize = 0.42f;
+        [Range(0f, 1f)] public float iceOpacity = 1f;
         [Min(0f)] public float iceGravityScale = 1f;
         [Min(0f)] public float iceDragThreshold = 0.08f;
         public float iceCleanupY = -15f;

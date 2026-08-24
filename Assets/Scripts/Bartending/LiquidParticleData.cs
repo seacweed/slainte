@@ -19,6 +19,7 @@ namespace Slainte.Bartending
         public List<LiquidPortion> portions = new();
         public float temperatureC = 20f;
         public CocktailTechnique techniques = CocktailTechnique.None;
+        public bool stirAttempted;
         public bool wasShakenWithIce;
 
         public float TotalVolumeMl
@@ -37,6 +38,7 @@ namespace Slainte.Bartending
             portions.Clear();
             temperatureC = sourceItem != null ? sourceItem.servingTemperatureC : 20f;
             techniques = CocktailTechnique.None;
+            stirAttempted = false;
             wasShakenWithIce = false;
 
             if (sourceItem == null || volumeMl <= 0f)
@@ -109,13 +111,6 @@ namespace Slainte.Bartending
                 / (leftTotal + rightTotal);
             left.temperatureC = Mathf.Lerp(left.temperatureC, equilibriumTemperature, strength);
             right.temperatureC = Mathf.Lerp(right.temperatureC, equilibriumTemperature, strength);
-
-            CocktailTechnique combinedTechniques = left.techniques | right.techniques;
-            left.techniques = combinedTechniques;
-            right.techniques = combinedTechniques;
-            bool combinedShakenWithIce = left.wasShakenWithIce || right.wasShakenWithIce;
-            left.wasShakenWithIce = combinedShakenWithIce;
-            right.wasShakenWithIce = combinedShakenWithIce;
 
             List<ItemDef> keys = GetSharedItemBuffer();
             AddKeys(left, keys);
@@ -194,9 +189,7 @@ namespace Slainte.Bartending
             if (other == null)
                 return TotalVolumeMl > tolerance;
 
-            if (Mathf.Abs(temperatureC - other.temperatureC) > 0.1f
-                || techniques != other.techniques
-                || wasShakenWithIce != other.wasShakenWithIce)
+            if (Mathf.Abs(temperatureC - other.temperatureC) > 0.1f)
                 return true;
 
             float myTotal = TotalVolumeMl;
@@ -323,6 +316,12 @@ namespace Slainte.Bartending
         {
             if (payload != null)
                 payload.techniques |= technique;
+        }
+
+        public void RecordStirAttempt()
+        {
+            if (payload != null)
+                payload.stirAttempted = true;
         }
 
         public bool HasDifferentComposition(LiquidParticleData other, float tolerance = 0.001f)

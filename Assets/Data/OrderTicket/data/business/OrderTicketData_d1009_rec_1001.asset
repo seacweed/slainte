@@ -14,5 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OrderTicketData
   key: d1009_rec_1001
   customerName: "\uC694\uB9AC\uCE74"
-  memo: "\uC8FC\uBB38: \uBC88\uD584 \uC0AC\uC6CC"
+  memo: "\uC190\uB2D8\uB4E4\uC774 \uADF8\uB807\uAC8C \uC598\uAE30\uD558\uB294 \uBC88\uD584
+    \uC0AC\uC6CC \uD55C \uC794 \uB9DB\uBCF4\uACE0 \uC2F6\uB124\uC694"
   items: []

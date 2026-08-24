@@ -9,8 +9,6 @@ namespace Slainte.Business
     public sealed class BusinessFlowBootstrap : MonoBehaviour
     {
         private const string SceneName = "BusinessScene";
-        private const string SettingsResourcePath = "Business/BusinessOrderFlowSettings";
-
         [SerializeField] private BusinessOrderFlowSettings settings;
 
         private BusinessOrderSessionController orderSession;
@@ -107,7 +105,7 @@ namespace Slainte.Business
         private void InitializeRuntime()
         {
             Scene scene = gameObject.scene;
-            settings ??= Resources.Load<BusinessOrderFlowSettings>(SettingsResourcePath);
+            settings ??= BusinessOrderFlowSettings.LoadDefault();
             if (settings == null)
             {
                 Debug.LogError("Resources에서 영업 주문 설정을 불러올 수 없습니다.");
@@ -116,6 +114,8 @@ namespace Slainte.Business
 
             modeManager = FindInScene<GameModeManager>(scene);
             liquorShelf = FindInScene<LiquorShelfUI>(scene);
+            liquorShelf?.SetDeliveryUnlocked(
+                settings.IsDeliveryUnlocked(GameProgress.Instance));
             tvBroadcastDatabase = TVBroadcastDatabase.LoadDefault();
             CustomerSpawner customerSpawner = FindInScene<CustomerSpawner>(scene);
             DialogueController dialogue = FindInScene<DialogueController>(scene);
@@ -219,14 +219,23 @@ namespace Slainte.Business
         private void ActivateTVBroadcastForBusiness()
         {
             GameProgress progress = GameProgress.Instance;
-            TVBroadcastEntry active = TVBroadcastRuntime.ActivateForecastForBusiness(
-                progress,
-                tvBroadcastDatabase);
+            bool deliveryUnlocked = settings != null
+                && settings.IsDeliveryUnlocked(progress);
+            liquorShelf?.SetDeliveryUnlocked(deliveryUnlocked);
+
+            bool tvUnlocked = settings != null && settings.IsTVUnlocked(progress);
+            TVBroadcastEntry active = tvUnlocked
+                ? TVBroadcastRuntime.ActivateForecastForBusiness(
+                    progress,
+                    tvBroadcastDatabase)
+                : null;
             bool deliveryDisabled = active != null
                 && active.effectType == TVBroadcastEffectType.DisableDelivery;
             liquorShelf?.SetDeliveryAvailable(
-                !deliveryDisabled,
-                deliveryDisabled ? active.restrictionReason : string.Empty);
+                deliveryUnlocked && !deliveryDisabled,
+                !deliveryUnlocked
+                    ? "물류 특급 에피소드 완료 후 배송이 해금됩니다."
+                    : deliveryDisabled ? active.restrictionReason : string.Empty);
             if (active != null)
                 DataManager.Instance?.Save();
         }

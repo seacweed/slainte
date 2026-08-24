@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Slainte.Bartending;
+using Slainte.Economy;
 using Slainte.TV;
 using UnityEditor;
 using UnityEngine;
@@ -52,6 +53,13 @@ namespace Slainte.EditorTools
             new(StringComparer.OrdinalIgnoreCase)
             {
                 { "갓 레이디", "갓레이디" }
+            };
+
+        private static readonly Dictionary<string, string> CharacterKeyAliases =
+            new(StringComparer.OrdinalIgnoreCase)
+            {
+                { "cartha", "kartha" },
+                { "eliud", "eliot" }
             };
 
         public static string DefaultCsvPath
@@ -312,6 +320,8 @@ namespace Slainte.EditorTools
                     errors.Add("방문 키가 없는 드래프트가 있습니다.");
                     continue;
                 }
+
+                NormalizeVisitCharacterKeys(visit);
 
                 hasNightPatrol |= visit.tags != null && visit.tags.Any(
                     tag => string.Equals(
@@ -619,6 +629,10 @@ namespace Slainte.EditorTools
             visit.preferredAtmosphereKey = row.preferredAtmosphere;
             visit.weight = row.weight;
             visit.reappearanceGroupKey = row.characterKey;
+            visit.overridePaymentCurrency = RequiresStrangeCoinPayment(row.attribute);
+            visit.paymentCurrency = visit.overridePaymentCurrency
+                ? GameCurrency.StrangeCoin
+                : GameCurrency.Money;
             ConfigureAvailability(row, visit);
             if (visit.initiallyAvailable && !HasPresentationSprite(character))
             {
@@ -795,6 +809,9 @@ namespace Slainte.EditorTools
                 order.requestedRecipeId = recipe.id;
                 order.orderType = CocktailOrderType.RecipeOrder;
                 order.characterKey = row.characterKey;
+                order.paymentCurrency = RequiresStrangeCoinPayment(row.attribute)
+                    ? GameCurrency.StrangeCoin
+                    : GameCurrency.Money;
                 if (string.IsNullOrWhiteSpace(order.expressionKeyMid))
                     order.expressionKeyMid = "mid";
                 if (string.IsNullOrWhiteSpace(order.expressionKeyGood))
@@ -823,6 +840,13 @@ namespace Slainte.EditorTools
 
             visit.orders = connected;
             EditorUtility.SetDirty(visit);
+        }
+
+        private static bool RequiresStrangeCoinPayment(string attribute)
+        {
+            return string.Equals(attribute, "아무개들", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(attribute, "F72", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(attribute, "셀리", StringComparison.OrdinalIgnoreCase);
         }
 
         private static Dictionary<string, CocktailRecipeDef> BuildRecipeNameMap(
@@ -888,13 +912,54 @@ namespace Slainte.EditorTools
 
         private static CharacterData FindCharacterByKey(string key)
         {
-            if (string.IsNullOrWhiteSpace(key))
+            string canonicalKey = NormalizeCharacterKey(key);
+            if (string.IsNullOrWhiteSpace(canonicalKey))
                 return null;
             Dictionary<string, CharacterData> characters = LoadAssetsByKey<CharacterData>(
                 asset => asset.key);
-            return characters.TryGetValue(key, out CharacterData character)
+            return characters.TryGetValue(canonicalKey, out CharacterData character)
                 ? character
                 : null;
+        }
+
+        private static void NormalizeVisitCharacterKeys(CustomerVisitData visit)
+        {
+            if (visit == null)
+                return;
+
+            bool changed = false;
+            if (visit.members != null)
+            {
+                for (int i = 0; i < visit.members.Count; i++)
+                {
+                    CustomerVisitMember member = visit.members[i];
+                    if (member == null)
+                        continue;
+
+                    string canonicalKey = NormalizeCharacterKey(member.characterKey);
+                    if (!string.Equals(
+                            canonicalKey,
+                            member.characterKey,
+                            StringComparison.Ordinal))
+                    {
+                        member.characterKey = canonicalKey;
+                        changed = true;
+                    }
+                }
+            }
+
+            string canonicalGroupKey = NormalizeCharacterKey(visit.reappearanceGroupKey);
+            if (!string.Equals(
+                    canonicalGroupKey,
+                    visit.reappearanceGroupKey,
+                    StringComparison.Ordinal))
+            {
+                visit.reappearanceGroupKey = canonicalGroupKey;
+                changed = true;
+            }
+
+            if (changed)
+                EditorUtility.SetDirty(visit);
         }
 
         private static bool HasPresentationSprite(CharacterData character)
@@ -906,6 +971,14 @@ namespace Slainte.EditorTools
             return character.expressions != null && character.expressions.Any(
                 expression => expression != null
                     && (expression.sprite != null || expression.overlaySprite != null));
+        }
+
+        public static string NormalizeCharacterKey(string key)
+        {
+            string normalized = key?.Trim() ?? string.Empty;
+            return CharacterKeyAliases.TryGetValue(normalized, out string canonicalKey)
+                ? canonicalKey
+                : normalized;
         }
 
         private static string CreateStableKey(string englishName, string fallback)
@@ -929,7 +1002,10 @@ namespace Slainte.EditorTools
                 }
             }
 
-            return builder.Length > 0 ? builder.ToString() : fallback.ToLowerInvariant();
+            string stableKey = builder.Length > 0
+                ? builder.ToString()
+                : fallback.ToLowerInvariant();
+            return NormalizeCharacterKey(stableKey);
         }
 
         private static string SafeAssetName(string value)

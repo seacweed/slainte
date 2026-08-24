@@ -41,8 +41,15 @@ MonoBehaviour:
       \uBFD0\uC774\uC9C0"
     nameColor: {r: 0, g: 0, b: 1, a: 1}
   feedbackLinesMid: []
-  feedbackLinesBad: []
+  feedbackLinesBad:
+  - speakerName: "\uBC1C\uB80C\uD2F0\uB178"
+    text: "\uC800\uAE30\uC694, \uC774\uB7F0 \uC2DD\uC774\uBA74 \uB2E4\uC2E0 \uC548\uC62C\uAC70\uC5D0\uC694!"
+    nameColor: {r: 0, g: 0, b: 1, a: 1}
+  - speakerName: "\uBCA0\uB9AC"
+    text: "\uC544, \uB410\uC5B4, \uB410\uC5B4. \uBE68\uB9AC \uAC00\uC790."
+    nameColor: {r: 1, g: 0, b: 1, a: 1}
   authoredFeedback: 63
+  intentionallySilentFeedback: 0
   feedbackLinesMidIce:
   - speakerName: "\uBCA0\uB9AC"
     text: "\uBB50, \uC5BC\uC74C\uC740 \uBCC4\uB860\uB370 \uC804\uCCB4\uC801\uC73C\uB85C\uB294

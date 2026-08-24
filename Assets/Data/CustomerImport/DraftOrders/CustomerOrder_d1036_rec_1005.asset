@@ -38,6 +38,7 @@ MonoBehaviour:
       \uC804\uD600 \uC801\uD569\uD558\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4"
     nameColor: {r: 1, g: 1, b: 1, a: 1}
   authoredFeedback: 63
+  intentionallySilentFeedback: 0
   feedbackLinesMidIce:
   - speakerName: E43
     text: "\uC5BC\uC74C\uC744 \uCC29\uAC01\uD55C \uAC83 \uAC19\uB124\uC694. \uB9DB\uC758

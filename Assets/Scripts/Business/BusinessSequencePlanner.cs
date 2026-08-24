@@ -96,7 +96,7 @@ namespace Slainte.Business
                 CustomerVisitData visit = frozenPool[i];
                 if (!IsStructurallyValidVisit(visit)
                     || visit.weight <= 0f
-                    || !IsVisitAvailable(visit, progress)
+                    || !IsVisitAvailableForSelection(visit, frozenPool, progress)
                     || IsRecentlySeen(visit, recentVisitKeys)
                     || (invalidVisitKeys != null && invalidVisitKeys.Contains(visit.visitKey)))
                     continue;
@@ -189,7 +189,10 @@ namespace Slainte.Business
                     CustomerVisitData visit = frozenVisitPool[i];
                     if (!IsStructurallyValidVisit(visit)
                         || visit.weight <= 0f
-                        || !IsVisitAvailable(visit, progress)
+                        || !IsVisitAvailableForSelection(
+                            visit,
+                            frozenVisitPool,
+                            progress)
                         || IsRecentlySeen(visit, recentVisitKeys)
                         || (invalidVisitKeys != null && invalidVisitKeys.Contains(visit.visitKey)))
                         continue;
@@ -460,7 +463,7 @@ namespace Slainte.Business
             for (int i = 0; i < visits.Count; i++)
             {
                 CustomerVisitData visit = visits[i];
-                if (!IsVisitAvailable(visit, progress))
+                if (!IsVisitAvailableForSelection(visit, visits, progress))
                     continue;
 
                 if (active.effectType == TVBroadcastEffectType.BoostCustomerTagWeight)
@@ -468,7 +471,7 @@ namespace Slainte.Business
                     if (TVBroadcastRuntime.CustomerMatchesActiveBoost(
                             progress,
                             database,
-                            visit?.tags))
+                            visit))
                     {
                         return true;
                     }
@@ -497,11 +500,10 @@ namespace Slainte.Business
             IReadOnlyList<CustomerVisitOrderOption> eligibleOrders,
             GameProgress progress)
         {
-            float multiplier = TVBroadcastRuntime.GetTaggedWeightMultiplier(
+            float multiplier = TVBroadcastRuntime.GetCustomerWeightMultiplier(
                 progress,
                 TVBroadcastDatabase.LoadDefault(),
-                TVBroadcastEffectType.BoostCustomerTagWeight,
-                visit?.tags);
+                visit);
             float baseOrderWeight = 0f;
             float boostedOrderWeight = 0f;
             if (eligibleOrders != null)
@@ -541,6 +543,91 @@ namespace Slainte.Business
             CustomerVisitData visit,
             GameProgress progress)
         {
+            return EvaluateVisitAvailability(
+                visit,
+                progress,
+                visit != null && visit.initiallyAvailable);
+        }
+
+        private static bool IsVisitAvailableForSelection(
+            CustomerVisitData visit,
+            IReadOnlyList<CustomerVisitData> visits,
+            GameProgress progress)
+        {
+            TVBroadcastDatabase database = TVBroadcastDatabase.LoadDefault();
+            if (!TVBroadcastRuntime.IsCustomerAllowedByActivePool(
+                    progress,
+                    database,
+                    visit))
+            {
+                return false;
+            }
+
+            TVBroadcastEntry active = TVBroadcastRuntime.GetActiveBroadcast(
+                progress,
+                database);
+            if (active == null
+                || !active.exclusiveCustomerPool
+                || active.effectType != TVBroadcastEffectType.BoostCustomerTagWeight
+                || !TVBroadcastRuntime.CustomerMatchesActiveBoost(
+                    progress,
+                    database,
+                    visit))
+            {
+                return IsVisitAvailable(visit, progress);
+            }
+
+            CustomerVisitData canonical = FindCanonicalAvailabilityVisit(
+                visit,
+                visits,
+                progress,
+                database);
+            return canonical != null
+                ? IsVisitAvailable(canonical, progress)
+                : EvaluateVisitAvailability(visit, progress, initialAvailability: true);
+        }
+
+        private static CustomerVisitData FindCanonicalAvailabilityVisit(
+            CustomerVisitData specialVisit,
+            IReadOnlyList<CustomerVisitData> visits,
+            GameProgress progress,
+            TVBroadcastDatabase database)
+        {
+            if (specialVisit == null || visits == null)
+                return null;
+
+            string reappearanceKey = specialVisit.GetReappearanceKey();
+            if (string.IsNullOrWhiteSpace(reappearanceKey))
+                return null;
+
+            for (int i = 0; i < visits.Count; i++)
+            {
+                CustomerVisitData candidate = visits[i];
+                if (candidate == null
+                    || candidate == specialVisit
+                    || !string.Equals(
+                        candidate.GetReappearanceKey(),
+                        reappearanceKey,
+                        StringComparison.OrdinalIgnoreCase)
+                    || TVBroadcastRuntime.CustomerMatchesActiveBoost(
+                        progress,
+                        database,
+                        candidate))
+                {
+                    continue;
+                }
+
+                return candidate;
+            }
+
+            return null;
+        }
+
+        private static bool EvaluateVisitAvailability(
+            CustomerVisitData visit,
+            GameProgress progress,
+            bool initialAvailability)
+        {
             if (visit == null
                 || progress == null
                 || !ProgressConditionEvaluator.IsMet(
@@ -551,7 +638,7 @@ namespace Slainte.Business
                 return false;
             }
 
-            bool available = visit.initiallyAvailable;
+            bool available = initialAvailability;
             if (visit.availabilityTransitions == null)
                 return available;
 

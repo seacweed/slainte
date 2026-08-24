@@ -37,8 +37,8 @@ namespace Slainte.EditorTools
             ValidateCraftingResultMapping();
             Debug.Log(
                 "[BusinessShiftValidator] 주문 대사 검증 통과: 연결 주문 169개, "
-                + "취향·분위기 주문 27개, 의도적 빈 주문 대사 6개, "
-                + "주문 당시 대사 주문표 반영 및 상세 결과 매핑");
+                + "취향·분위기 주문 27개, 의도적 빈 주문 대사 0개, "
+                + "주문 당시 대사 주문표 반영, 상세 결과 매핑 및 누락 대사 dummy fallback");
         }
 
         private static void RunValidation()
@@ -79,6 +79,9 @@ namespace Slainte.EditorTools
             int connectedOrderCount = 0;
             int conditionOrderCount = 0;
             int intentionallyBlankOrderCount = 0;
+            Dictionary<CraftingJobResult, int> missingFeedbackCounts = new();
+            for (int resultIndex = 0; resultIndex < CraftingJobResultPorts.Order.Length; resultIndex++)
+                missingFeedbackCounts[CraftingJobResultPorts.Order[resultIndex]] = 0;
             for (int visitIndex = 0;
                  visitIndex < settings.customerVisitDatabase.visits.Count;
                  visitIndex++)
@@ -122,8 +125,23 @@ namespace Slainte.EditorTools
 
                     Require(ticketDatabase.FindByKey(order.key) != null,
                         $"{visit.visitKey}/{order.key}: 영업 주문표가 없습니다.");
-                    Require(order.authoredFeedback == CustomerOrderFeedbackMask.All,
-                        $"{visit.visitKey}/{order.key}: 상세 결과 대사 정의 상태가 완전하지 않습니다.");
+                    Require((order.intentionallySilentFeedback & order.authoredFeedback) == 0,
+                        $"{visit.visitKey}/{order.key}: 실제 대사와 명시적 무대사 결과가 겹칩니다.");
+                    for (int resultIndex = 0;
+                         resultIndex < CraftingJobResultPorts.Order.Length;
+                         resultIndex++)
+                    {
+                        CraftingJobResult result = CraftingJobResultPorts.Order[resultIndex];
+                        bool hasDialogue = order.TryGetAuthoredFeedback(result, out _);
+                        bool intentionallySilent = order.IsFeedbackIntentionallySilent(result);
+                        if (!hasDialogue && !intentionallySilent)
+                        {
+                            missingFeedbackCounts[result]++;
+                            Require(!string.IsNullOrWhiteSpace(
+                                    settings.GetMissingFeedbackDummy(result)),
+                                $"{visit.visitKey}/{order.key}: {result} 누락 대사를 대신할 dummy가 없습니다.");
+                        }
+                    }
                     if (order.orderDialogueAuthored
                         && (order.lines == null || order.lines.Count == 0))
                     {
@@ -138,8 +156,20 @@ namespace Slainte.EditorTools
                 $"연결 주문 수가 예상과 다릅니다: {connectedOrderCount}/169");
             Require(conditionOrderCount == 27,
                 $"취향·분위기 주문 수가 예상과 다릅니다: {conditionOrderCount}/27");
-            Require(intentionallyBlankOrderCount == 6,
-                $"의도적으로 비운 주문 대사 수가 예상과 다릅니다: {intentionallyBlankOrderCount}/6");
+            Require(intentionallyBlankOrderCount == 0,
+                $"의도적으로 비운 주문 대사 수가 예상과 다릅니다: {intentionallyBlankOrderCount}/0");
+
+            List<string> missingFeedbackSummary = new();
+            for (int resultIndex = 0;
+                 resultIndex < CraftingJobResultPorts.Order.Length;
+                 resultIndex++)
+            {
+                CraftingJobResult result = CraftingJobResultPorts.Order[resultIndex];
+                missingFeedbackSummary.Add($"{result}={missingFeedbackCounts[result]}");
+            }
+            Debug.Log(
+                "[BusinessShiftValidator] 누락 결과 대사(dummy 대상): "
+                + string.Join(", ", missingFeedbackSummary));
         }
 
         private static void ValidateSettingsAndScene()
@@ -649,7 +679,6 @@ namespace Slainte.EditorTools
             {
                 matchedRecipe = matchingRecipe,
                 isSuccess = true,
-                score = 1f,
                 iceValid = true,
                 glassValid = true
             };
@@ -667,7 +696,6 @@ namespace Slainte.EditorTools
             {
                 matchedRecipe = mismatchingRecipe,
                 isSuccess = true,
-                score = 1f,
                 iceValid = true,
                 glassValid = true
             };
@@ -853,7 +881,8 @@ namespace Slainte.EditorTools
                 OrderEvaluationGrade.Mid,
                 baseRecipe,
                 requestedFailure,
-                detectedOther);
+                detectedOther,
+                CocktailOrderEvaluationOutcome.MidWrongMenu);
             Require(EpisodeCraftingResultMapper.Map(wrongMenu) == CraftingJobResult.MidWrongMenu,
                 "잘못된 메뉴 제조 결과 매핑에 실패했습니다.");
 
@@ -878,6 +907,7 @@ namespace Slainte.EditorTools
                     },
                     requestedRecipeResult = detectedTagMismatch,
                     detectedRecipeResult = detectedTagMismatch,
+                    outcome = CocktailOrderEvaluationOutcome.MidWrongMenu,
                     isSuccess = false
                 }
             };
@@ -895,7 +925,8 @@ namespace Slainte.EditorTools
                     OrderEvaluationGrade.Mid,
                     baseRecipe,
                     iceAndGlass,
-                    null)) == CraftingJobResult.MidIceGlass,
+                    null,
+                    CocktailOrderEvaluationOutcome.MidIceGlass)) == CraftingJobResult.MidIceGlass,
                 "얼음·잔 동시 불일치 결과 매핑에 실패했습니다.");
 
             CocktailRecipe iceVariant = new()
@@ -915,7 +946,8 @@ namespace Slainte.EditorTools
                 OrderEvaluationGrade.Mid,
                 baseRecipe,
                 matchedVariant,
-                matchedVariant);
+                matchedVariant,
+                CocktailOrderEvaluationOutcome.MidIce);
             Require(EpisodeCraftingResultMapper.Map(variantResult) == CraftingJobResult.MidIce,
                 "요청 레시피의 얼음 변형을 잘못된 메뉴로 오인했습니다.");
 
@@ -936,7 +968,8 @@ namespace Slainte.EditorTools
             OrderEvaluationGrade grade,
             CocktailRecipe baseRecipe,
             CocktailEvaluationResult requested,
-            CocktailEvaluationResult detected)
+            CocktailEvaluationResult detected,
+            CocktailOrderEvaluationOutcome evaluationOutcome = CocktailOrderEvaluationOutcome.Bad)
         {
             return new BusinessOrderSessionResult
             {
@@ -954,7 +987,8 @@ namespace Slainte.EditorTools
                             requestedRecipe = baseRecipe
                         },
                         requestedRecipeResult = requested,
-                        detectedRecipeResult = detected
+                        detectedRecipeResult = detected,
+                        outcome = evaluationOutcome
                     }
             };
         }

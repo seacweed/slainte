@@ -302,6 +302,10 @@ MonoBehaviour:
   maxInjectedSpeed: 2.5
   stirMinimumSpeed: 0.04
   stirMinimumAngularSpeed: 5
+  stirAttemptDuration: 0.35
+  stirCompletionDuration: 1
+  maximumCompositionDeviation: 0.1
+  compositionCheckInterval: 0.2
   generatedVisualLength: 3
   generatedVisualWidth: 0.08
   generatedVisualColor: {r: 0.7, g: 0.48, b: 0.28, a: 1}

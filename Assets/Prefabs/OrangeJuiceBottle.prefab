@@ -186,7 +186,7 @@ MonoBehaviour:
   liquidSpawnPoint: {fileID: 6071510365002094898}
   maxCapacity: 10000
   currentCapacity: 10000
-  pourMlPerSecond: 83.333336
+  pourMlPerSecond: 20
   maxParticlesPerFrame: 8
 --- !u!1 &7687632162397421003
 GameObject:

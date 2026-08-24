@@ -36,6 +36,7 @@ namespace Slainte.EditorTools
         private static readonly Dictionary<string, string> CharacterKeyAliases =
             new(StringComparer.OrdinalIgnoreCase)
             {
+                { "bigfish", "big_fish" },
                 { "valentinoberry", "valentino_and_berry" },
                 { "littlepip", "little_pip" },
                 { "sabaon", "saba_on" },

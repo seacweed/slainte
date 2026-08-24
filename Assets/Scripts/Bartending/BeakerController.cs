@@ -73,6 +73,7 @@ namespace Slainte.Bartending
         private int[] originalSortingOrders;
         private const int PICKUP_SORTING_ORDER_BASE = 100;
         private BartendingItemOrder interactionOrder;
+        private System.Func<Vector2, bool> customInteractionContains;
 
         public VesselLiquidTracker LiquidTracker => liquidTracker;
 
@@ -111,10 +112,51 @@ namespace Slainte.Bartending
             liquidTracker?.RefreshCollisionGeometry();
         }
 
+        public void ConfigureCustomCollisionGeometry(
+            IReadOnlyList<Vector2> edgePoints,
+            float configuredEdgeRadius,
+            System.Func<Vector2, bool> interactionContains)
+        {
+            if (edgePoints == null || edgePoints.Count < 3)
+                return;
+
+            edgeCollider ??= GetComponent<EdgeCollider2D>();
+            if (edgeCollider == null)
+                edgeCollider = gameObject.AddComponent<EdgeCollider2D>();
+
+            List<Vector2> points = new List<Vector2>(edgePoints.Count);
+            for (int i = 0; i < edgePoints.Count; i++)
+                points.Add(edgePoints[i]);
+
+            edgeCollider.enabled = true;
+            edgeCollider.isTrigger = false;
+            edgeCollider.edgeRadius = Mathf.Max(0f, configuredEdgeRadius);
+            edgeCollider.SetPoints(points);
+
+            BoxCollider2D[] rootBoxes = GetComponents<BoxCollider2D>();
+            for (int i = 0; i < rootBoxes.Length; i++)
+                rootBoxes[i].enabled = false;
+
+            mainCollider = edgeCollider;
+            customInteractionContains = interactionContains;
+            if (Application.isPlaying)
+            {
+                interactionOrder = BartendingItemOrder.Attach(
+                    gameObject,
+                    mainCollider,
+                    liquidTracker,
+                    ContainsInteractionPoint);
+            }
+            liquidTracker?.RefreshCollisionGeometry();
+        }
+
         private void Start()
         {
-            mainCollider = GetComponent<BoxCollider2D>();
-            mainCollider ??= GetComponent<Collider2D>();
+            if (mainCollider == null)
+            {
+                mainCollider = GetComponent<BoxCollider2D>();
+                mainCollider ??= GetComponent<Collider2D>();
+            }
             mainCamera = Camera.main;
 
             if (Application.isPlaying)
@@ -155,7 +197,8 @@ namespace Slainte.Bartending
                 interactionOrder = BartendingItemOrder.Attach(
                     gameObject,
                     mainCollider,
-                    liquidTracker);
+                    liquidTracker,
+                    ContainsInteractionPoint);
             }
         }
 
@@ -785,7 +828,18 @@ namespace Slainte.Bartending
 
             return interactionOrder != null
                 ? interactionOrder.IsFrontmostAt(mousePos)
-                : mainCollider.OverlapPoint(mousePos);
+                : ContainsInteractionPoint(mousePos);
+        }
+
+        private bool ContainsInteractionPoint(Vector2 worldPoint)
+        {
+            if (customInteractionContains != null)
+                return customInteractionContains(worldPoint);
+
+            return mainCollider != null
+                && mainCollider.enabled
+                && mainCollider.gameObject.activeInHierarchy
+                && mainCollider.OverlapPoint(worldPoint);
         }
 
         public void GenerateCurvedCollider()

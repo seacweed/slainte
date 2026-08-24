@@ -45,13 +45,10 @@ namespace Slainte.EditorTools
         private const string TicketDatabasePath =
             "Assets/Data/OrderTicket/OrderTicketDatabase.asset";
         private const string ValentinoBerryProfile = "근로자들_발렌티노와베리";
+        private const string SilentDialogueToken = "__SILENT__";
 
         private static readonly HashSet<string> IntentionallyBlankProfiles = new(
-            StringComparer.OrdinalIgnoreCase)
-        {
-            "카사_아이들_셀리",
-            "카사_아이들_F54"
-        };
+            StringComparer.OrdinalIgnoreCase);
 
         private static readonly Dictionary<string, string> RecipeNameAliases = new(
             StringComparer.OrdinalIgnoreCase)
@@ -65,6 +62,10 @@ namespace Slainte.EditorTools
         {
             { SpeakerKey(1, DialogueColumn.Order), "VB" },
             { SpeakerKey(1, DialogueColumn.Good), "BV" },
+            { SpeakerKey(1, DialogueColumn.MidIce), "VBB" },
+            { SpeakerKey(1, DialogueColumn.MidGlass), "VBB" },
+            { SpeakerKey(1, DialogueColumn.MidIceGlass), "VBB" },
+            { SpeakerKey(1, DialogueColumn.MidWrongMenu), "VBB" },
             { SpeakerKey(1, DialogueColumn.Bad), "VVBB" },
 
             { SpeakerKey(2, DialogueColumn.Order), "BVB" },
@@ -93,6 +94,7 @@ namespace Slainte.EditorTools
 
             { SpeakerKey(7, DialogueColumn.Order), "BB" },
             { SpeakerKey(7, DialogueColumn.Good), "BV" },
+            { SpeakerKey(7, DialogueColumn.Bad), "VB" },
             { SpeakerKey(7, DialogueColumn.MidIce), "BV" },
             { SpeakerKey(7, DialogueColumn.MidGlass), "BV" },
             { SpeakerKey(7, DialogueColumn.MidIceGlass), "BV" },
@@ -455,22 +457,51 @@ namespace Slainte.EditorTools
             CustomerDialogueImportReport report)
         {
             order.orderDialogueAuthored = true;
-            order.authoredFeedback = CustomerOrderFeedbackMask.All;
+            order.authoredFeedback = CustomerOrderFeedbackMask.None;
+            order.intentionallySilentFeedback = CustomerOrderFeedbackMask.None;
             order.lines = BuildLines(entry, DialogueColumn.Order, identity, report);
-            order.feedbackLinesGood = BuildLines(entry, DialogueColumn.Good, identity, report);
-            order.feedbackLinesMidIce = BuildLines(entry, DialogueColumn.MidIce, identity, report);
-            order.feedbackLinesMidGlass = BuildLines(entry, DialogueColumn.MidGlass, identity, report);
-            order.feedbackLinesMidIceGlass = BuildLines(
+            order.feedbackLinesGood = BuildFeedbackLines(
+                order,
+                CustomerOrderFeedbackMask.Good,
+                entry,
+                DialogueColumn.Good,
+                identity,
+                report);
+            order.feedbackLinesMidIce = BuildFeedbackLines(
+                order,
+                CustomerOrderFeedbackMask.MidIce,
+                entry,
+                DialogueColumn.MidIce,
+                identity,
+                report);
+            order.feedbackLinesMidGlass = BuildFeedbackLines(
+                order,
+                CustomerOrderFeedbackMask.MidGlass,
+                entry,
+                DialogueColumn.MidGlass,
+                identity,
+                report);
+            order.feedbackLinesMidIceGlass = BuildFeedbackLines(
+                order,
+                CustomerOrderFeedbackMask.MidIceGlass,
                 entry,
                 DialogueColumn.MidIceGlass,
                 identity,
                 report);
-            order.feedbackLinesMidWrongMenu = BuildLines(
+            order.feedbackLinesMidWrongMenu = BuildFeedbackLines(
+                order,
+                CustomerOrderFeedbackMask.MidWrongMenu,
                 entry,
                 DialogueColumn.MidWrongMenu,
                 identity,
                 report);
-            order.feedbackLinesBad = BuildLines(entry, DialogueColumn.Bad, identity, report);
+            order.feedbackLinesBad = BuildFeedbackLines(
+                order,
+                CustomerOrderFeedbackMask.Bad,
+                entry,
+                DialogueColumn.Bad,
+                identity,
+                report);
             order.feedbackLinesMid ??= new List<DialogueLine>();
             order.feedbackLinesMid.Clear();
         }
@@ -478,7 +509,8 @@ namespace Slainte.EditorTools
         private static void ApplyIntentionallyBlankDialogue(CustomerOrderData order)
         {
             order.orderDialogueAuthored = true;
-            order.authoredFeedback = CustomerOrderFeedbackMask.All;
+            order.authoredFeedback = CustomerOrderFeedbackMask.None;
+            order.intentionallySilentFeedback = CustomerOrderFeedbackMask.None;
             order.lines = new List<DialogueLine>();
             order.feedbackLinesGood = new List<DialogueLine>();
             order.feedbackLinesMid = new List<DialogueLine>();
@@ -489,6 +521,27 @@ namespace Slainte.EditorTools
             order.feedbackLinesMidWrongMenu = new List<DialogueLine>();
         }
 
+        private static List<DialogueLine> BuildFeedbackLines(
+            CustomerOrderData order,
+            CustomerOrderFeedbackMask mask,
+            DialogueEntry entry,
+            DialogueColumn column,
+            DialogueIdentity identity,
+            CustomerDialogueImportReport report)
+        {
+            string value = entry.Get(column);
+            if (IsSilentDialogue(value))
+            {
+                order.intentionallySilentFeedback |= mask;
+                return new List<DialogueLine>();
+            }
+
+            List<DialogueLine> lines = BuildLines(entry, column, identity, report);
+            if (lines.Count > 0)
+                order.authoredFeedback |= mask;
+            return lines;
+        }
+
         private static List<DialogueLine> BuildLines(
             DialogueEntry entry,
             DialogueColumn column,
@@ -496,7 +549,7 @@ namespace Slainte.EditorTools
             CustomerDialogueImportReport report)
         {
             string value = entry.Get(column);
-            if (string.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(value) || IsSilentDialogue(value))
                 return new List<DialogueLine>();
 
             string[] sourceLines = value
@@ -516,11 +569,14 @@ namespace Slainte.EditorTools
                     SpeakerKey(entry.slot, column),
                     out speakerSequence);
                 if (string.IsNullOrEmpty(speakerSequence)
-                    || speakerSequence.Length != sourceLines.Length)
+                    || speakerSequence.Length != sourceLines.Length
+                    || speakerSequence.Any(speaker => speaker != 'V' && speaker != 'B'))
                 {
-                    report.warnings.Add(
-                        $"발렌티노/베리 화자 수가 대사 줄 수와 다릅니다: "
-                        + $"slot={entry.slot}, column={column}, lines={sourceLines.Length}");
+                    report.errors.Add(
+                        $"발렌티노/베리 화자 매핑이 PDF 원본과 맞지 않습니다: "
+                        + $"slot={entry.slot}, column={column}, "
+                        + $"lines={sourceLines.Length}, mapping={speakerSequence ?? "<없음>"}");
+                    speakerSequence = null;
                 }
             }
 
@@ -549,6 +605,14 @@ namespace Slainte.EditorTools
                 }
             }
             return lines;
+        }
+
+        private static bool IsSilentDialogue(string value)
+        {
+            return string.Equals(
+                value?.Trim(),
+                SilentDialogueToken,
+                StringComparison.OrdinalIgnoreCase);
         }
 
         private static OrderTicketData UpsertTicket(
@@ -830,7 +894,7 @@ namespace Slainte.EditorTools
             {
                 string key = visit.members[i]?.characterKey;
                 if (!string.IsNullOrWhiteSpace(key))
-                    return key;
+                    return CustomerPlanningCsvImporter.NormalizeCharacterKey(key);
             }
             return string.Empty;
         }

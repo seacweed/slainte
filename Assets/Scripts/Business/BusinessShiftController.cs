@@ -379,7 +379,10 @@ namespace Slainte.Business
                     : new List<string>(),
                 ticketKey = order.key,
                 orderType = order.orderType,
-                paymentCurrency = order.paymentCurrency,
+                paymentCurrency = BusinessCustomerRules.ResolvePaymentCurrency(
+                    visit,
+                    order.paymentCurrency),
+                rewardProfile = BusinessCustomerRules.ResolveRewardProfile(visit),
                 presentOrder = true,
                 presentFeedback = true,
                 applyProgressRewards = false,

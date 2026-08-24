@@ -49,3 +49,5 @@ MonoBehaviour:
   - itemId: item_1003
     targetMl: 15
     toleranceMl: 5
+  icon: {fileID: 0}
+  description: 

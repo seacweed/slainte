@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Slainte.Economy;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -77,6 +78,12 @@ public sealed class CustomerVisitData : ScriptableObject
     [InspectorName("재등장 공유 키")]
     [Tooltip("같은 인물의 여러 방문형이 공유할 키입니다. 비어 있으면 방문 키를 사용합니다.")]
     public string reappearanceGroupKey;
+
+    [Header("결제")]
+    [InspectorName("결제 화폐 강제 지정")]
+    public bool overridePaymentCurrency;
+    [InspectorName("결제 화폐")]
+    public GameCurrency paymentCurrency = GameCurrency.Money;
 
     [Header("주문 후보")]
     [InspectorName("기획 원본 주문명")]

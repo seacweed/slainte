@@ -14,8 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.GlassDef
   id: glass_highball
   displayName: Highball
-  cabinetSprite: {fileID: 21300000, guid: ba47000000000000000000000000002e, type: 3}
-  worldSprite: {fileID: 21300000, guid: ba47000000000000000000000000002e, type: 3}
+  cabinetSprite: {fileID: 21300000, guid: 2c7288c91ec547789bbd75d6db8c50df, type: 3}
+  worldSprite: {fileID: 21300000, guid: 2c7288c91ec547789bbd75d6db8c50df, type: 3}
+  cabinetLayers:
+  - {fileID: 21300000, guid: abc8d43897f941828eb9316aca64d737, type: 3}
+  - {fileID: 21300000, guid: 3922e9f24fb94827853b09f24bb0edee, type: 3}
+  - {fileID: 21300000, guid: 41730ae0ea05458fb02c3338ae9bb13b, type: 3}
+  - {fileID: 21300000, guid: 2c7288c91ec547789bbd75d6db8c50df, type: 3}
+  worldLayers:
+  - {fileID: 21300000, guid: abc8d43897f941828eb9316aca64d737, type: 3}
+  - {fileID: 21300000, guid: 3922e9f24fb94827853b09f24bb0edee, type: 3}
+  - {fileID: 21300000, guid: 41730ae0ea05458fb02c3338ae9bb13b, type: 3}
+  - {fileID: 21300000, guid: 2c7288c91ec547789bbd75d6db8c50df, type: 3}
+  collisionReferenceSprite: {fileID: 21300000, guid: 2c7288c91ec547789bbd75d6db8c50df, type: 3}
   worldPrefab: {fileID: 2243653413097636618, guid: 0f545fa15c57b314184f5dc08a58782b, type: 3}
   glassId: highball
   capacityMl: 400
