@@ -60,7 +60,9 @@ public class EpisodeCsvImporter : EditorWindow
             AssetDatabase.Refresh();
         }
 
-        string assetPath = $"{_outputFolder}/EpisodeData_{data.episodeId}.asset";
+        string assetName = $"EpisodeData_{data.episodeId}";
+        data.name = assetName;
+        string assetPath = $"{_outputFolder}/{assetName}.asset";
         EpisodeData existing = AssetDatabase.LoadAssetAtPath<EpisodeData>(assetPath);
 
         if (existing != null)
@@ -84,6 +86,7 @@ public class EpisodeCsvImporter : EditorWindow
                 RestoreCharacterOverrides(data, existing);
 
             EditorUtility.CopySerialized(data, existing);
+            existing.name = assetName;
             EditorUtility.SetDirty(existing);
         }
         else

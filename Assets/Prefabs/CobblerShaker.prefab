@@ -123,9 +123,10 @@ MonoBehaviour:
   capWidthRatio: 1
   capThickness: 0.1
   strainerGuideEdgeRadius: 0.04
+  maximumTiltAngle: 180
   iceMode: 0
-  minimumSpeed: 3.5
-  requiredShakeDuration: 1.5
-  minimumReversals: 3
-  maximumReversalInterval: 0.65
-  reversalDotThreshold: -0.25
+  minimumSpeed: 2
+  requiredShakeDuration: 1
+  minimumReversals: 2
+  maximumReversalInterval: 1
+  reversalDotThreshold: 0

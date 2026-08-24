@@ -77,6 +77,11 @@ namespace Slainte.Bartending
 
         public VesselLiquidTracker LiquidTracker => liquidTracker;
 
+        public void ConfigureMaximumTiltAngle(float maximumAngle)
+        {
+            maxTiltAngle = Mathf.Max(0f, maximumAngle);
+        }
+
         public void ConfigureHorizontalRotationMovement(float sensitivity, float screenPadding)
         {
             rotationHorizontalSensitivity = Mathf.Max(0f, sensitivity);

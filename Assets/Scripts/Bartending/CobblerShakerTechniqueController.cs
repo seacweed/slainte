@@ -21,13 +21,16 @@ namespace Slainte.Bartending
         [SerializeField, Min(0.02f)] private float capThickness = 0.1f;
         [SerializeField, Min(0f)] private float strainerGuideEdgeRadius = 0.04f;
 
+        [Header("Shaker Interaction")]
+        [SerializeField, Range(120f, 180f)] private float maximumTiltAngle = 180f;
+
         [Header("Shake Requirement")]
         [SerializeField] private ShakerIceMode iceMode = ShakerIceMode.IcedShake;
-        [SerializeField, Min(0.1f)] private float minimumSpeed = 3.5f;
-        [SerializeField, Min(0.2f)] private float requiredShakeDuration = 1.5f;
-        [SerializeField, Min(1)] private int minimumReversals = 3;
-        [SerializeField, Min(0.1f)] private float maximumReversalInterval = 0.65f;
-        [SerializeField, Range(-0.95f, -0.05f)] private float reversalDotThreshold = -0.25f;
+        [SerializeField, Min(0.1f)] private float minimumSpeed = 2f;
+        [SerializeField, Min(0.2f)] private float requiredShakeDuration = 1f;
+        [SerializeField, Min(1)] private int minimumReversals = 2;
+        [SerializeField, Min(0.1f)] private float maximumReversalInterval = 1f;
+        [SerializeField, Range(-0.95f, 0.5f)] private float reversalDotThreshold = 0f;
 
         private BeakerController shaker;
         private Vector3 previousPosition;
@@ -63,13 +66,14 @@ namespace Slainte.Bartending
         private void Awake()
         {
             shaker = GetComponent<BeakerController>();
+            shaker.ConfigureMaximumTiltAngle(maximumTiltAngle);
             previousPosition = transform.position;
         }
 
         private void OnEnable()
         {
             previousPosition = transform.position;
-            ResetGesture(false);
+            ResetCadence();
         }
 
         private void LateUpdate()
@@ -90,14 +94,14 @@ namespace Slainte.Bartending
 
             if (shakeComplete || !CanAdvanceShake(tracker))
             {
-                ResetGesture(false);
+                ResetCadence();
                 return;
             }
 
             if (velocity.magnitude < minimumSpeed)
             {
                 if (Time.unscaledTime - lastReversalTime > maximumReversalInterval)
-                    ResetGesture(true);
+                    ResetCadence();
                 return;
             }
 
@@ -132,7 +136,7 @@ namespace Slainte.Bartending
                 ConfigurePhysicalClosures();
             RefreshPhysicalClosures();
             if (!IsFullyClosed)
-                ResetGesture(true);
+                ResetCadence();
         }
 
         public void MarkContentsAsShaken()
@@ -416,7 +420,7 @@ namespace Slainte.Bartending
 
             contentSignature = signature;
             shakeComplete = false;
-            ResetGesture(true);
+            ResetShakeProgress(true);
         }
 
         private static int CalculateContentSignature(VesselLiquidTracker tracker)
@@ -453,11 +457,16 @@ namespace Slainte.Bartending
             }
         }
 
-        private void ResetGesture(bool notify)
+        private void ResetCadence()
         {
             previousFastDirection = Vector2.zero;
             reversalCount = 0;
             lastReversalTime = Time.unscaledTime;
+        }
+
+        private void ResetShakeProgress(bool notify)
+        {
+            ResetCadence();
             if (!shakeComplete)
                 qualifiedShakeTime = 0f;
             if (notify)
