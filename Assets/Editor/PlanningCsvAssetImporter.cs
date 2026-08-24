@@ -939,7 +939,9 @@ namespace Slainte.EditorTools
             string abv = First(row, "ABV", "abv");
             recipe.abvOverridePercent = string.IsNullOrWhiteSpace(abv) ? -1f : ParseFloat(abv, -1f);
 
-            recipe.description = First(row, "설명", "description");
+            string description = First(row, "설명", "description");
+            if (!string.IsNullOrWhiteSpace(description))
+                recipe.description = description;
 
             ReplaceTags(recipe.ingredientPropertyTags,
                 First(row, "재료 속성 1"),
