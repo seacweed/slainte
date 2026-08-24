@@ -35,7 +35,7 @@ MonoBehaviour:
   serveTargetOutlineWidth: 4
   serveTargetPaddingPixels: 0
   serveTargetFadeDuration: 0.2
-  serveTargetNormalized: {x: 0.35, y: 0.48, z: 0.3, w: 0.42}
+  serveTargetNormalized: {x: 0.38, y: 0.48, z: 0.2, w: 0.5}
   contentsLabelBackgroundColor: {r: 0.04, g: 0.05, b: 0.06, a: 0.82}
   contentsLabelFont: {fileID: 11400000, guid: 8be9d5407d167644e9540752364be580, type: 2}
   contentsLabelTextColor: {r: 1, g: 0.82, b: 0.05, a: 1}

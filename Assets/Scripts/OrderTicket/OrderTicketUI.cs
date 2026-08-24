@@ -48,7 +48,7 @@ public class OrderTicketUI : MonoBehaviour
         if (!canvasGroup) canvasGroup = GetComponent<CanvasGroup>();
 
         _visiblePos = ticketRect.anchoredPosition;
-        HideStructuredOrderDetails();
+        ClearContent();
         ApplyClosedState();
         SetButtonInteractable(true);
     }
@@ -60,16 +60,27 @@ public class OrderTicketUI : MonoBehaviour
 
     public void Show(OrderTicketData data, string memo)
     {
+        if (data == null)
+        {
+            ClearContent();
+            return;
+        }
+
         if (customerNameText) customerNameText.text = data.customerName;
         if (memoText)         memoText.text         = memo ?? "";
 
         HideStructuredOrderDetails();
-
-        Canvas.ForceUpdateCanvases();
-        if (contentRect) LayoutRebuilder.ForceRebuildLayoutImmediate(contentRect);
-        if (scrollRect)  scrollRect.verticalNormalizedPosition = 1f;
+        ResetScrollToTop();
 
         BeginOpen();
+    }
+
+    public void ClearContent()
+    {
+        if (customerNameText) customerNameText.text = string.Empty;
+        if (memoText) memoText.text = string.Empty;
+        HideStructuredOrderDetails();
+        ResetScrollToTop();
     }
 
     public void Toggle()
@@ -162,6 +173,18 @@ public class OrderTicketUI : MonoBehaviour
             : null;
         if (header != null)
             header.gameObject.SetActive(false);
+    }
+
+    private void ResetScrollToTop()
+    {
+        if (!scrollRect)
+            return;
+
+        scrollRect.StopMovement();
+        Canvas.ForceUpdateCanvases();
+        if (contentRect)
+            LayoutRebuilder.ForceRebuildLayoutImmediate(contentRect);
+        scrollRect.verticalNormalizedPosition = 1f;
     }
 
     private void Slide(Vector2 target, Action onComplete)

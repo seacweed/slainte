@@ -113,7 +113,8 @@ namespace NarrativeFlow.Editor
                 EpisodeEventType.Dialogue => $"<b>{eventData.SpeakerKey}</b>\n{(eventData.Text?.Length > 40 ? eventData.Text.Substring(0, 37) + "..." : eventData.Text)}",
                 EpisodeEventType.Choice => $"{eventData.Choices.Count} Options",
                 EpisodeEventType.BusinessStart =>
-                    $"{eventData.CraftingOrderType}: {eventData.CraftingOrderTarget}\nTicket: {eventData.CraftingTicketKey}",
+                    $"{eventData.CraftingOrderType}: {eventData.CraftingOrderTarget}\nTicket: "
+                    + $"{(eventData.CraftingOrderTicket != null ? eventData.CraftingOrderTicket.key : eventData.CraftingTicketKey)}",
                 EpisodeEventType.BranchExit => $"EXIT -> <b>{eventData.ExitBranchName}</b>",
                 _ => "Point"
             };

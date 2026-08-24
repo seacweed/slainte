@@ -6,6 +6,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace Slainte.EditorTools
 {
@@ -132,13 +133,16 @@ namespace Slainte.EditorTools
             TVUIManager manager = panelPrefab != null
                 ? panelPrefab.GetComponent<TVUIManager>()
                 : null;
+            Image presenterImage = panelPrefab != null
+                ? panelPrefab.transform.Find("TVFrame/PresenterImage")?.GetComponent<Image>()
+                : null;
             Require(manager != null
                     && manager.screenBackgroundImage?.sprite != null
                     && manager.frameImage?.sprite != null
                     && manager.headlineImage?.sprite != null
                     && manager.cardBackgroundImage?.sprite != null
                     && manager.eventImage != null
-                    && manager.presenterImage != null
+                    && presenterImage?.sprite != null
                     && manager.ticker != null,
                 "TVPanel에 최종 배경/프레임/헤드라인/카드 또는 동적 이미지 참조가 없습니다.");
         }

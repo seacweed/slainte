@@ -72,7 +72,6 @@ public class GameModeManager : SceneSingleton<GameModeManager>
         if (!isEpisode)
         {
             recipeBook?.Open();
-            orderTicketUI?.Open();
         }
     }
 

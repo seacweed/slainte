@@ -32,8 +32,23 @@ MonoBehaviour:
     sequenceSlot: 3
     customerVisit: {fileID: 0}
     encounterEpisode: {fileID: 11400000, guid: 565cdd3b075026249b49e76ec6df782a, type: 2}
+  - ruleId: the_littles_0_slot_6
+    actionType: 1
+    exactDay: 0
+    condition:
+      minDay: 5
+      requiredFlags: []
+      blockedFlags: []
+      prerequisiteEpisodeIds: []
+      requiredVars: []
+      requiredCustomerAppearances: []
+    priority: 100
+    timing: 3
+    sequenceSlot: 6
+    customerVisit: {fileID: 0}
+    encounterEpisode: {fileID: 11400000, guid: 6b5b149ff75382c4eab9426d6b0070ff, type: 2}
   deliveryUnlockEpisodeId: LocalClusterExpress
-  tvUnlockEpisodeId:
+  tvUnlockEpisodeId: NightShift
   goodMoneyReward: 100
   midMoneyReward: 50
   badMoneyReward: 0

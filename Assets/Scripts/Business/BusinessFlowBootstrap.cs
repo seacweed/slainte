@@ -272,6 +272,30 @@ namespace Slainte.Business
             return started;
         }
 
+        public bool TryAbortEpisodeOrderForRecovery()
+        {
+            if (!episodeOrderActive)
+                return true;
+
+            bool aborted = orderSession != null
+                && orderSession.TryAbortEpisodeOrderForRecovery();
+            if (!aborted)
+            {
+                Debug.LogWarning(
+                    "[BusinessFlow] 활성 에피소드 제조 세션을 찾지 못해 복구 상태만 해제합니다.");
+                episodeOrderActive = false;
+            }
+
+            return !episodeOrderActive;
+        }
+
+        public bool TryForceCompleteBusiness()
+        {
+            return runtimeInitialized
+                && shiftController != null
+                && shiftController.TryForceCompleteShift();
+        }
+
         private void HandleBusinessDayCompleted()
         {
             businessSequenceActive = false;

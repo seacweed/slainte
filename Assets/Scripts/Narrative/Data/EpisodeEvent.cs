@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Slainte.Bartending;
+using Slainte.Economy;
 using UnityEngine;
 
 namespace NarrativeFlow
@@ -42,9 +43,14 @@ namespace NarrativeFlow
         public string SfxClipName;
 
         // Business Fields
+        [Tooltip("제조 중 표시할 주문서 에셋입니다. Ticket Key는 이전 데이터 호환용입니다.")]
+        public OrderTicketData CraftingOrderTicket;
         public string CraftingTicketKey;
         public CocktailOrderType CraftingOrderType = CocktailOrderType.EpisodeOrder;
         public string CraftingOrderTarget;
+        public bool CraftingPaymentEnabled = true;
+        public GameCurrency CraftingPaymentCurrency = GameCurrency.Money;
+        [Min(0.01f)] public float CraftingPaymentMultiplier = 1f;
         public List<CraftingOutcomeData> CraftingOutcomes = new();
 
         // Branch Exit

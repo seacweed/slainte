@@ -80,7 +80,7 @@ public sealed class PlaytestLauncherWindow : EditorWindow
         EditorGUILayout.LabelField("Episode & Day Playtest Launcher", EditorStyles.boldLabel);
         EditorGUILayout.HelpBox(
             "Every launch uses an isolated progress snapshot. Disk save writes and save deletion "
-            + "remain disabled until Play Mode ends.",
+            + "remain disabled until Play Mode ends. The Game View receives keyboard focus after launch.",
             MessageType.Info);
 
         if (EditorApplication.isPlaying)
@@ -113,6 +113,10 @@ public sealed class PlaytestLauncherWindow : EditorWindow
                 ? "The isolated playtest is running."
                 : PlaytestLaunchCoordinator.Status,
             MessageType.Info);
+        EditorGUILayout.HelpBox(
+            "Shortcuts: S opens the drawer, W closes it, and E toggles the order ticket. "
+            + "If they do not respond, click the Game View once. Episode dialogue intentionally locks them.",
+            MessageType.None);
 
         if (GUILayout.Button("Stop Isolated Playtest", GUILayout.Height(34f)))
             EditorApplication.isPlaying = false;
@@ -455,6 +459,7 @@ internal static class PlaytestLaunchCoordinator
             LaunchDay(request, progress, dayFlow, isolation);
             SessionState.SetInt(StageKey, 2);
             SetStatus($"Running isolated Day {request.targetDay} flow test.");
+            FocusGameView();
             return;
         }
 
@@ -475,12 +480,14 @@ internal static class PlaytestLaunchCoordinator
             SessionState.SetInt(StageKey, 1);
             SetStatus("Entering Business before starting the selected Encounter...");
             gameManager.ChangeState(GameState.Business);
+            FocusGameView();
             return;
         }
 
         SessionState.SetInt(StageKey, 2);
         episodeManager.StartEpisode(episode.episodeId);
         SetStatus($"Running isolated episode test: {episode.episodeTitle} [{episode.episodeId}]");
+        FocusGameView();
     }
 
     private static void DispatchEncounter(PlaytestLaunchRequest request)
@@ -507,6 +514,7 @@ internal static class PlaytestLaunchCoordinator
         EpisodeData episode = episodeManager.GetEpisodeData(request.episodeId);
         SessionState.SetInt(StageKey, 2);
         SetStatus($"Running isolated Encounter test: {episode?.episodeTitle} [{request.episodeId}]");
+        FocusGameView();
     }
 
     private static void LaunchDay(
@@ -580,6 +588,18 @@ internal static class PlaytestLaunchCoordinator
         return string.IsNullOrWhiteSpace(json)
             ? null
             : JsonUtility.FromJson<PlaytestLaunchRequest>(json);
+    }
+
+    private static void FocusGameView()
+    {
+        Type gameViewType = typeof(EditorWindow).Assembly.GetType("UnityEditor.GameView");
+        if (gameViewType == null)
+            return;
+
+        EditorWindow gameView = Resources.FindObjectsOfTypeAll(gameViewType)
+            .OfType<EditorWindow>()
+            .FirstOrDefault();
+        gameView?.Focus();
     }
 
     private static void HandlePlayModeStateChanged(PlayModeStateChange change)

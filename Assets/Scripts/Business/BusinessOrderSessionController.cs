@@ -33,6 +33,12 @@ namespace Slainte.Business
 
         public BusinessOrderSessionState State { get; private set; } = BusinessOrderSessionState.Idle;
         public string CurrentRecipeName => currentOrder?.RequestedRecipeName ?? string.Empty;
+        public bool HasActiveOrder => currentRequest != null
+            && !completionDispatched
+            && State != BusinessOrderSessionState.Idle
+            && State != BusinessOrderSessionState.Completed;
+        public string CurrentSessionId => currentRequest?.sessionId ?? string.Empty;
+        public OrderSessionOwner CurrentOwner => currentRequest?.owner ?? OrderSessionOwner.Business;
 
         public event Action<BusinessOrderSessionState, BusinessOrderSessionState> StateChanged;
         public event Action<BusinessOrderSessionResult> OrderCompleted;
@@ -234,10 +240,10 @@ namespace Slainte.Business
             return true;
         }
 
-#if UNITY_EDITOR
-        public bool TryCompleteCurrentOrderForPlaytest()
+        public bool TryAbortEpisodeOrderForRecovery()
         {
             if (currentRequest == null
+                || currentRequest.owner != OrderSessionOwner.Episode
                 || completionDispatched
                 || State == BusinessOrderSessionState.Idle
                 || State == BusinessOrderSessionState.Completed)
@@ -245,12 +251,62 @@ namespace Slainte.Business
                 return false;
             }
 
+            AbortForTechnicalFailure("현재 에피소드 강제 완료로 제조 세션을 종료했습니다.");
+            return true;
+        }
+
+#if UNITY_EDITOR
+        public bool TryCompleteCurrentOrderForPlaytest()
+        {
+            return TryForceCurrentOrderResult(
+                CraftingJobResult.Good,
+                presentConfiguredFeedback: false);
+        }
+
+        public bool TryForceCurrentOrderResult(CraftingJobResult forcedResult)
+        {
+            return TryForceCurrentOrderResult(
+                forcedResult,
+                presentConfiguredFeedback: true);
+        }
+
+        private bool TryForceCurrentOrderResult(
+            CraftingJobResult forcedResult,
+            bool presentConfiguredFeedback)
+        {
+            if (!HasActiveOrder)
+                return false;
+
             dialogue?.HideImmediate();
-            modeManager?.RequestModeChange(GameMode.OrderMode);
+            StopCraftingPreparationTimeout();
+            SetState(BusinessOrderSessionState.Evaluating);
+
+            CocktailOrderEvaluationOutcome outcome = forcedResult switch
+            {
+                CraftingJobResult.Good => CocktailOrderEvaluationOutcome.Good,
+                CraftingJobResult.MidIce => CocktailOrderEvaluationOutcome.MidIce,
+                CraftingJobResult.MidGlass => CocktailOrderEvaluationOutcome.MidGlass,
+                CraftingJobResult.MidIceGlass => CocktailOrderEvaluationOutcome.MidIceGlass,
+                CraftingJobResult.MidWrongMenu => CocktailOrderEvaluationOutcome.MidWrongMenu,
+                _ => CocktailOrderEvaluationOutcome.Bad
+            };
+            CocktailOrderEvaluationResult evaluation = new()
+            {
+                order = currentOrder,
+                outcome = outcome,
+                isSuccess = forcedResult == CraftingJobResult.Good
+                    || forcedResult == CraftingJobResult.MidIce
+                    || forcedResult == CraftingJobResult.MidGlass
+                    || forcedResult == CraftingJobResult.MidIceGlass,
+                failureReason = $"에디터 디버그 도구에서 {forcedResult} 결과로 넘겼습니다."
+            };
+            OrderEvaluationGrade grade = OrderEvaluationGrader.Resolve(evaluation, settings);
             GameCurrency paymentCurrency = currentRequest.paymentCurrency;
-            int listedPrice = GetListedPrice(paymentCurrency);
+            int listedPrice = BusinessOrderPriceRules.ApplyPaymentMultiplier(
+                GetListedPrice(paymentCurrency),
+                currentRequest.paymentMultiplier);
             BusinessOrderReward reward = BusinessOrderRewardCalculator.Calculate(
-                OrderEvaluationGrade.Good,
+                grade,
                 listedPrice,
                 settings,
                 TVBroadcastRuntime.GetTipMultiplier(
@@ -258,7 +314,7 @@ namespace Slainte.Business
                     tvBroadcastDatabase),
                 GameProgress.Instance != null ? GameProgress.Instance.CurrentMoney : 0,
                 currentRequest.rewardProfile);
-            CompleteCurrentOrder(new BusinessOrderSessionResult
+            pendingResult = new BusinessOrderSessionResult
             {
                 outcome = OrderSessionOutcome.Served,
                 customerOrderKey = currentRequest.customerOrderKey,
@@ -267,7 +323,7 @@ namespace Slainte.Business
                 paymentCurrency = paymentCurrency,
                 listedPrice = listedPrice,
                 accepted = true,
-                grade = OrderEvaluationGrade.Good,
+                grade = grade,
                 customerMood = reward.Mood,
                 baseRevenue = reward.BaseRevenue,
                 tipAmount = reward.TipAmount,
@@ -275,8 +331,14 @@ namespace Slainte.Business
                 moneyDelta = paymentCurrency == GameCurrency.Money ? reward.TotalRevenue : 0,
                 strangeCoinDelta = paymentCurrency == GameCurrency.StrangeCoin ? reward.TotalRevenue : 0,
                 totalPayment = reward.TotalRevenue,
-                reputationDelta = reward.ReputationDelta
-            });
+                reputationDelta = reward.ReputationDelta,
+                evaluation = evaluation
+            };
+
+            Debug.LogWarning(
+                $"[BusinessOrderSession] 현재 주문을 디버그 결과로 넘깁니다: "
+                + $"session={currentRequest.sessionId}, result={forcedResult}");
+            PresentPendingResult(presentConfiguredFeedback);
             return true;
         }
 #endif
@@ -286,7 +348,8 @@ namespace Slainte.Business
             if (currentRequest == null)
                 return;
 
-            if (!string.IsNullOrWhiteSpace(currentRequest.ticketKey))
+            if (currentRequest.ticketData != null
+                || !string.IsNullOrWhiteSpace(currentRequest.ticketKey))
                 PrepareCurrentOrderTicket();
 
             SetState(BusinessOrderSessionState.Crafting);
@@ -308,7 +371,8 @@ namespace Slainte.Business
         {
             if (ticketManager == null
                 || currentRequest == null
-                || string.IsNullOrWhiteSpace(currentRequest.ticketKey))
+                || (currentRequest.ticketData == null
+                    && string.IsNullOrWhiteSpace(currentRequest.ticketKey)))
             {
                 return;
             }
@@ -322,13 +386,20 @@ namespace Slainte.Business
                     StringComparison.Ordinal);
             if (matchingPresentedOrder)
             {
-                ticketManager.Prepare(
-                    currentRequest.ticketKey,
-                    OrderTicketMemoFormatter.Build(customerOrder, currentOrder?.line));
+                string memo = OrderTicketMemoFormatter.Build(
+                    customerOrder,
+                    currentOrder?.line);
+                if (currentRequest.ticketData != null)
+                    ticketManager.Prepare(currentRequest.ticketData, memo);
+                else
+                    ticketManager.Prepare(currentRequest.ticketKey, memo);
                 return;
             }
 
-            ticketManager.Prepare(currentRequest.ticketKey);
+            if (currentRequest.ticketData != null)
+                ticketManager.Prepare(currentRequest.ticketData);
+            else
+                ticketManager.Prepare(currentRequest.ticketKey);
         }
 
         private void SubmitOrder()
@@ -356,7 +427,9 @@ namespace Slainte.Business
 
             OrderEvaluationGrade grade = OrderEvaluationGrader.Resolve(evaluation, settings);
             GameCurrency paymentCurrency = currentRequest.paymentCurrency;
-            int listedPrice = GetListedPrice(paymentCurrency, evaluation);
+            int listedPrice = BusinessOrderPriceRules.ApplyPaymentMultiplier(
+                GetListedPrice(paymentCurrency, evaluation),
+                currentRequest.paymentMultiplier);
             BusinessOrderReward reward = BusinessOrderRewardCalculator.Calculate(
                 grade,
                 listedPrice,
@@ -391,10 +464,17 @@ namespace Slainte.Business
                 ? evaluation.ToDebugString()
                 : "판정 기능을 사용할 수 없습니다."));
 
+            PresentPendingResult(presentConfiguredFeedback: true);
+        }
+
+        private void PresentPendingResult(bool presentConfiguredFeedback)
+        {
             modeManager?.RequestModeChange(GameMode.OrderMode);
             ticketManager?.ClearTicket();
 
-            if (currentRequest != null && !currentRequest.presentFeedback)
+            if (!presentConfiguredFeedback
+                || currentRequest == null
+                || !currentRequest.presentFeedback)
             {
                 CompletePendingResult();
                 return;
@@ -418,7 +498,7 @@ namespace Slainte.Business
             {
                 string fallback = settings.GetMissingFeedbackDummy(detailedResult);
                 if (string.IsNullOrWhiteSpace(fallback))
-                    fallback = settings.GetFallbackFeedback(grade);
+                    fallback = settings.GetFallbackFeedback(pendingResult.grade);
                 if (!string.IsNullOrWhiteSpace(fallback))
                 {
                     Debug.LogWarning(
@@ -507,8 +587,23 @@ namespace Slainte.Business
             GameProgress progress = GameProgress.Instance;
             if (progress != null && completedRequest != null)
             {
-                if (completedRequest.applyProgressRewards || completedRequest.applyPayment)
+                bool paymentApplied = completedRequest.applyProgressRewards
+                    || completedRequest.applyPayment;
+                if (paymentApplied)
                     GameCurrencyWallet.Add(progress, result.paymentCurrency, result.PaymentAmount);
+                if (completedRequest.recordSale
+                    && result.outcome == OrderSessionOutcome.Served
+                    && result.accepted)
+                {
+                    BusinessSaleRecord record = result.ToSaleRecord();
+                    record.paymentApplied = paymentApplied;
+                    if (!completedRequest.applyProgressRewards
+                        && !completedRequest.applyReputation)
+                    {
+                        record.reputationDelta = 0;
+                    }
+                    progress.RecordDrinkSale(record);
+                }
                 if (completedRequest.applyProgressRewards || completedRequest.applyReputation)
                     progress.AddReputation(result.reputationDelta);
             }
@@ -534,18 +629,38 @@ namespace Slainte.Business
             CocktailOrderEvaluationResult evaluation = null)
         {
             CocktailRecipe recipe = ResolveListedRecipe(currentOrder, evaluation);
-            return recipe != null ? recipe.GetPrice(currency) : -1;
+            if (recipe != null)
+                return recipe.GetPrice(currency);
+
+            // 제출 결과를 판정한 뒤에도 레시피를 식별하지 못했다면
+            // 고정 보상으로 폴백하지 않고 결과 칵테일의 가격을 0으로 취급한다.
+            return evaluation != null ? 0 : -1;
         }
 
         private static CocktailRecipe ResolveListedRecipe(
             GeneratedCocktailOrder order,
             CocktailOrderEvaluationResult evaluation)
         {
-            if (!IsTagOrder(order?.orderType))
+            if (evaluation == null)
                 return order?.requestedRecipe;
 
-            return evaluation?.requestedRecipeResult?.matchedRecipe
-                ?? evaluation?.detectedRecipeResult?.matchedRecipe;
+            CocktailEvaluationResult detected = evaluation.detectedRecipeResult;
+            if (detected != null
+                && detected.isSuccess
+                && detected.matchedRecipe != null)
+            {
+                return detected.matchedRecipe;
+            }
+
+            CocktailEvaluationResult requested = evaluation.requestedRecipeResult;
+            if (requested != null
+                && requested.matchedRecipe != null
+                && (requested.isSuccess || requested.coreValid))
+            {
+                return requested.matchedRecipe;
+            }
+
+            return null;
         }
 
         private static bool HasValidRequestTarget(OrderSessionRequest request)

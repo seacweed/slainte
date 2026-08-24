@@ -568,10 +568,11 @@ MonoBehaviour:
       expressionKey: mid
       slotIndex: 0
     requiresCrafting: 1
+    craftingOrderTicket: {fileID: 11400000, guid: cc0345289ed243ae96ca9d9ddc8b6926, type: 2}
     craftingTicketKey: bf0_bf
-    craftingOrderType: 6
+    craftingOrderType: 3
     craftingOrderTarget: "\uACE0\uAE09\uC2A4\uB7EC\uC6B4"
-    craftingPaymentEnabled: 0
+    craftingPaymentEnabled: 1
     craftingPaymentCurrency: 0
     craftingOutcomes:
     - result: 0

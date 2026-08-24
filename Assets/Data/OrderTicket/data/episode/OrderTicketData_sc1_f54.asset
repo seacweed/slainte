@@ -14,9 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OrderTicketData
   key: sc1_f54
   customerName: F54
-  memo: "\uC190\uB2D8 \uBD88\uB800\uC73C\uBA74 \uC220 \uD55C\uC794\uC740 \uB0B4\uC918\uC57C\uC9C0.
-    \uC704\uC2A4\uD0A4 \uD55C\uC794!"
+  memo: "잠깐! 사람을 불렀으면 뭐라도 내줘야지. 바하 온더락으로 한 잔 부탁해!"
   items:
-  - name: "\uC704\uC2A4\uD0A4"
+  - name: "바하 온더락"
     qty: 1
-    price: 30
+    price: 210

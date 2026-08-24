@@ -21,7 +21,6 @@ namespace Slainte.TV
         public string title;
         [TextArea(2, 5)] public string tickerText;
         [Min(0f)] public float weight = 1f;
-        public Sprite presenterSprite;
         public Sprite eventSprite;
         public TVBroadcastEffectType effectType;
         public string targetTag;

@@ -898,6 +898,9 @@ namespace Slainte.Bartending
             if (!configured || !attached || owner == null)
                 return;
 
+            if (!BartendingSelection.TryAcquire(this))
+                return;
+
             Vector3 worldPosition = transform.position;
             Quaternion worldRotation = transform.rotation;
             Vector3 worldScale = transform.lossyScale;
@@ -961,6 +964,7 @@ namespace Slainte.Bartending
             transform.localRotation = attachedLocalRotation;
             transform.localScale = attachedLocalScale;
             owner?.NotifyPartStateChanged(this);
+            BartendingSelection.Release(this);
         }
 
         internal void AttachToCarrier(ShakerPartController carrier)
@@ -982,6 +986,7 @@ namespace Slainte.Bartending
             transform.localRotation = Quaternion.identity;
             transform.localScale = Vector3.one;
             owner?.NotifyPartStateChanged(this);
+            BartendingSelection.Release(this);
         }
 
         internal void FollowAttachedCarrier(Transform carrier)
@@ -1012,6 +1017,7 @@ namespace Slainte.Bartending
                 slotTransform.position.y + bottomOffset,
                 transform.position.z));
             pickedUp = false;
+            BartendingSelection.Release(this);
         }
 
         public void OnPickedUp()
@@ -1057,6 +1063,9 @@ namespace Slainte.Bartending
         private void PickUpAt(Vector3 pointerWorld)
         {
             if (!configured || attached)
+                return;
+
+            if (!BartendingSelection.TryAcquire(this))
                 return;
 
             VacateCurrentSlot();
@@ -1211,6 +1220,7 @@ namespace Slainte.Bartending
         {
             viewTransitionSuspended = false;
             pickedUp = false;
+            BartendingSelection.Release(this);
             VacateCurrentSlot();
         }
     }

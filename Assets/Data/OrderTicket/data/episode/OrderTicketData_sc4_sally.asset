@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b074092a6424ed548be557aa3efb3794, type: 3}
+  m_Name: OrderTicketData_sc4_sally
+  m_EditorClassIdentifier: Assembly-CSharp::OrderTicketData
+  key: sc4_sally
+  customerName: "셀리"
+  memo: "그 뭐였더라… 저번에 그 꼬맹이가 마셨던 걸로 부탁해.\n셰이디 말씀인가요?\n그래! 셰이디, 이름 참 복잡하네."
+  items:
+  - name: "셰이디"
+    qty: 1
+    price: 462

@@ -746,6 +746,8 @@ namespace Slainte.EditorTools
             item.bottleCategory = ParseCategory(First(row, "대분류", "category"));
             item.liquidType = ParseLiquidType(First(row, "소분류", "subcategory"));
             item.capacityMl = Mathf.Max(0f, ParseFloat(First(row, "Size(ml)", "sizeMl"), 700f));
+            item.inheritMixedLiquidColor = string.Equals(id, "item_1013", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(id, "item_1014", StringComparison.OrdinalIgnoreCase);
             item.dragMovesObject = true;
 
             string iconName = First(row, "IconName", "iconName");

@@ -37,6 +37,7 @@ namespace Slainte.Bartending
         private GameModeManager modeManager;
         private GameObject sessionRoot;
         private Transform sessionWorld;
+        private BartendingSelectionCoordinator selectionCoordinator;
         private BartendingViewport sessionViewport;
         private RectTransform slotLayoutTemplate;
         private RectTransform sessionSlotLayout;
@@ -201,6 +202,10 @@ namespace Slainte.Bartending
             sessionRenderLayer = builtSession.RenderLayer;
             sessionRoot = builtSession.Root;
             sessionWorld = builtSession.World;
+            selectionCoordinator = sessionWorld != null
+                ? sessionWorld.GetComponent<BartendingSelectionCoordinator>()
+                    ?? sessionWorld.gameObject.AddComponent<BartendingSelectionCoordinator>()
+                : null;
             sessionViewport = builtSession.Viewport;
             sessionViewport?.SetOutputVisible(false);
             sessionSlotLayout = builtSession.SlotLayout;
@@ -272,6 +277,7 @@ namespace Slainte.Bartending
             }
             sessionRoot = null;
             sessionWorld = null;
+            selectionCoordinator = null;
             sessionViewport = null;
             sessionSlotLayout = null;
             sessionLiquidPool = null;
@@ -635,6 +641,13 @@ namespace Slainte.Bartending
                 return false;
             }
 
+            if (item is not Component itemComponent
+                || !BartendingSelection.CanAcquire(itemComponent))
+            {
+                failure = "Put down the item already being held before taking another one.";
+                return false;
+            }
+
             if (!TryGetCabinetPickupWorldPosition(screenPosition, out Vector3 pickupWorld))
             {
                 failure = "The bartending counter is not ready to receive this item.";
@@ -713,6 +726,9 @@ namespace Slainte.Bartending
         {
             if (sessionWorld == null)
                 return false;
+
+            if (selectionCoordinator != null && selectionCoordinator.HasSelection)
+                return true;
 
             MonoBehaviour[] behaviours =
                 sessionWorld.GetComponentsInChildren<MonoBehaviour>(true);

@@ -91,7 +91,7 @@ namespace Slainte.EditorTools
                 throw new InvalidOperationException($"TV 방송 데이터베이스가 없습니다: {DatabasePath}");
 
             AssignBroadcastCards(database);
-            GameObject panelPrefab = BuildPanelPrefab(database);
+            GameObject panelPrefab = LoadPanelPrefab(database);
             GameObject tvPrefab = BuildTVPrefab(database, panelPrefab);
             InstallSceneArtwork(database, tvPrefab);
 
@@ -226,130 +226,19 @@ namespace Slainte.EditorTools
             EditorUtility.SetDirty(database);
         }
 
-        private static GameObject BuildPanelPrefab(TVBroadcastDatabase database)
+        private static GameObject LoadPanelPrefab(TVBroadcastDatabase database)
         {
-            Sprite backgroundSprite = LoadSprite(TVBackgroundPath);
-            Sprite frameSprite = LoadSprite(TVFramePath);
-            Sprite headlineSprite = LoadSprite(TVHeadlinePath);
-            Sprite cardBackgroundSprite = LoadSprite(TVCardBackgroundPath);
+            GameObject panelPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(PanelPrefabPath);
+            if (panelPrefab == null)
+                throw new InvalidOperationException($"TVPanel 프리팹이 없습니다: {PanelPrefabPath}");
 
-            GameObject panel = CreateImage(
-                "TVPanel",
-                null,
-                null,
-                new Color(0f, 0f, 0f, 0.42f));
-            Stretch(panel.GetComponent<RectTransform>());
-            panel.AddComponent<CanvasGroup>();
-            TVUIManager manager = panel.AddComponent<TVUIManager>();
-            manager.database = database;
+            TVUIManager manager = panelPrefab.GetComponent<TVUIManager>();
+            if (manager == null)
+                throw new InvalidOperationException("TVPanel 프리팹에 TVUIManager가 없습니다.");
+            if (manager.database != database)
+                throw new InvalidOperationException("TVPanel 프리팹에 올바른 방송 데이터베이스가 연결되지 않았습니다.");
 
-            GameObject frameRootObject = new("TVFrame", typeof(RectTransform));
-            RectTransform frameRoot = frameRootObject.GetComponent<RectTransform>();
-            frameRoot.SetParent(panel.transform, false);
-            frameRoot.anchorMin = frameRoot.anchorMax = new Vector2(1f, 0.5f);
-            frameRoot.pivot = new Vector2(1f, 0.5f);
-            frameRoot.sizeDelta = new Vector2(1062f, 810f);
-            frameRoot.anchoredPosition = new Vector2(-35f, 0f);
-            manager.tvFrame = frameRoot;
-
-            GameObject screen = CreateImage(
-                "ScreenBackground",
-                frameRoot,
-                backgroundSprite,
-                Color.white);
-            SetFixedRect(screen.GetComponent<RectTransform>(), new Vector2(-28f, 8f), new Vector2(840f, 640f));
-            manager.screenBackgroundImage = screen.GetComponent<Image>();
-
-            GameObject presenter = CreateImage(
-                "PresenterImage",
-                frameRoot,
-                null,
-                new Color(0.13f, 0.24f, 0.14f, 0.92f));
-            SetFixedRect(presenter.GetComponent<RectTransform>(), new Vector2(-246f, 72f), new Vector2(278f, 342f));
-            manager.presenterImage = presenter.GetComponent<Image>();
-            manager.presenterPlaceholderText = CreateText(
-                "PresenterPlaceholder",
-                presenter.transform,
-                "진행자 임시 영역\n최종 에셋 대기",
-                25f,
-                TextAlignmentOptions.Center,
-                new Color(0.88f, 0.94f, 0.69f, 1f));
-
-            GameObject cardBackground = CreateImage(
-                "EventCardBackground",
-                frameRoot,
-                cardBackgroundSprite,
-                Color.white);
-            SetFixedRect(cardBackground.GetComponent<RectTransform>(), new Vector2(190f, 82f), new Vector2(360f, 290f));
-            manager.cardBackgroundImage = cardBackground.GetComponent<Image>();
-
-            GameObject eventImage = CreateImage(
-                "EventImage",
-                frameRoot,
-                null,
-                Color.white);
-            SetFixedRect(eventImage.GetComponent<RectTransform>(), new Vector2(190f, 82f), new Vector2(360f, 290f));
-            manager.eventImage = eventImage.GetComponent<Image>();
-            manager.eventPlaceholderText = CreateText(
-                "EventPlaceholder",
-                eventImage.transform,
-                "방송 카드 준비 중",
-                24f,
-                TextAlignmentOptions.Center,
-                Color.white);
-
-            GameObject headline = CreateImage(
-                "Headline",
-                frameRoot,
-                headlineSprite,
-                Color.white);
-            SetFixedRect(headline.GetComponent<RectTransform>(), new Vector2(-28f, -174f), new Vector2(695f, 114f));
-            manager.headlineImage = headline.GetComponent<Image>();
-            manager.titleText = CreateText(
-                "TitleText",
-                headline.transform,
-                "이상 없음",
-                32f,
-                TextAlignmentOptions.Center,
-                Color.white);
-
-            GameObject tickerViewportObject = CreateImage(
-                "TickerViewport",
-                frameRoot,
-                null,
-                new Color(0.02f, 0.055f, 0.02f, 0.95f));
-            RectTransform tickerViewport = tickerViewportObject.GetComponent<RectTransform>();
-            SetFixedRect(tickerViewport, new Vector2(-28f, -255f), new Vector2(760f, 48f));
-            tickerViewportObject.AddComponent<RectMask2D>();
-            TextMeshProUGUI firstTicker = CreateTickerText("TickerA", tickerViewport);
-            TextMeshProUGUI secondTicker = CreateTickerText("TickerB", tickerViewport);
-            TVTicker ticker = tickerViewportObject.AddComponent<TVTicker>();
-            ticker.viewport = tickerViewport;
-            ticker.firstText = firstTicker;
-            ticker.secondText = secondTicker;
-            manager.ticker = ticker;
-
-            GameObject frameArt = CreateImage(
-                "FrameArtwork",
-                frameRoot,
-                frameSprite,
-                Color.white);
-            Stretch(frameArt.GetComponent<RectTransform>());
-            frameArt.GetComponent<Image>().raycastTarget = false;
-            manager.frameImage = frameArt.GetComponent<Image>();
-
-            Button closeButton = CreateButton(
-                "CloseButton",
-                frameRoot,
-                "X",
-                new Color(0.97f, 0.71f, 0.08f, 1f));
-            SetFixedRect(closeButton.GetComponent<RectTransform>(), new Vector2(486f, 365f), new Vector2(64f, 64f));
-            manager.closeButton = closeButton;
-
-            panel.SetActive(false);
-            GameObject saved = PrefabUtility.SaveAsPrefabAsset(panel, PanelPrefabPath);
-            Object.DestroyImmediate(panel);
-            return saved;
+            return panelPrefab;
         }
 
         private static GameObject BuildTVPrefab(
@@ -611,12 +500,13 @@ namespace Slainte.EditorTools
             if (sprite == null)
             {
                 string expectedName = System.IO.Path.GetFileNameWithoutExtension(path);
-                sprite = AssetDatabase.LoadAllAssetsAtPath(path)
-                    .OfType<Sprite>()
-                    .FirstOrDefault(candidate => string.Equals(
-                        candidate.name,
-                        expectedName,
-                        StringComparison.Ordinal));
+                IEnumerable<Sprite> sprites = AssetDatabase.LoadAllAssetsAtPath(path)
+                    .OfType<Sprite>();
+                sprite = sprites.FirstOrDefault(candidate => string.Equals(
+                             candidate.name,
+                             expectedName,
+                             StringComparison.Ordinal))
+                         ?? sprites.FirstOrDefault();
             }
 
             if (sprite == null)

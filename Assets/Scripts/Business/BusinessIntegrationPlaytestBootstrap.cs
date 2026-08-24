@@ -27,6 +27,7 @@ namespace Slainte.Business
     {
         private const string SettingsResourcePath = "Business/BusinessOrderFlowSettings";
         private const string SimpleEncounterId = "StrangeCoin_0";
+        private const string SixthEncounterId = "TheLittles_0";
         private const string CraftingEncounterId = "StrangeCoin_0";
 
         [Header("Runtime Pool")]
@@ -321,6 +322,7 @@ namespace Slainte.Business
             }
 
             BusinessRequiredActionRule strangeCoinRule = null;
+            BusinessRequiredActionRule theLittlesRule = null;
             for (int i = 0; i < productionSettings.requiredActions.Count; i++)
             {
                 BusinessRequiredActionRule candidate = productionSettings.requiredActions[i];
@@ -328,7 +330,11 @@ namespace Slainte.Business
                     && candidate.encounterEpisode.episodeId == SimpleEncounterId)
                 {
                     strangeCoinRule = candidate;
-                    break;
+                }
+                else if (candidate?.encounterEpisode != null
+                    && candidate.encounterEpisode.episodeId == SixthEncounterId)
+                {
+                    theLittlesRule = candidate;
                 }
             }
 
@@ -345,20 +351,36 @@ namespace Slainte.Business
                 return false;
             }
 
+            if (theLittlesRule == null
+                || theLittlesRule.actionType != BusinessRequiredActionType.EncounterEpisode
+                || theLittlesRule.timing != BusinessRequiredActionTiming.SequenceSlot
+                || theLittlesRule.sequenceSlot != 6
+                || theLittlesRule.condition == null
+                || theLittlesRule.condition.minDay != 5
+                || theLittlesRule.encounterEpisode.triggerCondition == null
+                || theLittlesRule.encounterEpisode.triggerCondition.minDay != 5)
+            {
+                status = "ERROR: Production TheLittles_0 Day-5 slot-6 rule is invalid.";
+                return false;
+            }
+
             if (productionSettings.randomEncounters != null)
             {
                 for (int i = 0; i < productionSettings.randomEncounters.Count; i++)
                 {
-                    if (productionSettings.randomEncounters[i]?.episode?.episodeId
-                        == SimpleEncounterId)
+                    string episodeId =
+                        productionSettings.randomEncounters[i]?.episode?.episodeId;
+                    if (episodeId == SimpleEncounterId || episodeId == SixthEncounterId)
                     {
-                        status = "ERROR: StrangeCoin_0 remains in the production random pool.";
+                        status = "ERROR: A fixed-slot encounter remains in the production random pool.";
                         return false;
                     }
                 }
             }
 
-            if (isolation == null || !isolation.PrepareIncompleteEpisode(SimpleEncounterId))
+            if (isolation == null
+                || !isolation.PrepareIncompleteEpisode(SimpleEncounterId)
+                || !isolation.PrepareIncompleteEpisode(SixthEncounterId))
             {
                 status = "ERROR: Production Day-5 progress could not be isolated.";
                 return false;

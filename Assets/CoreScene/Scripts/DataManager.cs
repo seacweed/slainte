@@ -3,12 +3,15 @@ using System.IO;
 
 public class DataManager : MonoSingleton<DataManager>
 {
+    public const string SaveFileName = "autosave.json";
     private static int saveSuppressionDepth;
 
     public SaveData CurrentData { get; private set; } = new SaveData();
     private string savePath;
 
     public static bool AreDiskWritesSuppressed => saveSuppressionDepth > 0;
+    public static string SaveFilePath =>
+        Path.Combine(Application.persistentDataPath, SaveFileName);
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetSaveSuppression()
@@ -29,7 +32,7 @@ public class DataManager : MonoSingleton<DataManager>
     protected override void Awake()
     {
         base.Awake();
-        savePath = Path.Combine(Application.persistentDataPath, "autosave.json");
+        savePath = SaveFilePath;
         Load();
     }
 
@@ -97,7 +100,7 @@ public class DataManager : MonoSingleton<DataManager>
         }
 
         string path = string.IsNullOrEmpty(savePath)
-            ? Path.Combine(Application.persistentDataPath, "autosave.json")
+            ? SaveFilePath
             : savePath;
 
         if (File.Exists(path))

@@ -727,6 +727,7 @@ namespace Slainte.Bartending.EditorTools
                 ScriptableObject.CreateInstance<BusinessBartendingSettings>();
             try
             {
+                settings.serveTargetSprite = sprite;
                 Canvas canvas = canvasObject.GetComponent<Canvas>();
                 canvas.renderMode = RenderMode.ScreenSpaceOverlay;
                 RectTransform canvasRect = canvasObject.GetComponent<RectTransform>();
@@ -798,25 +799,34 @@ namespace Slainte.Bartending.EditorTools
                 float tableTop = RectTransformUtility.WorldToScreenPoint(
                     null,
                     boundaryCorners[1]).y;
-                RequireApproximately(tableTop, clampedTarget.yMin, 0.01f,
-                    "Serving target lower edge was not clamped to the bar table top.");
                 Vector4 normalizedTarget = settings.serveTargetNormalized;
+                Rect expectedTarget = FitRectToSpriteAspectForValidation(
+                    new Rect(
+                        Mathf.Clamp01(normalizedTarget.x) * Screen.width,
+                        tableTop,
+                        Mathf.Clamp01(normalizedTarget.z) * Screen.width,
+                        Mathf.Clamp01(normalizedTarget.w) * Screen.height),
+                    sprite);
                 RequireApproximately(
-                    Mathf.Clamp01(normalizedTarget.x) * Screen.width,
+                    expectedTarget.xMin,
                     clampedTarget.xMin,
                     0.01f,
-                    "Serving target left edge changed with the customer sprite bounds.");
+                    "Serving target left edge did not match the visible sprite.");
                 RequireApproximately(
-                    Mathf.Clamp01(normalizedTarget.z) * Screen.width,
+                    expectedTarget.width,
                     clampedTarget.width,
                     0.01f,
-                    "Serving target width changed with the customer sprite bounds.");
+                    "Serving target width did not match the visible sprite.");
                 RequireApproximately(
-                    (Mathf.Clamp01(normalizedTarget.y) + Mathf.Clamp01(normalizedTarget.w))
-                        * Screen.height,
+                    expectedTarget.yMin,
+                    clampedTarget.yMin,
+                    0.01f,
+                    "Serving target lower edge did not match the visible sprite.");
+                RequireApproximately(
+                    expectedTarget.yMax,
                     clampedTarget.yMax,
                     0.01f,
-                    "Serving target upper edge changed with the customer sprite bounds.");
+                    "Serving target upper edge did not match the visible sprite.");
 
                 right.GetComponent<RectTransform>().anchoredPosition += new Vector2(240f, 80f);
                 Canvas.ForceUpdateCanvases();
@@ -838,6 +848,26 @@ namespace Slainte.Bartending.EditorTools
                 UnityEngine.Object.DestroyImmediate(sprite);
                 UnityEngine.Object.DestroyImmediate(texture);
             }
+        }
+
+        private static Rect FitRectToSpriteAspectForValidation(Rect rect, Sprite sprite)
+        {
+            float spriteAspect = sprite.rect.width / sprite.rect.height;
+            float rectAspect = rect.width / rect.height;
+            if (rectAspect > spriteAspect)
+            {
+                float fittedWidth = rect.height * spriteAspect;
+                rect.x += (rect.width - fittedWidth) * 0.5f;
+                rect.width = fittedWidth;
+            }
+            else
+            {
+                float fittedHeight = rect.width / spriteAspect;
+                rect.y += (rect.height - fittedHeight) * 0.5f;
+                rect.height = fittedHeight;
+            }
+
+            return rect;
         }
 
         private static RectTransform CreateServingLowerBoundary(

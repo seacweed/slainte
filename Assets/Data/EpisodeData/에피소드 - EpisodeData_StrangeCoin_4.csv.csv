@@ -37,7 +37,7 @@ sc2_1_true,50000,행운을 빕니다. E12,,,,,,,,,
 ,,,,,,,,,,,
 ,,,,,,,,,,,
 #NODES,,,,,,,,,,,
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,craftingOrderTarget,bgmCommand,bgmClipName,sfxCommand,sfxClipName
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,craftingOrderTarget,bgmCommand,bgmClipName,sfxCommand,sfxClipName,craftingOrderType
 0,f72,,정말이라니까! 라티오들은 손가락으로 액체를 마신다고!,1,FALSE,,,play,Ep_silly,play,sfx_come_in
 1,sally,,거짓말도 적당히 해. 그런 걸 누가 믿어?,2,FALSE,,,,,,
 2,f72,,왜 아무도 안 믿어주는 거야! 내가 오늘 그걸 보려고 얼마나 애쓴 줄 알아?,3,FALSE,,,,,,
@@ -138,7 +138,7 @@ nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingT
 62,e12,,바텐더씨. 저번보단 덜 쓴 거로 부탁해도 될까요?,63,FALSE,,,,,,
 63,shaun,,물론이죠. 저번보다 <b>달콤</b>한 거로 괜찮으실까요?,64,FALSE,,,,,,
 64,e12,,딱 제게 필요한 거군요.,65,FALSE,,,,,,
-65,,,,,TRUE,sc4_e12,달콤함,,,,
+65,,,,,TRUE,sc4_e12,달콤함,,,,,TasteOrder
 66_1_1,e12,,저번보다 훨씬 괜찮군요. 이 정도면 왜 술을 마시는지 알 것 같습니다.,66_1_2,FALSE,,,,,,
 66_1_2,f72,,"이제야 좀 말이 통하는 군, 신참!",66_1_3,FALSE,,,,,,
 66_1_3,e12,,…그렇다고 선배님처럼 땡땡이칠 마음은 없습니다.,67,FALSE,,,,,,

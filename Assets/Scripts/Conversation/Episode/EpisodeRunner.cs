@@ -48,9 +48,11 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 
     public bool IsRunning => _isRunning;
     public bool IsUsingManualCrafting => _isUsingManualCrafting;
+    public string CurrentEpisodeId => _episode?.episodeId ?? string.Empty;
 
     public bool CanReceiveAdvanceInput =>
-        _isRunning && !_waitingForChoice && !_waitingForCrafting && !_waitingForCharacterAnim && !_isTransitioning;
+        _isRunning && _currentNode != null
+        && !_waitingForChoice && !_waitingForCrafting && !_waitingForCharacterAnim && !_isTransitioning;
 
     public bool IsWaitingForChoice => _waitingForChoice || _isTransitioning;
 
@@ -73,6 +75,33 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         _craftingBridge = bridge;
     }
 
+    public bool TryForceCompleteForRecovery()
+    {
+        if (!_isRunning || _episode == null)
+            return false;
+
+        _craftingBridge?.AbortForEpisodeRecovery();
+
+        if (_runRoutine != null)
+        {
+            StopCoroutine(_runRoutine);
+            _runRoutine = null;
+        }
+
+        if (_panCoroutine != null)
+        {
+            StopCoroutine(_panCoroutine);
+            _panCoroutine = null;
+        }
+
+        _waitingForChoice = false;
+        _waitingForCrafting = false;
+        _waitingForCharacterAnim = false;
+        _isTransitioning = false;
+        FinishEncounter(applySettlementRewards: false);
+        return true;
+    }
+
     private bool BeginInternal(
         EpisodeData episode,
         bool isBusinessEncounter,
@@ -91,6 +120,7 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         }
 
         _episode = episode;
+        _currentNode = null;
         _isBusinessEncounter = isBusinessEncounter;
         _businessEncounterCompleted = onBusinessCompleted;
         _isRunning          = true;
@@ -251,7 +281,9 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
     {
         _isUsingManualCrafting = true;
 
-        if (!string.IsNullOrWhiteSpace(node.craftingTicketKey))
+        if (node.craftingOrderTicket != null)
+            ticketManager?.Prepare(node.craftingOrderTicket);
+        else if (!string.IsNullOrWhiteSpace(node.craftingTicketKey))
             ticketManager?.Prepare(node.craftingTicketKey);
 
         modeManager?.RequestModeChange(GameMode.CraftingMode);
@@ -289,7 +321,11 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 
     private void GoToNext()
     {
-        if (_currentNode == null) { EndEncounter(); return; }
+        if (_currentNode == null)
+        {
+            Debug.LogWarning("[EpisodeRunner] Ignored advance input before the first node was ready.");
+            return;
+        }
 
         string nextId = ResolveNextNodeId(_currentNode);
         if (string.IsNullOrWhiteSpace(nextId)) { EndEncounter(); return; }
@@ -507,16 +543,23 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 
     private void EndEncounter()
     {
+        FinishEncounter(applySettlementRewards: true);
+    }
+
+    private void FinishEncounter(bool applySettlementRewards)
+    {
         _isRunning = false;
         _runRoutine = null;
         ClearChoices();
         dialogue?.HideImmediate();
         characterStage?.Clear();
         cameraRig?.ResetPan();
+        ticketManager?.ClearTicket();
         AudioManager.Instance?.StopBgm();
 
         string episodeId = _episode?.episodeId;
-        ApplySettlementRewards(_episode);
+        if (applySettlementRewards)
+            ApplySettlementRewards(_episode);
         bool wasBusinessEncounter = _isBusinessEncounter;
         Action businessCompleted = _businessEncounterCompleted;
         _episode = null;

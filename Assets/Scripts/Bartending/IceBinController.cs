@@ -311,6 +311,9 @@ namespace Slainte.Bartending
 
         private void PickupBucket(Vector2 pointerWorld)
         {
+            if (!BartendingSelection.TryAcquire(this))
+                return;
+
             if (returnCoroutine != null)
             {
                 StopCoroutine(returnCoroutine);
@@ -379,6 +382,7 @@ namespace Slainte.Bartending
             pourAccumulator = 0f;
             SetRotationImmediately(0f);
             BartendingPointerAnchor.Release(this);
+            BartendingSelection.Release(this);
             StopCharging();
         }
 
@@ -509,8 +513,13 @@ namespace Slainte.Bartending
             if (cube == null)
                 return;
 
+            if (!cube.BeginDrag(pointerDown, true))
+            {
+                Destroy(cube.gameObject);
+                return;
+            }
+
             ConsumeOneIce();
-            cube.BeginDrag(pointerDown, true);
         }
 
         private void HandlePouring()
@@ -863,6 +872,7 @@ namespace Slainte.Bartending
             }
             CancelPointerSynchronization();
             BartendingPointerAnchor.Release(this);
+            BartendingSelection.Release(this);
             StopCharging();
             if (Active == this)
                 Active = null;

@@ -38,7 +38,7 @@ sc2_1_false,0,잘 선택했어. - F54,,,,,,,,,
 ,,,,,,,,,,,
 ,,,,,,,,,,,
 #NODES,,,,,,,,,,,
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,craftingOrderTarget,bgmCommand,bgmClipName,sfxCommand,sfxClipName
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,craftingOrderTarget,bgmCommand,bgmClipName,sfxCommand,sfxClipName,craftingOrderType
 0,shaun,,어서오세요. 손님.,1,FALSE,,,,,play,sfx_come_in
 1,shaun,,오늘 하루는 어떠셨-,,FALSE,,,play,Ep_main_0,,
 2_1_1,sally,,…좋은 저녁이야 바텐더,2_1_2,FALSE,,,,,,
@@ -51,7 +51,7 @@ nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingT
 2_1_8,sally,,"미안, 주문 같은 거 해본 적이 없어서.",2_1_9,FALSE,,,,,,
 2_1_9,shaun,,아니에요! 오히려 기쁜 주문인걸요!,2_1_10,FALSE,,,,,,
 2_1_10,sally,,알았다고. 빨리 한잔 내어줘.,2_1_11,FALSE,,,,,,
-2_1_11,,,,,TRUE,sc2_sally,깔끔한,,,,
+2_1_11,,,,,TRUE,sc2_sally,깔끔한,,,,,MoodOrder
 2_1_12_1_1,sally,,음.. 이건..,2_1_12_1_2,FALSE,,,,,,
 2_1_12_1_2,sally,,"잘은 몰라도, 꽤 괜찮네. 제대로 된 술은 처음 마셔봐",2_1_13,FALSE,,,,,,
 2_1_12_2_1,,,음.. 이건..,2_1_12_2_2,FALSE,,,,,,

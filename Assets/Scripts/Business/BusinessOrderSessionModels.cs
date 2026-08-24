@@ -37,17 +37,41 @@ namespace Slainte.Business
         public string requestedRecipeId;
         public string requestedConditionLabel;
         public List<string> requestedTags = new();
+        public OrderTicketData ticketData;
         public string ticketKey;
         public CocktailOrderType orderType = CocktailOrderType.RecipeOrder;
         public GameCurrency paymentCurrency = GameCurrency.Money;
+        public float paymentMultiplier = 1f;
         public BusinessCustomerRewardProfile rewardProfile =
             BusinessCustomerRewardProfile.Standard;
         public bool presentOrder = true;
         public bool presentFeedback = true;
         public bool applyProgressRewards = true;
         public bool applyPayment;
+        public bool recordSale;
         public bool applyReputation;
         public bool clearCustomerOnComplete = true;
+    }
+
+    public static class BusinessOrderPriceRules
+    {
+        public static float NormalizePaymentMultiplier(float multiplier)
+        {
+            return !float.IsNaN(multiplier)
+                && !float.IsInfinity(multiplier)
+                && multiplier > 0f
+                    ? multiplier
+                    : 1f;
+        }
+
+        public static int ApplyPaymentMultiplier(int listedPrice, float multiplier)
+        {
+            if (listedPrice <= 0)
+                return listedPrice;
+
+            return Mathf.Max(0, Mathf.RoundToInt(
+                listedPrice * NormalizePaymentMultiplier(multiplier)));
+        }
     }
 
     public enum OrderEvaluationGrade

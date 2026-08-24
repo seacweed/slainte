@@ -431,10 +431,11 @@ MonoBehaviour:
       expressionKey: mid
       slotIndex: 1
     requiresCrafting: 1
+    craftingOrderTicket: {fileID: 11400000, guid: a67d41b4d2ea4dc88f4ce1e6dbfce868, type: 2}
     craftingTicketKey: sc2_sally
-    craftingOrderType: 6
+    craftingOrderType: 3
     craftingOrderTarget: "\uAE54\uB054\uD55C"
-    craftingPaymentEnabled: 0
+    craftingPaymentEnabled: 1
     craftingPaymentCurrency: 0
     craftingOutcomes:
     - result: 0
@@ -2337,10 +2338,11 @@ MonoBehaviour:
       expressionKey: mid
       slotIndex: 0
     requiresCrafting: 1
+    craftingOrderTicket: {fileID: 11400000, guid: 2f3223fa36024ea0900b7d1b84a1d46b, type: 2}
     craftingTicketKey: sc2_f72
     craftingOrderType: 6
     craftingOrderTarget: rec_1001
-    craftingPaymentEnabled: 0
+    craftingPaymentEnabled: 1
     craftingPaymentCurrency: 0
     craftingOutcomes:
     - result: 0

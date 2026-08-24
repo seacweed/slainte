@@ -465,10 +465,11 @@ MonoBehaviour:
       expressionKey: pout
       slotIndex: 0
     requiresCrafting: 1
+    craftingOrderTicket: {fileID: 11400000, guid: 9cf3eed25cfc46a99e01a5ec238cb015, type: 2}
     craftingTicketKey: tl0_eliud
     craftingOrderType: 6
     craftingOrderTarget: rec_1007
-    craftingPaymentEnabled: 0
+    craftingPaymentEnabled: 1
     craftingPaymentCurrency: 0
     craftingOutcomes:
     - result: 0

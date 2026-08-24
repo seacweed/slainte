@@ -322,15 +322,18 @@ celi_apology_paid,소란 피워서 미안해 - 셀리,150
 | `nextNodeId` | 다음에 이동할 노드 ID (비우면 에피소드 종료) | `1` |
 | `requiresCrafting` | 제조 판정 여부 (`true` / `false`) | `false` |
 | `craftingTicketKey` | 사용할 제조 티켓 ID (`requiresCrafting=true` 일 때만 작성) | `sc0_f72` |
-| `craftingRecipeId` | 판정 기준이 될 레시피 ID (`requiresCrafting=true` 일 때 필수, 비우면 제조 세션이 시작되지 않음) | `rec_1019` |
+| `craftingOrderTarget` | 판정 기준이 될 레시피 ID 또는 조건 태그 (`requiresCrafting=true` 일 때 필수, 비우면 제조 세션이 시작되지 않음) | `rec_1019` |
 | `bgmCommand` | BGM 명령 (`none` / `play` / `stop`, 비우면 `none`) | `play` |
 | `bgmClipName` | 재생할 BGM 파일명 (`bgmCommand=play` 일 때만 작성, 확장자 제외) | `bgm_tension` |
 | `sfxCommand` | 효과음 명령 (`none` / `play`, 비우면 `none`) | `play` |
 | `sfxClipName` | 재생할 효과음 파일명 (`sfxCommand=play` 일 때만 작성, 확장자 제외, `Resources/SFX/` 폴더 기준) | `sfx_bell` |
+| `craftingPaymentEnabled` | 제조 완료 시 가격 지급 여부 (비우면 실제 제조 노드는 `true`) | `true` |
+| `craftingPaymentCurrency` | 지급 통화 (`Money` / `StrangeCoin`, 비우면 `Money`) | `StrangeCoin` |
+| `craftingPaymentMultiplier` | 통화별 레시피 가격에 적용할 양수 배율 (비우거나 잘못된 값이면 `1`) | `2` |
 
 BGM은 무한 반복 재생되며 새로 재생하면 이전 BGM과 크로스페이드로 교체됩니다. SFX는 BGM과 별도 채널에서 한 번만 재생되고(반복 없음), BGM을 멈추지 않으며 여러 개가 겹쳐 재생될 수 있습니다.
 
-**제조 판정 노드** 작성 시: `text`와 `nextNodeId`는 비우고, `requiresCrafting=true` + `craftingTicketKey` + `craftingRecipeId`를 작성합니다. `craftingRecipeId`가 비어 있으면 제조 세션이 시작되지 않아 주문서도 뜨지 않고 판정도 진행되지 않습니다. 제조 결과별(goodjob/badjob/midjob 4종) 이동 노드·플래그·변수 변경은 `#NODE_CRAFTING_BRANCHES` 섹션에 작성합니다.
+**제조 판정 노드** 작성 시: `text`와 `nextNodeId`는 비우고, `requiresCrafting=true` + `craftingTicketKey` + `craftingOrderTarget`을 작성합니다. `craftingOrderTarget`이 비어 있으면 제조 세션이 시작되지 않아 주문서도 뜨지 않고 판정도 진행되지 않습니다. 제조 결과별 이동 노드·플래그·변수 변경은 `#NODE_CRAFTING_BRANCHES` 섹션에 작성합니다. 선택지별 통화나 배율이 다르면 제조 노드를 나누고 각 노드에 결제 열을 별도로 입력합니다.
 
 **선택지 노드** 작성 시: `nextNodeId`는 비우고 `#CHOICES` 섹션에 선택지를 작성합니다.
 
@@ -338,9 +341,9 @@ BGM은 무한 반복 재생되며 새로 재생하면 이전 BGM과 크로스페
 
 ```csv
 #NODES
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,craftingRecipeId,bgmCommand,bgmClipName,sfxCommand,sfxClipName
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,craftingOrderTarget,bgmCommand,bgmClipName,sfxCommand,sfxClipName,craftingPaymentEnabled,craftingPaymentCurrency,craftingPaymentMultiplier
 0,f72,???,흘..크흘…,1,false,,,play,bgm_tension,,
-5,f72,???,,,true,sc0_f72,rec_1019,,,play,sfx_bell
+5,f72,???,,,true,sc0_f72,rec_1019,,,play,sfx_bell,true,StrangeCoin,2
 ```
 
 > **주의**: 대사에 쉼표(`,`)가 포함된 경우 반드시 큰따옴표로 감싸야 합니다.  
@@ -550,7 +553,7 @@ isHidden,characterName
 false,f72
 
 #NODES
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,craftingRecipeId,bgmCommand,bgmClipName,sfxCommand,sfxClipName
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,craftingOrderTarget,bgmCommand,bgmClipName,sfxCommand,sfxClipName,craftingPaymentEnabled,craftingPaymentCurrency,craftingPaymentMultiplier
 0,f72,???,뭘 마시겠어?,1,false,,,play,bgm_bar,,
 1,shaun,,추천해줘.,2,false,,,none,
 2,f72,,그럼 선택해.,,false,,,none,

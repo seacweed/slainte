@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Slainte.Business;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,6 +11,9 @@ namespace NarrativeFlow.Editor
 {
     public class EpisodeDataCompiler
     {
+        private const string OrderTicketDatabasePath =
+            "Assets/Data/OrderTicket/OrderTicketDatabase.asset";
+
         [MenuItem("Narrative/Compile Selected Graph to EpisodeData")]
         public static void CompileSelected()
         {
@@ -152,9 +157,17 @@ namespace NarrativeFlow.Editor
 
                 case EpisodeEventType.BusinessStart:
                     n.requiresCrafting     = true;
+                    n.craftingOrderTicket = ev.CraftingOrderTicket != null
+                        ? ev.CraftingOrderTicket
+                        : ResolveOrderTicket(ev.CraftingTicketKey);
                     n.craftingTicketKey    = ev.CraftingTicketKey;
                     n.craftingOrderType    = ev.CraftingOrderType;
                     n.craftingOrderTarget  = ev.CraftingOrderTarget;
+                    n.craftingPaymentEnabled = ev.CraftingPaymentEnabled;
+                    n.craftingPaymentCurrency = ev.CraftingPaymentCurrency;
+                    n.craftingPaymentMultiplier =
+                        BusinessOrderPriceRules.NormalizePaymentMultiplier(
+                            ev.CraftingPaymentMultiplier);
                     foreach (var result in CraftingJobResultPorts.Order)
                     {
                         string flag = ev.GetCraftingFlag(result);
@@ -181,6 +194,16 @@ namespace NarrativeFlow.Editor
                     break;
             }
             return n;
+        }
+
+        private static OrderTicketData ResolveOrderTicket(string ticketKey)
+        {
+            if (string.IsNullOrWhiteSpace(ticketKey))
+                return null;
+
+            OrderTicketDatabase database =
+                AssetDatabase.LoadAssetAtPath<OrderTicketDatabase>(OrderTicketDatabasePath);
+            return database != null ? database.FindByKey(ticketKey) : null;
         }
 
         // ── Link last event → outer graph edges ───────────────────────────────────
@@ -413,9 +436,9 @@ namespace NarrativeFlow.Editor
             }
 
             sb.AppendLine("#NODES");
-            sb.AppendLine("nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,bgmCommand,bgmClipName,sfxCommand,sfxClipName,craftingOrderType,craftingOrderTarget");
+            sb.AppendLine("nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,bgmCommand,bgmClipName,sfxCommand,sfxClipName,craftingOrderType,craftingOrderTarget,craftingPaymentEnabled,craftingPaymentCurrency,craftingPaymentMultiplier");
             foreach (var n in data.nodes)
-                sb.AppendLine($"{n.nodeId},{n.speakerKey},{n.overrideSpeakerName},{Csv(n.text)},{n.nextNodeId},{n.requiresCrafting.ToString().ToLower()},{n.craftingTicketKey},{n.bgmCommand},{n.bgmClipName},{n.sfxCommand},{n.sfxClipName},{n.craftingOrderType},{Csv(n.craftingOrderTarget)}");
+                sb.AppendLine($"{n.nodeId},{n.speakerKey},{n.overrideSpeakerName},{Csv(n.text)},{n.nextNodeId},{n.requiresCrafting.ToString().ToLower()},{n.craftingTicketKey},{n.bgmCommand},{n.bgmClipName},{n.sfxCommand},{n.sfxClipName},{n.craftingOrderType},{Csv(n.craftingOrderTarget)},{n.craftingPaymentEnabled.ToString().ToLower()},{n.craftingPaymentCurrency},{BusinessOrderPriceRules.NormalizePaymentMultiplier(n.craftingPaymentMultiplier).ToString("0.###", CultureInfo.InvariantCulture)}");
             sb.AppendLine();
 
             bool hasCraftingOutcomes = data.nodes.Any(n => n.craftingOutcomes.Count > 0);

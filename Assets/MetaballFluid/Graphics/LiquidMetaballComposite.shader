@@ -8,7 +8,6 @@ Shader "Slainte/LiquidMetaballComposite"
         _Threshold ("Threshold", Range(0, 1)) = 0.3
         _MergeStrength ("Merge Strength", Range(0, 1)) = 0.45
         _EdgeSoftness ("Edge Softness", Range(0, 0.25)) = 0.03
-        [Enum(Composite,0,Density,1,AccumulatedColor,2,NormalizedColor,3,NormalizedAlpha,4,MaximumCoverage,5,HybridDensity,6,ShapeMask,7)]
         _DebugView ("Debug View", Float) = 0
     }
 
