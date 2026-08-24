@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 4d95cb23a3a31914f84ed308349e170d
+guid: bc1b91abb5b9d8b4ab8789241429d440
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3171023291737384441
-    second: "\uBA54\uC778\uD654\uBA74_(\uAD6C\uB984_\uC55E\uBA74)_0"
+      213: 8815085725422794403
+    second: Plan-textbox-green_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +46,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\uBA54\uC778\uD654\uBA74_(\uAD6C\uB984_\uC55E\uBA74)_0"
+      name: Plan-textbox-green_0
       rect:
         serializedVersion: 2
         x: 0
-        y: 1143
-        width: 5117
-        height: 957
+        y: 0
+        width: 448
+        height: 83
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9f52f7e02ecb10c20800000000000000
-      internalID: 3171023291737384441
+      spriteID: 3a6317053c9755a70800000000000000
+      internalID: 8815085725422794403
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\uBA54\uC778\uD654\uBA74_(\uAD6C\uB984_\uC55E\uBA74)_0": 3171023291737384441
+      Plan-textbox-green_0: 8815085725422794403
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

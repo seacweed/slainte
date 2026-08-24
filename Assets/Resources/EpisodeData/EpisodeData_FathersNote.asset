@@ -56,38 +56,8 @@ MonoBehaviour:
       varThreshold: 0
       minMoney: 0
     conditionText: 
-  selectConditions:
-  - condition:
-      type: 0
-      minDay: 0
-      requiredFlag: 
-      prerequisiteEpisodeId: 
-      varName: 
-      varOp: 0
-      varThreshold: 0
-      minMoney: 0
-    flag: 
-    conditionText: 
-    revealCondition:
-      type: 0
-      minDay: 0
-      requiredFlag: 
-      prerequisiteEpisodeId: 
-      varName: 
-      varOp: 0
-      varThreshold: 0
-      minMoney: 0
-    hiddenText: 
-    characterOverrides:
-    - isHidden: 0
-      characterName: 
-  openingCharacters:
-  - characterKey: eric
-    expressionKey: mid
-    slotIndex: 0
-  - characterKey: 
-    expressionKey: 
-    slotIndex: -1
+  selectConditions: []
+  openingCharacters: []
   firstNodeId: 0
   nodes:
   - nodeId: 0
@@ -1950,7 +1920,7 @@ MonoBehaviour:
     overrideSpeakerName: 
     text: "\uD5E4- \uD5C8\uAC00\uC99D \uAC19\uC740\uAC8C \uB9C9\uC744 \uB208\uBE5B\uC774
       \uC544\uB2C8\uB124."
-    nextNodeId: 38
+    nextNodeId: 39
     choices: []
     flagBranches: []
     varBranches: []
@@ -1983,7 +1953,7 @@ MonoBehaviour:
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC704\uD5D8\uD558\uB2E4\uB294 \uAC74 \uC54C\uC544. \uD558\uC9C0\uB9CC\u2026"
-    nextNodeId: 39
+    nextNodeId: 40
     choices: []
     flagBranches: []
     varBranches: []
@@ -2018,7 +1988,7 @@ MonoBehaviour:
     text: "\uD3C9\uC0DD \uC5F0\uD569\uC758 \uADDC\uCE59\uC5D0 \uC228\uC8FD\uC774\uBA70
       \uC0B4\uACE0 \uC2F6\uC9C4 \uC54A\uC544. \uC544\uBC84\uC9C0\uC758 \uAFC8 \uC55E\uC5D0\uC11C\uB294
       \uB354\uB354\uC6B1."
-    nextNodeId: 40
+    nextNodeId: 41
     choices: []
     flagBranches: []
     varBranches: []
@@ -2053,7 +2023,7 @@ MonoBehaviour:
     text: "\uB2F9\uC7A5 \uB5A0\uB0A0 \uC218\uB294 \uC5C6\uACA0\uC9C0\uB9CC, \uD56D\uB85C\uB97C
       \uB6AB\uC73C\uB824\uBA74 \uC5EC\uB7EC \uC0AC\uB78C\uB4E4\uC758 \uD611\uC870\uAC00
       \uC808\uB300\uC801\uC73C\uB85C \uD544\uC694\uD560 \uAC70\uC57C."
-    nextNodeId: 41
+    nextNodeId: 42
     choices: []
     flagBranches: []
     varBranches: []
@@ -2088,7 +2058,7 @@ MonoBehaviour:
     text: "\uB098\uB3C4 \uC5B4\uB5BB\uAC8C\uB4E0 \uB3C4\uC640\uC904\uAC8C. \uB0B4
       \uC808\uCE5C\uC774 \uC5F0\uD569 \uC18C\uAC01\uC7A5\uC5D0 \uCC98\uBC15\uD788\uB294
       \uAF34\uC744 \uBCF4\uACE0 \uC2F6\uC9C0\uB294 \uC54A\uC73C\uB2C8\uAE4C."
-    nextNodeId: 42
+    nextNodeId: 43
     choices: []
     flagBranches: []
     varBranches: []
@@ -2121,7 +2091,7 @@ MonoBehaviour:
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uACE0\uB9C8\uC6CC 54."
-    nextNodeId: 43
+    nextNodeId: 44
     choices: []
     flagBranches: []
     varBranches: []
@@ -2155,7 +2125,7 @@ MonoBehaviour:
     overrideSpeakerName: 
     text: "\uCD94\uC9C4\uAE30 \uC815\uBE44\uB098 \uBD80\uD488 \uAC1C\uC870\uB294
       \uC6B0\uB9AC \uC815\uBE44\uC18C\uC5D0 \uB3C4\uC640\uC8FC\uB9C8."
-    nextNodeId: 44
+    nextNodeId: 45
     choices: []
     flagBranches: []
     varBranches: []
@@ -2190,7 +2160,7 @@ MonoBehaviour:
     text: "\uADF8\uB7F0 \uAC83\uB4E4\uC744 \uC5F0\uD569\uC758 \uB208\uC744 \uD53C\uD574
       \uBAA8\uC73C\uB824\uBA74 \uB3C8\uC774 \uAF64\uB098 \uB4E4\uACA0\uC9C0\uB9CC
       \uB9D0\uC774\uB2E4."
-    nextNodeId: 45
+    nextNodeId: 46
     choices: []
     flagBranches: []
     varBranches: []
@@ -2223,7 +2193,7 @@ MonoBehaviour:
     speakerKey: eric
     overrideSpeakerName: 
     text: "\uC74C\u2026 \uBB3C\uB860 54. \uC774\uAC74 \uBE44\uBC00\uB85C \uD574\uC8FC\uAC8C."
-    nextNodeId: 46
+    nextNodeId: 47
     choices: []
     flagBranches: []
     varBranches: []
@@ -2256,7 +2226,7 @@ MonoBehaviour:
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uBD80\uBD84\uB300\uB85C \uD569\uC8E0."
-    nextNodeId: 47
+    nextNodeId: 48
     choices: []
     flagBranches: []
     varBranches: []
@@ -2291,7 +2261,7 @@ MonoBehaviour:
     text: "\uC158, \uB124 \uC544\uBC84\uC9C0\uAC00 \uB0A8\uAE34 \uAC83\uC740 \uB2E8\uC21C\uD55C
       \uD38D \uAC74\uBB3C\uC774 \uC544\uB2C8\uB2E4. \uC800 \uBA38\uB098\uBA3C \uACE0\uD5A5\uC73C\uB85C
       \uD5A5\uD558\uB294 \uC758\uC9C0 \uADF8 \uC790\uCCB4\uC9C0."
-    nextNodeId: 48
+    nextNodeId: 49
     choices: []
     flagBranches: []
     varBranches: []
@@ -2325,7 +2295,7 @@ MonoBehaviour:
     overrideSpeakerName: 
     text: "\u2026\uAC10\uC0AC\uD569\uB2C8\uB2E4, \uC5D0\uB9AD \uC544\uC800\uC528.
       54 \uB108\uB3C4."
-    nextNodeId: 49
+    nextNodeId: 50
     choices: []
     flagBranches: []
     varBranches: []
@@ -2359,7 +2329,7 @@ MonoBehaviour:
     overrideSpeakerName: 
     text: "\uACE0\uB9D9\uAE34. \uB300\uC2E0 \uC548\uBD80 \uC5F0\uB77D\uC880 \uC790\uC8FC
       \uD574\uB77C. \uD560 \uC218 \uC788\uB2E4\uBA74\u2026"
-    nextNodeId: 50
+    nextNodeId: 51
     choices: []
     flagBranches: []
     varBranches: []
@@ -2393,7 +2363,7 @@ MonoBehaviour:
     overrideSpeakerName: 
     text: "\uADF8\uB9AC\uACE0\u2026 \uC5B8\uC81C\uB4E0\uC9C0 \uB3CC\uC544\uC640\uB3C4
       \uAD1C\uCC2E\uC544. \uC5EC\uAE30\uB3C4 \uB124 \uC9D1\uC774\uC796\uC544."
-    nextNodeId: 51
+    nextNodeId: 52
     choices: []
     flagBranches: []
     varBranches: []
@@ -2426,7 +2396,7 @@ MonoBehaviour:
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC751, \uAF2D \uC5F0\uB77D\uD560\uAC8C. \uB108\uBB34 \uAC71\uC815\uD558\uC9C0\uB9C8."
-    nextNodeId: 52
+    nextNodeId: 53
     choices: []
     flagBranches: []
     varBranches: []
@@ -2488,195 +2458,15 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 
-    speakerKey: 
-    overrideSpeakerName: 
-    text: 
-    nextNodeId: 
-    choices:
-    - buttonText: 
-      nextNodeId: 
-      setFlags: []
-      clearFlags: []
-      varChanges: []
-    flagBranches:
-    - requiredAllFlags: []
-      requiredAnyFlags: []
-      nextNodeId: 
-    varBranches: []
-    episodeBranches: []
-    characters:
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    requiresCrafting: 0
-    craftingTicketKey: 
-    craftingOrderType: 6
-    craftingOrderTarget: 
-    craftingPaymentEnabled: 0
-    craftingPaymentCurrency: 0
-    craftingOutcomes: []
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
-    sfxCommand: 0
-    sfxClipName: 
-  - nodeId: 
-    speakerKey: 
-    overrideSpeakerName: 
-    text: 
-    nextNodeId: 
-    choices:
-    - buttonText: 
-      nextNodeId: 
-      setFlags: []
-      clearFlags: []
-      varChanges: []
-    flagBranches:
-    - requiredAllFlags: []
-      requiredAnyFlags: []
-      nextNodeId: 
-    varBranches: []
-    episodeBranches: []
-    characters:
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    requiresCrafting: 0
-    craftingTicketKey: 
-    craftingOrderType: 6
-    craftingOrderTarget: 
-    craftingPaymentEnabled: 0
-    craftingPaymentCurrency: 0
-    craftingOutcomes: []
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
-    sfxCommand: 0
-    sfxClipName: 
-  - nodeId: 
-    speakerKey: 
-    overrideSpeakerName: 
-    text: 
-    nextNodeId: 
-    choices:
-    - buttonText: 
-      nextNodeId: 
-      setFlags: []
-      clearFlags: []
-      varChanges: []
-    flagBranches:
-    - requiredAllFlags: []
-      requiredAnyFlags: []
-      nextNodeId: 
-    varBranches: []
-    episodeBranches: []
-    characters:
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    requiresCrafting: 0
-    craftingTicketKey: 
-    craftingOrderType: 6
-    craftingOrderTarget: 
-    craftingPaymentEnabled: 0
-    craftingPaymentCurrency: 0
-    craftingOutcomes: []
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
-    sfxCommand: 0
-    sfxClipName: 
   settlementRewards: []
-  episodeDescription: 
-  iconNameBoard: 
+  episodeDescription: "\uC601\uC5C5\uC744 \uB9C8\uCE58\uACE0 \uD38D\uC744 \uC815\uB9AC\uD558\uB358
+    \uC911, \uC544\uBC84\uC9C0\uC758 \uC624\uB798\uB41C \uB178\uD2B8 \uD55C\uC7A5\uC744
+    \uBC1C\uACAC\uD588\uB2E4. <b>\uC9C0\uAD6C. \uC6B0\uB9AC\uC758 \uC9C4\uC815\uD55C
+    \uACE0\uD5A5.</b>"
+  iconNameBoard: FathersNote
   iconNameArchive: 
   characters:
   - isHidden: 0
     characterName: eric
   - isHidden: 0
     characterName: f54
-  - isHidden: 0
-    characterName: 
-  - isHidden: 0
-    characterName: 
-  - isHidden: 0
-    characterName: 

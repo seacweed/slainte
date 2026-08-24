@@ -19,10 +19,26 @@ public class EpisodeBoardManager : BaseUIManager
     [Header("Bottom UI")]
     public TextMeshProUGUI bottomEpisodeNameText; // 하단 텍스트 박스
     public Button startButton;                    // 시작 버튼
-    public Image startButtonImage;                // 버튼 색상 변경용
+    public Image startButtonImage;                // 버튼 스프라이트 변경용
+    public Image bottomTextboxImage;               // 하단 텍스트 박스 배경 스프라이트 변경용
 
-    public Color buttonActiveColor = Color.red;
-    public Color buttonInactiveColor = Color.gray;
+    [Header("Board State Visuals")]
+    [Tooltip("비활성: 필수 에피소드 게이트 / 1일차 영업 금지 / 조건 미달성 에피소드 선택 시")]
+    public Sprite buttonSpriteInactive;
+    public Sprite textboxSpriteInactive;
+    public Color textColorInactive = Color.gray;
+
+    [Tooltip("활성-영업: 아무것도 선택하지 않아 영업 진행이 가능한 상태")]
+    public Sprite buttonSpriteBusiness;
+    public Sprite textboxSpriteBusiness;
+    public Color textColorBusiness = new(0.2f, 0.8f, 0.2f);
+
+    [Tooltip("활성-에피소드: 플레이 가능한 기본 에피소드를 선택한 상태")]
+    public Sprite buttonSpriteEpisode;
+    public Sprite textboxSpriteEpisode;
+    public Color textColorEpisode = new(1f, 0.6f, 0.1f);
+
+    private enum BoardVisualState { Inactive, Business, Episode }
 
     [Header("Day 1 Exception")]
     [Tooltip("1일차 보드에서 영업 대신 강제로 진행시킬 기본 에피소드 ID. 비워두면 이 예외 로직은 비활성화됨.")]
@@ -46,28 +62,53 @@ public class EpisodeBoardManager : BaseUIManager
     // 창이 열릴 때 자동으로 실행되는 함수
     protected override void OnOpen()
     {
-        if (EpisodeManager.Instance != null &&
-            (EpisodeManager.Instance.HasPendingMandatoryEpisode()
-                || EpisodeManager.Instance.HasUpcomingMandatoryEpisode()))
-        {
-            ShowMandatoryGate(); // 미완료 필수 에피소드가 오늘 또는 내일(다음 영업 시작 시점) 발동 예정이면 보드 선택 자체를 막음
-            return;
-        }
-
         RefreshBoard(); // 조건에 따라 에피소드 표출 여부 갱신
         ResetBoard();   // 열릴 때마다 선택 내역 깔끔하게 초기화
     }
 
-    // 필수 에피소드가 남아있을 때: 보드를 비우고 안내 문구만 표시
-    private void ShowMandatoryGate()
+    // 미완료 필수 에피소드가 오늘 또는 내일(다음 영업 시작 시점) 발동 예정인지 — 기본 에피소드는 계속 노출하되 진행만 막는 데 사용
+    private bool IsMandatoryGateActive()
     {
-        foreach (var photo in GetComponentsInChildren<EpisodePhotoTrigger>(true))
-            Destroy(photo.gameObject);
+        return EpisodeManager.Instance != null &&
+            (EpisodeManager.Instance.HasPendingMandatoryEpisode()
+                || EpisodeManager.Instance.HasUpcomingMandatoryEpisode());
+    }
 
-        PinnedPhoto = null;
-        if (bottomEpisodeNameText) bottomEpisodeNameText.text = "먼저 영업을 통해 필수 에피소드를 진행해주세요.";
-        if (startButton) startButton.interactable = false;
-        if (startButtonImage) startButtonImage.color = buttonInactiveColor;
+    // 시작 버튼/텍스트 박스의 스프라이트·텍스트 색상·활성 여부를 한 곳에서 일괄 적용
+    private void ApplyBoardVisualState(BoardVisualState state, string text, bool interactable)
+    {
+        if (bottomEpisodeNameText)
+        {
+            bottomEpisodeNameText.text = text ?? string.Empty;
+            bottomEpisodeNameText.color = state switch
+            {
+                BoardVisualState.Business => textColorBusiness,
+                BoardVisualState.Episode => textColorEpisode,
+                _ => textColorInactive
+            };
+        }
+
+        if (startButtonImage)
+        {
+            startButtonImage.sprite = state switch
+            {
+                BoardVisualState.Business => buttonSpriteBusiness,
+                BoardVisualState.Episode => buttonSpriteEpisode,
+                _ => buttonSpriteInactive
+            };
+        }
+
+        if (bottomTextboxImage)
+        {
+            bottomTextboxImage.sprite = state switch
+            {
+                BoardVisualState.Business => textboxSpriteBusiness,
+                BoardVisualState.Episode => textboxSpriteEpisode,
+                _ => textboxSpriteInactive
+            };
+        }
+
+        if (startButton) startButton.interactable = interactable;
     }
 
     // 1일차에 영업 대신 지정된 기본 에피소드를 강제해야 하는지 확인.
@@ -257,6 +298,8 @@ public class EpisodeBoardManager : BaseUIManager
 
         if (PinnedPhoto != null)
         {
+            if (IsMandatoryGateActive()) return; // 방어적 재확인: StartDefaultEpisode는 자체 재검증이 없음
+
             ApplySelectConditionFlag(PinnedPhoto);
 
             // 1. 하루 흐름 컨트롤러에 기본 에피소드 시작 요청 (완료 후 정산으로 이어짐)
@@ -264,7 +307,7 @@ public class EpisodeBoardManager : BaseUIManager
         }
         else
         {
-            if (TryGetForcedDay1Episode(out _)) return; // 방어적 재확인: 정상 흐름에선 버튼이 이미 비활성화되어 있어야 함
+            if (IsMandatoryGateActive() || TryGetForcedDay1Episode(out _)) return; // 방어적 재확인: 정상 흐름에선 버튼이 이미 비활성화되어 있어야 함
 
             // 아무것도 선택하지 않은 기본 상태 = 영업 시작
             DayFlowController.Instance.StartBusinessDay();
@@ -297,19 +340,15 @@ public class EpisodeBoardManager : BaseUIManager
         PinnedPhoto = photo;
 
         bool canPlay = false;
-        if (EpisodeManager.Instance != null && GameProgress.Instance != null)
+        if (!IsMandatoryGateActive() && EpisodeManager.Instance != null && GameProgress.Instance != null)
         {
             canPlay = EpisodeManager.Instance.IsPlayable(photo.episodeData, GameProgress.Instance);
         }
 
-        // 하단 UI 활성화
-        if (bottomEpisodeNameText)
-        {
-            bottomEpisodeNameText.text = canPlay ? photo.episodeData.episodeTitle : $"{photo.episodeData.episodeTitle} <color=#ff8888>(조건 미달성)</color>";
-        }
-
-        if (startButton) startButton.interactable = canPlay;
-        if (startButtonImage) startButtonImage.color = canPlay ? buttonActiveColor : buttonInactiveColor;
+        ApplyBoardVisualState(
+            canPlay ? BoardVisualState.Episode : BoardVisualState.Inactive,
+            photo.episodeData.episodeTitle,
+            interactable: canPlay);
     }
 
     // 초기화 (허공 클릭, 창 닫기, 혹은 다른 사진 클릭 시 이전 사진 Unpin용) — 아무것도 선택 안 한 기본 상태 = 영업
@@ -321,16 +360,12 @@ public class EpisodeBoardManager : BaseUIManager
             PinnedPhoto = null;
         }
 
-        if (TryGetForcedDay1Episode(out var forcedPhoto))
+        if (IsMandatoryGateActive() || TryGetForcedDay1Episode(out _))
         {
-            if (bottomEpisodeNameText) bottomEpisodeNameText.text = $"오늘은 {forcedPhoto.episodeData.episodeTitle}를 먼저 확인해주세요.";
-            if (startButton) startButton.interactable = false;
-            if (startButtonImage) startButtonImage.color = buttonInactiveColor;
+            ApplyBoardVisualState(BoardVisualState.Inactive, string.Empty, interactable: false);
             return;
         }
 
-        if (bottomEpisodeNameText) bottomEpisodeNameText.text = "영업";
-        if (startButton) startButton.interactable = true;
-        if (startButtonImage) startButtonImage.color = buttonActiveColor;
+        ApplyBoardVisualState(BoardVisualState.Business, "영업", interactable: true);
     }
 }

@@ -46,38 +46,8 @@ MonoBehaviour:
       minMoney: 0
     conditionText: "\uC544\uC774\uB4E4 0 \uD074\uB9AC\uC5B4"
   playConditionEntries: []
-  selectConditions:
-  - condition:
-      type: 0
-      minDay: 0
-      requiredFlag: 
-      prerequisiteEpisodeId: 
-      varName: 
-      varOp: 0
-      varThreshold: 0
-      minMoney: 0
-    flag: 
-    conditionText: 
-    revealCondition:
-      type: 0
-      minDay: 0
-      requiredFlag: 
-      prerequisiteEpisodeId: 
-      varName: 
-      varOp: 0
-      varThreshold: 0
-      minMoney: 0
-    hiddenText: 
-    characterOverrides:
-    - isHidden: 0
-      characterName: 
-  openingCharacters:
-  - characterKey: eliud
-    expressionKey: hide
-    slotIndex: 0
-  - characterKey: 
-    expressionKey: 
-    slotIndex: -1
+  selectConditions: []
+  openingCharacters: []
   firstNodeId: 1
   nodes:
   - nodeId: 1
@@ -3001,71 +2971,16 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 
-    speakerKey: 
-    overrideSpeakerName: 
-    text: 
-    nextNodeId: 
-    choices:
-    - buttonText: 
-      nextNodeId: 
-      setFlags: []
-      clearFlags: []
-      varChanges: []
-    flagBranches:
-    - requiredAllFlags: []
-      requiredAnyFlags: []
-      nextNodeId: 
-    - requiredAllFlags: []
-      requiredAnyFlags: []
-      nextNodeId: 
-    - requiredAllFlags: []
-      requiredAnyFlags: []
-      nextNodeId: 
-    varBranches: []
-    episodeBranches: []
-    characters:
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    - characterKey: 
-      expressionKey: 
-      slotIndex: -1
-    requiresCrafting: 0
-    craftingTicketKey: 
-    craftingOrderType: 6
-    craftingOrderTarget: 
-    craftingPaymentEnabled: 0
-    craftingPaymentCurrency: 0
-    craftingOutcomes: []
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
-    sfxCommand: 0
-    sfxClipName: 
   settlementRewards:
   - requiredFlag: tl0_true
     label: 2200
     amount: 0
-  - requiredFlag: 
-    label: 
-    amount: 0
-  - requiredFlag: 
-    label: 
-    amount: 0
   episodeDescription: "\uB610 \uD55C\uBC88 \uC5D8\uB9AC\uC5C7\uC774 \uCC3E\uC544\uC628\uB2E4.
     \uADF8\uB9AC\uACE0, \uB610 \uB2E4\uB978 \uC544\uC774\uB3C4."
-  iconNameBoard: The Littles
+  iconNameBoard: TheLittles
   iconNameArchive: 
   characters:
   - isHidden: 0
     characterName: eliud
   - isHidden: 1
-    characterName: 
-  - isHidden: 0
     characterName: 

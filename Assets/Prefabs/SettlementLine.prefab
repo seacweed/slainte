@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 768404091587827254}
   - component: {fileID: 7227312960145572550}
+  - component: {fileID: 8982789653419986621}
   m_Layer: 5
   m_Name: SettlementLine
   m_TagString: Untagged
@@ -33,10 +34,10 @@ RectTransform:
   - {fileID: 7536814634036206406}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 48}
+  m_SizeDelta: {x: 1200, y: 48}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &7227312960145572550
 MonoBehaviour:
@@ -52,6 +53,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SettlementLineView
   labelText: {fileID: 5878587799614188699}
   valueText: {fileID: 1415160573843438482}
+--- !u!114 &8982789653419986621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232925576808062856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.LayoutElement
+  m_IgnoreLayout: 0
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: 1200
+  m_PreferredHeight: 48
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1 &2538428235702124656
 GameObject:
   m_ObjectHideFlags: 0
