@@ -322,6 +322,7 @@ celi_apology_paid,소란 피워서 미안해 - 셀리,150
 | `nextNodeId` | 다음에 이동할 노드 ID (비우면 에피소드 종료) | `1` |
 | `requiresCrafting` | 제조 판정 여부 (`true` / `false`) | `false` |
 | `craftingTicketKey` | 사용할 제조 티켓 ID (`requiresCrafting=true` 일 때만 작성) | `sc0_f72` |
+| `craftingRecipeId` | 판정 기준이 될 레시피 ID (`requiresCrafting=true` 일 때 필수, 비우면 제조 세션이 시작되지 않음) | `rec_1019` |
 | `bgmCommand` | BGM 명령 (`none` / `play` / `stop`, 비우면 `none`) | `play` |
 | `bgmClipName` | 재생할 BGM 파일명 (`bgmCommand=play` 일 때만 작성, 확장자 제외) | `bgm_tension` |
 | `sfxCommand` | 효과음 명령 (`none` / `play`, 비우면 `none`) | `play` |
@@ -329,7 +330,7 @@ celi_apology_paid,소란 피워서 미안해 - 셀리,150
 
 BGM은 무한 반복 재생되며 새로 재생하면 이전 BGM과 크로스페이드로 교체됩니다. SFX는 BGM과 별도 채널에서 한 번만 재생되고(반복 없음), BGM을 멈추지 않으며 여러 개가 겹쳐 재생될 수 있습니다.
 
-**제조 판정 노드** 작성 시: `text`와 `nextNodeId`는 비우고, `requiresCrafting=true` + `craftingTicketKey`만 작성합니다. 제조 결과별(goodjob/badjob/midjob 4종) 이동 노드·플래그·변수 변경은 `#NODE_CRAFTING_BRANCHES` 섹션에 작성합니다.
+**제조 판정 노드** 작성 시: `text`와 `nextNodeId`는 비우고, `requiresCrafting=true` + `craftingTicketKey` + `craftingRecipeId`를 작성합니다. `craftingRecipeId`가 비어 있으면 제조 세션이 시작되지 않아 주문서도 뜨지 않고 판정도 진행되지 않습니다. 제조 결과별(goodjob/badjob/midjob 4종) 이동 노드·플래그·변수 변경은 `#NODE_CRAFTING_BRANCHES` 섹션에 작성합니다.
 
 **선택지 노드** 작성 시: `nextNodeId`는 비우고 `#CHOICES` 섹션에 선택지를 작성합니다.
 
@@ -337,9 +338,9 @@ BGM은 무한 반복 재생되며 새로 재생하면 이전 BGM과 크로스페
 
 ```csv
 #NODES
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,bgmCommand,bgmClipName,sfxCommand,sfxClipName
-0,f72,???,흘..크흘…,1,false,,play,bgm_tension,,
-5,f72,???,,,true,sc0_f72,,,play,sfx_bell
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,craftingRecipeId,bgmCommand,bgmClipName,sfxCommand,sfxClipName
+0,f72,???,흘..크흘…,1,false,,,play,bgm_tension,,
+5,f72,???,,,true,sc0_f72,rec_1019,,,play,sfx_bell
 ```
 
 > **주의**: 대사에 쉼표(`,`)가 포함된 경우 반드시 큰따옴표로 감싸야 합니다.  
@@ -549,13 +550,13 @@ isHidden,characterName
 false,f72
 
 #NODES
-nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,bgmCommand,bgmClipName,sfxCommand,sfxClipName
-0,f72,???,뭘 마시겠어?,1,false,,play,bgm_bar,,
-1,shaun,,추천해줘.,2,false,,none,
-2,f72,,그럼 선택해.,,false,,none,
-3a,f72,,좋은 선택이야.,4,false,,none,
-3b,f72,,그것도 나쁘지 않아.,4,false,,none,
-4,f72,,또 오게.,,false,,stop,
+nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,craftingRecipeId,bgmCommand,bgmClipName,sfxCommand,sfxClipName
+0,f72,???,뭘 마시겠어?,1,false,,,play,bgm_bar,,
+1,shaun,,추천해줘.,2,false,,,none,
+2,f72,,그럼 선택해.,,false,,,none,
+3a,f72,,좋은 선택이야.,4,false,,,none,
+3b,f72,,그것도 나쁘지 않아.,4,false,,,none,
+4,f72,,또 오게.,,false,,,stop,
 
 #NODE_CHARS
 nodeId,characterKey,expressionKey,slotIndex

@@ -564,7 +564,7 @@ public class EpisodeCsvImporter : EditorWindow
             string nid = Field(row, 0);
             bool crafting = string.Equals(Field(row, 5), "true", StringComparison.OrdinalIgnoreCase)
                          || Field(row, 5) == "1";
-            string craftingRecipeId = Field(row, 15);
+            string craftingRecipeId = Field(row, 7);
             if (crafting && string.IsNullOrWhiteSpace(craftingRecipeId))
             {
                 Debug.LogError(
@@ -580,10 +580,11 @@ public class EpisodeCsvImporter : EditorWindow
                 nextNodeId          = Field(row, 4),
                 requiresCrafting    = crafting,
                 craftingTicketKey   = Field(row, 6),
-                bgmCommand          = ParseBgmCommand(Field(row, 7)),
-                bgmClipName         = Field(row, 8),
-                sfxCommand          = ParseSfxCommand(Field(row, 9)),
-                sfxClipName         = Field(row, 10),
+                craftingRecipeId    = craftingRecipeId,
+                bgmCommand          = ParseBgmCommand(Field(row, 8)),
+                bgmClipName         = Field(row, 9),
+                sfxCommand          = ParseSfxCommand(Field(row, 10)),
+                sfxClipName         = Field(row, 11),
                 craftingOutcomes = nodeCraftingBranches.TryGetValue(nid, out var craftBr)
                     ? craftBr : new List<CraftingOutcome>(),
                 characters = nodeChars.TryGetValue(nid, out var chars)
