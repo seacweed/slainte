@@ -21,18 +21,21 @@ public class InputRouter : MonoBehaviour
 
     void Update()
     {
-        Keyboard keyboard   = Keyboard.current;
-        bool advancePressed = Input.GetMouseButtonDown(0) || WasPressed(keyboard?.spaceKey, KeyCode.Space);
-        bool bookPressed    = WasPressed(keyboard?.tabKey, KeyCode.Tab);
-        bool ticketPressed  = WasPressed(keyboard?.eKey, KeyCode.E);
-        bool shelfPressed   = WasPressed(keyboard?.rKey, KeyCode.R);
+        Keyboard keyboard  = Keyboard.current;
+        bool searchFocused = recipeBook != null && recipeBook.IsSearchFocused;
+
+        bool advancePressed = Input.GetMouseButtonDown(0)
+            || (!searchFocused && WasPressed(keyboard?.spaceKey, KeyCode.Space));
+        bool bookPressed    = !searchFocused && WasPressed(keyboard?.aKey, KeyCode.A);
+        bool ticketPressed  = !searchFocused && WasPressed(keyboard?.tabKey, KeyCode.Tab);
+        bool shelfPressed   = !searchFocused && WasPressed(keyboard?.dKey, KeyCode.D);
 
         GameMode mode = modeManager != null ? modeManager.CurrentMode : GameMode.OrderMode;
 
         switch (mode)
         {
             case GameMode.OrderMode:
-                HandleCameraInput(keyboard);
+                HandleCameraInput(keyboard, searchFocused);
                 if (advancePressed) dialogue?.Advance();
                 if (bookPressed)    recipeBook?.Toggle();
                 if (ticketPressed)  orderTicketManager?.ToggleTicket();
@@ -51,7 +54,7 @@ public class InputRouter : MonoBehaviour
                 break;
 
             case GameMode.CraftingMode:
-                HandleCameraInput(keyboard);
+                HandleCameraInput(keyboard, searchFocused);
                 if (advancePressed) RouteAdvanceToEncounter();
                 if (bookPressed)    recipeBook?.Toggle();
                 if (ticketPressed)  orderTicketManager?.ToggleTicket();
@@ -60,9 +63,9 @@ public class InputRouter : MonoBehaviour
         }
     }
 
-    private void HandleCameraInput(Keyboard keyboard)
+    private void HandleCameraInput(Keyboard keyboard, bool searchFocused)
     {
-        if (cameraRig == null || cameraRig.IsAnimating) return;
+        if (cameraRig == null || cameraRig.IsAnimating || searchFocused) return;
 
         if (WasPressed(keyboard?.sKey, KeyCode.S)) cameraRig.OnCameraInput(CameraDirection.DrawerOpen);
         if (WasPressed(keyboard?.wKey, KeyCode.W)) cameraRig.OnCameraInput(CameraDirection.DrawerClose);

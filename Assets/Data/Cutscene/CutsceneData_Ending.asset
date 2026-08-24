@@ -28,8 +28,7 @@ MonoBehaviour:
   - image: {fileID: 651112069384815035, guid: 1d57b7346e940dc498683e82e13e43f3, type: 3}
     text: "<b>\uB0B4\uB7EC\uD2F0\uBE0C: </b>\n\uAD8C\uB098\uC740, \uC724\uC815\uBB35"
   - image: {fileID: 651112069384815035, guid: 1d57b7346e940dc498683e82e13e43f3, type: 3}
-    text: "<b>UI\uC544\uD2B8:</b> \n\uBC15\uC18C\uC5F0   \uBC30\uACBD \uC544\uD2B8:
-      \uAE40\uC11C\uC601"
+    text: "<b>UI\uC544\uD2B8:</b> \n\uBC15\uC18C\uC5F0   \n<b>\uBC30\uACBD\uC544\uD2B8:</b>\n\uAE40\uC11C\uC601"
   - image: {fileID: 651112069384815035, guid: 1d57b7346e940dc498683e82e13e43f3, type: 3}
     text: "<b>\uC74C\uC545:</b>\n\uC544\uBE44\uC2A4(Abyss), \uAE40\uD604\uBBFC"
   - image: {fileID: 651112069384815035, guid: 1d57b7346e940dc498683e82e13e43f3, type: 3}
@@ -39,5 +38,3 @@ MonoBehaviour:
   - image: {fileID: 651112069384815035, guid: 1d57b7346e940dc498683e82e13e43f3, type: 3}
     text: "<b>Special Thanks: </b>\n\uCC9C\uBB38\uD559 \uC790\uBB38: \uC784\uBCD1\uBB34\n\uB370\uBAA8
       \uC544\uD2B8: \uAD8C\uBBFC\uC11C"
-  - image: {fileID: 7043716195235948364, guid: 49dfe177e71be41428ed77d7a87b8232, type: 3}
-    text: 

@@ -90,6 +90,10 @@ public class EpisodeInfoUI : MonoBehaviour
         tooltipCanvas.overrideSorting = true;
         tooltipCanvas.sortingOrder = tooltipSortingOrder;
 
+        // 중첩 Canvas는 자체 GraphicRaycaster가 없으면 그 하위 UI(토글 등)가 포인터 클릭을 못 받는다.
+        if (GetComponent<GraphicRaycaster>() == null)
+            gameObject.AddComponent<GraphicRaycaster>();
+
         characterPortraitLookup = new Dictionary<string, Sprite>(System.StringComparer.OrdinalIgnoreCase);
         if (characterPortraitSprites != null)
         {

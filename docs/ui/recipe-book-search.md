@@ -62,7 +62,9 @@ DetailView — 뒤로가기만 존재(제목 없음)
 
 ## RecipeBookUI 연동
 
-`RecipeBookUI.SetInteractable(bool)`이 **disabled → enabled로 전환될 때만**(예: `EpisodeMode` 진입 후 `OrderMode`/`CraftingMode`로 복귀) `RecipeSearchUI.ResetToMain()`을 호출해 검색 화면을 초기 상태(검색어 비움, 카테고리 버튼 표시)로 되돌린다. Tab 키로 단순히 열고 닫는 동작(`Toggle()`)은 리셋되지 않는다.
+`RecipeBookUI.SetInteractable(bool)`이 **disabled → enabled로 전환될 때만**(예: `EpisodeMode` 진입 후 `OrderMode`/`CraftingMode`로 복귀) `RecipeSearchUI.ResetToMain()`을 호출해 검색 화면을 초기 상태(검색어 비움, 카테고리 버튼 표시)로 되돌린다. A 키로 단순히 열고 닫는 동작(`Toggle()`)은 리셋되지 않는다.
+
+**검색창 포커스 중 게임 키 차단** (`RecipeSearchUI.IsSearchFocused` → `RecipeBookUI.IsSearchFocused` → `InputRouter`): 검색어에 A/D/W/S/Tab/Space가 들어가면(예: "sad", "data") 타이핑 중에 도감 토글·술장 토글·주문서 토글·카메라 이동·대사 진행이 같이 트리거되던 문제가 있어서, `searchInputField.isFocused`(TMP_InputField 표준 프로퍼티)가 true인 동안은 `InputRouter.Update()`가 마우스 클릭을 제외한 모든 키보드 액션을 건너뛴다. 검색창 포커스를 벗어나면 즉시 정상 동작으로 복구된다.
 
 ## 재료명 색상 (`RecipeDetailUI`)
 

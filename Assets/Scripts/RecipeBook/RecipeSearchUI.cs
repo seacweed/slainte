@@ -109,6 +109,8 @@ public class RecipeSearchUI : MonoBehaviour
     // (e.g. EpisodeMode -> OrderMode/CraftingMode). Plain Tab-toggle open/close must not reset.
     public void ResetToMain() => ShowMain();
 
+    public bool IsSearchFocused => searchInputField != null && searchInputField.isFocused;
+
     public void ShowMain()
     {
         if (searchInputField) searchInputField.text = string.Empty;

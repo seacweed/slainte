@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a71cdafabaa4d9e44a88c2c34f0fa33d, type: 3}
   m_Name: CharacterData_cartha
   m_EditorClassIdentifier: Assembly-CSharp::CharacterData
-  key: kartha
+  key: cartha
   displayName: "\uCE74\uC0AC"
   englishName: 
-  nameColor: {r: 1, g: 1, b: 1, a: 1}
+  nameColor: {r: 0.8773585, g: 0.48420256, b: 0.48420256, a: 1}
   defaultSprite: {fileID: 0}
   defaultOverlaySprite: {fileID: 0}
   defaultBlinkSprite: {fileID: 0}
@@ -82,7 +82,7 @@ MonoBehaviour:
     blinkSprite: {fileID: 21300000, guid: 436598b0c0968e2439aa0c84dcfe257c, type: 3}
     blinkOverlaySprite: {fileID: 0}
   - key: mid_bruise_right
-    sprite: {fileID: 21300000, guid: 635fbf852d920bb40880b1e5579fa1a2, type: 3}
+    sprite: {fileID: 21300000, guid: d58a35943cf60c44d8e62e23f1be287e, type: 3}
     overlaySprite: {fileID: 0}
     blinkSprite: {fileID: 21300000, guid: 436598b0c0968e2439aa0c84dcfe257c, type: 3}
     blinkOverlaySprite: {fileID: 0}
@@ -92,17 +92,17 @@ MonoBehaviour:
     blinkSprite: {fileID: 21300000, guid: 0d90b2d77a41be6439cdd198381f39c5, type: 3}
     blinkOverlaySprite: {fileID: 0}
   - key: mid_right
-    sprite: {fileID: 21300000, guid: d58a35943cf60c44d8e62e23f1be287e, type: 3}
+    sprite: {fileID: 21300000, guid: 635fbf852d920bb40880b1e5579fa1a2, type: 3}
     overlaySprite: {fileID: 0}
     blinkSprite: {fileID: 21300000, guid: 0d90b2d77a41be6439cdd198381f39c5, type: 3}
     blinkOverlaySprite: {fileID: 0}
   - key: sad
-    sprite: {fileID: 21300000, guid: d8d0895d2a90748449d7ed0f48cffeeb, type: 3}
+    sprite: {fileID: 21300000, guid: 68976f25ca8bada4ba16b3b286145abe, type: 3}
     overlaySprite: {fileID: 0}
     blinkSprite: {fileID: 21300000, guid: 3247a2c5b9a12fa439e5c61b58c3b3d9, type: 3}
     blinkOverlaySprite: {fileID: 0}
   - key: sad_bruise
-    sprite: {fileID: 21300000, guid: 68976f25ca8bada4ba16b3b286145abe, type: 3}
+    sprite: {fileID: 21300000, guid: d8d0895d2a90748449d7ed0f48cffeeb, type: 3}
     overlaySprite: {fileID: 0}
     blinkSprite: {fileID: 21300000, guid: aeb3508c34e91394d89c5324edbea7b6, type: 3}
     blinkOverlaySprite: {fileID: 0}
@@ -117,22 +117,22 @@ MonoBehaviour:
     blinkSprite: {fileID: 21300000, guid: cd0854dd481c9f24990571258ee3c8a4, type: 3}
     blinkOverlaySprite: {fileID: 0}
   - key: smile_bruise_left
-    sprite: {fileID: 21300000, guid: 3a00b17e9707dae4cac7c4250c0c5235, type: 3}
+    sprite: {fileID: 21300000, guid: 2bdc96da65210b7469b4e58b19cd1684, type: 3}
     overlaySprite: {fileID: 0}
     blinkSprite: {fileID: 21300000, guid: cd0854dd481c9f24990571258ee3c8a4, type: 3}
     blinkOverlaySprite: {fileID: 0}
   - key: smile_bruise_right
-    sprite: {fileID: 21300000, guid: db8bac77f99631c448b1931f6d82e4c0, type: 3}
+    sprite: {fileID: 21300000, guid: d30a5c89f1637104e99f62434dccb052, type: 3}
     overlaySprite: {fileID: 0}
     blinkSprite: {fileID: 21300000, guid: cd0854dd481c9f24990571258ee3c8a4, type: 3}
     blinkOverlaySprite: {fileID: 0}
   - key: smile_left
-    sprite: {fileID: 21300000, guid: 2bdc96da65210b7469b4e58b19cd1684, type: 3}
+    sprite: {fileID: 21300000, guid: 3a00b17e9707dae4cac7c4250c0c5235, type: 3}
     overlaySprite: {fileID: 0}
     blinkSprite: {fileID: 21300000, guid: 21b898d28b1b17049953ec20ae5582a2, type: 3}
     blinkOverlaySprite: {fileID: 0}
   - key: smile_right
-    sprite: {fileID: 21300000, guid: d30a5c89f1637104e99f62434dccb052, type: 3}
+    sprite: {fileID: 21300000, guid: db8bac77f99631c448b1931f6d82e4c0, type: 3}
     overlaySprite: {fileID: 0}
     blinkSprite: {fileID: 21300000, guid: 21b898d28b1b17049953ec20ae5582a2, type: 3}
     blinkOverlaySprite: {fileID: 0}

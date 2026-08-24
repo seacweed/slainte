@@ -19,7 +19,7 @@
 1. 팀 로고(`teamLogoGroup`) fade in → hold → fade out
 2. 타이틀 로고(`titleGroup`)와 타이틀 발광(`titleGlowGroup`)이 함께 화면 중앙에서 fade in → `titleBlinkSteps` 순서대로 둘이 동일한 알파값으로 동기화되어 N회 깜박임
 3. 배경 딤머(`backgroundDimmerGroup`) fade out 시작, 동시에 타이틀 발광(`titleGlowGroup`)만 별도로 fade out 시작(타이틀 로고는 alpha 1 유지) — **이후 단계들과 완전히 독립적으로 진행**, 언제 끝나든 뒤 시퀀스를 막지 않음
-4. `moveStartDelay` 대기 후, 타이틀+배경(`backgroundGroup`)이 동시에 위로 이동
+4. `moveStartDelay` 대기 후, 타이틀+배경(`backgroundGroup`)+타이틀 발광(`titleGlowGroup`, 미배치 시 스킵)이 동시에 위로 이동(타이틀 발광은 타이틀 로고와 같은 이동량만큼 움직여 페이드아웃 도중에도 서로 분리되지 않음)
 5. 이동이 끝나면 곧바로 펍 조명(`pubLightingGroup`)이 깜박이며 켜짐
 6. 조명 연출이 끝나면 곧바로 메뉴(`menuGroup`) fade in + interactable 활성화
 
@@ -48,6 +48,7 @@
 - fade in과 `titleBlinkSteps` 깜박임 전 구간에서 `titleGroup`과 완전히 동일한 알파값으로 동기화되어 함께 움직임(`FadeCanvasGroups`/`BlinkCanvasGroups`가 여러 CanvasGroup에 동시 적용)
 - 깜박임이 끝나 alpha 1로 복귀한 뒤, 배경 딤머(`backgroundDimmerGroup`) fade out과 **같은 시점**에 `titleGlowGroup`만 독립적으로 fade out 시작(`titleGroup`은 계속 alpha 1 유지) — 사라지는 타이밍/속도만 분리되고 그 전까지는 로고와 완전히 같이 깜박임
 - fade out 지속시간은 `titleGlowFadeOutDuration`으로 딤머와 독립적으로 커스텀 가능(시작 타이밍만 동기화)
+- fade out과 동시에 진행되는 move up 단계에서도 `titleGroup`과 같은 이동량(delta)만큼 같이 움직인다(`MoveRectTransforms()`가 `(rect, from, to)` 튜플 배열을 받아 여러 RectTransform을 한 코루틴에서 같이 보간) — 원래는 `titleGroup`/`backgroundGroup`만 이동시켜서 `titleGlowGroup`이 페이드아웃되는 동안 제자리에 남아 타이틀 로고와 분리되어 보이는 버그가 있었음. `titleGlowGroup`이 `titleGroup`과 정확히 같은 위치에서 시작하지 않아도(의도적으로 오프셋된 경우도) 그 오프셋을 유지한 채 같이 이동함
 - 씬 배치 시 계층상 `TitleLogo`보다 아래(뒤)에 위치해야 함
 
 ## 배경 레이어와 딤머 방식

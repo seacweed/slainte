@@ -21,9 +21,9 @@ MonoBehaviour:
   defaultBlinkSprite: {fileID: 0}
   defaultBlinkOverlaySprite: {fileID: 0}
   expressions:
-  - key: e12_down
-    sprite: {fileID: 21300000, guid: f29d8ef8a9c20b44cab8f7c8e0e8bd18, type: 3}
-    overlaySprite: {fileID: 0}
+  - key: down
+    sprite: {fileID: 0}
+    overlaySprite: {fileID: 21300000, guid: f29d8ef8a9c20b44cab8f7c8e0e8bd18, type: 3}
     blinkSprite: {fileID: 0}
     blinkOverlaySprite: {fileID: 0}
   - key: treatment_angry

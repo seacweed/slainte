@@ -56,8 +56,10 @@ public class MainMenuIntroController : MonoBehaviour
 
     private RectTransform titleRect;
     private RectTransform backgroundRect;
+    private RectTransform titleGlowRect;
     private Vector2 titleCenterPosition;
     private Vector2 backgroundRestPosition;
+    private Vector2 titleGlowCenterPosition;
     private Coroutine introCoroutine;
 
     private void Awake()
@@ -66,6 +68,12 @@ public class MainMenuIntroController : MonoBehaviour
         backgroundRect = (RectTransform)backgroundGroup.transform;
         titleCenterPosition = titleRect.anchoredPosition;
         backgroundRestPosition = backgroundRect.anchoredPosition;
+
+        if (titleGlowGroup != null)
+        {
+            titleGlowRect = (RectTransform)titleGlowGroup.transform;
+            titleGlowCenterPosition = titleGlowRect.anchoredPosition;
+        }
 
         SetGroupState(teamLogoGroup, 0f, false);
         SetGroupState(titleGroup, 0f, false);
@@ -108,10 +116,13 @@ public class MainMenuIntroController : MonoBehaviour
         if (titleGlowGroup != null)
             StartCoroutine(FadeCanvasGroup(titleGlowGroup, 1f, 0f, titleGlowFadeOutDuration));
         yield return new WaitForSeconds(moveStartDelay);
+        // titleGlow는 titleLogo와 같은 이동량(delta)만큼 같이 움직여야 분리되지 않는다.
+        Vector2 titleGlowTopPosition = titleGlowCenterPosition + (titleTopPosition - titleCenterPosition);
         yield return MoveRectTransforms(
-            titleRect, titleCenterPosition, titleTopPosition,
-            backgroundRect, backgroundRestPosition, backgroundRaisedPosition,
-            moveUpDuration);
+            moveUpDuration,
+            (titleRect, titleCenterPosition, titleTopPosition),
+            (backgroundRect, backgroundRestPosition, backgroundRaisedPosition),
+            (titleGlowRect, titleGlowCenterPosition, titleGlowTopPosition));
 
         yield return FlickerCanvasGroupOn(pubLightingGroup, pubLightingFlickerCount, pubLightingFlickerDuration);
 
@@ -134,6 +145,8 @@ public class MainMenuIntroController : MonoBehaviour
 
         titleRect.anchoredPosition = titleTopPosition;
         backgroundRect.anchoredPosition = backgroundRaisedPosition;
+        if (titleGlowRect != null)
+            titleGlowRect.anchoredPosition = titleGlowCenterPosition + (titleTopPosition - titleCenterPosition);
     }
 
     private static IEnumerator FadeCanvasGroup(CanvasGroup group, float from, float to, float duration)
@@ -209,14 +222,14 @@ public class MainMenuIntroController : MonoBehaviour
     }
 
     private static IEnumerator MoveRectTransforms(
-        RectTransform a, Vector2 aFrom, Vector2 aTo,
-        RectTransform b, Vector2 bFrom, Vector2 bTo,
-        float duration)
+        float duration,
+        params (RectTransform rect, Vector2 from, Vector2 to)[] moves)
     {
         if (duration <= 0f)
         {
-            a.anchoredPosition = aTo;
-            b.anchoredPosition = bTo;
+            foreach (var move in moves)
+                if (move.rect != null)
+                    move.rect.anchoredPosition = move.to;
             yield break;
         }
 
@@ -225,12 +238,14 @@ public class MainMenuIntroController : MonoBehaviour
         {
             elapsed += Time.deltaTime;
             float t = elapsed / duration;
-            a.anchoredPosition = Vector2.Lerp(aFrom, aTo, t);
-            b.anchoredPosition = Vector2.Lerp(bFrom, bTo, t);
+            foreach (var move in moves)
+                if (move.rect != null)
+                    move.rect.anchoredPosition = Vector2.Lerp(move.from, move.to, t);
             yield return null;
         }
-        a.anchoredPosition = aTo;
-        b.anchoredPosition = bTo;
+        foreach (var move in moves)
+            if (move.rect != null)
+                move.rect.anchoredPosition = move.to;
     }
 
     private static void SetGroupState(CanvasGroup group, float alpha, bool interactable)

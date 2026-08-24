@@ -1,0 +1,94 @@
+{
+  "Nodes": [
+    {
+      "NodeId": "16d10591-a858-4ffa-9bb1-15173d3d95ad",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "흠..크흠…",
+      "NextNodeIds": ["e80f0e16-1daf-4b70-aaa1-4e877459a0aa"]
+    },
+    {
+      "NodeId": "e80f0e16-1daf-4b70-aaa1-4e877459a0aa",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "(은밀히 수상한 화폐를 건네며) 여기 <b>갓파더...",
+      "NextNodeIds": ["a61070f0-2c25-438a-9479-982286133cdf"]
+    },
+    {
+      "NodeId": "a61070f0-2c25-438a-9479-982286133cdf",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "죄송합니다 손님. 저희는 공식 화폐만 받습니다만…",
+      "NextNodeIds": ["7add28b0-ef0f-4c12-b666-b1b25fabe751"]
+    },
+    {
+      "NodeId": "7add28b0-ef0f-4c12-b666-b1b25fabe751",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "순진한 바텐더 씨는 경찰 무서운 줄 모르는군!",
+      "NextNodeIds": ["72eda5aa-94ce-43da-9978-016b573b8321"]
+    },
+    {
+      "NodeId": "72eda5aa-94ce-43da-9978-016b573b8321",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "영업 정지되고 싶지 않으면 <u>당장 술 내오는 ...",
+      "NextNodeIds": ["fb4a2718-f5db-4f21-a88b-38d41066de58"]
+    },
+    {
+      "NodeId": "fb4a2718-f5db-4f21-a88b-38d41066de58",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "5",
+      "NextNodeIds": ["655e17af-fbb2-43e4-a7eb-38b25135c3ee", "086a3ef9-2f2f-40c2-b62a-19126b4bc938"]
+    },
+    {
+      "NodeId": "655e17af-fbb2-43e4-a7eb-38b25135c3ee",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "소문대로 꽤 괜찮군.",
+      "NextNodeIds": ["517cc84a-63ac-4f69-8c16-291fc0c03bff"]
+    },
+    {
+      "NodeId": "086a3ef9-2f2f-40c2-b62a-19126b4bc938",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "이봐. 이거 내가 주문한거 맞아?",
+      "NextNodeIds": ["b211b9ca-b00f-4bfb-8aab-8d55e8857616"]
+    },
+    {
+      "NodeId": "517cc84a-63ac-4f69-8c16-291fc0c03bff",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "<b>5번가</b>의 싸구려 <b>밀주</b>랑은...",
+      "NextNodeIds": ["45bea96c-4cd3-44d4-8b6e-b0fbeba7f59a"]
+    },
+    {
+      "NodeId": "b211b9ca-b00f-4bfb-8aab-8d55e8857616",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "여기라고 <b>5번가</b>랑 다를게 없군.",
+      "NextNodeIds": ["b20bf7e9-e6aa-4867-8d6d-9132e1d9f5a7"]
+    },
+    {
+      "NodeId": "45bea96c-4cd3-44d4-8b6e-b0fbeba7f59a",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "아.",
+      "NextNodeIds": ["6bf3a053-8500-41bc-b26d-b6b490b0f0d0"]
+    },
+    {
+      "NodeId": "b20bf7e9-e6aa-4867-8d6d-9132e1d9f5a7",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "아.",
+      "NextNodeIds": ["0ccadb3f-625f-4cdd-b045-e23ce608a58b"]
+    },
+    {
+      "NodeId": "6bf3a053-8500-41bc-b26d-b6b490b0f0d0",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "밀주 얘기는 비밀이야. 알겠지?",
+      "NextNodeIds": []
+    },
+    {
+      "NodeId": "0ccadb3f-625f-4cdd-b045-e23ce608a58b",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "방금 이야기는 잊어!",
+      "NextNodeIds": []
+    },
+    {
+      "NodeId": "07b3e284-a86a-4d7d-a373-23f91f42348f",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "",
+      "NextNodeIds": []
+    }
+  ]
+}

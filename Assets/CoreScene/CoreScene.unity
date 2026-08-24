@@ -2024,7 +2024,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7781d378a3701ae468bee20fbaf826b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayFlowController
-  endingEpisodeId: 
+  endingEpisodeId: ToTheEarth
 --- !u!114 &1887207215
 MonoBehaviour:
   m_ObjectHideFlags: 0

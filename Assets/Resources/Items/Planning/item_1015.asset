@@ -24,6 +24,7 @@ MonoBehaviour:
   liquidType: 7
   capacityMl: 200
   liquidColor: {r: 0.21960784, g: 0.1254902, b: 0.078431375, a: 1}
+  inheritMixedLiquidColor: 0
   density: 1
   servingTemperatureC: 20
   overrideBottleGeometry: 0

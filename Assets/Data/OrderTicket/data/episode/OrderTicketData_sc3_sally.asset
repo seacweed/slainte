@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: OrderTicketData_sc3_sally
   m_EditorClassIdentifier: Assembly-CSharp::OrderTicketData
   key: sc3_sally
-  customerName: "셀리"
-  memo: "빨리 깔아무 술이나 줘봐. 얼음같은거 빼고."
+  customerName: "\uC140\uB9AC"
+  memo: "\uBE68\uB9AC <b>\uC544\uBB34 \uC220</b>\uC774\uB098 \uC918\uBD10. \uC5BC\uC74C\uAC19\uC740\uAC70
+    \uBE7C\uACE0."
   items:
-  - name: "브리즈 니트"
+  - name: "\uBE0C\uB9AC\uC988 \uB2C8\uD2B8"
     qty: 1
     price: 210

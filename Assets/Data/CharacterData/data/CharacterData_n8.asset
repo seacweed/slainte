@@ -15,7 +15,7 @@ MonoBehaviour:
   key: n8
   displayName: N8
   englishName: 
-  nameColor: {r: 1, g: 1, b: 1, a: 1}
+  nameColor: {r: 0.6604416, g: 0.9622642, b: 0.24056605, a: 1}
   defaultSprite: {fileID: 0}
   defaultOverlaySprite: {fileID: 0}
   defaultBlinkSprite: {fileID: 0}

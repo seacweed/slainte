@@ -126,8 +126,13 @@ MonoBehaviour:
     overlaySprite: {fileID: 0}
     blinkSprite: {fileID: 21300000, guid: cec5b8ec7e6d7a94dab9f597169a6e45, type: 3}
     blinkOverlaySprite: {fileID: 0}
-  - key: smile_right
-    sprite: {fileID: 21300000, guid: 65630a66e606d754faaa658a29b8c4a5, type: 3}
+  - key: blood_closed
+    sprite: {fileID: 21300000, guid: 25092c95e6129744b828317320bd9287, type: 3}
     overlaySprite: {fileID: 0}
-    blinkSprite: {fileID: 21300000, guid: cec5b8ec7e6d7a94dab9f597169a6e45, type: 3}
+    blinkSprite: {fileID: 0}
+    blinkOverlaySprite: {fileID: 0}
+  - key: blood_smile_closed
+    sprite: {fileID: 21300000, guid: 327fb91a49eb7fd41a823ef65472d1d6, type: 3}
+    overlaySprite: {fileID: 0}
+    blinkSprite: {fileID: 0}
     blinkOverlaySprite: {fileID: 0}
