@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Slainte.Bartending;
 using UnityEngine;
 
 namespace NarrativeFlow
@@ -42,6 +43,8 @@ namespace NarrativeFlow
 
         // Business Fields
         public string CraftingTicketKey;
+        public CocktailOrderType CraftingOrderType = CocktailOrderType.EpisodeOrder;
+        public string CraftingOrderTarget;
         public List<CraftingOutcomeData> CraftingOutcomes = new();
 
         // Branch Exit

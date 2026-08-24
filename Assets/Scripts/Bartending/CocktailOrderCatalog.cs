@@ -13,6 +13,40 @@ namespace Slainte.Bartending
         EpisodeOrder
     }
 
+    public static class CocktailOrderTagRules
+    {
+        public static bool TryGetSingleTag(
+            IEnumerable<string> source,
+            out string requestedTag)
+        {
+            requestedTag = string.Empty;
+            if (source == null)
+                return false;
+
+            int validTags = 0;
+            foreach (string tag in source)
+            {
+                if (string.IsNullOrWhiteSpace(tag))
+                    continue;
+
+                validTags++;
+                requestedTag = Normalize(tag);
+            }
+
+            return validTags == 1 && !string.IsNullOrWhiteSpace(requestedTag);
+        }
+
+        public static string Normalize(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return string.Empty;
+
+            string trimmed = value.Trim();
+            int separator = trimmed.IndexOf('_');
+            return (separator >= 0 ? trimmed.Substring(0, separator) : trimmed).Trim();
+        }
+    }
+
     public sealed class CocktailOrderTemplate
     {
         public string id;

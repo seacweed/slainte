@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Slainte.Bartending;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -47,6 +48,25 @@ namespace NarrativeFlow.Editor
                     break;
                 case EpisodeEventType.BusinessStart:
                     container.Add(CreateField("Ticket", ev.CraftingTicketKey, "ticket", nodeView, v => ev.CraftingTicketKey = v, graph));
+                    var orderTypeRow = NarrativeUIHelper.CreateRow();
+                    orderTypeRow.Add(NarrativeUIHelper.CreateLabel("Order Type", "field-label"));
+                    orderTypeRow.Add(new EnumField(ev.CraftingOrderType).SetFlex(1).With(x =>
+                        x.RegisterValueChangedCallback(e =>
+                        {
+                            ev.CraftingOrderType = (CocktailOrderType)e.newValue;
+                            nodeView.UpdateVisuals();
+                            graph.ValidateAllNodes();
+                            graph.RefreshMainGraphVisuals();
+                        })));
+                    orderTypeRow.Add(NarrativeUIHelper.CreateWarningIcon(nodeView, "order_type"));
+                    container.Add(orderTypeRow);
+                    container.Add(CreateField(
+                        "Order Target",
+                        ev.CraftingOrderTarget,
+                        "order_target",
+                        nodeView,
+                        v => ev.CraftingOrderTarget = v,
+                        graph));
                     container.Add(NarrativeUIHelper.CreateDivider());
                     foreach (var result in CraftingJobResultPorts.Order)
                     {

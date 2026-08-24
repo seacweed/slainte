@@ -32,7 +32,7 @@ namespace Slainte.Bartending
             IEnumerable<string> requestedTags)
         {
             if (IsTagOrder(orderType))
-                return TryGetSingleTag(requestedTags, out _);
+                return CocktailOrderTagRules.TryGetSingleTag(requestedTags, out _);
 
             return CanGenerateOrder(requestedRecipeId);
         }
@@ -48,7 +48,8 @@ namespace Slainte.Bartending
             string requestedTag = string.Empty;
             if (!tagOrder && recipe == null)
                 return null;
-            if (tagOrder && !TryGetSingleTag(requestedTags, out requestedTag))
+            if (tagOrder
+                && !CocktailOrderTagRules.TryGetSingleTag(requestedTags, out requestedTag))
                 return null;
 
             CocktailOrderTemplate template = PickTemplate(orderType);
@@ -60,7 +61,7 @@ namespace Slainte.Bartending
             string conditionLabel = tagOrder
                 ? string.IsNullOrWhiteSpace(requestedConditionLabel)
                     ? requestedTag
-                    : requestedConditionLabel.Trim()
+                    : CocktailOrderTagRules.Normalize(requestedConditionLabel)
                 : string.Empty;
 
             GeneratedCocktailOrder order = new GeneratedCocktailOrder
@@ -86,27 +87,6 @@ namespace Slainte.Bartending
         {
             return orderType == CocktailOrderType.TasteOrder
                 || orderType == CocktailOrderType.MoodOrder;
-        }
-
-        private static bool TryGetSingleTag(
-            IEnumerable<string> source,
-            out string requestedTag)
-        {
-            requestedTag = string.Empty;
-            if (source == null)
-                return false;
-
-            foreach (string tag in source)
-            {
-                if (string.IsNullOrWhiteSpace(tag))
-                    continue;
-                if (!string.IsNullOrEmpty(requestedTag))
-                    return false;
-
-                requestedTag = tag.Trim();
-            }
-
-            return !string.IsNullOrEmpty(requestedTag);
         }
 
         private CocktailRecipe ResolveRecipe(string requestedRecipeId)

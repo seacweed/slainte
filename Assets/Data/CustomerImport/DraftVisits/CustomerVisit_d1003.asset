@@ -16,8 +16,8 @@ MonoBehaviour:
   visitKey: d1003
   customerAttributeKey: "\uADFC\uB85C\uC790\uB4E4"
   speechStyleKey: "\uADFC\uB85C\uC790\uB4E4_\uBC1C\uB80C\uD2F0\uB178\uC640\uBCA0\uB9AC"
-  preferredTasteKey: "\uD654\uB824\uD55C"
-  preferredAtmosphereKey: "\uACE0\uAE09\uC2A4\uB7EC\uC6B4"
+  preferredTasteKey:
+  preferredAtmosphereKey: "\uD654\uB824\uD55C"
   tags:
   - "customer_attribute:\uADFC\uB85C\uC790\uB4E4"
   members:
@@ -65,16 +65,6 @@ MonoBehaviour:
       requiredVars: []
       requiredCustomerAppearances: []
   - order: {fileID: 11400000, guid: 338906eb58aeab04a8fb8c2bce018785, type: 2}
-    weight: 1
-    condition:
-      minDay: 0
-      minMoney: 0
-      requiredFlags: []
-      blockedFlags: []
-      prerequisiteEpisodeIds: []
-      requiredVars: []
-      requiredCustomerAppearances: []
-  - order: {fileID: 11400000, guid: bd0c33c012626d9498637dcf41d67c2c, type: 2}
     weight: 1
     condition:
       minDay: 0

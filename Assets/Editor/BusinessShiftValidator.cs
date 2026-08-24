@@ -36,8 +36,8 @@ namespace Slainte.EditorTools
             ValidateConditionOrderEvaluation();
             ValidateCraftingResultMapping();
             Debug.Log(
-                "[BusinessShiftValidator] 주문 대사 검증 통과: 연결 주문 169개, "
-                + "취향·분위기 주문 27개, 의도적 빈 주문 대사 0개, "
+                "[BusinessShiftValidator] 주문 대사 검증 통과: 연결 주문 168개, "
+                + "취향·분위기 주문 26개, 의도적 빈 주문 대사 0개, "
                 + "주문 당시 대사 주문표 반영, 상세 결과 매핑 및 누락 대사 dummy fallback");
         }
 
@@ -102,16 +102,27 @@ namespace Slainte.EditorTools
                     if (conditionOrder)
                     {
                         int validTags = 0;
+                        string requestedTag = string.Empty;
                         if (order.tags != null)
                         {
                             for (int tagIndex = 0; tagIndex < order.tags.Count; tagIndex++)
                             {
-                                if (!string.IsNullOrWhiteSpace(order.tags[tagIndex]))
-                                    validTags++;
+                                if (string.IsNullOrWhiteSpace(order.tags[tagIndex]))
+                                    continue;
+
+                                validTags++;
+                                requestedTag = order.tags[tagIndex].Trim();
                             }
                         }
                         Require(validTags == 1,
                             $"{visit.visitKey}/{order.key}: 조건 주문 태그가 정확히 하나가 아닙니다.");
+                        requestedTag = CocktailOrderTagRules.Normalize(requestedTag);
+                        Require(HasOrderableRecipeForCondition(
+                                recipes,
+                                order.orderType,
+                                requestedTag),
+                            $"{visit.visitKey}/{order.key}: 조건 태그에 대응하는 주문 가능한 레시피가 없습니다: "
+                            + requestedTag);
                         conditionOrderCount++;
                     }
                     else
@@ -152,10 +163,10 @@ namespace Slainte.EditorTools
             }
 
             Require(connectedOrderCount > 0, "검증할 손님 연결 주문이 없습니다.");
-            Require(connectedOrderCount == 169,
-                $"연결 주문 수가 예상과 다릅니다: {connectedOrderCount}/169");
-            Require(conditionOrderCount == 27,
-                $"취향·분위기 주문 수가 예상과 다릅니다: {conditionOrderCount}/27");
+            Require(connectedOrderCount == 168,
+                $"연결 주문 수가 예상과 다릅니다: {connectedOrderCount}/168");
+            Require(conditionOrderCount == 26,
+                $"취향·분위기 주문 수가 예상과 다릅니다: {conditionOrderCount}/26");
             Require(intentionallyBlankOrderCount == 0,
                 $"의도적으로 비운 주문 대사 수가 예상과 다릅니다: {intentionallyBlankOrderCount}/0");
 
@@ -257,7 +268,9 @@ namespace Slainte.EditorTools
             CustomerVisitDatabase database = ScriptableObject.CreateInstance<CustomerVisitDatabase>();
             CustomerVisitData visit = ScriptableObject.CreateInstance<CustomerVisitData>();
             CustomerVisitData readyVisit = ScriptableObject.CreateInstance<CustomerVisitData>();
+            CustomerVisitData tagVisit = ScriptableObject.CreateInstance<CustomerVisitData>();
             CustomerOrderData order = ScriptableObject.CreateInstance<CustomerOrderData>();
+            CustomerOrderData tagOrder = ScriptableObject.CreateInstance<CustomerOrderData>();
             EpisodeData episode = ScriptableObject.CreateInstance<EpisodeData>();
             EpisodeData secondEpisode = ScriptableObject.CreateInstance<EpisodeData>();
 
@@ -328,6 +341,51 @@ namespace Slainte.EditorTools
                     new System.Random(1));
                 Require(afterTwoOthers?.Visit == visit,
                     "최근 2명 목록에서 빠진 손님이 후보로 복귀하지 않았습니다.");
+
+                tagOrder.key = "validator_taste_order";
+                tagOrder.orderType = CocktailOrderType.TasteOrder;
+                tagOrder.tags.Add("validator_taste");
+                tagVisit.visitKey = "validator_tag_visit";
+                tagVisit.reappearanceGroupKey = tagVisit.visitKey;
+                tagVisit.weight = 1f;
+                tagVisit.initiallyAvailable = true;
+                tagVisit.members.Add(
+                    new CustomerVisitMember { characterKey = "validator_tag_customer" });
+                tagVisit.orders.Add(new CustomerVisitOrderOption
+                {
+                    order = tagOrder,
+                    weight = 1f,
+                    condition = new EpisodeTriggerCondition()
+                });
+                database.visits.Add(tagVisit);
+
+                List<CustomerVisitData> tagPool =
+                    BusinessSequencePlanner.BuildEligibleVisitPool(database, progress);
+                Require(tagPool.Contains(tagVisit),
+                    "단일 태그 맛 주문만 가진 손님이 영업 풀에서 제외됐습니다.");
+                CustomerVisitOrderOption selectedTagOrder =
+                    BusinessSequencePlanner.PickWeightedOrder(
+                        tagVisit,
+                        progress,
+                        new System.Random(1));
+                Require(selectedTagOrder?.order == tagOrder,
+                    "유효한 맛 주문을 영업 주문 후보로 선택하지 못했습니다.");
+
+                tagOrder.orderType = CocktailOrderType.MoodOrder;
+                Require(BusinessSequencePlanner.HasStructurallyValidOrderTarget(tagOrder),
+                    "단일 태그 분위기 주문을 유효한 주문 대상으로 인정하지 않았습니다.");
+                CustomerVisitOrderOption selectedMoodOrder =
+                    BusinessSequencePlanner.PickWeightedOrder(
+                        tagVisit,
+                        progress,
+                        new System.Random(1));
+                Require(selectedMoodOrder?.order == tagOrder,
+                    "유효한 분위기 주문을 영업 주문 후보로 선택하지 못했습니다.");
+                tagOrder.tags.Add("unexpected_second_tag");
+                Require(!BusinessSequencePlanner.HasStructurallyValidOrderTarget(tagOrder),
+                    "복수 태그 조건 주문을 유효한 주문 대상으로 인정했습니다.");
+                tagOrder.tags.RemoveAt(tagOrder.tags.Count - 1);
+                tagOrder.orderType = CocktailOrderType.TasteOrder;
 
                 episode.episodeId = "validator_episode";
                 episode.episodeType = EpisodeType.Encounter;
@@ -573,7 +631,9 @@ namespace Slainte.EditorTools
             {
                 UnityEngine.Object.DestroyImmediate(secondEpisode);
                 UnityEngine.Object.DestroyImmediate(episode);
+                UnityEngine.Object.DestroyImmediate(tagOrder);
                 UnityEngine.Object.DestroyImmediate(order);
+                UnityEngine.Object.DestroyImmediate(tagVisit);
                 UnityEngine.Object.DestroyImmediate(readyVisit);
                 UnityEngine.Object.DestroyImmediate(visit);
                 UnityEngine.Object.DestroyImmediate(database);
@@ -584,6 +644,7 @@ namespace Slainte.EditorTools
         private static void ValidateEpisodeCraftingCompatibility()
         {
             ValidateLegacyCraftingFields();
+            ValidateEpisodeCraftingRequestTargets();
             ValidateExistingCraftingNodes();
             ValidateOrderTicketDialogueMemo();
             ValidateConditionOrderEvaluation();
@@ -665,16 +726,17 @@ namespace Slainte.EditorTools
             CocktailOrderGenerator generator = new(null, null);
             GeneratedCocktailOrder order = generator.GenerateOrder(
                 CocktailOrderType.TasteOrder,
-                requestedTags: new[] { "화려한" },
-                requestedConditionLabel: "화려한");
+                requestedTags: new[] { "씁쓸함_Bitterness" },
+                requestedConditionLabel: "씁쓸함_Bitterness");
             Require(order != null
                     && order.requestedRecipe == null
                     && order.requiredTasteTags.Count == 1
-                    && order.requiredTasteTags.Contains("화려한"),
-                "취향 주문이 레시피 없이 정확한 단일 태그로 생성되지 않았습니다.");
+                    && order.requiredTasteTags.Contains("씁쓸함")
+                    && order.requestedConditionLabel == "씁쓸함",
+                "취향 주문이 기획용 영문 접미사를 제거한 단일 태그로 생성되지 않았습니다.");
 
             CocktailRecipe matchingRecipe = new() { id = "matching" };
-            matchingRecipe.tasteTags.Add("화려한");
+            matchingRecipe.tasteTags.Add("씁쓸함");
             CocktailEvaluationResult matchingResult = new()
             {
                 matchedRecipe = matchingRecipe,
@@ -705,6 +767,96 @@ namespace Slainte.EditorTools
                 mismatchingResult);
             Require(!mismatch.isSuccess,
                 "취향 태그가 다른 실제 레시피를 조건 주문 성공으로 판정했습니다.");
+
+            MethodInfo resolveListedRecipe = typeof(BusinessOrderSessionController).GetMethod(
+                "ResolveListedRecipe",
+                BindingFlags.Static | BindingFlags.NonPublic);
+            Require(resolveListedRecipe != null,
+                "조건 주문 가격 기준 레시피 선택 함수를 찾지 못했습니다.");
+            CocktailRecipe pricedRecipe = (CocktailRecipe)resolveListedRecipe.Invoke(
+                null,
+                new object[]
+                {
+                    order,
+                    new CocktailOrderEvaluationResult
+                    {
+                        order = order,
+                        requestedRecipeResult = matchingResult,
+                        detectedRecipeResult = new CocktailEvaluationResult()
+                    }
+                });
+            Require(pricedRecipe == matchingRecipe,
+                "잔·얼음 오류가 있는 조건 주문의 가격 기준 레시피를 보존하지 못했습니다.");
+
+            GeneratedCocktailOrder moodOrder = generator.GenerateOrder(
+                CocktailOrderType.MoodOrder,
+                requestedTags: new[] { "고급스러운_Luxurious" },
+                requestedConditionLabel: "고급스러운_Luxurious");
+            Require(moodOrder != null
+                    && moodOrder.requestedRecipe == null
+                    && moodOrder.requiredMoodTags.Count == 1
+                    && moodOrder.requiredMoodTags.Contains("고급스러운")
+                    && moodOrder.requestedConditionLabel == "고급스러운",
+                "분위기 주문이 기획용 영문 접미사를 제거한 단일 태그로 생성되지 않았습니다.");
+
+            CocktailRecipe matchingMoodRecipe = new() { id = "matching_mood" };
+            matchingMoodRecipe.moodTags.Add("고급스러운");
+            CocktailEvaluationResult matchingMoodResult = new()
+            {
+                matchedRecipe = matchingMoodRecipe,
+                isSuccess = true,
+                iceValid = true,
+                glassValid = true
+            };
+            CocktailOrderEvaluationResult moodSuccess = evaluator.Evaluate(
+                moodOrder,
+                null,
+                matchingMoodResult);
+            Require(moodSuccess.isSuccess,
+                "분위기 태그가 맞는 실제 레시피를 조건 주문 성공으로 판정하지 않았습니다.");
+
+            CocktailRecipe mismatchingMoodRecipe = new() { id = "mismatching_mood" };
+            mismatchingMoodRecipe.moodTags.Add("포근한");
+            CocktailOrderEvaluationResult moodMismatch = evaluator.Evaluate(
+                moodOrder,
+                null,
+                new CocktailEvaluationResult
+                {
+                    matchedRecipe = mismatchingMoodRecipe,
+                    isSuccess = true,
+                    iceValid = true,
+                    glassValid = true
+                });
+            Require(!moodMismatch.isSuccess
+                    && moodMismatch.outcome == CocktailOrderEvaluationOutcome.MidWrongMenu,
+                "분위기 태그가 다른 실제 레시피를 잘못된 메뉴로 판정하지 않았습니다.");
+        }
+
+        private static bool HasOrderableRecipeForCondition(
+            CocktailRecipeCatalog recipes,
+            CocktailOrderType orderType,
+            string requestedTag)
+        {
+            if (recipes == null || string.IsNullOrWhiteSpace(requestedTag))
+                return false;
+
+            foreach (CocktailRecipe recipe in recipes.OrderableRecipes)
+            {
+                if (recipe == null
+                    || recipe.evaluationGrade != CocktailRecipeEvaluationGrade.Good
+                    || !string.IsNullOrWhiteSpace(recipe.baseRecipeId))
+                {
+                    continue;
+                }
+
+                HashSet<string> tags = orderType == CocktailOrderType.TasteOrder
+                    ? recipe.tasteTags
+                    : recipe.moodTags;
+                if (tags != null && tags.Contains(requestedTag))
+                    return true;
+            }
+
+            return false;
         }
 
         private static void ValidateTechnicalFailureContract()
@@ -826,16 +978,39 @@ namespace Slainte.EditorTools
                     if (node == null || !node.requiresCrafting)
                         continue;
 
-                    if (string.IsNullOrWhiteSpace(node.craftingRecipeId))
+                    if (string.IsNullOrWhiteSpace(node.craftingOrderTarget))
                         manualCraftingNodes++;
                     else
                     {
                         actualCraftingNodes++;
-                        Require(recipeCatalog.TryGet(node.craftingRecipeId, out CocktailRecipe recipe)
-                                && recipe != null
-                                && recipe.isOrderable,
-                            $"실제 제조 노드의 주문 가능한 레시피가 없습니다: "
-                            + $"{episode.episodeId}/{node.nodeId}/{node.craftingRecipeId}");
+                        bool tagOrder = node.craftingOrderType == CocktailOrderType.TasteOrder
+                            || node.craftingOrderType == CocktailOrderType.MoodOrder;
+                        bool supportedOrderType = tagOrder
+                            || node.craftingOrderType == CocktailOrderType.EpisodeOrder;
+                        Require(supportedOrderType,
+                            $"에피소드 제조 노드에 지원하지 않는 주문 유형이 있습니다: "
+                            + $"{episode.episodeId}/{node.nodeId}/{node.craftingOrderType}");
+                        if (tagOrder)
+                        {
+                            string requestedTag = CocktailOrderTagRules.Normalize(
+                                node.craftingOrderTarget);
+                            Require(HasOrderableRecipeForCondition(
+                                    recipeCatalog,
+                                    node.craftingOrderType,
+                                    requestedTag),
+                                $"에피소드 조건 주문 태그에 대응하는 주문 가능한 레시피가 없습니다: "
+                                + $"{episode.episodeId}/{node.nodeId}/{requestedTag}");
+                        }
+                        else
+                        {
+                            Require(recipeCatalog.TryGet(
+                                        node.craftingOrderTarget,
+                                        out CocktailRecipe recipe)
+                                    && recipe != null
+                                    && recipe.isOrderable,
+                                $"실제 제조 노드의 주문 가능한 레시피가 없습니다: "
+                                + $"{episode.episodeId}/{node.nodeId}/{node.craftingOrderTarget}");
+                        }
                         Require(!string.IsNullOrWhiteSpace(node.craftingTicketKey)
                                 && ticketDatabase.FindByKey(node.craftingTicketKey) != null,
                             $"실제 제조 노드의 주문표가 없습니다: "
@@ -850,9 +1025,63 @@ namespace Slainte.EditorTools
             }
 
             Require(actualCraftingNodes > 0,
-                "craftingRecipeId가 있는 실제 제조 노드를 찾지 못했습니다.");
+                "craftingOrderTarget이 있는 실제 제조 노드를 찾지 못했습니다.");
             Require(manualCraftingNodes > 0,
                 "기존 수동 판정 호환을 검증할 제조 노드를 찾지 못했습니다.");
+        }
+
+        private static void ValidateEpisodeCraftingRequestTargets()
+        {
+            EpisodeNode recipeNode = new()
+            {
+                craftingOrderType = CocktailOrderType.EpisodeOrder,
+                craftingOrderTarget = "rec_1003",
+                craftingTicketKey = "validator_recipe_ticket"
+            };
+            Require(EpisodeCraftingBridge.TryBuildRequest(
+                    recipeNode,
+                    "validator_recipe",
+                    out OrderSessionRequest recipeRequest)
+                    && recipeRequest.orderType == CocktailOrderType.EpisodeOrder
+                    && recipeRequest.requestedRecipeId == "rec_1003"
+                    && recipeRequest.requestedTags.Count == 0,
+                "에피소드 레시피 target을 지정 레시피 주문으로 변환하지 못했습니다.");
+
+            EpisodeNode tasteNode = new()
+            {
+                craftingOrderType = CocktailOrderType.TasteOrder,
+                craftingOrderTarget = "씁쓸함_Bitterness"
+            };
+            Require(EpisodeCraftingBridge.TryBuildRequest(
+                    tasteNode,
+                    "validator_taste",
+                    out OrderSessionRequest tasteRequest)
+                    && string.IsNullOrEmpty(tasteRequest.requestedRecipeId)
+                    && tasteRequest.requestedTags.Count == 1
+                    && tasteRequest.requestedTags[0] == "씁쓸함"
+                    && tasteRequest.requestedConditionLabel == "씁쓸함",
+                "에피소드 맛 target을 단일 정규화 태그 주문으로 변환하지 못했습니다.");
+
+            EpisodeNode moodNode = new()
+            {
+                craftingOrderType = CocktailOrderType.MoodOrder,
+                craftingOrderTarget = "고급스러운_Luxurious"
+            };
+            Require(EpisodeCraftingBridge.TryBuildRequest(
+                    moodNode,
+                    "validator_mood",
+                    out OrderSessionRequest moodRequest)
+                    && string.IsNullOrEmpty(moodRequest.requestedRecipeId)
+                    && moodRequest.requestedTags.Count == 1
+                    && moodRequest.requestedTags[0] == "고급스러운",
+                "에피소드 분위기 target을 단일 정규화 태그 주문으로 변환하지 못했습니다.");
+
+            moodNode.craftingOrderType = CocktailOrderType.RecipeModifierOrder;
+            Require(!EpisodeCraftingBridge.TryBuildRequest(
+                    moodNode,
+                    "validator_unsupported",
+                    out _),
+                "에피소드에서 지원하지 않는 주문 유형을 허용했습니다.");
         }
 
         private static void ValidateCraftingResultMapping()

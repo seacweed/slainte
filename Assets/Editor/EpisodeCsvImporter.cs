@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Slainte.Bartending;
 using UnityEditor;
 using UnityEngine;
 
@@ -118,7 +119,7 @@ public class EpisodeCsvImporter : EditorWindow
 
     private static EpisodeData ParseCsv(string[] lines, out Dictionary<string, List<string[]>> sections)
     {
-        sections = SplitIntoSections(lines);
+        sections = SplitIntoSections(lines, out Dictionary<string, string[]> sectionHeaders);
 
         EpisodeData data = ScriptableObject.CreateInstance<EpisodeData>();
 
@@ -137,14 +138,27 @@ public class EpisodeCsvImporter : EditorWindow
         Dictionary<string, List<NodeVarBranch>>       nodeVarBranches     = BuildNodeVarBranchesLookup(sections);
         Dictionary<string, List<NodeEpisodeBranch>>   nodeEpisodeBranches = BuildNodeEpisodeBranchesLookup(sections);
         Dictionary<string, List<CraftingOutcome>>     nodeCraftingBranches = BuildNodeCraftingBranchesLookup(sections);
-        ParseNodes(sections, data, nodeChars, nodeChoices, nodeBranches, nodeVarBranches, nodeEpisodeBranches, nodeCraftingBranches);
+        sectionHeaders.TryGetValue("NODES", out string[] nodeHeaders);
+        ParseNodes(
+            sections,
+            data,
+            nodeChars,
+            nodeChoices,
+            nodeBranches,
+            nodeVarBranches,
+            nodeEpisodeBranches,
+            nodeCraftingBranches,
+            nodeHeaders);
 
         return data;
     }
 
-    private static Dictionary<string, List<string[]>> SplitIntoSections(string[] lines)
+    private static Dictionary<string, List<string[]>> SplitIntoSections(
+        string[] lines,
+        out Dictionary<string, string[]> sectionHeaders)
     {
         var sections = new Dictionary<string, List<string[]>>();
+        sectionHeaders = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
         string current = null;
         bool headerRead = false;
 
@@ -168,7 +182,8 @@ public class EpisodeCsvImporter : EditorWindow
 
             if (!headerRead)
             {
-                headerRead = true; // skip header row
+                sectionHeaders[current] = ParseLine(line);
+                headerRead = true;
                 continue;
             }
 
@@ -553,7 +568,8 @@ public class EpisodeCsvImporter : EditorWindow
         Dictionary<string, List<NodeFlagBranch>> nodeBranches,
         Dictionary<string, List<NodeVarBranch>> nodeVarBranches,
         Dictionary<string, List<NodeEpisodeBranch>> nodeEpisodeBranches,
-        Dictionary<string, List<CraftingOutcome>> nodeCraftingBranches)
+        Dictionary<string, List<CraftingOutcome>> nodeCraftingBranches,
+        string[] nodeHeaders)
     {
         data.nodes = new List<EpisodeNode>();
 
@@ -561,30 +577,37 @@ public class EpisodeCsvImporter : EditorWindow
 
         foreach (string[] row in rows)
         {
-            string nid = Field(row, 0);
-            bool crafting = string.Equals(Field(row, 5), "true", StringComparison.OrdinalIgnoreCase)
-                         || Field(row, 5) == "1";
-            string craftingRecipeId = Field(row, 7);
-            if (crafting && string.IsNullOrWhiteSpace(craftingRecipeId))
+            string nid = NamedField(row, nodeHeaders, "nodeId", 0);
+            string craftingValue = NamedField(row, nodeHeaders, "requiresCrafting", 5);
+            bool crafting = string.Equals(craftingValue, "true", StringComparison.OrdinalIgnoreCase)
+                         || craftingValue == "1";
+            string orderTypeValue = NamedField(row, nodeHeaders, "craftingOrderType", -1);
+            CocktailOrderType craftingOrderType = ParseCraftingOrderType(orderTypeValue);
+            string craftingOrderTarget = NamedField(row, nodeHeaders, "craftingOrderTarget", -1);
+            if (string.IsNullOrWhiteSpace(craftingOrderTarget))
             {
-                Debug.LogError(
-                    $"[EpisodeCsvImporter] Crafting node '{nid}' is missing craftingRecipeId.");
+                craftingOrderTarget = NamedField(
+                    row,
+                    nodeHeaders,
+                    "craftingRecipeId",
+                    -1);
             }
 
             data.nodes.Add(new EpisodeNode
             {
                 nodeId              = nid,
-                speakerKey          = Field(row, 1),
-                overrideSpeakerName = Field(row, 2),
-                text                = Field(row, 3),
-                nextNodeId          = Field(row, 4),
+                speakerKey          = NamedField(row, nodeHeaders, "speakerKey", 1),
+                overrideSpeakerName = NamedField(row, nodeHeaders, "overrideSpeakerName", 2),
+                text                = NamedField(row, nodeHeaders, "text", 3),
+                nextNodeId          = NamedField(row, nodeHeaders, "nextNodeId", 4),
                 requiresCrafting    = crafting,
-                craftingTicketKey   = Field(row, 6),
-                craftingRecipeId    = craftingRecipeId,
-                bgmCommand          = ParseBgmCommand(Field(row, 8)),
-                bgmClipName         = Field(row, 9),
-                sfxCommand          = ParseSfxCommand(Field(row, 10)),
-                sfxClipName         = Field(row, 11),
+                craftingTicketKey   = NamedField(row, nodeHeaders, "craftingTicketKey", 6),
+                craftingOrderType   = craftingOrderType,
+                craftingOrderTarget = craftingOrderTarget,
+                bgmCommand          = ParseBgmCommand(NamedField(row, nodeHeaders, "bgmCommand", 7)),
+                bgmClipName         = NamedField(row, nodeHeaders, "bgmClipName", 8),
+                sfxCommand          = ParseSfxCommand(NamedField(row, nodeHeaders, "sfxCommand", 9)),
+                sfxClipName         = NamedField(row, nodeHeaders, "sfxClipName", 10),
                 craftingOutcomes = nodeCraftingBranches.TryGetValue(nid, out var craftBr)
                     ? craftBr : new List<CraftingOutcome>(),
                 characters = nodeChars.TryGetValue(nid, out var chars)
@@ -617,7 +640,30 @@ public class EpisodeCsvImporter : EditorWindow
 
     private static string Field(string[] row, int index)
     {
-        return index < row.Length ? row[index].Trim() : string.Empty;
+        return index >= 0 && index < row.Length ? row[index].Trim() : string.Empty;
+    }
+
+    private static string NamedField(
+        string[] row,
+        string[] headers,
+        string fieldName,
+        int fallbackIndex)
+    {
+        if (headers != null)
+        {
+            for (int i = 0; i < headers.Length; i++)
+            {
+                if (string.Equals(
+                        headers[i]?.Trim(),
+                        fieldName,
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    return Field(row, i);
+                }
+            }
+        }
+
+        return Field(row, fallbackIndex);
     }
 
     private static List<VarChange> ParseVarChangeList(string value)
@@ -684,6 +730,13 @@ public class EpisodeCsvImporter : EditorWindow
     private static MandatorySlot ParseMandatorySlot(string value)
     {
         return System.Enum.TryParse(value.Trim(), true, out MandatorySlot result) ? result : MandatorySlot.None;
+    }
+
+    private static CocktailOrderType ParseCraftingOrderType(string value)
+    {
+        return Enum.TryParse(value?.Trim(), true, out CocktailOrderType result)
+            ? result
+            : CocktailOrderType.EpisodeOrder;
     }
 
     private static BgmCommand ParseBgmCommand(string value)

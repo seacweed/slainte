@@ -233,6 +233,9 @@ namespace NarrativeFlow.Editor
             if (!string.IsNullOrEmpty(ev.CraftingTicketKey))
                 header.Add(NarrativeUIHelper.CreateLabel($"  {ev.CraftingTicketKey}", "info-label").With(l => l.style.color = new Color(0.9f, 0.9f, 0.9f)));
             card.Add(header);
+            card.Add(NarrativeUIHelper.CreateLabel(
+                $"{ev.CraftingOrderType}: {ev.CraftingOrderTarget}",
+                "info-label"));
 
             foreach (var result in CraftingJobResultPorts.Order)
             {

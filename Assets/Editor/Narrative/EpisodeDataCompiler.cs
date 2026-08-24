@@ -151,8 +151,10 @@ namespace NarrativeFlow.Editor
                     break;
 
                 case EpisodeEventType.BusinessStart:
-                    n.requiresCrafting  = true;
-                    n.craftingTicketKey = ev.CraftingTicketKey;
+                    n.requiresCrafting     = true;
+                    n.craftingTicketKey    = ev.CraftingTicketKey;
+                    n.craftingOrderType    = ev.CraftingOrderType;
+                    n.craftingOrderTarget  = ev.CraftingOrderTarget;
                     foreach (var result in CraftingJobResultPorts.Order)
                     {
                         string flag = ev.GetCraftingFlag(result);
@@ -411,9 +413,9 @@ namespace NarrativeFlow.Editor
             }
 
             sb.AppendLine("#NODES");
-            sb.AppendLine("nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,bgmCommand,bgmClipName,sfxCommand,sfxClipName");
+            sb.AppendLine("nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,bgmCommand,bgmClipName,sfxCommand,sfxClipName,craftingOrderType,craftingOrderTarget");
             foreach (var n in data.nodes)
-                sb.AppendLine($"{n.nodeId},{n.speakerKey},{n.overrideSpeakerName},{Csv(n.text)},{n.nextNodeId},{n.requiresCrafting.ToString().ToLower()},{n.craftingTicketKey},{n.bgmCommand},{n.bgmClipName},{n.sfxCommand},{n.sfxClipName}");
+                sb.AppendLine($"{n.nodeId},{n.speakerKey},{n.overrideSpeakerName},{Csv(n.text)},{n.nextNodeId},{n.requiresCrafting.ToString().ToLower()},{n.craftingTicketKey},{n.bgmCommand},{n.bgmClipName},{n.sfxCommand},{n.sfxClipName},{n.craftingOrderType},{Csv(n.craftingOrderTarget)}");
             sb.AppendLine();
 
             bool hasCraftingOutcomes = data.nodes.Any(n => n.craftingOutcomes.Count > 0);

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Slainte.Bartending;
 using UnityEngine;
 
@@ -27,26 +28,17 @@ namespace Slainte.Business
             Action<CraftingJobResult> onCompleted,
             Action<string> onTechnicalFailure)
         {
-            if (!initialized
-                || craftingActive
-                || node == null
-                || string.IsNullOrWhiteSpace(node.craftingRecipeId))
+            if (!initialized || craftingActive)
                 return false;
 
-            OrderSessionRequest request = new()
-            {
-                sessionId = $"episode_crafting_{++sessionSequence}",
-                owner = OrderSessionOwner.Episode,
-                requestedRecipeId = node.craftingRecipeId,
-                ticketKey = node.craftingTicketKey,
-                orderType = CocktailOrderType.EpisodeOrder,
-                paymentCurrency = node.craftingPaymentCurrency,
-                presentOrder = false,
-                presentFeedback = false,
-                applyProgressRewards = false,
-                applyPayment = node.craftingPaymentEnabled,
-                clearCustomerOnComplete = false
-            };
+            int nextSessionSequence = sessionSequence + 1;
+            if (!TryBuildRequest(
+                    node,
+                    $"episode_crafting_{nextSessionSequence}",
+                    out OrderSessionRequest request))
+                return false;
+
+            sessionSequence = nextSessionSequence;
 
             craftingActive = true;
             bool started = businessFlow.StartEpisodeOrder(request, result =>
@@ -67,6 +59,49 @@ namespace Slainte.Business
             if (!started)
                 craftingActive = false;
             return started;
+        }
+
+        public static bool TryBuildRequest(
+            EpisodeNode node,
+            string sessionId,
+            out OrderSessionRequest request)
+        {
+            request = null;
+            if (node == null || string.IsNullOrWhiteSpace(node.craftingOrderTarget))
+                return false;
+
+            CocktailOrderType orderType = node.craftingOrderType;
+            bool tagOrder = orderType == CocktailOrderType.TasteOrder
+                || orderType == CocktailOrderType.MoodOrder;
+            if (!tagOrder && orderType != CocktailOrderType.EpisodeOrder)
+                return false;
+
+            string target = node.craftingOrderTarget.Trim();
+            string normalizedTag = tagOrder
+                ? CocktailOrderTagRules.Normalize(target)
+                : string.Empty;
+            if (tagOrder && string.IsNullOrWhiteSpace(normalizedTag))
+                return false;
+
+            request = new OrderSessionRequest
+            {
+                sessionId = sessionId,
+                owner = OrderSessionOwner.Episode,
+                requestedRecipeId = tagOrder ? string.Empty : target,
+                requestedConditionLabel = tagOrder ? normalizedTag : string.Empty,
+                requestedTags = tagOrder
+                    ? new List<string> { normalizedTag }
+                    : new List<string>(),
+                ticketKey = node.craftingTicketKey,
+                orderType = orderType,
+                paymentCurrency = node.craftingPaymentCurrency,
+                presentOrder = false,
+                presentFeedback = false,
+                applyProgressRewards = false,
+                applyPayment = node.craftingPaymentEnabled,
+                clearCustomerOnComplete = false
+            };
+            return true;
         }
     }
 

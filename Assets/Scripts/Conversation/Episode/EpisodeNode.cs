@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Slainte.Bartending;
 using Slainte.Economy;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [Serializable]
 public class EpisodeNode
@@ -36,8 +38,11 @@ public class EpisodeNode
     [Header("Crafting (optional)")]
     public bool   requiresCrafting = false;
     public string craftingTicketKey;
-    [HideInInspector]
-    public string craftingRecipeId;
+    [Tooltip("EpisodeOrder는 레시피 ID, TasteOrder/MoodOrder는 단일 태그를 대상으로 사용합니다.")]
+    public CocktailOrderType craftingOrderType = CocktailOrderType.EpisodeOrder;
+    [FormerlySerializedAs("craftingRecipeId")]
+    [Tooltip("주문 유형에 따라 레시피 ID 또는 맛/분위기 태그를 입력합니다.")]
+    public string craftingOrderTarget;
     [Tooltip("활성화하면 이 제조 주문 완료 시 선택한 통화로 레시피 가격을 지급합니다.")]
     public bool craftingPaymentEnabled;
     public GameCurrency craftingPaymentCurrency = GameCurrency.Money;

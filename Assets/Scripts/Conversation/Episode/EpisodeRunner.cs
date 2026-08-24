@@ -207,7 +207,7 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         _waitingForCrafting = true;
         _isUsingManualCrafting = false;
 
-        if (!string.IsNullOrWhiteSpace(node.craftingRecipeId) && _craftingBridge != null)
+        if (!string.IsNullOrWhiteSpace(node.craftingOrderTarget) && _craftingBridge != null)
         {
             bool fallbackRequested = false;
             string fallbackReason = string.Empty;

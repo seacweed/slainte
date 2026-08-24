@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Slainte.Bartending;
 using Slainte.TV;
 using UnityEngine;
 
@@ -378,7 +379,7 @@ namespace Slainte.Business
                     && option.weight > 0f
                     && order != null
                     && !string.IsNullOrWhiteSpace(order.key)
-                    && !string.IsNullOrWhiteSpace(order.requestedRecipeId))
+                    && HasStructurallyValidOrderTarget(order))
                     return true;
             }
 
@@ -412,8 +413,21 @@ namespace Slainte.Business
                 && option.weight > 0f
                 && order != null
                 && !string.IsNullOrWhiteSpace(order.key)
-                && !string.IsNullOrWhiteSpace(order.requestedRecipeId)
+                && HasStructurallyValidOrderTarget(order)
                 && ProgressConditionEvaluator.IsMet(option.condition, progress);
+        }
+
+        public static bool HasStructurallyValidOrderTarget(CustomerOrderData order)
+        {
+            if (order == null)
+                return false;
+
+            bool tagOrder = order.orderType == CocktailOrderType.TasteOrder
+                || order.orderType == CocktailOrderType.MoodOrder;
+            if (!tagOrder)
+                return !string.IsNullOrWhiteSpace(order.requestedRecipeId);
+
+            return CocktailOrderTagRules.TryGetSingleTag(order.tags, out _);
         }
 
         private static CustomerVisitOrderOption PickWeightedOrder(

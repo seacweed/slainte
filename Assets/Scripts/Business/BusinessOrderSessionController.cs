@@ -54,9 +54,11 @@ namespace Slainte.Business
             }
 
             bool tagOrder = IsTagOrder(order.orderType);
-            if (!tagOrder && string.IsNullOrWhiteSpace(order.requestedRecipeId))
+            if (!BusinessSequencePlanner.HasStructurallyValidOrderTarget(order))
             {
-                failureReason = $"주문 {order.key}의 레시피 ID가 비어 있습니다.";
+                failureReason = tagOrder
+                    ? $"주문 {order.key}에는 정확히 하나의 유효한 조건 태그가 필요합니다."
+                    : $"주문 {order.key}의 레시피 ID가 비어 있습니다.";
                 return false;
             }
 
@@ -531,10 +533,19 @@ namespace Slainte.Business
             GameCurrency currency,
             CocktailOrderEvaluationResult evaluation = null)
         {
-            CocktailRecipe recipe = IsTagOrder(currentOrder?.orderType)
-                ? evaluation?.detectedRecipeResult?.matchedRecipe
-                : currentOrder?.requestedRecipe;
+            CocktailRecipe recipe = ResolveListedRecipe(currentOrder, evaluation);
             return recipe != null ? recipe.GetPrice(currency) : -1;
+        }
+
+        private static CocktailRecipe ResolveListedRecipe(
+            GeneratedCocktailOrder order,
+            CocktailOrderEvaluationResult evaluation)
+        {
+            if (!IsTagOrder(order?.orderType))
+                return order?.requestedRecipe;
+
+            return evaluation?.requestedRecipeResult?.matchedRecipe
+                ?? evaluation?.detectedRecipeResult?.matchedRecipe;
         }
 
         private static bool HasValidRequestTarget(OrderSessionRequest request)
@@ -545,16 +556,7 @@ namespace Slainte.Business
             if (!IsTagOrder(request.orderType))
                 return !string.IsNullOrWhiteSpace(request.requestedRecipeId);
 
-            if (request.requestedTags == null)
-                return false;
-
-            int validTags = 0;
-            for (int i = 0; i < request.requestedTags.Count; i++)
-            {
-                if (!string.IsNullOrWhiteSpace(request.requestedTags[i]))
-                    validTags++;
-            }
-            return validTags == 1;
+            return CocktailOrderTagRules.TryGetSingleTag(request.requestedTags, out _);
         }
 
         private static bool IsTagOrder(CocktailOrderType? orderType)

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
 using System.Linq;
+using Slainte.Bartending;
 
 namespace NarrativeFlow.Editor
 {
@@ -65,6 +66,18 @@ namespace NarrativeFlow.Editor
                                 if (!errors.Contains("Duplicate Choices")) errors.Add("Duplicate Choices");
                             }
                         }
+                    }
+                }
+                else if (ev.Type == EpisodeEventType.BusinessStart)
+                {
+                    bool supportedType = ev.CraftingOrderType == CocktailOrderType.EpisodeOrder
+                        || ev.CraftingOrderType == CocktailOrderType.TasteOrder
+                        || ev.CraftingOrderType == CocktailOrderType.MoodOrder;
+                    if (!string.IsNullOrWhiteSpace(ev.CraftingOrderTarget)
+                        && !supportedType)
+                    {
+                        errors.Add("Unsupported Order Type");
+                        fieldErrors["order_type"] = "Use EpisodeOrder, TasteOrder, or MoodOrder";
                     }
                 }
                 else if (ev.Type == EpisodeEventType.BranchExit)

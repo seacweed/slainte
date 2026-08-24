@@ -179,8 +179,10 @@ namespace NarrativeFlow.Editor
 
             if (rNode.requiresCrafting)
             {
-                ev.Type              = EpisodeEventType.BusinessStart;
-                ev.CraftingTicketKey = rNode.craftingTicketKey;
+                ev.Type                = EpisodeEventType.BusinessStart;
+                ev.CraftingTicketKey   = rNode.craftingTicketKey;
+                ev.CraftingOrderType   = rNode.craftingOrderType;
+                ev.CraftingOrderTarget = rNode.craftingOrderTarget;
 
                 foreach (var result in CraftingJobResultPorts.Order)
                 {
