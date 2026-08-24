@@ -21,8 +21,8 @@ MonoBehaviour:
   appearsInRecipeBook: 1
   baseRecipeId: 
   evaluationGrade: 0
-  minTotalMl: 205
-  maxTotalMl: 215
+  minTotalMl: 200
+  maxTotalMl: 220
   toleranceMl: 10
   allowExtraIngredients: 0
   glassId: hurricane

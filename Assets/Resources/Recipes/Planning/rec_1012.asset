@@ -21,8 +21,8 @@ MonoBehaviour:
   appearsInRecipeBook: 1
   baseRecipeId: 
   evaluationGrade: 0
-  minTotalMl: 155
-  maxTotalMl: 165
+  minTotalMl: 150
+  maxTotalMl: 170
   toleranceMl: 10
   allowExtraIngredients: 0
   glassId: highball

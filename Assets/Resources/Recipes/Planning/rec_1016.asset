@@ -21,8 +21,8 @@ MonoBehaviour:
   appearsInRecipeBook: 1
   baseRecipeId: 
   evaluationGrade: 0
-  minTotalMl: 25
-  maxTotalMl: 35
+  minTotalMl: 20
+  maxTotalMl: 40
   toleranceMl: 10
   allowExtraIngredients: 0
   glassId: rock

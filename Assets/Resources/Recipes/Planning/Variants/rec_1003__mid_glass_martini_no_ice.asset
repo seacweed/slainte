@@ -21,8 +21,8 @@ MonoBehaviour:
   appearsInRecipeBook: 0
   baseRecipeId: rec_1003
   evaluationGrade: 1
-  minTotalMl: 55
-  maxTotalMl: 65
+  minTotalMl: 50
+  maxTotalMl: 70
   toleranceMl: 10
   allowExtraIngredients: 0
   glassId: martini
