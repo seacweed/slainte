@@ -70,6 +70,8 @@ namespace Slainte.Business
             craftingActive = false;
         }
 
+        private static TasteMoodTagPaletteDef cachedTagPalette;
+
         public static bool TryBuildRequest(
             EpisodeNode node,
             string sessionId,
@@ -79,18 +81,11 @@ namespace Slainte.Business
             if (node == null || string.IsNullOrWhiteSpace(node.craftingOrderTarget))
                 return false;
 
-            CocktailOrderType orderType = node.craftingOrderType;
+            string target = node.craftingOrderTarget.Trim();
+            string normalizedTag = CocktailOrderTagRules.Normalize(target);
+            CocktailOrderType orderType = ResolveOrderType(normalizedTag);
             bool tagOrder = orderType == CocktailOrderType.TasteOrder
                 || orderType == CocktailOrderType.MoodOrder;
-            if (!tagOrder && orderType != CocktailOrderType.EpisodeOrder)
-                return false;
-
-            string target = node.craftingOrderTarget.Trim();
-            string normalizedTag = tagOrder
-                ? CocktailOrderTagRules.Normalize(target)
-                : string.Empty;
-            if (tagOrder && string.IsNullOrWhiteSpace(normalizedTag))
-                return false;
 
             request = new OrderSessionRequest
             {
@@ -115,6 +110,27 @@ namespace Slainte.Business
                 clearCustomerOnComplete = false
             };
             return true;
+        }
+
+        // craftingOrderTarget 값 자체로 판별한다: 맛/분위기 태그 팔레트에 등록된 태그면 TasteOrder/MoodOrder,
+        // 아니면(레시피 ID로 간주) EpisodeOrder. CSV에 별도 craftingOrderType 컬럼을 요구하지 않기 위함.
+        private static CocktailOrderType ResolveOrderType(string normalizedTag)
+        {
+            if (string.IsNullOrWhiteSpace(normalizedTag))
+                return CocktailOrderType.EpisodeOrder;
+
+            if (cachedTagPalette == null)
+                cachedTagPalette = Resources.Load<TasteMoodTagPaletteDef>("Recipes/TasteMoodPalette");
+
+            if (cachedTagPalette == null)
+                return CocktailOrderType.EpisodeOrder;
+
+            if (cachedTagPalette.TryGetTasteColor(normalizedTag, out _, out _))
+                return CocktailOrderType.TasteOrder;
+            if (cachedTagPalette.TryGetMoodColor(normalizedTag, out _, out _))
+                return CocktailOrderType.MoodOrder;
+
+            return CocktailOrderType.EpisodeOrder;
         }
     }
 

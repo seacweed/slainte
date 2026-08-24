@@ -16,8 +16,8 @@ None, Rest, Business, Episode, Settlement
 
 ```
 RestScene
- ├─ 미완료 필수(Mandatory) 에피소드가 있으면
- │    → "에피소드 선택" 비활성/숨김, "영업 시작"만 노출
+ ├─ 미완료 필수(Mandatory) 에피소드가 있으면(목표일 하루 전부터 lookahead로 미리 감지)
+ │    → "에피소드 선택" 비활성(실제 구현은 사진 자체를 숨기지 않고 노출은 하되 선택해도 진행이 안 되도록 막는 방식 — 최신 동작은 [restscene-systems.md](../ui/restscene-systems.md#에피소드-보드-시스템) 참고), "영업 시작"만 노출
  │    → 영업 시작 시, 큐의 "다음 필수 에피소드 1개" 확인
  │         - mandatorySlot == BeforeBusiness → [그 에피소드] → Business(Stub) → Settlement
  │         - mandatorySlot == AfterBusiness  → Business(Stub) → [그 에피소드] → Settlement

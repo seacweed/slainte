@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BusinessOrderFlowSettings
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Business.BusinessOrderFlowSettings
   autoStart: 1
-  shiftDurationSeconds: 180
+  shiftDurationSeconds: 300
   customerVisitDatabase: {fileID: 11400000, guid: f5a61ed87b8042198be0337bde46a7eb, type: 2}
   randomEncounters: []
   requiredActions:
@@ -22,6 +22,7 @@ MonoBehaviour:
     exactDay: 0
     condition:
       minDay: 5
+      minMoney: 0
       requiredFlags: []
       blockedFlags: []
       prerequisiteEpisodeIds: []
@@ -37,6 +38,7 @@ MonoBehaviour:
     exactDay: 0
     condition:
       minDay: 5
+      minMoney: 0
       requiredFlags: []
       blockedFlags: []
       prerequisiteEpisodeIds: []

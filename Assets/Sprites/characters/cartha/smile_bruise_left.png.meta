@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 3a00b17e9707dae4cac7c4250c0c5235
+guid: 2bdc96da65210b7469b4e58b19cd1684
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7677990360035283005
-    second: kartha_smile_bruise_left_0
+      213: 4382648201235772197
+    second: kartha_smile_left_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: kartha_smile_bruise_left_0
+      name: kartha_smile_left_0
       rect:
         serializedVersion: 2
         x: 71
-        y: 383
-        width: 351
-        height: 569
+        y: 401
+        width: 338
+        height: 551
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d30d6ce7d83bd8a60800000000000000
-      internalID: 7677990360035283005
+      spriteID: 523b92a915b42dc30800000000000000
+      internalID: 4382648201235772197
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      kartha_smile_bruise_left_0: 7677990360035283005
+      kartha_smile_left_0: 4382648201235772197
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

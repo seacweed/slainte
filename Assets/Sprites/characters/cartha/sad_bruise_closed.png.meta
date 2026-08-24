@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: aeb3508c34e91394d89c5324edbea7b6
+guid: 3247a2c5b9a12fa439e5c61b58c3b3d9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -5957345604502254187
-    second: kartha_sad_bruise_closed_0
+      213: 3731973847421729702
+    second: kartha_sad_closed_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: kartha_sad_bruise_closed_0
+      name: kartha_sad_closed_0
       rect:
         serializedVersion: 2
         x: 71
-        y: 401
-        width: 338
-        height: 551
+        y: 383
+        width: 351
+        height: 569
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 59d886f6cb1435da0800000000000000
-      internalID: -5957345604502254187
+      spriteID: 6abbe9ef072aac330800000000000000
+      internalID: 3731973847421729702
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      kartha_sad_bruise_closed_0: -5957345604502254187
+      kartha_sad_closed_0: 3731973847421729702
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

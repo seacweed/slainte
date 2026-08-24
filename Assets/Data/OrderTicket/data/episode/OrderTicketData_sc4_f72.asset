@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OrderTicketData
   key: sc4_f72
   customerName: F72
-  memo: "그런 의미에서 한 잔 주문하지, 한여름의 나낭나로 부탁해. 얼음은 빼고"
+  memo: "\uADF8\uB7F0 \uC758\uBBF8\uC5D0\uC11C \uD55C \uC794 \uC8FC\uBB38\uD558\uC9C0,
+    \uD55C\uC5EC\uB984\uC758 \uB098\uB0AD\uB098\uB85C \uBD80\uD0C1\uD574."
   items:
-  - name: "한여름의 나낭나"
+  - name: "\uD55C\uC5EC\uB984\uC758 \uB098\uB0AD\uB098"
     qty: 1
     price: 189

@@ -53,7 +53,7 @@ BusinessScene
     ├── VerticalCameraFollowGroup   (런타임 생성, FrontCameraRig.Awake — 씬 파일에는 없음)
     │   ├── OrderTicketPanel   (OrderTicketUI, OrderMode/CraftingMode 진입 시 자동 open, EpisodeMode에서 잠금·슬라이드 닫힘)
     │   ├── RecipeBookPanel    (RecipeBookUI, OrderTicketPanel과 동일한 open/lock 패턴)
-    │   └── LiquorShelfPanel             (LiquorShelfUI, 우측 슬라이드 — R키 토글, EpisodeMode에서 잠금·슬라이드 닫힘)
+    │   └── LiquorShelfPanel             (LiquorShelfUI, 우측 슬라이드 — D키 토글, EpisodeMode에서 잠금·슬라이드 닫힘)
     │       ├── CategoryButtonsArea  (ScrollRect, 카테고리 탭 — 닫힌 상태에서도 화면 우측에 노출)
     │       └── LiquorShelf      (vertical 스크롤, 술장 배경+슬롯)
     │           └── Viewport

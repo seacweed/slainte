@@ -33,6 +33,7 @@ public class RecipeBookUI : MonoBehaviour
 
     public bool IsOpen => _state == BookState.Open;
     public bool IsTemporarilyBlocked => _temporarilyBlocked;
+    public bool IsSearchFocused => recipeSearchUI != null && recipeSearchUI.IsSearchFocused;
 
     void Awake()
     {

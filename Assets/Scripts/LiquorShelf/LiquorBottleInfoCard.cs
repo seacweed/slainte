@@ -59,11 +59,16 @@ public class LiquorBottleInfoCard : SceneSingleton<LiquorBottleInfoCard>
             img.sprite  = stateSprite;
         }
 
+        // 마지막 병이 정확히 꽉 찬 경우(remainder == 0)에도 잔량 텍스트를 그 병의 용량 그대로 표시한다.
+        // 재고가 아예 없을 때(clampedAmount == 0)만 숨긴다.
+        bool  showAmount    = clampedAmount > 0f;
+        float displayAmount = remainder > 0f ? remainder : def.unitVolume;
+
         if (amountText != null)
         {
-            amountText.gameObject.SetActive(hasInUse);
-            if (hasInUse)
-                amountText.text = $"{Mathf.RoundToInt(remainder)}/{Mathf.RoundToInt(def.unitVolume)}ml";
+            amountText.gameObject.SetActive(showAmount);
+            if (showAmount)
+                amountText.text = $"{Mathf.RoundToInt(displayAmount)}/{Mathf.RoundToInt(def.unitVolume)}ml";
         }
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(rect);

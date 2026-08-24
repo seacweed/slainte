@@ -372,8 +372,8 @@ public class EpisodeCsvImporter : EditorWindow
             data.settlementRewards.Add(new EpisodeSettlementReward
             {
                 requiredFlag = Field(row, 0),
-                label        = Field(row, 1),
-                amount       = int.TryParse(Field(row, 2), out int amount) ? amount : 0
+                amount       = int.TryParse(Field(row, 1), out int amount) ? amount : 0,
+                label        = Field(row, 2)
             });
         }
     }

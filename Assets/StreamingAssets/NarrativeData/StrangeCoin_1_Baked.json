@@ -1,0 +1,1066 @@
+{
+  "Nodes": [
+    {
+      "NodeId": "222be7dc-ff4c-4d58-b49c-07be7439c88d",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "1",
+      "NextNodeIds": ["9596ab3d-9f35-4284-8bee-6f195d110979"]
+    },
+    {
+      "NodeId": "9596ab3d-9f35-4284-8bee-6f195d110979",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "2",
+      "NextNodeIds": ["fbf8e595-bd30-4fda-88c0-3ea0b2507c78"]
+    },
+    {
+      "NodeId": "fbf8e595-bd30-4fda-88c0-3ea0b2507c78",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "3",
+      "NextNodeIds": ["7aca1869-9630-4f98-9ad0-df1de495bace"]
+    },
+    {
+      "NodeId": "7aca1869-9630-4f98-9ad0-df1de495bace",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "4",
+      "NextNodeIds": ["c21ad2df-4367-4afb-aae9-d1cc82c9a6bb"]
+    },
+    {
+      "NodeId": "c21ad2df-4367-4afb-aae9-d1cc82c9a6bb",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "5",
+      "NextNodeIds": ["9f6462be-723d-4990-bf32-a74a9036d709"]
+    },
+    {
+      "NodeId": "9f6462be-723d-4990-bf32-a74a9036d709",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "6",
+      "NextNodeIds": ["ea7ca12a-387e-4666-a599-bf0c88860e72"]
+    },
+    {
+      "NodeId": "ea7ca12a-387e-4666-a599-bf0c88860e72",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "7",
+      "NextNodeIds": ["4de6ad22-2694-41f5-a242-5083e32b078d"]
+    },
+    {
+      "NodeId": "4de6ad22-2694-41f5-a242-5083e32b078d",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "8",
+      "NextNodeIds": ["b616d83b-3a3c-4f81-9a90-5c860b8d22af"]
+    },
+    {
+      "NodeId": "b616d83b-3a3c-4f81-9a90-5c860b8d22af",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "9",
+      "NextNodeIds": ["00cc4e78-12e9-4c7e-b07f-589376541ad6"]
+    },
+    {
+      "NodeId": "00cc4e78-12e9-4c7e-b07f-589376541ad6",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "10",
+      "NextNodeIds": ["86aefa76-fc12-4b3c-8d10-8a26ee05b9df"]
+    },
+    {
+      "NodeId": "86aefa76-fc12-4b3c-8d10-8a26ee05b9df",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "11",
+      "NextNodeIds": ["465d6dca-aea1-4d4a-8a1d-afa96de6351c", "b0cd8d57-51dd-4236-b664-fec6b238d31d"]
+    },
+    {
+      "NodeId": "465d6dca-aea1-4d4a-8a1d-afa96de6351c",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "11_1_1",
+      "NextNodeIds": ["8b28aa07-1051-421e-9822-a097f3d6cd2d"]
+    },
+    {
+      "NodeId": "b0cd8d57-51dd-4236-b664-fec6b238d31d",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "11_2_1",
+      "NextNodeIds": ["8b28aa07-1051-421e-9822-a097f3d6cd2d"]
+    },
+    {
+      "NodeId": "8b28aa07-1051-421e-9822-a097f3d6cd2d",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "12",
+      "NextNodeIds": ["d76573d6-1884-40c8-ab96-414bb7dc3d0f"]
+    },
+    {
+      "NodeId": "d76573d6-1884-40c8-ab96-414bb7dc3d0f",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "13",
+      "NextNodeIds": ["55fc5198-2ec7-4b1a-90bf-5ca39cc81ea6"]
+    },
+    {
+      "NodeId": "55fc5198-2ec7-4b1a-90bf-5ca39cc81ea6",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "14",
+      "NextNodeIds": ["3b15a257-44d5-4921-a91c-64f81d1d303e"]
+    },
+    {
+      "NodeId": "3b15a257-44d5-4921-a91c-64f81d1d303e",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "15",
+      "NextNodeIds": ["654271f7-88e0-40b8-8567-9378f7bb2c18"]
+    },
+    {
+      "NodeId": "654271f7-88e0-40b8-8567-9378f7bb2c18",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "16",
+      "NextNodeIds": ["0e2c25af-77b8-4d70-8511-b40ea199187a"]
+    },
+    {
+      "NodeId": "0e2c25af-77b8-4d70-8511-b40ea199187a",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "17",
+      "NextNodeIds": ["5c0f5901-0cf5-4475-afee-34c6af944232"]
+    },
+    {
+      "NodeId": "5c0f5901-0cf5-4475-afee-34c6af944232",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "18",
+      "NextNodeIds": ["46676bda-ef6d-4821-afc0-5f6e8e3c6563"]
+    },
+    {
+      "NodeId": "46676bda-ef6d-4821-afc0-5f6e8e3c6563",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "19",
+      "NextNodeIds": ["987369f0-120d-4165-90d8-308e54fcc5ed"]
+    },
+    {
+      "NodeId": "987369f0-120d-4165-90d8-308e54fcc5ed",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "20",
+      "NextNodeIds": ["10db86f0-0c18-4c60-8441-4b2691a0e1dd"]
+    },
+    {
+      "NodeId": "10db86f0-0c18-4c60-8441-4b2691a0e1dd",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "21",
+      "NextNodeIds": ["2e85ea52-180f-4c4e-8d0e-abc11cacd99b"]
+    },
+    {
+      "NodeId": "2e85ea52-180f-4c4e-8d0e-abc11cacd99b",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "22",
+      "NextNodeIds": ["a3de06e1-9854-4f16-b49f-e203f0a238a8"]
+    },
+    {
+      "NodeId": "a3de06e1-9854-4f16-b49f-e203f0a238a8",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "23",
+      "NextNodeIds": ["249b38c7-7631-42c6-aa97-cc6fc5f07f66"]
+    },
+    {
+      "NodeId": "249b38c7-7631-42c6-aa97-cc6fc5f07f66",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "24",
+      "NextNodeIds": ["820e174c-ff10-4af5-b712-42e2603c7ef7"]
+    },
+    {
+      "NodeId": "820e174c-ff10-4af5-b712-42e2603c7ef7",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "25",
+      "NextNodeIds": ["819edc65-1e99-485a-acd3-ff770f9fb098"]
+    },
+    {
+      "NodeId": "819edc65-1e99-485a-acd3-ff770f9fb098",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "26",
+      "NextNodeIds": ["d43ed00f-51f0-4448-b9e4-84cf0b5fc3a0"]
+    },
+    {
+      "NodeId": "d43ed00f-51f0-4448-b9e4-84cf0b5fc3a0",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "27",
+      "NextNodeIds": ["fa7067b1-8d89-45fe-9091-81b927e46013"]
+    },
+    {
+      "NodeId": "fa7067b1-8d89-45fe-9091-81b927e46013",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "28",
+      "NextNodeIds": ["19fd2817-f388-4f67-b6c1-ea40e59b597c"]
+    },
+    {
+      "NodeId": "19fd2817-f388-4f67-b6c1-ea40e59b597c",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "29",
+      "NextNodeIds": ["b99c11bc-a2fd-4e9e-ae59-188b80b5dbac"]
+    },
+    {
+      "NodeId": "b99c11bc-a2fd-4e9e-ae59-188b80b5dbac",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "30",
+      "NextNodeIds": ["d92362ac-e049-4fba-ae22-39c2f3af8572"]
+    },
+    {
+      "NodeId": "d92362ac-e049-4fba-ae22-39c2f3af8572",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "31",
+      "NextNodeIds": ["a67c1091-73ba-4e61-8822-2afee84c1792"]
+    },
+    {
+      "NodeId": "a67c1091-73ba-4e61-8822-2afee84c1792",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "32",
+      "NextNodeIds": ["d5ed55f8-8d5a-4af7-8f6b-babb8349c1c1"]
+    },
+    {
+      "NodeId": "d5ed55f8-8d5a-4af7-8f6b-babb8349c1c1",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "33",
+      "NextNodeIds": ["bc0f1619-bbcb-4e6e-ad15-bd7255282049"]
+    },
+    {
+      "NodeId": "bc0f1619-bbcb-4e6e-ad15-bd7255282049",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "34",
+      "NextNodeIds": ["88c50753-e9cb-4478-8301-ce8026332d73"]
+    },
+    {
+      "NodeId": "88c50753-e9cb-4478-8301-ce8026332d73",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "35",
+      "NextNodeIds": ["51ddf4f8-d871-443a-aeca-384fdce04dd9"]
+    },
+    {
+      "NodeId": "51ddf4f8-d871-443a-aeca-384fdce04dd9",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "36",
+      "NextNodeIds": ["1449ba0e-3880-4260-a699-3b24174394b1"]
+    },
+    {
+      "NodeId": "1449ba0e-3880-4260-a699-3b24174394b1",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "37",
+      "NextNodeIds": ["536b35ce-90cf-448d-99b3-7cfa6adbe5ca"]
+    },
+    {
+      "NodeId": "536b35ce-90cf-448d-99b3-7cfa6adbe5ca",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "38",
+      "NextNodeIds": ["d6ef7410-c375-4193-9d23-3f1b86f536a9"]
+    },
+    {
+      "NodeId": "d6ef7410-c375-4193-9d23-3f1b86f536a9",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "39",
+      "NextNodeIds": ["5b558763-c4f3-44fd-847a-0f6a91f4114b"]
+    },
+    {
+      "NodeId": "5b558763-c4f3-44fd-847a-0f6a91f4114b",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "40",
+      "NextNodeIds": ["d1a6b891-b064-4ead-993f-ed5715e9f20d"]
+    },
+    {
+      "NodeId": "d1a6b891-b064-4ead-993f-ed5715e9f20d",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "41",
+      "NextNodeIds": ["40bad693-44ae-45cc-b46f-eff5638f010f"]
+    },
+    {
+      "NodeId": "40bad693-44ae-45cc-b46f-eff5638f010f",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "42",
+      "NextNodeIds": ["78486c61-5459-420e-9ed6-86eccb0b1370"]
+    },
+    {
+      "NodeId": "78486c61-5459-420e-9ed6-86eccb0b1370",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "43",
+      "NextNodeIds": ["4e33a145-db1b-4ddb-a088-e0c81456b48c"]
+    },
+    {
+      "NodeId": "4e33a145-db1b-4ddb-a088-e0c81456b48c",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "44",
+      "NextNodeIds": ["b72cde13-f243-4dc7-a4e7-0647e303267e"]
+    },
+    {
+      "NodeId": "b72cde13-f243-4dc7-a4e7-0647e303267e",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "45",
+      "NextNodeIds": ["29e6b945-1d21-4af4-9e90-ad0ba3e0e6c5"]
+    },
+    {
+      "NodeId": "29e6b945-1d21-4af4-9e90-ad0ba3e0e6c5",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "46",
+      "NextNodeIds": ["54528950-2cfb-4033-9bf3-5ad8a334a633"]
+    },
+    {
+      "NodeId": "54528950-2cfb-4033-9bf3-5ad8a334a633",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "47",
+      "NextNodeIds": ["9e26d96d-5f04-4d8a-95ce-0a544288f10d"]
+    },
+    {
+      "NodeId": "9e26d96d-5f04-4d8a-95ce-0a544288f10d",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "48",
+      "NextNodeIds": ["41de88e1-f032-4955-86a7-397436d458a9"]
+    },
+    {
+      "NodeId": "41de88e1-f032-4955-86a7-397436d458a9",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "49",
+      "NextNodeIds": ["abfed4e4-f671-4aae-8b34-be7587ec4f99"]
+    },
+    {
+      "NodeId": "abfed4e4-f671-4aae-8b34-be7587ec4f99",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "50",
+      "NextNodeIds": ["d3994c74-4d72-44a4-85f0-8c23e0a9763c"]
+    },
+    {
+      "NodeId": "d3994c74-4d72-44a4-85f0-8c23e0a9763c",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "51",
+      "NextNodeIds": ["493672e4-ff89-40eb-a481-8c4a4f19ad9d"]
+    },
+    {
+      "NodeId": "493672e4-ff89-40eb-a481-8c4a4f19ad9d",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "52",
+      "NextNodeIds": ["5da2059c-e589-45cf-9649-6bdd61295424"]
+    },
+    {
+      "NodeId": "5da2059c-e589-45cf-9649-6bdd61295424",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "53",
+      "NextNodeIds": ["321295f3-e972-4d28-aae7-676223590b42"]
+    },
+    {
+      "NodeId": "321295f3-e972-4d28-aae7-676223590b42",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "54",
+      "NextNodeIds": ["ba4e5c66-3560-4848-98e5-b73494d1c78b"]
+    },
+    {
+      "NodeId": "ba4e5c66-3560-4848-98e5-b73494d1c78b",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "55",
+      "NextNodeIds": ["37ee60a5-1d22-4c24-ad3f-238b461a6512"]
+    },
+    {
+      "NodeId": "37ee60a5-1d22-4c24-ad3f-238b461a6512",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "56",
+      "NextNodeIds": ["404c88d7-ac12-45a4-84d3-8df316552843"]
+    },
+    {
+      "NodeId": "404c88d7-ac12-45a4-84d3-8df316552843",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "57",
+      "NextNodeIds": ["e38e03c8-ee64-41c6-b993-3cf3ee9d621d"]
+    },
+    {
+      "NodeId": "e38e03c8-ee64-41c6-b993-3cf3ee9d621d",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58",
+      "NextNodeIds": ["230022ad-c979-4124-b448-842e486db352", "ca461a26-8b27-440a-88bb-9fbff09c000f"]
+    },
+    {
+      "NodeId": "230022ad-c979-4124-b448-842e486db352",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_1_1",
+      "NextNodeIds": ["3c02f4df-0fe2-4249-867e-aebb7c9741da"]
+    },
+    {
+      "NodeId": "ca461a26-8b27-440a-88bb-9fbff09c000f",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_2_1",
+      "NextNodeIds": ["40202dd0-b24e-4d18-aefc-bccb2f0fde6d"]
+    },
+    {
+      "NodeId": "3c02f4df-0fe2-4249-867e-aebb7c9741da",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_1_2",
+      "NextNodeIds": ["80f09f6f-5996-4a3a-ac44-4bd27bef92bf"]
+    },
+    {
+      "NodeId": "40202dd0-b24e-4d18-aefc-bccb2f0fde6d",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_2_2",
+      "NextNodeIds": ["4cff275f-5ed3-422d-afc8-93b69a3235d4"]
+    },
+    {
+      "NodeId": "80f09f6f-5996-4a3a-ac44-4bd27bef92bf",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_1_3",
+      "NextNodeIds": ["e5e375ab-bfc3-4361-8c6d-e93843dd68d5"]
+    },
+    {
+      "NodeId": "4cff275f-5ed3-422d-afc8-93b69a3235d4",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_2_3",
+      "NextNodeIds": ["46a9d56f-09de-4923-8181-81b4b439c688"]
+    },
+    {
+      "NodeId": "e5e375ab-bfc3-4361-8c6d-e93843dd68d5",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_1_4",
+      "NextNodeIds": ["6f14795c-50e0-46b1-bc20-c7ef9d9e85d5"]
+    },
+    {
+      "NodeId": "46a9d56f-09de-4923-8181-81b4b439c688",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_2_4",
+      "NextNodeIds": ["d1e19b3e-511e-416a-9266-a92119be2832"]
+    },
+    {
+      "NodeId": "6f14795c-50e0-46b1-bc20-c7ef9d9e85d5",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_1_5",
+      "NextNodeIds": ["12689a99-3072-4a89-8cfe-7b5792d30d6d"]
+    },
+    {
+      "NodeId": "d1e19b3e-511e-416a-9266-a92119be2832",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_2_5",
+      "NextNodeIds": ["8f9e1355-49ac-4ff2-b6a9-812c38f26970"]
+    },
+    {
+      "NodeId": "12689a99-3072-4a89-8cfe-7b5792d30d6d",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_1_6",
+      "NextNodeIds": ["401e60b0-0dfe-49ce-ba6b-e61f1a2c38d2"]
+    },
+    {
+      "NodeId": "8f9e1355-49ac-4ff2-b6a9-812c38f26970",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_2_6",
+      "NextNodeIds": ["fdefdcb3-cbcf-47f4-a2dd-40cada9ce2c9"]
+    },
+    {
+      "NodeId": "401e60b0-0dfe-49ce-ba6b-e61f1a2c38d2",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_1_7",
+      "NextNodeIds": ["39867b33-8d64-48a7-b3ce-d741135029c9"]
+    },
+    {
+      "NodeId": "fdefdcb3-cbcf-47f4-a2dd-40cada9ce2c9",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_2_7",
+      "NextNodeIds": ["4280926b-a7b2-4a9d-b9af-8c44832d813e"]
+    },
+    {
+      "NodeId": "39867b33-8d64-48a7-b3ce-d741135029c9",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_1_8",
+      "NextNodeIds": ["13319d4f-e46f-4865-a078-086e6da9da00"]
+    },
+    {
+      "NodeId": "4280926b-a7b2-4a9d-b9af-8c44832d813e",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_2_8",
+      "NextNodeIds": ["b9c89499-c7bd-44b3-9086-9b32673aa4cc"]
+    },
+    {
+      "NodeId": "13319d4f-e46f-4865-a078-086e6da9da00",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_1_9",
+      "NextNodeIds": ["577cf214-bda6-438a-b17a-9a42ec5ab253"]
+    },
+    {
+      "NodeId": "b9c89499-c7bd-44b3-9086-9b32673aa4cc",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_2_9",
+      "NextNodeIds": ["961ac7ec-51a2-49ee-afe8-82453e55d8e3"]
+    },
+    {
+      "NodeId": "577cf214-bda6-438a-b17a-9a42ec5ab253",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_1_10",
+      "NextNodeIds": ["b6ab324a-b742-4e72-a618-19a7c6de363e"]
+    },
+    {
+      "NodeId": "961ac7ec-51a2-49ee-afe8-82453e55d8e3",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_2_10",
+      "NextNodeIds": ["80c7c97f-5aec-4111-b992-7d018ee1abc1"]
+    },
+    {
+      "NodeId": "b6ab324a-b742-4e72-a618-19a7c6de363e",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_1_11",
+      "NextNodeIds": ["152250f1-044c-4087-9409-5309b310ed67"]
+    },
+    {
+      "NodeId": "80c7c97f-5aec-4111-b992-7d018ee1abc1",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_2_11",
+      "NextNodeIds": ["c685a209-c99c-4f4a-bd57-78f4752238d9"]
+    },
+    {
+      "NodeId": "152250f1-044c-4087-9409-5309b310ed67",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "59",
+      "NextNodeIds": ["ad29f1ce-575b-4ffe-9c78-f6843411e65a"]
+    },
+    {
+      "NodeId": "c685a209-c99c-4f4a-bd57-78f4752238d9",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_2_12",
+      "NextNodeIds": ["a7f0d44c-757d-48f6-a4fc-8621ccb4987c"]
+    },
+    {
+      "NodeId": "ad29f1ce-575b-4ffe-9c78-f6843411e65a",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "60",
+      "NextNodeIds": ["2c520bb4-689c-4f40-b0dc-aaae237b2846"]
+    },
+    {
+      "NodeId": "a7f0d44c-757d-48f6-a4fc-8621ccb4987c",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_2_13",
+      "NextNodeIds": ["f93bc694-495d-4ef0-81df-e8c641d8afd2"]
+    },
+    {
+      "NodeId": "2c520bb4-689c-4f40-b0dc-aaae237b2846",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "61",
+      "NextNodeIds": ["eac6a087-fba1-42fb-b80e-f7afbc244f29"]
+    },
+    {
+      "NodeId": "f93bc694-495d-4ef0-81df-e8c641d8afd2",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_2_14",
+      "NextNodeIds": ["db8d73dc-08a0-4ce8-b196-e85abe63b6a9"]
+    },
+    {
+      "NodeId": "eac6a087-fba1-42fb-b80e-f7afbc244f29",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "62",
+      "NextNodeIds": ["9d6e2560-7b25-47a0-ad04-4d3da2273bcf", "733b9927-448e-4894-857c-c8eac13e6381"]
+    },
+    {
+      "NodeId": "db8d73dc-08a0-4ce8-b196-e85abe63b6a9",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "58_2_15",
+      "NextNodeIds": ["152250f1-044c-4087-9409-5309b310ed67"]
+    },
+    {
+      "NodeId": "9d6e2560-7b25-47a0-ad04-4d3da2273bcf",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "62_1_1",
+      "NextNodeIds": ["ccf1a138-d39c-49ce-902e-f37a58d00443"]
+    },
+    {
+      "NodeId": "733b9927-448e-4894-857c-c8eac13e6381",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "62_2_1",
+      "NextNodeIds": ["f4a0f518-42ff-4cf9-af4f-1a217098bc69"]
+    },
+    {
+      "NodeId": "ccf1a138-d39c-49ce-902e-f37a58d00443",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "62_1_2",
+      "NextNodeIds": ["6e080448-9cfa-4fcc-bbf9-acf5ef932e27"]
+    },
+    {
+      "NodeId": "f4a0f518-42ff-4cf9-af4f-1a217098bc69",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "62_2_2",
+      "NextNodeIds": ["1335dbf1-f94e-4cb9-bfda-7b53b77f1234"]
+    },
+    {
+      "NodeId": "6e080448-9cfa-4fcc-bbf9-acf5ef932e27",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "62_1_3",
+      "NextNodeIds": ["64ca3be7-e403-411c-944c-6ec589c63e52"]
+    },
+    {
+      "NodeId": "1335dbf1-f94e-4cb9-bfda-7b53b77f1234",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "62_2_3",
+      "NextNodeIds": ["4932ed34-31d5-4a9e-8640-42bf9b228f18"]
+    },
+    {
+      "NodeId": "64ca3be7-e403-411c-944c-6ec589c63e52",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "63",
+      "NextNodeIds": ["14ca7747-8646-4062-a1c5-41ca4971739c", "8f30984b-6898-4ea2-b32f-0c0ee8c0313d"]
+    },
+    {
+      "NodeId": "4932ed34-31d5-4a9e-8640-42bf9b228f18",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "62_2_4",
+      "NextNodeIds": ["64ca3be7-e403-411c-944c-6ec589c63e52"]
+    },
+    {
+      "NodeId": "14ca7747-8646-4062-a1c5-41ca4971739c",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "63_1_1",
+      "NextNodeIds": ["282bb8bc-d32f-42a7-948c-32ce6989ab10"]
+    },
+    {
+      "NodeId": "8f30984b-6898-4ea2-b32f-0c0ee8c0313d",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "63_2_1",
+      "NextNodeIds": ["78e9cd9b-67a0-4c2a-b305-b7cd81539292"]
+    },
+    {
+      "NodeId": "282bb8bc-d32f-42a7-948c-32ce6989ab10",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "64",
+      "NextNodeIds": ["6e88ae1d-ea03-4afc-a8ae-9740dcd11739"]
+    },
+    {
+      "NodeId": "78e9cd9b-67a0-4c2a-b305-b7cd81539292",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "63_2_2",
+      "NextNodeIds": ["282bb8bc-d32f-42a7-948c-32ce6989ab10"]
+    },
+    {
+      "NodeId": "6e88ae1d-ea03-4afc-a8ae-9740dcd11739",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "65",
+      "NextNodeIds": ["1bf2e286-d850-43b2-ad33-b57360a47b78"]
+    },
+    {
+      "NodeId": "1bf2e286-d850-43b2-ad33-b57360a47b78",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "66",
+      "NextNodeIds": ["1575ac0e-4e4c-4e20-9435-8a784cff5838"]
+    },
+    {
+      "NodeId": "1575ac0e-4e4c-4e20-9435-8a784cff5838",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "67",
+      "NextNodeIds": ["09ff8917-e18e-415e-8ad6-a5abb6ec8c94"]
+    },
+    {
+      "NodeId": "09ff8917-e18e-415e-8ad6-a5abb6ec8c94",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "68",
+      "NextNodeIds": ["32340457-3052-4cab-af83-8f4250c898bf"]
+    },
+    {
+      "NodeId": "32340457-3052-4cab-af83-8f4250c898bf",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "69",
+      "NextNodeIds": ["7e054510-f2ab-4c48-835d-edbc0897ac4f"]
+    },
+    {
+      "NodeId": "7e054510-f2ab-4c48-835d-edbc0897ac4f",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "70",
+      "NextNodeIds": ["20adc295-b0f6-46b3-96c6-00c14c7fe552"]
+    },
+    {
+      "NodeId": "20adc295-b0f6-46b3-96c6-00c14c7fe552",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "71",
+      "NextNodeIds": ["c4124e01-a161-4315-af47-b9b7dc5bc017"]
+    },
+    {
+      "NodeId": "c4124e01-a161-4315-af47-b9b7dc5bc017",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "72",
+      "NextNodeIds": ["a89336b5-fcfa-4fef-8c7a-e5e0f7eeed08"]
+    },
+    {
+      "NodeId": "a89336b5-fcfa-4fef-8c7a-e5e0f7eeed08",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "73",
+      "NextNodeIds": ["30a2356b-e00d-4a41-a4b6-d581db488213"]
+    },
+    {
+      "NodeId": "30a2356b-e00d-4a41-a4b6-d581db488213",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "74",
+      "NextNodeIds": ["bed4ed42-97dc-4f65-a3b0-6f3a1def2e7f"]
+    },
+    {
+      "NodeId": "bed4ed42-97dc-4f65-a3b0-6f3a1def2e7f",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "75",
+      "NextNodeIds": ["ef8517ba-8a01-4fff-99e1-d6f4d31372bb"]
+    },
+    {
+      "NodeId": "ef8517ba-8a01-4fff-99e1-d6f4d31372bb",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "76",
+      "NextNodeIds": ["1d1c9c15-d92f-4837-98ef-4f612ef92e8e"]
+    },
+    {
+      "NodeId": "1d1c9c15-d92f-4837-98ef-4f612ef92e8e",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "77",
+      "NextNodeIds": ["1d2698a4-acca-465f-899c-96066a745dbb"]
+    },
+    {
+      "NodeId": "1d2698a4-acca-465f-899c-96066a745dbb",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "78",
+      "NextNodeIds": ["73051ec6-7d42-4ea6-807b-3b6d59d96c6f"]
+    },
+    {
+      "NodeId": "73051ec6-7d42-4ea6-807b-3b6d59d96c6f",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "79",
+      "NextNodeIds": ["941b4ab7-a2c6-446e-a2da-09a1203eb356"]
+    },
+    {
+      "NodeId": "941b4ab7-a2c6-446e-a2da-09a1203eb356",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "80",
+      "NextNodeIds": ["b1f323f2-cac6-4b71-8090-2beef9cd6ec9"]
+    },
+    {
+      "NodeId": "b1f323f2-cac6-4b71-8090-2beef9cd6ec9",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "81",
+      "NextNodeIds": ["093bfb98-ada0-4b12-addf-391694dee11b"]
+    },
+    {
+      "NodeId": "093bfb98-ada0-4b12-addf-391694dee11b",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "82",
+      "NextNodeIds": ["ade09ed7-4860-4c3b-9fe8-475f1967a35f"]
+    },
+    {
+      "NodeId": "ade09ed7-4860-4c3b-9fe8-475f1967a35f",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "83",
+      "NextNodeIds": ["d3850cb3-3156-43da-9f4a-dab9296e17ce"]
+    },
+    {
+      "NodeId": "d3850cb3-3156-43da-9f4a-dab9296e17ce",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "84",
+      "NextNodeIds": ["18804078-8cc2-424f-9771-cfba2780004a"]
+    },
+    {
+      "NodeId": "18804078-8cc2-424f-9771-cfba2780004a",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "85",
+      "NextNodeIds": ["cedc1640-84ff-4966-bc44-d8dcd5a31b83"]
+    },
+    {
+      "NodeId": "cedc1640-84ff-4966-bc44-d8dcd5a31b83",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "86",
+      "NextNodeIds": ["ece9771f-0a5b-4fdb-b36e-e9791255ccb4"]
+    },
+    {
+      "NodeId": "ece9771f-0a5b-4fdb-b36e-e9791255ccb4",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "87",
+      "NextNodeIds": ["40507ab4-54c5-4a22-b837-9d9a7c566724"]
+    },
+    {
+      "NodeId": "40507ab4-54c5-4a22-b837-9d9a7c566724",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "88",
+      "NextNodeIds": ["506d99be-07bc-406a-a9a0-c322d620ac70"]
+    },
+    {
+      "NodeId": "506d99be-07bc-406a-a9a0-c322d620ac70",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "89",
+      "NextNodeIds": ["4441e55f-0805-4cd9-a83e-c80ff4142480"]
+    },
+    {
+      "NodeId": "4441e55f-0805-4cd9-a83e-c80ff4142480",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "90",
+      "NextNodeIds": ["7c7f996b-6bbc-4a60-a1fd-3d136e4a3333"]
+    },
+    {
+      "NodeId": "7c7f996b-6bbc-4a60-a1fd-3d136e4a3333",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "91",
+      "NextNodeIds": ["45820fbf-e14d-47d9-94e1-73ca251baf94"]
+    },
+    {
+      "NodeId": "45820fbf-e14d-47d9-94e1-73ca251baf94",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92",
+      "NextNodeIds": ["720157b9-2119-4e22-bf5e-0ce992500850", "4b80f3c1-88f1-4a5b-89f5-4fba4996279e"]
+    },
+    {
+      "NodeId": "720157b9-2119-4e22-bf5e-0ce992500850",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_1",
+      "NextNodeIds": ["aacd87f8-1f89-4ea0-b41c-797eb5e8ab89"]
+    },
+    {
+      "NodeId": "4b80f3c1-88f1-4a5b-89f5-4fba4996279e",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_2_1",
+      "NextNodeIds": ["90a87d89-bf0b-4e5d-acf1-969eb26c1e5d"]
+    },
+    {
+      "NodeId": "aacd87f8-1f89-4ea0-b41c-797eb5e8ab89",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_2",
+      "NextNodeIds": ["3245a40f-f615-4bce-a2ba-8b0b46d66c79"]
+    },
+    {
+      "NodeId": "90a87d89-bf0b-4e5d-acf1-969eb26c1e5d",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_2_2",
+      "NextNodeIds": ["3c609c48-d03f-485f-9f1f-55bd16a4f3b2"]
+    },
+    {
+      "NodeId": "3245a40f-f615-4bce-a2ba-8b0b46d66c79",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_3",
+      "NextNodeIds": ["39dbe5f2-f2c1-46aa-93e7-c64e3ac88cae"]
+    },
+    {
+      "NodeId": "3c609c48-d03f-485f-9f1f-55bd16a4f3b2",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_2_3",
+      "NextNodeIds": ["3e50d5d0-0206-4b6c-8681-a41648c785ca"]
+    },
+    {
+      "NodeId": "39dbe5f2-f2c1-46aa-93e7-c64e3ac88cae",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_4",
+      "NextNodeIds": ["43632108-e085-4318-b1be-3672b38a214a"]
+    },
+    {
+      "NodeId": "3e50d5d0-0206-4b6c-8681-a41648c785ca",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_2_4",
+      "NextNodeIds": ["736f20f7-bf9e-4978-ad2f-b03b1b705f23"]
+    },
+    {
+      "NodeId": "43632108-e085-4318-b1be-3672b38a214a",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_5",
+      "NextNodeIds": ["e26842ff-2bfa-45db-951c-525f6b75f189"]
+    },
+    {
+      "NodeId": "736f20f7-bf9e-4978-ad2f-b03b1b705f23",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_2_5",
+      "NextNodeIds": ["98e56c24-a3de-4d35-a678-8b1f7e80cb86"]
+    },
+    {
+      "NodeId": "e26842ff-2bfa-45db-951c-525f6b75f189",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_6",
+      "NextNodeIds": ["d142f02f-d5df-4154-bc8f-f9e8ff485dc2"]
+    },
+    {
+      "NodeId": "98e56c24-a3de-4d35-a678-8b1f7e80cb86",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_2_6",
+      "NextNodeIds": ["ff6d227f-2578-4c88-9784-51abc4ff95ba"]
+    },
+    {
+      "NodeId": "d142f02f-d5df-4154-bc8f-f9e8ff485dc2",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_7",
+      "NextNodeIds": ["12659b04-406e-48dd-8fcc-bce4ab2fcf3f"]
+    },
+    {
+      "NodeId": "ff6d227f-2578-4c88-9784-51abc4ff95ba",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_2_7",
+      "NextNodeIds": ["5a6ec20f-7b57-4d45-b0d4-1f41360ee3d9"]
+    },
+    {
+      "NodeId": "12659b04-406e-48dd-8fcc-bce4ab2fcf3f",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_8",
+      "NextNodeIds": ["9926ac9b-67f4-4d63-8b48-7af7e3288040"]
+    },
+    {
+      "NodeId": "5a6ec20f-7b57-4d45-b0d4-1f41360ee3d9",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_2_8",
+      "NextNodeIds": ["e7654605-c07b-4115-9136-1a78f72d0ed8"]
+    },
+    {
+      "NodeId": "9926ac9b-67f4-4d63-8b48-7af7e3288040",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_9",
+      "NextNodeIds": ["3d395314-e467-4c01-933c-735843c60936"]
+    },
+    {
+      "NodeId": "e7654605-c07b-4115-9136-1a78f72d0ed8",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_2_9",
+      "NextNodeIds": ["329911bb-0003-4528-8275-25b8617c0392"]
+    },
+    {
+      "NodeId": "3d395314-e467-4c01-933c-735843c60936",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_10",
+      "NextNodeIds": ["9b3fd0e9-d9de-4a8d-82c1-e6bc6d5de272"]
+    },
+    {
+      "NodeId": "329911bb-0003-4528-8275-25b8617c0392",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_2_10",
+      "NextNodeIds": ["60edc501-2e28-4684-a93f-a35a2b0de338"]
+    },
+    {
+      "NodeId": "9b3fd0e9-d9de-4a8d-82c1-e6bc6d5de272",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_11",
+      "NextNodeIds": ["7cb81810-f275-463c-ba9e-74c2552ddf04"]
+    },
+    {
+      "NodeId": "60edc501-2e28-4684-a93f-a35a2b0de338",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_2_11",
+      "NextNodeIds": ["e93b7a87-d0d2-4693-ad8b-23f31dc12471"]
+    },
+    {
+      "NodeId": "7cb81810-f275-463c-ba9e-74c2552ddf04",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_12",
+      "NextNodeIds": ["e4a0655b-26d2-4d48-b3ac-c8815ecb02b8"]
+    },
+    {
+      "NodeId": "e93b7a87-d0d2-4693-ad8b-23f31dc12471",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_2_12",
+      "NextNodeIds": ["ae7042e6-775e-4162-8498-99d42720b612"]
+    },
+    {
+      "NodeId": "e4a0655b-26d2-4d48-b3ac-c8815ecb02b8",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_13",
+      "NextNodeIds": ["4477e574-2a4a-4fff-88c3-ea9891282747"]
+    },
+    {
+      "NodeId": "ae7042e6-775e-4162-8498-99d42720b612",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_2_13",
+      "NextNodeIds": ["f19677f6-5e16-4c29-ac13-6608974aae35"]
+    },
+    {
+      "NodeId": "4477e574-2a4a-4fff-88c3-ea9891282747",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_14",
+      "NextNodeIds": ["444a85b4-c172-408a-9627-7cd850522b0e"]
+    },
+    {
+      "NodeId": "f19677f6-5e16-4c29-ac13-6608974aae35",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_2_14",
+      "NextNodeIds": ["60bf9620-7834-4131-a170-e22f81795387"]
+    },
+    {
+      "NodeId": "444a85b4-c172-408a-9627-7cd850522b0e",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_15",
+      "NextNodeIds": ["b8e3fd03-e387-40e2-bbec-e6ae620883df"]
+    },
+    {
+      "NodeId": "60bf9620-7834-4131-a170-e22f81795387",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_2_15",
+      "NextNodeIds": ["d6a71a6a-dddc-419d-a948-c1e780810dd6"]
+    },
+    {
+      "NodeId": "b8e3fd03-e387-40e2-bbec-e6ae620883df",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_16",
+      "NextNodeIds": ["57017172-b3e9-46f5-9a91-9605c484cbb7"]
+    },
+    {
+      "NodeId": "d6a71a6a-dddc-419d-a948-c1e780810dd6",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_2_16",
+      "NextNodeIds": ["81c26d35-a9f6-40ab-b7d2-285d94de630c"]
+    },
+    {
+      "NodeId": "57017172-b3e9-46f5-9a91-9605c484cbb7",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_17",
+      "NextNodeIds": ["7ff95995-abab-48f8-9c50-726b497af4b3"]
+    },
+    {
+      "NodeId": "81c26d35-a9f6-40ab-b7d2-285d94de630c",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_2_17",
+      "NextNodeIds": ["4e0a74ac-c38d-48a2-a5a9-7edc44f9a90d"]
+    },
+    {
+      "NodeId": "7ff95995-abab-48f8-9c50-726b497af4b3",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_18",
+      "NextNodeIds": ["83bd7ae3-8941-44ca-9e22-e6d26ca43999"]
+    },
+    {
+      "NodeId": "4e0a74ac-c38d-48a2-a5a9-7edc44f9a90d",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_2_18",
+      "NextNodeIds": ["79a2f2c6-0c67-425b-8526-c0f52392e638"]
+    },
+    {
+      "NodeId": "83bd7ae3-8941-44ca-9e22-e6d26ca43999",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_19",
+      "NextNodeIds": ["908cf193-e72f-4443-a27e-18842a6be10f"]
+    },
+    {
+      "NodeId": "79a2f2c6-0c67-425b-8526-c0f52392e638",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_2_19",
+      "NextNodeIds": ["07bfccb8-10a2-4520-a273-1a0a18b15642"]
+    },
+    {
+      "NodeId": "908cf193-e72f-4443-a27e-18842a6be10f",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_20",
+      "NextNodeIds": ["7a8f8c25-33b6-43f5-9a18-8eed9c4c207e"]
+    },
+    {
+      "NodeId": "07bfccb8-10a2-4520-a273-1a0a18b15642",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_2_20",
+      "NextNodeIds": ["e8646a9e-301b-4add-912b-70100c6a5da4"]
+    },
+    {
+      "NodeId": "7a8f8c25-33b6-43f5-9a18-8eed9c4c207e",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_21",
+      "NextNodeIds": ["13593503-fe96-4b59-b282-94ab39fdaeed"]
+    },
+    {
+      "NodeId": "e8646a9e-301b-4add-912b-70100c6a5da4",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_2_21",
+      "NextNodeIds": []
+    },
+    {
+      "NodeId": "13593503-fe96-4b59-b282-94ab39fdaeed",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_22",
+      "NextNodeIds": ["b009128d-2083-4a06-a9a1-3c009dec39e1"]
+    },
+    {
+      "NodeId": "b009128d-2083-4a06-a9a1-3c009dec39e1",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_23",
+      "NextNodeIds": ["09e719b8-0e68-4306-a010-9da94aae04e8"]
+    },
+    {
+      "NodeId": "09e719b8-0e68-4306-a010-9da94aae04e8",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_24",
+      "NextNodeIds": ["093c9a16-6574-4a89-83c0-d215cb59480a"]
+    },
+    {
+      "NodeId": "093c9a16-6574-4a89-83c0-d215cb59480a",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "92_1_25",
+      "NextNodeIds": []
+    },
+    {
+      "NodeId": "fb9c61a8-95fc-4379-85ed-d451dd235805",
+      "NodeType": "EpisodeNodeSO",
+      "Title": "x1",
+      "NextNodeIds": []
+    }
+  ]
+}

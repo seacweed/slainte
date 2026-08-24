@@ -2,7 +2,7 @@
 
 ## 개요
 
-화면 우측에서 슬라이드로 열리는 카테고리형 술 진열장 UI. R키로 토글, 카테고리 버튼 클릭으로 해당 카테고리 열기.
+화면 우측에서 슬라이드로 열리는 카테고리형 술 진열장 UI. D키로 토글, 카테고리 버튼 클릭으로 해당 카테고리 열기.
 
 ## 스크립트 구성
 
@@ -80,7 +80,7 @@ LiquorShelfPanel  [LiquorShelfUI]  ← shelfPanelRect (우측 슬라이드 대�
 
 ## 입력
 
-- **R키**: `LiquorShelfUI.Toggle()` — 배송 화면이 열려 있는 상태에서 닫으면 `IsDeliveryOpen`(배송 패널이 아직 켜져 있는지)만 보고 `EndDeliverySession()` 없이 서랍만 `Slide(closedX, ...)`로 슬라이드시켜 감춤(레시피북 차단/배송 캐릭터 등 내부 상태·배송 패널 활성 상태는 그대로 유지 — `_deliveryPanel`이 `shelfPanelRect`의 자식이라 슬라이드에 같이 딸려 나감). 다시 열면 `IsDeliveryOpen`이 여전히 true이므로 셔터/재초기화 없이 `Slide(openX, ...)`만으로 즉시 복원. 배송이 열려 있지 않았을 때는 기존처럼 `Close()`(카테고리 상태 종료)/마지막 카테고리(없으면 첫 번째) 열기로 동작. 배송 패널 자체의 닫기(X) 버튼은 별도로 `Close()`를 호출해 레시피북 차단 해제·배송 캐릭터 퇴장·셔터 리셋까지 포함한 완전 종료를 수행함(R키 경로와 분리됨)
+- **D키**: `LiquorShelfUI.Toggle()` — 배송 화면이 열려 있는 상태에서 닫으면 `IsDeliveryOpen`(배송 패널이 아직 켜져 있는지)만 보고 `EndDeliverySession()` 없이 서랍만 `Slide(closedX, ...)`로 슬라이드시켜 감춤(레시피북 차단/배송 캐릭터 등 내부 상태·배송 패널 활성 상태는 그대로 유지 — `_deliveryPanel`이 `shelfPanelRect`의 자식이라 슬라이드에 같이 딸려 나감). 다시 열면 `IsDeliveryOpen`이 여전히 true이므로 셔터/재초기화 없이 `Slide(openX, ...)`만으로 즉시 복원. 배송이 열려 있지 않았을 때는 기존처럼 `Close()`(카테고리 상태 종료)/마지막 카테고리(없으면 첫 번째) 열기로 동작. 배송 패널 자체의 닫기(X) 버튼은 별도로 `Close()`를 호출해 레시피북 차단 해제·배송 캐릭터 퇴장·셔터 리셋까지 포함한 완전 종료를 수행함(D키 경로와 분리됨)
 - **술병 좌클릭**: CraftingMode에서 해당 병을 테이블 오른쪽 빈 슬롯부터 즉시 배치
 - OrderMode / CraftingMode에서만 동작, EpisodeMode에서는 무시
 
@@ -112,8 +112,9 @@ LiquorShelfPanel  [LiquorShelfUI]  ← shelfPanelRect (우측 슬라이드 대�
 ## LiquorBottleInfoCard (호버 정보카드)
 
 - 씬에 단 하나만 존재, `Instance` 싱글턴 프로퍼티로 참조. 평소 `SetActive(false)`
-- 표시 내용: 이름 / 소분류 / 병 개수만큼의 상태 아이콘(`Image[] stateImages`, `LiquorStockLevelPalette.GetSprite()`로 12단계 중 선택) / (사용 중인 병이 있을 때만) `"310/700ml"` 형식 잔여량 텍스트
+- 표시 내용: 이름 / 소분류 / 병 개수만큼의 상태 아이콘(`Image[] stateImages`, `LiquorStockLevelPalette.GetSprite()`로 12단계 중 선택) / (재고가 조금이라도 있으면) `"310/700ml"` 형식 잔여량 텍스트
 - 계산 예: `bottleCount=6, unitVolume=700`인 술이 2410ml 남으면 `fullCount=3`(2100ml, `GetSprite(1f)`), 나머지 310ml인 in-use 1칸(`GetSprite(310/700)`), empty 2칸(`GetSprite(0f)`), 텍스트 `"310/700ml"`
+- **마지막 병이 정확히 꽉 찬 경우도 표시됨**: 텍스트 표시 여부(`showAmount`)는 아이콘 렌더링용 in-use 판정(`remainder > 0f && fullCount < bottleCount`)과 별개 조건(`clampedAmount > 0f`)을 쓴다 — 아이콘 판정만 재사용하면 `remainder == 0`(마지막 병까지 정확히 꽉 참)일 때 "사용 중인 병 없음"으로 오판해 텍스트 전체가 숨겨지는 버그가 있었음. 텍스트에 표시할 값도 `remainder > 0 ? remainder : unitVolume`으로 계산해, 꽉 찬 경우 `"700/700ml"`처럼 뜬다(재고가 0일 때만 텍스트 자체가 숨겨짐)
 - **아이콘 레이아웃**: `stateImages` 10칸 = 1번째 줄(고정 5개) + `secondRowContainer`(2번째 줄, `bottleCount > 5`일 때만 `SetActive(true)`). 개별 아이콘 활성화는 기존처럼 `i < bottleCount` 기준, 2번째 줄 컨테이너는 `VerticalLayoutGroup` + `ContentSizeFitter`(Vertical Fit = Preferred Size)로 감싸서 꺼졌을 때 카드 높이가 자동으로 줄어들게 함
 - 위치 계산은 `RestScene/Scripts/TooltipManager.UpdatePosition`(화면 밖 벗어나면 좌우 자동 전환)의 구조를 참고해 새로 작성 — world position 기반이라 부모가 어디든 계산엔 무관, 단 `Viewport`의 `Mask` 밖(= `LiquorShelfPanel` 직계 자식)에 둬야 렌더링이 잘리지 않음
 

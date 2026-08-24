@@ -15,7 +15,7 @@ MonoBehaviour:
   key: eliud
   displayName: "\uC5D8\uB9AC\uC5C7"
   englishName: 
-  nameColor: {r: 1, g: 1, b: 1, a: 1}
+  nameColor: {r: 1, g: 0.5719801, b: 0, a: 1}
   defaultSprite: {fileID: 0}
   defaultOverlaySprite: {fileID: 0}
   defaultBlinkSprite: {fileID: 0}

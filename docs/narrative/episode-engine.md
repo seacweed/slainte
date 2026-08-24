@@ -27,6 +27,8 @@
 `EpisodeNode.characters: List<CharacterSlotEntry>` — 해당 노드에서 표시할 캐릭터+표정. 비어 있으면 스테이지 변경 없음.
 `EpisodeNode` 제조 관련 필드:
 - `requiresCrafting: bool` + `craftingTicketKey: string` — 노드 진입 시 `CraftingMode`로 전환
+- `craftingOrderTarget: string` — 레시피 ID 또는 맛/분위기 태그(둘 중 뭔지는 `EpisodeCraftingBridge.ResolveOrderType()`이 `TasteMoodTagPaletteDef`에 대조해 자동 판별, 별도 타입 컬럼 없음)
+- `craftingPaymentEnabled` / `craftingPaymentCurrency` / `craftingPaymentMultiplier` — 제조 완료 시 가격 지급 여부/통화/배율. CSV 작성법은 [episode-csv-guide.md](episode-csv-guide.md#nodes) 참고
 - `craftingOutcomes: List<CraftingOutcome>` — 제조 결과(`CraftingJobResult`: `Good` / `MidIce` / `MidGlass` / `MidIceGlass` / `MidWrongMenu` / `Bad`)별 분기 노드/플래그/변수 변경(`NodeFlagBranch` 등과 동일하게 결과가 있는 것만 항목으로 존재, sparse). `EpisodeNode.GetNextNodeId(result)` / `GetCraftingFlag(result)` / `GetCraftingVarChanges(result)` 접근자로 조회(비어 있으면 `nextNodeId` 사용)
 
 `EpisodeNode` 분기 필드:
@@ -41,7 +43,7 @@
 `EpisodeTriggerCondition` 필드:
 - `requiredVars: List<VarCondition>` — 수치 변수 조건이 모두 충족되어야 에피소드 발동. `VarCondition`은 `varName`, `op`(`CompareOp` 열거형), `threshold` 보유
 
-제조 완료는 `EpisodeRunner.NotifyCraftingCompleted(CraftingJobResult result)` 호출로 처리합니다. `node.craftingRecipeId`가 있으면 `EpisodeCraftingBridge`가 영업과 동일한 자동 판정 세션(`BusinessOrderSessionController`)을 실행해 결과를 `CraftingJobResult`로 변환하고, 기술적 초기화 실패 시에만 `CraftingJudgeUI`의 6개 버튼(Good/Mid-Ice/Mid-Glass/Mid-Ice+Glass/Mid-WrongMenu/Bad) 수동 판정으로 폴백합니다. `craftingRecipeId`가 없는 노드는 처음부터 수동 판정 경로만 사용합니다. 자세한 매핑 규칙은 [business-interactions.md](../gameplay/business-interactions.md#에피소드-제조-노드-판정-episodecraftingbridge) 참고.
+제조 완료는 `EpisodeRunner.NotifyCraftingCompleted(CraftingJobResult result)` 호출로 처리합니다. `node.craftingOrderTarget`이 있으면 `EpisodeCraftingBridge`가 영업과 동일한 자동 판정 세션(`BusinessOrderSessionController`)을 실행해 결과를 `CraftingJobResult`로 변환하고, 기술적 초기화 실패 시에만 `CraftingJudgeUI`의 6개 버튼(Good/Mid-Ice/Mid-Glass/Mid-Ice+Glass/Mid-WrongMenu/Bad) 수동 판정으로 폴백합니다(`CraftingJudgeUI`는 `EpisodeRunner.IsUsingManualCrafting`이 true이고 `CraftingMode`일 때만 노출되는 레거시 디버그 패널 — `craftingOrderTarget`이 팔레트에 없는 오타 태그라 레시피 조회에 실패하는 경우도 이 폴백을 타므로, 의도치 않게 이 패널이 뜬다면 태그 오타부터 의심할 것). `craftingOrderTarget`이 없는 노드는 처음부터 수동 판정 경로만 사용합니다. 자세한 매핑 규칙은 [business-interactions.md](../gameplay/business-interactions.md#에피소드-제조-노드-판정-episodecraftingbridge) 참고.
 
 `EpisodeData.settlementRewards: List<EpisodeSettlementReward>` — `{ requiredFlag, label, amount }` 목록. `EpisodeRunner.EndEncounter()`가 에피소드 종료 시 각 항목의 `requiredFlag`가 서 있는지 확인해, 켜져 있으면 `GameProgress.AddSettlementReward(label, amount)`로 그날 정산 화면에 커스텀 보상 줄을 추가합니다(정산 시점 지급). CSV 작성법은 [episode-csv-guide.md](episode-csv-guide.md#settlement_rewards) 참고.
 

@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: OrderTicketData_tl1_eliud
   m_EditorClassIdentifier: Assembly-CSharp::OrderTicketData
   key: tl1_eliud
-  customerName: "엘리엇"
-  memo: "아무튼, 내 대답은 늘 같아. 나낭나로 기분전환이라도 해봐."
+  customerName: "\uC5D8\uB9AC\uC5C7"
+  memo: "\uC544\uBB34\uD2BC, \uB0B4 \uB300\uB2F5\uC740 \uB298 \uAC19\uC544. \uD55C\uC5EC\uB984\uC758
+    \uC8FC\uC2A4\uB85C \uAE30\uBD84\uC804\uD658\uC774\uB77C\uB3C4 \uD574\uBD10."
   items:
-  - name: "한여름의 주스"
+  - name: "\uD55C\uC5EC\uB984\uC758 \uC8FC\uC2A4"
     qty: 1
     price: 97
