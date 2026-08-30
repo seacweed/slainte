@@ -20,6 +20,8 @@ public class LiquidReaction : MonoBehaviour
     public int agitationMaxPartners = 3;
     private float lastReactionTime;
     private float nextAgitationMixTime;
+    private LiquidReaction recentMixPartner;
+    private float recentMixPartnerTime;
 
     [Header("Optimization Settings")]
     public float sleepVelocityThreshold = 0.05f;
@@ -29,7 +31,7 @@ public class LiquidReaction : MonoBehaviour
     private Collider2D ownCollider;
     private int agitationSearchOffset;
 
-    private static readonly Collider2D[] NearbyParticles = new Collider2D[64];
+    private static readonly Collider2D[] NearbyParticles = new Collider2D[32];
 
     void Awake()
     {
@@ -72,6 +74,10 @@ public class LiquidReaction : MonoBehaviour
         isLogicallySleeping = false;
         settleTimer = 0f;
 
+        // 확산 믹싱 스케줄에 랜덤 지터를 줘서, 같은 물리 프레임에 스폰/재활성화된
+        // 입자들이 영구적으로 같은 틱에 몰리는 것을 방지한다.
+        nextAgitationMixTime = Time.time + Random.Range(0f, agitationMixInterval);
+
         if (rb != null && !rb.IsAwake())
             rb.WakeUp();
     }
@@ -95,7 +101,20 @@ public class LiquidReaction : MonoBehaviour
 
             MixAttributes(otherParticle);
             lastReactionTime = Time.time;
+            RecordRecentMixPartner(otherParticle);
         }
+    }
+
+    void RecordRecentMixPartner(LiquidReaction partner)
+    {
+        recentMixPartner = partner;
+        recentMixPartnerTime = Time.time;
+    }
+
+    bool WasRecentlyMixedWith(LiquidReaction partner)
+    {
+        return recentMixPartner == partner
+            && (Time.time - recentMixPartnerTime) < agitationMixInterval;
     }
 
     void MixAttributes(LiquidReaction other)
@@ -207,6 +226,14 @@ public class LiquidReaction : MonoBehaviour
             if (!hit.TryGetComponent(out LiquidReaction other))
                 continue;
 
+            // 같은 쌍을 양쪽에서 각각 판정/믹싱하지 않도록, 인스턴스 ID가 더 작은 쪽만 처리한다.
+            if (GetInstanceID() > other.GetInstanceID())
+                continue;
+
+            // 직전 물리 충돌(OnCollisionEnter2D)로 이미 이 상대와 믹싱했다면 이번 틱은 건너뛴다.
+            if (WasRecentlyMixedWith(other))
+                continue;
+
             if (!HasMeaningfulMixTarget(other))
                 continue;
 
@@ -217,6 +244,7 @@ public class LiquidReaction : MonoBehaviour
 
             MixParticleData(other, mixStrength, relativeMixStrength > 0f);
             MixPhysicalAttributes(other);
+            RecordRecentMixPartner(other);
             mixedPartners++;
 
             if (mixedPartners >= agitationMaxPartners)
