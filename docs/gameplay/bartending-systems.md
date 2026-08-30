@@ -176,22 +176,41 @@ CraftingMode에서만 `BubblePanel`이 활성화되어 화면 최상단에 렌�
 
 | 스크립트 | 클래스명 | 역할 |
 |---|---|---|
-| `ObjPooling.cs` | `LiquidPool` | 최대 `poolSize(900)` 입자 오브젝트 풀 관리. 소진 시 스킵 |
-| `Spawner.cs` | `LiquidSpawner` | `spawnInterval`마다 풀에서 입자 꺼내 스폰, 초기 속도 0 보장 |
-| `LiquidReaction.cs` | `LiquidReaction` | 입자 충돌 시 색상·물리 속성 평균화 혼합, 수면 최적화 |
-| `ReturnToPool.cs` | `ReturnToPool` | 화면 밖(OOB) 입자 자동 풀 반환 |
+| `ObjPooling.cs` | `LiquidPool` | 최대 `poolSize(900)` 입자 오브젝트 풀 관리. 소진 시 스킵. 활성 입자를 `(GameObject, ReturnToPool, LiquidReaction)` 캐시 구조로 들고 있어 `Update()`에서 매 프레임 `TryGetComponent`를 반복하지 않음 |
+| `Spawner.cs` | `LiquidSpawner` | `spawnInterval`마다 풀에서 입자 꺼내 스폰, 초기 속도 0 보장 (테스트용 — 실제 게임 내 pour는 `BottleController.TrySpawnLiquid()`가 `pool.DefaultParticleVolumeMl`만큼씩 직접 `GetParticle()` 호출) |
+| `LiquidReaction.cs` | `LiquidReaction` | 입자 충돌 시 색상·물리 속성 평균화 혼합, 수면 최적화, 확산(Agitation) 믹싱 |
+| `ReturnToPool.cs` | `ReturnToPool` | 화면 밖(OOB) 입자 자동 풀 반환. 용기 밖 유출 입자는 왼쪽/오른쪽/아래 화면 이탈 시 즉시 회수(위쪽은 제외) |
 | `FullSizeQuad.cs` | `FullScreenQuad` | MetaballMat 적용 전체화면 쿼드, 해상도 변화에 실시간 대응 |
 | `drag.cs` | — | 마우스 드래그 가능한 물리 오브젝트 |
 
+### 두 가지 믹싱 경로
+
+`LiquidReaction`은 서로 다른 두 트리거로 재료를 섞는다 — 같은 쌍이 한 틱에 이중으로 섞이지 않도록 `WasRecentlyMixedWith()`로 서로를 인지한다.
+
+- **물리 충돌 기반** (`OnCollisionEnter2D` → `TryMixCollision`): 실제 콜라이더 접촉 시 `mixSpeed` 세기로, `reactionCooldown`(기본 0.05s)마다 최대 1회.
+- **확산(Agitation) 기반** (`FixedUpdate` → `TryMixNearbyParticlesByAgitation`): `agitationMixInterval`(기본 0.05s)마다 반경 `agitationMixRadius`(0.16) 내 이웃을 `Physics2D.OverlapCircle`로 스캔(버퍼 32개)해, 상대 입자와의 상대 속도가 `agitationVelocityThreshold`를 넘으면 `agitationMixSpeed` 세기로 최대 `agitationMaxPartners`(3)명까지 혼합. 서로 다른 쌍을 양쪽에서 중복 처리하지 않도록 `GetInstanceID()`가 더 작은 쪽만 판정·믹싱을 수행한다.
+
 ### LiquidReaction 최적화 레이어
 
-1. `isLogicallySleeping` 상태인 입자는 충돌 연산을 주도하지 않음
-2. `reactionCooldown`으로 동일 프레임 내 중복 연산 방지
+1. `isLogicallySleeping` 상태인 입자는 충돌·확산 연산을 주도하지 않음
+2. `reactionCooldown`/`agitationMixInterval`으로 동일 상대 대상 중복 연산 방지, 두 믹싱 경로 간에도 최근 믹싱 상대를 공유해 이중 처리 방지
 3. `TryGetComponent`로 충돌 대상 타입 체크
 4. 색상과 mass가 이미 거의 동일(`< 2% 차이`)하면 물리 속성 덮어쓰기 스킵
+5. `WakeUp()` 시 `nextAgitationMixTime`에 `[0, agitationMixInterval)` 랜덤 지터를 부여 — 같은 물리 프레임에 스폰/재활성화된 입자들이 매 틱 영구적으로 같은 프레임에 몰려 부하 스파이크를 만드는 것을 방지
 
 수면 조건: `rb.linearVelocity.sqrMagnitude < sleepVelocityThreshold` 상태가 `timeToSleep(2.0s)` 지속.
-수면 해제: `WakeUp()` 명시 호출 또는 다른 활성 입자의 충돌.
+수면 해제: `WakeUp()` 명시 호출 또는 다른 활성 입자의 충돌/혼합.
+
+### ReturnToPool 회수 규칙
+
+`CheckOOB()`는 매 프레임 `LiquidPool.Update()`가 계산한 화면 월드 경계(`Camera.main.orthographicSize`/`aspect` 기반, `FullSizeQuad.cs`와 동일 방식)를 받아 판정한다.
+
+1. `bottomLimit`/`topLimit`/`horizontalLimit` 하드 박스를 넘으면 용기 소속 여부와 무관하게 즉시 회수(4방향 전부).
+2. `recycleUncontainedParticles`가 켜져 있고 용기(`VesselOwner`)가 없는 입자는:
+   - 왼쪽/오른쪽/아래로 화면을 이탈하면 **정지 유예 없이 즉시 회수** (위쪽은 이 규칙에서 제외 — 기존 하드 박스만 적용).
+   - 그 외엔 `settledOutsideRecycleDelay`(5s) 동안 정지 상태이거나 `maxOutsideVesselLifetime`(20s)이 지나면 회수하는 기존 유예 규칙 유지.
+
+> **성능 참고**: 쉐이킹 중 렉의 실측 지배 비용은 스크립트가 아니라 Unity 네이티브 `Physics2D.FindNewContacts`(브로드페이즈)이며, 동시 활성 파티클 수(N)에 좌우된다. N을 줄이는 조치(위 화면 이탈 즉시 회수, `defaultVolumeMl` 상향)가 스크립트 로직 최적화보다 체감 효과가 훨씬 크다 — 최적화 작업 전 Unity Profiler CSV로 실측 검증할 것.
 
 ### 프리팹 (`Assets/MetaballFluid/Prefabs/`)
 

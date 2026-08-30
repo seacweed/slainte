@@ -44,7 +44,7 @@ MonoBehaviour:
   contentsLabelFontSize: 25
   contentsRefreshInterval: 0.1
   contentsMinimumVisibleMl: 0.05
-  showVesselDebugLabels: 1
+  showVesselDebugLabels: 0
   vesselDebugRefreshInterval: 0.2
   rotationHorizontalSensitivity: 1
   rotationHorizontalScreenPadding: 12

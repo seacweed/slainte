@@ -6,13 +6,20 @@ public class LiquidPool : MonoBehaviour
 {
     private const float FallbackParticleVolumeMl = 1f;
 
+    private struct ActiveParticle
+    {
+        public GameObject GameObject;
+        public ReturnToPool ReturnToPool;
+        public LiquidReaction LiquidReaction;
+    }
+
     public static LiquidPool Instance;
     public GameObject particlePrefab;
     [Min(0)] public int poolSize = 900;
     [Min(1)] public int maxAutomaticReturnsPerFrame = 16;
 
     private readonly Queue<GameObject> poolQueue = new Queue<GameObject>();
-    private readonly List<GameObject> activeParticles = new List<GameObject>();
+    private readonly List<ActiveParticle> activeParticles = new List<ActiveParticle>();
     private bool initialized;
     private bool missingPrefabLogged;
     private bool missingParticleDataLogged;
@@ -64,18 +71,45 @@ public class LiquidPool : MonoBehaviour
             return null;
 
         PrepareParticle(particle, position, sourceItem, volumeMl);
-        activeParticles.Add(particle);
+        activeParticles.Add(new ActiveParticle
+        {
+            GameObject = particle,
+            ReturnToPool = particle.GetComponent<ReturnToPool>(),
+            LiquidReaction = particle.GetComponent<LiquidReaction>()
+        });
         return particle;
     }
 
     public bool ReturnParticle(GameObject particle)
     {
-        if (particle == null || !activeParticles.Remove(particle))
+        if (particle == null)
             return false;
 
+        int index = FindActiveIndex(particle);
+        if (index < 0)
+            return false;
+
+        ReturnParticleAt(index);
+        return true;
+    }
+
+    private int FindActiveIndex(GameObject particle)
+    {
+        for (int i = 0; i < activeParticles.Count; i++)
+        {
+            if (activeParticles[i].GameObject == particle)
+                return i;
+        }
+
+        return -1;
+    }
+
+    private void ReturnParticleAt(int index)
+    {
+        GameObject particle = activeParticles[index].GameObject;
+        activeParticles.RemoveAt(index);
         particle.SetActive(false);
         poolQueue.Enqueue(particle);
-        return true;
     }
 
     private GameObject GetAvailableParticle()
@@ -178,28 +212,44 @@ public class LiquidPool : MonoBehaviour
 
     private void Update()
     {
+        Camera cam = Camera.main;
+        bool hasScreenBounds = cam != null;
+        float screenLeft = 0f;
+        float screenRight = 0f;
+        float screenBottom = 0f;
+        if (hasScreenBounds)
+        {
+            // FullSizeQuad.cs와 동일한 방식으로 화면의 월드 좌표 경계를 매 프레임 1회만 계산한다.
+            float halfHeight = cam.orthographicSize;
+            float halfWidth = halfHeight * cam.aspect;
+            Vector3 camPos = cam.transform.position;
+            screenLeft = camPos.x - halfWidth;
+            screenRight = camPos.x + halfWidth;
+            screenBottom = camPos.y - halfHeight;
+        }
+
         int automaticReturns = 0;
         int returnLimit = Mathf.Max(1, maxAutomaticReturnsPerFrame);
         for (int i = activeParticles.Count - 1; i >= 0; i--)
         {
-            GameObject particle = activeParticles[i];
-            if (particle == null)
+            ActiveParticle entry = activeParticles[i];
+            if (entry.GameObject == null)
             {
                 activeParticles.RemoveAt(i);
                 continue;
             }
 
             if (automaticReturns < returnLimit
-                && particle.TryGetComponent(out ReturnToPool returnToPool)
-                && returnToPool.CheckOOB())
+                && entry.ReturnToPool != null
+                && entry.ReturnToPool.CheckOOB(hasScreenBounds, screenLeft, screenRight, screenBottom))
             {
-                ReturnParticle(particle);
+                ReturnParticleAt(i);
                 automaticReturns++;
                 continue;
             }
 
-            if (particle.TryGetComponent(out LiquidReaction reaction))
-                reaction.CheckSleepState(Time.deltaTime);
+            if (entry.LiquidReaction != null)
+                entry.LiquidReaction.CheckSleepState(Time.deltaTime);
         }
     }
 

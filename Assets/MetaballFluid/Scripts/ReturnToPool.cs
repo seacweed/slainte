@@ -32,7 +32,7 @@ public class ReturnToPool : MonoBehaviour
         CacheComponents();
     }
 
-    public bool CheckOOB()
+    public bool CheckOOB(bool hasScreenBounds, float screenLeft, float screenRight, float screenBottom)
     {
         Vector3 position = transform.position;
         if (position.y < bottomLimit
@@ -51,6 +51,14 @@ public class ReturnToPool : MonoBehaviour
             outsideVesselTimer = 0f;
             settledOutsideTimer = 0f;
             return false;
+        }
+
+        // 용기를 벗어난 입자가 왼쪽/오른쪽/아래로 화면을 이탈하면 정지 유예 없이 즉시 회수한다.
+        // 위쪽은 의도적으로 제외 — 기존 topLimit 하드 경계 동작을 그대로 유지한다.
+        if (hasScreenBounds
+            && (position.x < screenLeft || position.x > screenRight || position.y < screenBottom))
+        {
+            return true;
         }
 
         float deltaTime = Mathf.Max(0f, Time.deltaTime);
