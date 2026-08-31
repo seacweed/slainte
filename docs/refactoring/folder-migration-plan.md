@@ -9,6 +9,30 @@
 
 1차 이동에서는 동작, 네임스페이스, 직렬화 데이터, 어셈블리 경계를 변경하지 않는다. 물리적 이동이 안정된 뒤 코드 리팩토링과 `.asmdef` 도입을 별도 단계로 수행한다.
 
+## 이번 브랜치 결과
+
+완료한 범위:
+
+- 프로젝트 코드와 에디터 도구를 `Core`, `Shared`, `Features` 소유 영역으로 이동
+- 사람이 수정하는 Bartending·Business CSV 원본을 각 기능의 `Content/Source`로 분리
+- 제품·개발 씬과 Unity 설정 에셋을 `_Project` 아래로 이동하고 Build Settings 및 에디터 경로 갱신
+- 이동 커밋과 코드 변경 커밋을 분리해 기존 작성 이력을 추적할 수 있게 유지
+- 에디터 씬 경로를 `ProjectScenePaths`로 통합하고 `EpisodeManager`의 동일 필터 로직 중복 제거
+
+후속 브랜치로 미룬 범위:
+
+- 직렬화 타입 마이그레이션이 필요한 전역 네임스페이스 변경
+- 의존 방향을 더 정리한 뒤 도입해야 하는 Runtime·Editor·Tests `.asmdef`
+- `Resources`, `StreamingAssets`, `Data`, `Art`, `Prefabs`의 광범위한 이동과 Source/Generated/Runtime 세분화
+
+현재 검증 결과:
+
+- Unity 배치 재임포트 및 Runtime·Editor 빌드: 오류 0개, 기준선과 동일한 `CS0649` 경고 8개
+- TV/Rest 배치 검증 및 Business 순수 규칙 배치 검증: 통과
+- BusinessShift 배치 검증: 검증기 기대 영업시간 180초와 현재 설정 300초 불일치로 중단
+- BartendingSystem 배치 검증: 검증기 기대 액체 알파 1.0과 현재 구현 0.2 불일치로 중단
+- Unity GUI와 전체 플레이 흐름 수동 검증: 별도 확인 필요
+
 ## 기준선
 
 - Unity: `6000.3.5f2`
