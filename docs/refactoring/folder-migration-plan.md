@@ -21,6 +21,8 @@
 - `Shared/Input`, `Shared/Lifecycle`에 기능별 네임스페이스를 도입하고 사용처를 명시적으로 연결
 - `Slainte.Shared.Input`, `Slainte.Shared.Lifecycle`, `Slainte.Shared.Editor` 어셈블리 경계를 도입
 - `Slainte.Shared.Tests.EditMode` 테스트 어셈블리와 공용 계약 테스트 3개 추가
+- `Assets/RestScene` 잔여 에셋을 Rest의 `Art`, `Prefabs`, `Content/Legacy`로 통합
+- 팀 소유 `MetaballFluid`를 Bartending의 `Infrastructure`로 통합하고 경로 검증기 추가
 
 남겨둔 범위:
 
@@ -34,6 +36,7 @@
 - Unity 배치 재임포트 및 Runtime·Editor 빌드: 오류 0개, 기준선과 동일한 `CS0649` 경고 8개
 - Shared EditMode 테스트: 3개 통과, 실패·건너뜀 0개
 - TV/Rest 배치 검증 및 Business 순수 규칙 배치 검증: 통과
+- Rest 최종 아트 검증 및 MetaballFluid 인프라 에셋 검증: 통과
 - BusinessShift 배치 검증: 검증기 기대 영업시간 180초와 현재 설정 300초 불일치로 중단
 - BartendingSystem 배치 검증: 검증기 기대 액체 알파 1.0과 현재 구현 0.2 불일치로 중단
 - Unity GUI와 전체 플레이 흐름 수동 검증: 별도 확인 필요
@@ -94,6 +97,8 @@ Assets/
 | `Assets/Narrative/Graphs` | `Features/Narrative/Content/Graphs` | Narrative Graph 원본 에셋 |
 | `Assets/RestScene/Scripts` | `Features/Rest/Runtime` | RestScene 런타임 코드 |
 | `Assets/Scripts/TV`, `Assets/RestScene/Scripts/TV*.cs` | `Features/Rest/Runtime/TV` | TV 데이터·판정·표시 통합 |
+| `Assets/RestScene/Prefabs`, `Sprites` | `Features/Rest/Prefabs`, `Art/Sprites` | Rest 실사용 프리팹과 이미지 |
+| `Assets/RestScene/Episode`, `ShopItem` | `Features/Rest/Content/Legacy` | 현재 코드·에셋 참조가 없는 이전 데이터 보존 |
 | `Assets/Scripts/Business` | `Features/Business/Runtime/Flow` | 주문 세션과 영업 조립 담당 |
 | `Assets/Scripts/Conversation` | `Features/Business/Runtime/Conversation` | 에피소드 공용 경계 재검토 |
 | `Assets/Scripts/OrderTicket` | `Features/Business/Runtime/OrderTicket` | BusinessScene UI |
@@ -104,6 +109,7 @@ Assets/
 | `Assets/Scripts/DragandDrop` | `Features/Bartending/Runtime/Interaction` | 병·도구 배치와 UI 드래그 |
 | `Assets/Scripts/LiquorShelf` | `Features/Bartending/Runtime/LiquorShelf` | 재고·술장·배달 상점 |
 | `Assets/Scripts/RecipeBook` | `Features/Bartending/Runtime/RecipeBook` | 제조 레시피 탐색 UI |
+| `Assets/MetaballFluid` | `Features/Bartending/Infrastructure/MetaballFluid` | 팀 소유 액체 렌더링·물리 묶음 |
 | `Assets/CoreScene/Scripts`의 앱 흐름 | `Core/Runtime/Flow` | 씬 전환과 하루 진행 |
 | `Assets/CoreScene/Scripts`의 저장 코드, `Assets/Scripts/GameProgress.cs` | `Core/Runtime/Persistence` | 저장 데이터와 런타임 진행 상태 |
 | `Assets/CoreScene/Scripts`의 컷씬·정산 코드 | `Core/Runtime/Cutscene`, `Core/Runtime/Settlement` | 전역 화면 흐름 |

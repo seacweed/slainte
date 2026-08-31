@@ -154,7 +154,7 @@ MetaballFluid(아래 절)는 순수 시각 레이어이고, 판정에 쓰이는 
 
 ---
 
-## MetaballFluid 시스템 (`Assets/MetaballFluid/`)
+## MetaballFluid 시스템 (`Assets/_Project/Features/Bartending/Infrastructure/MetaballFluid/`)
 
 2D 메타볼 알고리즘으로 칵테일 액체를 실시간 시각화합니다.
 CraftingMode에서만 `BubblePanel`이 활성화되어 화면 최상단에 렌더링됩니다.
@@ -212,7 +212,7 @@ CraftingMode에서만 `BubblePanel`이 활성화되어 화면 최상단에 렌�
 
 > **성능 참고**: 쉐이킹 중 렉의 실측 지배 비용은 스크립트가 아니라 Unity 네이티브 `Physics2D.FindNewContacts`(브로드페이즈)이며, 동시 활성 파티클 수(N)에 좌우된다. N을 줄이는 조치(위 화면 이탈 즉시 회수, `defaultVolumeMl` 상향)가 스크립트 로직 최적화보다 체감 효과가 훨씬 크다 — 최적화 작업 전 Unity Profiler CSV로 실측 검증할 것.
 
-### 프리팹 (`Assets/MetaballFluid/Prefabs/`)
+### 프리팹 (`Assets/_Project/Features/Bartending/Infrastructure/MetaballFluid/Prefabs/`)
 
 | 프리팹 | 설명 |
 |---|---|

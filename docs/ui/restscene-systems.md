@@ -49,7 +49,7 @@ IShopCurrency / MoneyShopCurrency / StrangeCoinShopCurrency — 상점 결제 �
 
 ---
 
-## BaseUIManager (`RestScene/Scripts/BaseUIManager.cs`)
+## BaseUIManager (`Assets/_Project/Features/Rest/Runtime/BaseUIManager.cs`)
 
 모든 UI 패널의 공통 기반 추상 클래스. `CanvasGroup` 필수.
 
@@ -71,7 +71,7 @@ IShopCurrency / MoneyShopCurrency / StrangeCoinShopCurrency — 상점 결제 �
 
 ## 에피소드 보드 시스템
 
-### EpisodeBoardManager (`RestScene/Scripts/EpisodeBoardManager.cs`)
+### EpisodeBoardManager (`Assets/_Project/Features/Rest/Runtime/EpisodeBoardManager.cs`)
 
 `BaseUIManager` 상속. 에피소드 보드 전체를 관리합니다.
 
@@ -143,7 +143,7 @@ public string day1ForcedEpisodeId;    // 기본값 "FathersNote"
 
 ---
 
-### EpisodePhotoTrigger (`RestScene/Scripts/EpisodePhotoTrigger.cs`)
+### EpisodePhotoTrigger (`Assets/_Project/Features/Rest/Runtime/EpisodePhotoTrigger.cs`)
 
 에피소드 보드의 개별 사진 슬롯. `IPointerEnterHandler`, `IPointerExitHandler`, `IPointerClickHandler` 구현.
 
@@ -165,7 +165,7 @@ public string day1ForcedEpisodeId;    // 기본값 "FathersNote"
 
 ---
 
-### EpisodeInfoUI (`RestScene/Scripts/EpisodeInfoUI.cs`)
+### EpisodeInfoUI (`Assets/_Project/Features/Rest/Runtime/EpisodeInfoUI.cs`)
 
 사진 옆에 표시되는 에피소드 상세 정보 팝업. `BaseUIManager` 미상속, 독립 활성화. 자체 `Canvas`를 `overrideSorting`으로 추가해 `sortingOrder`를 높여 항상 최상단에 렌더링 — 이 중첩(nested) Canvas는 **`GraphicRaycaster`도 같이 붙여야** 그 하위 UI(토글 등)가 포인터 클릭을 받는다(`Awake()`에서 없으면 자동으로 `AddComponent`). 안 붙이면 상위 루트 Canvas의 raycaster가 있어도 이 중첩 Canvas 하위 Graphic들은 클릭 대상에서 빠지는 Unity UI의 잘 알려진 함정이라, 다른 화면에 비슷하게 sortingOrder용 중첩 Canvas를 추가할 때도 주의할 것. `LiquorBottleInfoCard`와 동일하게 **런타임 `Instantiate`/`Destroy` 없이** 에디터에서 미리 배치한 고정 슬롯 배열을 채우는 방식으로 구성(조건 행 개수·초상화 슬롯 개수는 에디터에 배치한 배열 길이만큼). 세로 길이는 `VerticalLayoutGroup`+`ContentSizeFitter`로 조건 개수에 따라 유동적으로 늘어남.
 
@@ -218,7 +218,7 @@ public string day1ForcedEpisodeId;    // 기본값 "FathersNote"
 
 ## 현황판 (EpisodeUIManager)
 
-`RestScene/Scripts/EpisodeUIManager.cs`, `BaseUIManager` 상속.
+`Assets/_Project/Features/Rest/Runtime/EpisodeUIManager.cs`, `BaseUIManager` 상속.
 
 **애니메이션**: `EpisodeBoardManager`와 동일한 슬라이드 업 방식
 
@@ -233,7 +233,7 @@ public string day1ForcedEpisodeId;    // 기본값 "FathersNote"
 
 ## 상점 시스템 (ShopUIManager)
 
-`RestScene/Scripts/ShopUIManager.cs`, `BaseUIManager` 상속.
+`Assets/_Project/Features/Rest/Runtime/ShopUIManager.cs`, `BaseUIManager` 상속.
 
 **열기/닫기**: 펼침·접힘 애니메이션 없음 — `AnimateOpen()`/`AnimateClose()`는 `CanvasGroup`의 `alpha`/`interactable`/`blocksRaycasts`만 즉시 전환하고 끝남(과거의 가로→세로 스케일 애니메이션은 열리는 도중 뒷화면이 그대로 비쳐 보이는 문제로 제거됨).
 
@@ -272,7 +272,7 @@ homePanel (재료/업그레이드/레시피북 3버튼)
 
 **기본 프레임(배경/상단/하단 오버레이)**: 5개 화면 모두가 공유하는 배경 이미지 1장 + 상단 오버레이(금액 표시, 항상 고정) 1장은 `ShopUIManager` 루트에 한 번만 배치하고 화면 패널들은 그 위에 얹힘 — 화면마다 중복 배치하지 않음. 하단 오버레이만 예외: `homePanel`(스크롤 없음)은 그 자식으로 두면 패널 활성화에 따라 자동으로 같이 열리고 닫히고, 스크롤이 있는 나머지 4화면은 각자의 `ScrollRect` Content 맨 끝에 배치해 끝까지 스크롤해야 보이는 캡 이미지로 동작(아래 `ScrollContentMinHeight` 참고).
 
-### ScrollContentMinHeight (`RestScene/Scripts/ScrollContentMinHeight.cs`)
+### ScrollContentMinHeight (`Assets/_Project/Features/Rest/Runtime/ScrollContentMinHeight.cs`)
 
 `ScrollRect`의 Content에 부착, `ContentSizeFitter`를 대체. 자식(아이템 목록 + 하단 오버레이 캡)의 실제 필요 높이가 뷰포트보다 작으면 뷰포트 높이로 고정해 `Vertical Layout Group`의 `Flexible` 자식(Spacer)이 남는 공간을 채우게 해서 하단 캡 이미지가 화면 맨 밑에 붙게 하고, 필요 높이가 뷰포트보다 크면 그 값을 그대로 써서 정상적으로 스크롤되게 한다.
 
@@ -293,7 +293,7 @@ homePanel (재료/업그레이드/레시피북 3버튼)
 | `unlockHintType` | `None`/`RecipeBook`/`Episode` — 잠금 툴팁에 표시할 힌트 종류(표시 전용, 실제 해금 여부는 기존 `unlockFlagKey`로 판정) |
 | `recipeBookIcon` / `recipeBookName` | `unlockHintType == RecipeBook`일 때 툴팁에 표시 |
 
-### ItemSlotUI (`RestScene/Scripts/ItemSlotUI.cs`)
+### ItemSlotUI (`Assets/_Project/Features/Rest/Runtime/ItemSlotUI.cs`)
 
 `LiquorBottleDef` 하나를 바인딩하는 그리드 슬롯. `IPointerEnterHandler`/`IPointerExitHandler` 구현.
 
@@ -304,7 +304,7 @@ homePanel (재료/업그레이드/레시피북 3버튼)
 - **구매(`OnBuyClick`)**: `IShopCurrency.TrySpend(price)` 성공 시 `GameProgress.AddBottleAmount(id, unitVolume, MaxAmount)`로 **1병 단위** 충전(가득 리필이 아님), `OnPurchased` 이벤트로 `ShopUIManager`의 소지금 텍스트 갱신을 트리거
 - **`Setup(def, currency)`**: `currency`를 생략하면 `MoneyShopCurrency`(원화)로 동작 — 일반 상점 호출부는 수정 없이 그대로 호환됨. 이상한 상점은 `StrangeCoinShopCurrency`를 넘겨서 같은 슬롯 로직을 재사용(아래 "이상한 상점" 참고)
 
-### IngredientUnlockTooltip (`RestScene/Scripts/IngredientUnlockTooltip.cs`)
+### IngredientUnlockTooltip (`Assets/_Project/Features/Rest/Runtime/IngredientUnlockTooltip.cs`)
 
 잠긴 재료 호버 시 표시. `LiquorBottleInfoCard`와 동일한 싱글톤/고정 슬롯 패턴(`Instance`, `Show()`/`Hide()`, `LayoutRebuilder` 기반 위치 계산).
 
@@ -356,7 +356,7 @@ homePanel (재료/업그레이드/레시피북 3버튼)
 
 **카테고리 버튼 프리팹 재사용 시 주의**: `strangeCategoryButtonPrefab`를 `ShopCategoryButton.prefab` 복제로 만들 경우, 원본에 있던 클릭 범위 버그(배경 `Image`가 `Button` 컴포넌트의 부모 오브젝트에 있어 아이콘+텍스트 바깥 영역은 클릭이 안 되는 문제 — Unity 이벤트 버블링은 자식→부모 방향으로만 핸들러를 찾기 때문)를 원본에서 먼저 고친 뒤 복제할 것. 자세한 원인은 이 문서가 아니라 프리팹 자체를 열어 `Button`/배경 `Image`의 부모-자식 관계를 확인.
 
-### ItemData (`RestScene/Scripts/ItemData.cs`) — 임시 데이터, 상점 미사용
+### ItemData (`Assets/_Project/Features/Rest/Runtime/ItemData.cs`) — 임시 데이터, 상점 미사용
 
 ```csharp
 [CreateAssetMenu(menuName = "Shop/Item Data")]
@@ -400,7 +400,7 @@ public enum ItemType { Alcohol, Liqueur, NonAlcohol, Powder, Tool, Glass }
 
 `ObjectInteraction.AnyUIOpen`을 매 프레임 폴링해 씬 전역 배경(`colorBackground`/`grayBackground`)을 켜고 끄는 조율자. 개별 오브젝트(TV/작전판/상점)의 하이라이트·회색 처리는 각자의 `ObjectInteraction`이 담당하고, 이 컴포넌트는 "UI가 하나라도 열려 있으면 화면 전체를 흑백으로" 하는 전역 톤 전환만 맡는다.
 
-### BoardBackground (`RestScene/Scripts/BoardBackground.cs`)
+### BoardBackground (`Assets/_Project/Features/Rest/Runtime/BoardBackground.cs`)
 
 에피소드 보드의 빈 배경 클릭 시 `EpisodeBoardManager.ResetBoard()` 호출.
 
@@ -408,7 +408,7 @@ public enum ItemType { Alcohol, Liqueur, NonAlcohol, Powder, Tool, Glass }
 
 ## 툴팁 시스템
 
-### TooltipManager (`RestScene/Scripts/TooltipManager.cs`)
+### TooltipManager (`Assets/_Project/Features/Rest/Runtime/TooltipManager.cs`)
 
 `Instance` 싱글톤 (MonoSingleton 미사용, 직접 Awake에서 `Instance = this`).
 
