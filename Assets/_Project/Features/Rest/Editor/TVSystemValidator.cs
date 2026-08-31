@@ -10,7 +10,8 @@ namespace Slainte.EditorTools
 {
     public static class TVSystemValidator
     {
-        private const string ScenePath = "Assets/RestScene/RestScene.unity";
+        private const string ScenePath =
+            "Assets/_Project/Scenes/Production/RestScene.unity";
         private const string PrefabPath = "Assets/RestScene/Prefabs/TVSystem.prefab";
         private const string PanelPrefabPath = "Assets/RestScene/Prefabs/TVPanel.prefab";
 

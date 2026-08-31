@@ -6,10 +6,10 @@
 
 | 순서 | 씬 | 역할 |
 |---:|---|---|
-| 0 | `Assets/MainMenuScene.unity` | 새 게임 진입 |
-| 1 | `Assets/CoreScene/CoreScene.unity` | 영속 서비스와 페이드 |
-| 2 | `Assets/BusinessScene.unity` | 에피소드·영업·제조 공용 |
-| 3 | `Assets/RestScene/RestScene.unity` | 보드·상점·현황 |
+| 0 | `Assets/_Project/Scenes/Production/MainMenuScene.unity` | 새 게임 진입 |
+| 1 | `Assets/_Project/Scenes/Production/CoreScene.unity` | 영속 서비스와 페이드 |
+| 2 | `Assets/_Project/Scenes/Production/BusinessScene.unity` | 에피소드·영업·제조 공용 |
+| 3 | `Assets/_Project/Scenes/Production/RestScene.unity` | 보드·상점·현황 |
 
 `CoreSceneAutoLoader`가 플레이 전에 CoreScene을 추가 방식으로 로드한다. 전체 흐름 QA는 `MainMenuScene`, 주문·제조 단독 QA는 `BusinessScene`, 휴식 UI QA는 `RestScene`에서 시작한다.
 

@@ -9,9 +9,10 @@ namespace Slainte.EditorTools
 {
     public static class BusinessIntegrationPlaytestTools
     {
-        private const string SourceScenePath = "Assets/BusinessScene.unity";
+        private const string SourceScenePath =
+            "Assets/_Project/Scenes/Production/BusinessScene.unity";
         private const string PlaytestScenePath =
-            "Assets/Scenes/Dev/BusinessFlowIntegrationPlaytest.unity";
+            "Assets/_Project/Scenes/Development/BusinessFlowIntegrationPlaytest.unity";
         private const string RunningKey =
             "Slainte.BusinessIntegrationPlaytest.Validator.Running";
         private const string ThirdSlotRunningKey =
@@ -622,7 +623,7 @@ namespace Slainte.EditorTools
             {
                 EditorUtility.DisplayDialog(
                     "Business Integration Playtest",
-                    "Assets/BusinessScene.unity를 찾지 못했습니다.",
+                    "Assets/_Project/Scenes/Production/BusinessScene.unity를 찾지 못했습니다.",
                     "확인");
                 return false;
             }

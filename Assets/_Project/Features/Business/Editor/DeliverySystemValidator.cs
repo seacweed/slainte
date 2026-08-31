@@ -7,7 +7,8 @@ using UnityEngine.SceneManagement;
 
 public static class DeliverySystemValidator
 {
-    private const string BusinessScenePath = "Assets/BusinessScene.unity";
+    private const string BusinessScenePath =
+        "Assets/_Project/Scenes/Production/BusinessScene.unity";
     private const string RunningKey = "Slainte.DeliverySystemValidator.Running";
     private static double startedAt;
     private static int stage;

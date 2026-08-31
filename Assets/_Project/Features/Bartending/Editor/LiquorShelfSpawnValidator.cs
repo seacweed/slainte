@@ -11,7 +11,8 @@ using UnityEngine.SceneManagement;
 
 public static class LiquorShelfSpawnValidator
 {
-    private const string BusinessScenePath = "Assets/BusinessScene.unity";
+    private const string BusinessScenePath =
+        "Assets/_Project/Scenes/Production/BusinessScene.unity";
     private const string RunningKey = "Slainte.LiquorShelfSpawnValidator.Running";
     private const string ManualToolCabinetKey =
         "Slainte.ToolCabinetManualPlaytest.Running";

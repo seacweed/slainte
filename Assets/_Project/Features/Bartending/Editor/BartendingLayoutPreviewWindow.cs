@@ -156,7 +156,8 @@ namespace Slainte.Bartending.EditorTools
 
     public static class BartendingSandboxSceneGenerator
     {
-        private const string SandboxScenePath = "Assets/Scenes/Dev/BartendingSandbox.unity";
+        private const string SandboxScenePath =
+            "Assets/_Project/Scenes/Development/BartendingSandbox.unity";
 
         [MenuItem("Slainte/Bartending/Create or Open Sandbox Scene")]
         public static void CreateOrOpen()

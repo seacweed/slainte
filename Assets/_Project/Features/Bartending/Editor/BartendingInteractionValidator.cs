@@ -15,7 +15,8 @@ namespace Slainte.Bartending.EditorTools
 {
     public static class BartendingInteractionValidator
     {
-        private const string SandboxScenePath = "Assets/Scenes/Dev/BartendingSandbox.unity";
+        private const string SandboxScenePath =
+            "Assets/_Project/Scenes/Development/BartendingSandbox.unity";
         private const string RunningKey = "Slainte.BartendingInteractionValidator.Running";
         private const float TestLiquidVolumeMl = 37.5f;
 

@@ -8,7 +8,8 @@ namespace Slainte.Bartending.EditorTools
 {
     public static class BartendingIceValidator
     {
-        private const string SandboxScenePath = "Assets/Scenes/Dev/BartendingSandbox.unity";
+        private const string SandboxScenePath =
+            "Assets/_Project/Scenes/Development/BartendingSandbox.unity";
         private const string RunningKey = "Slainte.BartendingIceValidator.Running";
         private static int phase;
         private static int phaseFrames;
@@ -34,7 +35,8 @@ namespace Slainte.Bartending.EditorTools
             BartendingSessionInstance preview = null;
             try
             {
-                Scene scene = EditorSceneManager.OpenScene("Assets/BusinessScene.unity");
+                Scene scene = EditorSceneManager.OpenScene(
+                    "Assets/_Project/Scenes/Production/BusinessScene.unity");
                 RectTransform counter = FindRect(scene, "BarCounter");
                 RectTransform slots = FindRect(scene, "TableSlots");
                 BusinessBartendingSettings settings =

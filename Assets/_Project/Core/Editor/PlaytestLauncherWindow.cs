@@ -344,7 +344,8 @@ public sealed class PlaytestLauncherWindow : EditorWindow
 [InitializeOnLoad]
 internal static class PlaytestLaunchCoordinator
 {
-    private const string StartScenePath = "Assets/RestScene/RestScene.unity";
+    private const string StartScenePath =
+        "Assets/_Project/Scenes/Production/RestScene.unity";
     private const string ActiveKey = "Slainte.PlaytestLauncher.Active";
     private const string RequestKey = "Slainte.PlaytestLauncher.Request";
     private const string StageKey = "Slainte.PlaytestLauncher.Stage";

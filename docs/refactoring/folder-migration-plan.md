@@ -84,7 +84,7 @@ Assets/
 | `Assets/Editor` 루트 도구 | `Core/Editor`, `Shared/Editor`, `Features/*/Editor` | Bartending·Business·Rest·공용 도구를 소유 기능별 분리 |
 | `Assets/Editor/Data/Planning` | `Features/Bartending/Content/Source/Planning` | 사람이 수정하는 기획 CSV 원본 |
 | `Assets/Editor/Data/CustomerDialogue` | `Features/Business/Content/Source/CustomerDialogue` | 사람이 수정하는 주문 대사 CSV 원본 |
-| 제품·개발 씬 | `Scenes/Production`, `Scenes/Development` | Build Settings와 Editor 도구 경로 갱신 |
+| 제품·개발 씬 | `Scenes/Production`, `Scenes/Development` | Build Settings와 Editor 도구 경로 동시 갱신 |
 
 `CameraMove`, `DragandDrop`, `LiquorShelf`, `RecipeBook`은 Bartending 런타임 하위 모듈로 분류한다. `Tools`는 참조 그래프를 확인한 뒤 소유 영역을 확정한다.
 

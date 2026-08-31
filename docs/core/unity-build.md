@@ -8,9 +8,9 @@
 
 ## 실행 진입점
 
-- 전체 하루 흐름: `Assets/MainMenuScene.unity`
-- 주문·제조 단독 확인: `Assets/BusinessScene.unity`
-- 휴식 UI 단독 확인: `Assets/RestScene/RestScene.unity`
+- 전체 하루 흐름: `Assets/_Project/Scenes/Production/MainMenuScene.unity`
+- 주문·제조 단독 확인: `Assets/_Project/Scenes/Production/BusinessScene.unity`
+- 휴식 UI 단독 확인: `Assets/_Project/Scenes/Production/RestScene.unity`
 - `CoreScene`은 `CoreSceneAutoLoader`가 추가 방식으로 불러오므로 일반적으로 직접 실행할 필요가 없습니다.
 
 ## 품질 검증 메뉴
