@@ -85,6 +85,7 @@ Assets/
 | `Assets/Editor/Data/Planning` | `Features/Bartending/Content/Source/Planning` | 사람이 수정하는 기획 CSV 원본 |
 | `Assets/Editor/Data/CustomerDialogue` | `Features/Business/Content/Source/CustomerDialogue` | 사람이 수정하는 주문 대사 CSV 원본 |
 | 제품·개발 씬 | `Scenes/Production`, `Scenes/Development` | Build Settings와 Editor 도구 경로 동시 갱신 |
+| `Assets/Settings` | `_Project/Settings` | URP·Renderer2D·씬 템플릿 설정 에셋 |
 
 `CameraMove`, `DragandDrop`, `LiquorShelf`, `RecipeBook`은 Bartending 런타임 하위 모듈로 분류한다. `Tools`는 참조 그래프를 확인한 뒤 소유 영역을 확정한다.
 
