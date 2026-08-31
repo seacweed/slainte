@@ -7,7 +7,7 @@
 
 프로젝트 전용 코드와 콘텐츠를 기능별로 모으고, 폴더 위치가 아니라 책임과 의존 방향으로 소유 영역을 구분한다.
 
-1차 이동에서는 동작, 네임스페이스, 직렬화 데이터, 어셈블리 경계를 변경하지 않는다. 물리적 이동이 안정된 뒤 코드 리팩토링과 `.asmdef` 도입을 별도 단계로 수행한다.
+물리적 이동에서는 동작과 직렬화 데이터를 변경하지 않는다. 이동에 필수인 경로 상수 수정과 검증기는 같은 원자적 커밋에 포함하고, 동작·네임스페이스·어셈블리 변경은 별도 단계로 수행한다.
 
 ## 이번 브랜치 결과
 
@@ -23,13 +23,18 @@
 - `Slainte.Shared.Tests.EditMode` 테스트 어셈블리와 공용 계약 테스트 3개 추가
 - `Assets/RestScene` 잔여 에셋을 Rest의 `Art`, `Prefabs`, `Content/Legacy`로 통합
 - 팀 소유 `MetaballFluid`를 Bartending의 `Infrastructure`로 통합하고 경로 검증기 추가
+- Bartending 병·잔·도구 아트를 `Features/Bartending/Art`로 통합
+- Bartending 전용 장비·상호작용·주류 선반·레시피 UI Prefab 13개를 `Features/Bartending/Prefabs`로 통합
+- Bartending 전용 병·칵테일·장비·주류 선반·레시피 Sprite 114개를 역할별로 통합
+- Bartending 에디터의 하드코딩 자산 경로를 `BartendingAssetPaths`로 통합하고 구조 검증기를 추가
 
 남겨둔 범위:
 
 - 직렬화 타입 마이그레이션이 필요한 나머지 전역 네임스페이스 변경
 - 기능 간 순환 의존을 먼저 제거해야 하는 Core·Business·Bartending·Rest·Narrative `.asmdef`
 - 씬과 Prefab에 `Assembly-CSharp::타입명`으로 기록된 Shared UI 컴포넌트의 어셈블리 이동
-- `Resources`, `StreamingAssets`, `Data`, `Art`, `Prefabs`의 광범위한 이동과 Source/Generated/Runtime 세분화
+- `Resources`, `StreamingAssets`, `Data`의 Source/Generated/Runtime 세분화
+- 루트 `Prefabs`, `Sprites`에 남은 Business·Core·공용 자산의 소유 영역 확정과 후속 이동
 
 현재 검증 결과:
 
@@ -37,6 +42,7 @@
 - Shared EditMode 테스트: 3개 통과, 실패·건너뜀 0개
 - TV/Rest 배치 검증 및 Business 순수 규칙 배치 검증: 통과
 - Rest 최종 아트 검증 및 MetaballFluid 인프라 에셋 검증: 통과
+- Bartending Art·Sprite 114개·Prefab 13개 로드 및 Prefab Missing Script 검증: 통과
 - BusinessShift 배치 검증: 검증기 기대 영업시간 180초와 현재 설정 300초 불일치로 중단
 - BartendingSystem 배치 검증: 검증기 기대 액체 알파 1.0과 현재 구현 0.2 불일치로 중단
 - Unity GUI와 전체 플레이 흐름 수동 검증: 별도 확인 필요
@@ -47,7 +53,7 @@
 - Runtime 빌드: 오류 0개, 기존 `CS0649` 경고 8개
 - Editor 빌드: 오류 0개, 기존 `CS0649` 경고 8개
 - 제품 씬: `MainMenuScene`, `CoreScene`, `BusinessScene`, `RestScene`
-- 프로젝트 자체 `.asmdef`: 없음
+- 프로젝트 자체 `.asmdef`: `Slainte.Shared.Input`, `Slainte.Shared.Lifecycle`, `Slainte.Shared.Editor`, `Slainte.Shared.Tests.EditMode`
 - `Resources`와 `StreamingAssets`를 사용하는 런타임 경로가 존재함
 
 ## 목표 폴더
@@ -109,8 +115,11 @@ Assets/
 | `Assets/Scripts/DragandDrop` | `Features/Bartending/Runtime/Interaction` | 병·도구 배치와 UI 드래그 |
 | `Assets/Scripts/LiquorShelf` | `Features/Bartending/Runtime/LiquorShelf` | 재고·술장·배달 상점 |
 | `Assets/Scripts/RecipeBook` | `Features/Bartending/Runtime/RecipeBook` | 제조 레시피 탐색 UI |
-| `Assets/MetaballFluid`의 에셋 | `Features/Bartending/Infrastructure/MetaballFluid` | 팀 소유 액체 표현 에셋(셰이더·머티리얼·프리팙·물리) |
+| `Assets/MetaballFluid`의 에셋 | `Features/Bartending/Infrastructure/MetaballFluid` | 팀 소유 액체 표현 에셋(셰이더·머티리얼·Prefab·물리) |
 | `Assets/MetaballFluid`의 스크립트 | `Features/Bartending/Runtime/Liquid`, `Runtime/Interaction` | 풀링·혼합·회수·렌더링 실행 책임을 Bartending 런타임으로 통합 |
+| `Assets/Art/Bartending` | `Features/Bartending/Art` | 병·잔·도구 캐비닛·충돌 기준 이미지 통합 완료 |
+| Bartending 전용 루트 Prefab | `Features/Bartending/Prefabs` | 장비·상호작용·LiquorShelf·RecipeBook 기준으로 통합 완료 |
+| `Assets/Sprites/bottles`, `cocktails`, Bartending UI Sprite | `Features/Bartending/Art/Sprites` | 병·칵테일·장비·LiquorShelf·RecipeBook 기준으로 통합 완료 |
 | `Assets/CoreScene/Scripts`의 앱 흐름 | `Core/Runtime/Flow` | 씬 전환과 하루 진행 |
 | `Assets/CoreScene/Scripts`의 저장 코드, `Assets/Scripts/GameProgress.cs` | `Core/Runtime/Persistence` | 저장 데이터와 런타임 진행 상태 |
 | `Assets/CoreScene/Scripts`의 컷씬·정산 코드 | `Core/Runtime/Cutscene`, `Core/Runtime/Settlement` | 전역 화면 흐름 |
@@ -137,7 +146,7 @@ Assets/
 6. Bartending 코드, 도구, 콘텐츠를 통합한다.
 7. Core와 제품 씬을 마지막에 이동한다.
 
-각 기능 이동은 독립 커밋으로 유지한다. 이동 커밋에서는 포맷팅과 동작 변경을 하지 않는다.
+각 기능 이동은 독립 커밋으로 유지한다. 이동 커밋에서는 포맷팅과 동작 변경을 하지 않으며, 이동으로 깨지는 에디터 경로만 함께 갱신한다.
 
 ### 2. 데이터 경계 정리
 
@@ -177,8 +186,9 @@ Assets/
 
 ## Git과 기여 이력
 
-- 이동만 수행한 커밋과 실제 코드 변경 커밋을 분리한다.
-- 이동 커밋에서는 파일 내용과 포맷을 바꾸지 않는다.
+- 자산 이동과 그 이동에 필수인 경로 수정은 하나의 원자적 커밋으로 유지한다.
+- 동작·설계 변경은 자산 이동 커밋과 분리한다.
+- 이동 커밋에서는 무관한 파일 내용과 포맷을 바꾸지 않는다.
 - 공동 구현은 커밋 또는 PR 설명에 기록한다.
 - 대규모 기계적 변경은 필요할 경우 `.git-blame-ignore-revs` 후보로 기록한다.
 - 기존 팀원의 작성 이력을 단순 이동 커밋의 신규 구현으로 간주하지 않는다.
