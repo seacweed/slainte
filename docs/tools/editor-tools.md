@@ -101,13 +101,13 @@ CSV 작성 방법은 [../narrative/episode-csv-guide.md](../narrative/episode-cs
 
 ## 캐릭터 표정 스프라이트 임포터
 
-`Assets/Sprites/characters/{key}/` 폴더 안의 png 파일들을 `CharacterData.expressions`에 자동으로 채우는 툴입니다.
+`Assets/_Project/Features/Business/Art/Sprites/Characters/{key}/` 폴더 안의 png 파일들을 `CharacterData.expressions`에 자동으로 채우는 툴입니다.
 
 ### 사용 방법
 
 1. Project 창에서 대상 `CharacterData` 에셋 선택 (예: `CharacterData_f54.asset`)
 2. Unity 메뉴 → **Slainte > 데이터 > 캐릭터 표정 스프라이트 폴더 임포트**
-3. 폴더 선택창에서 스프라이트 폴더 지정 (예: `Assets/Sprites/characters/f54`)
+3. 폴더 선택창에서 스프라이트 폴더 지정 (예: `Assets/_Project/Features/Business/Art/Sprites/Characters/f54`)
 
 ### 동작 규칙
 
@@ -127,7 +127,7 @@ CSV 작성 방법은 [../narrative/episode-csv-guide.md](../narrative/episode-cs
 
 ### 사용 방법
 
-1. Project 창에서 대상 폴더(들) 선택 (예: `Assets/Sprites/characters/eliot`)
+1. Project 창에서 대상 폴더(들) 선택 (예: `Assets/_Project/Features/Business/Art/Sprites/Characters/eliot`)
 2. Unity 메뉴 → **Slainte > 데이터 > 캐릭터 스프라이트 접두어 제거**
 
 ### 동작 규칙

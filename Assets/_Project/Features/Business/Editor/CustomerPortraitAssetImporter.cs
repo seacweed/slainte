@@ -31,7 +31,7 @@ namespace Slainte.EditorTools
     public static class CustomerPortraitAssetImporter
     {
         private const string DestinationRoot =
-            "Assets/Sprites/customers/imported_planning";
+            BusinessAssetPaths.CustomerSpriteRoot + "imported_planning";
 
         private static readonly Dictionary<string, string> CharacterKeyAliases =
             new(StringComparer.OrdinalIgnoreCase)
