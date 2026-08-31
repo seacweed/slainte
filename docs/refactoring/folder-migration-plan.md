@@ -59,7 +59,8 @@ Assets/
 | `Assets/Scripts/Input`의 인터페이스 | `Shared/Runtime/Input` | UI·게임플레이 공용 계약 |
 | `Assets/Scripts/Input/InputRouter.cs` | `Features/Business/Runtime/Input` | BusinessScene의 입력 조립기 |
 | `Assets/Scripts/UI/Notifications` | `Features/Business/Runtime/UI/Notifications` | BusinessScene의 호감도 알림 표시 |
-| `Assets/Scripts/Narrative` | `Features/Narrative/Runtime` | 이전 베이크 경로와 제품 경로 분리 필요 |
+| `Assets/Scripts/Narrative/Data` | `Features/Narrative/Runtime/Data` | Narrative ScriptableObject 타입 |
+| `Assets/Scripts/Narrative/Runtime` | `Features/Narrative/Runtime/Baked` | 베이크 JSON 호환 실행 경로 |
 | `Assets/Editor/Narrative` | `Features/Narrative/Editor` | USS·Template 하드코딩 경로 동시 수정 |
 | `Assets/RestScene/Scripts`, `Assets/Scripts/TV` | `Features/Rest/Runtime` | TV는 Rest 수명에 포함 |
 | `Assets/Scripts/Business` | `Features/Business/Runtime` | 주문 세션과 영업 조립 담당 |
