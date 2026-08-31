@@ -37,7 +37,7 @@ namespace Slainte.EditorTools
     public static class CustomerDialogueCsvImporter
     {
         public const string SourceCsvAssetPath =
-            "Assets/Editor/Data/CustomerDialogue/customer_order_dialogue.csv";
+            "Assets/_Project/Features/Business/Content/Source/CustomerDialogue/customer_order_dialogue.csv";
 
         private const string OrderFolder = CustomerPlanningCsvImporter.OrderFolder;
         private const string VisitFolder = CustomerPlanningCsvImporter.VisitFolder;

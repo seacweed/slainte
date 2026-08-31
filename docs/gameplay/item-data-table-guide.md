@@ -6,7 +6,7 @@
 
 - 아이템 CSV: `Data_slainte.csv - 아이템.csv`
 - 레시피 CSV: `Data_slainte.csv - 레시피.csv`
-- 배합 CSV: `Assets/Editor/Data/slainte_recipe_ingredients.csv`
+- 배합 CSV: `Assets/_Project/Features/Bartending/Content/Source/slainte_recipe_ingredients.csv`
 - 임포트 메뉴: `Slainte > 데이터 > 기획 CSV 임포트`
 - 다운로드 폴더 기본 파일 즉시 반영: `Slainte > 데이터 > 다운로드 폴더 CSV 바로 임포트`
 - 검증 메뉴: `Slainte > 품질 검증 > 기획 CSV 에셋 검증`

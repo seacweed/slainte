@@ -99,7 +99,8 @@ namespace Slainte.EditorTools
         public const string ShelfOutputFolder = "Assets/Data/LiquorBottle/Planning";
         public const string RecipeOutputFolder = "Assets/Resources/Recipes/Planning";
         public const string VariantOutputFolder = "Assets/Resources/Recipes/Planning/Variants";
-        public const string PlanningCsvFolder = "Assets/Editor/Data/Planning";
+        public const string PlanningCsvFolder =
+            "Assets/_Project/Features/Bartending/Content/Source/Planning";
         public const string LegacyItemFolder = "Assets/Data/Legacy/PlanningItems";
         public const string LegacyBottleFolder = "Assets/Data/Legacy/PlanningBottles";
         public const string LiquorBottleCatalogPath = "Assets/Data/LiquorBottle/Liquor Bottle Catalog.asset";
