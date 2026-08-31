@@ -26,10 +26,13 @@ namespace Slainte.EditorTools
                 CoreAssetPaths.CutsceneContentRoot,
                 3,
                 "Core");
+            ValidateProjectSetting(CoreAssetPaths.DefaultVolumeProfile);
+            ValidateProjectSetting(CoreAssetPaths.InputActions);
+            ValidateProjectSetting(CoreAssetPaths.UniversalRenderPipelineGlobalSettings);
 
             Debug.Log(
-                "[CoreAssetStructureValidator] PASS: cutscene and settlement "
-                + "assets resolved from the Core area.");
+                "[CoreAssetStructureValidator] PASS: cutscene, settlement and project "
+                + "settings assets resolved from their owned areas.");
         }
 
         private static void ValidateSpriteTree(string path, int expectedCount)
@@ -67,6 +70,12 @@ namespace Slainte.EditorTools
                 throw new InvalidOperationException(
                     $"Core prefab has {missingScriptCount} missing script(s): {path}");
             }
+        }
+
+        private static void ValidateProjectSetting(string path)
+        {
+            if (AssetDatabase.LoadMainAssetAtPath(path) == null)
+                throw new InvalidOperationException("Project setting asset is missing: " + path);
         }
 
     }

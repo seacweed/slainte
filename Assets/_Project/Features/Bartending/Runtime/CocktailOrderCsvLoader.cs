@@ -13,12 +13,7 @@ namespace Slainte.Bartending
             string dataFolder = ProjectStreamingAssetPaths.Bartending,
             string orderTemplatesFileName = ProjectStreamingAssetPaths.BartendingOrderTemplates)
         {
-            if (string.IsNullOrWhiteSpace(dataFolder)
-                || string.Equals(dataFolder, "Data", StringComparison.OrdinalIgnoreCase))
-            {
-                dataFolder = ProjectStreamingAssetPaths.Bartending;
-            }
-
+            dataFolder = ProjectStreamingAssetPaths.ResolveBartendingDirectory(dataFolder);
             string dataPath = Path.Combine(Application.streamingAssetsPath, dataFolder);
             string orderTemplatesPath = Path.Combine(dataPath, orderTemplatesFileName);
             return LoadTemplatesFromFile(orderTemplatesPath);

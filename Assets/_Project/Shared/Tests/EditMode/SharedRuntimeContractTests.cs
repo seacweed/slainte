@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using Slainte.Content;
 using Slainte.Shared.Input;
 using Slainte.Shared.Lifecycle;
 using UnityEngine;
@@ -21,6 +22,26 @@ namespace Slainte.Shared.Tests
         {
             Assert.That((int)CameraDirection.DrawerOpen, Is.EqualTo(0));
             Assert.That((int)CameraDirection.DrawerClose, Is.EqualTo(1));
+        }
+
+        [TestCase(null)]
+        [TestCase("")]
+        [TestCase("Data")]
+        [TestCase("data")]
+        public void StreamingAssetPath_LegacyBartendingDirectoryUsesOwnedRoot(
+            string configuredDirectory)
+        {
+            Assert.That(
+                ProjectStreamingAssetPaths.ResolveBartendingDirectory(configuredDirectory),
+                Is.EqualTo(ProjectStreamingAssetPaths.Bartending));
+        }
+
+        [Test]
+        public void StreamingAssetPath_CustomDirectoryIsPreserved()
+        {
+            Assert.That(
+                ProjectStreamingAssetPaths.ResolveBartendingDirectory("PlaytestData"),
+                Is.EqualTo("PlaytestData"));
         }
 
         [Test]

@@ -14,12 +14,7 @@ namespace Slainte.Bartending
             string recipesFileName = ProjectStreamingAssetPaths.BartendingRecipes,
             string recipeIngredientsFileName = ProjectStreamingAssetPaths.BartendingRecipeIngredients)
         {
-            if (string.IsNullOrWhiteSpace(dataFolder)
-                || string.Equals(dataFolder, "Data", System.StringComparison.OrdinalIgnoreCase))
-            {
-                dataFolder = ProjectStreamingAssetPaths.Bartending;
-            }
-
+            dataFolder = ProjectStreamingAssetPaths.ResolveBartendingDirectory(dataFolder);
             string dataPath = Path.Combine(Application.streamingAssetsPath, dataFolder);
             string recipesPath = Path.Combine(dataPath, recipesFileName);
             string recipeIngredientsPath = Path.Combine(dataPath, recipeIngredientsFileName);

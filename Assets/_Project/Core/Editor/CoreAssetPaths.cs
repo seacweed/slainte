@@ -11,5 +11,13 @@ namespace Slainte.EditorTools
             CoreRoot + "/Art/Sprites/Settlement/";
         public const string SettlementLinePrefab =
             CoreRoot + "/Prefabs/Settlement/SettlementLine.prefab";
+
+        public const string ProjectSettingsRoot = "Assets/_Project/Settings/";
+        public const string DefaultVolumeProfile =
+            ProjectSettingsRoot + "DefaultVolumeProfile.asset";
+        public const string InputActions =
+            ProjectSettingsRoot + "InputSystem_Actions.inputactions";
+        public const string UniversalRenderPipelineGlobalSettings =
+            ProjectSettingsRoot + "UniversalRenderPipelineGlobalSettings.asset";
     }
 }

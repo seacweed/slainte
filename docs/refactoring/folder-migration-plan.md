@@ -32,6 +32,8 @@
 - `Assets/Resources`를 `Bartending`, `Business`, `Core`, `Narrative`, `Rest` 런타임 경계로 재구성
 - `Assets/StreamingAssets`를 `Bartending`, `Narrative` 런타임 데이터 경계로 재구성
 - Resources와 StreamingAssets 경로를 공통 상수로 통합하고 통합 구조 검증기를 추가
+- 루트 렌더링·입력 설정 에셋을 `_Project/Settings`로 통합
+- Unity 비의존 콘텐츠 경로를 `Slainte.Shared.Content` 어셈블리와 계약 테스트로 분리
 
 남겨둔 범위:
 
@@ -43,7 +45,7 @@
 
 - Unity 배치 재임포트와 프로젝트 통합 에셋 검증: 통과
 - 전체 C# 빌드: 오류 0개, 기준선과 동일한 `CS0649` 경고 8개
-- Shared EditMode 테스트: 3개 통과, 실패·건너뜀 0개
+- Shared EditMode 테스트: 8개 통과, 실패·건너뜀 0개
 - TV/Rest 배치 검증 및 Business 순수 규칙 배치 검증: 통과
 - Rest 최종 아트 검증 및 MetaballFluid 인프라 에셋 검증: 통과
 - Bartending Art·Sprite 114개·Prefab 13개 로드 및 Prefab Missing Script 검증: 통과
@@ -57,7 +59,7 @@
 - Runtime 빌드: 오류 0개, 기존 `CS0649` 경고 8개
 - Editor 빌드: 오류 0개, 기존 `CS0649` 경고 8개
 - 제품 씬: `MainMenuScene`, `CoreScene`, `BusinessScene`, `RestScene`
-- 프로젝트 자체 `.asmdef`: `Slainte.Shared.Input`, `Slainte.Shared.Lifecycle`, `Slainte.Shared.Editor`, `Slainte.Shared.Tests.EditMode`
+- 프로젝트 자체 `.asmdef`: `Slainte.Shared.Content`, `Slainte.Shared.Input`, `Slainte.Shared.Lifecycle`, `Slainte.Shared.Editor`, `Slainte.Shared.Tests.EditMode`
 - `Resources`와 `StreamingAssets`를 사용하는 런타임 경로가 존재함
 
 ## 목표 폴더

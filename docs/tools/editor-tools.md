@@ -1,7 +1,7 @@
 # 에디터 툴
 
 Unity 에디터에서 사용할 수 있는 커스텀 툴 목록입니다.  
-모든 툴은 `Assets/Editor/` 에 위치합니다.
+툴은 `Assets/_Project/Core/Editor/`, `Shared/Editor/`, `Features/*/Editor/`에 소유 영역별로 나뉘어 있습니다.
 
 | 툴 | 파일 | 메뉴 경로 |
 |---|---|---|

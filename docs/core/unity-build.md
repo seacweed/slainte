@@ -19,4 +19,4 @@
 - `Slainte > 품질 검증 > 손님 풀 검증`
 - 바텐딩 세로 절단·에셋 검증 메뉴는 `Assets/_Project/Features/Bartending/Editor/BartendingSystemValidator.cs`와 `BusinessFlowSceneSetup.cs`를 기준으로 확인합니다.
 
-현재 `.asmdef`와 Unity Test Framework 테스트 파일은 없습니다. IDE 컴파일 성공만으로 씬 직렬화, Resources 참조, 실제 물리·입력 동작을 검증할 수 없으므로 Unity 플레이 검증이 필요합니다.
+현재 공용 런타임에는 `Slainte.Shared.Content`, `Slainte.Shared.Input`, `Slainte.Shared.Lifecycle` 어셈블리가 있고, 에디터 도구와 EditMode 계약 테스트는 `Slainte.Shared.Editor`, `Slainte.Shared.Tests.EditMode`로 분리되어 있습니다. 기능 전체 어셈블리는 Business·Rest(TV) 등의 상호 의존을 해소한 뒤 도입합니다. IDE 컴파일과 EditMode 테스트만으로 씬 직렬화, 실제 물리·입력 동작까지 검증되지는 않으므로 Unity 플레이 검증이 필요합니다.

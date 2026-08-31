@@ -57,5 +57,19 @@ namespace Slainte.Content
         public const string BartendingRecipes = "recipes.csv";
 
         public const string Narrative = "Narrative";
+
+        public static string ResolveBartendingDirectory(string configuredDirectory)
+        {
+            if (string.IsNullOrWhiteSpace(configuredDirectory)
+                || string.Equals(
+                    configuredDirectory,
+                    "Data",
+                    System.StringComparison.OrdinalIgnoreCase))
+            {
+                return Bartending;
+            }
+
+            return configuredDirectory;
+        }
     }
 }

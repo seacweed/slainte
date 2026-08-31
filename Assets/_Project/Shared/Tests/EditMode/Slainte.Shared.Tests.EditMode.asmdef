@@ -2,6 +2,7 @@
     "name": "Slainte.Shared.Tests.EditMode",
     "rootNamespace": "Slainte.Shared.Tests",
     "references": [
+        "Slainte.Shared.Content",
         "Slainte.Shared.Input",
         "Slainte.Shared.Lifecycle"
     ],

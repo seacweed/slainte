@@ -182,7 +182,7 @@ ItemDef
 
 ## 10. 알려진 구조적 부채
 
-- 자동 테스트와 `.asmdef` 경계가 없다.
+- 공용 계약에는 EditMode 테스트와 `.asmdef` 경계가 있지만, 기능 간 상호 의존 때문에 Core·Business·Bartending·Narrative·Rest 경계는 아직 단일 기본 어셈블리에 남아 있다.
 - 저장이 비원자적이고 정확한 실행 위치를 저장하지 않는다.
 - 제조용 `ItemDef`, 술장용 `LiquorBottleDef`, 상점용 `ItemData`가 분리되어 있다.
 - 다수 시스템이 문자열 키와 `Resources.Load`에 의존한다.
