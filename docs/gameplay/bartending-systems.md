@@ -143,7 +143,7 @@ MetaballFluid(아래 절)는 순수 시각 레이어이고, 판정에 쓰이는 
 
 ## 레시피 에셋 (`CocktailRecipeDataLoader.cs`)
 
-`CocktailRecipeDataLoader`는 기존 샘플 CSV와 `Resources/Recipes`의 `CocktailRecipeDef`를 합쳐 읽는다. 기존 QA 주문을 유지하면서 기획 CSV로 가져온 레시피를 추가하기 위한 호환 계층이다.
+`CocktailRecipeDataLoader`는 `Assets/StreamingAssets/Bartending/`의 기존 샘플 CSV와 `Resources/Bartending/Recipes`의 `CocktailRecipeDef`를 합쳐 읽는다. 기존 QA 주문을 유지하면서 기획 CSV로 가져온 레시피를 추가하기 위한 호환 계층이다.
 
 - 기본 레시피 18종 중 배합이 있는 15종만 주문 가능
 - 기본 정답은 `Good`

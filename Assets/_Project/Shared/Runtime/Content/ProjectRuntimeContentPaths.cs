@@ -45,4 +45,17 @@ namespace Slainte.Content
         public const string CoreBgm = CoreAudio + "/BGM";
         public const string CoreSfx = CoreAudio + "/SFX";
     }
+
+    public static class ProjectStreamingAssetPaths
+    {
+        public const string AssetRoot = "Assets/StreamingAssets/";
+
+        public const string Bartending = "Bartending";
+        public const string BartendingIngredients = "ingredients.csv";
+        public const string BartendingOrderTemplates = "order_templates.csv";
+        public const string BartendingRecipeIngredients = "recipe_ingredients.csv";
+        public const string BartendingRecipes = "recipes.csv";
+
+        public const string Narrative = "Narrative";
+    }
 }

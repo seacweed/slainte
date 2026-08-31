@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using NarrativeFlow.Runtime;
+using Slainte.Content;
 
 namespace NarrativeFlow
 {
@@ -40,7 +41,10 @@ namespace NarrativeFlow
         public void LoadGraphData(string graphName)
         {
             string fileName = $"{graphName}_Baked.json";
-            string filePath = Path.Combine(Application.streamingAssetsPath, "NarrativeData", fileName);
+            string filePath = Path.Combine(
+                Application.streamingAssetsPath,
+                ProjectStreamingAssetPaths.Narrative,
+                fileName);
 
             if (File.Exists(filePath))
             {

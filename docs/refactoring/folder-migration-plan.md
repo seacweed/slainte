@@ -27,18 +27,22 @@
 - Bartending 전용 장비·상호작용·주류 선반·레시피 UI Prefab 13개를 `Features/Bartending/Prefabs`로 통합
 - Bartending 전용 병·칵테일·장비·주류 선반·레시피 Sprite 114개를 역할별로 통합
 - Bartending 에디터의 하드코딩 자산 경로를 `BartendingAssetPaths`로 통합하고 구조 검증기를 추가
+- 루트 Delivery·MainMenu·Cutscene·Settlement·Conversation 자산을 실제 소유 기능으로 통합
+- `Assets/Data`를 각 기능의 `Content/Source`, `Content/Generated`, `Content/Legacy`로 분리
+- `Assets/Resources`를 `Bartending`, `Business`, `Core`, `Narrative`, `Rest` 런타임 경계로 재구성
+- `Assets/StreamingAssets`를 `Bartending`, `Narrative` 런타임 데이터 경계로 재구성
+- Resources와 StreamingAssets 경로를 공통 상수로 통합하고 통합 구조 검증기를 추가
 
 남겨둔 범위:
 
 - 직렬화 타입 마이그레이션이 필요한 나머지 전역 네임스페이스 변경
 - 기능 간 순환 의존을 먼저 제거해야 하는 Core·Business·Bartending·Rest·Narrative `.asmdef`
 - 씬과 Prefab에 `Assembly-CSharp::타입명`으로 기록된 Shared UI 컴포넌트의 어셈블리 이동
-- `Resources`, `StreamingAssets`, `Data`의 Source/Generated/Runtime 세분화
-- 루트 `Prefabs`, `Sprites`에 남은 Business·Core·공용 자산의 소유 영역 확정과 후속 이동
 
 현재 검증 결과:
 
-- Unity 배치 재임포트 및 Runtime·Editor 빌드: 오류 0개, 기준선과 동일한 `CS0649` 경고 8개
+- Unity 배치 재임포트와 프로젝트 통합 에셋 검증: 통과
+- 전체 C# 빌드: 오류 0개, 기준선과 동일한 `CS0649` 경고 8개
 - Shared EditMode 테스트: 3개 통과, 실패·건너뜀 0개
 - TV/Rest 배치 검증 및 Business 순수 규칙 배치 검증: 통과
 - Rest 최종 아트 검증 및 MetaballFluid 인프라 에셋 검증: 통과
@@ -81,12 +85,19 @@ Assets/
 │  │  └─ Templates/
 │  └─ Settings/
 ├─ Resources/
+│  ├─ Bartending/
+│  ├─ Business/
+│  ├─ Core/
+│  ├─ Narrative/
+│  └─ Rest/
 ├─ StreamingAssets/
+│  ├─ Bartending/
+│  └─ Narrative/
 ├─ ThirdParty/
 └─ TextMesh Pro/
 ```
 
-`Resources`와 `StreamingAssets`는 데이터 원본과 생성물의 관계를 확정하기 전까지 현재 위치를 유지한다.
+`Resources`와 `StreamingAssets`는 Unity의 특수 폴더 경계를 유지하되, 내부를 기능 소유권별로 나눈다. 사람이 직접 수정하는 원본은 가능한 한 `_Project/Features/*/Content/Source`에 두고, 런타임이 직접 읽어야 하는 결과만 특수 폴더에 둔다.
 
 ## 소유 영역 후보
 
@@ -131,6 +142,7 @@ Assets/
 | `Assets/Data/Cutscene` | `Core/Content/Cutscenes` | 전역 컷신 데이터 소유 위치 통합 완료 |
 | `Assets/Data/RecipeBook`, `UpgradeData` | `Features/Rest/Content/Generated` | 휴식 상점용 해금·업그레이드 데이터 통합 완료 |
 | `Assets/Resources`의 타입별 폴더 | `Resources/Bartending`, `Business`, `Narrative`, `Rest`, `Core` | Unity `Resources` 경계는 유지하고 기능 소유권별 하위 경로로 통합 완료 |
+| `Assets/StreamingAssets/Data`, `NarrativeData` | `StreamingAssets/Bartending`, `Narrative` | CSV와 베이크 JSON을 기능별 런타임 데이터 경계로 통합 완료 |
 | `Assets/CoreScene/Scripts`의 앱 흐름 | `Core/Runtime/Flow` | 씬 전환과 하루 진행 |
 | `Assets/CoreScene/Scripts`의 저장 코드, `Assets/Scripts/GameProgress.cs` | `Core/Runtime/Persistence` | 저장 데이터와 런타임 진행 상태 |
 | `Assets/CoreScene/Scripts`의 컷씬·정산 코드 | `Core/Runtime/Cutscene`, `Core/Runtime/Settlement` | 전역 화면 흐름 |

@@ -160,8 +160,8 @@ public string day1ForcedEpisodeId;    // 기본값 "FathersNote"
 
 **`static HasBoardPhoto(EpisodeData ep)`**
 - `ep.iconNameBoard`가 있으면 그 이름으로, 없으면 `ep.episodeId.Replace("_", "-")`를 기본 이름으로 사용
-- `Resources/Sprites/{baseName}-idle` 스프라이트 로드 성공 여부로 표시 가능 여부 판단
-- 보드에 표시하려면 `Resources/Sprites/`에 `{baseName}-idle/hover/selected` 3종 스프라이트 필요
+- `Resources/Rest/Sprites/EpisodeBoard/{baseName}-idle` 스프라이트 로드 성공 여부로 표시 가능 여부 판단
+- 보드에 표시하려면 `Resources/Rest/Sprites/EpisodeBoard/`에 `{baseName}-idle/hover/selected` 3종 스프라이트 필요
 
 ---
 
@@ -247,7 +247,7 @@ homePanel (재료/업그레이드/레시피북 3버튼)
  └─ recipeBookPanel          — RecipeBookDef 리스트(Vertical Layout Group + ScrollRect)
 ```
 
-**중요: 재료 마스터 데이터는 `ItemData`가 아니라 술장의 `LiquorBottleDef`/`LiquorCategoryDef`를 그대로 사용**. `Resources/Items/`의 `ItemData`는 임시 데이터라 상점이 참조하지 않음(아래 ItemData 섹션 참고). 상점에서 구매한 재료의 잔량(`GameProgress.bottleAmount`, id 키)이 술장(`LiquorShelfUI`/`LiquorBottleSlotUI`)에 표시되는 잔량과 완전히 같은 저장소를 공유하므로 두 화면이 자동으로 동기화된다.
+**중요: 재료 마스터 데이터는 `ItemData`가 아니라 술장의 `LiquorBottleDef`/`LiquorCategoryDef`를 그대로 사용**. `Resources/Bartending/Items/`의 `ItemData`는 임시 데이터라 상점이 참조하지 않음(아래 ItemData 섹션 참고). 상점에서 구매한 재료의 잔량(`GameProgress.bottleAmount`, id 키)이 술장(`LiquorShelfUI`/`LiquorBottleSlotUI`)에 표시되는 잔량과 완전히 같은 저장소를 공유하므로 두 화면이 자동으로 동기화된다.
 
 **핵심 메서드**
 
@@ -372,7 +372,7 @@ public class ItemData : ScriptableObject
 public enum ItemType { Alcohol, Liqueur, NonAlcohol, Powder, Tool, Glass }
 ```
 
-`Resources/Items/`에 187개 에셋 존재하지만 임시 데이터라 위 상점 구현은 참조하지 않음(위 "재료 마스터 데이터" 설명 참고). `Assets/_Project/Features/Rest/Editor/ItemDataImporter.cs`(CSV 임포터)도 함께 미사용 상태로 남아있음.
+`Resources/Bartending/Items/`의 `ItemData` 120개는 임시 데이터라 위 상점 구현은 참조하지 않음(같은 폴더의 제작용 `ItemDef` 18개와 별개). `Assets/_Project/Features/Rest/Editor/ItemDataImporter.cs`(CSV 임포터)도 함께 미사용 상태로 남아있음.
 
 ---
 

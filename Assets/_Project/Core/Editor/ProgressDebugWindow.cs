@@ -153,7 +153,9 @@ namespace Slainte.EditorTools
             EditorGUILayout.LabelField("에피소드 완료 상태", EditorStyles.boldLabel);
             if (episodes.Length == 0)
             {
-                EditorGUILayout.HelpBox("Resources/EpisodeData에서 에피소드를 찾지 못했습니다.", MessageType.Warning);
+                EditorGUILayout.HelpBox(
+                    "Resources/Narrative/Episodes에서 에피소드를 찾지 못했습니다.",
+                    MessageType.Warning);
                 if (GUILayout.Button("목록 새로고침"))
                     RefreshEpisodes();
                 return;

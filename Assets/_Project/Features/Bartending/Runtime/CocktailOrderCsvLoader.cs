@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using Slainte.Content;
 using UnityEngine;
 
 namespace Slainte.Bartending
@@ -9,9 +10,15 @@ namespace Slainte.Bartending
     public static class CocktailOrderCsvLoader
     {
         public static CocktailOrderTemplateCatalog LoadTemplatesFromStreamingAssets(
-            string dataFolder = "Data",
-            string orderTemplatesFileName = "order_templates.csv")
+            string dataFolder = ProjectStreamingAssetPaths.Bartending,
+            string orderTemplatesFileName = ProjectStreamingAssetPaths.BartendingOrderTemplates)
         {
+            if (string.IsNullOrWhiteSpace(dataFolder)
+                || string.Equals(dataFolder, "Data", StringComparison.OrdinalIgnoreCase))
+            {
+                dataFolder = ProjectStreamingAssetPaths.Bartending;
+            }
+
             string dataPath = Path.Combine(Application.streamingAssetsPath, dataFolder);
             string orderTemplatesPath = Path.Combine(dataPath, orderTemplatesFileName);
             return LoadTemplatesFromFile(orderTemplatesPath);

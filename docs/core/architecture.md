@@ -117,7 +117,7 @@ CustomerOrderData
 
 ### 레시피 데이터
 
-`CocktailRecipeDataLoader`는 StreamingAssets의 호환 CSV와 `Resources/Recipes`의 에셋을 합친다. 기본 레시피는 Good 판정, 숨은 변형은 Mid 판정에 사용한다.
+`CocktailRecipeDataLoader`는 `StreamingAssets/Bartending`의 호환 CSV와 `Resources/Bartending/Recipes`의 에셋을 합친다. 기본 레시피는 Good 판정, 숨은 변형은 Mid 판정에 사용한다.
 
 ## 6. 공용 주문 경계
 

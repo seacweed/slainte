@@ -4,7 +4,7 @@
 
 ## 데이터 (`TVBroadcastDatabase.cs`)
 
-`TVBroadcastDatabase`(ScriptableObject, `Resources/TV/TVBroadcastDatabase`)가 `TVBroadcastEntry` 목록을 보관한다.
+`TVBroadcastDatabase`(ScriptableObject, `Resources/Rest/TV/TVBroadcastDatabase`)가 `TVBroadcastEntry` 목록을 보관한다.
 
 ```
 TVBroadcastEntry

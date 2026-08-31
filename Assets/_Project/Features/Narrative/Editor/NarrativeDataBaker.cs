@@ -7,6 +7,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using NarrativeFlow.Runtime;
+using Slainte.Content;
 
 namespace NarrativeFlow.Editor
 {
@@ -65,7 +66,9 @@ namespace NarrativeFlow.Editor
         {
             string json = GenerateFlatJson(graph);
             
-            string dirPath = Path.Combine(Application.dataPath, "StreamingAssets", "NarrativeData");
+            string dirPath = Path.Combine(
+                Application.streamingAssetsPath,
+                ProjectStreamingAssetPaths.Narrative);
             if (!Directory.Exists(dirPath)) Directory.CreateDirectory(dirPath);
             
             string outPath = Path.Combine(dirPath, $"{graph.name}_Baked.json");

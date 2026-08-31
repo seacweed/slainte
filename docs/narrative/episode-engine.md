@@ -50,13 +50,13 @@
 ## 오디오 (`Assets/_Project/Core/Runtime/Audio/`)
 
 `AudioManager` (`MonoSingleton<AudioManager>`). BGM 크로스페이드를 담당합니다:
-- `PlayBgm(string clipName, float fadeDuration)` — `Resources/BGM/{clipName}` 클립을 로드해 재생. 이미 같은 클립이 재생 중이면 무시. 두 `AudioSource`(bgmSourceA/B)를 교대로 사용해 크로스페이드 처리
+- `PlayBgm(string clipName, float fadeDuration)` — `Resources/Core/Audio/BGM/{clipName}` 클립을 로드해 재생. 이미 같은 클립이 재생 중이면 무시. 두 `AudioSource`(bgmSourceA/B)를 교대로 사용해 크로스페이드 처리
 - `StopBgm(float fadeDuration)` — 현재 재생 중인 BGM을 페이드아웃 후 정지
 - Inspector에서 `bgmSourceA` / `bgmSourceB`를 직접 연결하거나, 비워두면 자동 생성
 
 `EpisodeNode` BGM 필드:
 - `bgmCommand: BgmCommand` — `None`(변경 없음, 기본값) / `Play`(재생) / `Stop`(정지)
-- `bgmClipName: string` — `Play`일 때만 사용. 확장자 없는 파일명 (`Resources/BGM/` 기준)
+- `bgmClipName: string` — `Play`일 때만 사용. 확장자 없는 파일명 (`Resources/Core/Audio/BGM/` 기준)
 
 `EpisodeRunner`가 노드 진입 시 `ApplyBgmCommand()`를 호출해 `AudioManager`에 위임합니다.
 
@@ -67,12 +67,12 @@ BGM 클립은 `Assets/Resources/Core/Audio/BGM/` 폴더에 배치해야 합니�
 BGM과 완전히 분리된 채널이다 — BGM은 무한 반복 + 크로스페이드(교체 시 이전 곡이 페이드아웃되며 끊김), SFX는 원샷 재생(반복 없음, 여러 개 겹쳐도 서로 안 끊김, BGM을 전혀 건드리지 않음). SFX를 재생하려고 `bgmCommand`를 같이 쓰면 안 됨 — BGM 크로스페이드가 발동해 기존 BGM이 멈추고 그 클립이 무한 반복되어 버림.
 
 `AudioManager`:
-- `PlaySfx(string clipName, float volume = 1f)` — `Resources/SFX/{clipName}` 클립을 로드해 BGM과 별도인 전용 `AudioSource`(`sfxSource`)에서 `PlayOneShot`으로 재생
+- `PlaySfx(string clipName, float volume = 1f)` — `Resources/Core/Audio/SFX/{clipName}` 클립을 로드해 BGM과 별도인 전용 `AudioSource`(`sfxSource`)에서 `PlayOneShot`으로 재생
 - `sfxSource`는 `bgmSourceA`/`B`와 마찬가지로 Inspector에서 직접 연결하거나 비워두면 자동 생성(단, `loop = false`로 생성됨)
 
 `EpisodeNode` SFX 필드:
 - `sfxCommand: SfxCommand` — `None`(기본값) / `Play`. `Stop`은 없음(원샷은 알아서 끝남)
-- `sfxClipName: string` — `Play`일 때만 사용. 확장자 없는 파일명(`Resources/SFX/` 기준)
+- `sfxClipName: string` — `Play`일 때만 사용. 확장자 없는 파일명(`Resources/Core/Audio/SFX/` 기준)
 
 `EpisodeRunner`가 노드 진입 시 `ApplyBgmCommand()`와 같은 자리에서 `ApplySfxCommand()`도 호출.
 

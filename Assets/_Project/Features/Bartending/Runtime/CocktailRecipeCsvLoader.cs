@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using Slainte.Content;
 using UnityEngine;
 
 namespace Slainte.Bartending
@@ -9,10 +10,16 @@ namespace Slainte.Bartending
     {
         public static CocktailRecipeCatalog LoadFromStreamingAssets(
             ItemDefCatalog itemCatalog,
-            string dataFolder = "Data",
-            string recipesFileName = "recipes.csv",
-            string recipeIngredientsFileName = "recipe_ingredients.csv")
+            string dataFolder = ProjectStreamingAssetPaths.Bartending,
+            string recipesFileName = ProjectStreamingAssetPaths.BartendingRecipes,
+            string recipeIngredientsFileName = ProjectStreamingAssetPaths.BartendingRecipeIngredients)
         {
+            if (string.IsNullOrWhiteSpace(dataFolder)
+                || string.Equals(dataFolder, "Data", System.StringComparison.OrdinalIgnoreCase))
+            {
+                dataFolder = ProjectStreamingAssetPaths.Bartending;
+            }
+
             string dataPath = Path.Combine(Application.streamingAssetsPath, dataFolder);
             string recipesPath = Path.Combine(dataPath, recipesFileName);
             string recipeIngredientsPath = Path.Combine(dataPath, recipeIngredientsFileName);

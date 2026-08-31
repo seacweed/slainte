@@ -24,10 +24,11 @@ namespace Slainte.EditorTools
             RestFeatureAssetStructureValidator.RunBatchValidation();
             Slainte.Editor.BartendingAssetStructureValidator.RunBatchValidation();
             RuntimeResourceStructureValidator.RunBatchValidation();
+            StreamingAssetStructureValidator.RunBatchValidation();
 
             Debug.Log(
                 "[ProjectAssetStructureValidator] PASS: Core, MainMenu, Narrative, "
-                + "Business, Rest, Bartending and runtime Resources are valid.");
+                + "Business, Rest, Bartending, Resources and StreamingAssets are valid.");
         }
     }
 }

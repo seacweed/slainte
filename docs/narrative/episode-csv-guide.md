@@ -326,7 +326,7 @@ celi_apology_paid,150,소란 피워서 미안해 - 셀리
 | `bgmCommand` | BGM 명령 (`none` / `play` / `stop`, 비우면 `none`) | `play` |
 | `bgmClipName` | 재생할 BGM 파일명 (`bgmCommand=play` 일 때만 작성, 확장자 제외) | `bgm_tension` |
 | `sfxCommand` | 효과음 명령 (`none` / `play`, 비우면 `none`) | `play` |
-| `sfxClipName` | 재생할 효과음 파일명 (`sfxCommand=play` 일 때만 작성, 확장자 제외, `Resources/SFX/` 폴더 기준) | `sfx_bell` |
+| `sfxClipName` | 재생할 효과음 파일명 (`sfxCommand=play` 일 때만 작성, 확장자 제외, `Resources/Core/Audio/SFX/` 폴더 기준) | `sfx_bell` |
 | `craftingPaymentEnabled` | 제조 완료 시 가격 지급 여부 (비우면 실제 제조 노드는 `true`) | `true` |
 | `craftingPaymentCurrency` | 지급 통화 (`Money` / `StrangeCoin`, 비우면 `Money`) | `StrangeCoin` |
 | `craftingPaymentMultiplier` | 통화별 레시피 가격에 적용할 양수 배율 (비우거나 잘못된 값이면 `1`) | `2` |

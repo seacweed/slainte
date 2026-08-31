@@ -98,7 +98,7 @@ LiquorShelfPanel  [LiquorShelfUI]  ← shelfPanelRect (우측 슬라이드 대�
 - `IPointerEnterHandler`/`IPointerExitHandler` 구현 → 호버 시 `LiquorBottleInfoCard.Instance.Show(def, amount, rect)` / `Hide()`
 - `IPointerClickHandler` 구현 → 좌클릭 시 `BusinessBartendingBootstrap.TryPlaceBottleFromShelf()` 호출
 - 같은 종류의 병이 이미 테이블에 있거나 재고가 0이거나 빈 슬롯이 없으면 배치하지 않음
-- `LiquorBottleDef.id`와 `Resources/Items` 아래 제작용 `ItemDef.id`가 같아야 실제 병을 생성할 수 있음
+- `LiquorBottleDef.id`와 `Resources/Bartending/Items` 아래 제작용 `ItemDef.id`가 같아야 실제 병을 생성할 수 있음
 - `amountFillImage`(선택, `Image` Type=Filled/Horizontal, 프리팹에 포함)가 연결돼 있으면 `Refresh()`마다 `fillAmount = amount / def.MaxAmount`로 상시 갱신 (호버 무관, 잠금 시 자동 숨김)
 
 ## 잔여량 저장 (GameProgress)

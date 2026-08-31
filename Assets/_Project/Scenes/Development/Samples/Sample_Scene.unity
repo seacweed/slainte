@@ -873,7 +873,7 @@ MonoBehaviour:
   targetGlass: {fileID: 0}
   targetTracker: {fileID: 0}
   autoFindTarget: 1
-  dataFolder: Data
+  dataFolder: Bartending
   recipesFileName: recipes.csv
   recipeIngredientsFileName: recipe_ingredients.csv
   orderTemplatesFileName: order_templates.csv

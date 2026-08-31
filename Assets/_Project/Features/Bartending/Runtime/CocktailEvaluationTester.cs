@@ -11,8 +11,9 @@ namespace Slainte.Bartending
         [SerializeField] private bool autoFindTarget = true;
 
         [Header("레시피·주문 데이터")]
-        [SerializeField] private string dataFolder = "Data";
-        [SerializeField] private string orderTemplatesFileName = "order_templates.csv";
+        [SerializeField] private string dataFolder = ProjectStreamingAssetPaths.Bartending;
+        [SerializeField] private string orderTemplatesFileName =
+            ProjectStreamingAssetPaths.BartendingOrderTemplates;
         [SerializeField] private string itemResourcesPath =
             ProjectResourcePaths.BartendingItems;
         [SerializeField] private ItemDef[] additionalItems;
