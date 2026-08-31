@@ -1,6 +1,6 @@
 # TV 방송 시스템
 
-휴식 화면과 영업 화면에 공통으로 영향을 주는 하루 단위 랜덤 이벤트. `Assets/Scripts/TV/`(데이터·런타임 판정)와 `Assets/RestScene/Scripts/TV*.cs`(휴식 화면 표시)로 나뉜다.
+휴식 화면과 영업 화면에 공통으로 영향을 주는 하루 단위 랜덤 이벤트. 데이터·런타임 판정과 휴식 화면 표시 코드는 `Assets/_Project/Features/Rest/Runtime/TV/`에 함께 둔다.
 
 ## 데이터 (`TVBroadcastDatabase.cs`)
 
@@ -54,7 +54,7 @@ TVBroadcastEntry
 
 ## 관련 파일
 
-- `Assets/Scripts/TV/TVBroadcastDatabase.cs`, `TVBroadcastRuntime.cs`
-- `Assets/RestScene/Scripts/TVRestBootstrap.cs`, `TVSystemController.cs`, `TVUIManager.cs`, `TVTicker.cs`
+- `Assets/_Project/Features/Rest/Runtime/TV/TVBroadcastDatabase.cs`, `TVBroadcastRuntime.cs`
+- `Assets/_Project/Features/Rest/Runtime/TV/TVRestBootstrap.cs`, `TVSystemController.cs`, `TVUIManager.cs`, `TVTicker.cs`
 - `Assets/Scripts/Business/BusinessFlowBootstrap.cs`(영업 시작 시 활성화 호출)
 - `Assets/Scripts/GameProgress.cs`(예보/활성 방송 상태 저장)

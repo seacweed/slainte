@@ -63,7 +63,8 @@ Assets/
 | `Assets/Scripts/Narrative/Runtime` | `Features/Narrative/Runtime/Baked` | 베이크 JSON 호환 실행 경로 |
 | `Assets/Editor/Narrative` | `Features/Narrative/Editor` | USS·Template 하드코딩 경로 동시 수정 |
 | `Assets/Narrative/Graphs` | `Features/Narrative/Content/Graphs` | Narrative Graph 원본 에셋 |
-| `Assets/RestScene/Scripts`, `Assets/Scripts/TV` | `Features/Rest/Runtime` | TV는 Rest 수명에 포함 |
+| `Assets/RestScene/Scripts` | `Features/Rest/Runtime` | RestScene 런타임 코드 |
+| `Assets/Scripts/TV`, `Assets/RestScene/Scripts/TV*.cs` | `Features/Rest/Runtime/TV` | TV 데이터·판정·표시 통합 |
 | `Assets/Scripts/Business` | `Features/Business/Runtime` | 주문 세션과 영업 조립 담당 |
 | `Assets/Scripts/Conversation` | `Features/Business/Runtime/Conversation` | 에피소드 공용 경계 재검토 |
 | `Assets/Scripts/OrderTicket` | `Features/Business/Runtime/OrderTicket` | BusinessScene UI |
