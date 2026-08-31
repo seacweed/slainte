@@ -217,9 +217,12 @@ public class SetupTestSceneMenu
                 gInstController.glassProfile = AnimationCurve.Constant(0f, 1f, 1f);
                 
                 // [실시간 스프라이트 갱신 보완] 씬에 스폰된 GlassInstance의 자식들을 glass_rock 이미지들로 강제 업데이트
-                Sprite s01 = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/UI/glass_rock/glass_rock_01.png");
-                Sprite s02 = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/UI/glass_rock/glass_rock_02.png");
-                Sprite s03 = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/UI/glass_rock/glass_rock_03.png");
+                Sprite s01 = AssetDatabase.LoadAssetAtPath<Sprite>(
+                    BartendingAssetPaths.RockGlassSpriteRoot + "glass_rock_01.png");
+                Sprite s02 = AssetDatabase.LoadAssetAtPath<Sprite>(
+                    BartendingAssetPaths.RockGlassSpriteRoot + "glass_rock_02.png");
+                Sprite s03 = AssetDatabase.LoadAssetAtPath<Sprite>(
+                    BartendingAssetPaths.RockGlassSpriteRoot + "glass_rock_03.png");
 
                 Transform t01 = glassInstance.transform.Find("Sprite_01");
                 if (t01 != null && s01 != null) t01.GetComponent<SpriteRenderer>().sprite = s01;
@@ -354,9 +357,12 @@ public class SetupTestSceneMenu
         so.FindProperty("returnSpeed").floatValue = 0.8f;
         so.ApplyModifiedProperties();
 
-        Sprite s01 = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/UI/beaker/beaker_01.png");
-        Sprite s02 = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/UI/beaker/beaker_02.png");
-        Sprite s03 = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/UI/beaker/beaker_03.png");
+        Sprite s01 = AssetDatabase.LoadAssetAtPath<Sprite>(
+            BartendingAssetPaths.BeakerSpriteRoot + "beaker_01.png");
+        Sprite s02 = AssetDatabase.LoadAssetAtPath<Sprite>(
+            BartendingAssetPaths.BeakerSpriteRoot + "beaker_02.png");
+        Sprite s03 = AssetDatabase.LoadAssetAtPath<Sprite>(
+            BartendingAssetPaths.BeakerSpriteRoot + "beaker_03.png");
 
         GameObject g01 = new GameObject("Sprite_01");
         g01.transform.SetParent(root.transform);
@@ -438,9 +444,12 @@ public class SetupTestSceneMenu
         so.ApplyModifiedProperties();
 
         // glass_rock 스프라이트를 로드하여 정교한 잔 샌드위치 입체감 틀을 조립
-        Sprite s01 = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/UI/glass_rock/glass_rock_01.png");
-        Sprite s02 = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/UI/glass_rock/glass_rock_02.png");
-        Sprite s03 = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Sprites/UI/glass_rock/glass_rock_03.png");
+        Sprite s01 = AssetDatabase.LoadAssetAtPath<Sprite>(
+            BartendingAssetPaths.RockGlassSpriteRoot + "glass_rock_01.png");
+        Sprite s02 = AssetDatabase.LoadAssetAtPath<Sprite>(
+            BartendingAssetPaths.RockGlassSpriteRoot + "glass_rock_02.png");
+        Sprite s03 = AssetDatabase.LoadAssetAtPath<Sprite>(
+            BartendingAssetPaths.RockGlassSpriteRoot + "glass_rock_03.png");
 
         GameObject g01 = new GameObject("Sprite_01");
         g01.transform.SetParent(root.transform);

@@ -24,11 +24,13 @@ namespace Slainte.Editor
             GlassCollisionProfileValidator.ValidateAll();
             JiggerCollisionProfileValidator.ValidateAll();
             ValidateToolCabinetArt();
+            ValidateSpriteCollections();
             ValidatePrefabs();
 
             Debug.Log(
                 "[BartendingAssetStructureValidator] PASS: bottle, glass, tool cabinet, "
-                + "ice, collision-profile and prefab assets resolved from the Bartending feature.");
+                + "ice, sprite collections, collision-profile and prefab assets resolved "
+                + "from the Bartending feature.");
         }
 
         private static void ValidateToolCabinetArt()
@@ -55,6 +57,30 @@ namespace Slainte.Editor
         {
             if (AssetDatabase.LoadAssetAtPath<Sprite>(path) == null)
                 throw new InvalidOperationException("Bartending sprite is missing: " + path);
+        }
+
+        private static void ValidateSpriteCollections()
+        {
+            ValidateSpriteTree(BartendingAssetPaths.BottleSpriteRoot, 49);
+            ValidateSpriteTree(BartendingAssetPaths.CocktailSpriteRoot, 21);
+            ValidateSpriteTree(BartendingAssetPaths.BeakerSpriteRoot, 3);
+            ValidateSpriteTree(BartendingAssetPaths.CobblerShakerSpriteRoot, 4);
+            ValidateSpriteTree(BartendingAssetPaths.RockGlassSpriteRoot, 4);
+            ValidateSpriteTree(BartendingAssetPaths.LiquorShelfSpriteRoot, 21);
+            ValidateSpriteTree(BartendingAssetPaths.RecipeBookSpriteRoot, 12);
+        }
+
+        private static void ValidateSpriteTree(string path, int expectedCount)
+        {
+            string[] guids = AssetDatabase.FindAssets("t:Texture2D", new[] { path });
+            if (guids.Length != expectedCount)
+            {
+                throw new InvalidOperationException(
+                    $"Expected {expectedCount} sprites under {path}, found {guids.Length}.");
+            }
+
+            foreach (string guid in guids)
+                ValidateSprite(AssetDatabase.GUIDToAssetPath(guid));
         }
 
         private static void ValidatePrefabs()
