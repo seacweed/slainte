@@ -1,5 +1,6 @@
 using System;
 using Slainte.Business;
+using Slainte.EditorTools;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -7,8 +8,7 @@ using UnityEngine.SceneManagement;
 
 public static class DeliverySystemValidator
 {
-    private const string BusinessScenePath =
-        "Assets/_Project/Scenes/Production/BusinessScene.unity";
+    private const string BusinessScenePath = ProjectScenePaths.Business;
     private const string RunningKey = "Slainte.DeliverySystemValidator.Running";
     private static double startedAt;
     private static int stage;

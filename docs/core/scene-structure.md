@@ -13,6 +13,8 @@
 
 `CoreSceneAutoLoader`가 플레이 전에 CoreScene을 추가 방식으로 로드한다. 전체 흐름 QA는 `MainMenuScene`, 주문·제조 단독 QA는 `BusinessScene`, 휴식 UI QA는 `RestScene`에서 시작한다.
 
+에디터 도구의 제품·개발 씬 경로는 `Assets/_Project/Shared/Editor/ProjectScenePaths.cs`에서 한곳에 관리한다.
+
 ## 2. CoreScene
 
 ```text

@@ -15,8 +15,7 @@ namespace Slainte.EditorTools
 {
     public static class RestSceneFinalArtInstaller
     {
-        public const string ScenePath =
-            "Assets/_Project/Scenes/Production/RestScene.unity";
+        public const string ScenePath = ProjectScenePaths.Rest;
         public const string DatabasePath = "Assets/Resources/TV/TVBroadcastDatabase.asset";
         public const string TVPrefabPath = "Assets/RestScene/Prefabs/TVSystem.prefab";
         public const string PanelPrefabPath = "Assets/RestScene/Prefabs/TVPanel.prefab";

@@ -13,8 +13,7 @@ namespace Slainte.EditorTools
     /// </summary>
     public sealed class TVSystemTestWindow : EditorWindow
     {
-        private const string ScenePath =
-            "Assets/_Project/Scenes/Production/RestScene.unity";
+        private const string ScenePath = ProjectScenePaths.Rest;
         private const string DatabasePath = "Assets/Resources/TV/TVBroadcastDatabase.asset";
 
         private int selectedIndex;

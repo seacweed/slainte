@@ -1,4 +1,5 @@
 using System;
+using Slainte.EditorTools;
 using UnityEditor;
 using UnityEditor.Events;
 using UnityEditor.SceneManagement;
@@ -8,8 +9,7 @@ using UnityEngine.UI;
 
 public static class DeliveryShopPrefabGenerator
 {
-    private const string RestScenePath =
-        "Assets/_Project/Scenes/Production/RestScene.unity";
+    private const string RestScenePath = ProjectScenePaths.Rest;
     private const string PrefabFolder = "Assets/Prefabs/Business";
     private const string PrefabPath = PrefabFolder + "/DeliveryShopPanel.prefab";
     private const string CatalogPath = "Assets/Resources/Shop/LiquorShopCatalog.asset";

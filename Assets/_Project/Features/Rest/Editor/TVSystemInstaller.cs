@@ -12,8 +12,7 @@ namespace Slainte.EditorTools
 {
     public static class TVSystemInstaller
     {
-        private const string ScenePath =
-            "Assets/_Project/Scenes/Production/RestScene.unity";
+        private const string ScenePath = ProjectScenePaths.Rest;
         private const string DatabasePath = "Assets/Resources/TV/TVBroadcastDatabase.asset";
         private const string PrefabPath = "Assets/RestScene/Prefabs/TVSystem.prefab";
         private const string PanelPrefabPath = "Assets/RestScene/Prefabs/TVPanel.prefab";

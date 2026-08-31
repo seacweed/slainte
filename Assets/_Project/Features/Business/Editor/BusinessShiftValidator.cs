@@ -13,8 +13,7 @@ namespace Slainte.EditorTools
 {
     public static class BusinessShiftValidator
     {
-        private const string BusinessScenePath =
-            "Assets/_Project/Scenes/Production/BusinessScene.unity";
+        private const string BusinessScenePath = ProjectScenePaths.Business;
         private const string SettingsPath = "Assets/Resources/Business/BusinessOrderFlowSettings.asset";
         private const string TicketDatabasePath = "Assets/Data/OrderTicket/OrderTicketDatabase.asset";
         private const string CustomerOrderDatabasePath =

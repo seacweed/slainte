@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Slainte.Business;
+using Slainte.EditorTools;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -344,8 +345,7 @@ public sealed class PlaytestLauncherWindow : EditorWindow
 [InitializeOnLoad]
 internal static class PlaytestLaunchCoordinator
 {
-    private const string StartScenePath =
-        "Assets/_Project/Scenes/Production/RestScene.unity";
+    private const string StartScenePath = ProjectScenePaths.Rest;
     private const string ActiveKey = "Slainte.PlaytestLauncher.Active";
     private const string RequestKey = "Slainte.PlaytestLauncher.Request";
     private const string StageKey = "Slainte.PlaytestLauncher.Stage";

@@ -10,10 +10,8 @@ namespace Slainte.EditorTools
 {
     public static class BusinessCustomerPoolStressTestTools
     {
-        private const string SourceScenePath =
-            "Assets/_Project/Scenes/Production/BusinessScene.unity";
-        private const string StressScenePath =
-            "Assets/_Project/Scenes/Development/BusinessCustomerPoolStress.unity";
+        private const string SourceScenePath = ProjectScenePaths.Business;
+        private const string StressScenePath = ProjectScenePaths.BusinessCustomerPoolStress;
         private const string PlayValidationRunningKey =
             "Slainte.CustomerPoolStress.PlayValidation.Running";
         private static double playValidationStartedAt;
@@ -375,7 +373,7 @@ namespace Slainte.EditorTools
             {
                 EditorUtility.DisplayDialog(
                     "Customer Pool Stress Test",
-                    "Assets/_Project/Scenes/Production/BusinessScene.unity를 찾지 못했습니다.",
+                    $"{ProjectScenePaths.Business}를 찾지 못했습니다.",
                     "확인");
                 return false;
             }

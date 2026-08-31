@@ -2,6 +2,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Slainte.EditorTools;
 
 namespace Slainte.Bartending.EditorTools
 {
@@ -156,8 +157,7 @@ namespace Slainte.Bartending.EditorTools
 
     public static class BartendingSandboxSceneGenerator
     {
-        private const string SandboxScenePath =
-            "Assets/_Project/Scenes/Development/BartendingSandbox.unity";
+        private const string SandboxScenePath = ProjectScenePaths.BartendingSandbox;
 
         [MenuItem("Slainte/Bartending/Create or Open Sandbox Scene")]
         public static void CreateOrOpen()

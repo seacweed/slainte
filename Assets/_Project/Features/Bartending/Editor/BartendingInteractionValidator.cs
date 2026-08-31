@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Slainte.Bartending;
+using Slainte.EditorTools;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -15,8 +16,7 @@ namespace Slainte.Bartending.EditorTools
 {
     public static class BartendingInteractionValidator
     {
-        private const string SandboxScenePath =
-            "Assets/_Project/Scenes/Development/BartendingSandbox.unity";
+        private const string SandboxScenePath = ProjectScenePaths.BartendingSandbox;
         private const string RunningKey = "Slainte.BartendingInteractionValidator.Running";
         private const float TestLiquidVolumeMl = 37.5f;
 
