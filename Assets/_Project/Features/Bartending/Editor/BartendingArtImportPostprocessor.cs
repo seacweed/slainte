@@ -13,10 +13,10 @@ namespace Slainte.Editor
     /// </summary>
     public sealed class BartendingArtImportPostprocessor : AssetPostprocessor
     {
-        public const string BottleRoot = "Assets/Art/Bartending/Bottles/";
-        public const string GlassRoot = "Assets/Art/Bartending/Glasses/";
-        public const string LegacyGlassRoot = "Assets/Art/Bartending/GlassCollisionTests/";
-        public const string ToolCabinetRoot = "Assets/Art/Bartending/ToolCabinet/";
+        public const string BottleRoot = BartendingAssetPaths.BottleArtRoot;
+        public const string GlassRoot = BartendingAssetPaths.GlassArtRoot;
+        public const string LegacyGlassRoot = BartendingAssetPaths.LegacyGlassArtRoot;
+        public const string ToolCabinetRoot = BartendingAssetPaths.ToolCabinetArtRoot;
 
         private void OnPreprocessTexture()
         {

@@ -10,10 +10,10 @@ namespace Slainte.Editor
     [InitializeOnLoad]
     public static class ToolCabinetAssetInstaller
     {
-        private const string ArtRoot = "Assets/Art/Bartending/ToolCabinet/";
-        private const string ToolRoot = ArtRoot + "Tools/";
-        private const string IceRoot = ArtRoot + "Ice/";
-        private const string GlassRoot = "Assets/Art/Bartending/Glasses/";
+        private const string ArtRoot = BartendingAssetPaths.ToolCabinetArtRoot;
+        private const string ToolRoot = BartendingAssetPaths.ToolArtRoot;
+        private const string IceRoot = BartendingAssetPaths.IceArtRoot;
+        private const string GlassRoot = BartendingAssetPaths.GlassArtRoot;
         private const string DefinitionRoot = "Assets/Resources/Bartending/ToolCabinet";
         private const string CatalogPath = DefinitionRoot + "/ToolCabinetCatalog.asset";
 

@@ -12,7 +12,7 @@ namespace Slainte.Editor
 {
     public static class GlassCollisionProfileValidator
     {
-        private const string AssetRoot = "Assets/Art/Bartending/Glasses/";
+        private const string AssetRoot = BartendingAssetPaths.GlassArtRoot;
         private const string DefinitionRoot = "Assets/Resources/Bartending/ToolCabinet/";
         private const string SettingsPath =
             "Assets/Resources/Bartending/BusinessBartendingSettings.asset";

@@ -11,7 +11,7 @@ namespace Slainte.Editor
     public static class JiggerCollisionProfileValidator
     {
         private const string SpritePath =
-            "Assets/Art/Bartending/ToolCabinet/Tools/jigger_front.png";
+            BartendingAssetPaths.ToolArtRoot + "jigger_front.png";
         private const string DefinitionPath =
             "Assets/Resources/Bartending/ToolCabinet/Jigger.asset";
         private const string SettingsPath =

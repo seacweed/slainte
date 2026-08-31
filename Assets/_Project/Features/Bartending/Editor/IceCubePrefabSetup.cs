@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using Slainte.Bartending;
+using Slainte.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ namespace Slainte.Bartending.EditorTools
 {
     public static class IceCubePrefabSetup
     {
-        private const string SpritePath = "Assets/Art/Bartending/IceCube.png";
+        private const string SpritePath = BartendingAssetPaths.DefaultIceSprite;
         private const string PrefabPath = "Assets/Prefabs/Bartending/IceCube.prefab";
         private const string SettingsPath = "Assets/Resources/Bartending/BusinessBartendingSettings.asset";
 
