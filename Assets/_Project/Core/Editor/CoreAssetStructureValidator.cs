@@ -22,6 +22,10 @@ namespace Slainte.EditorTools
             ValidateSpriteTree(CoreAssetPaths.CutsceneSpriteRoot, 9);
             ValidateSpriteTree(CoreAssetPaths.SettlementSpriteRoot, 2);
             ValidatePrefab(CoreAssetPaths.SettlementLinePrefab);
+            ProjectAssetValidationUtility.ValidateAssetTree(
+                CoreAssetPaths.CutsceneContentRoot,
+                3,
+                "Core");
 
             Debug.Log(
                 "[CoreAssetStructureValidator] PASS: cutscene and settlement "
@@ -64,5 +68,6 @@ namespace Slainte.EditorTools
                     $"Core prefab has {missingScriptCount} missing script(s): {path}");
             }
         }
+
     }
 }

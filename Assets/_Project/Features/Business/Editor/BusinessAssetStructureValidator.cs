@@ -26,6 +26,14 @@ namespace Slainte.EditorTools
             ValidateSpriteTree(BusinessAssetPaths.OrderTicketSpriteRoot, 3);
             ValidateSpriteTree(BusinessAssetPaths.ConversationSpriteRoot, 2);
             ValidateRequiredAsset<AudioClip>(BusinessAssetPaths.TypewriterSfx);
+            ProjectAssetValidationUtility.ValidateAssetTree(
+                BusinessAssetPaths.CharacterContentRoot, 13, "Business");
+            ProjectAssetValidationUtility.ValidateAssetTree(
+                BusinessAssetPaths.CustomerImportRoot, 280, "Business");
+            ProjectAssetValidationUtility.ValidateAssetTree(
+                BusinessAssetPaths.CustomerOrderRoot, 3, "Business");
+            ProjectAssetValidationUtility.ValidateAssetTree(
+                BusinessAssetPaths.OrderTicketRoot, 193, "Business");
 
             ValidatePrefab(BusinessAssetPaths.AffinityNotificationPrefab);
             ValidatePrefab(BusinessAssetPaths.CharacterPrefab);
@@ -50,6 +58,7 @@ namespace Slainte.EditorTools
             foreach (string guid in guids)
                 ValidateRequiredAsset<Sprite>(AssetDatabase.GUIDToAssetPath(guid));
         }
+
 
         private static void ValidatePrefab(string path)
         {

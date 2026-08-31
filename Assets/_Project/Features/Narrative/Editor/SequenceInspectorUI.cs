@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Slainte.Bartending;
 using Slainte.Economy;
+using Slainte.EditorTools;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -53,7 +54,7 @@ namespace NarrativeFlow.Editor
                     {
                         OrderTicketDatabase ticketDatabase =
                             AssetDatabase.LoadAssetAtPath<OrderTicketDatabase>(
-                                "Assets/Data/OrderTicket/OrderTicketDatabase.asset");
+                                BusinessAssetPaths.OrderTicketDatabase);
                         ev.CraftingOrderTicket =
                             ticketDatabase != null
                                 ? ticketDatabase.FindByKey(ev.CraftingTicketKey)

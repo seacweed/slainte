@@ -19,6 +19,7 @@ namespace Slainte.EditorTools
         {
             CoreAssetStructureValidator.RunBatchValidation();
             MainMenuAssetStructureValidator.RunBatchValidation();
+            NarrativeContentStructureValidator.RunBatchValidation();
             BusinessAssetStructureValidator.RunBatchValidation();
             RestFeatureAssetStructureValidator.RunBatchValidation();
             Slainte.Editor.BartendingAssetStructureValidator.RunBatchValidation();

@@ -464,7 +464,8 @@ namespace Slainte.EditorTools
         private static CustomerVisitData LoadVisit(string visitKey)
         {
             CustomerVisitData visit = AssetDatabase.LoadAssetAtPath<CustomerVisitData>(
-                $"Assets/Data/CustomerImport/DraftVisits/CustomerVisit_{visitKey}.asset");
+                $"{BusinessAssetPaths.CustomerImportRoot}DraftVisits/"
+                + $"CustomerVisit_{visitKey}.asset");
             Require(visit != null, $"실제 손님 방문 에셋을 찾지 못했습니다: {visitKey}");
             return visit;
         }

@@ -3,6 +3,9 @@ namespace Slainte.EditorTools
     internal static class RestAssetPaths
     {
         private const string FeatureRoot = "Assets/_Project/Features/Rest";
+        public const string GeneratedContentRoot = FeatureRoot + "/Content/Generated/";
+        public const string RecipeBookContentRoot = GeneratedContentRoot + "RecipeBooks/";
+        public const string UpgradeContentRoot = GeneratedContentRoot + "Upgrades/";
         private const string PrefabRoot = FeatureRoot + "/Prefabs";
         private const string SpriteRoot = FeatureRoot + "/Art/Sprites";
         private const string FinalSpriteRoot = SpriteRoot + "/Final";

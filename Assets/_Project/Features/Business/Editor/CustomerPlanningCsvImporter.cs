@@ -35,19 +35,17 @@ namespace Slainte.EditorTools
 
     public static class CustomerPlanningCsvImporter
     {
-        public const string RootFolder = "Assets/Data/CustomerImport";
+        public const string RootFolder = BusinessAssetPaths.CustomerImportRoot;
         public const string CharacterFolder = RootFolder + "/DraftCharacters";
         public const string VisitFolder = RootFolder + "/DraftVisits";
         public const string OrderFolder = RootFolder + "/DraftOrders";
         public const string AttributeTagPrefix = "customer_attribute:";
         public const string NightPatrolAttributeTag = AttributeTagPrefix + "야간순찰";
 
-        private const string CharacterDatabasePath =
-            "Assets/Data/CharacterData/CharacterDatabase.asset";
+        private const string CharacterDatabasePath = BusinessAssetPaths.CharacterDatabase;
         private const string VisitDatabasePath =
             "Assets/Resources/CustomerVisit/CustomerVisitDatabase.asset";
-        private const string OrderDatabasePath =
-            "Assets/Data/CustomerOrder/CustomerOrderDatabase.asset";
+        private const string OrderDatabasePath = BusinessAssetPaths.CustomerOrderDatabase;
 
         private static readonly Dictionary<string, string> RecipeNameAliases =
             new(StringComparer.OrdinalIgnoreCase)

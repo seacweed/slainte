@@ -8,7 +8,8 @@ namespace Slainte.EditorTools
 {
     public sealed class BottleMouthAnchorEditorWindow : EditorWindow
     {
-        private const string PlanningBottleFolder = "Assets/Data/LiquorBottle/Planning";
+        private const string PlanningBottleFolder =
+            Slainte.Editor.BartendingAssetPaths.LiquorBottleRoot + "Planning";
         private const byte AlphaThreshold = 3;
         private const float DefaultOutwardPixels = 3f;
 

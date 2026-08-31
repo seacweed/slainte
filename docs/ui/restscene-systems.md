@@ -432,6 +432,6 @@ public enum ItemType { Alcohol, Liqueur, NonAlcohol, Powder, Tool, Glass }
 | 현황판 데이터 | `EpisodeUIManager` | `money`, `isBusinessOpen` → `GameProgress` 연동 필요 |
 | `ObjectInteraction` 중복 | `ObjectInteractionBoard` | 두 클래스 코드 동일, 하나로 통합 가능 |
 | 재료 소진 로직 | `GameProgress.AddBottleAmount` | 영업 중 사용에 따른 잔량 감소는 미구현(음수 delta로 재사용 가능하도록만 설계됨) |
-| `LiquorBottleDef` 상점 데이터 | `Assets/Data/LiquorBottle/*.asset` | `price`/`category`/`unlockFlagKey`/`unlockHintType` 값이 비어있으면 상점에 노출되지 않음 — 애셋별로 직접 입력 필요 |
+| `LiquorBottleDef` 상점 데이터 | `Assets/_Project/Features/Bartending/Content/Generated/LiquorBottles/*.asset` | `price`/`category`/`unlockFlagKey`/`unlockHintType` 값이 비어있으면 상점에 노출되지 않음 — 애셋별로 직접 입력 필요 |
 | `RecipeBookDef` 에셋 | `Assets/_Project/Features/Rest/Runtime/RecipeBookDef.cs` | 코드만 존재, 실제 SO 에셋과 `ShopUIManager.allRecipeBooks`/`recipeBookPanel` 연결은 아직 수동 작업 필요 |
 | `LiquorCategoryDef.color` 값 | `LiquorCategoryDef` 에셋 | 필드만 추가됨, 카테고리별 실제 색상 값은 아직 미입력(기본값 흰색) |

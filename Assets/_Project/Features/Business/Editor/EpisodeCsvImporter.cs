@@ -5,13 +5,13 @@ using System.IO;
 using System.Text;
 using Slainte.Bartending;
 using Slainte.Economy;
+using Slainte.EditorTools;
 using UnityEditor;
 using UnityEngine;
 
 public class EpisodeCsvImporter : EditorWindow
 {
-    private const string OrderTicketDatabasePath =
-        "Assets/Data/OrderTicket/OrderTicketDatabase.asset";
+    private const string OrderTicketDatabasePath = BusinessAssetPaths.OrderTicketDatabase;
     private string _csvPath = "";
     private string _outputFolder = "Assets/Resources/EpisodeData";
 

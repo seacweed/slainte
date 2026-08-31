@@ -10,6 +10,18 @@ namespace Slainte.EditorTools
         public const string CustomerSpriteRoot = SpriteRoot + "Customers/";
         public const string OrderTicketSpriteRoot = SpriteRoot + "UI/OrderTicket/";
         public const string ConversationSpriteRoot = SpriteRoot + "UI/Conversation/";
+        public const string ContentRoot = FeatureRoot + "/Content/";
+        public const string GeneratedContentRoot = ContentRoot + "Generated/";
+        public const string CharacterContentRoot = GeneratedContentRoot + "Characters/";
+        public const string CustomerImportRoot = GeneratedContentRoot + "CustomerImports/";
+        public const string CustomerOrderRoot = GeneratedContentRoot + "CustomerOrders/";
+        public const string OrderTicketRoot = GeneratedContentRoot + "OrderTickets/";
+        public const string CharacterDatabase =
+            CharacterContentRoot + "CharacterDatabase.asset";
+        public const string CustomerOrderDatabase =
+            CustomerOrderRoot + "CustomerOrderDatabase.asset";
+        public const string OrderTicketDatabase =
+            OrderTicketRoot + "OrderTicketDatabase.asset";
         public const string AudioRoot = FeatureRoot + "/Audio/";
         public const string TypewriterSfx = AudioRoot + "SFX/Untitled.wav";
 

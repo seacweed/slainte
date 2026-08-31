@@ -12,7 +12,7 @@ namespace Slainte.Editor
     /// </summary>
     public static class BartendingBottleArtSetup
     {
-        private const string LiquorRoot = "Assets/Data/LiquorBottle";
+        private const string LiquorRoot = BartendingAssetPaths.LiquorBottleRoot;
         private const string PlanningItemRoot = "Assets/Resources/Items/Planning/";
         private const string BottleArtRoot = BartendingArtImportPostprocessor.BottleRoot;
 

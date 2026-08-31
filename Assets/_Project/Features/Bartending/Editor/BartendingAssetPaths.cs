@@ -4,6 +4,12 @@ namespace Slainte.Editor
     {
         public const string FeatureRoot =
             "Assets/_Project/Features/Bartending";
+        public const string ContentRoot = FeatureRoot + "/Content/";
+        public const string GeneratedContentRoot = ContentRoot + "Generated/";
+        public const string LiquorBottleRoot = GeneratedContentRoot + "LiquorBottles/";
+        public const string LiquorCategoryRoot = GeneratedContentRoot + "LiquorCategories/";
+        public const string InventoryContentRoot = GeneratedContentRoot + "Inventory/";
+        public const string PlanningLegacyRoot = ContentRoot + "Legacy/Planning/";
         public const string ArtRoot = FeatureRoot + "/Art/";
         public const string BottleArtRoot = ArtRoot + "Bottles/";
         public const string GlassArtRoot = ArtRoot + "Glasses/";
@@ -40,7 +46,7 @@ namespace Slainte.Editor
         public const string DeliveryShopPrefabRoot = PrefabRoot + "UI/DeliveryShop/";
 
         public const string LegacyItemRoot =
-            FeatureRoot + "/Content/Legacy/Items/";
+            ContentRoot + "Legacy/Items/";
 
         public const string BeakerPrefab = EquipmentPrefabRoot + "Beaker.prefab";
         public const string BottlePrefab = EquipmentPrefabRoot + "Bottle.prefab";
@@ -63,5 +69,7 @@ namespace Slainte.Editor
         public const string LegacyGinItem = LegacyItemRoot + "gin.asset";
         public const string LegacyRumItem = LegacyItemRoot + "rum.asset";
         public const string LegacyVodkaItem = LegacyItemRoot + "vodka.asset";
+        public const string LiquorStockLevelPalette =
+            InventoryContentRoot + "LiquorStockLevel.asset";
     }
 }

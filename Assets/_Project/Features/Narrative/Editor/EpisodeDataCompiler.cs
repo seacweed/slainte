@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Slainte.Business;
+using Slainte.EditorTools;
 using UnityEditor;
 using UnityEngine;
 
@@ -11,8 +12,7 @@ namespace NarrativeFlow.Editor
 {
     public class EpisodeDataCompiler
     {
-        private const string OrderTicketDatabasePath =
-            "Assets/Data/OrderTicket/OrderTicketDatabase.asset";
+        private const string OrderTicketDatabasePath = BusinessAssetPaths.OrderTicketDatabase;
 
         [MenuItem("Narrative/Compile Selected Graph to EpisodeData")]
         public static void CompileSelected()
@@ -510,10 +510,10 @@ namespace NarrativeFlow.Editor
                         sb.AppendLine($"{n.nodeId},{b.requiredCompletedEpisodeId},{b.nextNodeId}");
             }
 
-            const string dir = "Assets/Data/Export";
+            const string dir = NarrativeAssetPaths.ExportRoot;
             if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
             File.WriteAllText($"{dir}/{id}.csv", sb.ToString(), Encoding.UTF8);
-            Debug.Log($"[EpisodeDataCompiler] Exported CSV → Assets/Data/Export/{id}.csv");
+            Debug.Log($"[EpisodeDataCompiler] Exported CSV → {dir}/{id}.csv");
         }
 
         private static string Csv(string s)

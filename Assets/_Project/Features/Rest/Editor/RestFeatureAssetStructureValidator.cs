@@ -27,6 +27,10 @@ namespace Slainte.EditorTools
             ValidatePrefab(RestAssetPaths.ShopCategoryButtonPrefab);
             ValidatePrefab(RestAssetPaths.StrangeCategoryButtonPrefab);
             ValidatePrefab(RestAssetPaths.UpgradeSlotPrefab);
+            ProjectAssetValidationUtility.ValidateAssetTree(
+                RestAssetPaths.RecipeBookContentRoot, 2, "Rest");
+            ProjectAssetValidationUtility.ValidateAssetTree(
+                RestAssetPaths.UpgradeContentRoot, 4, "Rest");
 
             Debug.Log(
                 "[RestFeatureAssetStructureValidator] PASS: episode-board, shop and "
@@ -69,5 +73,6 @@ namespace Slainte.EditorTools
                     $"Rest prefab has {missingScriptCount} missing script(s): {path}");
             }
         }
+
     }
 }

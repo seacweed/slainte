@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Slainte.Bartending;
 using Slainte.Business;
+using Slainte.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -96,14 +97,14 @@ namespace Slainte.EditorTools
         private static bool automaticImportAttempted;
 
         public const string ItemOutputFolder = "Assets/Resources/Items/Planning";
-        public const string ShelfOutputFolder = "Assets/Data/LiquorBottle/Planning";
+        public const string ShelfOutputFolder = BartendingAssetPaths.LiquorBottleRoot + "Planning";
         public const string RecipeOutputFolder = "Assets/Resources/Recipes/Planning";
         public const string VariantOutputFolder = "Assets/Resources/Recipes/Planning/Variants";
         public const string PlanningCsvFolder =
             "Assets/_Project/Features/Bartending/Content/Source/Planning";
-        public const string LegacyItemFolder = "Assets/Data/Legacy/PlanningItems";
-        public const string LegacyBottleFolder = "Assets/Data/Legacy/PlanningBottles";
-        public const string LiquorBottleCatalogPath = "Assets/Data/LiquorBottle/Liquor Bottle Catalog.asset";
+        public const string LegacyItemFolder = BartendingAssetPaths.PlanningLegacyRoot + "PlanningItems";
+        public const string LegacyBottleFolder = BartendingAssetPaths.PlanningLegacyRoot + "PlanningBottles";
+        public const string LiquorBottleCatalogPath = BartendingAssetPaths.LiquorBottleRoot + "Liquor Bottle Catalog.asset";
         public const string LiquorShopCatalogPath = "Assets/Resources/Shop/LiquorShopCatalog.asset";
 
         public static string DefaultItemCsvPath => ProjectPath(PlanningCsvFolder + "/items.csv");
@@ -338,7 +339,7 @@ namespace Slainte.EditorTools
             int linkedLegacyBottleCount = 0;
             string[] legacyBottleGuids = AssetDatabase.FindAssets(
                 "t:LiquorBottleDef",
-                new[] { "Assets/Data/LiquorBottle" });
+                new[] { BartendingAssetPaths.LiquorBottleRoot });
             for (int i = 0; i < legacyBottleGuids.Length; i++)
             {
                 string path = AssetDatabase.GUIDToAssetPath(legacyBottleGuids[i]);
@@ -872,7 +873,7 @@ namespace Slainte.EditorTools
         {
             string[] guids = AssetDatabase.FindAssets(
                 "t:LiquorBottleDef",
-                new[] { "Assets/Data/LiquorBottle" });
+                new[] { BartendingAssetPaths.LiquorBottleRoot });
             for (int i = 0; i < guids.Length; i++)
             {
                 string path = AssetDatabase.GUIDToAssetPath(guids[i]);
@@ -1425,7 +1426,7 @@ namespace Slainte.EditorTools
 
             foreach (string guid in AssetDatabase.FindAssets(
                          "t:LiquorCategoryDef",
-                         new[] { "Assets/Data/LiquorCategory" }))
+                         new[] { BartendingAssetPaths.LiquorCategoryRoot }))
             {
                 LiquorCategoryDef category = AssetDatabase.LoadAssetAtPath<LiquorCategoryDef>(
                     AssetDatabase.GUIDToAssetPath(guid));
@@ -1670,7 +1671,9 @@ namespace Slainte.EditorTools
 
         private static Sprite FindExistingSprite(string displayName, string importedId, Func<LiquorBottleDef, Sprite> selector)
         {
-            string[] guids = AssetDatabase.FindAssets("t:LiquorBottleDef", new[] { "Assets/Data/LiquorBottle" });
+            string[] guids = AssetDatabase.FindAssets(
+                "t:LiquorBottleDef",
+                new[] { BartendingAssetPaths.LiquorBottleRoot });
             for (int i = 0; i < guids.Length; i++)
             {
                 string sourcePath = AssetDatabase.GUIDToAssetPath(guids[i]);
@@ -1705,7 +1708,7 @@ namespace Slainte.EditorTools
 
             string[] guids = AssetDatabase.FindAssets(
                 "t:LiquorBottleDef",
-                new[] { "Assets/Data/LiquorBottle" });
+                new[] { BartendingAssetPaths.LiquorBottleRoot });
             for (int i = 0; i < guids.Length; i++)
             {
                 string sourcePath = AssetDatabase.GUIDToAssetPath(guids[i]);

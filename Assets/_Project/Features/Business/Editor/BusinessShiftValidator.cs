@@ -15,15 +15,15 @@ namespace Slainte.EditorTools
     {
         private const string BusinessScenePath = ProjectScenePaths.Business;
         private const string SettingsPath = "Assets/Resources/Business/BusinessOrderFlowSettings.asset";
-        private const string TicketDatabasePath = "Assets/Data/OrderTicket/OrderTicketDatabase.asset";
+        private const string TicketDatabasePath = BusinessAssetPaths.OrderTicketDatabase;
         private const string CustomerOrderDatabasePath =
-            "Assets/Data/CustomerOrder/CustomerOrderDatabase.asset";
+            BusinessAssetPaths.CustomerOrderDatabase;
         private const string CharacterDatabasePath =
-            "Assets/Data/CharacterData/CharacterDatabase.asset";
+            BusinessAssetPaths.CharacterDatabase;
         private const string F54CharacterPath =
-            "Assets/Data/CharacterData/data/CharacterData_f54.asset";
+            BusinessAssetPaths.CharacterContentRoot + "data/CharacterData_f54.asset";
         private const string F72CharacterPath =
-            "Assets/Data/CharacterData/data/CharacterData_f72.asset";
+            BusinessAssetPaths.CharacterContentRoot + "data/CharacterData_f72.asset";
 
         [MenuItem("Slainte/품질 검증/시간 기반 영업 검증")]
         public static void ValidateFromMenu()
@@ -1351,7 +1351,8 @@ namespace Slainte.EditorTools
             const string episodePath =
                 "Assets/Resources/EpisodeData/EpisodeData_StrangeCoin_1.asset";
             const string csvPath =
-                "Assets/Data/EpisodeData/에피소드 - EpisodeData_StrangeCoin_1.csv.csv";
+                NarrativeAssetPaths.EpisodeSourceRoot
+                + "에피소드 - EpisodeData_StrangeCoin_1.csv.csv";
 
             EpisodeData episode = AssetDatabase.LoadAssetAtPath<EpisodeData>(episodePath);
             Require(episode != null, "StrangeCoin_1 에피소드 데이터를 찾지 못했습니다.");

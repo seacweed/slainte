@@ -125,6 +125,11 @@ Assets/
 | `Assets/Sprites/maintitle` | `Features/MainMenu/Art/Sprites/Title` | 메인 메뉴 전용 타이틀·캐릭터 이미지 통합 완료 |
 | `Assets/Sprites/cutscenes`, 정산 Sprite·Prefab | `Core/Art`, `Core/Prefabs/Settlement` | 전역 컷신·정산 표시 자산을 Core 소유로 통합 완료 |
 | 루트 대화 UI Sprite | `Features/Business/Art/Sprites/UI/Conversation` | 선택지·대화창 이미지를 Business 대화 UI로 통합 완료 |
+| `Assets/Data`의 영업 생성 데이터 | `Features/Business/Content/Generated` | 캐릭터·방문·주문·티켓 생성 결과와 임포터 경로 통합 완료 |
+| `Assets/Data`의 바텐딩 데이터 | `Features/Bartending/Content/Generated`, `Content/Legacy` | 술·카테고리·재고 팔레트와 이전 기획 결과 분리 완료 |
+| `Assets/Data/EpisodeData`, `Export` | `Features/Narrative/Content/Source`, `Content/Generated` | 에피소드 CSV 원본과 컴파일 출력 분리 완료 |
+| `Assets/Data/Cutscene` | `Core/Content/Cutscenes` | 전역 컷신 데이터 소유 위치 통합 완료 |
+| `Assets/Data/RecipeBook`, `UpgradeData` | `Features/Rest/Content/Generated` | 휴식 상점용 해금·업그레이드 데이터 통합 완료 |
 | `Assets/CoreScene/Scripts`의 앱 흐름 | `Core/Runtime/Flow` | 씬 전환과 하루 진행 |
 | `Assets/CoreScene/Scripts`의 저장 코드, `Assets/Scripts/GameProgress.cs` | `Core/Runtime/Persistence` | 저장 데이터와 런타임 진행 상태 |
 | `Assets/CoreScene/Scripts`의 컷씬·정산 코드 | `Core/Runtime/Cutscene`, `Core/Runtime/Settlement` | 전역 화면 흐름 |

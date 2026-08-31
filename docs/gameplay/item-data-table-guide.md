@@ -14,7 +14,7 @@
 임포트 결과는 다음 위치에 ID 기준으로 저장된다.
 
 - `ItemDef`: `Assets/Resources/Items/Planning/`
-- `LiquorBottleDef`: `Assets/Data/LiquorBottle/Planning/`
+- `LiquorBottleDef`: `Assets/_Project/Features/Bartending/Content/Generated/LiquorBottles/Planning/`
 - 기본 `CocktailRecipeDef`: `Assets/Resources/Recipes/Planning/`
 - 숨은 Mid 판정 레시피: `Assets/Resources/Recipes/Planning/Variants/`
 

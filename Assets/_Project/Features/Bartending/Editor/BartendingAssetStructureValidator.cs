@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using Slainte.EditorTools;
 using UnityEditor;
 using UnityEngine;
 
@@ -26,6 +27,7 @@ namespace Slainte.Editor
             ValidateToolCabinetArt();
             ValidateSpriteCollections();
             ValidatePrefabs();
+            ValidateContent();
             ValidateLegacyItems();
 
             Debug.Log(
@@ -127,6 +129,18 @@ namespace Slainte.Editor
                 if (AssetDatabase.LoadAssetAtPath<ItemDef>(path) == null)
                     throw new InvalidOperationException("Legacy ItemDef is missing: " + path);
             }
+        }
+
+        private static void ValidateContent()
+        {
+            ProjectAssetValidationUtility.ValidateAssetTree(
+                BartendingAssetPaths.LiquorBottleRoot, 31, "Bartending");
+            ProjectAssetValidationUtility.ValidateAssetTree(
+                BartendingAssetPaths.LiquorCategoryRoot, 6, "Bartending");
+            ProjectAssetValidationUtility.ValidateAssetTree(
+                BartendingAssetPaths.InventoryContentRoot, 1, "Bartending");
+            ProjectAssetValidationUtility.ValidateAssetTree(
+                BartendingAssetPaths.PlanningLegacyRoot, 2, "Bartending");
         }
 
         private static void ValidatePrefab(string path)

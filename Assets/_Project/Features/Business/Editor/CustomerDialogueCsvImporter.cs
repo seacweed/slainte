@@ -41,9 +41,8 @@ namespace Slainte.EditorTools
 
         private const string OrderFolder = CustomerPlanningCsvImporter.OrderFolder;
         private const string VisitFolder = CustomerPlanningCsvImporter.VisitFolder;
-        private const string TicketFolder = "Assets/Data/OrderTicket/data/business";
-        private const string TicketDatabasePath =
-            "Assets/Data/OrderTicket/OrderTicketDatabase.asset";
+        private const string TicketFolder = BusinessAssetPaths.OrderTicketRoot + "data/business";
+        private const string TicketDatabasePath = BusinessAssetPaths.OrderTicketDatabase;
         private const string ValentinoBerryProfile = "근로자들_발렌티노와베리";
         private const string SilentDialogueToken = "__SILENT__";
 
