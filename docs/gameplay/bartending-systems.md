@@ -4,7 +4,7 @@ BusinessScene의 CraftingMode에서 동작하는 도구 인터랙션과 액체 �
 
 ---
 
-## 바텐딩 도구 (`Assets/Scripts/Bartending/`)
+## 바텐딩 도구 (`Assets/_Project/Features/Bartending/Runtime/`)
 
 ### 영업 도구장
 
@@ -121,7 +121,7 @@ QHD(`2560×1440`) 화면에서 도구·잔·병·얼음은 원본 `Sprite` 픽�
 
 ---
 
-## 액체 의미 데이터 계층 (`Assets/Scripts/Bartending/LiquidParticleData.cs`, `VesselLiquidTracker.cs`)
+## 액체 의미 데이터 계층 (`Assets/_Project/Features/Bartending/Runtime/LiquidParticleData.cs`, `VesselLiquidTracker.cs`)
 
 MetaballFluid(아래 절)는 순수 시각 레이어이고, 판정에 쓰이는 실제 재료 구성은 이 계층이 담당한다.
 

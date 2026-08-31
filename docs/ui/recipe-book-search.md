@@ -4,12 +4,12 @@
 
 ## 클래스
 
-- `RecipeSearchUI` (`Assets/Scripts/RecipeBook/RecipeSearchUI.cs`) — 검색 화면 상태 전환·데이터 로딩·필터링 관리
-- `RecipeSearchOptionButton` (`Assets/Scripts/RecipeBook/RecipeSearchOptionButton.cs`) — 맛/분위기 태그 하나를 표시하는 공용 버튼(클릭 가능/불가능 모두 지원)
-- `RecipeListItemUI` (`Assets/Scripts/RecipeBook/RecipeListItemUI.cs`) — 레시피 리스트 한 줄(아이콘+이름)
-- `RecipeDetailUI` (`Assets/Scripts/RecipeBook/RecipeDetailUI.cs`) — 레시피 상세 화면
-- `RecipeIngredientRowUI` (`Assets/Scripts/RecipeBook/RecipeIngredientRowUI.cs`) — 상세 화면의 재료 한 줄(재료명+양)
-- `TasteMoodTagPaletteDef` (`Assets/Scripts/RecipeBook/TasteMoodTagPaletteDef.cs`) — 맛 6종/분위기 6종 태그별 배경색·글자색 ScriptableObject
+- `RecipeSearchUI` (`Assets/_Project/Features/Bartending/Runtime/RecipeBook/RecipeSearchUI.cs`) — 검색 화면 상태 전환·데이터 로딩·필터링 관리
+- `RecipeSearchOptionButton` (`Assets/_Project/Features/Bartending/Runtime/RecipeBook/RecipeSearchOptionButton.cs`) — 맛/분위기 태그 하나를 표시하는 공용 버튼(클릭 가능/불가능 모두 지원)
+- `RecipeListItemUI` (`Assets/_Project/Features/Bartending/Runtime/RecipeBook/RecipeListItemUI.cs`) — 레시피 리스트 한 줄(아이콘+이름)
+- `RecipeDetailUI` (`Assets/_Project/Features/Bartending/Runtime/RecipeBook/RecipeDetailUI.cs`) — 레시피 상세 화면
+- `RecipeIngredientRowUI` (`Assets/_Project/Features/Bartending/Runtime/RecipeBook/RecipeIngredientRowUI.cs`) — 상세 화면의 재료 한 줄(재료명+양)
+- `TasteMoodTagPaletteDef` (`Assets/_Project/Features/Bartending/Runtime/RecipeBook/TasteMoodTagPaletteDef.cs`) — 맛 6종/분위기 6종 태그별 배경색·글자색 ScriptableObject
 
 ## 화면 흐름
 

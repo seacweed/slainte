@@ -70,7 +70,11 @@ Assets/
 | `Assets/Scripts/OrderTicket` | `Features/Business/Runtime/OrderTicket` | BusinessScene UI |
 | `Assets/Scripts/Economy` | `Core/Runtime/Economy` | 영업·휴식·정산·내러티브 공용 통화 정책 |
 | `Assets/Scripts/Presentation` | `Features/Business/Runtime/Presentation` | BusinessScene 캐릭터 표시와 서빙 대상 |
-| `Assets/Scripts/Bartending` | `Features/Bartending/Runtime` | 가장 큰 이동 단위로 후순위 |
+| `Assets/Scripts/Bartending` | `Features/Bartending/Runtime` | 바텐딩 도메인 핵심 |
+| `Assets/Scripts/CameraMove` | `Features/Bartending/Runtime/Camera` | 바텐딩 화면 카메라 |
+| `Assets/Scripts/DragandDrop` | `Features/Bartending/Runtime/Interaction` | 병·도구 배치와 UI 드래그 |
+| `Assets/Scripts/LiquorShelf` | `Features/Bartending/Runtime/LiquorShelf` | 재고·술장·배달 상점 |
+| `Assets/Scripts/RecipeBook` | `Features/Bartending/Runtime/RecipeBook` | 제조 레시피 탐색 UI |
 | `Assets/CoreScene/Scripts`, `Assets/Scripts/Core` | `Core/Runtime` | 실제 기능 소유 클래스를 먼저 분리 |
 | `Assets/Editor` 루트 도구 | 담당 기능의 `Editor` | 하드코딩 에셋 경로 갱신 필요 |
 | 제품·개발 씬 | `Scenes/Production`, `Scenes/Development` | Build Settings와 Editor 도구 경로 갱신 |

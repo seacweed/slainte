@@ -23,7 +23,7 @@
 **`LiquorBottleDef`** (`Assets > Create > Bartending > Liquor Bottle`)
 - `shelfSprite`: `LiquorBottleSlotUI`(술장 슬롯)에 표시되는 스프라이트, `_lid` 변형 이미지 사용
 - `shopSprite`: `ItemSlotUI`(상점 슬롯)에 표시되는 스프라이트, `_blank` 변형 이미지 사용. `shelfSprite`와 별개 필드이므로 둘 다 채워야 함
-- 바테이블(제조 중 실제로 놓이는 병)에 뜨는 "기본" 이미지는 이 SO가 아니라 별도 `ItemDef.icon`(`Assets/Scripts/DragandDrop/ItemDef.cs`)에서 관리 — 세 화면(상점/술장/바테이블)이 각각 다른 스프라이트 소스를 참조하는 구조
+- 바테이블(제조 중 실제로 놓이는 병)에 뜨는 "기본" 이미지는 이 SO가 아니라 별도 `ItemDef.icon`(`Assets/_Project/Features/Bartending/Runtime/Interaction/ItemDef.cs`)에서 관리 — 세 화면(상점/술장/바테이블)이 각각 다른 스프라이트 소스를 참조하는 구조
 - `unlockFlagKey`: 비어있으면 항상 해금
 - `subCategory`: 정보카드에 표시할 소분류 텍스트
 - `bottleCount`: 정보카드에 표시할 병 아이콘 개수 (예: 6)

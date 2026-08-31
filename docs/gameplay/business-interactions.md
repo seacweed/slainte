@@ -91,7 +91,7 @@ CustomerOrderData
 
 `BusinessOrderSessionController`가 제조 화면(CraftingMode)으로 진입할 때, 현재 주문이 실제 손님 주문(`CustomerOrderData`)인지 확인한 뒤 `OrderTicketMemoFormatter.Build()`로 해당 주문의 `lines`를 주문표 본문으로 조립해 `OrderTicketManager.Prepare(ticketKey, memoOverride)`에 전달합니다. `orderDialogueAuthored`가 켜져 있고 `lines`가 비어있는 주문은 칵테일명 등으로 폴백하지 않고 빈 본문을 그대로 유지하는 것이 현재 데이터 계약입니다 — 대사가 의도적으로 비어있는 주문임을 뜻합니다.
 
-## 드래그-드롭 바텐딩 (`Assets/Scripts/DragandDrop/`)
+## 드래그-드롭 바텐딩 (`Assets/_Project/Features/Bartending/Runtime/Interaction/`)
 
 - `ItemDef` (ScriptableObject): `ItemType`(Bottle, Glass, Tool), `dragMovesObject` 플래그
 - `DragManager.Instance` 싱글톤: 드래그 상태와 고스트 이미지 관리
