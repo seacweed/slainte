@@ -55,9 +55,10 @@ Assets/
 | 현재 경로 | 목표 영역 | 비고 |
 |---|---|---|
 | `Assets/Scripts/MainMenu` | `Features/MainMenu/Runtime` | 첫 시험 이동 |
-| `Assets/Scripts/Audio` | `Shared/Runtime/Audio` | 전역 수명 검토 |
-| `Assets/Scripts/Input` | `Shared/Runtime/Input` | UI·게임플레이 공용 계약 포함 |
-| `Assets/Scripts/UI` | `Shared/Runtime/UI` | 기능 전용 UI는 해당 기능으로 재분류 |
+| `Assets/Scripts/Audio` | `Core/Runtime/Audio` | 앱 수명의 전역 오디오 서비스 |
+| `Assets/Scripts/Input`의 인터페이스 | `Shared/Runtime/Input` | UI·게임플레이 공용 계약 |
+| `Assets/Scripts/Input/InputRouter.cs` | `Features/Business/Runtime/Input` | BusinessScene의 입력 조립기 |
+| `Assets/Scripts/UI/Notifications` | `Features/Business/Runtime/UI/Notifications` | BusinessScene의 호감도 알림 표시 |
 | `Assets/Scripts/Narrative` | `Features/Narrative/Runtime` | 이전 베이크 경로와 제품 경로 분리 필요 |
 | `Assets/Editor/Narrative` | `Features/Narrative/Editor` | USS·Template 하드코딩 경로 동시 수정 |
 | `Assets/RestScene/Scripts`, `Assets/Scripts/TV` | `Features/Rest/Runtime` | TV는 Rest 수명에 포함 |
@@ -76,7 +77,7 @@ Assets/
 ### 1. 물리적 이동
 
 1. MainMenu를 시험 이동한다.
-2. Shared 후보인 Audio, Input, UI를 분류하고 이동한다.
+2. Audio를 Core로, 입력 계약을 Shared로, BusinessScene 입력·알림을 Business로 이동한다.
 3. Narrative를 Runtime, Editor, Content 단위로 이동한다.
 4. Rest와 TV를 통합한다.
 5. Business와 주문·대화 UI를 통합한다.

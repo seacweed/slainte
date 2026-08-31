@@ -6,14 +6,14 @@
 
 ## 컴포넌트
 
-### `NotificationManager` (`Assets/Scripts/UI/Notifications/`)
+### `NotificationManager` (`Assets/_Project/Features/Business/Runtime/UI/Notifications/`)
 - `MonoSingleton<NotificationManager>`
 - `GameProgress.OnAffinityChanged(varName, delta)` 이벤트 구독
 - `CharacterDatabase.FindByKey(varName)`으로 `displayName` 조회 — 등록된 캐릭터 key가 아니면 알림 무시
 - `Queue<(string displayName, int delta)>` 기반 순차 표시 (코루틴)
 - Inspector 필드: `notificationPrefab`, `container`(Transform), `characterDB`
 
-### `AffinityNotificationUI` (`Assets/Scripts/UI/Notifications/`)
+### `AffinityNotificationUI` (`Assets/_Project/Features/Business/Runtime/UI/Notifications/`)
 - 캐릭터 이름(`TMP_Text`) + 방향 애니메이션(`AnimatedSpriteUI` × 2)
 - `Setup(displayName, delta)` — delta 부호에 따라 `upAnim` / `downAnim` 활성화 후 `Play()`
 - `PlayAndDestroy(onComplete)` — 슬라이드 인(오른쪽→원위치, smoothstep) + 페이드 인 → 유지 → 페이드 아웃 → `Destroy` + 콜백

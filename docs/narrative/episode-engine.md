@@ -47,7 +47,7 @@
 
 `EpisodeData.settlementRewards: List<EpisodeSettlementReward>` — `{ requiredFlag, label, amount }` 목록. `EpisodeRunner.EndEncounter()`가 에피소드 종료 시 각 항목의 `requiredFlag`가 서 있는지 확인해, 켜져 있으면 `GameProgress.AddSettlementReward(label, amount)`로 그날 정산 화면에 커스텀 보상 줄을 추가합니다(정산 시점 지급). CSV 작성법은 [episode-csv-guide.md](episode-csv-guide.md#settlement_rewards) 참고.
 
-## 오디오 (`Assets/Scripts/Audio/`)
+## 오디오 (`Assets/_Project/Core/Runtime/Audio/`)
 
 `AudioManager` (`MonoSingleton<AudioManager>`). BGM 크로스페이드를 담당합니다:
 - `PlayBgm(string clipName, float fadeDuration)` — `Resources/BGM/{clipName}` 클립을 로드해 재생. 이미 같은 클립이 재생 중이면 무시. 두 `AudioSource`(bgmSourceA/B)를 교대로 사용해 크로스페이드 처리
