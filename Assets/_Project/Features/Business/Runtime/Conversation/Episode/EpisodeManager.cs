@@ -22,21 +22,12 @@ public class EpisodeManager : MonoSingleton<EpisodeManager>
         Debug.Log($"[EpisodeManager] {allEpisodes.Count} episode(s) loaded.");
     }
 
-    public List<EpisodeData> GetAvailableEpisodes()
-    {
-        GameProgress gp = GameProgress.Instance;
-        var available = new List<EpisodeData>();
-        foreach (var ep in allEpisodes)
-        {
-            if (ep.episodeType != EpisodeType.Default) continue;
-            if (gp != null && gp.IsEpisodeCompleted(ep.episodeId)) continue;
-            if (IsUnlocked(ep, gp)) available.Add(ep);
-        }
-        return available;
-    }
+    public List<EpisodeData> GetAvailableEpisodes() => GetSelectableDefaultEpisodes();
 
     // Rest 보드에서 플레이어가 직접 선택 가능한 에피소드만 (기본 에피소드). 필수 에피소드는 DayFlowController가 자동으로 큐잉함.
-    public List<EpisodeData> GetBoardEpisodes()
+    public List<EpisodeData> GetBoardEpisodes() => GetSelectableDefaultEpisodes();
+
+    private List<EpisodeData> GetSelectableDefaultEpisodes()
     {
         GameProgress gp = GameProgress.Instance;
         var visible = new List<EpisodeData>();
