@@ -205,7 +205,7 @@ public string day1ForcedEpisodeId;    // 기본값 "FathersNote"
 - `PortraitSlot { container, characterImage }` — `container`는 배경 이미지가 이미 붙어있는 슬롯 루트, `characterImage`는 캐릭터 스프라이트를 넣을 자식 `Image`. 캐릭터가 3개 이하면 왼쪽(0번 슬롯)부터 채우고, 남는 슬롯은 **배경까지 포함해 컨테이너 전체를 비활성화**(자식 이미지만 숨기면 배경이 계속 보여서 unknown 취급되는 버그가 있었음)
 - 현재 켜져 있는 옵션(`GetSelectedIndex()`)이 있고 그 옵션의 `characterOverrides`가 채워져 있으면 그 리스트를, 아니면 옵션 미선택 시 기본값인 `data.characters`를 그대로 사용(`GetActiveCharacterList()`)
 - 즉 **옵션마다 서로 다른 등장인물 조합을 지정 가능** — 옵션 A는 캐릭터를 공개, 옵션 B는 비공개(???), 옵션 C는 다른 캐릭터로 교체 등 자유롭게 구성
-- `CharacterDisplay.isHidden`이면 `unknownPortrait`(???) 표시, 아니면 `characterPortraitSprites: CharacterPortraitSprite[]`(`{ characterKey, sprite }` 쌍, 인스펙터에 직접 등록)에서 `characterName`으로 조회. `Resources.Load` 경로 추측 방식은 폐기됨(초상화 스프라이트가 `Assets/Sprites/UI/episode_board/character/`처럼 `Resources` 폴더 밖에 있어 애초에 못 찾았음) — 새 캐릭터를 추가하면 `characterPortraitSprites`에 키-스프라이트 쌍을 등록해야 함
+- `CharacterDisplay.isHidden`이면 `unknownPortrait`(???) 표시, 아니면 `characterPortraitSprites: CharacterPortraitSprite[]`(`{ characterKey, sprite }` 쌍, 인스펙터에 직접 등록)에서 `characterName`으로 조회. `Resources.Load` 경로 추측 방식은 폐기됨(초상화 스프라이트가 `Assets/_Project/Features/Rest/Art/Sprites/EpisodeBoard/character/`처럼 `Resources` 폴더 밖에 있어 애초에 못 찾았음) — 새 캐릭터를 추가하면 `characterPortraitSprites`에 키-스프라이트 쌍을 등록해야 함
 - 어떤 토글이든 값이 바뀔 때마다(`OnSelectToggleChanged`) 초상화만 즉시 갱신
 
 **위치 계산** (`UpdatePosition`)

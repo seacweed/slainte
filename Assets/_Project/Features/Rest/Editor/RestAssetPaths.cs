@@ -11,6 +11,19 @@ namespace Slainte.EditorTools
 
         public const string TVSystemPrefab = PrefabRoot + "/TVSystem.prefab";
         public const string TVPanelPrefab = PrefabRoot + "/TVPanel.prefab";
+        public const string EpisodeTemplatePrefab =
+            PrefabRoot + "/Episode/EpisodeTemplate.prefab";
+        public const string RecipeBookSlotPrefab =
+            PrefabRoot + "/RecipeBook/RecipeBookSlotUI.prefab";
+        public const string ShopCategoryButtonPrefab =
+            PrefabRoot + "/Shop/ShopCategoryButton.prefab";
+        public const string StrangeCategoryButtonPrefab =
+            PrefabRoot + "/Shop/StrangeCategoryButton.prefab";
+        public const string UpgradeSlotPrefab =
+            PrefabRoot + "/Shop/UpgradeSlotUI.prefab";
+
+        public const string EpisodeBoardSpriteRoot = SpriteRoot + "/EpisodeBoard";
+        public const string ShopSpriteRoot = SpriteRoot + "/Shop";
 
         public const string BackgroundColor = FinalSpriteRoot + "/background_color.png";
         public const string BackgroundGray = FinalSpriteRoot + "/background_gray.png";
