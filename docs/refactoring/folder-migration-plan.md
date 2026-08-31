@@ -109,7 +109,8 @@ Assets/
 | `Assets/Scripts/DragandDrop` | `Features/Bartending/Runtime/Interaction` | 병·도구 배치와 UI 드래그 |
 | `Assets/Scripts/LiquorShelf` | `Features/Bartending/Runtime/LiquorShelf` | 재고·술장·배달 상점 |
 | `Assets/Scripts/RecipeBook` | `Features/Bartending/Runtime/RecipeBook` | 제조 레시피 탐색 UI |
-| `Assets/MetaballFluid` | `Features/Bartending/Infrastructure/MetaballFluid` | 팀 소유 액체 렌더링·물리 묶음 |
+| `Assets/MetaballFluid`의 에셋 | `Features/Bartending/Infrastructure/MetaballFluid` | 팀 소유 액체 표현 에셋(셰이더·머티리얼·프리팙·물리) |
+| `Assets/MetaballFluid`의 스크립트 | `Features/Bartending/Runtime/Liquid`, `Runtime/Interaction` | 풀링·혼합·회수·렌더링 실행 책임을 Bartending 런타임으로 통합 |
 | `Assets/CoreScene/Scripts`의 앱 흐름 | `Core/Runtime/Flow` | 씬 전환과 하루 진행 |
 | `Assets/CoreScene/Scripts`의 저장 코드, `Assets/Scripts/GameProgress.cs` | `Core/Runtime/Persistence` | 저장 데이터와 런타임 진행 상태 |
 | `Assets/CoreScene/Scripts`의 컷씬·정산 코드 | `Core/Runtime/Cutscene`, `Core/Runtime/Settlement` | 전역 화면 흐름 |

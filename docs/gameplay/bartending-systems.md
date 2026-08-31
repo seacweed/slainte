@@ -121,7 +121,7 @@ QHD(`2560×1440`) 화면에서 도구·잔·병·얼음은 원본 `Sprite` 픽�
 
 ---
 
-## 액체 의미 데이터 계층 (`Assets/_Project/Features/Bartending/Runtime/LiquidParticleData.cs`, `VesselLiquidTracker.cs`)
+## 액체 의미 데이터 계층 (`Assets/_Project/Features/Bartending/Runtime/Liquid/`)
 
 MetaballFluid(아래 절)는 순수 시각 레이어이고, 판정에 쓰이는 실제 재료 구성은 이 계층이 담당한다.
 
@@ -154,10 +154,11 @@ MetaballFluid(아래 절)는 순수 시각 레이어이고, 판정에 쓰이는 
 
 ---
 
-## MetaballFluid 시스템 (`Assets/_Project/Features/Bartending/Infrastructure/MetaballFluid/`)
+## MetaballFluid 표현 인프라 (`Assets/_Project/Features/Bartending/Infrastructure/MetaballFluid/`)
 
 2D 메타볼 알고리즘으로 칵테일 액체를 실시간 시각화합니다.
-CraftingMode에서만 `BubblePanel`이 활성화되어 화면 최상단에 렌더링됩니다.
+실행 코드는 Bartending 도메인 타입에 직접 의존하므로 `Runtime/Liquid`이 소유하고,
+이 폴더에는 셰이더·머티리얼·액체 프리팙·물리 에셋만 남깁니다.
 
 ### 렌더링 구조
 
@@ -172,16 +173,16 @@ CraftingMode에서만 `BubblePanel`이 활성화되어 화면 최상단에 렌�
 `FullScreenQuad`는 orthographic 카메라 기준으로 매 프레임 전체 화면 크기를 재계산합니다.
 `sortingLayerName`과 `sortingOrder(기본 12)`로 다른 UI 위에 렌더링 순서를 제어합니다.
 
-### 스크립트
+### 런타임 스크립트 (`Assets/_Project/Features/Bartending/Runtime/Liquid/`)
 
 | 스크립트 | 클래스명 | 역할 |
 |---|---|---|
-| `ObjPooling.cs` | `LiquidPool` | 최대 `poolSize(900)` 입자 오브젝트 풀 관리. 소진 시 스킵. 활성 입자를 `(GameObject, ReturnToPool, LiquidReaction)` 캐시 구조로 들고 있어 `Update()`에서 매 프레임 `TryGetComponent`를 반복하지 않음 |
-| `Spawner.cs` | `LiquidSpawner` | `spawnInterval`마다 풀에서 입자 꺼내 스폰, 초기 속도 0 보장 (테스트용 — 실제 게임 내 pour는 `BottleController.TrySpawnLiquid()`가 `pool.DefaultParticleVolumeMl`만큼씩 직접 `GetParticle()` 호출) |
+| `Particles/LiquidPool.cs` | `LiquidPool` | `poolSize(900)`만큼 입자를 미리 생성하고, 캐시가 소진되면 필요한 만큼 추가 생성. 활성 입자를 `(GameObject, LiquidParticleRecycler, LiquidReaction)` 캐시 구조로 관리 |
+| `Particles/LiquidSpawner.cs` | `LiquidSpawner` | `spawnInterval`마다 풀에서 입자 꺼내 스폰, 초기 속도 0 보장 (테스트용 — 실제 게임 내 pour는 `BottleController.TrySpawnLiquid()`가 `pool.DefaultParticleVolumeMl`만큼씩 직접 `GetParticle()` 호출) |
 | `LiquidReaction.cs` | `LiquidReaction` | 입자 충돌 시 색상·물리 속성 평균화 혼합, 수면 최적화, 확산(Agitation) 믹싱 |
-| `ReturnToPool.cs` | `ReturnToPool` | 화면 밖(OOB) 입자 자동 풀 반환. 용기 밖 유출 입자는 왼쪽/오른쪽/아래 화면 이탈 시 즉시 회수(위쪽은 제외) |
-| `FullSizeQuad.cs` | `FullScreenQuad` | MetaballMat 적용 전체화면 쿼드, 해상도 변화에 실시간 대응 |
-| `drag.cs` | — | 마우스 드래그 가능한 물리 오브젝트 |
+| `Particles/LiquidParticleRecycler.cs` | `LiquidParticleRecycler` | 화면 밖(OOB) 입자 자동 풀 반환. 용기 밖 유출 입자는 왼쪽/오른쪽/아래 화면 이탈 시 즉시 회수(위쪽은 제외) |
+| `Rendering/FullScreenQuad.cs` | `FullScreenQuad` | MetaballMat 적용 전체화면 쿼드, 해상도 변화에 실시간 대응 |
+| `Runtime/Interaction/DraggableBar.cs` | `DraggableBar` | 마우스 드래그 가능한 물리 오브젝트 |
 
 ### 두 가지 믹싱 경로
 
@@ -201,9 +202,9 @@ CraftingMode에서만 `BubblePanel`이 활성화되어 화면 최상단에 렌�
 수면 조건: `rb.linearVelocity.sqrMagnitude < sleepVelocityThreshold` 상태가 `timeToSleep(2.0s)` 지속.
 수면 해제: `WakeUp()` 명시 호출 또는 다른 활성 입자의 충돌/혼합.
 
-### ReturnToPool 회수 규칙
+### LiquidParticleRecycler 회수 규칙
 
-`CheckOOB()`는 매 프레임 `LiquidPool.Update()`가 계산한 화면 월드 경계(`Camera.main.orthographicSize`/`aspect` 기반, `FullSizeQuad.cs`와 동일 방식)를 받아 판정한다.
+`ShouldRecycle()`는 매 프레임 `LiquidPool.Update()`가 한 번 계산한 `LiquidScreenBounds`(정사영 카메라의 `orthographicSize`/`aspect` 기반)와 `deltaTime`을 받아 판정한다.
 
 1. `bottomLimit`/`topLimit`/`horizontalLimit` 하드 박스를 넘으면 용기 소속 여부와 무관하게 즉시 회수(4방향 전부).
 2. `recycleUncontainedParticles`가 켜져 있고 용기(`VesselOwner`)가 없는 입자는:
@@ -218,4 +219,6 @@ CraftingMode에서만 `BubblePanel`이 활성화되어 화면 최상단에 렌�
 |---|---|
 | `water_particle` | 기본 액체 입자 (흰색) |
 | `BlueLiquid`, `redLiquid`, `greenLiquid` | 색상별 입자 변형 |
-| `BubblePanel` | 렌더링 패널 전체 (Camera + LiquidPool + FullScreenQuad 포함) |
+
+`BubblePanel.prefab`은 현재 코드·신 참조가 없고 삭제된 `KatanaZeroSpeech`를 참조하는
+이전 프로토타입이므로 `Features/Bartending/Content/Legacy/Prototypes`로 분리했습니다.

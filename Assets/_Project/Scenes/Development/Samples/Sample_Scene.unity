@@ -509,7 +509,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 54bdcc91fe0fe4041afeae9ef6834a22, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FullScreenQuad
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FullScreenQuad
   sortingLayerName: Default
   sortingOrder: 12
 --- !u!64 &511549318
@@ -914,7 +914,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 54bdcc91fe0fe4041afeae9ef6834a22, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FullScreenQuad
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FullScreenQuad
   sortingLayerName: Default
   sortingOrder: 12
 --- !u!23 &1011387299
@@ -1272,7 +1272,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 216b2398881e6c347a2ee1111e835f70, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LiquidPool
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.LiquidPool
   particlePrefab: {fileID: 6191169969125092929, guid: 44387e2fc656fda41b517e3cbf2b992c, type: 3}
   poolSize: 1000
 --- !u!4 &1448443811
@@ -1524,7 +1524,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ffe0643f44814b29aa499e761601d44c, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::LiquidMetaballRenderer
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.LiquidMetaballRenderer
   accumulationMaterial: {fileID: 2100000, guid: 96ea9ea980184d038d7e30e043ad8f62, type: 2}
   outputRenderer: {fileID: 1011387299}
   legacyOutputRenderer: {fileID: 511549319}

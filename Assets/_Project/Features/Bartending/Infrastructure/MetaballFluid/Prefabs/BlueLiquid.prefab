@@ -168,7 +168,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b0f6fbf3b8553dd4292a5e53886ba1f6, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LiquidReaction
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.LiquidReaction
   spriteRenderer: {fileID: 0}
   rb: {fileID: 0}
   mixSpeed: 10

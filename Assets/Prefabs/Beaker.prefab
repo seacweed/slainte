@@ -402,7 +402,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3ed5703ba6430ac45a90793dd12c3375, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DraggableBar
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.DraggableBar
 --- !u!68 &3869815587157159555
 EdgeCollider2D:
   m_ObjectHideFlags: 0
