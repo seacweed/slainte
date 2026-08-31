@@ -19,7 +19,7 @@
 - `PlayAndDestroy(onComplete)` — 슬라이드 인(오른쪽→원위치, smoothstep) + 페이드 인 → 유지 → 페이드 아웃 → `Destroy` + 콜백
 - Inspector 필드: `nameText`, `upAnim`, `downAnim`, `slideDistance`, `fadeInDuration`, `holdDuration`, `fadeOutDuration`
 
-### `AnimatedSpriteUI` (`Assets/Scripts/Tools/`)
+### `AnimatedSpriteUI` (`Assets/_Project/Shared/Runtime/UI/AnimatedSpriteUI.cs`)
 범용 스프라이트 프레임 애니메이션 컴포넌트. `Image` 컴포넌트 필수.
 
 | 필드 | 설명 |

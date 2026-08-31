@@ -2,7 +2,7 @@
 
 게임 흐름 중 특정 시점(오프닝, Day1 종료, 엔딩)에 이미지+텍스트 슬라이드를 순서대로 보여주는 시스템입니다.
 
-## 클래스 (`Assets/CoreScene/Scripts/`)
+## 클래스 (`Assets/_Project/Core/Runtime/Cutscene/`)
 
 - `CutsceneData` — 슬라이드(`Sprite image` + `string text`) 리스트를 담는 ScriptableObject. `cutsceneId`로 식별
 - `CutsceneIds` — 컷씬 id 상수(`Today`/`FathersNote`/`Ending`, 값은 각각 `"Cutscene_Today"`/`"Cutscene_FathersNote"`/`"Cutscene_Ending"`)

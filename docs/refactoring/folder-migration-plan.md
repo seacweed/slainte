@@ -75,7 +75,12 @@ Assets/
 | `Assets/Scripts/DragandDrop` | `Features/Bartending/Runtime/Interaction` | 병·도구 배치와 UI 드래그 |
 | `Assets/Scripts/LiquorShelf` | `Features/Bartending/Runtime/LiquorShelf` | 재고·술장·배달 상점 |
 | `Assets/Scripts/RecipeBook` | `Features/Bartending/Runtime/RecipeBook` | 제조 레시피 탐색 UI |
-| `Assets/CoreScene/Scripts`, `Assets/Scripts/Core` | `Core/Runtime` | 실제 기능 소유 클래스를 먼저 분리 |
+| `Assets/CoreScene/Scripts`의 앱 흐름 | `Core/Runtime/Flow` | 씬 전환과 하루 진행 |
+| `Assets/CoreScene/Scripts`의 저장 코드, `Assets/Scripts/GameProgress.cs` | `Core/Runtime/Persistence` | 저장 데이터와 런타임 진행 상태 |
+| `Assets/CoreScene/Scripts`의 컷씬·정산 코드 | `Core/Runtime/Cutscene`, `Core/Runtime/Settlement` | 전역 화면 흐름 |
+| `Assets/CoreScene/Scripts`의 싱글턴 기반 클래스 | `Shared/Runtime/Lifecycle` | 여러 기능이 쓰는 MonoBehaviour 수명 계약 |
+| `Assets/Scripts/Core` | `Features/Business/Runtime/Mode` 및 `Conversation/Episode` | 실제로는 BusinessScene 모드와 에피소드 조건 코드 |
+| `Assets/Scripts/Tools` | `Shared/Runtime/UI` | 여러 UI에서 재사용하는 표시·레이아웃 도구 |
 | `Assets/Editor` 루트 도구 | 담당 기능의 `Editor` | 하드코딩 에셋 경로 갱신 필요 |
 | 제품·개발 씬 | `Scenes/Production`, `Scenes/Development` | Build Settings와 Editor 도구 경로 갱신 |
 
