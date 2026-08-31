@@ -78,7 +78,7 @@ namespace NarrativeFlow.Editor
             container.Add(CreateButton("+ Add", onAdd).SetMargin(5, 0));
         }
 
-        public static StyleSheet LoadStyle() => AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/Editor/Narrative/NarrativeStyles.uss");
+        public static StyleSheet LoadStyle() => AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/_Project/Features/Narrative/Editor/NarrativeStyles.uss");
     }
 
     public static class VisualElementExtensions 

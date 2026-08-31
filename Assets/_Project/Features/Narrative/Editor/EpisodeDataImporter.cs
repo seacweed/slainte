@@ -23,7 +23,7 @@ namespace NarrativeFlow.Editor
 
         public static NarrativeGraphSO Import(EpisodeData source)
         {
-            const string dir = "Assets/Narrative/Graphs";
+            const string dir = "Assets/_Project/Features/Narrative/Content/Graphs";
             if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
             string path = $"{dir}/{source.episodeId}.asset";
 

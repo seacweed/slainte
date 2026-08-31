@@ -18,7 +18,7 @@ Unity 메뉴 → **Narrative > Open Narrative Graph Editor**
 
 - **Project 뷰 우클릭 → Create > Narrative > Graph** 로 `NarrativeGraphSO` 에셋 생성
 - 에셋을 더블클릭하거나 에디터 창에 드래그하면 그래프가 열림
-- 저장 위치 권장: `Assets/Narrative/Graphs/`
+- 저장 위치 권장: `Assets/_Project/Features/Narrative/Content/Graphs/`
 
 ---
 
@@ -166,7 +166,7 @@ Sequence Editor 빈 공간 **우클릭** → 이벤트 타입 선택 후 배치 
 
 1. Project 뷰에서 `EpisodeData_xxx.asset` 선택
 2. 메뉴 **Narrative > Import EpisodeData to Graph**
-3. `Assets/Narrative/Graphs/{episodeId}.asset` 생성
+3. `Assets/_Project/Features/Narrative/Content/Graphs/{episodeId}.asset` 생성
 
 > Choice 노드의 경사 대사(Text)가 빈칸인 경우 임포트 후 자동으로 채워집니다.
 

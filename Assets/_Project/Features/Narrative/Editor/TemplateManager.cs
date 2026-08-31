@@ -7,7 +7,7 @@ namespace NarrativeFlow.Editor
 {
     public static class TemplateManager
     {
-        public const string TEMPLATE_DIR = "Assets/Editor/Narrative/Templates";
+        public const string TEMPLATE_DIR = "Assets/_Project/Features/Narrative/Editor/Templates";
 
         public static void SaveTemplate(NodeDataSO sourceNode, string templateName)
         {

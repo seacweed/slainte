@@ -52,7 +52,7 @@ Nodes: List<NodeDataSO>                  — 서브에셋으로 AddObjectToAsset
 Edges: List<EdgeData>                    — { BaseNodeGuid, TargetNodeGuid, OutputPortIndex }
 ```
 
-저장 경로: `Assets/Narrative/Graphs/{episodeId}.asset`
+저장 경로: `Assets/_Project/Features/Narrative/Content/Graphs/{episodeId}.asset`
 
 ### EpisodeNodeSO (Event Block)
 ```
