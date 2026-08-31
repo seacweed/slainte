@@ -68,12 +68,14 @@ Assets/
 | `Assets/Scripts/Business` | `Features/Business/Runtime/Flow` | 주문 세션과 영업 조립 담당 |
 | `Assets/Scripts/Conversation` | `Features/Business/Runtime/Conversation` | 에피소드 공용 경계 재검토 |
 | `Assets/Scripts/OrderTicket` | `Features/Business/Runtime/OrderTicket` | BusinessScene UI |
+| `Assets/Scripts/Economy` | `Core/Runtime/Economy` | 영업·휴식·정산·내러티브 공용 통화 정책 |
+| `Assets/Scripts/Presentation` | `Features/Business/Runtime/Presentation` | BusinessScene 캐릭터 표시와 서빙 대상 |
 | `Assets/Scripts/Bartending` | `Features/Bartending/Runtime` | 가장 큰 이동 단위로 후순위 |
 | `Assets/CoreScene/Scripts`, `Assets/Scripts/Core` | `Core/Runtime` | 실제 기능 소유 클래스를 먼저 분리 |
 | `Assets/Editor` 루트 도구 | 담당 기능의 `Editor` | 하드코딩 에셋 경로 갱신 필요 |
 | 제품·개발 씬 | `Scenes/Production`, `Scenes/Development` | Build Settings와 Editor 도구 경로 갱신 |
 
-`CameraMove`, `DragandDrop`, `Economy`, `LiquorShelf`, `Presentation`, `RecipeBook`, `Tools`는 참조 그래프를 확인한 뒤 소유 영역을 확정한다.
+`CameraMove`, `DragandDrop`, `LiquorShelf`, `RecipeBook`은 Bartending 런타임 하위 모듈로 분류한다. `Tools`는 참조 그래프를 확인한 뒤 소유 영역을 확정한다.
 
 ## 실행 순서
 

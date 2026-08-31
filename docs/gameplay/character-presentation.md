@@ -1,6 +1,6 @@
 # 캐릭터 표시 & 대화 렌더링
 
-## 캐릭터 표시 (`Assets/Scripts/Presentation/`)
+## 캐릭터 표시 (`Assets/_Project/Features/Business/Runtime/Presentation/`)
 
 - `CharacterView` — 프리팹 루트에 부착. `Setup(Sprite, Sprite?, blinkSprite?, blinkOverlaySprite?)` + `SwapSprite(Sprite, Sprite?, blinkSprite?, blinkOverlaySprite?)` + `PlayAppearAnimation()` / `PlayDisappearAnimation()` 제공. fade+rise+pop 애니메이션 처리. 슬롯 하단 기준으로 배치.
   - **깜빡임**: 등장 애니메이션 완료 후 자동 시작. 5~15초 랜덤 간격으로 눈 감은 스프라이트로 교체 후 1초 뒤 복원. `blinkSprite`가 null이면 비활성화. `SwapSprite` 호출 시 새 blink 스프라이트로 재시작. 퇴장 애니메이션 시작 시 중단.
