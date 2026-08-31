@@ -1,6 +1,6 @@
 namespace Slainte.EditorTools
 {
-    internal static class ProjectScenePaths
+    public static class ProjectScenePaths
     {
         private const string ProductionRoot = "Assets/_Project/Scenes/Production";
         private const string DevelopmentRoot = "Assets/_Project/Scenes/Development";
