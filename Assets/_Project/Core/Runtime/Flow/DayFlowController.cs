@@ -1,3 +1,4 @@
+using Slainte.Shared.Lifecycle;
 using UnityEngine;
 
 // 하루 진행 순서(필수 에피소드 큐, 영업, 정산)를 전담하는 컨트롤러.

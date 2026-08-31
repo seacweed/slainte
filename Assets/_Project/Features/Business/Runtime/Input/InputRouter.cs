@@ -1,3 +1,4 @@
+using Slainte.Shared.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Slainte.Shared.Lifecycle;
 using UnityEngine;
 
 public class EpisodeManager : MonoSingleton<EpisodeManager>

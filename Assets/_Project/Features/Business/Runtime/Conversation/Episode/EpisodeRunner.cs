@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Slainte.Business;
+using Slainte.Shared.Input;
 using UnityEngine;
 
 public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler

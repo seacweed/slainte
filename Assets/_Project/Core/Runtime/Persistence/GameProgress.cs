@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Slainte.Business;
 using Slainte.Economy;
+using Slainte.Shared.Lifecycle;
 using UnityEngine;
 
 public class GameProgress : MonoSingleton<GameProgress>

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.IO;
+using Slainte.Shared.Lifecycle;
 
 public class DataManager : MonoSingleton<DataManager>
 {

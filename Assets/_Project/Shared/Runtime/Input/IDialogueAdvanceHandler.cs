@@ -1,5 +1,8 @@
-public interface IDialogueAdvanceHandler
+namespace Slainte.Shared.Input
 {
-    bool CanReceiveAdvanceInput { get; }
-    void OnAdvanceInput();
+    public interface IDialogueAdvanceHandler
+    {
+        bool CanReceiveAdvanceInput { get; }
+        void OnAdvanceInput();
+    }
 }

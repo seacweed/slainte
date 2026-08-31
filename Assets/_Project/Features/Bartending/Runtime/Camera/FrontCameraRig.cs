@@ -1,3 +1,4 @@
+using Slainte.Shared.Input;
 using UnityEngine;
 
 public class FrontCameraRig : MonoBehaviour, ICameraInputHandler

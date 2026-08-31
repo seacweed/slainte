@@ -1,5 +1,6 @@
 using System; // 💡 1. System 추가 (Action을 사용하기 위해 필수!)
 using System.Collections;
+using Slainte.Shared.Lifecycle;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

@@ -1,4 +1,5 @@
 using System;
+using Slainte.Shared.Lifecycle;
 using UnityEngine;
 
 public class GameModeManager : SceneSingleton<GameModeManager>

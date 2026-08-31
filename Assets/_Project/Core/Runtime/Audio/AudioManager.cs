@@ -1,4 +1,5 @@
 using System.Collections;
+using Slainte.Shared.Lifecycle;
 using UnityEngine;
 
 public class AudioManager : MonoSingleton<AudioManager>

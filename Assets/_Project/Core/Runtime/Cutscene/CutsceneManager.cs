@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Slainte.Shared.Lifecycle;
 using UnityEngine;
 
 // cutsceneId로 등록된 CutsceneData를 찾아 CutsceneUI에 재생을 위임한다.

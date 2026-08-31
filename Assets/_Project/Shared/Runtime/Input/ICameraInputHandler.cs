@@ -1,11 +1,14 @@
-public enum CameraDirection
+namespace Slainte.Shared.Input
 {
-    DrawerOpen,
-    DrawerClose
-}
+    public enum CameraDirection
+    {
+        DrawerOpen,
+        DrawerClose
+    }
 
-public interface ICameraInputHandler
-{
-    bool IsAnimating { get; }
-    void OnCameraInput(CameraDirection direction);
+    public interface ICameraInputHandler
+    {
+        bool IsAnimating { get; }
+        void OnCameraInput(CameraDirection direction);
+    }
 }

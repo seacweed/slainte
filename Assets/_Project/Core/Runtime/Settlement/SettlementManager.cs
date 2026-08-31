@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Slainte.Business;
 using Slainte.Economy;
+using Slainte.Shared.Lifecycle;
 using UnityEngine;
 
 // 정산 화면(셔터+모니터) 진행을 담당. GameManager.ChangeState(GameState.Settlement)에서 호출됨.
