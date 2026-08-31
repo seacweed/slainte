@@ -8,11 +8,11 @@
 
 | 스크립트 | 위치 | 역할 |
 |---|---|---|
-| `MainMenuIntroController` | `Assets/Scripts/MainMenu/` | 인트로 시퀀스 전체 진행(코루틴), 스킵 입력 처리 |
-| `InfiniteHorizontalScroller` | `Assets/Scripts/MainMenu/` | 타일 2개를 이어붙여 무한 루프시키는 범용 스크롤러 — 구름 앞/뒷면에 재사용 |
-| `MainMenuManager` | `Assets/Scripts/MainMenu/` | 시작 버튼 클릭 로직 (기존, 변경 없음). 인트로 완료 전엔 `MenuGroup`의 CanvasGroup이 non-interactable이라 클릭 불가 |
-| `MainMenuCharacterSpawner` | `Assets/Scripts/MainMenu/` | 화면 양 끝에서 캐릭터를 반복 스폰(스폰 간격/최대 인원수/스프라이트 선택 담당), 씬 로드 즉시 시작해 메인메뉴 진입 후에도 계속 동작 |
-| `MainMenuCharacterWalker` | `Assets/Scripts/MainMenu/` | 스폰된 캐릭터 1명의 개별 이동(속도, 위아래 bobbing) 및 반대쪽 끝 도달 시 콜백 담당 |
+| `MainMenuIntroController` | `Assets/_Project/Features/MainMenu/Runtime/` | 인트로 시퀀스 전체 진행(코루틴), 스킵 입력 처리 |
+| `InfiniteHorizontalScroller` | `Assets/_Project/Features/MainMenu/Runtime/` | 타일 2개를 이어붙여 무한 루프시키는 범용 스크롤러 — 구름 앞/뒷면에 재사용 |
+| `MainMenuManager` | `Assets/_Project/Features/MainMenu/Runtime/` | 시작 버튼 클릭 로직 (기존, 변경 없음). 인트로 완료 전엔 `MenuGroup`의 CanvasGroup이 non-interactable이라 클릭 불가 |
+| `MainMenuCharacterSpawner` | `Assets/_Project/Features/MainMenu/Runtime/` | 화면 양 끝에서 캐릭터를 반복 스폰(스폰 간격/최대 인원수/스프라이트 선택 담당), 씬 로드 즉시 시작해 메인메뉴 진입 후에도 계속 동작 |
+| `MainMenuCharacterWalker` | `Assets/_Project/Features/MainMenu/Runtime/` | 스폰된 캐릭터 1명의 개별 이동(속도, 위아래 bobbing) 및 반대쪽 끝 도달 시 콜백 담당 |
 
 ## 시퀀스 순서
 
