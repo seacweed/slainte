@@ -17,26 +17,26 @@ namespace Slainte.EditorTools
     {
         public const string ScenePath = ProjectScenePaths.Rest;
         public const string DatabasePath = "Assets/Resources/TV/TVBroadcastDatabase.asset";
-        public const string TVPrefabPath = "Assets/RestScene/Prefabs/TVSystem.prefab";
-        public const string PanelPrefabPath = "Assets/RestScene/Prefabs/TVPanel.prefab";
+        public const string TVPrefabPath = RestAssetPaths.TVSystemPrefab;
+        public const string PanelPrefabPath = RestAssetPaths.TVPanelPrefab;
 
-        public const string BackgroundColorPath = "Assets/RestScene/Sprites/Final/background_color.png";
-        public const string BackgroundGrayPath = "Assets/RestScene/Sprites/Final/background_gray.png";
-        public const string CompositeReferencePath = "Assets/RestScene/Sprites/Final/composite_reference.png";
-        public const string TVWorldNormalPath = "Assets/RestScene/Sprites/Final/tv_world_normal.png";
-        public const string TVWorldOutlinePath = "Assets/RestScene/Sprites/Final/tv_world_outline.png";
-        public const string TVWorldGrayPath = "Assets/RestScene/Sprites/Final/tv_world_gray.png";
-        public const string BoardNormalPath = "Assets/RestScene/Sprites/Final/board_normal.png";
-        public const string BoardOutlinePath = "Assets/RestScene/Sprites/Final/board_outline.png";
-        public const string BoardGrayPath = "Assets/RestScene/Sprites/Final/board_gray.png";
-        public const string ShopNormalPath = "Assets/RestScene/Sprites/Final/shop_normal.png";
-        public const string ShopOutlinePath = "Assets/RestScene/Sprites/Final/shop_outline.png";
-        public const string ShopGrayPath = "Assets/RestScene/Sprites/Final/shop_gray.png";
+        public const string BackgroundColorPath = RestAssetPaths.BackgroundColor;
+        public const string BackgroundGrayPath = RestAssetPaths.BackgroundGray;
+        public const string CompositeReferencePath = RestAssetPaths.CompositeReference;
+        public const string TVWorldNormalPath = RestAssetPaths.TVWorldNormal;
+        public const string TVWorldOutlinePath = RestAssetPaths.TVWorldOutline;
+        public const string TVWorldGrayPath = RestAssetPaths.TVWorldGray;
+        public const string BoardNormalPath = RestAssetPaths.BoardNormal;
+        public const string BoardOutlinePath = RestAssetPaths.BoardOutline;
+        public const string BoardGrayPath = RestAssetPaths.BoardGray;
+        public const string ShopNormalPath = RestAssetPaths.ShopNormal;
+        public const string ShopOutlinePath = RestAssetPaths.ShopOutline;
+        public const string ShopGrayPath = RestAssetPaths.ShopGray;
 
-        public const string TVBackgroundPath = "Assets/RestScene/Sprites/TVFinal/tv_background.png";
-        public const string TVFramePath = "Assets/RestScene/Sprites/TVFinal/tv_frame.png";
-        public const string TVHeadlinePath = "Assets/RestScene/Sprites/TVFinal/tv_headline.png";
-        public const string TVCardBackgroundPath = "Assets/RestScene/Sprites/TVFinal/tv_card_background.png";
+        public const string TVBackgroundPath = RestAssetPaths.TVBackground;
+        public const string TVFramePath = RestAssetPaths.TVFrame;
+        public const string TVHeadlinePath = RestAssetPaths.TVHeadline;
+        public const string TVCardBackgroundPath = RestAssetPaths.TVCardBackground;
 
         public static readonly Rect TVCrop = new(1154f, 558f, 212f, 276f);
         public static readonly Rect BoardCrop = new(610f, 660f, 545f, 556f);
@@ -131,9 +131,9 @@ namespace Slainte.EditorTools
                 new(ShopNormalPath, ShopCrop),
                 new(ShopOutlinePath, ShopCrop),
                 new(ShopGrayPath, ShopCrop),
-                new("Assets/RestScene/Sprites/Final/Deferred/shop_strange_normal.png", ShopCrop),
-                new("Assets/RestScene/Sprites/Final/Deferred/shop_strange_outline.png", ShopCrop),
-                new("Assets/RestScene/Sprites/Final/Deferred/shop_strange_gray.png", ShopCrop)
+                new(RestAssetPaths.StrangeShopNormal, ShopCrop),
+                new(RestAssetPaths.StrangeShopOutline, ShopCrop),
+                new(RestAssetPaths.StrangeShopGray, ShopCrop)
             };
 
             foreach (CropAsset asset in croppedSprites)
@@ -516,7 +516,7 @@ namespace Slainte.EditorTools
 
         private static string CardPath(int cardNumber)
         {
-            return $"Assets/RestScene/Sprites/TVFinal/tv_card_{cardNumber}.png";
+            return RestAssetPaths.TVCard(cardNumber);
         }
 
         private static GameObject CreateImage(

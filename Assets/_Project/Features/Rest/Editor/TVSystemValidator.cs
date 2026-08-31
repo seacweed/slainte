@@ -11,8 +11,8 @@ namespace Slainte.EditorTools
     public static class TVSystemValidator
     {
         private const string ScenePath = ProjectScenePaths.Rest;
-        private const string PrefabPath = "Assets/RestScene/Prefabs/TVSystem.prefab";
-        private const string PanelPrefabPath = "Assets/RestScene/Prefabs/TVPanel.prefab";
+        private const string PrefabPath = RestAssetPaths.TVSystemPrefab;
+        private const string PanelPrefabPath = RestAssetPaths.TVPanelPrefab;
 
         [MenuItem("Slainte/TV/Validate TV System")]
         public static void ValidateFromMenu()

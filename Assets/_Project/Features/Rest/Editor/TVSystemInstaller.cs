@@ -14,8 +14,8 @@ namespace Slainte.EditorTools
     {
         private const string ScenePath = ProjectScenePaths.Rest;
         private const string DatabasePath = "Assets/Resources/TV/TVBroadcastDatabase.asset";
-        private const string PrefabPath = "Assets/RestScene/Prefabs/TVSystem.prefab";
-        private const string PanelPrefabPath = "Assets/RestScene/Prefabs/TVPanel.prefab";
+        private const string PrefabPath = RestAssetPaths.TVSystemPrefab;
+        private const string PanelPrefabPath = RestAssetPaths.TVPanelPrefab;
         private static readonly Vector3 DefaultWorldPosition = new(9.5f, 0.3f, 0f);
 
         [MenuItem("Slainte/TV/Install TV System")]

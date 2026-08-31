@@ -263,7 +263,7 @@ namespace Slainte.EditorTools
 
         private static string CardPath(int cardNumber)
         {
-            return $"Assets/RestScene/Sprites/TVFinal/tv_card_{cardNumber}.png";
+            return RestAssetPaths.TVCard(cardNumber);
         }
 
         private static void Require(bool condition, string message)
