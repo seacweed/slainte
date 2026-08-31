@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using Slainte.Bartending;
+using Slainte.Bartending.EditorTools;
 
 public class SetupTestSceneMenu
 {
@@ -30,7 +31,8 @@ public class SetupTestSceneMenu
             pool = poolObj.AddComponent<LiquidPool>();
         }
         
-        GameObject particlePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/MetaballFluid/Prefabs/water_particle.prefab");
+        GameObject particlePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(
+            MetaballFluidAssetPaths.WaterParticlePrefab);
         if (particlePrefab != null)
         {
             pool.particlePrefab = particlePrefab;
@@ -245,7 +247,8 @@ public class SetupTestSceneMenu
             Object.DestroyImmediate(meshCol);
         }
 
-        Material metaballMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/MetaballFluid/Graphics/MetaballMat.mat");
+        Material metaballMat = AssetDatabase.LoadAssetAtPath<Material>(
+            MetaballFluidAssetPaths.MetaballMaterial);
         if (metaballMat != null)
         {
             quadObj.GetComponent<MeshRenderer>().material = metaballMat;
@@ -263,10 +266,10 @@ public class SetupTestSceneMenu
     {
         string[] particlePaths = new string[]
         {
-            "Assets/MetaballFluid/Prefabs/water_particle.prefab",
-            "Assets/MetaballFluid/Prefabs/BlueLiquid.prefab",
-            "Assets/MetaballFluid/Prefabs/greenLiquid.prefab",
-            "Assets/MetaballFluid/Prefabs/redLiquid.prefab"
+            MetaballFluidAssetPaths.WaterParticlePrefab,
+            MetaballFluidAssetPaths.BlueLiquidPrefab,
+            MetaballFluidAssetPaths.GreenLiquidPrefab,
+            MetaballFluidAssetPaths.RedLiquidPrefab
         };
 
         foreach (string path in particlePaths)
