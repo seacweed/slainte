@@ -17,6 +17,6 @@
 
 - `Slainte > 품질 검증 > 기획 CSV 에셋 검증`
 - `Slainte > 품질 검증 > 손님 풀 검증`
-- 바텐딩 세로 절단·에셋 검증 메뉴는 `Assets/Editor/BartendingSystemValidator.cs`와 `BusinessFlowSceneSetup.cs`를 기준으로 확인합니다.
+- 바텐딩 세로 절단·에셋 검증 메뉴는 `Assets/_Project/Features/Bartending/Editor/BartendingSystemValidator.cs`와 `BusinessFlowSceneSetup.cs`를 기준으로 확인합니다.
 
 현재 `.asmdef`와 Unity Test Framework 테스트 파일은 없습니다. IDE 컴파일 성공만으로 씬 직렬화, Resources 참조, 실제 물리·입력 동작을 검증할 수 없으므로 Unity 플레이 검증이 필요합니다.

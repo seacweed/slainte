@@ -81,7 +81,7 @@ Assets/
 | `Assets/CoreScene/Scripts`의 싱글턴 기반 클래스 | `Shared/Runtime/Lifecycle` | 여러 기능이 쓰는 MonoBehaviour 수명 계약 |
 | `Assets/Scripts/Core` | `Features/Business/Runtime/Mode` 및 `Conversation/Episode` | 실제로는 BusinessScene 모드와 에피소드 조건 코드 |
 | `Assets/Scripts/Tools` | `Shared/Runtime/UI` | 여러 UI에서 재사용하는 표시·레이아웃 도구 |
-| `Assets/Editor` 루트 도구 | 담당 기능의 `Editor` | 하드코딩 에셋 경로 갱신 필요 |
+| `Assets/Editor` 루트 도구 | `Core/Editor`, `Shared/Editor`, `Features/*/Editor` | Bartending·Business·Rest·공용 도구를 소유 기능별 분리 |
 | 제품·개발 씬 | `Scenes/Production`, `Scenes/Development` | Build Settings와 Editor 도구 경로 갱신 |
 
 `CameraMove`, `DragandDrop`, `LiquorShelf`, `RecipeBook`은 Bartending 런타임 하위 모듈로 분류한다. `Tools`는 참조 그래프를 확인한 뒤 소유 영역을 확정한다.

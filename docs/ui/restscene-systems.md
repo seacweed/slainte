@@ -372,7 +372,7 @@ public class ItemData : ScriptableObject
 public enum ItemType { Alcohol, Liqueur, NonAlcohol, Powder, Tool, Glass }
 ```
 
-`Resources/Items/`에 187개 에셋 존재하지만 임시 데이터라 위 상점 구현은 참조하지 않음(위 "재료 마스터 데이터" 설명 참고). `Assets/Editor/ItemDataImporter.cs`(CSV 임포터)도 함께 미사용 상태로 남아있음.
+`Resources/Items/`에 187개 에셋 존재하지만 임시 데이터라 위 상점 구현은 참조하지 않음(위 "재료 마스터 데이터" 설명 참고). `Assets/_Project/Features/Rest/Editor/ItemDataImporter.cs`(CSV 임포터)도 함께 미사용 상태로 남아있음.
 
 ---
 
