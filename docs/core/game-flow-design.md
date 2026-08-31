@@ -82,5 +82,5 @@ RestScene
 - `SettlementUI`/`SettlementManager`를 CoreScene의 영속 Canvas(페이드 캔버스와 같은 곳)에 배치하고 셔터/모니터 텍스트 필드 연결
 - `BusinessStubUI`를 BusinessScene에 배치하고 스킵 버튼 연결
 - `EpisodeUIManager` 필드명이 `toggleButton→startBusinessButton`으로 바뀌어 RestScene 인스펙터에서 버튼 재연결 필요
-- `ChapterData` SO 에셋을 `Assets/Resources/ChapterData/`에 생성 완료(`ChapterData_0`, chapterId `Sector0`). `ChapterData.LoadFirst()`가 chapterIndex 최솟값 챕터를 반환하며 `MainMenuManager`가 새 게임 시작 시 이를 사용
+- `ChapterData` SO 에셋을 `Assets/Resources/Narrative/Chapters/`에 생성 완료(`ChapterData_0`, chapterId `Sector0`). `ChapterData.LoadFirst()`가 chapterIndex 최솟값 챕터를 반환하며 `MainMenuManager`가 새 게임 시작 시 이를 사용
 - 그래프 에디터 인스펙터 UI에 `episodeType/mandatorySlot/chapterId` 편집 필드 노출은 아직 미반영 (현재는 CSV 또는 EpisodeData 에셋 직접 편집으로 설정 가능)

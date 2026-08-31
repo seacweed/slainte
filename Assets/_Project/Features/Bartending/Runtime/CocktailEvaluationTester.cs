@@ -1,3 +1,4 @@
+using Slainte.Content;
 using UnityEngine;
 
 namespace Slainte.Bartending
@@ -12,7 +13,8 @@ namespace Slainte.Bartending
         [Header("레시피·주문 데이터")]
         [SerializeField] private string dataFolder = "Data";
         [SerializeField] private string orderTemplatesFileName = "order_templates.csv";
-        [SerializeField] private string itemResourcesPath = "Items";
+        [SerializeField] private string itemResourcesPath =
+            ProjectResourcePaths.BartendingItems;
         [SerializeField] private ItemDef[] additionalItems;
 
         [Header("주문")]

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Slainte.Content;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -11,9 +12,9 @@ namespace Slainte.Bartending
     public sealed class ToolCabinetController : MonoBehaviour
     {
         private const string CatalogResourcePath =
-            "Bartending/ToolCabinet/ToolCabinetCatalog";
+            ProjectResourcePaths.BartendingToolCabinetCatalog;
         private const string SettingsResourcePath =
-            "Bartending/BusinessBartendingSettings";
+            ProjectResourcePaths.BartendingSettings;
         private static readonly ToolKind[] CabinetToolOrder =
         {
             ToolKind.Jigger,

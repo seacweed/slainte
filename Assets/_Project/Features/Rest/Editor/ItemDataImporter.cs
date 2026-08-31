@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using Slainte.Content;
 
 public class ItemDataImporter : EditorWindow
 {
@@ -14,7 +15,8 @@ public class ItemDataImporter : EditorWindow
         if (string.IsNullOrEmpty(path)) return;
 
         // 2. 저장될 폴더 확인 (없으면 자동 생성)
-        string savePath = "Assets/Resources/Items";
+        string savePath =
+            ProjectResourcePaths.AssetRoot + ProjectResourcePaths.BartendingItems;
         if (!Directory.Exists(savePath)) 
         {
             Directory.CreateDirectory(savePath);

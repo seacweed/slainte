@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Slainte.Business;
+using Slainte.Content;
 using Slainte.EditorTools;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -259,7 +260,8 @@ public sealed class PlaytestLauncherWindow : EditorWindow
     {
         string retainedId = selectedEpisodeId;
         episodes.Clear();
-        episodes.AddRange(Resources.LoadAll<EpisodeData>("EpisodeData")
+        episodes.AddRange(Resources.LoadAll<EpisodeData>(
+            ProjectResourcePaths.NarrativeEpisodes)
             .Where(episode => episode != null && !string.IsNullOrWhiteSpace(episode.episodeId))
             .OrderBy(GetMinimumDay)
             .ThenBy(episode => episode.episodeType)
@@ -546,7 +548,8 @@ internal static class PlaytestLaunchCoordinator
     {
         List<string> completedBeforeDay = new List<string>();
         List<string> incompleteFromDay = new List<string>();
-        EpisodeData[] allEpisodes = Resources.LoadAll<EpisodeData>("EpisodeData");
+        EpisodeData[] allEpisodes = Resources.LoadAll<EpisodeData>(
+            ProjectResourcePaths.NarrativeEpisodes);
         foreach (EpisodeData episode in allEpisodes)
         {
             if (episode == null || episode.episodeType != EpisodeType.Mandatory)

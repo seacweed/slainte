@@ -1,4 +1,5 @@
 using System;
+using Slainte.Content;
 using Slainte.EditorTools;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -39,7 +40,8 @@ namespace Slainte.Bartending.EditorTools
                 RectTransform counter = FindRect(scene, "BarCounter");
                 RectTransform slots = FindRect(scene, "TableSlots");
                 BusinessBartendingSettings settings =
-                    Resources.Load<BusinessBartendingSettings>("Bartending/BusinessBartendingSettings");
+                    Resources.Load<BusinessBartendingSettings>(
+                        ProjectResourcePaths.BartendingSettings);
                 Require(counter != null, "BusinessScene has no BarCounter for layout preview.");
                 Require(slots != null, "BusinessScene has no TableSlots for layout preview.");
                 Require(settings != null, "Business bartending settings could not be loaded.");
@@ -165,7 +167,8 @@ namespace Slainte.Bartending.EditorTools
                 "The sandbox display camera is missing or can render gameplay layers.");
 
             BusinessBartendingSettings settings =
-                Resources.Load<BusinessBartendingSettings>("Bartending/BusinessBartendingSettings");
+                Resources.Load<BusinessBartendingSettings>(
+                    ProjectResourcePaths.BartendingSettings);
             testCube = IceCubeController.Create(
                 session.World,
                 settings,

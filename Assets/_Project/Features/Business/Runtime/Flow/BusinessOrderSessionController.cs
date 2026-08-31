@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Slainte.Bartending;
+using Slainte.Content;
 using Slainte.Economy;
 using Slainte.TV;
 using UnityEngine;
@@ -516,7 +517,9 @@ namespace Slainte.Business
 
         private void BuildEvaluationServices()
         {
-            ItemDefCatalog itemCatalog = ItemDefCatalog.LoadFromResources("Items", null);
+            ItemDefCatalog itemCatalog = ItemDefCatalog.LoadFromResources(
+                ProjectResourcePaths.BartendingItems,
+                null);
             CocktailRecipeCatalog recipeCatalog = CocktailRecipeDataLoader.LoadDefault(itemCatalog);
             CocktailOrderTemplateCatalog templateCatalog = CocktailOrderCsvLoader.LoadTemplatesFromStreamingAssets(
                 "Data",

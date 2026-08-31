@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Slainte.Content;
 using UnityEditor;
 using UnityEngine;
 
@@ -13,7 +14,10 @@ namespace Slainte.Editor
     public static class BartendingBottleArtSetup
     {
         private const string LiquorRoot = BartendingAssetPaths.LiquorBottleRoot;
-        private const string PlanningItemRoot = "Assets/Resources/Items/Planning/";
+        private const string PlanningItemRoot =
+            ProjectResourcePaths.AssetRoot
+            + ProjectResourcePaths.BartendingPlanningItems
+            + "/";
         private const string BottleArtRoot = BartendingArtImportPostprocessor.BottleRoot;
 
         private readonly struct ArtMapping
@@ -164,7 +168,11 @@ namespace Slainte.Editor
         {
             string path = id.StartsWith("item_", StringComparison.OrdinalIgnoreCase)
                 ? PlanningItemRoot + id + ".asset"
-                : "Assets/Resources/Items/" + id + ".asset";
+                : ProjectResourcePaths.AssetRoot
+                  + ProjectResourcePaths.BartendingItems
+                  + "/"
+                  + id
+                  + ".asset";
 
             ItemDef item = AssetDatabase.LoadAssetAtPath<ItemDef>(path);
             if (item == null)

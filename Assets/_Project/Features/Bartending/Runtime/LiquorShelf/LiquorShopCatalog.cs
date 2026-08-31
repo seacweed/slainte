@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using Slainte.Content;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Shop/Liquor Shop Catalog", fileName = "LiquorShopCatalog")]
 public sealed class LiquorShopCatalog : ScriptableObject
 {
-    public const string DefaultResourcePath = "Shop/LiquorShopCatalog";
+    public const string DefaultResourcePath = ProjectResourcePaths.BartendingShopCatalog;
 
     [Header("Products")]
     public List<LiquorCategoryDef> categories = new();

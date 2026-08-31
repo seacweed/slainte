@@ -74,7 +74,7 @@ CSV 작성 방법은 [../narrative/episode-csv-guide.md](../narrative/episode-cs
 
 1. Unity 메뉴 → **Tools > Slainte > Import Episode CSV**
 2. **Browse** 버튼으로 CSV 파일 선택
-3. Output Folder 확인 (기본값: `Assets/Resources/EpisodeData`)
+3. Output Folder 확인 (기본값: `Assets/Resources/Narrative/Episodes`)
 4. **Import** 클릭
 
 ### 동작 규칙

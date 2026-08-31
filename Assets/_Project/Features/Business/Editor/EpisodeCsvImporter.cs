@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using Slainte.Bartending;
 using Slainte.Economy;
+using Slainte.Content;
 using Slainte.EditorTools;
 using UnityEditor;
 using UnityEngine;
@@ -13,7 +14,8 @@ public class EpisodeCsvImporter : EditorWindow
 {
     private const string OrderTicketDatabasePath = BusinessAssetPaths.OrderTicketDatabase;
     private string _csvPath = "";
-    private string _outputFolder = "Assets/Resources/EpisodeData";
+    private string _outputFolder =
+        ProjectResourcePaths.AssetRoot + ProjectResourcePaths.NarrativeEpisodes;
 
     [MenuItem("Tools/Slainte/Import Episode CSV")]
     public static void Open()

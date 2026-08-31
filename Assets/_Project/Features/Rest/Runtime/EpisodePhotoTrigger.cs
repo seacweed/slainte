@@ -1,3 +1,4 @@
+using Slainte.Content;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI; // Image 컴포넌트를 제어하기 위해 필수 추가
@@ -28,8 +29,7 @@ public class EpisodePhotoTrigger : MonoBehaviour, IPointerEnterHandler, IPointer
         string baseName = GetBoardPhotoBaseName(data);
         if (string.IsNullOrEmpty(baseName)) return null;
 
-        Sprite sprite = LoadBoardSprite(baseName, "idle");
-        return sprite != null ? sprite : Resources.Load<Sprite>(baseName + "-idle");
+        return LoadBoardSprite(baseName, "idle");
     }
 
     public void SetEpisodeData(EpisodeData data, EpisodeBoardManager manager)
@@ -48,11 +48,6 @@ public class EpisodePhotoTrigger : MonoBehaviour, IPointerEnterHandler, IPointer
             hoverSprite = LoadBoardSprite(baseName, "hover");
             selectedSprite = LoadBoardSprite(baseName, "selected");
 
-            // 예외처리: 파일을 찾지 못한 경우 폴더 구조에 따라 다를 수 있으므로 기본 로드 시도
-            if (normalSprite == null) normalSprite = Resources.Load<Sprite>(baseName + "-idle");
-            if (hoverSprite == null) hoverSprite = Resources.Load<Sprite>(baseName + "-hover");
-            if (selectedSprite == null) selectedSprite = Resources.Load<Sprite>(baseName + "-selected");
-
             if (photoImage != null && normalSprite != null)
                 photoImage.sprite = normalSprite;
         }
@@ -69,9 +64,8 @@ public class EpisodePhotoTrigger : MonoBehaviour, IPointerEnterHandler, IPointer
 
     private static Sprite LoadBoardSprite(string baseName, string state)
     {
-        Sprite sprite = Resources.Load<Sprite>($"Sprites/EpisodeBoard/{baseName}-{state}");
-        if (sprite == null) sprite = Resources.Load<Sprite>($"{baseName}-{state}");
-        return sprite;
+        return Resources.Load<Sprite>(
+            $"{ProjectResourcePaths.RestEpisodeBoardSprites}/{baseName}-{state}");
     }
 
     private void Awake() 

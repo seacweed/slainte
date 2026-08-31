@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Slainte.Bartending;
+using Slainte.Content;
 using Slainte.EditorTools;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -590,7 +591,8 @@ namespace Slainte.Bartending.EditorTools
             InvokeNonPublic(beaker.LiquidTracker, "TrackParticle", testParticle);
 
             BusinessBartendingSettings settings =
-                Resources.Load<BusinessBartendingSettings>("Bartending/BusinessBartendingSettings");
+                Resources.Load<BusinessBartendingSettings>(
+                    ProjectResourcePaths.BartendingSettings);
             testCube = IceCubeController.Create(
                 session.World,
                 settings,
@@ -964,7 +966,7 @@ namespace Slainte.Bartending.EditorTools
         {
             BusinessBartendingSettings settings =
                 Resources.Load<BusinessBartendingSettings>(
-                    "Bartending/BusinessBartendingSettings");
+                    ProjectResourcePaths.BartendingSettings);
             Require(settings != null, "Business bartending settings are missing.");
 
             TMP_FontAsset expectedFont = settings.contentsLabelFont != null

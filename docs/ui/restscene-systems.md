@@ -155,7 +155,7 @@ public string day1ForcedEpisodeId;    // 기본값 "FathersNote"
 - 언핀(pin된 사진을 재클릭): `isPinned = false` + `EpisodeBoardManager.ResetBoard()` 호출 → 보드가 "영업" 기본 상태로 복귀
 
 **`SetEpisodeData(EpisodeData data, EpisodeBoardManager board)`**
-- `data.iconNameBoard`로 `Resources.Load<Sprite>("Sprites/{name}")` 시도
+- `data.iconNameBoard`로 `Resources.Load<Sprite>("Rest/Sprites/EpisodeBoard/{name}")` 시도
 - `Image` 컴포넌트 우선, 없으면 `SpriteRenderer` 대체
 
 **`static HasBoardPhoto(EpisodeData ep)`**

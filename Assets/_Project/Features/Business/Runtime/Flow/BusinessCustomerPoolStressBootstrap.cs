@@ -11,7 +11,7 @@ namespace Slainte.Business
     [DisallowMultipleComponent]
     public sealed class BusinessCustomerPoolStressBootstrap : MonoBehaviour
     {
-        private const string SettingsResourcePath = "Business/BusinessOrderFlowSettings";
+        private const string SettingsResourcePath = BusinessOrderFlowSettings.ResourcePath;
 
         [Header("Stress Pool")]
         [SerializeField, Min(1)] private int customerCount = 32;

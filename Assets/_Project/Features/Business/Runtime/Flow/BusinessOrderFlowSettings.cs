@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Slainte.Content;
 using UnityEngine;
 
 namespace Slainte.Business
@@ -73,7 +74,7 @@ namespace Slainte.Business
     [CreateAssetMenu(menuName = "Slainte/Business/Order Flow Settings", fileName = "BusinessOrderFlowSettings")]
     public sealed class BusinessOrderFlowSettings : ScriptableObject
     {
-        public const string ResourcePath = "Business/BusinessOrderFlowSettings";
+        public const string ResourcePath = ProjectResourcePaths.BusinessOrderFlowSettings;
 
         [Header("영업 진행")]
         public bool autoStart = true;

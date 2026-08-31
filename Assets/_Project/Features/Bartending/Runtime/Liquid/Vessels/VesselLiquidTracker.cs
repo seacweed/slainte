@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Text;
+using Slainte.Content;
 using UnityEngine;
 
 namespace Slainte.Bartending
@@ -1366,7 +1367,9 @@ namespace Slainte.Bartending
                 return debugCocktailEvaluator;
 
             debugEvaluatorInitialized = true;
-            ItemDefCatalog itemCatalog = ItemDefCatalog.LoadFromResources("Items", null);
+            ItemDefCatalog itemCatalog = ItemDefCatalog.LoadFromResources(
+                ProjectResourcePaths.BartendingItems,
+                null);
             CocktailRecipeCatalog recipeCatalog =
                 CocktailRecipeDataLoader.LoadDefault(itemCatalog);
             if (recipeCatalog != null && recipeCatalog.Count > 0)

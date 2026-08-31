@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Slainte.Content;
 using UnityEngine;
 
 namespace Slainte.TV
@@ -37,7 +38,7 @@ namespace Slainte.TV
         fileName = "TVBroadcastDatabase")]
     public sealed class TVBroadcastDatabase : ScriptableObject
     {
-        public const string ResourcePath = "TV/TVBroadcastDatabase";
+        public const string ResourcePath = ProjectResourcePaths.RestTvDatabase;
         private static TVBroadcastDatabase cachedDefault;
 
         public List<TVBroadcastEntry> broadcasts = new();

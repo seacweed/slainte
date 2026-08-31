@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using Slainte.Bartending;
 using Slainte.Business;
+using Slainte.Content;
 using Slainte.Economy;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -84,7 +85,9 @@ namespace Slainte.EditorTools
                     $"손님 주문 DB에 중복 키가 있습니다: {registered.key}");
             }
 
-            ItemDefCatalog items = ItemDefCatalog.LoadFromResources("Items", null);
+            ItemDefCatalog items = ItemDefCatalog.LoadFromResources(
+                ProjectResourcePaths.BartendingItems,
+                null);
             CocktailRecipeCatalog recipes = CocktailRecipeDataLoader.LoadDefault(items);
             int connectedOrderCount = 0;
             int conditionOrderCount = 0;
@@ -1190,8 +1193,11 @@ namespace Slainte.EditorTools
 
         private static void ValidateExistingCraftingNodes()
         {
-            EpisodeData[] episodes = Resources.LoadAll<EpisodeData>("EpisodeData");
-            ItemDefCatalog itemCatalog = ItemDefCatalog.LoadFromResources("Items", null);
+            EpisodeData[] episodes = Resources.LoadAll<EpisodeData>(
+                ProjectResourcePaths.NarrativeEpisodes);
+            ItemDefCatalog itemCatalog = ItemDefCatalog.LoadFromResources(
+                ProjectResourcePaths.BartendingItems,
+                null);
             CocktailRecipeCatalog recipeCatalog = CocktailRecipeDataLoader.LoadDefault(itemCatalog);
             OrderTicketDatabase ticketDatabase =
                 AssetDatabase.LoadAssetAtPath<OrderTicketDatabase>(TicketDatabasePath);
@@ -1349,7 +1355,9 @@ namespace Slainte.EditorTools
         private static void ValidateStrangeCoinOneChoicePayment()
         {
             const string episodePath =
-                "Assets/Resources/EpisodeData/EpisodeData_StrangeCoin_1.asset";
+                ProjectResourcePaths.AssetRoot
+                + ProjectResourcePaths.NarrativeEpisodes
+                + "/EpisodeData_StrangeCoin_1.asset";
             const string csvPath =
                 NarrativeAssetPaths.EpisodeSourceRoot
                 + "에피소드 - EpisodeData_StrangeCoin_1.csv.csv";

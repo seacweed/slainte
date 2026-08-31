@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Slainte.Business;
+using Slainte.Content;
 using Slainte.TV;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -14,7 +15,8 @@ namespace Slainte.EditorTools
     public sealed class TVSystemTestWindow : EditorWindow
     {
         private const string ScenePath = ProjectScenePaths.Rest;
-        private const string DatabasePath = "Assets/Resources/TV/TVBroadcastDatabase.asset";
+        private const string DatabasePath =
+            ProjectResourcePaths.AssetRoot + ProjectResourcePaths.RestTvDatabase + ".asset";
 
         private int selectedIndex;
         private Vector2 scroll;

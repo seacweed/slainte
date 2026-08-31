@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using Slainte.Content;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -18,7 +19,7 @@ namespace Slainte.Bartending
         }
 
         private const string SceneName = "BusinessScene";
-        private const string SettingsResourcePath = "Bartending/BusinessBartendingSettings";
+        private const string SettingsResourcePath = ProjectResourcePaths.BartendingSettings;
 
         private readonly List<GameObject> hiddenCanvasItems = new List<GameObject>();
         private readonly List<BottleController> sessionBottles = new List<BottleController>();
@@ -123,7 +124,9 @@ namespace Slainte.Bartending
         {
             targetScene = scene;
             settings = sessionSettings;
-            itemCatalog = ItemDefCatalog.LoadFromResources("Items", null);
+            itemCatalog = ItemDefCatalog.LoadFromResources(
+                ProjectResourcePaths.BartendingItems,
+                null);
             modeManager = FindInScene<GameModeManager>(scene);
             if (modeManager == null)
             {

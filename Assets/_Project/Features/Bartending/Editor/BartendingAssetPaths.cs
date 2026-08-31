@@ -5,6 +5,10 @@ namespace Slainte.Editor
         public const string FeatureRoot =
             "Assets/_Project/Features/Bartending";
         public const string ContentRoot = FeatureRoot + "/Content/";
+        public const string SourceContentRoot = ContentRoot + "Source/";
+        public const string PlanningSourceRoot = SourceContentRoot + "Planning/";
+        public const string LegacySourceRoot = SourceContentRoot + "Legacy/";
+        public const string LegacyItemDataCsv = LegacySourceRoot + "ItemData.csv";
         public const string GeneratedContentRoot = ContentRoot + "Generated/";
         public const string LiquorBottleRoot = GeneratedContentRoot + "LiquorBottles/";
         public const string LiquorCategoryRoot = GeneratedContentRoot + "LiquorCategories/";

@@ -59,7 +59,7 @@ public enum GameState { None, Episode, Business, Settlement, Rest }
 
 `MonoSingleton<EpisodeManager>`. 에피소드 데이터 관리와 시작/완료 처리를 담당합니다.
 
-- `LoadAllEpisodes()` — `Resources.LoadAll<EpisodeData>("EpisodeData")`로 Awake 시 일괄 로드
+- `LoadAllEpisodes()` — `Resources.LoadAll<EpisodeData>("Narrative/Episodes")`로 Awake 시 일괄 로드
 - `GetAvailableEpisodes()` / `GetBoardEpisodes()` — `episodeType == Default`인 에피소드만 반환 (Mandatory는 플레이어가 직접 선택하지 않음), `GameProgress` 완료 여부 및 `CanStart()` 조건 체크
 - `CanStart(EpisodeData, GameProgress)` — `EpisodeTriggerCondition` 기반 조건 검사
   - `minDay`, `requiredFlags`, `blockedFlags`, `prerequisiteEpisodeIds`, `requiredVars`, `requiredCustomerAppearances` 순서로 검사

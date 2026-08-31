@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using Slainte.Content;
 using Slainte.TV;
 using TMPro;
 using UnityEditor;
@@ -13,7 +14,8 @@ namespace Slainte.EditorTools
     public static class TVSystemInstaller
     {
         private const string ScenePath = ProjectScenePaths.Rest;
-        private const string DatabasePath = "Assets/Resources/TV/TVBroadcastDatabase.asset";
+        private const string DatabasePath =
+            ProjectResourcePaths.AssetRoot + ProjectResourcePaths.RestTvDatabase + ".asset";
         private const string PrefabPath = RestAssetPaths.TVSystemPrefab;
         private const string PanelPrefabPath = RestAssetPaths.TVPanelPrefab;
         private static readonly Vector3 DefaultWorldPosition = new(9.5f, 0.3f, 0f);
@@ -57,7 +59,8 @@ namespace Slainte.EditorTools
 
         private static TVBroadcastDatabase EnsureDatabase()
         {
-            EnsureFolder("Assets/Resources", "TV");
+            EnsureFolder("Assets/Resources", "Rest");
+            EnsureFolder("Assets/Resources/Rest", "TV");
             TVBroadcastDatabase database =
                 AssetDatabase.LoadAssetAtPath<TVBroadcastDatabase>(DatabasePath);
             if (database == null)

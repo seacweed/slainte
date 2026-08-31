@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Slainte.Content;
 using System.IO;
 using System.Reflection;
 using Slainte.Bartending;
@@ -500,7 +501,11 @@ namespace Slainte.Editor
         {
             string[] guids = AssetDatabase.FindAssets(
                 "t:CocktailRecipeDef",
-                new[] { "Assets/Resources/Recipes/Planning" });
+                new[]
+                {
+                    ProjectResourcePaths.AssetRoot
+                    + ProjectResourcePaths.BartendingPlanningRecipes
+                });
             for (int i = 0; i < guids.Length; i++)
             {
                 string path = AssetDatabase.GUIDToAssetPath(guids[i]);

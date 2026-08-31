@@ -1,3 +1,4 @@
+using Slainte.Content;
 using UnityEngine;
 
 namespace Slainte.Bartending
@@ -12,8 +13,11 @@ namespace Slainte.Bartending
 
         public static CocktailRecipeCatalog LoadFromResources(
             ItemDefCatalog itemCatalog,
-            string resourcesPath = "Recipes")
+            string resourcesPath = ProjectResourcePaths.BartendingRecipes)
         {
+            if (string.IsNullOrWhiteSpace(resourcesPath) || resourcesPath == "Recipes")
+                resourcesPath = ProjectResourcePaths.BartendingRecipes;
+
             CocktailRecipeCatalog catalog = new CocktailRecipeCatalog();
             CocktailRecipeDef[] definitions = Resources.LoadAll<CocktailRecipeDef>(resourcesPath);
             for (int i = 0; i < definitions.Length; i++)

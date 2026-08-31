@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Slainte.Bartending;
+using Slainte.Content;
 using UnityEngine;
 
 namespace Slainte.TV
@@ -247,7 +248,7 @@ namespace Slainte.TV
             }
 
             cachedRecipeCatalog ??= CocktailRecipeDataLoader.LoadDefault(
-                ItemDefCatalog.LoadFromResources("Items", null));
+                ItemDefCatalog.LoadFromResources(ProjectResourcePaths.BartendingItems, null));
             return cachedRecipeCatalog.TryGet(order.requestedRecipeId, out CocktailRecipe recipe)
                 && recipe != null
                 && recipe.expectedAbvPercent >= active.minimumAbvPercent;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Slainte.Bartending;
+using Slainte.Content;
 using UnityEngine;
 
 namespace Slainte.Business
@@ -120,7 +121,8 @@ namespace Slainte.Business
                 return CocktailOrderType.EpisodeOrder;
 
             if (cachedTagPalette == null)
-                cachedTagPalette = Resources.Load<TasteMoodTagPaletteDef>("Recipes/TasteMoodPalette");
+                cachedTagPalette = Resources.Load<TasteMoodTagPaletteDef>(
+                    ProjectResourcePaths.BartendingRecipes + "/TasteMoodPalette");
 
             if (cachedTagPalette == null)
                 return CocktailOrderType.EpisodeOrder;

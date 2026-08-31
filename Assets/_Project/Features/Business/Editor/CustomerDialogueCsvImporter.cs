@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Slainte.Bartending;
+using Slainte.Content;
 using UnityEditor;
 using UnityEngine;
 
@@ -834,7 +835,8 @@ namespace Slainte.EditorTools
         {
             Dictionary<string, CocktailRecipeDef> recipes = new(
                 StringComparer.OrdinalIgnoreCase);
-            CocktailRecipeDef[] definitions = Resources.LoadAll<CocktailRecipeDef>("Recipes");
+            CocktailRecipeDef[] definitions = Resources.LoadAll<CocktailRecipeDef>(
+                ProjectResourcePaths.BartendingRecipes);
             for (int i = 0; i < definitions.Length; i++)
             {
                 CocktailRecipeDef definition = definitions[i];

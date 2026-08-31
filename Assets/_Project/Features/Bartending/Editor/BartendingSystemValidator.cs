@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Slainte.Bartending;
+using Slainte.Content;
 using UnityEditor;
 using UnityEngine;
 
@@ -352,7 +353,9 @@ public static class BartendingSystemValidator
 
     private static void ValidateCsvData()
     {
-        ItemDefCatalog items = ItemDefCatalog.LoadFromResources("Items", null);
+        ItemDefCatalog items = ItemDefCatalog.LoadFromResources(
+            ProjectResourcePaths.BartendingItems,
+            null);
         CocktailRecipeCatalog recipes = CocktailRecipeDataLoader.LoadDefault(items);
         Assert(recipes.TryGet("rec_1014", out CocktailRecipe johnnyDogsNeat),
             "기획 CSV에서 조니 독스 니트 레시피를 불러오지 못했습니다.");
@@ -386,13 +389,16 @@ public static class BartendingSystemValidator
     private static void ValidateBusinessBottleData()
     {
         BusinessBartendingSettings settings =
-            Resources.Load<BusinessBartendingSettings>("Bartending/BusinessBartendingSettings");
+            Resources.Load<BusinessBartendingSettings>(
+                ProjectResourcePaths.BartendingSettings);
         Assert(settings != null && settings.bottlePrefab != null,
             "영업 바텐딩 공통 병 프리팹이 설정되지 않았습니다.");
         Assert(settings.bottlePrefab.GetComponent<BottleController>() != null,
             "영업 바텐딩 공통 병 프리팹에 BottleController가 없습니다.");
 
-        ItemDefCatalog items = ItemDefCatalog.LoadFromResources("Items", null);
+        ItemDefCatalog items = ItemDefCatalog.LoadFromResources(
+            ProjectResourcePaths.BartendingItems,
+            null);
         List<string> missingItemIds = new List<string>();
         string[] guids = AssetDatabase.FindAssets("t:LiquorBottleDef");
         for (int i = 0; i < guids.Length; i++)

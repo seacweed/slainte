@@ -1,4 +1,5 @@
 using System.Collections;
+using Slainte.Content;
 using Slainte.Shared.Lifecycle;
 using UnityEngine;
 
@@ -34,10 +35,13 @@ public class AudioManager : MonoSingleton<AudioManager>
     {
         if (string.IsNullOrWhiteSpace(clipName)) return;
 
-        AudioClip clip = Resources.Load<AudioClip>($"SFX/{clipName}");
+        AudioClip clip = Resources.Load<AudioClip>(
+            $"{ProjectResourcePaths.CoreSfx}/{clipName}");
         if (clip == null)
         {
-            Debug.LogWarning($"[AudioManager] SFX clip not found: Resources/SFX/{clipName}");
+            Debug.LogWarning(
+                $"[AudioManager] SFX clip not found: Resources/"
+                + $"{ProjectResourcePaths.CoreSfx}/{clipName}");
             return;
         }
 
@@ -48,10 +52,13 @@ public class AudioManager : MonoSingleton<AudioManager>
     {
         if (string.IsNullOrWhiteSpace(clipName)) return;
 
-        AudioClip clip = Resources.Load<AudioClip>($"BGM/{clipName}");
+        AudioClip clip = Resources.Load<AudioClip>(
+            $"{ProjectResourcePaths.CoreBgm}/{clipName}");
         if (clip == null)
         {
-            Debug.LogWarning($"[AudioManager] BGM clip not found: Resources/BGM/{clipName}");
+            Debug.LogWarning(
+                $"[AudioManager] BGM clip not found: Resources/"
+                + $"{ProjectResourcePaths.CoreBgm}/{clipName}");
             return;
         }
 

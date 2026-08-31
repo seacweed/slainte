@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Slainte.Business;
+using Slainte.Content;
 using Slainte.EditorTools;
 using UnityEditor;
 using UnityEngine;
@@ -111,7 +112,8 @@ namespace NarrativeFlow.Editor
             }
 
             // Save (overwrite existing asset if present).
-            const string dir = "Assets/Resources/EpisodeData";
+            const string dir =
+                ProjectResourcePaths.AssetRoot + ProjectResourcePaths.NarrativeEpisodes;
             if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
             string path = $"{dir}/EpisodeData_{episodeId}.asset";
 

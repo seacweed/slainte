@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Slainte.Business;
+using Slainte.Content;
 using UnityEditor;
 using UnityEngine;
 
@@ -451,7 +452,8 @@ namespace Slainte.EditorTools
                     ? episodes[selectedEpisodeIndex]?.episodeId
                     : null;
 
-            episodes = Resources.LoadAll<EpisodeData>("EpisodeData")
+            episodes = Resources.LoadAll<EpisodeData>(
+                ProjectResourcePaths.NarrativeEpisodes)
                 .Where(episode => episode != null && !string.IsNullOrWhiteSpace(episode.episodeId))
                 .OrderBy(episode => episode.episodeId, StringComparer.OrdinalIgnoreCase)
                 .ToArray();

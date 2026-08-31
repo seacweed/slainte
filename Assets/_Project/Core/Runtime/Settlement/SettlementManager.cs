@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Slainte.Business;
+using Slainte.Content;
 using Slainte.Economy;
 using Slainte.Shared.Lifecycle;
 using UnityEngine;
@@ -15,7 +16,8 @@ public class SettlementManager : MonoSingleton<SettlementManager>
     protected override void Awake()
     {
         base.Awake();
-        _chapters.AddRange(Resources.LoadAll<ChapterData>("ChapterData"));
+        _chapters.AddRange(Resources.LoadAll<ChapterData>(
+            ProjectResourcePaths.NarrativeChapters));
     }
 
     public void BeginSettlement()

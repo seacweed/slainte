@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using Slainte.Bartending;
 using Slainte.Business;
+using Slainte.Content;
 using Slainte.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -96,22 +97,29 @@ namespace Slainte.EditorTools
     {
         private static bool automaticImportAttempted;
 
-        public const string ItemOutputFolder = "Assets/Resources/Items/Planning";
+        public const string ItemOutputFolder =
+            ProjectResourcePaths.AssetRoot + ProjectResourcePaths.BartendingPlanningItems;
         public const string ShelfOutputFolder = BartendingAssetPaths.LiquorBottleRoot + "Planning";
-        public const string RecipeOutputFolder = "Assets/Resources/Recipes/Planning";
-        public const string VariantOutputFolder = "Assets/Resources/Recipes/Planning/Variants";
+        public const string RecipeOutputFolder =
+            ProjectResourcePaths.AssetRoot + ProjectResourcePaths.BartendingPlanningRecipes;
+        public const string VariantOutputFolder =
+            ProjectResourcePaths.AssetRoot + ProjectResourcePaths.BartendingRecipeVariants;
         public const string PlanningCsvFolder =
-            "Assets/_Project/Features/Bartending/Content/Source/Planning";
+            BartendingAssetPaths.PlanningSourceRoot;
         public const string LegacyItemFolder = BartendingAssetPaths.PlanningLegacyRoot + "PlanningItems";
         public const string LegacyBottleFolder = BartendingAssetPaths.PlanningLegacyRoot + "PlanningBottles";
         public const string LiquorBottleCatalogPath = BartendingAssetPaths.LiquorBottleRoot + "Liquor Bottle Catalog.asset";
-        public const string LiquorShopCatalogPath = "Assets/Resources/Shop/LiquorShopCatalog.asset";
+        public const string LiquorShopCatalogPath =
+            ProjectResourcePaths.AssetRoot
+            + ProjectResourcePaths.BartendingShopCatalog
+            + ".asset";
 
-        public static string DefaultItemCsvPath => ProjectPath(PlanningCsvFolder + "/items.csv");
+        public static string DefaultItemCsvPath => ProjectPath(PlanningCsvFolder + "items.csv");
 
-        public static string DefaultRecipeCsvPath => ProjectPath(PlanningCsvFolder + "/recipes.csv");
+        public static string DefaultRecipeCsvPath => ProjectPath(PlanningCsvFolder + "recipes.csv");
 
-        public static string DefaultIngredientCsvPath => ProjectPath(PlanningCsvFolder + "/recipe_ingredients.csv");
+        public static string DefaultIngredientCsvPath =>
+            ProjectPath(PlanningCsvFolder + "recipe_ingredients.csv");
 
         [InitializeOnLoadMethod]
         private static void QueueAuthoritativeCsvImport()
@@ -258,7 +266,9 @@ namespace Slainte.EditorTools
         [MenuItem("Slainte/품질 검증/기획 CSV 에셋 검증")]
         public static void ValidateImportedAssets()
         {
-            ItemDefCatalog items = ItemDefCatalog.LoadFromResources("Items", null);
+            ItemDefCatalog items = ItemDefCatalog.LoadFromResources(
+                ProjectResourcePaths.BartendingItems,
+                null);
             CocktailRecipeCatalog recipes = CocktailRecipeDataLoader.LoadDefault(items);
 
             Require(recipes.TryGet("rec_1001", out CocktailRecipe burnhamSour),
@@ -302,7 +312,8 @@ namespace Slainte.EditorTools
             Require(OrderEvaluationGrader.Resolve(midResult, null) == OrderEvaluationGrade.Mid,
                 "숨은 변형 레시피가 Mid로 판정되지 않았습니다.");
 
-            ItemDef[] planningItems = Resources.LoadAll<ItemDef>("Items/Planning");
+            ItemDef[] planningItems = Resources.LoadAll<ItemDef>(
+                ProjectResourcePaths.BartendingPlanningItems);
             Require(planningItems.Length == 15,
                 $"CSV 활성 재료가 15개가 아닙니다: {planningItems.Length}개");
             Require(recipes.OrderableCount == 21,
@@ -1645,7 +1656,12 @@ namespace Slainte.EditorTools
 
         private static void CopyExistingVisualSettings(string displayName, string importedId, ItemDef destination)
         {
-            string[] guids = AssetDatabase.FindAssets("t:ItemDef", new[] { "Assets/Resources/Items" });
+            string[] guids = AssetDatabase.FindAssets(
+                "t:ItemDef",
+                new[]
+                {
+                    ProjectResourcePaths.AssetRoot + ProjectResourcePaths.BartendingItems
+                });
             for (int i = 0; i < guids.Length; i++)
             {
                 ItemDef source = AssetDatabase.LoadAssetAtPath<ItemDef>(AssetDatabase.GUIDToAssetPath(guids[i]));
@@ -1734,7 +1750,12 @@ namespace Slainte.EditorTools
 
         private static bool AssetExistsWithItemId(string itemId)
         {
-            string[] guids = AssetDatabase.FindAssets("t:ItemDef", new[] { "Assets/Resources/Items" });
+            string[] guids = AssetDatabase.FindAssets(
+                "t:ItemDef",
+                new[]
+                {
+                    ProjectResourcePaths.AssetRoot + ProjectResourcePaths.BartendingItems
+                });
             for (int i = 0; i < guids.Length; i++)
             {
                 ItemDef item = AssetDatabase.LoadAssetAtPath<ItemDef>(AssetDatabase.GUIDToAssetPath(guids[i]));

@@ -60,7 +60,7 @@
 
 `EpisodeRunner`가 노드 진입 시 `ApplyBgmCommand()`를 호출해 `AudioManager`에 위임합니다.
 
-BGM 클립은 `Assets/Resources/BGM/` 폴더에 배치해야 합니다.
+BGM 클립은 `Assets/Resources/Core/Audio/BGM/` 폴더에 배치해야 합니다.
 
 ### SFX
 
@@ -76,6 +76,6 @@ BGM과 완전히 분리된 채널이다 — BGM은 무한 반복 + 크로스페�
 
 `EpisodeRunner`가 노드 진입 시 `ApplyBgmCommand()`와 같은 자리에서 `ApplySfxCommand()`도 호출.
 
-SFX 클립은 `Assets/Resources/SFX/` 폴더에 배치해야 합니다(BGM 폴더와 별도).
+SFX 클립은 `Assets/Resources/Core/Audio/SFX/` 폴더에 배치해야 합니다(BGM 폴더와 별도).
 
 CSV/노드 그래프 에디터에서의 작성법은 [episode-csv-guide.md](episode-csv-guide.md#nodes), [narrative-graph-editor.md](narrative-graph-editor.md) 참고.

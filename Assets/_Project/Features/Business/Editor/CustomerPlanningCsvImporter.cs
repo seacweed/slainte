@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Slainte.Bartending;
+using Slainte.Content;
 using Slainte.Economy;
 using Slainte.TV;
 using UnityEditor;
@@ -44,7 +45,9 @@ namespace Slainte.EditorTools
 
         private const string CharacterDatabasePath = BusinessAssetPaths.CharacterDatabase;
         private const string VisitDatabasePath =
-            "Assets/Resources/CustomerVisit/CustomerVisitDatabase.asset";
+            ProjectResourcePaths.AssetRoot
+            + ProjectResourcePaths.BusinessCustomerVisitDatabase
+            + ".asset";
         private const string OrderDatabasePath = BusinessAssetPaths.CustomerOrderDatabase;
 
         private static readonly Dictionary<string, string> RecipeNameAliases =
@@ -305,7 +308,9 @@ namespace Slainte.EditorTools
                 return errors;
             }
 
-            ItemDefCatalog items = ItemDefCatalog.LoadFromResources("Items", null);
+            ItemDefCatalog items = ItemDefCatalog.LoadFromResources(
+                ProjectResourcePaths.BartendingItems,
+                null);
             CocktailRecipeCatalog recipes = CocktailRecipeDataLoader.LoadDefault(items);
             bool hasNightPatrol = false;
             Dictionary<string, CustomerOrderData> ordersByKey =
@@ -852,7 +857,8 @@ namespace Slainte.EditorTools
         {
             Dictionary<string, CocktailRecipeDef> recipes =
                 new(StringComparer.OrdinalIgnoreCase);
-            CocktailRecipeDef[] definitions = Resources.LoadAll<CocktailRecipeDef>("Recipes");
+            CocktailRecipeDef[] definitions = Resources.LoadAll<CocktailRecipeDef>(
+                ProjectResourcePaths.BartendingRecipes);
             for (int i = 0; i < definitions.Length; i++)
             {
                 CocktailRecipeDef definition = definitions[i];

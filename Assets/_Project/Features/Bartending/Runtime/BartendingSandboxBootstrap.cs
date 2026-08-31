@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Slainte.Content;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -9,7 +10,7 @@ namespace Slainte.Bartending
     [DisallowMultipleComponent]
     public sealed class BartendingSandboxBootstrap : MonoBehaviour
     {
-        private const string SettingsResourcePath = "Bartending/BusinessBartendingSettings";
+        private const string SettingsResourcePath = ProjectResourcePaths.BartendingSettings;
 
         [SerializeField] private BusinessBartendingSettings settings;
         [SerializeField] private RectTransform barCounter;
@@ -147,7 +148,9 @@ namespace Slainte.Bartending
             CreateTestBottles();
             snapRoutine = StartCoroutine(SnapAfterInitialization());
 
-            ItemDefCatalog itemCatalog = ItemDefCatalog.LoadFromResources("Items", null);
+            ItemDefCatalog itemCatalog = ItemDefCatalog.LoadFromResources(
+                ProjectResourcePaths.BartendingItems,
+                null);
             CocktailRecipeCatalog recipes = CocktailRecipeDataLoader.LoadDefault(itemCatalog);
             evaluator = new CocktailEvaluator(recipes);
         }
@@ -162,8 +165,10 @@ namespace Slainte.Bartending
             {
                 items = new[]
                 {
-                    Resources.Load<ItemDef>("Items/Planning/item_1006"),
-                    Resources.Load<ItemDef>("Items/Planning/item_1009")
+                    Resources.Load<ItemDef>(
+                        ProjectResourcePaths.BartendingPlanningItems + "/item_1006"),
+                    Resources.Load<ItemDef>(
+                        ProjectResourcePaths.BartendingPlanningItems + "/item_1009")
                 };
             }
             if (items == null || session == null)

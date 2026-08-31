@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Slainte.Content;
 using Slainte.Shared.Lifecycle;
 using UnityEngine;
 
@@ -19,7 +20,8 @@ public class EpisodeManager : MonoSingleton<EpisodeManager>
     private void LoadAllEpisodes()
     {
         allEpisodes.Clear();
-        allEpisodes.AddRange(Resources.LoadAll<EpisodeData>("EpisodeData"));
+        allEpisodes.AddRange(Resources.LoadAll<EpisodeData>(
+            ProjectResourcePaths.NarrativeEpisodes));
         Debug.Log($"[EpisodeManager] {allEpisodes.Count} episode(s) loaded.");
     }
 

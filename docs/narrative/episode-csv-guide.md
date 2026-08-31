@@ -335,7 +335,7 @@ BGM은 무한 반복 재생되며 새로 재생하면 이전 BGM과 크로스페
 
 **제조 판정 노드** 작성 시: `text`와 `nextNodeId`는 비우고, `requiresCrafting=true` + `craftingTicketKey` + `craftingOrderTarget`을 작성합니다. `craftingOrderTarget`이 비어 있으면 제조 세션이 시작되지 않아 주문서도 뜨지 않고 판정도 진행되지 않습니다. 제조 결과별 이동 노드·플래그·변수 변경은 `#NODE_CRAFTING_BRANCHES` 섹션에 작성합니다. 선택지별 통화나 배율이 다르면 제조 노드를 나누고 각 노드에 결제 열을 별도로 입력합니다.
 >
-> **레시피 ID vs 맛/분위기 태그**: `craftingOrderTarget`에 뭘 쓰든 별도로 지정할 컬럼은 없습니다 — `EpisodeCraftingBridge.ResolveOrderType()`이 값 자체를 `Assets/Resources/Recipes/TasteMoodPalette.asset`(맛/분위기 태그 팔레트)에 대조해서 자동으로 판별합니다. 팔레트에 등록된 태그 문자열(예: `고급스러운`, `씁쓸함`)이면 태그 기반 주문(맛/분위기 조건만 맞으면 통과)으로, 등록 안 된 값이면 레시피 ID(`rec_1019` 등, 정확히 그 레시피여야 통과)로 처리됩니다. 팔레트에 없는 오타 태그를 쓰면 존재하지 않는 레시피 ID로 취급되어 제조가 항상 실패하니, 태그를 쓸 땐 팔레트에 등록된 문자열과 정확히 일치하는지 확인하세요.
+> **레시피 ID vs 맛/분위기 태그**: `craftingOrderTarget`에 뭘 쓰든 별도로 지정할 컬럼은 없습니다 — `EpisodeCraftingBridge.ResolveOrderType()`이 값 자체를 `Assets/Resources/Bartending/Recipes/TasteMoodPalette.asset`(맛/분위기 태그 팔레트)에 대조해서 자동으로 판별합니다. 팔레트에 등록된 태그 문자열(예: `고급스러운`, `씁쓸함`)이면 태그 기반 주문(맛/분위기 조건만 맞으면 통과)으로, 등록 안 된 값이면 레시피 ID(`rec_1019` 등, 정확히 그 레시피여야 통과)로 처리됩니다. 팔레트에 없는 오타 태그를 쓰면 존재하지 않는 레시피 ID로 취급되어 제조가 항상 실패하니, 태그를 쓸 땐 팔레트에 등록된 문자열과 정확히 일치하는지 확인하세요.
 
 **선택지 노드** 작성 시: `nextNodeId`는 비우고 `#CHOICES` 섹션에 선택지를 작성합니다.
 
@@ -608,7 +608,7 @@ CSV 임포트는 에피소드 에셋만 만듭니다. `Random Encounters`에 등
 1. Unity 메뉴 → **Tools > Slainte > Import Episode CSV**
 2. **Browse** 버튼으로 작성한 CSV 파일 선택
 3. **Import** 클릭
-4. `Assets/Resources/EpisodeData/EpisodeData_{episodeId}.asset` 으로 저장됨
+4. `Assets/Resources/Narrative/Episodes/EpisodeData_{episodeId}.asset` 으로 저장됨
 
 같은 `episodeId`의 에셋이 이미 존재하면 **덮어씁니다**.
 

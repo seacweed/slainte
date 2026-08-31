@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Slainte.Bartending;
 using Slainte.Business;
+using Slainte.Content;
 using Slainte.EditorTools;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -45,7 +46,8 @@ public static class LiquorShelfSpawnValidator
         SceneManager.MoveGameObjectToScene(isolationHost, scene);
         PlaytestProgressIsolation.Attach(isolationHost);
         BusinessOrderFlowSettings flowSettings =
-            Resources.Load<BusinessOrderFlowSettings>("Business/BusinessOrderFlowSettings");
+            Resources.Load<BusinessOrderFlowSettings>(
+                ProjectResourcePaths.BusinessOrderFlowSettings);
         if (flowSettings != null)
         {
             SessionState.SetBool(ManualToolCabinetAutoStartKey, flowSettings.autoStart);
@@ -145,7 +147,8 @@ public static class LiquorShelfSpawnValidator
     private static void RestoreBusinessAutoStartForManualPlaytest()
     {
         BusinessOrderFlowSettings flowSettings =
-            Resources.Load<BusinessOrderFlowSettings>("Business/BusinessOrderFlowSettings");
+            Resources.Load<BusinessOrderFlowSettings>(
+                ProjectResourcePaths.BusinessOrderFlowSettings);
         if (flowSettings != null
             && SessionState.GetBool(ManualToolCabinetAutoStartKey, false))
         {

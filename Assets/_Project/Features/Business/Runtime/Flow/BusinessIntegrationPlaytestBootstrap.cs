@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Slainte.Bartending;
+using Slainte.Content;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -25,7 +26,7 @@ namespace Slainte.Business
     [DisallowMultipleComponent]
     public sealed class BusinessIntegrationPlaytestBootstrap : MonoBehaviour
     {
-        private const string SettingsResourcePath = "Business/BusinessOrderFlowSettings";
+        private const string SettingsResourcePath = BusinessOrderFlowSettings.ResourcePath;
         private const string SimpleEncounterId = "StrangeCoin_0";
         private const string SixthEncounterId = "TheLittles_0";
         private const string CraftingEncounterId = "StrangeCoin_0";
@@ -784,7 +785,8 @@ namespace Slainte.Business
 
         private static EpisodeData FindEpisode(string episodeId)
         {
-            EpisodeData[] episodes = Resources.LoadAll<EpisodeData>("EpisodeData");
+            EpisodeData[] episodes = Resources.LoadAll<EpisodeData>(
+                ProjectResourcePaths.NarrativeEpisodes);
             for (int i = 0; i < episodes.Length; i++)
             {
                 if (episodes[i] != null && episodes[i].episodeId == episodeId)

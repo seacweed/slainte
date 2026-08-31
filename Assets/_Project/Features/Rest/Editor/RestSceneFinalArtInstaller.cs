@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Slainte.Content;
 using Slainte.TV;
 using TMPro;
 using UnityEditor;
@@ -16,7 +17,8 @@ namespace Slainte.EditorTools
     public static class RestSceneFinalArtInstaller
     {
         public const string ScenePath = ProjectScenePaths.Rest;
-        public const string DatabasePath = "Assets/Resources/TV/TVBroadcastDatabase.asset";
+        public const string DatabasePath =
+            ProjectResourcePaths.AssetRoot + ProjectResourcePaths.RestTvDatabase + ".asset";
         public const string TVPrefabPath = RestAssetPaths.TVSystemPrefab;
         public const string PanelPrefabPath = RestAssetPaths.TVPanelPrefab;
 

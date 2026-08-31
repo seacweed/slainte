@@ -5,6 +5,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using Slainte.Bartending;
+using Slainte.Content;
 
 public enum RecipeSearchCategory
 {
@@ -97,7 +98,8 @@ public class RecipeSearchUI : MonoBehaviour
 
     private void LoadRecipes()
     {
-        ItemDefCatalog itemCatalog = ItemDefCatalog.LoadFromResources("Items");
+        ItemDefCatalog itemCatalog = ItemDefCatalog.LoadFromResources(
+            ProjectResourcePaths.BartendingItems);
         CocktailRecipeCatalog catalog = CocktailRecipeDataLoader.LoadDefault(itemCatalog);
         _allBookRecipes = catalog.Recipes
             .Where(recipe => recipe != null && recipe.appearsInRecipeBook)

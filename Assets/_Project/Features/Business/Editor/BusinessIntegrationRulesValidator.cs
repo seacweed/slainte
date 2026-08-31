@@ -1,5 +1,6 @@
 using System;
 using Slainte.Business;
+using Slainte.Content;
 using Slainte.Economy;
 using UnityEditor;
 using UnityEngine;
@@ -59,9 +60,13 @@ namespace Slainte.EditorTools
         private static void ValidateEncounterEpisodeType()
         {
             EpisodeData strangeCoinEpisode = AssetDatabase.LoadAssetAtPath<EpisodeData>(
-                "Assets/Resources/EpisodeData/EpisodeData_StrangeCoin_0.asset");
+                ProjectResourcePaths.AssetRoot
+                + ProjectResourcePaths.NarrativeEpisodes
+                + "/EpisodeData_StrangeCoin_0.asset");
             EpisodeData theLittlesEpisode = AssetDatabase.LoadAssetAtPath<EpisodeData>(
-                "Assets/Resources/EpisodeData/EpisodeData_TheLittles_0.asset");
+                ProjectResourcePaths.AssetRoot
+                + ProjectResourcePaths.NarrativeEpisodes
+                + "/EpisodeData_TheLittles_0.asset");
 
             ValidateEncounterEpisode(strangeCoinEpisode, "StrangeCoin_0");
             ValidateEncounterEpisode(theLittlesEpisode, "TheLittles_0");

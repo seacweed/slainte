@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Slainte.Content;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Slainte/손님 방문 데이터베이스", fileName = "CustomerVisitDatabase")]
@@ -26,6 +27,7 @@ public sealed class CustomerVisitDatabase : ScriptableObject
 
     public static CustomerVisitDatabase LoadDefault()
     {
-        return Resources.Load<CustomerVisitDatabase>("CustomerVisit/CustomerVisitDatabase");
+        return Resources.Load<CustomerVisitDatabase>(
+            ProjectResourcePaths.BusinessCustomerVisitDatabase);
     }
 }

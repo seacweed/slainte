@@ -29,6 +29,13 @@ namespace Slainte.Editor
             ValidatePrefabs();
             ValidateContent();
             ValidateLegacyItems();
+            if (AssetDatabase.LoadAssetAtPath<TextAsset>(
+                    BartendingAssetPaths.LegacyItemDataCsv) == null)
+            {
+                throw new InvalidOperationException(
+                    "Legacy item source CSV is missing: "
+                    + BartendingAssetPaths.LegacyItemDataCsv);
+            }
 
             Debug.Log(
                 "[BartendingAssetStructureValidator] PASS: bottle, glass, tool cabinet, "

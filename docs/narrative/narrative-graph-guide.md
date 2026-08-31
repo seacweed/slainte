@@ -152,7 +152,7 @@ Sequence Editor 빈 공간 **우클릭** → 이벤트 타입 선택 후 배치 
 ### EpisodeData로 컴파일
 - 그래프 설정 패널 하단 **Compile to EpisodeData** 버튼
 - 또는 메뉴 **Narrative > Compile Graph**
-- 출력: `Assets/Resources/EpisodeData/EpisodeData_{episodeId}.asset`
+- 출력: `Assets/Resources/Narrative/Episodes/EpisodeData_{episodeId}.asset`
 
 ### CSV 내보내기
 메뉴 **Narrative > Export Graph to CSV**  

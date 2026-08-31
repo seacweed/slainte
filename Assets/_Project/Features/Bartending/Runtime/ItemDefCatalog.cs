@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Slainte.Content;
 using UnityEngine;
 
 namespace Slainte.Bartending
@@ -9,9 +10,14 @@ namespace Slainte.Bartending
 
         public IReadOnlyDictionary<string, ItemDef> ItemsById => itemsById;
 
-        public static ItemDefCatalog LoadFromResources(string resourcesPath, IEnumerable<ItemDef> additionalItems = null)
+        public static ItemDefCatalog LoadFromResources(
+            string resourcesPath = ProjectResourcePaths.BartendingItems,
+            IEnumerable<ItemDef> additionalItems = null)
         {
             ItemDefCatalog catalog = new ItemDefCatalog();
+
+            if (string.IsNullOrWhiteSpace(resourcesPath) || resourcesPath == "Items")
+                resourcesPath = ProjectResourcePaths.BartendingItems;
 
             ItemDef[] resourceItems = Resources.LoadAll<ItemDef>(resourcesPath);
             for (int i = 0; i < resourceItems.Length; i++)
@@ -20,9 +26,7 @@ namespace Slainte.Bartending
             // The planning CSV is authoritative for numeric item_* IDs. Loading this
             // subfolder again with replacement makes the result deterministic even if
             // another Resources asset accidentally retains one of those IDs.
-            string planningPath = string.IsNullOrWhiteSpace(resourcesPath)
-                ? "Items/Planning"
-                : resourcesPath.TrimEnd('/') + "/Planning";
+            string planningPath = resourcesPath.TrimEnd('/') + "/Planning";
             ItemDef[] planningItems = Resources.LoadAll<ItemDef>(planningPath);
             for (int i = 0; i < planningItems.Length; i++)
                 catalog.AddOrReplace(planningItems[i]);

@@ -130,6 +130,7 @@ Assets/
 | `Assets/Data/EpisodeData`, `Export` | `Features/Narrative/Content/Source`, `Content/Generated` | 에피소드 CSV 원본과 컴파일 출력 분리 완료 |
 | `Assets/Data/Cutscene` | `Core/Content/Cutscenes` | 전역 컷신 데이터 소유 위치 통합 완료 |
 | `Assets/Data/RecipeBook`, `UpgradeData` | `Features/Rest/Content/Generated` | 휴식 상점용 해금·업그레이드 데이터 통합 완료 |
+| `Assets/Resources`의 타입별 폴더 | `Resources/Bartending`, `Business`, `Narrative`, `Rest`, `Core` | Unity `Resources` 경계는 유지하고 기능 소유권별 하위 경로로 통합 완료 |
 | `Assets/CoreScene/Scripts`의 앱 흐름 | `Core/Runtime/Flow` | 씬 전환과 하루 진행 |
 | `Assets/CoreScene/Scripts`의 저장 코드, `Assets/Scripts/GameProgress.cs` | `Core/Runtime/Persistence` | 저장 데이터와 런타임 진행 상태 |
 | `Assets/CoreScene/Scripts`의 컷씬·정산 코드 | `Core/Runtime/Cutscene`, `Core/Runtime/Settlement` | 전역 화면 흐름 |
