@@ -27,12 +27,17 @@ namespace Slainte.Editor
             BartendingUiSpriteRoot + "LiquorShelf/";
         public const string RecipeBookSpriteRoot =
             BartendingUiSpriteRoot + "RecipeBook/";
+        public const string DeliveryShopSpriteRoot =
+            BartendingUiSpriteRoot + "DeliveryShop/";
+        public const string ItemIconSpriteRoot =
+            BartendingUiSpriteRoot + "ItemIcons/";
 
         public const string PrefabRoot = FeatureRoot + "/Prefabs/";
         public const string EquipmentPrefabRoot = PrefabRoot + "Equipment/";
         public const string InteractionPrefabRoot = PrefabRoot + "Interaction/";
         public const string LiquorShelfPrefabRoot = PrefabRoot + "UI/LiquorShelf/";
         public const string RecipeBookPrefabRoot = PrefabRoot + "UI/RecipeBook/";
+        public const string DeliveryShopPrefabRoot = PrefabRoot + "UI/DeliveryShop/";
 
         public const string BeakerPrefab = EquipmentPrefabRoot + "Beaker.prefab";
         public const string BottlePrefab = EquipmentPrefabRoot + "Bottle.prefab";
@@ -44,5 +49,13 @@ namespace Slainte.Editor
             EquipmentPrefabRoot + "OrangeJuiceBottle.prefab";
         public const string TestSlotPrefab =
             InteractionPrefabRoot + "TestSlot.prefab";
+        public const string ItemDraggablePrefab =
+            InteractionPrefabRoot + "ItemDraggable.prefab";
+        public const string DeliveryCategoryButtonPrefab =
+            DeliveryShopPrefabRoot + "DeliveryCategoryButton.prefab";
+        public const string DeliveryItemSlotPrefab =
+            DeliveryShopPrefabRoot + "DeliveryItemSlotUI.prefab";
+        public const string DeliveryShopPanelPrefab =
+            DeliveryShopPrefabRoot + "DeliveryShopPanel.prefab";
     }
 }

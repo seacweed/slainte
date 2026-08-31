@@ -68,6 +68,8 @@ namespace Slainte.Editor
             ValidateSpriteTree(BartendingAssetPaths.RockGlassSpriteRoot, 4);
             ValidateSpriteTree(BartendingAssetPaths.LiquorShelfSpriteRoot, 21);
             ValidateSpriteTree(BartendingAssetPaths.RecipeBookSpriteRoot, 12);
+            ValidateSpriteTree(BartendingAssetPaths.DeliveryShopSpriteRoot, 4);
+            ValidateSpriteTree(BartendingAssetPaths.ItemIconSpriteRoot, 5);
         }
 
         private static void ValidateSpriteTree(string path, int expectedCount)
@@ -94,6 +96,10 @@ namespace Slainte.Editor
                 BartendingAssetPaths.IceCubePrefab,
                 BartendingAssetPaths.OrangeJuiceBottlePrefab,
                 BartendingAssetPaths.TestSlotPrefab,
+                BartendingAssetPaths.ItemDraggablePrefab,
+                BartendingAssetPaths.DeliveryCategoryButtonPrefab,
+                BartendingAssetPaths.DeliveryItemSlotPrefab,
+                BartendingAssetPaths.DeliveryShopPanelPrefab,
                 BartendingAssetPaths.LiquorShelfPrefabRoot + "BottleSlot.prefab",
                 BartendingAssetPaths.LiquorShelfPrefabRoot + "CategoryButton.prefab",
                 BartendingAssetPaths.LiquorShelfPrefabRoot + "LiquorInfoCard.prefab",
