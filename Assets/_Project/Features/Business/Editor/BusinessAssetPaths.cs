@@ -9,6 +9,7 @@ namespace Slainte.EditorTools
         public const string CharacterSpriteRoot = SpriteRoot + "Characters/";
         public const string CustomerSpriteRoot = SpriteRoot + "Customers/";
         public const string OrderTicketSpriteRoot = SpriteRoot + "UI/OrderTicket/";
+        public const string ConversationSpriteRoot = SpriteRoot + "UI/Conversation/";
         public const string AudioRoot = FeatureRoot + "/Audio/";
         public const string TypewriterSfx = AudioRoot + "SFX/Untitled.wav";
 

@@ -84,7 +84,7 @@ LayerMask slotLayer;     // 빈 값이면 "Slot" 레이어를 자동 탐색
 
 트리거 Enter/Stay/Exit에서 픽업 중인 도구에만 에메랄드 녹색(`#66FF66, alpha 0.5`) 하이라이트를 표시하며, 이미 점유된 슬롯에는 하이라이트 없음.
 
-### 프리팹 (`Assets/Prefabs/`)
+### 프리팹 (`Assets/_Project/Features/Bartending/Prefabs/Equipment/`)
 
 | 프리팹 | 비고 |
 |---|---|

@@ -39,6 +39,9 @@ namespace Slainte.Editor
         public const string RecipeBookPrefabRoot = PrefabRoot + "UI/RecipeBook/";
         public const string DeliveryShopPrefabRoot = PrefabRoot + "UI/DeliveryShop/";
 
+        public const string LegacyItemRoot =
+            FeatureRoot + "/Content/Legacy/Items/";
+
         public const string BeakerPrefab = EquipmentPrefabRoot + "Beaker.prefab";
         public const string BottlePrefab = EquipmentPrefabRoot + "Bottle.prefab";
         public const string CobblerShakerPrefab =
@@ -57,5 +60,8 @@ namespace Slainte.Editor
             DeliveryShopPrefabRoot + "DeliveryItemSlotUI.prefab";
         public const string DeliveryShopPanelPrefab =
             DeliveryShopPrefabRoot + "DeliveryShopPanel.prefab";
+        public const string LegacyGinItem = LegacyItemRoot + "gin.asset";
+        public const string LegacyRumItem = LegacyItemRoot + "rum.asset";
+        public const string LegacyVodkaItem = LegacyItemRoot + "vodka.asset";
     }
 }

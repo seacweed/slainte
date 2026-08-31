@@ -120,6 +120,11 @@ Assets/
 | `Assets/Art/Bartending` | `Features/Bartending/Art` | 병·잔·도구 캐비닛·충돌 기준 이미지 통합 완료 |
 | Bartending 전용 루트 Prefab | `Features/Bartending/Prefabs` | 장비·상호작용·LiquorShelf·RecipeBook 기준으로 통합 완료 |
 | `Assets/Sprites/bottles`, `cocktails`, Bartending UI Sprite | `Features/Bartending/Art/Sprites` | 병·칵테일·장비·LiquorShelf·RecipeBook 기준으로 통합 완료 |
+| `Assets/Art/Delivery`, 배송 상점 Prefab, 아이템 UI Sprite | `Features/Bartending/Art`, `Prefabs`, `Runtime/LiquorShelf` | 배송 상점 표시·상호작용 자산을 Bartending 소유로 통합 완료 |
+| `Assets/Items`의 미참조 주류 3종 | `Features/Bartending/Content/Legacy/Items` | 현재 참조가 없는 구형 `ItemDef`를 삭제하지 않고 보존 |
+| `Assets/Sprites/maintitle` | `Features/MainMenu/Art/Sprites/Title` | 메인 메뉴 전용 타이틀·캐릭터 이미지 통합 완료 |
+| `Assets/Sprites/cutscenes`, 정산 Sprite·Prefab | `Core/Art`, `Core/Prefabs/Settlement` | 전역 컷신·정산 표시 자산을 Core 소유로 통합 완료 |
+| 루트 대화 UI Sprite | `Features/Business/Art/Sprites/UI/Conversation` | 선택지·대화창 이미지를 Business 대화 UI로 통합 완료 |
 | `Assets/CoreScene/Scripts`의 앱 흐름 | `Core/Runtime/Flow` | 씬 전환과 하루 진행 |
 | `Assets/CoreScene/Scripts`의 저장 코드, `Assets/Scripts/GameProgress.cs` | `Core/Runtime/Persistence` | 저장 데이터와 런타임 진행 상태 |
 | `Assets/CoreScene/Scripts`의 컷씬·정산 코드 | `Core/Runtime/Cutscene`, `Core/Runtime/Settlement` | 전역 화면 흐름 |

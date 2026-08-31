@@ -10,7 +10,7 @@
 |---|---|---|
 | `LiquorShelfUI` | ShelfPanel | 메인 컨트롤러 — 슬라이드, 카테고리 전환, EpisodeMode 대응 |
 | `LiquorCategoryButtonUI` | 카테고리 버튼 프리팹 (술장/상점 공용) | 클릭 시 `LiquorShelfUI.OpenCategory()`(술장) 또는 `ShopUIManager.ShowListByCategory()`(상점) 호출. `colorImage`(선택 필드)가 연결된 프리팹 인스턴스에서만 카테고리 고유색으로 틴트 — 술장 프리팹은 비워두면 색이 적용되지 않음 |
-| `LiquorBottleSlotUI` | `BottleSlot.prefab` (`Assets/Prefabs/`) | 해금 플래그 확인, 호버 정보 표시, 잔여량 갱신, 제작 중 좌클릭 선택. `Setup(def)`로 런타임 주입되어 인스턴스화됨 |
+| `LiquorBottleSlotUI` | `BottleSlot.prefab` (`Assets/_Project/Features/Bartending/Prefabs/UI/LiquorShelf/`) | 해금 플래그 확인, 호버 정보 표시, 잔여량 갱신, 제작 중 좌클릭 선택. `Setup(def)`로 런타임 주입되어 인스턴스화됨 |
 | `LiquorBottleInfoCard` | ShelfPanel 직계 자식 (씬에 단 하나) | 호버한 병의 이름/소분류/병 단위 상태/잔여량 표시 |
 | `LiquorBottleDef` | ScriptableObject | 술 데이터 (id, shelfSprite, shopSprite, unlockFlagKey, subCategory, bottleCount, unitVolume) |
 | `LiquorBottleCatalog` | ScriptableObject (술장/상점 공용) | `List<LiquorBottleDef> bottles` — 전체 술 목록. `LiquorShelfUI`와 `ShopUIManager`(일반/이상한 상점)가 동일 에셋을 참조해 술 추가 시 한 곳만 등록하면 됨 |

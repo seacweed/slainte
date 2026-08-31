@@ -24,6 +24,7 @@ namespace Slainte.EditorTools
             ValidateSpriteTree(BusinessAssetPaths.CharacterSpriteRoot, 210);
             ValidateSpriteTree(BusinessAssetPaths.CustomerSpriteRoot, 97);
             ValidateSpriteTree(BusinessAssetPaths.OrderTicketSpriteRoot, 3);
+            ValidateSpriteTree(BusinessAssetPaths.ConversationSpriteRoot, 2);
             ValidateRequiredAsset<AudioClip>(BusinessAssetPaths.TypewriterSfx);
 
             ValidatePrefab(BusinessAssetPaths.AffinityNotificationPrefab);
@@ -33,7 +34,8 @@ namespace Slainte.EditorTools
 
             Debug.Log(
                 "[BusinessAssetStructureValidator] PASS: environment, character, customer, "
-                + "order-ticket, audio and prefab assets resolved from the Business feature.");
+                + "conversation, order-ticket, audio and prefab assets resolved from the "
+                + "Business feature.");
         }
 
         private static void ValidateSpriteTree(string path, int expectedCount)

@@ -84,7 +84,7 @@ Canvas
 
 ## 캐릭터 등장 연출 (`MainMenuCharacterSpawner` / `MainMenuCharacterWalker`)
 
-`Assets/Sprites/maintitle/`의 캐릭터 실루엣 8종(`메인화면_캐릭터(...)​.png`)을 `MainMenuCharacterSpawner`의 `characterSprites` 배열에 연결해 사용한다. 스폰/이동 로직은 프리팹 없이 런타임에 `Image` 컴포넌트를 코드로 생성하는 방식이라 씬에는 다음만 준비하면 된다:
+`Assets/_Project/Features/MainMenu/Art/Sprites/Title/`의 캐릭터 실루엣 8종(`메인화면_캐릭터(...)​.png`)을 `MainMenuCharacterSpawner`의 `characterSprites` 배열에 연결해 사용한다. 스폰/이동 로직은 프리팹 없이 런타임에 `Image` 컴포넌트를 코드로 생성하는 방식이라 씬에는 다음만 준비하면 된다:
 
 1. 빈 `RectTransform`(`CharacterSpawnArea`)을 `BackgroundRoot`(`backgroundGroup`) 하위에 배치 — `BackgroundDimmer` 앞(위) 어디든 상관없으나 순서상 그 직전을 권장. `BackgroundRoot`의 자식이므로 배경 move up 애니메이션에 캐릭터도 자동으로 함께 따라간다. 이 RectTransform의 폭이 캐릭터가 좌우로 오가는 이동 구간(양 끝)이 되므로, 화면 폭에 맞춰 앵커/사이즈를 설정
 2. `MainMenuCharacterSpawner` 컴포넌트를 아무 GameObject에 부착하고 `spawnArea`에 위 RectTransform 연결, `characterSprites`에 8종 스프라이트 연결
@@ -93,7 +93,7 @@ Canvas
 5. 스폰 간격은 `spawnIntervalRange` 범위 내 랜덤이며, 씬 로드 즉시(`Start`) 시작해 인트로 진행 상태와 무관하게 계속 반복 스폰됨(메인메뉴 진입 후에도 유지)
 6. `spriteFacesRight`는 원본 스프라이트가 기본적으로 오른쪽을 보고 있는지 여부 — 이동 방향과 다르면 자동으로 좌우 반전(localScale.x 부호 반전)
 
-## 에셋 (`Assets/Sprites/maintitle/`)
+## 에셋 (`Assets/_Project/Features/MainMenu/Art/Sprites/Title/`)
 
 - `splash_01.png` — 팀 로고 ("TEAM ISLAND" + 모래시계 아이콘)
 - `main_title_text.png` — 타이틀 워드마크 "Sláinte"

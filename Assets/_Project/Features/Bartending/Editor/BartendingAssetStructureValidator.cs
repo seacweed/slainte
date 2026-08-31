@@ -26,6 +26,7 @@ namespace Slainte.Editor
             ValidateToolCabinetArt();
             ValidateSpriteCollections();
             ValidatePrefabs();
+            ValidateLegacyItems();
 
             Debug.Log(
                 "[BartendingAssetStructureValidator] PASS: bottle, glass, tool cabinet, "
@@ -110,6 +111,22 @@ namespace Slainte.Editor
 
             foreach (string path in paths)
                 ValidatePrefab(path);
+        }
+
+        private static void ValidateLegacyItems()
+        {
+            string[] paths =
+            {
+                BartendingAssetPaths.LegacyGinItem,
+                BartendingAssetPaths.LegacyRumItem,
+                BartendingAssetPaths.LegacyVodkaItem
+            };
+
+            foreach (string path in paths)
+            {
+                if (AssetDatabase.LoadAssetAtPath<ItemDef>(path) == null)
+                    throw new InvalidOperationException("Legacy ItemDef is missing: " + path);
+            }
         }
 
         private static void ValidatePrefab(string path)
