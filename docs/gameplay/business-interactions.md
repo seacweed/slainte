@@ -2,7 +2,7 @@
 
 ## 영업 주문 기본 흐름
 
-통합 주문 흐름은 `Assets/Scripts/Business/`에 구현되어 있습니다.
+통합 주문 흐름은 `Assets/_Project/Features/Business/Runtime/Flow/`에 구현되어 있습니다.
 
 - `BusinessFlowBootstrap`는 씬 안의 의존성을 연결하고, 진행 중인 에피소드가 없으면 시간 기반 영업을 시작합니다.
 - `BusinessShiftController`는 기본 180초의 남은 영업시간, 손님별 쿨다운, 필수 손님·인카운터, 정산 진입을 관리합니다. 주문 중에는 시간이 흐르고 영업 인카운터 중에는 영업시간과 쿨다운이 함께 멈춥니다.
@@ -46,7 +46,7 @@
 - **수동 판정 폴백**: 레시피·제조 화면·잔 추적기 등 기술적인 초기화가 실패했을 때(`onTechnicalFailure`)만 같은 노드를 `BeginManualCrafting()`으로 전환해 기존 `OrderTicketManager.Prepare(node.craftingTicketKey)` + `GameModeManager.RequestModeChange(GameMode.CraftingMode)` + `CraftingJudgeUI` 6버튼 수동 판정으로 진행합니다. `craftingOrderTarget`이 비어 있는 제조 노드는 처음부터 이 수동 경로만 사용합니다. `CraftingJudgeUI`는 `EpisodeRunner.IsUsingManualCrafting`이 true이고 `CraftingMode`일 때만 노출되는 레거시 디버그 패널이라, 태그 오타로 레시피 조회가 실패해도 같은 패널이 뜬다 — 의도치 않게 이 패널이 보이면 `craftingOrderTarget` 값이 팔레트/레시피 카탈로그에 정확히 등록된 문자열인지부터 확인할 것.
 - 에피소드 제조는 `applyProgressRewards = false`이므로 판매 수익이나 손님 재등장 제한에 포함되지 않습니다.
 
-## 영업 씬 손님 & 주문 (`Assets/Scripts/Conversation/Sell/`, `Assets/Scripts/OrderTicket/`)
+## 영업 씬 손님 & 주문 (`Assets/_Project/Features/Business/Runtime/Conversation/Sell/`, `Assets/_Project/Features/Business/Runtime/OrderTicket/`)
 
 - `CustomerSpawner` — `CustomerVisitData.members` 전원을 `CharacterStage`에 표시하고, 등장 완료 후 선택된 `CustomerOrderData`의 대사를 시작합니다. 결과가 나오면 각 구성원의 Good·Mid·Bad 표정으로 교체합니다. 방문 키가 없는 이전 데이터는 `CustomerOrderData.characterKey`를 호환 경로로 사용합니다.
 - `OrderTicketManager` — 티켓 데이터를 채워 표시하는 두 경로. ① `OrderMode`: `DialogueClosed` 이벤트 수신 후 `Show(data)`. ② `CraftingMode`: `OnModeChanged` 이벤트로 모드 전환 시점에 즉시 `Show(data)`. 두 경우 모두 `dialogue.HideImmediate()`를 먼저 호출해 대화창을 닫습니다. `EpisodeMode` 진입 시 `_pendingTicketKey` 초기화 + `ticketUI.HideAnimated()` 호출(슬라이드로 닫힘, 비활성화는 아님). `ToggleTicket()` — Tab키/버튼 토글 진입점, `_pendingTicketKey`가 없으면 무시(빈 티켓 노출 방지).

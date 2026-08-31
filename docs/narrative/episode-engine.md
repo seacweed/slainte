@@ -1,6 +1,6 @@
 # 에피소드 엔진 & 오디오
 
-## 에피소드 (`Assets/Scripts/Conversation/Episode/`)
+## 에피소드 (`Assets/_Project/Features/Business/Runtime/Conversation/Episode/`)
 
 `EpisodeRunner`가 `EpisodeData` 기반 에피소드를 오케스트레이션합니다:
 1. `EpisodeBoardManager`에서 에피소드 선택 → `EpisodeManager.StartEpisode(id)` 호출

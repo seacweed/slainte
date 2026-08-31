@@ -65,7 +65,7 @@ Assets/
 | `Assets/Narrative/Graphs` | `Features/Narrative/Content/Graphs` | Narrative Graph 원본 에셋 |
 | `Assets/RestScene/Scripts` | `Features/Rest/Runtime` | RestScene 런타임 코드 |
 | `Assets/Scripts/TV`, `Assets/RestScene/Scripts/TV*.cs` | `Features/Rest/Runtime/TV` | TV 데이터·판정·표시 통합 |
-| `Assets/Scripts/Business` | `Features/Business/Runtime` | 주문 세션과 영업 조립 담당 |
+| `Assets/Scripts/Business` | `Features/Business/Runtime/Flow` | 주문 세션과 영업 조립 담당 |
 | `Assets/Scripts/Conversation` | `Features/Business/Runtime/Conversation` | 에피소드 공용 경계 재검토 |
 | `Assets/Scripts/OrderTicket` | `Features/Business/Runtime/OrderTicket` | BusinessScene UI |
 | `Assets/Scripts/Bartending` | `Features/Bartending/Runtime` | 가장 큰 이동 단위로 후순위 |

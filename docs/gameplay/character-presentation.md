@@ -22,7 +22,7 @@
   - `GetBlinkSprite(expressionKey)` / `GetBlinkOverlaySprite(expressionKey)` — 눈 감은 스프라이트 조회. 표정에 지정된 값이 없으면 `defaultBlinkSprite` / `defaultBlinkOverlaySprite` 반환. 둘 다 null이면 해당 표정에서 깜빡임 없음.
   - **주인공은 1인칭 시점이므로 스프라이트 없음.** `CharacterData`는 화자 이름 표시용으로만 사용하고, `EpisodeNode.characters`에는 포함하지 않습니다.
 
-## 대화 렌더링 (`Assets/Scripts/Conversation/DialogueController.cs`)
+## 대화 렌더링 (`Assets/_Project/Features/Business/Runtime/Conversation/DialogueController.cs`)
 
 TMPro 타이핑 애니메이션. 모든 모드에서 공유하는 단일 컴포넌트입니다:
 - `StartDialogue(List<DialogueLine>)` — 손님 대화용 배치 큐 방식

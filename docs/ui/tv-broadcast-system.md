@@ -56,5 +56,5 @@ TVBroadcastEntry
 
 - `Assets/_Project/Features/Rest/Runtime/TV/TVBroadcastDatabase.cs`, `TVBroadcastRuntime.cs`
 - `Assets/_Project/Features/Rest/Runtime/TV/TVRestBootstrap.cs`, `TVSystemController.cs`, `TVUIManager.cs`, `TVTicker.cs`
-- `Assets/Scripts/Business/BusinessFlowBootstrap.cs`(영업 시작 시 활성화 호출)
+- `Assets/_Project/Features/Business/Runtime/Flow/BusinessFlowBootstrap.cs`(영업 시작 시 활성화 호출)
 - `Assets/Scripts/GameProgress.cs`(예보/활성 방송 상태 저장)
