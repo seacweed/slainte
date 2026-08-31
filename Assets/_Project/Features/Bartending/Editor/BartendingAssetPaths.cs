@@ -13,5 +13,22 @@ namespace Slainte.Editor
         public const string ToolArtRoot = ToolCabinetArtRoot + "Tools/";
         public const string IceArtRoot = ToolCabinetArtRoot + "Ice/";
         public const string DefaultIceSprite = IceArtRoot + "ice_01.png";
+
+        public const string PrefabRoot = FeatureRoot + "/Prefabs/";
+        public const string EquipmentPrefabRoot = PrefabRoot + "Equipment/";
+        public const string InteractionPrefabRoot = PrefabRoot + "Interaction/";
+        public const string LiquorShelfPrefabRoot = PrefabRoot + "UI/LiquorShelf/";
+        public const string RecipeBookPrefabRoot = PrefabRoot + "UI/RecipeBook/";
+
+        public const string BeakerPrefab = EquipmentPrefabRoot + "Beaker.prefab";
+        public const string BottlePrefab = EquipmentPrefabRoot + "Bottle.prefab";
+        public const string CobblerShakerPrefab =
+            EquipmentPrefabRoot + "CobblerShaker.prefab";
+        public const string GlassPrefab = EquipmentPrefabRoot + "Glass.prefab";
+        public const string IceCubePrefab = EquipmentPrefabRoot + "IceCube.prefab";
+        public const string OrangeJuiceBottlePrefab =
+            EquipmentPrefabRoot + "OrangeJuiceBottle.prefab";
+        public const string TestSlotPrefab =
+            InteractionPrefabRoot + "TestSlot.prefab";
     }
 }

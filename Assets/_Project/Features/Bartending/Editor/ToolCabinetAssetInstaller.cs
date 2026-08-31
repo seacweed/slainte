@@ -63,7 +63,7 @@ namespace Slainte.Editor
                 new[] { "jigger_back", "jigger_front" },
                 Array.Empty<string>(),
                 Array.Empty<string>(),
-                "Assets/Prefabs/Beaker.prefab",
+                BartendingAssetPaths.BeakerPrefab,
                 30f,
                 0f,
                 0,
@@ -87,7 +87,7 @@ namespace Slainte.Editor
                 },
                 Array.Empty<string>(),
                 Array.Empty<string>(),
-                "Assets/Prefabs/CobblerShaker.prefab",
+                BartendingAssetPaths.CobblerShakerPrefab,
                 0f,
                 0f,
                 0,
@@ -305,7 +305,7 @@ namespace Slainte.Editor
             definition.worldLayers = (Sprite[])layers.Clone();
             definition.collisionReferenceSprite = collisionReference;
             definition.worldPrefab =
-                AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Glass.prefab");
+                AssetDatabase.LoadAssetAtPath<GameObject>(BartendingAssetPaths.GlassPrefab);
             definition.glassId = id.Replace("glass_", string.Empty);
             definition.capacityMl = capacityMl;
             definition.worldScale = worldScale;

@@ -10,7 +10,7 @@ namespace Slainte.Bartending.EditorTools
     public static class IceCubePrefabSetup
     {
         private const string SpritePath = BartendingAssetPaths.DefaultIceSprite;
-        private const string PrefabPath = "Assets/Prefabs/Bartending/IceCube.prefab";
+        private const string PrefabPath = BartendingAssetPaths.IceCubePrefab;
         private const string SettingsPath = "Assets/Resources/Bartending/BusinessBartendingSettings.asset";
 
         [MenuItem("Slainte/Bartending/Create or Refresh Ice Cube Prefab")]

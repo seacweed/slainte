@@ -1,4 +1,5 @@
 using Slainte.Bartending;
+using Slainte.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -6,8 +7,8 @@ namespace Slainte.EditorTools
 {
     public static class CobblerShakerSetup
     {
-        private const string SourcePrefabPath = "Assets/Prefabs/Beaker.prefab";
-        private const string ShakerPrefabPath = "Assets/Prefabs/CobblerShaker.prefab";
+        private const string SourcePrefabPath = BartendingAssetPaths.BeakerPrefab;
+        private const string ShakerPrefabPath = BartendingAssetPaths.CobblerShakerPrefab;
         private const string SettingsPath = "Assets/Resources/Bartending/BusinessBartendingSettings.asset";
 
         [MenuItem("Slainte/Business/코블러 셰이커 설정 적용")]

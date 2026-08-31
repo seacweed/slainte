@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using Slainte.Bartending;
 using Slainte.Bartending.EditorTools;
+using Slainte.Editor;
 
 public class SetupTestSceneMenu
 {
@@ -115,7 +116,8 @@ public class SetupTestSceneMenu
         }
 
         // 3. Create Bottle
-        GameObject bottlePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Bottle.prefab");
+        GameObject bottlePrefab =
+            AssetDatabase.LoadAssetAtPath<GameObject>(BartendingAssetPaths.BottlePrefab);
         if (bottlePrefab != null)
         {
             GameObject bottleObj = GameObject.Find("BottleInstance");
@@ -307,7 +309,7 @@ public class SetupTestSceneMenu
 
     private static GameObject CreateOrGetBeakerPrefab()
     {
-        string prefabPath = "Assets/Prefabs/Beaker.prefab";
+        string prefabPath = BartendingAssetPaths.BeakerPrefab;
         GameObject existingPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
 
         // 소중한 사용자 비커 프리셋 100% 영구 보존
@@ -388,7 +390,7 @@ public class SetupTestSceneMenu
 
     private static GameObject CreateOrGetGlassPrefab()
     {
-        string prefabPath = "Assets/Prefabs/Glass.prefab";
+        string prefabPath = BartendingAssetPaths.GlassPrefab;
         GameObject existingPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
 
         // 사용자가 커스터마이징해 둔 소중한 잔 프리셋 100% 보존

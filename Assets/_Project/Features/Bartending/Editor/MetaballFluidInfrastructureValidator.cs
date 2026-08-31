@@ -1,4 +1,5 @@
 using System;
+using Slainte.Editor;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -10,8 +11,8 @@ namespace Slainte.Bartending.EditorTools
     {
         private const string SampleScenePath =
             "Assets/_Project/Scenes/Development/Samples/Sample_Scene.unity";
-        private const string BeakerPrefabPath = "Assets/Prefabs/Beaker.prefab";
-        private const string GlassPrefabPath = "Assets/Prefabs/Glass.prefab";
+        private const string BeakerPrefabPath = BartendingAssetPaths.BeakerPrefab;
+        private const string GlassPrefabPath = BartendingAssetPaths.GlassPrefab;
 
         [MenuItem("Slainte/Bartending/Validate Metaball Infrastructure")]
         public static void ValidateFromMenu()

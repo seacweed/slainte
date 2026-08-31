@@ -24,10 +24,11 @@ namespace Slainte.Editor
             GlassCollisionProfileValidator.ValidateAll();
             JiggerCollisionProfileValidator.ValidateAll();
             ValidateToolCabinetArt();
+            ValidatePrefabs();
 
             Debug.Log(
                 "[BartendingAssetStructureValidator] PASS: bottle, glass, tool cabinet, "
-                + "ice and collision-profile assets resolved from the Bartending feature.");
+                + "ice, collision-profile and prefab assets resolved from the Bartending feature.");
         }
 
         private static void ValidateToolCabinetArt()
@@ -54,6 +55,49 @@ namespace Slainte.Editor
         {
             if (AssetDatabase.LoadAssetAtPath<Sprite>(path) == null)
                 throw new InvalidOperationException("Bartending sprite is missing: " + path);
+        }
+
+        private static void ValidatePrefabs()
+        {
+            string[] paths =
+            {
+                BartendingAssetPaths.BeakerPrefab,
+                BartendingAssetPaths.BottlePrefab,
+                BartendingAssetPaths.CobblerShakerPrefab,
+                BartendingAssetPaths.GlassPrefab,
+                BartendingAssetPaths.IceCubePrefab,
+                BartendingAssetPaths.OrangeJuiceBottlePrefab,
+                BartendingAssetPaths.TestSlotPrefab,
+                BartendingAssetPaths.LiquorShelfPrefabRoot + "BottleSlot.prefab",
+                BartendingAssetPaths.LiquorShelfPrefabRoot + "CategoryButton.prefab",
+                BartendingAssetPaths.LiquorShelfPrefabRoot + "LiquorInfoCard.prefab",
+                BartendingAssetPaths.RecipeBookPrefabRoot + "RecipeIngredientRowUI.prefab",
+                BartendingAssetPaths.RecipeBookPrefabRoot + "RecipeListItemUI.prefab",
+                BartendingAssetPaths.RecipeBookPrefabRoot + "SearchOption.prefab"
+            };
+
+            foreach (string path in paths)
+                ValidatePrefab(path);
+        }
+
+        private static void ValidatePrefab(string path)
+        {
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (prefab == null)
+                throw new InvalidOperationException("Bartending prefab is missing: " + path);
+
+            int missingScriptCount = 0;
+            foreach (Transform child in prefab.GetComponentsInChildren<Transform>(true))
+            {
+                missingScriptCount +=
+                    GameObjectUtility.GetMonoBehavioursWithMissingScriptCount(child.gameObject);
+            }
+
+            if (missingScriptCount > 0)
+            {
+                throw new InvalidOperationException(
+                    $"Bartending prefab has {missingScriptCount} missing script(s): {path}");
+            }
         }
     }
 }
