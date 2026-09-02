@@ -166,9 +166,9 @@ namespace Slainte.Bartending
                 items = new[]
                 {
                     Resources.Load<ItemDef>(
-                        ProjectResourcePaths.BartendingPlanningItems + "/item_1006"),
+                        ProjectResourcePaths.BartendingItems + "/item_1006"),
                     Resources.Load<ItemDef>(
-                        ProjectResourcePaths.BartendingPlanningItems + "/item_1009")
+                        ProjectResourcePaths.BartendingItems + "/item_1009")
                 };
             }
             if (items == null || session == null)

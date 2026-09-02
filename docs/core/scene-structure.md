@@ -171,4 +171,4 @@ RestScene → BusinessScene(Episode)
 - 런타임 생성 컴포넌트는 Edit Mode Hierarchy에 보이지 않는다.
 - CoreScene과 서브 씬 양쪽에 같은 `MonoSingleton` 컴포넌트가 있으면 중복 객체가 제거될 수 있다.
 - 씬·Prefab YAML에 남은 이전 컴포넌트 참조는 Unity Inspector의 Missing Script로 별도 확인한다.
-- `Sample_*` 씬과 `_Recovery` 씬은 빌드 흐름이 아니라 QA·복구 자료다.
+- `Sample_*` 씬은 빌드 흐름이 아니라 QA 자료다.

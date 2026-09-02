@@ -23,14 +23,6 @@ namespace Slainte.Bartending
             for (int i = 0; i < resourceItems.Length; i++)
                 catalog.Add(resourceItems[i]);
 
-            // The planning CSV is authoritative for numeric item_* IDs. Loading this
-            // subfolder again with replacement makes the result deterministic even if
-            // another Resources asset accidentally retains one of those IDs.
-            string planningPath = resourcesPath.TrimEnd('/') + "/Planning";
-            ItemDef[] planningItems = Resources.LoadAll<ItemDef>(planningPath);
-            for (int i = 0; i < planningItems.Length; i++)
-                catalog.AddOrReplace(planningItems[i]);
-
             if (additionalItems != null)
             {
                 foreach (ItemDef item in additionalItems)
@@ -70,16 +62,6 @@ namespace Slainte.Bartending
             }
 
             itemsById[id] = item;
-        }
-
-        private void AddOrReplace(ItemDef item)
-        {
-            if (item == null)
-                return;
-
-            string id = GetLookupId(item);
-            if (!string.IsNullOrWhiteSpace(id))
-                itemsById[id] = item;
         }
 
         private static string GetLookupId(ItemDef item)

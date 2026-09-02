@@ -1,6 +1,6 @@
 # 도감 검색 (Recipe Book Search)
 
-`RecipeBookPanel` 내부에서 `Assets/Resources/Bartending/Recipes/Planning/*.asset`의 21개 레시피(`appearsInRecipeBook = true`)를 맛/분위기 태그 또는 이름으로 찾아 상세 정보를 보여주는 검색 UI입니다. "재료로 찾기"는 추후 재도입 가능성이 있어 데이터 필드(`CocktailRecipeDef.ingredientPropertyTags`)는 남겨두었지만, 현재 UI에는 없습니다.
+`RecipeBookPanel` 내부에서 `Assets/Resources/Bartending/Recipes/*.asset`의 21개 기본 레시피(`appearsInRecipeBook = true`)를 맛/분위기 태그 또는 이름으로 찾아 상세 정보를 보여주는 검색 UI입니다. "재료로 찾기"는 추후 재도입 가능성이 있어 데이터 필드(`CocktailRecipeDef.ingredientPropertyTags`)는 남겨두었지만, 현재 UI에는 없습니다.
 
 ## 클래스
 

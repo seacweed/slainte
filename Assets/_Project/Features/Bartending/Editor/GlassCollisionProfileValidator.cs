@@ -504,7 +504,7 @@ namespace Slainte.Editor
                 new[]
                 {
                     ProjectResourcePaths.AssetRoot
-                    + ProjectResourcePaths.BartendingPlanningRecipes
+                    + ProjectResourcePaths.BartendingRecipes
                 });
             for (int i = 0; i < guids.Length; i++)
             {

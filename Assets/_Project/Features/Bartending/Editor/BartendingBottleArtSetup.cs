@@ -14,9 +14,9 @@ namespace Slainte.Editor
     public static class BartendingBottleArtSetup
     {
         private const string LiquorRoot = BartendingAssetPaths.LiquorBottleRoot;
-        private const string PlanningItemRoot =
+        private const string ItemRoot =
             ProjectResourcePaths.AssetRoot
-            + ProjectResourcePaths.BartendingPlanningItems
+            + ProjectResourcePaths.BartendingItems
             + "/";
         private const string BottleArtRoot = BartendingArtImportPostprocessor.BottleRoot;
 
@@ -167,7 +167,7 @@ namespace Slainte.Editor
         private static void ApplyItemIconIfPresent(string id, Sprite barSprite)
         {
             string path = id.StartsWith("item_", StringComparison.OrdinalIgnoreCase)
-                ? PlanningItemRoot + id + ".asset"
+                ? ItemRoot + id + ".asset"
                 : ProjectResourcePaths.AssetRoot
                   + ProjectResourcePaths.BartendingItems
                   + "/"

@@ -13,10 +13,10 @@
 
 임포트 결과는 다음 위치에 ID 기준으로 저장된다.
 
-- `ItemDef`: `Assets/Resources/Bartending/Items/Planning/`
+- `ItemDef`: `Assets/Resources/Bartending/Items/`
 - `LiquorBottleDef`: `Assets/_Project/Features/Bartending/Content/Generated/LiquorBottles/Planning/`
-- 기본 `CocktailRecipeDef`: `Assets/Resources/Bartending/Recipes/Planning/`
-- 숨은 Mid 판정 레시피: `Assets/Resources/Bartending/Recipes/Planning/Variants/`
+- 기본 `CocktailRecipeDef`: `Assets/Resources/Bartending/Recipes/`
+- 숨은 Mid 판정 레시피: `Assets/Resources/Bartending/Recipes/Variants/`
 
 같은 ID를 다시 임포트하면 기존 에셋을 갱신한다. 빈 행과 이름이 `임시 비워둠`인 행은 건너뛴다. 일반적인 CSV 따옴표, 쉼표가 들어간 셀, UTF-8 BOM을 지원한다.
 

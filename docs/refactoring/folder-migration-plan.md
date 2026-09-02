@@ -1,5 +1,7 @@
 # Slainte 구조 리팩토링 계획
 
+현재 폴더 배치 규칙은 [프로젝트 폴더 구조 규약](folder-structure-conventions.md)을 따른다.
+
 기준일: 2026-08-31
 작업 브랜치: `boguk9_refactoring`
 
@@ -144,6 +146,7 @@ Assets/
 | `Assets/Data/Cutscene` | `Core/Content/Cutscenes` | 전역 컷신 데이터 소유 위치 통합 완료 |
 | `Assets/Data/RecipeBook`, `UpgradeData` | `Features/Rest/Content/Generated` | 휴식 상점용 해금·업그레이드 데이터 통합 완료 |
 | `Assets/Resources`의 타입별 폴더 | `Resources/Bartending`, `Business`, `Narrative`, `Rest`, `Core` | Unity `Resources` 경계는 유지하고 기능 소유권별 하위 경로로 통합 완료 |
+| `Resources/Bartending/Items/Planning`, `Recipes/Planning` | `Resources/Bartending/Items`, `Recipes` | 런타임 출력의 제작 단계 폴더를 제거하고 직접 출력하도록 변경 완료 |
 | `Assets/StreamingAssets/Data`, `NarrativeData` | `StreamingAssets/Bartending`, `Narrative` | CSV와 베이크 JSON을 기능별 런타임 데이터 경계로 통합 완료 |
 | `Assets/CoreScene/Scripts`의 앱 흐름 | `Core/Runtime/Flow` | 씬 전환과 하루 진행 |
 | `Assets/CoreScene/Scripts`의 저장 코드, `Assets/Scripts/GameProgress.cs` | `Core/Runtime/Persistence` | 저장 데이터와 런타임 진행 상태 |

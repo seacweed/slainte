@@ -98,10 +98,10 @@ namespace Slainte.EditorTools
         private static bool automaticImportAttempted;
 
         public const string ItemOutputFolder =
-            ProjectResourcePaths.AssetRoot + ProjectResourcePaths.BartendingPlanningItems;
+            ProjectResourcePaths.AssetRoot + ProjectResourcePaths.BartendingItems;
         public const string ShelfOutputFolder = BartendingAssetPaths.LiquorBottleRoot + "Planning";
         public const string RecipeOutputFolder =
-            ProjectResourcePaths.AssetRoot + ProjectResourcePaths.BartendingPlanningRecipes;
+            ProjectResourcePaths.AssetRoot + ProjectResourcePaths.BartendingRecipes;
         public const string VariantOutputFolder =
             ProjectResourcePaths.AssetRoot + ProjectResourcePaths.BartendingRecipeVariants;
         public const string PlanningCsvFolder =
@@ -312,10 +312,10 @@ namespace Slainte.EditorTools
             Require(OrderEvaluationGrader.Resolve(midResult, null) == OrderEvaluationGrade.Mid,
                 "숨은 변형 레시피가 Mid로 판정되지 않았습니다.");
 
-            ItemDef[] planningItems = Resources.LoadAll<ItemDef>(
-                ProjectResourcePaths.BartendingPlanningItems);
-            Require(planningItems.Length == 15,
-                $"CSV 활성 재료가 15개가 아닙니다: {planningItems.Length}개");
+            ItemDef[] importedItems = Resources.LoadAll<ItemDef>(
+                ProjectResourcePaths.BartendingItems);
+            Require(importedItems.Length == 15,
+                $"CSV 활성 재료가 15개가 아닙니다: {importedItems.Length}개");
             Require(recipes.OrderableCount == 21,
                 $"주문 가능 레시피가 21개가 아닙니다: {recipes.OrderableCount}개");
 
