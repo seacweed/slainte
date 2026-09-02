@@ -4,13 +4,13 @@ namespace Slainte.Bartending
 {
     public enum CocktailOrderType
     {
-        RecipeOrder,
-        RecipeModifierOrder,
-        TasteOrder,
-        MoodOrder,
-        VariantRecipeOrder,
-        CustomRecipeOrder,
-        EpisodeOrder
+        RecipeOrder = 0,
+        RecipeModifierOrder = 1,
+        TasteOrder = 2,
+        MoodOrder = 3,
+        // 직렬화 호환을 위해 이전 값 4는 재사용하지 않는다.
+        CustomRecipeOrder = 5,
+        EpisodeOrder = 6
     }
 
     public static class CocktailOrderTagRules

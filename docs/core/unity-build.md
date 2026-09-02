@@ -17,6 +17,8 @@
 
 - `Slainte > 품질 검증 > 기획 CSV 에셋 검증`
 - `Slainte > 품질 검증 > 손님 풀 검증`
-- 바텐딩 세로 절단·에셋 검증 메뉴는 `Assets/_Project/Features/Bartending/Editor/BartendingSystemValidator.cs`와 `BusinessFlowSceneSetup.cs`를 기준으로 확인합니다.
+- 바텐딩 세로 절단 검증은 `Assets/_Project/Features/Bartending/Editor/BartendingSystemValidator.cs`, 영업 흐름 검증은 `Assets/_Project/Features/Business/Editor/BusinessShiftValidator.cs`와 `BusinessIntegrationRulesValidator.cs`를 기준으로 확인합니다.
+
+`Tools > Slainte > Validate Runtime Resource Structure`는 아직 구조 개편 전 바텐딩 에셋 개수를 기대하므로 현재 실패한다. 개수 기준을 수정하기 전에는 바텐딩 데이터 확인에 `기획 CSV 에셋 검증`을 사용한다.
 
 현재 공용 런타임에는 `Slainte.Shared.Content`, `Slainte.Shared.Input`, `Slainte.Shared.Lifecycle` 어셈블리가 있고, 에디터 도구와 EditMode 계약 테스트는 `Slainte.Shared.Editor`, `Slainte.Shared.Tests.EditMode`로 분리되어 있습니다. 기능 전체 어셈블리는 Business·Rest(TV) 등의 상호 의존을 해소한 뒤 도입합니다. IDE 컴파일과 EditMode 테스트만으로 씬 직렬화, 실제 물리·입력 동작까지 검증되지는 않으므로 Unity 플레이 검증이 필요합니다.

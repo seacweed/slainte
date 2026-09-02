@@ -2,6 +2,8 @@
 
 이 문서는 슬런챠 프로젝트를 외부 포트폴리오 문서·웹사이트·발표 자료로 제작할 때 사용할 수 있도록, 현재 저장소의 실제 코드와 프로젝트 구조에서 확인된 내용만 정리한 자료다.
 
+기준일: 2026-09-02
+
 ## 1. 프로젝트 개요
 
 ### 한 줄 소개
@@ -25,7 +27,7 @@
 - 상위 진행 상태는 `Episode → Business → Settlement → Rest` 구조다.
 - `BusinessScene` 안에서 주문 제시, 에피소드, 칵테일 제작 모드가 전환된다.
 - 진행 데이터는 `GameProgress`에 모이고 JSON으로 저장된다.
-- 칵테일과 아이템 데이터는 ScriptableObject와 CSV를 사용한다.
+- 기준 CSV에서 생성한 `ItemDef` 15개와 기본 `CocktailRecipeDef` 21개를 제품 런타임의 ScriptableObject 데이터로 사용한다.
 
 ### 액체 시스템의 정확한 기술적 정의
 
@@ -69,10 +71,10 @@
 
 #### 관련 코드
 
-- `Assets/Scripts/Bartending/LiquidParticleData.cs`
+- `Assets/_Project/Features/Bartending/Runtime/Liquid/Particles/LiquidParticleData.cs`
   - `LiquidPayload.MixPair`
   - `LiquidPayload.EvaluateColor`
-- `Assets/MetaballFluid/Scripts/LiquidReaction.cs`
+- `Assets/_Project/Features/Bartending/Runtime/Liquid/Particles/LiquidReaction.cs`
   - `TryMixNearbyParticlesByAgitation`
   - `GetRelativeVelocityMixStrength`
 
@@ -95,7 +97,7 @@
 
 #### 관련 코드
 
-- `Assets/Scripts/Bartending/VesselLiquidTracker.cs`
+- `Assets/_Project/Features/Bartending/Runtime/Liquid/Vessels/VesselLiquidTracker.cs`
   - `FindPreferredOwner`
   - `RefreshParticleIsolation`
   - `SetParticleVesselCollision`
@@ -122,13 +124,13 @@
 
 #### 관련 코드
 
-- `Assets/Scripts/Bartending/VesselLiquidTracker.cs`
+- `Assets/_Project/Features/Bartending/Runtime/Liquid/Vessels/VesselLiquidTracker.cs`
   - `BuildComposition`
-- `Assets/Scripts/Bartending/CocktailEvaluator.cs`
+- `Assets/_Project/Features/Bartending/Runtime/CocktailEvaluator.cs`
   - `EvaluateRecipe`
-- `Assets/Scripts/Business/BusinessOrderSessionController.cs`
+- `Assets/_Project/Features/Business/Runtime/Flow/BusinessOrderSessionController.cs`
   - `SubmitOrder`
-- `Assets/Scripts/Bartending/BusinessBartendingBootstrap.cs`
+- `Assets/_Project/Features/Bartending/Runtime/BusinessBartendingBootstrap.cs`
   - 병 배치, 재고 분배 및 잔여 용량 동기화 코드
 
 #### 포트폴리오 포인트
@@ -194,7 +196,7 @@
 
 ### 6.1 최우선: 용기 소유권에 따른 충돌 격리
 
-**파일:** `Assets/Scripts/Bartending/VesselLiquidTracker.cs`
+**파일:** `Assets/_Project/Features/Bartending/Runtime/Liquid/Vessels/VesselLiquidTracker.cs`
 
 **추천 함수:** `FindPreferredOwner`, `RefreshParticleIsolation`
 
@@ -213,7 +215,7 @@ Physics2D.IgnoreCollision(
 
 ### 6.2 입자 조성 및 온도 혼합
 
-**파일:** `Assets/Scripts/Bartending/LiquidParticleData.cs`
+**파일:** `Assets/_Project/Features/Bartending/Runtime/Liquid/Particles/LiquidParticleData.cs`
 
 **추천 함수:** `LiquidPayload.MixPair`
 
@@ -237,7 +239,7 @@ right.temperatureC = Mathf.Lerp(
 
 ### 6.3 상대 운동에 따른 혼합 강도
 
-**파일:** `Assets/MetaballFluid/Scripts/LiquidReaction.cs`
+**파일:** `Assets/_Project/Features/Bartending/Runtime/Liquid/Particles/LiquidReaction.cs`
 
 **추천 함수:** `TryMixNearbyParticlesByAgitation`, `GetRelativeVelocityMixStrength`
 
@@ -260,7 +262,7 @@ return agitationMixSpeed * agitation;
 
 ### 6.4 물리 결과의 레시피 판정
 
-**파일:** `Assets/Scripts/Bartending/CocktailEvaluator.cs`
+**파일:** `Assets/_Project/Features/Bartending/Runtime/CocktailEvaluator.cs`
 
 **추천 함수:** `EvaluateRecipe`
 

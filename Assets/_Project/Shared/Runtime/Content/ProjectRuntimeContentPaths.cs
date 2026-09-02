@@ -13,8 +13,6 @@ namespace Slainte.Content
             BartendingToolCabinet + "/ToolCabinetCatalog";
         public const string BartendingItems = BartendingRoot + "/Items";
         public const string BartendingRecipes = BartendingRoot + "/Recipes";
-        public const string BartendingRecipeVariants =
-            BartendingRecipes + "/Variants";
         public const string BartendingShop = BartendingRoot + "/Shop";
         public const string BartendingShopCatalog =
             BartendingShop + "/LiquorShopCatalog";

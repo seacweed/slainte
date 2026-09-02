@@ -12,22 +12,22 @@
 
 재료별 HEX는 알파 채널이 포함된 `#RRGGBBAA` 형식입니다. 예를 들어 `#A679BB71`은 RGB `#A679BB`, 알파 약 44%를 뜻합니다. 색 선택기, HEX, RGB, 알파 입력은 서로 실시간으로 동기화됩니다.
 
-## Unity 데이터 갱신
+## Unity 데이터 갱신 상태
 
-저장소 루트에서 다음 명령을 실행합니다.
+독립 실행 파일에는 기존에 생성된 데이터 스냅샷이 포함되어 있어 그대로 열 수 있습니다. 다만 현재 `generate-data.ps1`은 구조 개편 전 경로(`Assets/Resources/Items`, `Assets/Resources/Recipes`, `Assets/StreamingAssets/Data`)를 읽기 때문에, 아래 명령으로는 현재 Unity 데이터가 갱신되지 않습니다.
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\Tools\RecipeColorMixer\generate-data.ps1
 ```
 
-이 과정은 프로그램 실행에 필요하지 않은 선택 기능입니다. 스크립트가 다음 데이터를 읽어 `recipe-data.js`와 독립 실행 파일 `RecipeColorMixer.html`을 다시 생성합니다.
+현재 기준 데이터 위치는 다음과 같습니다.
 
-- `Assets/Resources/Items/**/*.asset`의 `ItemDef`
-- `Assets/Resources/Recipes/**/*.asset`의 주문 가능한 `CocktailRecipeDef`
-- `Assets/StreamingAssets/Data/recipes.csv`
-- `Assets/StreamingAssets/Data/recipe_ingredients.csv`
+- `Assets/Resources/Bartending/Items/*.asset`의 `ItemDef` 15개
+- `Assets/Resources/Bartending/Recipes/*.asset`의 주문 가능한 `CocktailRecipeDef` 21개
+- `Assets/_Project/Features/Bartending/Content/Source/Planning/recipes.csv`
+- `Assets/_Project/Features/Bartending/Content/Source/Planning/recipe_ingredients.csv`
 
-레시피를 불러온 후에도 색 선택기, HEX, RGB, 알파, 용량을 자유롭게 수정할 수 있습니다.
+자동 갱신을 다시 사용하려면 생성 스크립트의 경로와 wide 배합 CSV 파서를 먼저 현재 형식에 맞춰야 합니다. 그 전까지 위 명령으로 생성물을 덮어쓰지 않습니다. 화면에서 불러온 스냅샷의 색 선택기, HEX, RGB, 알파, 용량은 자유롭게 수정할 수 있습니다.
 
 ## 계산 방식
 

@@ -143,14 +143,15 @@ MetaballFluid(아래 절)는 순수 시각 레이어이고, 판정에 쓰이는 
 
 ## 레시피 에셋 (`CocktailRecipeDataLoader.cs`)
 
-`CocktailRecipeDataLoader`는 `Assets/StreamingAssets/Bartending/`의 기존 샘플 CSV와 `Resources/Bartending/Recipes`의 `CocktailRecipeDef`를 합쳐 읽는다. 기존 QA 주문을 유지하면서 기획 CSV로 가져온 레시피를 추가하기 위한 호환 계층이다.
+`CocktailRecipeDataLoader`는 `Resources/Bartending/Recipes`의 `CocktailRecipeDef`만 읽는다. 기준 원본은 `Features/Bartending/Content/Source/Planning`의 `recipes.csv`와 `recipe_ingredients.csv`이며, 에디터 임포터가 두 파일을 기본 레시피 에셋으로 변환한다. `StreamingAssets/Bartending`의 샘플 CSV는 개발·검증용이고 제품 런타임 레시피 소스가 아니다.
 
-- 기본 레시피 18종 중 배합이 있는 15종만 주문 가능
-- 기본 정답은 `Good`
-- 레시피북에서 숨긴 잔·얼음 변형 73종은 `Mid`
+- 기본 레시피 21종이 모두 주문 가능
+- 정확한 기본 레시피는 `Good`
+- 핵심 배합·기법이 맞고 잔·얼음만 다르면 별도 에셋 없이 `MidGlass`/`MidIce`/`MidIceGlass`로 판정
+- 다른 기본 레시피가 정확히 감지되면 `MidWrongMenu`
 - 레시피 도수는 명시 값이 없을 때 `Σ(재료 용량 × 재료 ABV) / 총 용량`으로 계산
 - 무작위 주문은 `isOrderable` 레시피만 선택
-- 기본 레시피 주문 판정 시 같은 `baseRecipeId`의 숨은 변형까지 비교
+- `Resources/Bartending/Recipes`에는 기본 레시피 21개와 `TasteMoodPalette.asset`만 두며 결과별 파생 레시피는 만들지 않음
 
 ---
 

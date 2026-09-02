@@ -1,6 +1,6 @@
 # Slainte 아키텍처
 
-기준일: 2026-08-09
+기준일: 2026-09-02
 
 ## 1. 설계 요약
 
@@ -117,7 +117,9 @@ CustomerOrderData
 
 ### 레시피 데이터
 
-`CocktailRecipeDataLoader`는 `StreamingAssets/Bartending`의 호환 CSV와 `Resources/Bartending/Recipes`의 에셋을 합친다. 기본 레시피는 Good 판정, 숨은 변형은 Mid 판정에 사용한다.
+사람이 수정하는 원본은 `Features/Bartending/Content/Source/Planning`의 `items.csv`, `recipes.csv`, `recipe_ingredients.csv`다. 에디터 임포터가 이를 런타임 에셋으로 변환하며, `CocktailRecipeDataLoader`는 `Resources/Bartending/Recipes`의 기본 `CocktailRecipeDef` 21개를 단일 제품 런타임 소스로 읽는다. `CocktailRecipeCsvLoader`와 `StreamingAssets/Bartending`의 샘플 CSV는 개발·검증 경로다.
+
+결과별 파생 레시피 에셋은 두지 않는다. 기본 레시피가 정확히 맞으면 `Good`, 핵심 배합·기법이 맞고 잔·얼음만 다르면 주문 평가기가 `MidGlass`/`MidIce`/`MidIceGlass`로 직접 분류한다. 다른 기본 레시피가 정확히 감지되면 `MidWrongMenu`다.
 
 ## 6. 공용 주문 경계
 
@@ -184,7 +186,7 @@ ItemDef
 
 - 공용 계약에는 EditMode 테스트와 `.asmdef` 경계가 있지만, 기능 간 상호 의존 때문에 Core·Business·Bartending·Narrative·Rest 경계는 아직 단일 기본 어셈블리에 남아 있다.
 - 저장이 비원자적이고 정확한 실행 위치를 저장하지 않는다.
-- 제조용 `ItemDef`, 술장용 `LiquorBottleDef`, 상점용 `ItemData`가 분리되어 있다.
+- 제조용 `ItemDef`와 술장용 `LiquorBottleDef`는 동일 아이템 ID로 연결되지만 별도 타입이며, 이전 상점용 `ItemData` 경로도 남아 있다.
 - 다수 시스템이 문자열 키와 `Resources.Load`에 의존한다.
 - 일부 에피소드 제조 노드의 레시피 ID가 비어 있다.
 - 휴식 상점 구매가 진행도와 연결되지 않았다.

@@ -3,6 +3,8 @@
 기준일: 2026-09-02  
 적용 대상: `Assets` 아래의 프로젝트 코드, Unity 에셋, 런타임 데이터
 
+이 문서에서 **표준**은 새 파일과 최종 구조에 적용할 규칙이고, **현재 예외**는 아직 마이그레이션하지 못한 실제 상태다. 예외를 표준의 근거로 사용하지 않으며, 표준 예시가 현재 폴더가 이미 모두 정리됐다는 뜻도 아니다.
+
 ## 1. 목적
 
 이 규약은 새 파일의 위치를 사람마다 다르게 판단하지 않도록 다음 기준을 고정한다.
@@ -39,6 +41,8 @@ Assets/
 - `Scripts`, `Prefabs`, `Images`, `Data` 같은 종류별 최상위 폴더를 다시 만들지 않는다.
 - `_Recovery`, `Temp`, `Backup`, `New Folder`, `Misc` 폴더를 `Assets` 아래에 커밋하지 않는다.
 
+현재 실제 최상위 구조는 위 표준과 일치한다. `_Project` 아래에는 `Core`, `Features`, `Scenes`, `Settings`, `Shared`가 있고, `Resources`는 `Bartending`, `Business`, `Core`, `Narrative`, `Rest`, `StreamingAssets`는 `Bartending`, `Narrative`로 나뉜다.
+
 ## 3. 소유 영역 판단
 
 파일을 배치할 때 다음 순서로 판단한다.
@@ -48,7 +52,7 @@ Assets/
 3. 특정 기능의 도메인 규칙·타입에 의존하지 않으며 둘 이상의 영역에서 재사용되는가? 그러면 `Shared`에 둔다.
 4. Unity의 특수 로딩 경로가 필요한가? 소유 기능 이름을 유지한 채 `Resources` 또는 `StreamingAssets`에 둔다.
 
-Scene에서 사용되는 위치는 소유권의 근거가 아니다. `RestScene`에서 사용하는 구매 코드라도 주류 가격과 재고를 관리하면 Bartending 소유다.
+Scene에서 사용되는 위치는 소유권의 근거가 아니다. 예를 들어 상점 패널·화면 전환은 `Rest`, 판매되는 병과 재료 정의는 `Bartending`, 지갑과 통화 정책은 `Core/Economy`가 소유한다. 한 화면에서 함께 사용된다는 이유로 모두 같은 Feature에 넣지 않는다.
 
 ## 4. Feature 규칙
 
@@ -99,7 +103,7 @@ Features/<Feature>/
 - `Audio`: 기능 전용 음악과 효과음
 - `Prefabs`: 기능이 소유하는 Prefab
 - `Content`: 원본 데이터, 생성 결과, 임시 Legacy 데이터
-- `Infrastructure`: 기능을 구현하는 저수준 기술 에셋 또는 외부 연동
+- `Infrastructure`: 해당 Feature가 소유하는 저수준 기술 에셋 또는 외부 시스템 어댑터. 공급자 소유 패키지 원본은 이곳으로 옮기지 않는다.
 
 ## 5. Core 규칙
 
@@ -173,7 +177,7 @@ Feature별 `.asmdef`는 위 의존 방향에서 순환 참조가 제거된 뒤 �
 
 ### Namespace 규칙
 
-새로운 비직렬화 코드는 소유 영역을 namespace에 표시한다.
+새 타입은 `MonoBehaviour`·`ScriptableObject` 여부와 관계없이 소유 모듈의 namespace를 사용한다. 기존 모듈에 파일을 추가할 때는 그 모듈의 현재 namespace를 따르며, 폴더 이동 작업에 새 namespace 변경을 섞지 않는다.
 
 ```text
 Slainte.Core
@@ -183,6 +187,8 @@ Slainte.Narrative
 Slainte.Rest
 Slainte.Shared
 ```
+
+위 이름은 새 모듈의 기본 목표다. 이미 `NarrativeFlow`, `Slainte.TV`, `Slainte.Economy`처럼 독립된 namespace를 쓰는 모듈에는 기존 경계를 유지한다. 같은 모듈 안에 목표 이름과 기존 이름을 임의로 혼용하지 않는다. Shared의 현재 명시적 경계는 `Slainte.Shared.Input`, `Slainte.Shared.Lifecycle`, `Slainte.Content`, `Slainte.EditorTools`다.
 
 하위 폴더가 의미 있는 코드 경계를 만들 때만 하위 namespace를 추가한다. 폴더 깊이를 기계적으로 namespace에 모두 복제하지 않는다.
 
@@ -198,16 +204,18 @@ Content/
 ```
 
 - `Source`: 사람이 직접 수정하는 CSV, 그래프, 원본 설정
-- `Generated`: Importer나 생성 도구가 만든 Unity 에셋
+- `Generated`: Importer나 생성 도구가 만든 Unity 에셋 중 Unity 특수 경로가 필요하지 않은 결과
 - `Legacy`: 현재 실행 경로가 참조하지 않는 이전 데이터
 
 Generated 파일을 손으로 수정하지 않는다. 수정이 필요하면 Source 또는 Importer를 변경하고 다시 생성한다.
+
+생성 결과가 `Resources.Load` 대상이면 `Content/Generated`와 `Resources`에 중복 보관하지 않고 `Resources/<Owner>/<LoadGroup>`에 직접 출력한다. 이 경우 원본은 `Content/Source`, 생성 절차는 해당 Feature의 `Editor`, 런타임 결과만 `Resources`가 맡는다.
 
 Legacy에는 새 참조를 추가하지 않는다. Legacy를 유지할 때는 보존 이유와 삭제 조건을 문서 또는 README에 기록한다.
 
 ### Planning 명칭
 
-`Planning`은 제작 단계 이름이므로 런타임 출력 폴더로 사용하지 않는다.
+`Planning`은 기능이나 데이터 역할이 아니라 제작 단계 이름이므로 새 폴더명으로 사용하지 않는다. 특히 런타임 출력 경로에는 두지 않는다.
 
 ```text
 # 표준
@@ -215,25 +223,25 @@ Content/Source/items.csv
 Content/Source/recipes.csv
 Resources/Bartending/Items/item_1001.asset
 Resources/Bartending/Recipes/rec_1001.asset
-Resources/Bartending/Recipes/Variants/rec_1001_mid.asset
 
 # 금지
 Resources/Bartending/Items/Planning/item_1001.asset
 Resources/Bartending/Recipes/Planning/rec_1001.asset
 ```
 
-`Items/Planning`과 `Recipes/Planning`은 제거했으며, Importer도 각각 `Items`, `Recipes`에 바로 출력한다. 현재 남은 `Source/Planning`, `LiquorBottles/Planning`은 별도 마이그레이션 대상이다. 새 코드에서 런타임 `Planning` 경로 의존을 추가하지 않는다.
+`Items/Planning`과 `Recipes/Planning`은 제거했으며, Importer도 각각 `Items`, `Recipes`에 바로 출력한다. 현재 기준 CSV가 있는 `Source/Planning`과 병 생성 결과가 있는 `LiquorBottles/Planning`은 경로 상수가 이미 사용 중인 마이그레이션 예외다. 당장은 이 위치를 기준 원본·출력으로 사용하되 새 `Planning` 폴더나 의존을 추가하지 않고, 이동할 때는 CSV 기본 경로·Importer 출력·GUID를 한 변경에서 함께 갱신한다.
 
 ## 9. Resources 규칙
 
 `Resources`는 `Resources.Load` 또는 `Resources.LoadAll`이 필요한 런타임 에셋만 보관한다.
 
+`Resources`는 코드 소유권을 정하는 주 구조가 아니라 Unity 로딩 제약을 위한 **런타임 배포 경계**다. 따라서 첫 단계는 반드시 소유 Feature이고, 그 아래는 타입 이름을 기계적으로 나누는 대신 관련 로더들이 공유하는 런타임 사용 단위(`LoadGroup`)로 나눈다. 현재 `Bartending/Items`와 `Bartending/Recipes`가 타입 이름처럼 보여도, 루트의 전역 `Items`, `Recipes` 분류와 달리 Bartending 소유권 안의 명시적 로딩 단위다.
+
 ```text
 Resources/
 ├─ Bartending/
 │  ├─ Items/
-│  ├─ Recipes/
-│  │  └─ Variants/
+│  ├─ Recipes/       # 기본 레시피 21개와 TasteMoodPalette; 결과별 복사본 금지
 │  ├─ Shop/
 │  └─ ToolCabinet/
 ├─ Business/
@@ -248,6 +256,8 @@ Resources/
 - 코드에서 Resources 경로 문자열을 직접 작성하지 않는다.
 - 런타임 경로는 `ProjectResourcePaths`에 정의한다.
 - 같은 타입과 ID의 중복 에셋을 여러 하위 폴더에 두지 않는다.
+- 같은 런타임 사용 단위의 소수 보조 에셋은 관련 로더가 명확한 경로로 읽는 조건에서 같은 LoadGroup에 둘 수 있다. `TasteMoodPalette.asset`이 `Bartending/Recipes`에 있는 이유가 여기에 해당한다.
+- `Resources`에 있다는 이유로 해당 에셋의 도메인 소유권이 사라지지 않는다. 생성기와 런타임 타입은 계속 원래 Feature가 소유한다.
 
 ## 10. StreamingAssets 규칙
 
@@ -264,6 +274,7 @@ StreamingAssets/
 - 파일명과 폴더명은 `ProjectStreamingAssetPaths`에 정의한다.
 - Unity 에셋 참조로 충분한 파일을 StreamingAssets에 중복 보관하지 않는다.
 - Source와 런타임 출력이 다르면 생성 절차와 어느 쪽이 원본인지 문서화한다.
+- 개발·검증 전용 원시 파일은 가능하면 Feature의 `Tests`, `Content/Source` 또는 Development Scene 쪽에 둔다. 제품 빌드에서 파일 경로 접근이 필요하지 않다면 `StreamingAssets`에 두지 않는다.
 
 ## 11. Scene 규칙
 
@@ -331,8 +342,10 @@ GUID가 바뀌거나 기존 GUID가 다른 에셋에 재사용되면 이동을 �
 | 특정 플레이 기능의 규칙·상태·표시인가? | `Features/<Feature>` |
 | 게임 전체 시작·저장·Scene·흐름 조립인가? | `Core` |
 | 기능 중립이며 둘 이상이 쓰는 기반 부품인가? | `Shared` |
-| `Resources.Load`로 읽어야 하는가? | `Resources/<Owner>` |
-| 파일 경로로 직접 읽어야 하는 원시 데이터인가? | `StreamingAssets/<Owner>` |
+| 사람이 직접 수정하는 Feature 원본인가? | `Features/<Feature>/Content/Source` |
+| 생성 결과이며 Unity 특수 경로가 필요 없는가? | `Features/<Feature>/Content/Generated` |
+| `Resources.Load`로 읽어야 하는가? | `Resources/<Owner>/<LoadGroup>` |
+| 파일 경로로 직접 읽어야 하는 원시 데이터인가? | `StreamingAssets/<Owner>/<Purpose>` |
 | 제품 Scene인가? | `Scenes/Production` |
 | 테스트·샌드박스 Scene인가? | `Scenes/Development` |
 | 외부 패키지가 소유하는가? | 패키지의 기존 루트 유지 |
@@ -342,9 +355,12 @@ GUID가 바뀌거나 기존 GUID가 다른 에셋에 재사용되면 이동을 �
 다음 항목은 현재 구조에 남아 있으나 새 규약의 표준으로 간주하지 않는다.
 
 - `Content/Source/Planning`, `Content/Generated/LiquorBottles/Planning` 제작 단계 폴더
+- `StreamingAssets/Bartending`의 `ingredients.csv`, `recipes.csv`, `recipe_ingredients.csv` 개발·검증 데이터
+- `BusinessOrderSessionController`에 직접 적힌 `order_templates.csv` 파일명
 - 전역 namespace에 남은 기존 Unity 직렬화 타입
 - Feature 간 직접 참조와 그로 인해 보류된 Feature별 `.asmdef`
 - Shared와 Core로 추출하기 전의 일부 교차 기능 조립 코드
+- 구조 개편 전 바텐딩 에셋 개수를 기대하는 `RuntimeResourceStructureValidator`
 
 새 코드는 예외를 확대하지 않는다. 예외를 제거하는 변경은 GUID 보존, 컴파일, 자동 검증, Play Mode 확인을 포함한 별도 작업으로 진행한다.
 
@@ -355,8 +371,10 @@ GUID가 바뀌거나 기존 GUID가 다른 에셋에 재사용되면 이동을 �
 - [ ] Shared가 특정 Feature의 데이터 타입이나 게임 규칙에 의존하지 않는다.
 - [ ] Runtime 코드가 Editor 코드를 참조하지 않는다.
 - [ ] Resources·StreamingAssets 경로가 공용 상수에 등록됐다.
+- [ ] Resources·StreamingAssets 사용이 실제 로더 요구로 설명되며 단순 정리 목적이 아니다.
 - [ ] Generated 파일을 직접 수정하지 않았다.
 - [ ] 새 `Planning`, `Data`, `Misc`, `_Recovery` 폴더를 만들지 않았다.
+- [ ] 현재 마이그레이션 예외에 새 의존이나 파일을 추가하지 않았다.
 - [ ] 이동한 에셋의 `.meta` GUID가 유지됐다.
 - [ ] 관련 Validator와 테스트가 통과했다.
 - [ ] 제품 흐름에 영향이 있으면 Play Mode에서 확인했다.

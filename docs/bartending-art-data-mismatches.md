@@ -1,81 +1,55 @@
 # 바텐딩 병 아트와 데이터 연결 현황
 
-기준일: 2026-08-19
+기준일: 2026-09-02
 
-## 적용 원칙
+## 현재 기준
 
-- 원본 PNG의 픽셀 크기, 캔버스, 종횡비를 변경하지 않는다.
-- 상점은 `*_blank.png`, 술장은 뚜껑이 있는 `*_lid.png`, 바테이블은 뚜껑이 없는 기본 `*.png`를 사용한다.
-- `hotwater.png`는 별도 변형이 없으므로 세 화면에서 같은 이미지를 사용한다.
-- 이름과 데이터가 정확히 대응할 때만 연결한다. 유사 이름으로 추정하거나 새 데이터를 만들지 않는다.
-- 데이터만 있는 항목은 데이터와 기존 레거시 참조를 보존하되 새 컨텍스트 이미지 필드는 비워 둔다.
-- 아트만 있는 항목은 Unity 에셋으로 반입하되 데이터에는 연결하지 않는다.
-- 기존 술장 배경과 프레임은 이번 작업에서 변경하지 않는다.
+활성 재료는 `items.csv`의 `item_1001`~`item_1015` 15종이다. 임포터는 각 행에서 다음 두 에셋을 만들거나 갱신한다.
 
-## 연결한 아트 세트
+- 제조·액체 데이터: `Assets/Resources/Bartending/Items/<ID>.asset`
+- 술장·상점·바테이블 표시: `Assets/_Project/Features/Bartending/Content/Generated/LiquorBottles/Planning/<ID>.asset`
 
-| 아트 이름 | LiquorBottleDef ID | 추가로 같은 아트를 쓰는 LiquorBottleDef ID | ItemDef ID | 비고 |
-| --- | --- | --- | --- | --- |
-| `tropicaljuice` | `tropical_juice` | `item_1001` | `item_1001` | 3종 연결 |
-| `siltrop` | `siltrop` | `item_1002` | `item_1002` | 3종 연결 |
-| `syntheticlemon` | `synthetic_lemon` | `item_1003` | `item_1003` | 합성 레몬 전용. 레몬주스에 재사용하지 않음 |
-| `slop` | `item_1005` | - | `item_1005` | 3종 연결 |
-| `nanangna` | `nanangna` | `item_1007` | `item_1007` | 3종 연결 |
-| `cotton` | `cotton` | `item_1008` | `item_1008` | 3종 연결 |
-| `hectar` | `hectar` | `item_1009` | `item_1009` | 3종 연결 |
-| `bless` | `bless` | `item_1010` | `item_1010` | 3종 연결 |
-| `breezevodka` | `breeze_vodka` | `item_1011` | `breeze_vodka`, `item_1011` | 3종 연결 |
-| `johnnydogs` | `johnny_dogs` | `item_1012` | `item_1012` | 3종 연결 |
-| `burnhambourbon` | `burnham_bourbon` | `item_1013` | `item_1013` | 3종 연결 |
-| `beatha` | `beatha` | `item_1014` | `item_1014` | 3종 연결 |
-| `coffeepowder` | `item_1025` | - | `item_1025` | 3종 연결 |
-| `hotwater` | `item_1024` | - | `item_1024` | 단일 PNG를 세 컨텍스트에 연결 |
+현재 두 폴더에는 각각 15개 에셋이 있으며, 모든 `ItemDef.icon`과 모든 `LiquorBottleDef`의 상점·술장·바테이블 Sprite 참조가 연결되어 있다.
 
-각 3종 연결은 다음 필드 대응을 뜻한다.
+## 이미지 사용 규칙
 
-| 화면/용도 | 파일 | 데이터 필드 |
-| --- | --- | --- |
-| 상점 | `<name>_blank.png` | shop/blank sprite |
-| 술장 | `<name>_lid.png` | shelf/lid sprite |
-| 바테이블 | `<name>.png` | bar/open sprite 및 대응 ItemDef icon |
+- 상점: `*_blank` Sprite → `LiquorBottleDef.shopBlankSprite`
+- 술장: `*_lid` Sprite → `LiquorBottleDef.shelfLidSprite`
+- 바테이블: 기본 Sprite → `LiquorBottleDef.barSprite`와 `ItemDef.icon`
+- 뜨거운 물은 제공된 이미지 구성을 재사용하지만 세 컨텍스트 필드 자체는 모두 연결되어 있다.
+- 이름이 비슷하다는 이유만으로 다른 재료의 이미지를 대신 연결하지 않는다.
 
-## 데이터는 있지만 새 아트가 없는 항목
+## 활성 데이터 연결표
 
-| 데이터 | 상태 | 처리 |
-| --- | --- | --- |
-| `LiquorBottleDef: lemon_juice` | `lemonjuice` 아트 세트 없음 | 레몬주스 데이터와 기존 레거시 sprite를 삭제하지 않음. 새 shop/shelf/bar 필드는 비움 |
-| `ItemDef: lemon_juice` | `lemonjuice` 아트 세트 없음 | 기존 레거시 icon을 보존. 합성 레몬 이미지를 대신 연결하지 않음 |
-| `LiquorBottleDef/ItemDef: item_1023` (`꿀`) | 대응 병 아트 없음 | 새 shop/shelf/bar 및 icon 연결을 비움 |
-| `ItemDef: lans_whiskey` | 대응 LiquorBottleDef와 새 병 아트 없음 | 기존 데이터를 보존하고 이번 연결 대상에서 제외 |
+| Item ID | 표시 이름 | CSV `IconName` | 아트 기본 이름 |
+|---|---|---|---|
+| `item_1001` | 열대 주스 | `icon_tropicalJuice` | `tropicaljuice` |
+| `item_1002` | 실청 | `icon_siltrop` | `siltrop` |
+| `item_1003` | 합성 레몬 | `icon_syntheticLemon` | `syntheticlemon` |
+| `item_1004` | 슬롭 | `icon_slop` | `slop` |
+| `item_1005` | 나낭나 | `icon_nanangna` | `nanangna` |
+| `item_1006` | 코튼 | `icon_cotton` | `cotton` |
+| `item_1007` | 헥타르 | `icon_hectar` | `hectar` |
+| `item_1008` | 블레스 | `icon_bless` | `bless` |
+| `item_1009` | 브리즈 보드카 | `icon_breezeVodka` | `breezevodka` |
+| `item_1010` | 조니 독스 | `icon_johnnyDogs` | `johnnydogs` |
+| `item_1011` | 번햄 버번 | `icon_burnhamBourbon` | `burnhambourbon` |
+| `item_1012` | 바하 | `icon_beatha` | `beatha` |
+| `item_1013` | 탄산 미닛 | `icon_minuteFizz` | `minutefizz` |
+| `item_1014` | 뜨거운 물 | `icon_hotWater` | `hotwater` |
+| `item_1015` | 커피 분말 | `icon_coffeePowder` | `coffeepowder` |
 
-## 아트는 있지만 데이터가 없는 항목
+`IconName`은 기획 키이고 실제 Sprite 이름 탐색은 임포터의 이름 정규화와 접미사 규칙을 거친다. 연결 여부는 파일명 추측이 아니라 생성 에셋의 직렬화 참조와 검증 메뉴로 확인한다.
 
-| 아트 | 상태 | 처리 |
-| --- | --- | --- |
-| `minutefizz.png`, `minutefizz_blank.png`, `minutefizz_lid.png` | 정확히 대응하는 LiquorBottleDef/ItemDef 없음 | PNG와 Unity 에셋만 보존하고 미연결 |
+## 병존하는 이전 에셋
 
-## 런타임 데이터 불일치
+`Content/Generated/LiquorBottles` 바로 아래에는 `beatha.asset`, `breezeVodka.asset` 같은 이름 기반 `LiquorBottleDef`가 남아 있다. 이 에셋들은 현재 동일 재료의 canonical `ItemDef`를 직접 참조하도록 연결되어 있으므로, 과거 문서에 적힌 “동일 ID의 ItemDef가 없어 소환할 수 없음” 상태는 해소됐다.
 
-다음 레거시 LiquorBottleDef는 이번 아트 세트와 연결되지만 동일 ID의 ItemDef가 없어서 현재 술장에서 바테이블로 생성할 수 없다. 액체 속성 데이터를 추정해 ItemDef를 새로 만들지 않았다.
+다만 이름 기반 에셋과 `Planning/item_####.asset`이 함께 존재하는 구조는 중복이다. 술장 카탈로그, Scene, Prefab의 참조를 조사하지 않은 채 이전 에셋을 삭제하면 안 된다. 최종 목표는 참조를 ID 기반 에셋으로 통일한 뒤 이름 기반 호환 에셋을 제거하는 것이다.
 
-- `beatha`
-- `bless`
-- `burnham_bourbon`
-- `cotton`
-- `hectar`
-- `johnny_dogs`
-- `nanangna`
-- `siltrop`
-- `synthetic_lemon`
-- `tropical_juice`
+## 남은 확인
 
-`breeze_vodka`는 동일 ID의 LiquorBottleDef와 ItemDef가 모두 있어 세 화면 흐름을 검증할 수 있다. Planning 데이터의 `item_1001`~`item_1025` 중 현재 생성된 항목은 동일 ID의 두 정의가 있으므로, 아트가 있는 항목에 한해 세 화면 흐름을 검증할 수 있다.
-
-## 후속 자료가 필요한 항목
-
-- 레몬주스용 `lemonjuice.png`, `lemonjuice_blank.png`, `lemonjuice_lid.png`
-- 꿀(`item_1023`)용 기본/blank/lid 병 이미지
-- 미닛피즈의 안정 ID, 가격, 용량, 액체 색상과 분류를 포함한 LiquorBottleDef/ItemDef
-- 위 레거시 10종의 바테이블 사용을 위한 동일 ID ItemDef 액체 데이터
-
-도구장 배경, 도구 아트, 얼음 아트 및 도구 소유/배치 기능은 다음 작업 범위다.
+- 상점 → 술장 → 바테이블 세 화면에서 15종 Sprite가 의도한 상태로 보이는지 수동 확인
+- 병 Sprite Collider 자동 생성 결과와 실제 클릭·드래그 범위 확인
+- 입력된 `RGBA`가 병 아트와 완성 음료에서 의도한 색으로 보이는지 확인
+- 이름 기반 이전 `LiquorBottleDef`의 Scene·Prefab·카탈로그 참조 감사 후 제거 여부 결정

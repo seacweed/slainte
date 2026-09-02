@@ -1048,9 +1048,7 @@ namespace Slainte.EditorTools
 
             foreach (CocktailRecipe recipe in recipes.OrderableRecipes)
             {
-                if (recipe == null
-                    || recipe.evaluationGrade != CocktailRecipeEvaluationGrade.Good
-                    || !string.IsNullOrWhiteSpace(recipe.baseRecipeId))
+                if (recipe == null)
                 {
                     continue;
                 }
@@ -1077,8 +1075,6 @@ namespace Slainte.EditorTools
             foreach (CocktailRecipe recipe in recipes.OrderableRecipes)
             {
                 if (recipe == null
-                    || recipe.evaluationGrade != CocktailRecipeEvaluationGrade.Good
-                    || !string.IsNullOrWhiteSpace(recipe.baseRecipeId)
                     || recipe.GetPrice(currency) <= 0)
                 {
                     continue;
@@ -1502,28 +1498,6 @@ namespace Slainte.EditorTools
                     null,
                     CocktailOrderEvaluationOutcome.MidIceGlass)) == CraftingJobResult.MidIceGlass,
                 "얼음·잔 동시 불일치 결과 매핑에 실패했습니다.");
-
-            CocktailRecipe iceVariant = new()
-            {
-                id = "requested__mid_ice",
-                baseRecipeId = "requested",
-                glassId = "rock",
-                iceRequirement = IceRequirement.Required,
-                evaluationGrade = CocktailRecipeEvaluationGrade.Mid
-            };
-            CocktailEvaluationResult matchedVariant = new()
-            {
-                matchedRecipe = iceVariant,
-                isSuccess = true
-            };
-            BusinessOrderSessionResult variantResult = CreateCraftingResult(
-                OrderEvaluationGrade.Mid,
-                baseRecipe,
-                matchedVariant,
-                matchedVariant,
-                CocktailOrderEvaluationOutcome.MidIce);
-            Require(EpisodeCraftingResultMapper.Map(variantResult) == CraftingJobResult.MidIce,
-                "요청 레시피의 얼음 변형을 잘못된 메뉴로 오인했습니다.");
 
             CocktailEvaluationResult otherFailure = new()
             {

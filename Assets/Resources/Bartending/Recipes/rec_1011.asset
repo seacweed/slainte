@@ -19,8 +19,6 @@ MonoBehaviour:
   strangeCoinPrice: 1
   isOrderable: 1
   appearsInRecipeBook: 1
-  baseRecipeId: 
-  evaluationGrade: 0
   minTotalMl: 135
   maxTotalMl: 155
   toleranceMl: 10

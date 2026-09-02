@@ -111,7 +111,6 @@ namespace Slainte.Bartending
             {
                 case CocktailOrderType.RecipeOrder:
                 case CocktailOrderType.RecipeModifierOrder:
-                case CocktailOrderType.VariantRecipeOrder:
                 case CocktailOrderType.CustomRecipeOrder:
                 case CocktailOrderType.EpisodeOrder:
                     return EvaluateRecipeOrder(order, composition, detectedRecipeResult);
@@ -283,10 +282,6 @@ namespace Slainte.Bartending
             return !string.Equals(
                     detected.id,
                     order.requestedRecipeId,
-                    System.StringComparison.OrdinalIgnoreCase)
-                && !string.Equals(
-                    detected.baseRecipeId,
-                    order.requestedRecipeId,
                     System.StringComparison.OrdinalIgnoreCase);
         }
 
@@ -339,7 +334,6 @@ namespace Slainte.Bartending
                 CocktailOrderType.RecipeModifierOrder => "조건 변경 주문",
                 CocktailOrderType.TasteOrder => "맛 주문",
                 CocktailOrderType.MoodOrder => "분위기 주문",
-                CocktailOrderType.VariantRecipeOrder => "변형 레시피 주문",
                 CocktailOrderType.CustomRecipeOrder => "수제 레시피 주문",
                 CocktailOrderType.EpisodeOrder => "에피소드 주문",
                 _ => "알 수 없는 주문"

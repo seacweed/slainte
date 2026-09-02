@@ -116,7 +116,7 @@ LiquorShelfPanel  [LiquorShelfUI]  ← shelfPanelRect (우측 슬라이드 대�
 - 계산 예: `bottleCount=6, unitVolume=700`인 술이 2410ml 남으면 `fullCount=3`(2100ml, `GetSprite(1f)`), 나머지 310ml인 in-use 1칸(`GetSprite(310/700)`), empty 2칸(`GetSprite(0f)`), 텍스트 `"310/700ml"`
 - **마지막 병이 정확히 꽉 찬 경우도 표시됨**: 텍스트 표시 여부(`showAmount`)는 아이콘 렌더링용 in-use 판정(`remainder > 0f && fullCount < bottleCount`)과 별개 조건(`clampedAmount > 0f`)을 쓴다 — 아이콘 판정만 재사용하면 `remainder == 0`(마지막 병까지 정확히 꽉 참)일 때 "사용 중인 병 없음"으로 오판해 텍스트 전체가 숨겨지는 버그가 있었음. 텍스트에 표시할 값도 `remainder > 0 ? remainder : unitVolume`으로 계산해, 꽉 찬 경우 `"700/700ml"`처럼 뜬다(재고가 0일 때만 텍스트 자체가 숨겨짐)
 - **아이콘 레이아웃**: `stateImages` 10칸 = 1번째 줄(고정 5개) + `secondRowContainer`(2번째 줄, `bottleCount > 5`일 때만 `SetActive(true)`). 개별 아이콘 활성화는 기존처럼 `i < bottleCount` 기준, 2번째 줄 컨테이너는 `VerticalLayoutGroup` + `ContentSizeFitter`(Vertical Fit = Preferred Size)로 감싸서 꺼졌을 때 카드 높이가 자동으로 줄어들게 함
-- 위치 계산은 `Assets/_Project/Features/Rest/Runtime/TooltipManager.UpdatePosition`(화면 밖 벗어나면 좌우 자동 전환)의 구조를 참고해 새로 작성 — world position 기반이라 부모가 어디든 계산엔 무관, 단 `Viewport`의 `Mask` 밖(= `LiquorShelfPanel` 직계 자식)에 둬야 렌더링이 잘리지 않음
+- 위치 계산은 `TooltipManager.UpdatePosition()`(화면 밖 벗어나면 좌우 자동 전환)의 구조를 참고해 새로 작성 — world position 기반이라 부모가 어디든 계산엔 무관, 단 `Viewport`의 `Mask` 밖(= `LiquorShelfPanel` 직계 자식)에 둬야 렌더링이 잘리지 않음
 
 ## 상시 표시 잔여량 바
 
@@ -146,7 +146,7 @@ LiquorShelfPanel  [LiquorShelfUI]  ← shelfPanelRect (우측 슬라이드 대�
 - 구매 성공 시 `HandleDeliveryPurchased()` → `DeliveryCharacterPresenter`가 바테이블 뒤에서 배송 캐릭터를 슬라이드로 등장시키고, `deliveryCharacterSlideDuration + deliveryCharacterHoldDuration` 뒤 자동으로 숨긴다. 연속 구매 시 진행 중이던 코루틴을 멈추고 다시 시작해 등장 시간이 계속 리셋되지 않게 한다.
 - `EndDeliverySession()`: 배송 패널을 닫으면 `SetInteractable(false)`+`HideImmediate()`로 즉시 비활성화하고, 셔터도 즉시 리셋하며, 배송 캐릭터도 슬라이드로 퇴장시킨다. `BlocksRecipeBook`이 `true`인 동안(배송 세션 진행 중)에는 레시피북 잠금 해제 판단에 이 플래그가 쓰인다.
 
-### DeliveryItemSlotUI (`Assets/_Project/Features/Rest/Runtime/DeliveryItemSlotUI.cs`)
+### DeliveryItemSlotUI (`Assets/_Project/Features/Bartending/Runtime/LiquorShelf/DeliveryItemSlotUI.cs`)
 
 배송 전용 아이템 슬롯. `ItemSlotUI`와 필드/구매 로직은 동일하되(별도 클래스로 분리 — `ItemSlotUI` 쪽은 배송이 갈라져 나가면서 `priceMultiplier` 관련 코드를 제거해 다시 배율 1 고정인 일반/이상한 상점 전용으로 정리됨), 구매 버튼 아래에 원가(배율 적용 전 가격)를 회색 텍스트 + 대각선 취소선(`originalPriceText`/`originalPriceStrike`)으로 추가 표시하는 부분만 다르다. 이 클래스는 배송 전용(배율이 항상 1이 아님)이라 별도 조건 없이 해금 상태에서 항상 표시된다.
 

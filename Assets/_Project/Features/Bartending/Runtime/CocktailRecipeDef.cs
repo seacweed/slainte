@@ -26,8 +26,6 @@ namespace Slainte.Bartending
         [Header("Availability")]
         public bool isOrderable = true;
         public bool appearsInRecipeBook = true;
-        public string baseRecipeId;
-        public CocktailRecipeEvaluationGrade evaluationGrade = CocktailRecipeEvaluationGrade.Good;
 
         [Header("Evaluation")]
         [Min(0f)] public float minTotalMl;
@@ -66,8 +64,6 @@ namespace Slainte.Bartending
                 strangeCoinPrice = strangeCoinPrice,
                 isOrderable = isOrderable && ingredients != null && ingredients.Count > 0,
                 appearsInRecipeBook = appearsInRecipeBook,
-                baseRecipeId = baseRecipeId != null ? baseRecipeId.Trim() : string.Empty,
-                evaluationGrade = evaluationGrade,
                 minTotalMl = minTotalMl,
                 maxTotalMl = maxTotalMl,
                 toleranceMl = toleranceMl,

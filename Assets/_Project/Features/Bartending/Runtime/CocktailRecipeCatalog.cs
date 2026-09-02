@@ -35,12 +35,6 @@ namespace Slainte.Bartending
         }
     }
 
-    public enum CocktailRecipeEvaluationGrade
-    {
-        Good,
-        Mid
-    }
-
     public sealed class CocktailRecipeIngredient
     {
         public string ingredientId;
@@ -58,8 +52,6 @@ namespace Slainte.Bartending
         public int strangeCoinPrice;
         public bool isOrderable = true;
         public bool appearsInRecipeBook = true;
-        public string baseRecipeId;
-        public CocktailRecipeEvaluationGrade evaluationGrade = CocktailRecipeEvaluationGrade.Good;
         public float expectedAbvPercent;
         public float minTotalMl;
         public float maxTotalMl;

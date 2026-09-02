@@ -36,7 +36,7 @@ DetailView — 뒤로가기만 존재(제목 없음)
 
 ## 데이터 연동
 
-- `RecipeSearchUI.Awake()`에서 `ItemDefCatalog.LoadFromResources("Items")` + `CocktailRecipeDataLoader.LoadDefault(itemCatalog)`로 카탈로그를 로드(`BusinessOrderSessionController`와 동일한 패턴)한 뒤 `appearsInRecipeBook == true`인 레시피만 캐시. 잔·얼음 변형(`Variants/` 하위 73개)은 전부 `appearsInRecipeBook = false`라 자동 제외됨.
+- `RecipeSearchUI.Awake()`에서 `ItemDefCatalog.LoadFromResources(ProjectResourcePaths.BartendingItems)`와 `CocktailRecipeDataLoader.LoadDefault(itemCatalog)`로 기본 레시피 카탈로그를 로드(`BusinessOrderSessionController`와 동일한 패턴)한 뒤 `appearsInRecipeBook == true`인 레시피만 캐시한다.
 - 맛/분위기 필터링은 `CocktailRecipe.tasteTags`/`moodTags`(대소문자 무시 `HashSet<string>`)에 태그 포함 여부로 판정.
 - 이름 검색은 `displayName` 부분 일치(대소문자 무시)만 지원.
 - `CocktailRecipeDef`에는 `icon`(Sprite)과 `description`(TextArea) 필드가 있으며 `ToRuntime()`을 통해 `CocktailRecipe.icon`/`description`으로 그대로 전달됨. `description`은 기획 CSV(`Assets/_Project/Features/Bartending/Content/Source/Planning/recipes.csv`)에 "설명" 컬럼을 추가하면 `PlanningCsvAssetImporter`가 자동으로 채움. `icon`은 Sprite 참조라 CSV로 채울 수 없어 Inspector에서 직접 할당해야 함.

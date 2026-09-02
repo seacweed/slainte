@@ -841,7 +841,6 @@ namespace Slainte.EditorTools
             {
                 CocktailRecipeDef definition = definitions[i];
                 if (definition == null
-                    || !string.IsNullOrWhiteSpace(definition.baseRecipeId)
                     || string.IsNullOrWhiteSpace(definition.displayName))
                 {
                     continue;

@@ -6,8 +6,9 @@ Unity 에디터에서 사용할 수 있는 커스텀 툴 목록입니다.
 | 툴 | 파일 | 메뉴 경로 |
 |---|---|---|
 | 에피소드 CSV 임포터 | `EpisodeCsvImporter.cs` | Tools > Slainte > Import Episode CSV |
-| 아이템 데이터 임포터 | `ItemDataImporter.cs` | Tools > Import Item Data (CSV) |
+| 레거시 ItemData 임포터 | `ItemDataImporter.cs` | Tools > Import Item Data (CSV) |
 | 기획 CSV 에셋 임포터 | `PlanningCsvAssetImporter.cs` | Slainte > 데이터 > 기획 CSV 임포트 |
+| 기준 기획 CSV 즉시 임포트 | `PlanningCsvAssetImporter.cs` | Slainte > 데이터 > 기준 CSV 바로 임포트 |
 | 기획 CSV 자동 검증 | `PlanningCsvAssetImporter.cs` | Slainte > 품질 검증 > 기획 CSV 에셋 검증 |
 | 코블러 셰이커 설정 | `CobblerShakerSetup.cs` | Slainte > Business > 코블러 셰이커 설정 적용 |
 | 손님 풀 샘플 설정 | `CustomerPoolSetup.cs` | Slainte > Business > 손님 풀 샘플 설정 적용 |
@@ -52,16 +53,18 @@ Unity 에디터에서 사용할 수 있는 커스텀 툴 목록입니다.
 
 ## 기획 CSV 에셋 임포터
 
-아이템 CSV, 레시피 CSV, PDF에서 옮긴 배합 CSV를 읽어 실제 바텐딩 런타임이 사용하는 에셋을 생성한다.
+`Features/Bartending/Content/Source/Planning`의 `items.csv`, `recipes.csv`, `recipe_ingredients.csv`를 읽어 실제 바텐딩 런타임 에셋을 생성·갱신한다.
 
 - 아이템 한 행에서 `ItemDef`와 `LiquorBottleDef`를 함께 갱신한다.
 - 레시피 한 행에서 `CocktailRecipeDef`를 갱신하고 배합 CSV의 재료·용량을 연결한다.
-- 15개 기본 레시피에서 잔·얼음만 다른 숨은 Mid 판정 레시피 73개를 자동 생성한다. 재료·제조법 변형은 생성하지 않는다.
+- 잔·얼음 Mid 판정용 중복 레시피 에셋은 생성하지 않는다. 해당 결과는 주문 평가기가 기본 레시피와 제출 조성을 비교해 직접 분류한다.
 - 도수 칸이 비어 있으면 재료별 도수와 용량으로 완성 음료 도수를 계산한다.
-- 아이리시 커피, 블랙 커피, 핫 테디처럼 배합이 없는 레시피는 주문 대상에서 자동 제외한다.
+- 배합이 없는 레시피는 주문 대상에서 자동 제외한다. 현재 기본 레시피 21종은 모두 배합이 연결되어 주문 가능하다.
 - 재임포트는 ID 기준 갱신 방식이므로 중복 에셋을 만들지 않는다.
 
-자동 검증은 에셋 수, 재료 참조, 번햄 사워 계산 도수, 정확 제조 Good, 잔 변형 Mid를 확인한다.
+출력 위치는 `Resources/Bartending/Items`, `Resources/Bartending/Recipes`, `Features/Bartending/Content/Generated/LiquorBottles/Planning`이다. 제품 레시피는 `Resources/Bartending/Recipes`만 읽는다.
+
+자동 검증은 기본 레시피 에셋 수, 재료 참조, 번햄 사워 계산 도수, 정확 제조 `Good`, 잔 불일치 `MidGlass`, 다른 기본 레시피 제출 `MidWrongMenu`를 확인한다.
 
 ---
 
@@ -127,7 +130,7 @@ CSV 작성 방법은 [../narrative/episode-csv-guide.md](../narrative/episode-cs
 
 ### 사용 방법
 
-1. Project 창에서 대상 폴더(들) 선택 (예: `Assets/_Project/Features/Business/Art/Sprites/Characters/eliot`)
+1. Project 창에서 대상 폴더(들) 선택 (예: `Assets/_Project/Features/Business/Art/Sprites/Characters/f54`)
 2. Unity 메뉴 → **Slainte > 데이터 > 캐릭터 스프라이트 접두어 제거**
 
 ### 동작 규칙

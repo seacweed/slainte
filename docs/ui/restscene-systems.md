@@ -356,7 +356,7 @@ homePanel (재료/업그레이드/레시피북 3버튼)
 
 **카테고리 버튼 프리팹 재사용 시 주의**: `strangeCategoryButtonPrefab`를 `ShopCategoryButton.prefab` 복제로 만들 경우, 원본에 있던 클릭 범위 버그(배경 `Image`가 `Button` 컴포넌트의 부모 오브젝트에 있어 아이콘+텍스트 바깥 영역은 클릭이 안 되는 문제 — Unity 이벤트 버블링은 자식→부모 방향으로만 핸들러를 찾기 때문)를 원본에서 먼저 고친 뒤 복제할 것. 자세한 원인은 이 문서가 아니라 프리팹 자체를 열어 `Button`/배경 `Image`의 부모-자식 관계를 확인.
 
-### ItemData (`Assets/_Project/Features/Rest/Runtime/ItemData.cs`) — 임시 데이터, 상점 미사용
+### ItemData (`Assets/_Project/Features/Rest/Runtime/ItemData.cs`) — 레거시 타입, 상점 미사용
 
 ```csharp
 [CreateAssetMenu(menuName = "Shop/Item Data")]
@@ -372,7 +372,7 @@ public class ItemData : ScriptableObject
 public enum ItemType { Alcohol, Liqueur, NonAlcohol, Powder, Tool, Glass }
 ```
 
-`Resources/Bartending/Items/`의 `ItemData` 120개는 임시 데이터라 위 상점 구현은 참조하지 않음(같은 폴더의 제작용 `ItemDef` 18개와 별개). `Assets/_Project/Features/Rest/Editor/ItemDataImporter.cs`(CSV 임포터)도 함께 미사용 상태로 남아있음.
+현재 `Resources/Bartending/Items/`에는 바텐딩 기준 CSV에서 생성한 `ItemDef` 15개만 있고 `ItemData` 에셋은 없다. 상점은 `LiquorShopCatalog`의 `LiquorBottleDef`를 사용한다. `Assets/_Project/Features/Rest/Editor/ItemDataImporter.cs`와 `Content/Source/Legacy/ItemData.csv`는 호환을 위해 남은 이전 경로이며 새 상점 데이터를 만들 때 사용하지 않는다.
 
 ---
 

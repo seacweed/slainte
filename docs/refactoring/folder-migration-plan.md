@@ -2,7 +2,7 @@
 
 현재 폴더 배치 규칙은 [프로젝트 폴더 구조 규약](folder-structure-conventions.md)을 따른다.
 
-기준일: 2026-08-31
+기준일: 2026-09-02
 작업 브랜치: `boguk9_refactoring`
 
 ## 목표
@@ -36,6 +36,8 @@
 - Resources와 StreamingAssets 경로를 공통 상수로 통합하고 통합 구조 검증기를 추가
 - 루트 렌더링·입력 설정 에셋을 `_Project/Settings`로 통합
 - Unity 비의존 콘텐츠 경로를 `Slainte.Shared.Content` 어셈블리와 계약 테스트로 분리
+- `Resources/Bartending/Items/Planning`, `Recipes/Planning`을 제거하고 Item·Recipe 에셋을 각 루트에 직접 출력
+- 레시피 결과별 파생 에셋을 제거하고 `Good`·`Mid`·`MidWrongMenu`를 기본 레시피 비교로 직접 판정
 
 남겨둔 범위:
 
@@ -43,17 +45,25 @@
 - 기능 간 순환 의존을 먼저 제거해야 하는 Core·Business·Bartending·Rest·Narrative `.asmdef`
 - 씬과 Prefab에 `Assembly-CSharp::타입명`으로 기록된 Shared UI 컴포넌트의 어셈블리 이동
 
-현재 검증 결과:
+현재 변경에서 다시 확인한 결과:
 
-- Unity 배치 재임포트와 프로젝트 통합 에셋 검증: 통과
-- 전체 C# 빌드: 오류 0개, 기준선과 동일한 `CS0649` 경고 8개
-- Shared EditMode 테스트: 8개 통과, 실패·건너뜀 0개
-- TV/Rest 배치 검증 및 Business 순수 규칙 배치 검증: 통과
-- Rest 최종 아트 검증 및 MetaballFluid 인프라 에셋 검증: 통과
-- Bartending Art·Sprite 114개·Prefab 13개 로드 및 Prefab Missing Script 검증: 통과
-- BusinessShift 배치 검증: 검증기 기대 영업시간 180초와 현재 설정 300초 불일치로 중단
-- BartendingSystem 배치 검증: 검증기 기대 액체 알파 1.0과 현재 구현 0.2 불일치로 중단
-- Unity GUI와 전체 플레이 흐름 수동 검증: 별도 확인 필요
+- Editor C# 빌드: 오류 0개, 기준선과 동일한 `CS0649` 경고 8개
+- Unity `6000.3.5f2` 배치 `기획 CSV 에셋 검증`: 통과
+- 검증 데이터: 아이템·술장 15종, 기본·주문 가능 레시피 21종
+- 검증 판정: 가격·재고·도수·얼음·`Good`·`MidGlass`·`MidWrongMenu`
+- `Resources/Bartending/Recipes`에 결과별 파생 레시피 경로 없음
+
+이전 구조 이동 단계에서 통과했고 이번 변경에서는 다시 실행하지 않은 항목:
+
+- Shared EditMode 테스트 8개
+- TV/Rest와 Business 순수 규칙 배치 검증
+- Rest 최종 아트와 MetaballFluid 인프라 검증
+- Bartending Sprite 114개·Prefab 13개 로드와 Missing Script 검증
+
+남은 확인:
+
+- BusinessShift·BartendingSystem 검증기의 기대값을 현재 설정과 동기화한 뒤 재실행
+- 제품 Scene의 주문 생성 → 제조 → 제출 → 보상 수동 스모크 테스트
 
 ## 기준선
 
@@ -147,6 +157,7 @@ Assets/
 | `Assets/Data/RecipeBook`, `UpgradeData` | `Features/Rest/Content/Generated` | 휴식 상점용 해금·업그레이드 데이터 통합 완료 |
 | `Assets/Resources`의 타입별 폴더 | `Resources/Bartending`, `Business`, `Narrative`, `Rest`, `Core` | Unity `Resources` 경계는 유지하고 기능 소유권별 하위 경로로 통합 완료 |
 | `Resources/Bartending/Items/Planning`, `Recipes/Planning` | `Resources/Bartending/Items`, `Recipes` | 런타임 출력의 제작 단계 폴더를 제거하고 직접 출력하도록 변경 완료 |
+| `Resources/Bartending/Recipes`의 결과별 파생 폴더 | 없음 | 기본 레시피 21개만 유지하고 결과 차이는 런타임 평가기로 판정하도록 변경 완료 |
 | `Assets/StreamingAssets/Data`, `NarrativeData` | `StreamingAssets/Bartending`, `Narrative` | CSV와 베이크 JSON을 기능별 런타임 데이터 경계로 통합 완료 |
 | `Assets/CoreScene/Scripts`의 앱 흐름 | `Core/Runtime/Flow` | 씬 전환과 하루 진행 |
 | `Assets/CoreScene/Scripts`의 저장 코드, `Assets/Scripts/GameProgress.cs` | `Core/Runtime/Persistence` | 저장 데이터와 런타임 진행 상태 |

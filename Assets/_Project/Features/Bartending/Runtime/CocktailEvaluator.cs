@@ -154,27 +154,6 @@ namespace Slainte.Bartending
             return EvaluateRecipe(recipe, composition);
         }
 
-        public CocktailEvaluationResult EvaluateRecipeFamily(string recipeId, CocktailComposition composition)
-        {
-            CocktailEvaluationResult requested = EvaluateRecipe(recipeId, composition);
-            if (requested.isSuccess || recipeCatalog == null)
-                return requested;
-
-            foreach (CocktailRecipe candidate in recipeCatalog.Recipes)
-            {
-                if (candidate == null
-                    || candidate.evaluationGrade != CocktailRecipeEvaluationGrade.Mid
-                    || !string.Equals(candidate.baseRecipeId, recipeId, System.StringComparison.OrdinalIgnoreCase))
-                    continue;
-
-                CocktailEvaluationResult result = EvaluateRecipe(candidate, composition);
-                if (result.isSuccess)
-                    return result;
-            }
-
-            return requested;
-        }
-
         public CocktailEvaluationResult EvaluateFirstOrderable(
             CocktailComposition composition,
             System.Predicate<CocktailRecipe> predicate,
@@ -237,10 +216,7 @@ namespace Slainte.Bartending
 
         private static bool IsDetectableBaseRecipe(CocktailRecipe recipe)
         {
-            return recipe != null
-                && recipe.isOrderable
-                && recipe.evaluationGrade == CocktailRecipeEvaluationGrade.Good
-                && string.IsNullOrWhiteSpace(recipe.baseRecipeId);
+            return recipe != null && recipe.isOrderable;
         }
 
         private static CocktailEvaluationResult EvaluateRecipe(CocktailRecipe recipe, CocktailComposition composition)
