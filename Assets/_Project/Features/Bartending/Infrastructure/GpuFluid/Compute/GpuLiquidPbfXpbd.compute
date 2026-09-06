@@ -1,0 +1,1293 @@
+#pragma kernel ResetParticles
+#pragma kernel ResetCompositionBuffers
+#pragma kernel SpawnParticles
+#pragma kernel IntegrateParticles
+#pragma kernel ClearGrid
+#pragma kernel BuildGrid
+#pragma kernel CalculateDensityLambda
+#pragma kernel CalculatePositionDelta
+#pragma kernel ApplyDeltaAndBoundaries
+#pragma kernel UpdateVelocities
+#pragma kernel MixComposition
+#pragma kernel UpdateParticleColors
+#pragma kernel ApplyTechnique
+#pragma kernel TranslateVesselContents
+#pragma kernel SetVesselSuspended
+
+#pragma target 5.0
+
+#define THREAD_GROUP_SIZE 64
+#define STATE_STIR_ATTEMPTED 1u
+#define STATE_SHAKEN_WITH_ICE 2u
+#define STATE_SUSPENDED 4u
+#define MIX_NEIGHBOR_NORMALIZATION 32.0
+
+struct LiquidParticle
+{
+    float2 position;
+    float2 previousPosition;
+    float2 velocity;
+    float volumeMl;
+    float temperatureC;
+    uint vesselId;
+    uint techniqueFlags;
+    uint stateFlags;
+    uint active;
+    uint padding;
+};
+
+struct SpawnCommand
+{
+    float2 position;
+    float2 velocity;
+    float volumeMl;
+    float temperatureC;
+    uint sourceIngredient;
+    uint vesselId;
+    uint stateFlags;
+};
+
+struct IngredientVisual
+{
+    float4 color;
+    uint inheritMixedColor;
+    uint padding0;
+    uint padding1;
+    uint padding2;
+};
+
+struct BoundarySegment
+{
+    float2 a;
+    float2 b;
+    float2 velocityA;
+    float2 velocityB;
+    uint vesselId;
+    uint flags;
+};
+
+struct VesselTrigger
+{
+    float2 center;
+    float2 axisX;
+    float2 axisY;
+    float2 halfExtents;
+    uint vesselId;
+    int priority;
+    uint active;
+    uint flags;
+};
+
+struct Agitator
+{
+    float2 a;
+    float2 b;
+    float2 velocity;
+    float radius;
+    float strength;
+    uint vesselId;
+    uint active;
+};
+
+RWStructuredBuffer<LiquidParticle> _Particles;
+RWStructuredBuffer<float> _CompositionA;
+RWStructuredBuffer<float> _CompositionB;
+RWStructuredBuffer<float> _CompositionRead;
+RWStructuredBuffer<float> _CompositionWrite;
+RWStructuredBuffer<float4> _ParticleColors;
+RWStructuredBuffer<float2> _PositionDeltas;
+RWStructuredBuffer<float> _Lambdas;
+RWStructuredBuffer<int> _GridHeads;
+RWStructuredBuffer<int> _GridNext;
+RWStructuredBuffer<uint> _FreeIndices;
+RWStructuredBuffer<int> _FreeCount;
+StructuredBuffer<SpawnCommand> _SpawnCommands;
+StructuredBuffer<IngredientVisual> _IngredientVisuals;
+StructuredBuffer<BoundarySegment> _Boundaries;
+StructuredBuffer<VesselTrigger> _VesselTriggers;
+StructuredBuffer<Agitator> _Agitators;
+RWStructuredBuffer<uint> _Statistics;
+
+int _ParticleCapacity;
+int _MaximumIngredients;
+int _IngredientCount;
+int _SpawnCount;
+int _GridWidth;
+int _GridHeight;
+int _GridCellCount;
+int _BoundaryCount;
+int _VesselTriggerCount;
+int _AgitatorCount;
+int _TechniqueTargetVessel;
+int _TechniqueMask;
+int _TechniqueStateMask;
+int _TransformTargetVessel;
+int _SuspensionTargetVessel;
+int _SuspensionEnabled;
+
+float _DeltaTime;
+float _ParticleRadius;
+float _SmoothingRadius;
+float _RestDensity;
+float _DensityCompliance;
+float _LambdaEpsilon;
+float _ArtificialPressureStrength;
+float _ArtificialPressureRadiusRatio;
+float _BoundaryDensityScale;
+float _WallFriction;
+float _WallRestitution;
+float _SplashTransfer;
+float _SplashMinimumImpactSpeed;
+float _BottomImpactSpread;
+float _VelocityDamping;
+float _MaximumSpeed;
+float _ClosedVesselDampingRate;
+float _ClosedVesselMaximumRelativeSpeed;
+float _Viscosity;
+float _PassiveMixRate;
+float _AgitationMixRate;
+float _FullMixRelativeSpeed;
+float _MaximumMixPerSubstep;
+float _MinimumVisibleAlpha;
+float2 _Gravity;
+float2 _GridOrigin;
+float2 _WorldMin;
+float2 _WorldMax;
+float2 _TransformDelta;
+
+int2 GetCell(float2 position)
+{
+    return (int2)floor((position - _GridOrigin) / _SmoothingRadius);
+}
+
+bool IsCellValid(int2 cell)
+{
+    return cell.x >= 0 && cell.y >= 0
+        && cell.x < _GridWidth && cell.y < _GridHeight;
+}
+
+int GetCellIndex(int2 cell)
+{
+    return cell.y * _GridWidth + cell.x;
+}
+
+float KernelPoly6(float distanceSquared)
+{
+    float h2 = _SmoothingRadius * _SmoothingRadius;
+    if (distanceSquared >= h2)
+        return 0.0;
+
+    float difference = h2 - distanceSquared;
+    float h8 = max(1e-8, h2 * h2 * h2 * h2);
+    return 4.0 / (3.14159265 * h8) * difference * difference * difference;
+}
+
+float2 KernelSpikyGradient(float2 offset)
+{
+    float distance = length(offset);
+    if (distance <= 1e-5 || distance >= _SmoothingRadius)
+        return 0.0;
+
+    float h5 = max(1e-8, pow(_SmoothingRadius, 5.0));
+    float coefficient = -30.0 / (3.14159265 * h5);
+    float difference = _SmoothingRadius - distance;
+    return coefficient * difference * difference * offset / distance;
+}
+
+float2 GetPairSeparationOffset(
+    uint particleIndex,
+    uint neighborIndex,
+    float2 offset)
+{
+    if (dot(offset, offset) > 1e-8)
+        return offset;
+
+    // A hard vessel correction can place several particles on exactly the
+    // same wall/corner coordinate. A radial kernel has no gradient at that
+    // singularity, so those particles would otherwise remain welded together.
+    // Use a stable, antisymmetric pair direction to let PBF separate them.
+    uint smallerIndex = min(particleIndex, neighborIndex);
+    uint largerIndex = max(particleIndex, neighborIndex);
+    uint pairHash = smallerIndex * 747796405u
+        + largerIndex * 2891336453u;
+    float angle = (float)(pairHash & 1023u)
+        * (6.28318530718 / 1024.0);
+    float2 direction = float2(cos(angle), sin(angle));
+    float directionSign = particleIndex == smallerIndex ? 1.0 : -1.0;
+    return direction * directionSign * max(1e-4, _ParticleRadius * 0.05);
+}
+
+float2 ClosestPointOnSegment(
+    float2 samplePosition,
+    float2 a,
+    float2 b,
+    out float t)
+{
+    float2 ab = b - a;
+    float lengthSquared = dot(ab, ab);
+    t = lengthSquared > 1e-8
+        ? saturate(dot(samplePosition - a, ab) / lengthSquared)
+        : 0.0;
+    return a + ab * t;
+}
+
+float Cross2D(float2 a, float2 b)
+{
+    return a.x * b.y - a.y * b.x;
+}
+
+bool IsBoundaryCompatible(uint particleVesselId, uint boundaryVesselId)
+{
+    return particleVesselId == 0u || particleVesselId == boundaryVesselId;
+}
+
+bool TryFindNearestCompatibleBoundary(
+    float2 position,
+    uint vesselId,
+    float maximumDistance,
+    out float2 closestPoint,
+    out float2 normal,
+    out float distance,
+    out float segmentT,
+    out float2 boundaryVelocity)
+{
+    closestPoint = 0.0;
+    normal = 0.0;
+    distance = maximumDistance;
+    segmentT = 0.0;
+    boundaryVelocity = 0.0;
+    bool found = false;
+
+    for (int boundaryIndex = 0; boundaryIndex < _BoundaryCount; boundaryIndex++)
+    {
+        BoundarySegment boundary = _Boundaries[boundaryIndex];
+        if (!IsBoundaryCompatible(vesselId, boundary.vesselId))
+            continue;
+
+        float candidateT;
+        float2 candidateClosest = ClosestPointOnSegment(
+            position,
+            boundary.a,
+            boundary.b,
+            candidateT);
+        float2 difference = position - candidateClosest;
+        float candidateDistance = length(difference);
+        if (candidateDistance >= distance)
+            continue;
+
+        float2 tangent = boundary.b - boundary.a;
+        closestPoint = candidateClosest;
+        normal = candidateDistance > 1e-5
+            ? difference / candidateDistance
+            : normalize(float2(-tangent.y, tangent.x));
+        distance = candidateDistance;
+        segmentT = candidateT;
+        boundaryVelocity = lerp(
+            boundary.velocityA,
+            boundary.velocityB,
+            candidateT);
+        found = true;
+    }
+
+    return found;
+}
+
+bool IsInsideVesselTrigger(
+    VesselTrigger trigger,
+    float2 position,
+    float padding)
+{
+    float2 offset = position - trigger.center;
+    float localX = abs(dot(offset, trigger.axisX));
+    float localY = abs(dot(offset, trigger.axisY));
+    float safePadding = max(0.0, padding);
+    float2 paddedExtents = trigger.halfExtents
+        + float2(safePadding, safePadding);
+    return localX <= paddedExtents.x && localY <= paddedExtents.y;
+}
+
+uint FindContainingVessel(float2 position, uint previousVesselId)
+{
+    uint selectedVessel = 0u;
+    int selectedPriority = -2147483647;
+
+    // Content triggers are deliberately inset from the drawn glass wall. Keep
+    // an already-owned particle attached through the PBF support radius so a
+    // near-wall particle cannot be left behind when the vessel is snapped.
+    if (previousVesselId != 0u)
+    {
+        float ownershipPadding = _SmoothingRadius + _ParticleRadius;
+        for (int previousTriggerIndex = 0;
+             previousTriggerIndex < _VesselTriggerCount;
+             previousTriggerIndex++)
+        {
+            VesselTrigger previousTrigger = _VesselTriggers[previousTriggerIndex];
+            if (previousTrigger.active != 0u
+                && previousTrigger.vesselId == previousVesselId
+                && IsInsideVesselTrigger(
+                    previousTrigger,
+                    position,
+                    ownershipPadding))
+            {
+                selectedVessel = previousVesselId;
+                selectedPriority = 2147483647;
+                break;
+            }
+        }
+    }
+
+    for (int triggerIndex = 0;
+         selectedVessel == 0u && triggerIndex < _VesselTriggerCount;
+         triggerIndex++)
+    {
+        VesselTrigger trigger = _VesselTriggers[triggerIndex];
+        if (trigger.active == 0u)
+            continue;
+
+        if (IsInsideVesselTrigger(trigger, position, 0.0)
+            && trigger.priority >= selectedPriority)
+        {
+            selectedPriority = trigger.priority;
+            selectedVessel = trigger.vesselId;
+        }
+    }
+    return selectedVessel;
+}
+
+float2 ConstrainToClosedVessel(float2 position, uint vesselId)
+{
+    if (vesselId == 0u)
+        return position;
+
+    for (int triggerIndex = 0; triggerIndex < _VesselTriggerCount; triggerIndex++)
+    {
+        VesselTrigger trigger = _VesselTriggers[triggerIndex];
+        if (trigger.active == 0u
+            || trigger.vesselId != vesselId
+            || (trigger.flags & 1u) == 0u)
+        {
+            continue;
+        }
+
+        float2 offset = position - trigger.center;
+        float2 local = float2(
+            dot(offset, trigger.axisX),
+            dot(offset, trigger.axisY));
+        float2 safeExtents = max(
+            trigger.halfExtents - _ParticleRadius,
+            _ParticleRadius.xx);
+        local = clamp(local, -safeExtents, safeExtents);
+        return trigger.center
+            + trigger.axisX * local.x
+            + trigger.axisY * local.y;
+    }
+
+    return position;
+}
+
+bool IsClosedVessel(uint vesselId)
+{
+    if (vesselId == 0u)
+        return false;
+
+    for (int triggerIndex = 0; triggerIndex < _VesselTriggerCount; triggerIndex++)
+    {
+        VesselTrigger trigger = _VesselTriggers[triggerIndex];
+        if (trigger.active != 0u
+            && trigger.vesselId == vesselId
+            && (trigger.flags & 1u) != 0u)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void ResetParticles(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint index = dispatchId.x;
+    if (index >= (uint)_ParticleCapacity)
+        return;
+
+    LiquidParticle particle = (LiquidParticle)0;
+    particle.temperatureC = 20.0;
+    _Particles[index] = particle;
+    _ParticleColors[index] = 0.0;
+    _PositionDeltas[index] = 0.0;
+    _Lambdas[index] = 0.0;
+    _GridNext[index] = -1;
+    _FreeIndices[index] = index;
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void ResetCompositionBuffers(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint index = dispatchId.x;
+    if (index >= (uint)_ParticleCapacity)
+        return;
+
+    uint compositionOffset = index * (uint)_MaximumIngredients;
+    for (int ingredient = 0; ingredient < _MaximumIngredients; ingredient++)
+    {
+        _CompositionA[compositionOffset + ingredient] = 0.0;
+        _CompositionB[compositionOffset + ingredient] = 0.0;
+    }
+
+    if (index == 0u)
+    {
+        _FreeCount[0] = _ParticleCapacity;
+        _Statistics[0] = 0u;
+        _Statistics[1] = 0u;
+        _Statistics[2] = 0u;
+        _Statistics[3] = 0u;
+    }
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void SpawnParticles(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint commandIndex = dispatchId.x;
+    if (commandIndex >= (uint)_SpawnCount)
+        return;
+
+    int previousFreeCount;
+    InterlockedAdd(_FreeCount[0], -1, previousFreeCount);
+    if (previousFreeCount <= 0)
+    {
+        int ignored;
+        InterlockedAdd(_FreeCount[0], 1, ignored);
+        InterlockedAdd(_Statistics[0], 1u);
+        return;
+    }
+
+    uint particleIndex = _FreeIndices[previousFreeCount - 1];
+    SpawnCommand command = _SpawnCommands[commandIndex];
+    LiquidParticle particle = (LiquidParticle)0;
+    particle.position = command.position;
+    particle.previousPosition = command.position;
+    particle.velocity = command.velocity;
+    particle.volumeMl = max(0.0, command.volumeMl);
+    particle.temperatureC = command.temperatureC;
+    particle.vesselId = command.vesselId;
+    particle.techniqueFlags = 0u;
+    particle.stateFlags = command.stateFlags;
+    particle.active = 1u;
+    _Particles[particleIndex] = particle;
+
+    uint compositionOffset = particleIndex * (uint)_MaximumIngredients;
+    for (int ingredient = 0; ingredient < _MaximumIngredients; ingredient++)
+    {
+        float value = ingredient == (int)command.sourceIngredient ? 1.0 : 0.0;
+        _CompositionA[compositionOffset + ingredient] = value;
+        _CompositionB[compositionOffset + ingredient] = value;
+    }
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void TranslateVesselContents(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint index = dispatchId.x;
+    if (index >= (uint)_ParticleCapacity)
+        return;
+
+    LiquidParticle particle = _Particles[index];
+    if (particle.active == 0u)
+    {
+        return;
+    }
+
+    uint targetVesselId = (uint)_TransformTargetVessel;
+    if (particle.vesselId != targetVesselId)
+    {
+        if (particle.vesselId != 0u
+            || FindContainingVessel(particle.position, targetVesselId)
+            != targetVesselId)
+        {
+            return;
+        }
+        particle.vesselId = targetVesselId;
+    }
+
+    particle.position += _TransformDelta;
+    particle.previousPosition += _TransformDelta;
+    _Particles[index] = particle;
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void SetVesselSuspended(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint index = dispatchId.x;
+    if (index >= (uint)_ParticleCapacity)
+        return;
+
+    LiquidParticle particle = _Particles[index];
+    if (particle.active == 0u
+        || particle.vesselId != (uint)_SuspensionTargetVessel)
+    {
+        return;
+    }
+
+    if (_SuspensionEnabled != 0)
+        particle.stateFlags |= STATE_SUSPENDED;
+    else
+        particle.stateFlags &= ~STATE_SUSPENDED;
+
+    particle.velocity = 0.0;
+    particle.previousPosition = particle.position;
+    _Particles[index] = particle;
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void IntegrateParticles(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint index = dispatchId.x;
+    if (index >= (uint)_ParticleCapacity)
+        return;
+
+    LiquidParticle particle = _Particles[index];
+    if (particle.active == 0u
+        || (particle.stateFlags & STATE_SUSPENDED) != 0u)
+        return;
+
+    particle.previousPosition = particle.position;
+    particle.velocity += _Gravity * _DeltaTime;
+
+    for (int agitatorIndex = 0; agitatorIndex < _AgitatorCount; agitatorIndex++)
+    {
+        Agitator agitator = _Agitators[agitatorIndex];
+        if (agitator.active == 0u)
+            continue;
+        if (agitator.vesselId != 0u
+            && particle.vesselId != 0u
+            && agitator.vesselId != particle.vesselId)
+            continue;
+
+        float segmentT;
+        float2 closest = ClosestPointOnSegment(
+            particle.position,
+            agitator.a,
+            agitator.b,
+            segmentT);
+        float distanceToAgitator = length(particle.position - closest);
+        if (distanceToAgitator <= agitator.radius + _SmoothingRadius)
+        {
+            float influence = saturate(
+                1.0 - distanceToAgitator / max(1e-5, agitator.radius + _SmoothingRadius));
+            float response = 1.0 - exp(
+                -max(0.0, agitator.strength) * _DeltaTime);
+            particle.velocity += (agitator.velocity - particle.velocity)
+                * influence
+                * response;
+        }
+    }
+
+    particle.position += particle.velocity * _DeltaTime;
+    _Particles[index] = particle;
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void ClearGrid(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint index = dispatchId.x;
+    if (index < (uint)_GridCellCount)
+        _GridHeads[index] = -1;
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void BuildGrid(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint index = dispatchId.x;
+    if (index >= (uint)_ParticleCapacity)
+        return;
+
+    LiquidParticle particle = _Particles[index];
+    if (particle.active == 0u
+        || (particle.stateFlags & STATE_SUSPENDED) != 0u)
+    {
+        _GridNext[index] = -1;
+        return;
+    }
+
+    int2 cell = GetCell(particle.position);
+    if (!IsCellValid(cell))
+    {
+        _GridNext[index] = -1;
+        return;
+    }
+
+    int previousHead;
+    InterlockedExchange(_GridHeads[GetCellIndex(cell)], (int)index, previousHead);
+    _GridNext[index] = previousHead;
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void CalculateDensityLambda(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint index = dispatchId.x;
+    if (index >= (uint)_ParticleCapacity)
+        return;
+
+    LiquidParticle particle = _Particles[index];
+    if (particle.active == 0u
+        || (particle.stateFlags & STATE_SUSPENDED) != 0u)
+    {
+        _Lambdas[index] = 0.0;
+        return;
+    }
+
+    float density = max(0.01, particle.volumeMl) * KernelPoly6(0.0);
+    float gradientSum = 0.0;
+    float2 selfGradient = 0.0;
+    int2 originCell = GetCell(particle.position);
+
+    for (int y = -1; y <= 1; y++)
+    {
+        for (int x = -1; x <= 1; x++)
+        {
+            int2 cell = originCell + int2(x, y);
+            if (!IsCellValid(cell))
+                continue;
+
+            int neighborIndex = _GridHeads[GetCellIndex(cell)];
+            int guard = 0;
+            while (neighborIndex >= 0 && guard++ < _ParticleCapacity)
+            {
+                if (neighborIndex != (int)index)
+                {
+                    LiquidParticle neighbor = _Particles[neighborIndex];
+                    if (neighbor.active != 0u
+                        && (neighbor.stateFlags & STATE_SUSPENDED) == 0u
+                        && neighbor.vesselId == particle.vesselId)
+                    {
+                        float2 offset = particle.position - neighbor.position;
+                        float distanceSquared = dot(offset, offset);
+                        if (distanceSquared < _SmoothingRadius * _SmoothingRadius)
+                        {
+                            float neighborMass = max(0.01, neighbor.volumeMl);
+                            density += neighborMass * KernelPoly6(distanceSquared);
+                            float2 gradientOffset = GetPairSeparationOffset(
+                                index,
+                                (uint)neighborIndex,
+                                offset);
+                            float2 gradient = -neighborMass
+                                / max(0.01, _RestDensity)
+                                * KernelSpikyGradient(gradientOffset);
+                            gradientSum += dot(gradient, gradient);
+                            selfGradient -= gradient;
+                        }
+                    }
+                }
+                neighborIndex = _GridNext[neighborIndex];
+            }
+        }
+    }
+
+    if (particle.vesselId != 0u && _BoundaryDensityScale > 0.0)
+    {
+        float2 boundaryPoint;
+        float2 boundaryNormal;
+        float boundaryDistance;
+        float boundaryT;
+        float2 boundaryVelocity;
+        if (TryFindNearestCompatibleBoundary(
+            particle.position,
+            particle.vesselId,
+            _SmoothingRadius,
+            boundaryPoint,
+            boundaryNormal,
+            boundaryDistance,
+            boundaryT,
+            boundaryVelocity))
+        {
+            float boundaryMass = max(0.01, particle.volumeMl)
+                * _BoundaryDensityScale;
+            float2 boundaryOffset = particle.position - boundaryPoint;
+            density += boundaryMass * KernelPoly6(
+                boundaryDistance * boundaryDistance);
+            selfGradient += boundaryMass
+                / max(0.01, _RestDensity)
+                * KernelSpikyGradient(boundaryOffset);
+        }
+    }
+
+    gradientSum += dot(selfGradient, selfGradient);
+    // Free surfaces and airborne streams are naturally under-dense. Solving a
+    // negative density constraint pulls those particles together and produces
+    // an elastic, jelly-like rope. Liquid incompressibility only needs to
+    // reject compression here; sparse regions remain ballistic/flowing.
+    float constraint = max(
+        0.0,
+        density / max(0.01, _RestDensity) - 1.0);
+    float alpha = _DensityCompliance / max(1e-8, _DeltaTime * _DeltaTime);
+    _Lambdas[index] = -constraint / (gradientSum + _LambdaEpsilon + alpha);
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void CalculatePositionDelta(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint index = dispatchId.x;
+    if (index >= (uint)_ParticleCapacity)
+        return;
+
+    LiquidParticle particle = _Particles[index];
+    if (particle.active == 0u
+        || (particle.stateFlags & STATE_SUSPENDED) != 0u)
+    {
+        _PositionDeltas[index] = 0.0;
+        return;
+    }
+
+    float2 delta = 0.0;
+    float artificialPressureReferenceDistance = _SmoothingRadius
+        * clamp(_ArtificialPressureRadiusRatio, 0.1, 0.9);
+    float artificialPressureReference = max(
+        1e-5,
+        KernelPoly6(
+            artificialPressureReferenceDistance
+            * artificialPressureReferenceDistance));
+    int2 originCell = GetCell(particle.position);
+    for (int y = -1; y <= 1; y++)
+    {
+        for (int x = -1; x <= 1; x++)
+        {
+            int2 cell = originCell + int2(x, y);
+            if (!IsCellValid(cell))
+                continue;
+
+            int neighborIndex = _GridHeads[GetCellIndex(cell)];
+            int guard = 0;
+            while (neighborIndex >= 0 && guard++ < _ParticleCapacity)
+            {
+                if (neighborIndex != (int)index)
+                {
+                    LiquidParticle neighbor = _Particles[neighborIndex];
+                    if (neighbor.active != 0u
+                        && (neighbor.stateFlags & STATE_SUSPENDED) == 0u
+                        && neighbor.vesselId == particle.vesselId)
+                    {
+                        float2 offset = particle.position - neighbor.position;
+                        float distanceSquared = dot(offset, offset);
+                        if (distanceSquared < _SmoothingRadius * _SmoothingRadius)
+                        {
+                            float neighborMass = max(0.01, neighbor.volumeMl);
+                            float2 gradientOffset = GetPairSeparationOffset(
+                                index,
+                                (uint)neighborIndex,
+                                offset);
+                            float kernelRatio = min(
+                                KernelPoly6(distanceSquared)
+                                    / artificialPressureReference,
+                                1.5);
+                            float artificialPressure = -_ArtificialPressureStrength
+                                * kernelRatio
+                                * kernelRatio
+                                * kernelRatio
+                                * kernelRatio;
+                            delta += (
+                                _Lambdas[index]
+                                + _Lambdas[neighborIndex]
+                                + artificialPressure)
+                                * neighborMass
+                                / max(0.01, _RestDensity)
+                                * KernelSpikyGradient(gradientOffset);
+                        }
+                    }
+                }
+                neighborIndex = _GridNext[neighborIndex];
+            }
+        }
+    }
+
+    if (particle.vesselId != 0u && _BoundaryDensityScale > 0.0)
+    {
+        float2 boundaryPoint;
+        float2 boundaryNormal;
+        float boundaryDistance;
+        float boundaryT;
+        float2 boundaryVelocity;
+        if (TryFindNearestCompatibleBoundary(
+            particle.position,
+            particle.vesselId,
+            _SmoothingRadius,
+            boundaryPoint,
+            boundaryNormal,
+            boundaryDistance,
+            boundaryT,
+            boundaryVelocity))
+        {
+            float boundaryMass = max(0.01, particle.volumeMl)
+                * _BoundaryDensityScale;
+            delta += _Lambdas[index]
+                * boundaryMass
+                / max(0.01, _RestDensity)
+                * KernelSpikyGradient(particle.position - boundaryPoint);
+        }
+    }
+
+    float maxDelta = _ParticleRadius * 0.75;
+    float deltaLength = length(delta);
+    if (deltaLength > maxDelta)
+        delta *= maxDelta / deltaLength;
+    _PositionDeltas[index] = delta;
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void ApplyDeltaAndBoundaries(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint index = dispatchId.x;
+    if (index >= (uint)_ParticleCapacity)
+        return;
+
+    LiquidParticle particle = _Particles[index];
+    if (particle.active == 0u
+        || (particle.stateFlags & STATE_SUSPENDED) != 0u)
+        return;
+
+    float2 position = particle.position + _PositionDeltas[index];
+    float bestCorrectionScore = -1.0;
+    float2 bestCorrectedPosition = position;
+    for (int boundaryIndex = 0; boundaryIndex < _BoundaryCount; boundaryIndex++)
+    {
+        BoundarySegment boundary = _Boundaries[boundaryIndex];
+        if (!IsBoundaryCompatible(particle.vesselId, boundary.vesselId))
+            continue;
+
+        float segmentT;
+        float2 closest = ClosestPointOnSegment(position, boundary.a, boundary.b, segmentT);
+        float2 difference = position - closest;
+        float distance = length(difference);
+
+        if (distance < _ParticleRadius)
+        {
+            float2 tangent = boundary.b - boundary.a;
+            float2 normal = distance > 1e-5
+                ? difference / distance
+                : normalize(float2(-tangent.y, tangent.x));
+            float correctionScore = _ParticleRadius - distance;
+            if (correctionScore > bestCorrectionScore)
+            {
+                bestCorrectionScore = correctionScore;
+                bestCorrectedPosition = closest + normal * _ParticleRadius;
+            }
+            continue;
+        }
+
+        float2 previousA = boundary.a - boundary.velocityA * _DeltaTime;
+        float2 previousB = boundary.b - boundary.velocityB * _DeltaTime;
+        float previousSide = Cross2D(
+            previousB - previousA,
+            particle.previousPosition - previousA);
+        float currentSide = Cross2D(boundary.b - boundary.a, position - boundary.a);
+        if (previousSide * currentSide < 0.0)
+        {
+            float crossingT;
+            float2 crossingClosest = ClosestPointOnSegment(
+                position,
+                boundary.a,
+                boundary.b,
+                crossingT);
+            if (crossingT > 0.0 && crossingT < 1.0)
+            {
+                float2 normal = normalize(float2(
+                    -(boundary.b - boundary.a).y,
+                    (boundary.b - boundary.a).x));
+                normal *= previousSide >= 0.0 ? 1.0 : -1.0;
+                float correctionScore = _ParticleRadius
+                    + length(position - crossingClosest);
+                if (correctionScore > bestCorrectionScore)
+                {
+                    bestCorrectionScore = correctionScore;
+                    bestCorrectedPosition = crossingClosest
+                        + normal * _ParticleRadius;
+                }
+            }
+        }
+    }
+
+    if (bestCorrectionScore >= 0.0)
+        position = bestCorrectedPosition;
+
+    uint previousVesselId = particle.vesselId;
+    bool preserveClosedVessel = IsClosedVessel(previousVesselId);
+    position = ConstrainToClosedVessel(position, previousVesselId);
+    particle.position = position;
+    particle.vesselId = preserveClosedVessel
+        ? previousVesselId
+        : FindContainingVessel(position, previousVesselId);
+    _Particles[index] = particle;
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint index = dispatchId.x;
+    if (index >= (uint)_ParticleCapacity)
+        return;
+
+    LiquidParticle particle = _Particles[index];
+    if (particle.active == 0u
+        || (particle.stateFlags & STATE_SUSPENDED) != 0u)
+        return;
+
+    if (particle.position.x < _WorldMin.x
+        || particle.position.y < _WorldMin.y
+        || particle.position.x > _WorldMax.x
+        || particle.position.y > _WorldMax.y)
+    {
+        particle.active = 0u;
+        particle.vesselId = 0u;
+        _Particles[index] = particle;
+        int freeSlot;
+        InterlockedAdd(_FreeCount[0], 1, freeSlot);
+        if (freeSlot < _ParticleCapacity)
+            _FreeIndices[freeSlot] = index;
+        InterlockedAdd(_Statistics[1], 1u);
+        return;
+    }
+
+    float2 velocity = (particle.position - particle.previousPosition)
+        / max(1e-5, _DeltaTime);
+    bool closedVessel = IsClosedVessel(particle.vesselId);
+    float2 neighborVelocity = 0.0;
+    float neighborWeight = 0.0;
+    float2 splashVelocity = 0.0;
+    float splashWeight = 0.0;
+    int2 originCell = GetCell(particle.position);
+    for (int y = -1; y <= 1; y++)
+    {
+        for (int x = -1; x <= 1; x++)
+        {
+            int2 cell = originCell + int2(x, y);
+            if (!IsCellValid(cell))
+                continue;
+            int neighborIndex = _GridHeads[GetCellIndex(cell)];
+            int guard = 0;
+            while (neighborIndex >= 0 && guard++ < _ParticleCapacity)
+            {
+                if (neighborIndex != (int)index)
+                {
+                    LiquidParticle neighbor = _Particles[neighborIndex];
+                    float distanceSquared = dot(
+                        particle.position - neighbor.position,
+                        particle.position - neighbor.position);
+                    if (neighbor.active != 0u
+                        && (neighbor.stateFlags & STATE_SUSPENDED) == 0u
+                        && neighbor.vesselId == particle.vesselId
+                        && distanceSquared < _SmoothingRadius * _SmoothingRadius)
+                    {
+                        float weight = KernelPoly6(distanceSquared);
+                        neighborVelocity += neighbor.velocity * weight;
+                        neighborWeight += weight;
+
+                        float distance = sqrt(distanceSquared);
+                        if (distance > 1e-5)
+                        {
+                            float2 collisionNormal = (
+                                particle.position - neighbor.position)
+                                / distance;
+                            float closingSpeed = max(
+                                0.0,
+                                -dot(
+                                    velocity - neighbor.velocity,
+                                    collisionNormal));
+                            // Tangential splash transfer is useful for an open
+                            // pour, but repeatedly adds energy inside a sealed
+                            // shaker. Closed-vessel motion comes from its walls.
+                            if (!closedVessel
+                                && closingSpeed > _SplashMinimumImpactSpeed)
+                            {
+                                float impactWeight = saturate(
+                                    1.0 - distance
+                                        / max(1e-5, _SmoothingRadius));
+                                uint smallerIndex = min(index, (uint)neighborIndex);
+                                uint largerIndex = max(index, (uint)neighborIndex);
+                                uint pairHash = smallerIndex * 747796405u
+                                    + largerIndex * 2891336453u;
+                                float impactSign = (pairHash & 1u) == 0u
+                                    ? -1.0
+                                    : 1.0;
+                                float2 collisionTangent = float2(
+                                    -collisionNormal.y,
+                                    collisionNormal.x);
+                                splashVelocity += collisionTangent
+                                    * impactSign
+                                    * (closingSpeed - _SplashMinimumImpactSpeed)
+                                    * impactWeight;
+                                splashWeight += impactWeight;
+                            }
+                        }
+                    }
+                }
+                neighborIndex = _GridNext[neighborIndex];
+            }
+        }
+    }
+
+    if (neighborWeight > 1e-5)
+    {
+        velocity = lerp(
+            velocity,
+            neighborVelocity / neighborWeight,
+            saturate(_Viscosity));
+    }
+    if (splashWeight > 1e-5)
+    {
+        velocity += splashVelocity
+            / splashWeight
+            * saturate(_SplashTransfer);
+    }
+
+    float2 boundaryPoint;
+    float2 boundaryNormal;
+    float boundaryDistance;
+    float boundaryT;
+    float2 boundaryVelocity;
+    float contactDistance = _ParticleRadius * 1.1;
+    float boundarySearchDistance = closedVessel
+        ? length(_WorldMax - _WorldMin) + _SmoothingRadius
+        : contactDistance;
+    bool hasCompatibleBoundary = TryFindNearestCompatibleBoundary(
+        particle.position,
+        particle.vesselId,
+        boundarySearchDistance,
+        boundaryPoint,
+        boundaryNormal,
+        boundaryDistance,
+        boundaryT,
+        boundaryVelocity);
+    if (hasCompatibleBoundary && boundaryDistance <= contactDistance)
+    {
+        float2 relativeVelocity = velocity - boundaryVelocity;
+        float normalSpeed = dot(relativeVelocity, boundaryNormal);
+        if (normalSpeed < 0.0)
+        {
+            float impactSpeed = -normalSpeed;
+            relativeVelocity -= (1.0 + saturate(_WallRestitution))
+                * normalSpeed
+                * boundaryNormal;
+
+            // A falling stream should split across the bottom instead of
+            // losing all of its impact energy and settling like a stacked
+            // granular column. Alternate the tangential direction per
+            // particle so an impact produces balanced left/right motion.
+            float floorInfluence = saturate(
+                (boundaryNormal.y - 0.2) / 0.8);
+            uint impactHash = index * 747796405u + 2891336453u;
+            float impactSign = (impactHash & 1u) == 0u ? -1.0 : 1.0;
+            float2 boundaryTangent = float2(
+                boundaryNormal.y,
+                -boundaryNormal.x);
+            if (!closedVessel)
+            {
+                relativeVelocity += boundaryTangent
+                    * impactSign
+                    * impactSpeed
+                    * saturate(_BottomImpactSpread)
+                    * floorInfluence;
+            }
+        }
+
+        float retainedNormalSpeed = dot(relativeVelocity, boundaryNormal);
+        float2 tangentVelocity = relativeVelocity
+            - retainedNormalSpeed * boundaryNormal;
+        relativeVelocity = retainedNormalSpeed * boundaryNormal
+            + tangentVelocity * (1.0 - saturate(_WallFriction));
+        velocity = boundaryVelocity + relativeVelocity;
+    }
+
+    if (closedVessel && hasCompatibleBoundary)
+    {
+        // Bound only the liquid's motion relative to the sealed shaker. The
+        // shaker can still move freely, while repeated wall corrections can no
+        // longer ratchet the internal kinetic energy toward the global cap.
+        float2 relativeVelocity = velocity - boundaryVelocity;
+        relativeVelocity *= exp(
+            -max(0.0, _ClosedVesselDampingRate) * _DeltaTime);
+        float relativeSpeed = length(relativeVelocity);
+        float maximumRelativeSpeed = max(
+            0.1,
+            _ClosedVesselMaximumRelativeSpeed);
+        if (relativeSpeed > maximumRelativeSpeed)
+            relativeVelocity *= maximumRelativeSpeed / relativeSpeed;
+        velocity = boundaryVelocity + relativeVelocity;
+    }
+
+    velocity *= 1.0 - saturate(_VelocityDamping);
+    float speed = length(velocity);
+    if (speed > _MaximumSpeed)
+        velocity *= _MaximumSpeed / speed;
+    particle.velocity = velocity;
+    _Particles[index] = particle;
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void MixComposition(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint index = dispatchId.x;
+    if (index >= (uint)_ParticleCapacity)
+        return;
+
+    LiquidParticle particle = _Particles[index];
+    uint compositionOffset = index * (uint)_MaximumIngredients;
+    if (particle.active == 0u
+        || (particle.stateFlags & STATE_SUSPENDED) != 0u
+        || _IngredientCount <= 0)
+    {
+        for (int inactiveIngredient = 0;
+             inactiveIngredient < _MaximumIngredients;
+             inactiveIngredient++)
+        {
+            _CompositionWrite[compositionOffset + inactiveIngredient] =
+                _CompositionRead[compositionOffset + inactiveIngredient];
+        }
+        return;
+    }
+
+    int2 originCell = GetCell(particle.position);
+    for (int ingredient = 0; ingredient < _IngredientCount; ingredient++)
+    {
+        float selfRatio = _CompositionRead[compositionOffset + ingredient];
+        float ratioDelta = 0.0;
+
+        for (int y = -1; y <= 1; y++)
+        {
+            for (int x = -1; x <= 1; x++)
+            {
+                int2 cell = originCell + int2(x, y);
+                if (!IsCellValid(cell))
+                    continue;
+
+                int neighborIndex = _GridHeads[GetCellIndex(cell)];
+                int guard = 0;
+                while (neighborIndex >= 0 && guard++ < _ParticleCapacity)
+                {
+                    if (neighborIndex != (int)index)
+                    {
+                        LiquidParticle neighbor = _Particles[neighborIndex];
+                        float2 offset = particle.position - neighbor.position;
+                        float distance = length(offset);
+                        bool compatibleVessels = particle.vesselId == neighbor.vesselId
+                            || particle.vesselId == 0u
+                            || neighbor.vesselId == 0u;
+                        if (neighbor.active != 0u
+                            && (neighbor.stateFlags & STATE_SUSPENDED) == 0u
+                            && compatibleVessels
+                            && distance < _SmoothingRadius)
+                        {
+                            float distanceWeight = saturate(
+                                1.0 - distance / max(1e-5, _SmoothingRadius));
+                            float relativeSpeed = length(
+                                particle.velocity - neighbor.velocity);
+                            float agitation = saturate(
+                                relativeSpeed / max(0.01, _FullMixRelativeSpeed));
+                            float mixWeight = (
+                                _PassiveMixRate
+                                + _AgitationMixRate * agitation)
+                                * distanceWeight
+                                * _DeltaTime
+                                / MIX_NEIGHBOR_NORMALIZATION;
+                            mixWeight = min(
+                                mixWeight,
+                                _MaximumMixPerSubstep
+                                / MIX_NEIGHBOR_NORMALIZATION);
+
+                            float neighborRatio = _CompositionRead[
+                                neighborIndex * _MaximumIngredients + ingredient];
+                            float totalVolume = max(
+                                1e-5,
+                                particle.volumeMl + neighbor.volumeMl);
+                            float equilibrium = (
+                                selfRatio * particle.volumeMl
+                                + neighborRatio * neighbor.volumeMl)
+                                / totalVolume;
+                            ratioDelta += (equilibrium - selfRatio) * mixWeight;
+                        }
+                    }
+                    neighborIndex = _GridNext[neighborIndex];
+                }
+            }
+        }
+
+        _CompositionWrite[compositionOffset + ingredient] =
+            max(0.0, selfRatio + ratioDelta);
+    }
+
+    float ratioTotal = 0.0;
+    for (int sumIngredient = 0; sumIngredient < _IngredientCount; sumIngredient++)
+        ratioTotal += _CompositionWrite[compositionOffset + sumIngredient];
+    if (ratioTotal > 1e-5)
+    {
+        for (int normalizeIngredient = 0;
+             normalizeIngredient < _IngredientCount;
+             normalizeIngredient++)
+        {
+            _CompositionWrite[compositionOffset + normalizeIngredient] /= ratioTotal;
+        }
+    }
+    for (int unusedIngredient = _IngredientCount;
+         unusedIngredient < _MaximumIngredients;
+         unusedIngredient++)
+    {
+        _CompositionWrite[compositionOffset + unusedIngredient] = 0.0;
+    }
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void UpdateParticleColors(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint index = dispatchId.x;
+    if (index >= (uint)_ParticleCapacity)
+        return;
+    LiquidParticle particle = _Particles[index];
+    if (particle.active == 0u || _IngredientCount <= 0)
+    {
+        _ParticleColors[index] = 0.0;
+        return;
+    }
+
+    uint compositionOffset = index * (uint)_MaximumIngredients;
+    float independentWeight = 0.0;
+    float allWeight = 0.0;
+    for (int ingredient = 0; ingredient < _IngredientCount; ingredient++)
+    {
+        float weight = max(0.0, _CompositionRead[compositionOffset + ingredient]);
+        allWeight += weight;
+        if (_IngredientVisuals[ingredient].inheritMixedColor == 0u)
+            independentWeight += weight;
+    }
+
+    bool useIndependent = independentWeight > 1e-5;
+    float denominator = useIndependent ? independentWeight : max(1e-5, allWeight);
+    float4 color = 0.0;
+    for (int colorIngredient = 0;
+         colorIngredient < _IngredientCount;
+         colorIngredient++)
+    {
+        IngredientVisual visual = _IngredientVisuals[colorIngredient];
+        if (useIndependent && visual.inheritMixedColor != 0u)
+            continue;
+        float weight = max(
+            0.0,
+            _CompositionRead[compositionOffset + colorIngredient]) / denominator;
+        color += visual.color * weight;
+    }
+    color.a = max(color.a, _MinimumVisibleAlpha);
+    _ParticleColors[index] = saturate(color);
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void ApplyTechnique(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint index = dispatchId.x;
+    if (index >= (uint)_ParticleCapacity)
+        return;
+    LiquidParticle particle = _Particles[index];
+    if (particle.active == 0u
+        || particle.vesselId != (uint)_TechniqueTargetVessel)
+        return;
+
+    particle.techniqueFlags |= (uint)_TechniqueMask;
+    particle.stateFlags |= (uint)_TechniqueStateMask;
+    _Particles[index] = particle;
+}

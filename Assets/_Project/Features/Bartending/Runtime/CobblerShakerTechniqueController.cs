@@ -146,15 +146,7 @@ namespace Slainte.Bartending
                 return;
 
             bool hasIce = tracker.IceCount > 0;
-            foreach (LiquidParticleData particle in tracker.Particles)
-            {
-                if (particle == null)
-                    continue;
-
-                particle.RecordTechnique(CocktailTechnique.Shake);
-                if (particle.payload != null)
-                    particle.payload.wasShakenWithIce |= hasIce;
-            }
+            tracker.MarkContentsAsShaken(hasIce);
 
             shakeComplete = true;
             qualifiedShakeTime = requiredShakeDuration;
@@ -432,16 +424,24 @@ namespace Slainte.Bartending
             {
                 int sum = 17;
                 int xor = 0;
-                foreach (LiquidParticleData particle in tracker.Particles)
+                if (LiquidSimulationRuntime.IsGpuActive)
                 {
-                    if (particle == null)
-                        continue;
-                    int volume = particle.payload != null
-                        ? Mathf.RoundToInt(particle.payload.TotalVolumeMl * 10f)
-                        : 0;
-                    int value = particle.GetInstanceID() * 397 ^ volume;
-                    sum += value;
-                    xor ^= value;
+                    sum = sum * 397 ^ tracker.ContentVersion;
+                    sum = sum * 397 ^ tracker.ParticleCount;
+                }
+                else
+                {
+                    foreach (LiquidParticleData particle in tracker.Particles)
+                    {
+                        if (particle == null)
+                            continue;
+                        int volume = particle.payload != null
+                            ? Mathf.RoundToInt(particle.payload.TotalVolumeMl * 10f)
+                            : 0;
+                        int value = particle.GetInstanceID() * 397 ^ volume;
+                        sum += value;
+                        xor ^= value;
+                    }
                 }
 
                 foreach (IceCubeController ice in tracker.IceCubes)

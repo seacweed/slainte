@@ -23,6 +23,8 @@ namespace Slainte.Bartending
         public BartendingViewport Viewport { get; internal set; }
         public RectTransform SlotLayout { get; internal set; }
         public LiquidPool LiquidPool { get; internal set; }
+        public GpuLiquidSystem GpuLiquidSystem { get; internal set; }
+        public ILiquidSimulationBackend LiquidBackend { get; internal set; }
         public LiquidMetaballRenderer LiquidMetaballRenderer { get; internal set; }
         public IceBinController IceBin { get; internal set; }
         public IBartendingItem Beaker { get; internal set; }
@@ -87,6 +89,8 @@ namespace Slainte.Bartending
             Viewport = null;
             SlotLayout = null;
             LiquidPool = null;
+            GpuLiquidSystem = null;
+            LiquidBackend = null;
             LiquidMetaballRenderer = null;
             IceBin = null;
             Beaker = null;
@@ -893,6 +897,17 @@ namespace Slainte.Bartending
             session.ItemScale = itemScale;
             session.Slots.AddRange(CreateSlots(world.transform, settings, slotPositions, itemScale));
 
+            if (!isPreview)
+            {
+                session.LiquidBackend = CreateLiquidSimulation(
+                    world.transform,
+                    settings,
+                    renderLayer,
+                    itemScale);
+                session.LiquidPool = session.LiquidBackend as LiquidPool;
+                session.GpuLiquidSystem = session.LiquidBackend as GpuLiquidSystem;
+            }
+
             if (!useToolCabinet)
             {
                 session.Beaker = CreateItem(
@@ -938,7 +953,6 @@ namespace Slainte.Bartending
 
             if (!isPreview)
             {
-                session.LiquidPool = CreateLiquidPool(world.transform, settings, renderLayer, itemScale);
                 session.InteractionOverlay = BartendingInteractionOverlay.Create(
                     session.Viewport,
                     session.WorldCamera,
@@ -1366,6 +1380,41 @@ namespace Slainte.Bartending
             poolObject.SetActive(true);
             SetLayerRecursively(poolObject, renderLayer);
             return pool;
+        }
+
+        public static ILiquidSimulationBackend CreateLiquidSimulation(
+            Transform parent,
+            BusinessBartendingSettings settings,
+            int renderLayer,
+            float itemScale)
+        {
+            bool tryGpu = settings.liquidSimulationBackend
+                != LiquidSimulationBackendMode.LegacyRigidbody2D;
+            string reason = string.Empty;
+            if (tryGpu && GpuLiquidSystem.CanRun(settings, out reason))
+            {
+                GameObject systemObject = new GameObject("GpuLiquidSystem");
+                systemObject.SetActive(false);
+                systemObject.transform.SetParent(parent, false);
+                GpuLiquidSystem gpuSystem = systemObject.AddComponent<GpuLiquidSystem>();
+                gpuSystem.Configure(settings, renderLayer);
+                systemObject.SetActive(true);
+                if (gpuSystem.IsOperational)
+                    return gpuSystem;
+
+                Object.Destroy(systemObject);
+                reason = string.IsNullOrWhiteSpace(gpuSystem.InitializationError)
+                    ? "GPU liquid initialization failed."
+                    : gpuSystem.InitializationError;
+            }
+
+            if (tryGpu)
+            {
+                Debug.LogWarning(
+                    $"[BartendingSessionBuilder] GPU liquid is unavailable; using the legacy Rigidbody2D backend. {reason}");
+            }
+
+            return CreateLiquidPool(parent, settings, renderLayer, itemScale);
         }
 
         public static void SetLayerRecursively(GameObject root, int layer)

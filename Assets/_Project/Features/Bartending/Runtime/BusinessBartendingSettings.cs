@@ -92,6 +92,8 @@ namespace Slainte.Bartending
         };
 
         [Header("Liquid")]
+        public LiquidSimulationBackendMode liquidSimulationBackend =
+            LiquidSimulationBackendMode.Automatic;
         [Min(1)] public int liquidPoolSize = 300;
         public Material liquidMetaballAccumulationMaterial;
         public Material liquidMetaballCompositeMaterial;
@@ -101,6 +103,46 @@ namespace Slainte.Bartending
         [Range(0f, 0.25f)] public float liquidMetaballEdgeSoftness = 0.03f;
         [Range(0f, 1f)] public float liquidMinimumVisibleAlpha = 0.05f;
         public int liquidSortingOrder = 12;
+
+        [Header("GPU Liquid PBF/XPBD")]
+        public ComputeShader gpuLiquidComputeShader;
+        [Min(64)] public int gpuLiquidParticleCapacity = 4096;
+        [Min(0.01f)] public float gpuLiquidParticleVolumeMl = 0.5f;
+        [Range(1, 32)] public int gpuLiquidMaximumIngredients = 16;
+        [Range(1, 4)] public int gpuLiquidSubsteps = 2;
+        [Range(1, 10)] public int gpuLiquidSolverIterations = 5;
+        [Min(0.01f)] public float gpuLiquidParticleRadius = 0.065f;
+        [Range(1f, 1.5f)] public float gpuLiquidContainedRenderRadiusMultiplier = 1.18f;
+        [Range(1f, 2f)] public float gpuLiquidRenderRadiusMultiplier = 1.35f;
+        [Range(1f, 3f)] public float gpuLiquidAirborneStretchMultiplier = 1.65f;
+        [Min(0.1f)] public float gpuLiquidAirborneFullStretchSpeed = 2.25f;
+        [Min(0.02f)] public float gpuLiquidSmoothingRadius = 0.16f;
+        [Min(0.01f)] public float gpuLiquidRestDensity = 150f;
+        [Min(0f)] public float gpuLiquidDensityCompliance = 0.000001f;
+        [Min(0.000001f)] public float gpuLiquidLambdaEpsilon = 0.01f;
+        [Range(0f, 0.02f)] public float gpuLiquidArtificialPressureStrength = 0.00035f;
+        [Range(0.1f, 0.9f)] public float gpuLiquidArtificialPressureRadiusRatio = 0.3f;
+        [Range(0f, 12f)] public float gpuLiquidBoundaryDensityScale = 4f;
+        [Range(0f, 1f)] public float gpuLiquidWallFriction = 0.01f;
+        [Range(0f, 1f)] public float gpuLiquidWallRestitution;
+        [Range(0f, 1f)] public float gpuLiquidSplashTransfer = 0.06f;
+        [Min(0f)] public float gpuLiquidSplashMinimumImpactSpeed = 1.1f;
+        [Range(0f, 1f)] public float gpuLiquidBottomImpactSpread;
+        [Range(0f, 1f)] public float gpuLiquidVelocityDamping = 0.003f;
+        [Min(0.1f)] public float gpuLiquidMaximumSpeed = 20f;
+        [Tooltip("Velocity damping per second, relative to a fully closed vessel. This prevents sustained shaking from accumulating unbounded particle energy without affecting poured liquid.")]
+        [Min(0f)] public float gpuLiquidClosedVesselDampingRate = 2f;
+        [Tooltip("Maximum particle speed relative to a fully closed vessel.")]
+        [Min(0.1f)] public float gpuLiquidClosedVesselMaximumRelativeSpeed = 6f;
+        [Range(0f, 1f)] public float gpuLiquidViscosity = 0.02f;
+        [Min(0f)] public float gpuLiquidPassiveMixRate = 0.02f;
+        [Min(0f)] public float gpuLiquidAgitationMixRate = 8f;
+        [Min(0.01f)] public float gpuLiquidFullMixRelativeSpeed = 0.8f;
+        [Range(0.01f, 0.5f)] public float gpuLiquidMaximumMixPerSubstep = 0.3f;
+        [Range(0f, 1f)] public float gpuLiquidStirCompositionTolerance = 0.08f;
+        [Min(0.05f)] public float gpuLiquidSnapshotInterval = 0.1f;
+        public Vector2 gpuLiquidWorldMin = new Vector2(-20f, -15f);
+        public Vector2 gpuLiquidWorldMax = new Vector2(20f, 15f);
 
         [Header("Liquid/Ice Interaction")]
         [Tooltip("Whether liquid particles physically collide with ice cubes during bartending.")]

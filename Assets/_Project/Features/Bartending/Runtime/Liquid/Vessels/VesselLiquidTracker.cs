@@ -259,6 +259,14 @@ namespace Slainte.Bartending
         {
             get
             {
+                if (GpuLiquidSystem.Instance != null
+                    && GpuLiquidSystem.Instance.TryGetSnapshot(
+                        this,
+                        out GpuLiquidVesselSnapshot gpuSnapshot))
+                {
+                    return gpuSnapshot.ParticleCount;
+                }
+
                 Cleanup();
                 RefreshTrackedParticles();
                 return particles.Count;
@@ -305,7 +313,21 @@ namespace Slainte.Bartending
         internal int InteractionPriority => interactionPriority;
         internal static HashSet<LiquidParticleData> ActiveParticles => activeParticles;
         public static bool LiquidIceCollisionEnabled => liquidIceCollisionEnabled;
-        public int ContentVersion => contentVersion;
+        public int ContentVersion
+        {
+            get
+            {
+                if (GpuLiquidSystem.Instance != null
+                    && GpuLiquidSystem.Instance.TryGetSnapshot(
+                        this,
+                        out GpuLiquidVesselSnapshot gpuSnapshot))
+                {
+                    return gpuSnapshot.Version;
+                }
+
+                return contentVersion;
+            }
+        }
 
         public static void SetLiquidIceCollisionEnabled(bool enabled)
         {
@@ -355,10 +377,12 @@ namespace Slainte.Bartending
                 runtimeDebugLabelsEnabled,
                 runtimeDebugLabelsRefreshInterval);
             RegisterVessel(this);
+            GpuLiquidSystem.Instance?.RegisterVessel(this);
         }
 
         private void OnDisable()
         {
+            GpuLiquidSystem.Instance?.UnregisterVessel(this);
             ownerReleaseBuffer.Clear();
             foreach (LiquidParticleData particle in ownedParticles)
             {
@@ -433,7 +457,6 @@ namespace Slainte.Bartending
         public CocktailComposition BuildComposition()
         {
             Cleanup();
-            RefreshTrackedParticles();
             RefreshTrackedIceCubes();
 
             CocktailComposition composition = new CocktailComposition();
@@ -441,6 +464,14 @@ namespace Slainte.Bartending
             if (servingIceCount == 0 && hasIce)
                 servingIceCount = 1;
             composition.SetServingStyle(servingGlassId, servingIceCount);
+
+            if (GpuLiquidSystem.Instance != null
+                && GpuLiquidSystem.Instance.TryPopulateComposition(this, composition))
+            {
+                return composition;
+            }
+
+            RefreshTrackedParticles();
             foreach (LiquidParticleData particle in particles)
             {
                 if (particle == null || particle.payload == null)
@@ -467,6 +498,17 @@ namespace Slainte.Bartending
 
         public void MarkContentsAsStirAttempted()
         {
+            if (GpuLiquidSystem.Instance != null
+                && GpuLiquidSystem.Instance.TryGetSnapshot(this, out _))
+            {
+                GpuLiquidSystem.Instance.MarkTechnique(
+                    this,
+                    CocktailTechnique.None,
+                    true,
+                    false);
+                return;
+            }
+
             Cleanup();
             RefreshTrackedParticles();
             foreach (LiquidParticleData particle in particles)
@@ -475,6 +517,17 @@ namespace Slainte.Bartending
 
         public void MarkContentsAsStirred()
         {
+            if (GpuLiquidSystem.Instance != null
+                && GpuLiquidSystem.Instance.TryGetSnapshot(this, out _))
+            {
+                GpuLiquidSystem.Instance.MarkTechnique(
+                    this,
+                    CocktailTechnique.Stir,
+                    true,
+                    false);
+                return;
+            }
+
             Cleanup();
             RefreshTrackedParticles();
             foreach (LiquidParticleData particle in particles)
@@ -491,6 +544,14 @@ namespace Slainte.Bartending
         // 0이면 모든 입자가 전체 평균과 동일한 조성(완전히 섞임), 1에 가까울수록 재료별로 분리된 상태.
         public float CalculateMeanCompositionDeviation()
         {
+            if (GpuLiquidSystem.Instance != null
+                && GpuLiquidSystem.Instance.TryGetSnapshot(
+                    this,
+                    out GpuLiquidVesselSnapshot gpuSnapshot))
+            {
+                return gpuSnapshot.MeanCompositionDeviation;
+            }
+
             Cleanup();
             RefreshTrackedParticles();
 
@@ -539,6 +600,94 @@ namespace Slainte.Bartending
             return Mathf.Clamp01(weightedDeviation / totalVolumeMl);
         }
 
+        public float CalculateMaximumCompositionDeviation(float tolerance, out int outlierCount)
+        {
+            tolerance = Mathf.Clamp01(tolerance);
+            if (GpuLiquidSystem.Instance != null
+                && GpuLiquidSystem.Instance.TryGetSnapshot(
+                    this,
+                    out GpuLiquidVesselSnapshot gpuSnapshot))
+            {
+                outlierCount = gpuSnapshot.OutOfToleranceParticleCount;
+                return gpuSnapshot.MaximumCompositionDeviation;
+            }
+
+            Cleanup();
+            RefreshTrackedParticles();
+            outlierCount = 0;
+
+            Dictionary<ItemDef, float> totalByItem = new();
+            float totalVolumeMl = 0f;
+            foreach (LiquidParticleData particle in particles)
+            {
+                LiquidPayload payload = particle != null ? particle.payload : null;
+                if (payload == null)
+                    continue;
+
+                for (int i = 0; i < payload.portions.Count; i++)
+                {
+                    LiquidPortion portion = payload.portions[i];
+                    if (portion.sourceItem == null || portion.volumeMl <= 0f)
+                        continue;
+                    totalByItem.TryGetValue(portion.sourceItem, out float currentMl);
+                    totalByItem[portion.sourceItem] = currentMl + portion.volumeMl;
+                    totalVolumeMl += portion.volumeMl;
+                }
+            }
+
+            if (totalVolumeMl <= 0.0001f)
+                return 1f;
+
+            float maximumDeviation = 0f;
+            foreach (LiquidParticleData particle in particles)
+            {
+                LiquidPayload payload = particle != null ? particle.payload : null;
+                float particleVolumeMl = payload != null ? payload.TotalVolumeMl : 0f;
+                if (particleVolumeMl <= 0.0001f)
+                    continue;
+
+                float deviation = 0f;
+                foreach (KeyValuePair<ItemDef, float> pair in totalByItem)
+                {
+                    float vesselRatio = pair.Value / totalVolumeMl;
+                    float particleRatio = payload.GetVolume(pair.Key) / particleVolumeMl;
+                    deviation += Mathf.Abs(particleRatio - vesselRatio);
+                }
+
+                deviation = Mathf.Clamp01(deviation * 0.5f);
+                maximumDeviation = Mathf.Max(maximumDeviation, deviation);
+                if (deviation > tolerance)
+                    outlierCount++;
+            }
+
+            return maximumDeviation;
+        }
+
+        public void MarkContentsAsShaken(bool shakenWithIce)
+        {
+            if (GpuLiquidSystem.Instance != null
+                && GpuLiquidSystem.Instance.TryGetSnapshot(this, out _))
+            {
+                GpuLiquidSystem.Instance.MarkTechnique(
+                    this,
+                    CocktailTechnique.Shake,
+                    false,
+                    shakenWithIce);
+                return;
+            }
+
+            Cleanup();
+            RefreshTrackedParticles();
+            foreach (LiquidParticleData particle in particles)
+            {
+                if (particle == null)
+                    continue;
+                particle.RecordTechnique(CocktailTechnique.Shake);
+                if (particle.payload != null)
+                    particle.payload.wasShakenWithIce |= shakenWithIce;
+            }
+        }
+
         public void ConfigureServingStyle(string glassId, bool containsIce = false)
         {
             servingGlassId = glassId?.Trim() ?? string.Empty;
@@ -552,6 +701,12 @@ namespace Slainte.Bartending
 
         public void BeginExternalMotion()
         {
+            if (GpuLiquidSystem.Instance != null
+                && GpuLiquidSystem.Instance.TryGetSnapshot(this, out _))
+            {
+                return;
+            }
+
             Cleanup();
             RefreshTrackedParticles();
             RefreshTrackedIceCubes();
@@ -585,6 +740,14 @@ namespace Slainte.Bartending
             if (delta.sqrMagnitude <= 0.000001f)
                 return;
 
+            if (GpuLiquidSystem.Instance != null
+                && GpuLiquidSystem.Instance.TryGetSnapshot(this, out _))
+            {
+                GpuLiquidSystem.Instance.TranslateVesselContents(this, delta);
+                TranslateTrackedIceCubes(delta);
+                return;
+            }
+
             if (externalMotionContentsCaptured)
             {
                 TranslateExternalMotionContents(delta);
@@ -598,6 +761,30 @@ namespace Slainte.Bartending
                 TranslateParticle(particle, delta);
 
             TranslateTrackedIceCubes(delta);
+        }
+
+        public void SettleAfterImmediateMotion()
+        {
+            if (GpuLiquidSystem.Instance != null
+                && GpuLiquidSystem.Instance.SettleVesselAfterImmediateMotion(this))
+            {
+                return;
+            }
+
+            Cleanup();
+            RefreshTrackedParticles();
+            foreach (LiquidParticleData particle in particles)
+            {
+                if (particle == null)
+                    continue;
+
+                Rigidbody2D particleBody = particle.GetComponent<Rigidbody2D>();
+                if (particleBody == null)
+                    continue;
+
+                particleBody.linearVelocity = Vector2.zero;
+                particleBody.angularVelocity = 0f;
+            }
         }
 
         private void TranslateExternalMotionContents(Vector2 delta)

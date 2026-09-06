@@ -219,3 +219,10 @@ MonoBehaviour:
   currentCapacity: 100
   pourMlPerSecond: 20
   maxParticlesPerFrame: 8
+  pourStartAngle: 90
+  fullPourAngle: 120
+  minimumPourFlowFactor: 0.65
+  pourExitSpeed: 2.4
+  mouthVelocityInheritance: 0
+  maximumInheritedMouthSpeed: 3
+  pourSpawnHalfWidth: 0

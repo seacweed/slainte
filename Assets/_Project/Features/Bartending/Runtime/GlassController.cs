@@ -523,6 +523,7 @@ namespace Slainte.Bartending
 
             MoveVesselAndContents(targetPosition);
             SetRotationImmediately(0f);
+            liquidTracker?.SettleAfterImmediateMotion();
             ReleaseGlass();
         }
 

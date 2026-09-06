@@ -5,7 +5,7 @@ using UnityEngine.Scripting.APIUpdating;
 namespace Slainte.Bartending
 {
     [MovedFrom(true, "", "Assembly-CSharp", "LiquidPool")]
-    public class LiquidPool : MonoBehaviour
+    public class LiquidPool : MonoBehaviour, ILiquidSimulationBackend
     {
         private const float FallbackParticleVolumeMl = 1f;
 
@@ -33,6 +33,8 @@ namespace Slainte.Bartending
         public int AvailableParticleCount => poolQueue.Count;
         public int TotalParticleCount => activeParticles.Count + poolQueue.Count;
         public float DefaultParticleVolumeMl => ResolveDefaultParticleVolumeMl();
+        public bool IsOperational => particlePrefab != null;
+        public bool IsGpuBackend => false;
 
         private void Awake()
         {
@@ -81,6 +83,27 @@ namespace Slainte.Bartending
                 Reaction = particle.GetComponent<LiquidReaction>()
             });
             return particle;
+        }
+
+        public bool TryEmit(
+            Vector2 worldPosition,
+            Vector2 initialVelocity,
+            ItemDef sourceItem,
+            float volumeMl)
+        {
+            GameObject particle = GetParticle(worldPosition, sourceItem, volumeMl);
+            if (particle == null)
+                return false;
+
+            if (particle.TryGetComponent(out Rigidbody2D body))
+                body.linearVelocity = initialVelocity;
+            return true;
+        }
+
+        public void ResetSimulation()
+        {
+            for (int i = activeParticles.Count - 1; i >= 0; i--)
+                ReturnParticleAt(i);
         }
 
         public bool ReturnParticle(GameObject particle)

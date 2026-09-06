@@ -117,19 +117,51 @@ QHD(`2560×1440`) 화면에서 도구·잔·병·얼음은 원본 `Sprite` 픽�
 
 ### 병 따르기 (`BottleController`)
 
-프레임 기반 타이머 대신 `pourMlPerSecond`(용기별 필드, `Bottle.prefab` 실제값 `83.33 ml/s`)로 초당 배출량을 계산해 입자를 스폰한다. 프레임당 최대 `maxParticlesPerFrame`(기본 8개)까지만 한 번에 catch-up 스폰해 프레임 드랍 시 순간 폭발적 스폰을 막는다. 병 내부 `currentCapacity`가 소진되면 더 이상 부피를 차감하지 않는다.
+프레임 기반 타이머 대신 `pourMlPerSecond`(용기별 필드, `Bottle.prefab` 현재값 `20 ml/s`)와 병의 기울기에 따른 유량 계수로 초당 배출량을 계산한다. `BottleController.TrySpawnLiquid()`는 활성 `ILiquidSimulationBackend`의 `DefaultParticleVolumeMl` 단위로 `TryEmit()`을 호출한다. 프레임당 최대 `maxParticlesPerFrame`(기본 8개)까지만 한 번에 catch-up 스폰해 프레임 드랍 시 순간 폭발적 스폰을 막는다. 병 내부 `currentCapacity`가 소진되면 더 이상 부피를 차감하지 않는다.
+
+---
+
+## 액체 시뮬레이션 백엔드
+
+`LiquidSimulationBackendMode`와 `ILiquidSimulationBackend`가 병 따르기와 세션 생성 코드에서
+레거시 Physics2D 입자와 GPU PBF/XPBD 입자를 같은 ml 기반 계약으로 연결한다.
+
+| 설정값 | 생성되는 백엔드 | 실패 시 동작 |
+|---|---|---|
+| `LegacyRigidbody2D` | `LiquidPool` | GPU를 시도하지 않음 |
+| `GpuPbfXpbd` | `GpuLiquidSystem` 우선 | Compute Shader 또는 초기화 조건이 맞지 않으면 `LiquidPool`로 폴백 |
+| `Automatic` | `GpuLiquidSystem` 우선 | GPU를 사용할 수 없으면 `LiquidPool`로 폴백 |
+
+모드는 `Assets/Resources/Bartending/BusinessBartendingSettings.asset`의
+`Liquid > Liquid Simulation Backend`에서 선택한다. 설정은 `BartendingSessionBuilder.Build()`가
+세션을 조립할 때만 읽으므로 변경 후 세션 또는 씬을 다시 시작해야 한다. 실행 중 입자 상태를
+다른 백엔드로 옮기는 핫스왑은 지원하지 않는다.
+
+- 레거시 입자 부피: `water_particle.prefab`의 `defaultVolumeMl: 2`
+- GPU 입자 부피: `BusinessBartendingSettings.gpuLiquidParticleVolumeMl: 0.5`
+- 현재 settings asset 기본 모드: `Automatic`
+
+### 구현 및 기여 경계
+
+레거시 `LiquidPool`의 활성 입자 컴포넌트 캐시, 프레임 단위 화면 경계 계산, 자동 반환,
+`LiquidReaction`의 최근 혼합 상대 중복 방지·수면·지터·32개 이웃 버퍼 최적화는 그대로 유지한다.
+GPU PBF/XPBD는 `Infrastructure/GpuFluid`의 Compute Shader와 `Runtime/Liquid/Gpu`의 런타임 코드에
+분리된 별도 구현이다. `BottleController`, `VesselLiquidTracker`, 젓기·셰이킹 코드는 두 구현이
+공유하는 통합 경로이므로, 레거시 풀링 최적화와 GPU 백엔드를 한 사람의 단독 구현으로 묶어
+설명해서는 안 된다.
 
 ---
 
 ## 액체 의미 데이터 계층 (`Assets/_Project/Features/Bartending/Runtime/Liquid/`)
 
-MetaballFluid(아래 절)는 순수 시각 레이어이고, 판정에 쓰이는 실제 재료 구성은 이 계층이 담당한다.
+물리·렌더링 백엔드와 관계없이 판정에 쓰이는 재료 구성은 이 계층의
+`CocktailComposition` 계약으로 합산한다.
 
-- `LiquidPayload`: 입자 하나가 담는 재료 구성. `portions`(재료별 `volumeMl` 리스트), `temperatureC`, `techniques`(`CocktailTechnique` 플래그), `wasShakenWithIce`를 가진다. **색상은 상태로 저장하지 않고 `EvaluateColor()`가 `portions`의 volume 가중 평균으로 매 호출 계산하는 파생값이다** — 개별 컴포넌트는 이 값을 그대로 `SpriteRenderer.color`에 반영할 뿐 직접 색을 설정하지 않는다.
+- `LiquidPayload`: 레거시 입자 하나가 담는 재료 구성. `portions`(재료별 `volumeMl` 리스트), `temperatureC`, `techniques`(`CocktailTechnique` 플래그), `wasShakenWithIce`를 가진다. **색상은 상태로 저장하지 않고 `EvaluateColor()`가 `portions`의 volume 가중 평균으로 계산하는 파생값이다** — 개별 컴포넌트는 이 값을 `SpriteRenderer.color`에 반영한다.
 - `LiquidPayload.MixPair(left, right, strength)`: 두 입자가 충돌했을 때 온도·기법·재료 비율을 `strength` 세기로 평형에 가깝게 보간한다. `LiquidReaction`(MetaballFluid)이 물리 충돌 시점에 호출한다.
 - `LiquidParticleData`(MonoBehaviour): 입자 하나 = `payload` 하나. `DefaultVolumeMl`은 스폰 시 이 입자가 나타내는 재료 ml. `VesselOwner`로 현재 소속된 `VesselLiquidTracker`를 추적한다.
 - `VesselLiquidTracker`(`[RequireComponent(Collider2D)]`): 잔·비커·셰이커 등 용기에 부착. 트리거 콜라이더 진입/유지 시 입자·얼음(`IceCubeController`)의 소유권을 점유(`TryAssignVesselOwner`)하며, 콜라이더가 겹치는 용기가 여러 개면 `interactionPriority`가 더 높은 쪽이 우선한다. 소유권이 다른 용기 소속 입자·얼음끼리는 `Physics2D.IgnoreCollision`으로 물리 충돌 자체를 차단해 서로 다른 용기의 내용물이 섞이지 않게 격리한다.
-- `VesselLiquidTracker.BuildComposition()`: 현재 추적 중인 입자·얼음을 모아 `CocktailComposition`(재료별 합산 volume, 부피 가중 평균 온도, 잔 종류, 얼음 개수, 기법 플래그, `WasShakenWithIce`)을 생성한다 — 판정과 최종 색 표시는 모두 이 스냅샷을 사용한다.
+- `VesselLiquidTracker.BuildComposition()`: 레거시에서는 현재 추적 중인 입자·얼음을 모으고, GPU 모드에서는 `GpuLiquidSystem`의 vessel snapshot을 읽어 `CocktailComposition`(재료별 합산 volume, 부피 가중 평균 온도, 잔 종류, 얼음 개수, 기법 플래그, `WasShakenWithIce`)을 생성한다. 판정은 백엔드와 관계없이 이 스냅샷을 사용한다.
 - `CocktailComposition.EvaluateFinalColor()`: `LiquidPayload.EvaluateColor()`를 재사용하며, `Add()` 호출 시 dirty 플래그를 세워 다음 조회 때만 재계산한다(캐시).
 
 ## 레시피 판정 (`CocktailEvaluator.cs`)
@@ -139,7 +171,7 @@ MetaballFluid(아래 절)는 순수 시각 레이어이고, 판정에 쓰이는 
 - 재료별 목표량과 총량은 고정 `±5 ml` 경계를 포함해 검사한다.
 - 허용되지 않은 추가 재료는 양과 관계없이 실패한다.
 - 숫자 점수와 유사도 판정은 사용하지 않는다. 기본 레시피가 모두 맞으면 `Good`, 핵심 배합·기법이 맞고 완성 잔/얼음만 다르면 `MidGlass`/`MidIce`/`MidIceGlass`, 다른 주문 가능 기본 레시피가 정확히 맞으면 `MidWrongMenu`, 나머지는 `Bad`다.
-- `Build`는 별도 기법 미사용, `Stir`는 바스푼의 유효 혼합 0.35초 이상 시도 및 1초 이상·평균 조성 편차 10% 이하 완료, `Shake`는 닫힌 셰이커의 기존 동작 조건으로 구분한다.
+- `Build`는 별도 기법 미사용, `Stir`는 바스푼의 유효 혼합 0.35초 이상 시도 및 1초 이상 진행한 뒤 최대 조성 편차 8% 이하·허용 범위 밖 입자 0개 상태를 0.15초 유지하면 완료, `Shake`는 닫힌 셰이커의 기존 동작 조건으로 구분한다.
 
 ## 레시피 에셋 (`CocktailRecipeDataLoader.cs`)
 
@@ -155,11 +187,12 @@ MetaballFluid(아래 절)는 순수 시각 레이어이고, 판정에 쓰이는 
 
 ---
 
-## MetaballFluid 표현 인프라 (`Assets/_Project/Features/Bartending/Infrastructure/MetaballFluid/`)
+## 액체 렌더링 인프라
 
-2D 메타볼 알고리즘으로 칵테일 액체를 실시간 시각화합니다.
-실행 코드는 Bartending 도메인 타입에 직접 의존하므로 `Runtime/Liquid`이 소유하고,
-이 폴더에는 셰이더·머티리얼·액체 프리팙·물리 에셋만 남깁니다.
+레거시 Physics2D 입자는 `Infrastructure/MetaballFluid`의 에셋과
+`Runtime/Liquid/Rendering/LiquidMetaballRenderer`로 합성한다. GPU 백엔드는
+`Infrastructure/GpuFluid/Graphics/GpuLiquidAccumulation.shader`와 GPU 버퍼를 사용해 별도로 그린다.
+실행 코드는 Bartending 도메인 타입에 직접 의존하므로 `Runtime/Liquid`이 소유한다.
 
 ### 렌더링 구조
 
@@ -178,21 +211,24 @@ MetaballFluid(아래 절)는 순수 시각 레이어이고, 판정에 쓰이는 
 
 | 스크립트 | 클래스명 | 역할 |
 |---|---|---|
-| `Particles/LiquidPool.cs` | `LiquidPool` | `poolSize(900)`만큼 입자를 미리 생성하고, 캐시가 소진되면 필요한 만큼 추가 생성. 활성 입자를 `(GameObject, LiquidParticleRecycler, LiquidReaction)` 캐시 구조로 관리 |
-| `Particles/LiquidSpawner.cs` | `LiquidSpawner` | `spawnInterval`마다 풀에서 입자 꺼내 스폰, 초기 속도 0 보장 (테스트용 — 실제 게임 내 pour는 `BottleController.TrySpawnLiquid()`가 `pool.DefaultParticleVolumeMl`만큼씩 직접 `GetParticle()` 호출) |
+| `LiquidSimulationBackend.cs` | `ILiquidSimulationBackend` | 레거시/GPU 공통 상태·ml 단위 배출·초기화 계약과 현재 활성 백엔드 조회 |
+| `Particles/LiquidPool.cs` | `LiquidPool` | settings의 `liquidPoolSize`만큼 입자를 미리 생성하고, 캐시가 소진되면 필요한 만큼 추가 생성. 활성 입자를 `(GameObject, LiquidParticleRecycler, LiquidReaction)` 캐시 구조로 관리하는 레거시 백엔드 |
+| `Gpu/GpuLiquidSystem.cs` | `GpuLiquidSystem` | Compute Shader 버퍼, PBF/XPBD 스텝, GPU 혼합·색상·용기 snapshot 및 렌더링을 관리하는 GPU 백엔드 |
+| `Gpu/GpuLiquidVesselProxy.cs` | `GpuLiquidVesselProxy` | 용기 경계와 트리거 정보를 GPU 시뮬레이션 데이터로 변환 |
+| `Particles/LiquidSpawner.cs` | `LiquidSpawner` | `spawnInterval`마다 레거시 풀에서 입자를 꺼내는 테스트용 스포너. 실제 게임의 병 따르기는 `BottleController.TrySpawnLiquid()`가 활성 백엔드의 `TryEmit()` 호출 |
 | `Particles/LiquidReaction.cs` | `LiquidReaction` | 입자 충돌 시 색상·물리 속성 평균화 혼합, 수면 최적화, 확산(Agitation) 믹싱 |
 | `Particles/LiquidParticleRecycler.cs` | `LiquidParticleRecycler` | 화면 밖(OOB) 입자 자동 풀 반환. 용기 밖 유출 입자는 왼쪽/오른쪽/아래 화면 이탈 시 즉시 회수(위쪽은 제외) |
 | `Rendering/FullScreenQuad.cs` | `FullScreenQuad` | MetaballMat 적용 전체화면 쿼드, 해상도 변화에 실시간 대응 |
 | (`Runtime/Interaction/DraggableBar.cs`, Liquid 폴더 밖) | `DraggableBar` | 마우스 드래그 가능한 물리 오브젝트 |
 
-### 두 가지 믹싱 경로
+### 레거시 믹싱 경로
 
 `LiquidReaction`은 서로 다른 두 트리거로 재료를 섞는다 — 같은 쌍이 한 틱에 이중으로 섞이지 않도록 `WasRecentlyMixedWith()`로 서로를 인지한다.
 
 - **물리 충돌 기반** (`OnCollisionEnter2D` → `TryMixCollision`): 실제 콜라이더 접촉 시 `mixSpeed` 세기로, `reactionCooldown`(기본 0.05s)마다 최대 1회.
 - **확산(Agitation) 기반** (`FixedUpdate` → `TryMixNearbyParticlesByAgitation`): `agitationMixInterval`(기본 0.05s)마다 반경 `agitationMixRadius`(0.16) 내 이웃을 `Physics2D.OverlapCircle`로 스캔(버퍼 32개)해, 상대 입자와의 상대 속도가 `agitationVelocityThreshold`를 넘으면 `agitationMixSpeed` 세기로 최대 `agitationMaxPartners`(3)명까지 혼합. 서로 다른 쌍을 양쪽에서 중복 처리하지 않도록 `GetInstanceID()`가 더 작은 쪽만 판정·믹싱을 수행한다.
 
-### LiquidReaction 최적화 레이어
+### 레거시 LiquidReaction 최적화 레이어
 
 1. `isLogicallySleeping` 상태인 입자는 충돌·확산 연산을 주도하지 않음
 2. `reactionCooldown`/`agitationMixInterval`으로 동일 상대 대상 중복 연산 방지, 두 믹싱 경로 간에도 최근 믹싱 상대를 공유해 이중 처리 방지
@@ -203,7 +239,7 @@ MetaballFluid(아래 절)는 순수 시각 레이어이고, 판정에 쓰이는 
 수면 조건: `rb.linearVelocity.sqrMagnitude < sleepVelocityThreshold` 상태가 `timeToSleep(2.0s)` 지속.
 수면 해제: `WakeUp()` 명시 호출 또는 다른 활성 입자의 충돌/혼합.
 
-### LiquidParticleRecycler 회수 규칙
+### 레거시 LiquidParticleRecycler 회수 규칙
 
 `ShouldRecycle()`는 매 프레임 `LiquidPool.Update()`가 한 번 계산한 `LiquidScreenBounds`(정사영 카메라의 `orthographicSize`/`aspect` 기반)와 `deltaTime`을 받아 판정한다.
 
@@ -212,7 +248,16 @@ MetaballFluid(아래 절)는 순수 시각 레이어이고, 판정에 쓰이는 
    - 왼쪽/오른쪽/아래로 화면을 이탈하면 **정지 유예 없이 즉시 회수** (위쪽은 이 규칙에서 제외 — 기존 하드 박스만 적용).
    - 그 외엔 `settledOutsideRecycleDelay`(5s) 동안 정지 상태이거나 `maxOutsideVesselLifetime`(20s)이 지나면 회수하는 기존 유예 규칙 유지.
 
-> **성능 참고**: 쉐이킹 중 렉의 실측 지배 비용은 스크립트가 아니라 Unity 네이티브 `Physics2D.FindNewContacts`(브로드페이즈)이며, 동시 활성 파티클 수(N)에 좌우된다. N을 줄이는 조치(위 화면 이탈 즉시 회수, `defaultVolumeMl` 상향)가 스크립트 로직 최적화보다 체감 효과가 훨씬 크다 — 최적화 작업 전 Unity Profiler CSV로 실측 검증할 것.
+> **레거시 성능 참고**: 쉐이킹 중 렉의 실측 지배 비용은 스크립트가 아니라 Unity 네이티브 `Physics2D.FindNewContacts`(브로드페이즈)이며, 동시 활성 파티클 수(N)에 좌우된다. 이 설명과 최적화 수치는 GPU 백엔드에 그대로 적용되지 않는다. 두 모드는 동일한 장면·용량·입자 수 조건에서 별도로 측정해야 한다.
+
+### GPU PBF/XPBD 검증
+
+- 정적 구성 검증: Unity 메뉴 `Slainte > Bartending > Validate GPU Liquid PBF-XPBD`
+- 부하 계측: `LiquidStressHarness`의 활성 입자 수, p95 및 p99 프레임 시간
+- Compute Shader 미지원, 필수 커널·셰이더·설정 누락 또는 초기화 실패 시 레거시 백엔드로 폴백
+
+빌드 성공과 정적 검증은 플레이모드의 시각 결과나 대상 GPU의 성능을 증명하지 않는다.
+공개 성능 수치는 실제 대상 기기에서 측정한 결과만 사용한다.
 
 ### 프리팹 (`Assets/_Project/Features/Bartending/Infrastructure/MetaballFluid/Prefabs/`)
 

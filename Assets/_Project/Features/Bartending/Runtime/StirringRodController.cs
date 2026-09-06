@@ -34,8 +34,9 @@ namespace Slainte.Bartending
         [SerializeField] private float stirMinimumAngularSpeed = 5f;
         [SerializeField, Min(0.05f)] private float stirAttemptDuration = 0.35f;
         [SerializeField, Min(0.1f)] private float stirCompletionDuration = 1f;
-        [SerializeField, Range(0f, 1f)] private float maximumCompositionDeviation = 0.1f;
+        [SerializeField, Range(0f, 1f)] private float maximumCompositionDeviation = 0.08f;
         [SerializeField, Min(0.05f)] private float compositionCheckInterval = 0.2f;
+        [SerializeField, Min(0f)] private float compositionStabilityDuration = 0.15f;
 
         [Header("Generated Visual Fallback")]
         [SerializeField] private float generatedVisualLength = 3f;
@@ -63,6 +64,8 @@ namespace Slainte.Bartending
         private float nextCompositionCheckTime;
         private float lastStirSampleFixedTime = float.MinValue;
         private bool stirAttemptRecorded;
+        private float uniformCompositionSince = -1f;
+        private bool stirCompleted;
 
         public GameObject GameObject => gameObject;
         public bool IsPickedUp => currentState == StirringRodState.PickedUp || currentState == StirringRodState.Rotating;
@@ -110,6 +113,8 @@ namespace Slainte.Bartending
             float angle = NormalizeAngle(rb != null ? rb.rotation : transform.eulerAngles.z);
             rodAngularVelocity = Mathf.DeltaAngle(previousAngle, angle) / Mathf.Max(Time.fixedDeltaTime, 0.0001f);
             previousAngle = angle;
+
+            UpdateGpuStirring();
         }
 
         private void HandleInput()
@@ -396,6 +401,8 @@ namespace Slainte.Bartending
                 nextCompositionCheckTime = Time.unscaledTime;
                 lastStirSampleFixedTime = float.MinValue;
                 stirAttemptRecorded = false;
+                uniformCompositionSince = -1f;
+                stirCompleted = false;
             }
 
             if (Mathf.Approximately(lastStirSampleFixedTime, Time.fixedTime))
@@ -409,7 +416,8 @@ namespace Slainte.Bartending
                 stirAttemptRecorded = true;
             }
 
-            if (activeStirTime < stirCompletionDuration
+            if (stirCompleted
+                || activeStirTime < stirCompletionDuration
                 || Time.unscaledTime < nextCompositionCheckTime)
             {
                 return;
@@ -417,11 +425,85 @@ namespace Slainte.Bartending
 
             nextCompositionCheckTime = Time.unscaledTime
                 + Mathf.Max(0.05f, compositionCheckInterval);
-            if (vessel.CalculateMeanCompositionDeviation()
-                <= Mathf.Clamp01(maximumCompositionDeviation))
+            float tolerance = Mathf.Clamp01(maximumCompositionDeviation);
+            float maximumDeviation = vessel.CalculateMaximumCompositionDeviation(
+                tolerance,
+                out int outlierCount);
+            if (maximumDeviation <= tolerance && outlierCount == 0)
             {
-                vessel.MarkContentsAsStirred();
+                if (uniformCompositionSince < 0f)
+                    uniformCompositionSince = Time.unscaledTime;
+
+                if (Time.unscaledTime - uniformCompositionSince
+                    >= Mathf.Max(0f, compositionStabilityDuration))
+                {
+                    vessel.MarkContentsAsStirred();
+                    stirCompleted = true;
+                }
             }
+            else
+            {
+                uniformCompositionSince = -1f;
+            }
+        }
+
+        private void UpdateGpuStirring()
+        {
+            GpuLiquidSystem gpu = GpuLiquidSystem.Instance;
+            if (gpu == null || !gpu.IsOperational || !IsPickedUp)
+                return;
+
+            bool hasLinearMotion = rodVelocity.sqrMagnitude >= stirMinimumSpeed * stirMinimumSpeed;
+            bool hasAngularMotion = Mathf.Abs(rodAngularVelocity) >= stirMinimumAngularSpeed;
+            if (!hasLinearMotion && !hasAngularMotion)
+                return;
+
+            Vector2 center = rb != null ? rb.position : (Vector2)transform.position;
+            Vector2 axis = transform.up;
+            float halfLength = Mathf.Max(0.05f, generatedVisualLength
+                * Mathf.Abs(transform.lossyScale.y) * 0.5f);
+            Vector2 a = center - axis * halfLength;
+            Vector2 b = center + axis * halfLength;
+
+            VesselLiquidTracker vessel = gpu.FindVesselAtWorldPoint(a);
+            vessel ??= gpu.FindVesselAtWorldPoint(center);
+            vessel ??= gpu.FindVesselAtWorldPoint(b);
+            if (vessel == null)
+                return;
+
+            Vector2 targetVelocity = hasLinearMotion
+                ? rodVelocity * linearVelocityScale
+                : Vector2.zero;
+            if (hasAngularMotion)
+            {
+                targetVelocity += Vector2.Perpendicular(axis)
+                    * Mathf.Sign(rodAngularVelocity)
+                    * Mathf.Abs(rodAngularVelocity)
+                    * angularVelocityScale;
+            }
+
+            targetVelocity = Vector2.ClampMagnitude(
+                targetVelocity,
+                Mathf.Max(0f, maxInjectedSpeed));
+            if (targetVelocity.sqrMagnitude <= 0.0001f)
+                return;
+
+            float radius = Mathf.Max(
+                generatedVisualWidth * Mathf.Abs(transform.lossyScale.x) * 0.75f,
+                gpu.ParticleRenderRadius * 0.35f);
+            float stirBlend = Mathf.Clamp01(velocityBlend);
+            float responseRate = stirBlend >= 0.999f
+                ? 1000f
+                : -Mathf.Log(Mathf.Max(0.001f, 1f - stirBlend))
+                    / Mathf.Max(Time.fixedDeltaTime, 0.0001f);
+            gpu.SetAgitator(
+                a,
+                b,
+                targetVelocity,
+                radius,
+                responseRate,
+                vessel);
+            RegisterStirActivity(vessel);
         }
 
         private void ResetStirProgress()
@@ -432,6 +514,8 @@ namespace Slainte.Bartending
             nextCompositionCheckTime = 0f;
             lastStirSampleFixedTime = float.MinValue;
             stirAttemptRecorded = false;
+            uniformCompositionSince = -1f;
+            stirCompleted = false;
         }
 
         private void EnsureRigidbody()
