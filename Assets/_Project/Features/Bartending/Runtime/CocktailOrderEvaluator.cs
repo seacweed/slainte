@@ -73,6 +73,10 @@ namespace Slainte.Bartending
         }
     }
 
+    // CocktailEvaluator의 단순 성공/실패 판정을 "이번 주문" 맥락에서 Good/MidGlass/MidIce/
+    // MidIceGlass/MidWrongMenu/Bad 여섯 등급으로 재분류한다(HANDOFF.md 문서에 정리된 등급 정의와
+    // 동일). 등급별 파생 레시피 에셋은 없으며, 이 클래스가 요청 레시피 대비 판정 결과만으로
+    // 등급을 계산한다(ClassifyRequestedOutcome).
     public sealed class CocktailOrderEvaluator
     {
         private readonly CocktailEvaluator cocktailEvaluator;
@@ -194,6 +198,8 @@ namespace Slainte.Bartending
                 ? cocktailEvaluator.EvaluateRecipe(order.requestedRecipeId, composition)
                 : null;
 
+            // 요청 레시피 기준으로는 Bad(요청 레시피 자체가 안 맞음)여도, 조성이 요청과 다른
+            // "다른 기본 레시피"를 정확히 만족한다면 완전 실패가 아니라 MidWrongMenu로 승격한다.
             CocktailOrderEvaluationOutcome outcome = ClassifyRequestedOutcome(requestedRecipeResult);
             if (outcome == CocktailOrderEvaluationOutcome.Bad
                 && IsDifferentDetectedMenu(order, detectedRecipeResult))
@@ -215,6 +221,9 @@ namespace Slainte.Bartending
             };
         }
 
+        // coreValid(배합·기법·추가재료 조건)가 이미 깨졌다면 잔/얼음을 볼 것도 없이 Bad다.
+        // coreValid인데 잔/얼음만 어긋난 경우에만 Mid* 등급을 주되, 제출한 잔 자체가 알려진
+        // 잔 종류가 아니면(오타·미등록 glassId) "부분 성공"으로 인정하지 않고 Bad로 취급한다.
         private CocktailOrderEvaluationOutcome ClassifyRequestedOutcome(
             CocktailEvaluationResult result)
         {

@@ -22,6 +22,10 @@ namespace Slainte.Business
         ProductionDay5
     }
 
+    // BusinessScene을 실제 GameProgress/설정과 완전히 격리된 상태로 재현해, 10가지 사전 정의
+    // 시나리오(정상 영업/타이머 만료/필수 손님/인카운터 등)를 OnGUI 패널에서 골라 실행하는
+    // QA용 통합 플레이테스트 진입점. PlaytestProgressIsolation이 진행 상태 스냅샷을 잡아두므로
+    // Play 모드를 종료하면 원래 세이브에 영향 없이 복원된다.
     [DefaultExecutionOrder(-1000)]
     [DisallowMultipleComponent]
     public sealed class BusinessIntegrationPlaytestBootstrap : MonoBehaviour
@@ -258,6 +262,9 @@ namespace Slainte.Business
             return shift.IsActive;
         }
 
+        // 실제 BusinessOrderFlowSettings/CustomerVisitDatabase를 복제(Instantiate, DontSave)해
+        // 시나리오별로 자유롭게 수정 가능한 격리 인스턴스를 만든다 — 원본 프로덕션 에셋은
+        // 절대 건드리지 않는다.
         private bool CreateRuntimeSettings()
         {
             BusinessOrderFlowSettings source = sourceSettings != null
@@ -312,6 +319,10 @@ namespace Slainte.Business
             return true;
         }
 
+        // 프로덕션 설정에 실제 등록된 StrangeCoin_0(3번 슬롯)/TheLittles_0(6번 슬롯) 인카운터
+        // 규칙이 기획 의도(Day 5, 지정 슬롯)와 정확히 일치하는지 검증한 뒤에만 그대로 사용한다 —
+        // 시나리오 자체가 실제 데이터로 회귀 테스트하는 용도이므로, 설정이 어긋나면 조용히
+        // 넘어가지 않고 즉시 실패시켜 데이터 오류를 드러낸다.
         private bool TryConfigureProductionDay5()
         {
             if (productionSettings == null

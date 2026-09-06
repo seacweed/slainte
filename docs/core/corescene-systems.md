@@ -39,7 +39,7 @@ GameState.Settlement
               └─ SceneTransitionManager → RestScene 로드
 ```
 
-## GameManager (`CoreScene/Scripts/GameManager.cs`)
+## GameManager (`Assets/_Project/Core/Runtime/Flow/GameManager.cs`)
 
 `MonoSingleton<GameManager>`. 게임 상태 전환과 씬 로드를 담당합니다.
 
@@ -55,7 +55,9 @@ public enum GameState { None, Episode, Business, Settlement, Rest }
 
 각 상태 전환의 다음 단계 결정(필수 에피소드 큐, 영업 전/후 순서)은 GameManager가 아니라 `DayFlowController`가 담당합니다.
 
-## EpisodeManager (`CoreScene/Scripts/EpisodeManager.cs`)
+## EpisodeManager (`Assets/_Project/Features/Business/Runtime/Conversation/Episode/EpisodeManager.cs`)
+
+구조 개편 후 `EpisodeManager`는 Core가 아니라 Business 기능이 소유한다(에피소드 상영 자체는 BusinessScene에서 일어나기 때문). 아래 절은 이 매니저가 CoreScene의 하루 흐름과 어떻게 맞물리는지 설명하기 위해 여기 남겨둔다.
 
 `MonoSingleton<EpisodeManager>`. 에피소드 데이터 관리와 시작/완료 처리를 담당합니다.
 
@@ -69,7 +71,7 @@ public enum GameState { None, Episode, Business, Settlement, Rest }
 - `ClearEpisode(id)` — `GameProgress.MarkEpisodeCompleted()` → 현재 에피소드 ID 초기화 → 저장
 - `GetEpisodeData(id)` — id로 EpisodeData 검색
 
-## DayFlowController (`CoreScene/Scripts/DayFlowController.cs`)
+## DayFlowController (`Assets/_Project/Core/Runtime/Flow/DayFlowController.cs`)
 
 `MonoSingleton<DayFlowController>`. 하루 진행 순서(필수 에피소드 큐, 영업, 정산)를 전담합니다. `EpisodeRunner`/`EpisodeBoardManager`/`EpisodeUIManager`/영업 스텁은 `GameManager`를 직접 호출하지 않고 이 클래스를 거칩니다.
 
@@ -81,7 +83,7 @@ public enum GameState { None, Episode, Business, Settlement, Rest }
 
 > MainMenu의 첫 에피소드 진입(`MainMenuManager`)은 Rest를 거치지 않아 위 두 메서드를 호출하지 않으므로 Day 1은 그대로 유지되고, 이후 Rest에서 처음 누르는 시작 버튼부터 Day가 증가한다.
 
-## SettlementManager / SettlementUI (`CoreScene/Scripts/SettlementManager.cs`, `SettlementUI.cs`)
+## SettlementManager / SettlementUI (`Assets/_Project/Core/Runtime/Settlement/SettlementManager.cs`, `SettlementUI.cs`)
 
 `SettlementManager`(`MonoSingleton`, CoreScene의 `Managers` 루트 오브젝트에 배치)는 `GameManager.ChangeState(GameState.Settlement)`에서 호출되는 `BeginSettlement()`을 통해 당일 정산을 처리합니다.
 
@@ -92,7 +94,7 @@ public enum GameState { None, Episode, Business, Settlement, Rest }
 - `Close()`는 UI를 바로 감추지 않고 `onClosed` 콜백만 호출 → `SettlementManager.OnSettlementClosed()`가 `GameProgress.ResetDaySettlement()` → `DataManager.Save()` → `GameManager.ChangeState(GameState.Rest)` 순으로 진행. `GameState.Rest` 전환은 항상 정산 화면을 닫으면서 진입하므로, `GameManager`가 `SceneTransitionManager.TransitionToSubScene()`에 `onFadeOutComplete` 콜백으로 `SettlementManager.OnFadeOutComplete()`를 넘김 — 화면이 완전히 검게 된 직후(씬 언로드 전) 호출되어 `SettlementUI.HideAndReset()`으로 셔터/모니터를 원위치로 되돌리고 UI를 비활성화. 즉 셔터/모니터/보고서는 페이드아웃이 끝날 때까지 화면에 그대로 유지되고, 리셋은 화면이 안 보이는 시점에만 일어나 티가 나지 않음
 - 씬 배치: `SettlementUI`(비주얼)는 CoreScene의 영속 오버레이 Canvas(페이드 캔버스와 같은 위치)에 두어야 어느 씬에서 전환되든 위에 표시됨. `SettlementManager`(로직)는 다른 `MonoSingleton`과 함께 `Managers` 오브젝트에 배치
 
-## GameProgress (`Scripts/GameProgress.cs`)
+## GameProgress (`Assets/_Project/Core/Runtime/Persistence/GameProgress.cs`)
 
 `MonoSingleton<GameProgress>`. 런타임 게임 상태의 단일 Source of Truth입니다.
 
@@ -117,7 +119,7 @@ public enum GameState { None, Episode, Business, Settlement, Rest }
 | `RecordDeliveryPurchase` | 배송 탭 구매 1건마다 `DayDeliveryCount`/`DayDeliverySpend` 누적 |
 | `AddSettlementReward` / `GetDaySettlementRewards` | 에피소드 종료 시 조건을 만족한 커스텀 보상(라벨+금액)을 `dayTotalIncome`에는 즉시 더하되(정산 시점 실지급) 목록에 기록 — `EpisodeRunner.EndEncounter()`가 호출 |
 
-## DataManager (`CoreScene/Scripts/DataManager.cs`)
+## DataManager (`Assets/_Project/Core/Runtime/Persistence/DataManager.cs`)
 
 `MonoSingleton<DataManager>`. JSON 저장/로드를 담당합니다.
 
@@ -126,7 +128,7 @@ public enum GameState { None, Episode, Business, Settlement, Rest }
 
 현재 저장은 임시 파일 교체나 백업 없이 본 파일에 직접 쓰며, 진행 중인 에피소드 노드와 `GameState`는 저장하지 않습니다.
 
-## SaveData (`CoreScene/Scripts/SaveData.cs`)
+## SaveData (`Assets/_Project/Core/Runtime/Persistence/SaveData.cs`)
 
 JsonUtility로 직렬화되는 저장 구조체입니다.
 

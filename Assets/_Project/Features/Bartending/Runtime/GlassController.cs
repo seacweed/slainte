@@ -18,6 +18,9 @@ namespace Slainte.Bartending
         Returning
     }
 
+    // 플레이어가 드래그해서 드는 잔(Glass) 오브젝트. 상태는 Idle → PickedUp → Tilting → Returning으로
+    // 순환하며, 실제 충돌 형태(EdgeCollider2D)는 스프라이트별 GlassCollisionProfileDefinition을
+    // 자동 감지해 곡선 실루엣과 내용물 감지용 트리거를 함께 생성한다(GenerateCurvedCollider/ApplyCollisionProfile).
     [ExecuteInEditMode]
     [RequireComponent(typeof(EdgeCollider2D), typeof(Collider2D))]
     public class GlassController : MonoBehaviour, IBartendingItem, IPointerAnchoredPickup,
@@ -688,6 +691,9 @@ namespace Slainte.Bartending
             currentState = GlassState.PickedUp;
         }
 
+        // 위치/회전을 Update에서 바로 적용하지 않고 큐에 담아뒀다가 FixedUpdate(ApplyPendingPhysicsMotion)에서
+        // Rigidbody2D.MovePosition/MoveRotation으로 적용한다 — Kinematic Rigidbody는 물리 스텝 밖에서
+        // transform을 직접 바꾸면 트리거 충돌 감지가 불안정해지므로 반드시 물리 스텝에 맞춰야 한다.
         private void QueuePositionTarget(Vector3 targetPosition)
         {
             targetPosition.z = 0f;
@@ -755,6 +761,9 @@ namespace Slainte.Bartending
             rotationTargetPending = false;
         }
 
+        // 잔을 집거나(픽업) 원위치 복귀가 끝났을 때 마우스 커서를 잔의 새 화면 좌표로 강제 이동시켜,
+        // 다음 프레임부터 "커서가 곧 잔"이 되게 만드는 동기화 절차. OS 커서 워프는 한 프레임 만에
+        // 반영되지 않을 수 있어 최대 PointerSyncFrameBudget 프레임 동안 확인을 재시도한다.
         private void BeginPointerSynchronization(
             Vector3 pivotWorld,
             bool unlockCursor,
@@ -972,6 +981,8 @@ namespace Slainte.Bartending
             edgeCollider.SetPoints(points);
         }
 
+        // 스프라이트 이름으로 GlassCollisionProfiles에 등록된 프로필을 찾아 자동 적용한다.
+        // 아트가 바뀌어도(스프라이트 교체) 잔마다 콜라이더/트리거를 수동 세팅할 필요 없게 하기 위함.
         private bool TryApplyDetectedCollisionProfile(bool configureContentTriggers)
         {
             SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>(true);
@@ -1046,6 +1057,9 @@ namespace Slainte.Bartending
             liquidTracker?.RefreshCollisionGeometry();
         }
 
+        // 프로필이 정의한 개수만큼 "__GlassContentTrigger_N" 이름의 자식 BoxCollider2D를 만들어
+        // VesselLiquidTracker가 액체 입자를 감지할 트리거로 쓴다. 기존에 남아있던 자식은 재사용하고,
+        // 새 프로필의 트리거 개수보다 인덱스가 큰 것들은 비활성화한다(프로필 교체 시 잔여물 방지).
         private Collider2D ConfigureContentTriggers(
             GlassCollisionProfileDefinition profile,
             SpriteRenderer visual)
@@ -1099,6 +1113,9 @@ namespace Slainte.Bartending
             return primary != null ? primary : edgeCollider;
         }
 
+        // 프로필 기반 실제 콜라이더 포인트로부터 height/topWidth/bottomWidth 같은 기존 필드를
+        // 역산해 채워둔다 — 이 값들을 참조하는 다른 코드(예: GetPivotToBottomOffset 폴백)와의
+        // 하위 호환을 위해서다.
         private void UpdateLegacyGeometryMetrics(IReadOnlyList<Vector2> points)
         {
             if (points == null || points.Count == 0)

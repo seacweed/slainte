@@ -13,6 +13,8 @@ namespace Slainte.Bartending
         Preview
     }
 
+    // BartendingSessionBuilder.Build()가 조립한 세션의 산출물을 한데 묶은 핸들.
+    // Destroy()가 호출될 때까지 이 인스턴스가 세션의 모든 런타임 컴포넌트에 대한 유일한 참조를 들고 있다.
     public sealed class BartendingSessionInstance
     {
         public GameObject Root { get; internal set; }
@@ -96,6 +98,9 @@ namespace Slainte.Bartending
         }
     }
 
+    // 바텐딩 뷰포트 위에 그려지는 UI 오버레이. 두 가지 역할을 겸한다:
+    // (1) 서빙 글라스를 들고 있을 때 손님 위치에 서빙 타겟 사각형을 페이드로 표시,
+    // (2) 슬롯에 놓인 비커/글라스 위에 실시간 액체 성분 라벨(RefreshLabelContent)을 띄운다.
     public sealed class BartendingInteractionOverlay : MonoBehaviour, IBartendingServeTarget
     {
         private sealed class VesselLabel
@@ -435,6 +440,8 @@ namespace Slainte.Bartending
             }
         }
 
+        // 서빙 타겟을 즉시 켜고(fade duration 0) 서서히 끄는(fade out) 비대칭 연출을 위해
+        // 요청값이 바뀔 때만 코루틴을 새로 시작한다(중복 요청은 무시).
         private void SetServingTargetVisible(bool visible)
         {
             if (servingTargetImage == null || servingTargetCanvasGroup == null
@@ -491,6 +498,8 @@ namespace Slainte.Bartending
             servingTargetFadeRoutine = null;
         }
 
+        // BeakerController가 슬롯에 놓이거나 빠질 때마다 성분 라벨을 새로 만들거나 제거한다
+        // (다른 도구 종류는 라벨을 표시하지 않는다).
         private void HandleSlotOccupancyChanged(SlotController slot, IBartendingItem item)
         {
             RemoveLabel(slot);
@@ -805,8 +814,13 @@ namespace Slainte.Bartending
         }
     }
 
+    // 바텐딩 조리대(카메라/뷰포트/슬롯/도구/액체 풀)를 조립하는 팩토리.
+    // Runtime 모드(실제 플레이)와 Preview 모드(에디터 배치 미리보기)를 공유하되,
+    // Preview에서는 액체 풀·인터랙션 오버레이·메타볼 렌더러 등 런타임 전용 구성요소를 생략한다.
     public static class BartendingSessionBuilder
     {
+        // 세션의 모든 구성요소(카메라→뷰포트→슬롯 레이아웃→도구→액체 풀)를 순서대로 만들어
+        // BartendingSessionInstance로 묶어 반환한다. mode에 따라 Runtime/Preview 분기가 갈린다.
         public static BartendingSessionInstance Build(
             Transform parent,
             RectTransform counter,
@@ -992,6 +1006,9 @@ namespace Slainte.Bartending
             return camera;
         }
 
+        // 액체 파티클들을 메타볼(뭉쳐 보이는 유체) 형태로 합성해 별도 카메라로 캡처한 뒤
+        // 쿼드 하나에 출력하는 렌더러를 구성한다. 머티리얼이 없으면(구버전 설정) null을 반환해
+        // 개별 파티클 렌더링으로 자연히 폴백한다.
         public static LiquidMetaballRenderer CreateLiquidMetaballRenderer(
             Transform parent,
             Camera worldCamera,
@@ -1205,6 +1222,8 @@ namespace Slainte.Bartending
             return layout;
         }
 
+        // 슬롯 레이아웃 템플릿에 준비된 가이드(UIDropSlot) 수가 실제로 필요한 슬롯 수보다 적으면
+        // 마지막 가이드를 복제해 채운다. LayoutGroup이 없는 템플릿이면 평균 간격으로 균등 재배치까지 한다.
         internal static void EnsureSlotLayoutGuideCount(RectTransform layout, int desiredSlotCount)
         {
             if (layout == null || desiredSlotCount <= 0)
@@ -1383,6 +1402,8 @@ namespace Slainte.Bartending
             }
         }
 
+        // 슬롯 레이아웃 복제본을, 실제 화면에 보이는 카운터 영역(뷰포트와 겹치는 부분)의 중앙에 맞춘다 —
+        // 스크롤/마스킹으로 카운터 일부가 가려져도 슬롯이 항상 보이는 범위 안에 놓이게 하기 위함.
         private static void AlignSlotLayoutToVisibleTable(
             RectTransform layout,
             RectTransform content,

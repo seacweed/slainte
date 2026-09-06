@@ -17,7 +17,7 @@ Slainte는 다음 네 경계로 구성된다.
 
 | 기반 | 수명 | 대표 클래스 |
 |---|---|---|
-| `MonoSingleton<T>` | 앱 수명, `DontDestroyOnLoad` | `GameManager`, `DayFlowManager`, `EpisodeManager`, `DataManager`, `GameProgress`, `AudioManager` |
+| `MonoSingleton<T>` | 앱 수명, `DontDestroyOnLoad` | `GameManager`, `DayFlowController`, `EpisodeManager`, `DataManager`, `GameProgress`, `AudioManager` |
 | `SceneSingleton<T>` | 현재 씬 수명 | `GameModeManager`, 씬 참조를 보유한 관리자 |
 | 일반 `MonoBehaviour` | 소유 씬·세션 수명 | `EpisodeRunner`, `CustomerSpawner`, 도구 Controller |
 | 런타임 생성 객체 | 주문 제조 세션 수명 | 바텐딩 카메라, RenderTexture, 슬롯, 도구, 액체 풀 |
@@ -36,7 +36,7 @@ None
 → Episode ...
 ```
 
-`DayFlowManager`가 순서를 결정하고 `GameManager`가 상태에 맞는 씬 전환 또는 시작 콜백을 실행한다.
+`DayFlowController`가 순서를 결정하고 `GameManager`가 상태에 맞는 씬 전환 또는 시작 콜백을 실행한다.
 
 ### BusinessScene 내부
 
@@ -164,9 +164,9 @@ ItemDef
 - `GameModeManager.OnModeChanged`
 - `BusinessOrderSessionController.StateChanged`
 - `BusinessOrderSessionController.OrderCompleted`
-- `BusinessSequenceRunner.BusinessDayCompleted`
+- `BusinessShiftController.ShiftCompleted`
 - `BusinessBartendingBootstrap.ServeRequested`
-- `GameProgress.BottleAmountChanged`
+- `BottleController.CapacityChanged`
 
 이벤트 구독 클래스는 `OnDestroy` 또는 세션 정리에서 반드시 구독을 해제한다.
 

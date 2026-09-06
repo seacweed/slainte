@@ -11,6 +11,11 @@ using UnityEngine;
 
 namespace NarrativeFlow.Editor
 {
+    // NarrativeGraphSO(비주얼 그래프)를 런타임 EpisodeData(노드 리스트 + nextNodeId 체인)로
+    // 컴파일한다. 핵심 변환은 "그래프의 노드 하나(EpisodeNodeSO)는 여러 이벤트를 담을 수 있고,
+    // 그 이벤트 각각이 런타임에서는 별도의 EpisodeNode가 되어 순서대로 nextNodeId로 이어진다"는
+    // 점 — 즉 그래프 노드 1개가 런타임 노드 N개로 펼쳐질 수 있다(nodeMapping이 이 매핑을 추적).
+    // 컴파일 후에는 사람이 읽고 diff하기 좋도록 같은 내용을 CSV로도 함께 내보낸다(ExportToCsv).
     public class EpisodeDataCompiler
     {
         private const string OrderTicketDatabasePath = BusinessAssetPaths.OrderTicketDatabase;
@@ -290,6 +295,9 @@ namespace NarrativeFlow.Editor
             if (target is EpisodeNodeSO && nodeMapping.TryGetValue(targetGuid, out var ids))
                 return ids[0];
 
+            // TriggerNode는 그 자체로 런타임 노드가 되지 않는다(조건 라우팅만 하는 그래프 전용
+            // 구성 요소). 대신 그 조건들을 호출자(currentNode)의 flagBranches/varBranches에
+            // 그대로 주입해, 런타임에서는 마치 currentNode가 직접 여러 조건 분기를 가진 것처럼 보인다.
             if (target is TriggerNodeSO trigger)
             {
                 InjectTriggerLogic(currentNode, trigger, graph, nodeMapping);

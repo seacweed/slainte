@@ -11,6 +11,8 @@
 - 요구사항이 명확하지 않거나 부족한 점이 있는 경우 반드시 질문 후 답변
 - 최적화를 고려한 코드 작성
 - claude.md 업데이트 시 프로젝트 전체를 아우르는 중심 내용만 이 파일에 작성(docs에 추가될 내용은 작성하지 말 것), 세부 사항들은 docs의 개별 문서에 작성. 필요시 새로운 문서 생성하고 claude.md에 링크 추가.
+- 새 코드를 작성하거나 기존 코드를 수정할 때도 핵심 로직(판정·상태 머신·물리 조작 등 복잡한 컨트롤러)에는 항상 요약+WHY 중심 주석을 단다. 서술형(클래스·복잡한 메서드 위 1~3줄 요약 + 까다로운 분기·트릭에 인라인 WHY, 단순 getter·필드 나열은 생략)은 `Assets/_Project/Core/Runtime/Persistence/GameProgress.cs`의 기존 스타일을 따를 것
+- 파일을 어느 폴더/네임스페이스/어셈블리에 둘지 애매하면 [docs/refactoring/folder-structure-conventions.md](docs/refactoring/folder-structure-conventions.md)의 배치 규칙과 판단표를 따른다. asmdef 경계를 새로 추가하거나 옮길 때는 [docs/refactoring/assembly-boundary-audit.md](docs/refactoring/assembly-boundary-audit.md)에 정리된 현재 순환 참조 현황과 분리 순서를 먼저 확인한다
 
 ## 프로젝트 개요
 
@@ -31,6 +33,7 @@
 - **화면 전용 UI는 공유 컴포넌트에 옵션을 얹지 말고 포크**: 기존 슬롯(`ItemSlotUI`)을 다른 화면(배송)에서 쓰되 그 화면만의 필드로 프리팹 크기/레이아웃 자체가 바뀌어야 하면, 공유 프리팹에 조건부 필드를 추가하지 말고 스크립트+프리팹을 통째로 복제한 전용 클래스를 만들 것(예: `ItemSlotUI` → `DeliveryItemSlotUI`). 그런 화면 전용 프리팹 참조들은 개별 UI 컴포넌트가 아니라 공용 카탈로그 SO(`LiquorShopCatalog`)에 모아두고 `Initialize()` 시점에 주입하는 패턴을 따를 것. 단, 프리팹 구조는 그대로고 크기·글씨 등 값 몇 개만 위치별로 달라야 하는 경우엔 포크 대신 `Setup()`에 선택적 오버라이드 인자를 추가하는 쪽을 우선할 것(예: `RecipeSearchOptionButton`)
 - **컷씬**: `CutsceneManager`/`CutsceneUI`(CoreScene 상주)가 이미지+텍스트 슬라이드를 재생. 트리거 판단(어떤 컷씬을 언제 재생할지)은 `DayFlowController`/`SettlementManager`가 담당하며, 컷씬 종료 후 패널을 곧바로 감추지 않고 `SceneTransitionManager.onFadeOutComplete`(다음 화면이 완전히 덮인 시점)에 감춰 화면 전환 사이 빈 틈이 생기지 않게 함
 - **씬 로컬 MonoBehaviour의 Awake 타이밍 함정**: 비활성 부모(예: 아직 안 열린 패널) 밑에서 `Instantiate`된 오브젝트는 활성화 전까지 Unity가 `Awake()` 호출을 미룸 — 그 전에 외부에서 `Setup()`류를 호출하면 `Awake()`에서만 캐싱한 참조가 아직 없을 수 있음. `Awake()`와 공개 메서드 양쪽에서 호출 가능한 `EnsureInitialized()` 패턴으로 방어할 것
+- **핵심 로직 주석 진행 상황**: 주석 규칙은 위 "반드시 지켜야 할 점" 참고. Bartending·Business·Core·Rest·Narrative·MainMenu 핵심 로직 41개 파일에 적용 완료(전체 약 279개 `.cs` 파일 중 나머지는 후속 세션에서 이어감)
 
 ## 문서
 
@@ -69,3 +72,7 @@
 | [docs/customer-availability-missing-data.md](docs/customer-availability-missing-data.md) | 손님 등장조건 CSV 반영 현황, 누락된 에피소드·플래그·이미지 목록 |
 | **tools** |||
 | [docs/tools/editor-tools.md](docs/tools/editor-tools.md) | 에디터 툴 목록 및 사용법 |
+| **refactoring** |||
+| [docs/refactoring/folder-structure-conventions.md](docs/refactoring/folder-structure-conventions.md) | 폴더 구조 표준·소유권 판단 규칙, 새 파일 배치 빠른 판단표 |
+| [docs/refactoring/assembly-boundary-audit.md](docs/refactoring/assembly-boundary-audit.md) | 어셈블리 경계 현황, 순환 참조 목록, 분리 순서 로드맵 |
+| [docs/refactoring/folder-migration-plan.md](docs/refactoring/folder-migration-plan.md) | 이번 브랜치 이동 내역, 이전/이후 경로 매핑표 |

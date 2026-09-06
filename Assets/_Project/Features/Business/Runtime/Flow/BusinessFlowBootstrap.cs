@@ -6,6 +6,11 @@ using UnityEngine.SceneManagement;
 
 namespace Slainte.Business
 {
+    // BusinessScene 진입점. 씬 내 필수 컴포넌트(모드 매니저/손님 스포너/대화창/주문표/바텐딩
+    // 부트스트랩 등)를 찾아 BusinessOrderSessionController·BusinessShiftController·
+    // EpisodeCraftingBridge를 초기화하고 서로 연결한다. 시간 기반 영업(StartBusinessSequence)과
+    // 에피소드가 요청하는 제조 주문(StartEpisodeOrder)이 같은 orderSession을 공유하므로,
+    // episodeOrderActive/businessSequenceActive 플래그로 두 흐름이 겹치지 않게 조율한다.
     public sealed class BusinessFlowBootstrap : MonoBehaviour
     {
         private const string SceneName = "BusinessScene";
@@ -216,6 +221,9 @@ namespace Slainte.Business
             RefreshLegacyCraftingJudge();
         }
 
+        // 영업 시작 시점에 TV 예보(Forecast)를 오늘의 활성 방송으로 확정하고, 그 효과가
+        // 배송을 막는(DisableDelivery) 방송이면 술장 UI에 즉시 반영한다. 활성화가 일어났으면
+        // (하루 지연 예보 상태가 소비됐으므로) 곧바로 저장해 앱이 중간에 꺼져도 유실되지 않게 한다.
         private void ActivateTVBroadcastForBusiness()
         {
             GameProgress progress = GameProgress.Instance;
@@ -244,6 +252,8 @@ namespace Slainte.Business
             OrderSessionRequest request,
             System.Action<BusinessOrderSessionResult> onCompleted)
         {
+            // 시간 기반 영업이 진행 중이어도, 그 영업이 인카운터(대화) 상태라면 에피소드가
+            // 요청하는 제조 주문을 예외적으로 허용한다 — 인카운터 자체가 제조를 요구할 수 있기 때문.
             bool allowedDuringBusinessEncounter = businessSequenceActive
                 && shiftController != null
                 && shiftController.State == BusinessShiftState.EncounterActive;
@@ -314,6 +324,9 @@ namespace Slainte.Business
             RefreshLegacyCraftingJudge();
         }
 
+        // 구버전 제조 판정 UI(CraftingJudgeUI)는 "에피소드가 수동 제조 모드로 실행 중이며
+        // 현재 CraftingMode인 동안"에만 보여야 한다 — 상태가 바뀔 때마다(주문 세션/게임 모드 변경)
+        // 이 조건을 다시 계산해 표시 여부를 갱신한다.
         private void RefreshLegacyCraftingJudge()
         {
             if (legacyCraftingJudge == null)

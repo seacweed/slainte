@@ -3,6 +3,11 @@ using UnityEngine.Scripting.APIUpdating;
 
 namespace Slainte.Bartending
 {
+    // 액체 입자(LiquidParticleData가 붙은 물리 오브젝트) 하나마다 붙어, 다른 입자와 섞일 때
+    // payload(재료 성분)와 물리 속성(질량 등)을 평균화한다. 두 가지 믹싱 경로가 있다:
+    // (1) 물리 충돌 순간(TryMixCollision) — 즉각적이고 강한 믹싱,
+    // (2) 매 FixedUpdate 주기적으로 반경 내 입자를 스캔하는 확산 믹싱(TryMixNearbyParticlesByAgitation)
+    //     — 흔들기/젓기처럼 서로 스치기만 해도 서서히 섞이는 느낌을 낸다.
     [MovedFrom(true, "", "Assembly-CSharp", "LiquidReaction")]
     public class LiquidReaction : MonoBehaviour
     {
@@ -49,6 +54,8 @@ namespace Slainte.Bartending
             TryMixNearbyParticlesByAgitation();
         }
 
+        // 일정 속도 이하로 timeToSleep초 이상 정지해 있으면 물리 바디를 재워(Rigidbody2D.Sleep)
+        // 매 프레임의 믹싱/충돌 계산 비용을 아낀다. 입자가 많이 쌓인 잔에서 특히 중요한 최적화.
         public void CheckSleepState(float deltaTime)
         {
             if (isLogicallySleeping) return;
@@ -193,6 +200,10 @@ namespace Slainte.Bartending
             other.particleData.ApplyVisualFromPayload();
         }
 
+        // agitationMixInterval마다 한 번씩 반경 내 입자를 훑어, 상대 속도가 클수록(젓기/흔들기로
+        // 요동이 클수록) 더 강하게 섞는다. agitationSearchOffset으로 매번 시작 인덱스를 회전시켜
+        // 겹침 목록의 앞쪽 입자만 계속 우대되는 편향을 막고, 한 틱에 섞는 상대 수를
+        // agitationMaxPartners로 제한해 비용을 예측 가능하게 유지한다.
         void TryMixNearbyParticlesByAgitation()
         {
             if (isLogicallySleeping) return;
@@ -258,6 +269,9 @@ namespace Slainte.Bartending
                 NearbyParticles[i] = null;
         }
 
+        // 상대 속도가 agitationVelocityThreshold 미만이면 섞이지 않고(0 반환), 그 이상부터
+        // agitationFullMixRelativeSpeed까지 선형 보간해 믹싱 강도를 올린다 — 살살 부딪히면 거의
+        // 안 섞이고, 세게 흔들수록 빠르게 섞이는 느낌을 만든다.
         float GetRelativeVelocityMixStrength(LiquidReaction other)
         {
             if (other == null || rb == null || other.rb == null)
@@ -278,6 +292,8 @@ namespace Slainte.Bartending
             return agitationMixSpeed * agitation;
         }
 
+        // 재료가 섞이면 질량·감쇠·중력스케일 같은 물리 속성도 두 입자의 평균값으로 맞춰,
+        // 서로 다른 액체가 섞인 뒤에도 물리적으로 이질감 없이 한 덩어리처럼 움직이게 한다.
         void MixPhysicalAttributes(LiquidReaction other)
         {
             if (rb == null || other.rb == null)

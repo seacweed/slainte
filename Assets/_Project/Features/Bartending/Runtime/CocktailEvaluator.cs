@@ -116,6 +116,10 @@ namespace Slainte.Bartending
         }
     }
 
+    // VesselLiquidTracker.BuildComposition()이 만든 CocktailComposition을 레시피 카탈로그와 대조해
+    // 성공/실패와 그 이유를 판정한다. HANDOFF.md 기준으로 결과 등급(Good/Mid.../Bad)별 파생 레시피
+    // 에셋은 존재하지 않으며, 그 구분은 이 클래스가 아니라 호출자(CocktailOrderEvaluator 등)가
+    // EvaluationResult의 개별 valid 플래그를 조합해 만든다.
     public sealed class CocktailEvaluator
     {
         private readonly CocktailRecipeCatalog recipeCatalog;
@@ -125,6 +129,8 @@ namespace Slainte.Bartending
             this.recipeCatalog = recipeCatalog;
         }
 
+        // 어떤 레시피를 만들려 했는지 모를 때(자유 제조) 카탈로그를 순서대로 훑어 처음으로
+        // 완전히 일치하는 레시피를 찾는다. 카탈로그 순서가 곧 탐지 우선순위다.
         public CocktailEvaluationResult Evaluate(CocktailComposition composition)
         {
             if (recipeCatalog == null || recipeCatalog.Count == 0)
@@ -154,6 +160,9 @@ namespace Slainte.Bartending
             return EvaluateRecipe(recipe, composition);
         }
 
+        // predicate로 후보를 좁힌 뒤 완전 일치를 찾되, allowServingStyleMismatch가 true면
+        // "배합·기법은 맞는데 잔/얼음만 틀린" 첫 결과를 기억해뒀다가 완전 일치가 끝내 없을 때
+        // 그것을 대신 반환한다 — 호출자가 이 값으로 MidGlass/MidIce 판정을 내릴 수 있게 하기 위함.
         public CocktailEvaluationResult EvaluateFirstOrderable(
             CocktailComposition composition,
             System.Predicate<CocktailRecipe> predicate,
@@ -214,11 +223,16 @@ namespace Slainte.Bartending
             return false;
         }
 
+        // isOrderable == false인 레시피는 자동 탐지 대상에서 제외한다(예: 숨김/비주문용 레시피).
+        // 그런 레시피도 EvaluateRecipe(id, ...)로 ID를 직접 지정하면 판정은 여전히 가능하다.
         private static bool IsDetectableBaseRecipe(CocktailRecipe recipe)
         {
             return recipe != null && recipe.isOrderable;
         }
 
+        // 하나의 레시피에 대해 재료 용량(허용 오차 포함)·잔·얼음·셰이킹 얼음·제조법을 각각 독립
+        // 판정한 뒤 전부 만족해야만 isSuccess로 표시한다. 개별 valid 플래그를 결과에 그대로
+        // 남겨두는 이유는, 호출자가 "완전 일치"와 "부분 일치(Mid* 등급)"를 구분해야 하기 때문이다.
         private static CocktailEvaluationResult EvaluateRecipe(CocktailRecipe recipe, CocktailComposition composition)
         {
             CocktailEvaluationResult result = new CocktailEvaluationResult

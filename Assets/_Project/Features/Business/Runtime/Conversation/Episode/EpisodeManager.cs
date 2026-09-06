@@ -4,6 +4,10 @@ using Slainte.Content;
 using Slainte.Shared.Lifecycle;
 using UnityEngine;
 
+// 전체 에피소드 카탈로그를 로드하고, 작전판 노출 여부(해금 조건)·필수 에피소드 큐잉·
+// 현재 재생 중인 에피소드 상태를 관리하는 싱글톤. Rest 보드의 기본 에피소드 선택,
+// DayFlowController의 필수 에피소드 자동 진행, Business 인카운터(TryStartBusinessEncounter)
+// 세 가지 진입 경로가 모두 이 매니저를 거쳐 CurrentPlayingEpisodeID를 갱신한다.
 public class EpisodeManager : MonoSingleton<EpisodeManager>
 {
     private List<EpisodeData> allEpisodes = new();
@@ -206,6 +210,9 @@ public class EpisodeManager : MonoSingleton<EpisodeManager>
         callback?.Invoke();
     }
 
+    // 복구 명령(디버그/장애 대응)으로 현재 진행 중인 에피소드를 강제로 완료 처리한다.
+    // EpisodeRunner가 실행 중이면 러너를 통해 정상 종료시키고, 그게 아니라 Business
+    // 인카운터였다면 그 완료 경로로, 둘 다 아니면(상태 불일치) 직접 ClearEpisode로 정리한다.
     public bool TryForceCompleteCurrentEpisode(out string completedEpisodeId)
     {
         completedEpisodeId = CurrentPlayingEpisodeID;

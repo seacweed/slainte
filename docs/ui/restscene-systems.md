@@ -372,7 +372,7 @@ public class ItemData : ScriptableObject
 public enum ItemType { Alcohol, Liqueur, NonAlcohol, Powder, Tool, Glass }
 ```
 
-현재 `Resources/Bartending/Items/`에는 바텐딩 기준 CSV에서 생성한 `ItemDef` 15개만 있고 `ItemData` 에셋은 없다. 상점은 `LiquorShopCatalog`의 `LiquorBottleDef`를 사용한다. `Assets/_Project/Features/Rest/Editor/ItemDataImporter.cs`와 `Content/Source/Legacy/ItemData.csv`는 호환을 위해 남은 이전 경로이며 새 상점 데이터를 만들 때 사용하지 않는다.
+현재 `Resources/Bartending/Items/`에는 바텐딩 기준 CSV에서 생성한 `ItemDef` 15개만 있고 `ItemData` 에셋은 없다. 상점은 `LiquorShopCatalog`의 `LiquorBottleDef`를 사용한다. `Assets/_Project/Features/Rest/Editor/ItemDataImporter.cs`와 `Assets/_Project/Features/Bartending/Content/Source/Legacy/ItemData.csv`는 호환을 위해 남은 이전 경로이며 새 상점 데이터를 만들 때 사용하지 않는다.
 
 ---
 

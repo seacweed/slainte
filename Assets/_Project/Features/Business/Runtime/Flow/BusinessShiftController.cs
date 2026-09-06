@@ -37,8 +37,13 @@ namespace Slainte.Business
         Completed
     }
 
+    // 하루 영업(Shift) 한 번의 상태 머신. BeginShift()에서 손님/인카운터 풀을 그날의 GameProgress
+    // 조건으로 한 번 얼려두고(frozenCustomerPool/frozenEncounterPool — 영업 도중 진행도가 바뀌어도
+    // 대상 목록이 흔들리지 않게), 주문/인카운터/필수 액션이 끝날 때마다 AdvanceAtSafePoint()가
+    // 다음에 무엇을 할지 결정한다. 그 우선순위는 AdvanceAtSafePoint 주석 참고.
     public sealed class BusinessShiftController : MonoBehaviour
     {
+        // 같은 손님이 연달아 다시 나오지 않도록 최근 등장한 손님 N명을 기억해 다음 가중치 선택에서 제외한다.
         private const int RecentCustomerLimit = 2;
 
         private readonly Queue<string> recentCustomerKeys = new();
@@ -127,6 +132,9 @@ namespace Slainte.Business
             CustomerVisitDatabase database = settings.customerVisitDatabase
                 ?? CustomerVisitDatabase.LoadDefault();
 
+            // 영업 시작 시점의 GameProgress 조건으로 대상 풀을 한 번만 계산해 얼려둔다 —
+            // 영업 도중 플래그/호감도가 바뀌어도(예: 인카운터 보상) 오늘 등장 대상 목록 자체는
+            // 흔들리지 않아야 하기 때문이다.
             frozenCustomerPool.AddRange(
                 BusinessSequencePlanner.BuildEligibleVisitPool(database, progress));
             ExcludeVisitsWithInvalidOrderData();
@@ -234,6 +242,11 @@ namespace Slainte.Business
                 SetState(BusinessShiftState.CompletingRequiredActions);
         }
 
+        // 주문/인카운터가 하나 끝날 때마다(또는 영업 시작 시) 호출되어 "다음엔 뭘 할지"를 우선순위
+        // 순서로 결정한다: ① 강제 종료 예약 → 즉시 정산, ② 타이머 만료 → AfterTimer 필수 액션을
+        // 모두 처리한 뒤 정산, ③ 고정 슬롯(SequenceSlot) 필수 액션, ④ 첫 손님 전(BeforeFirstCustomer)
+        // 필수 액션(최초 1회), ⑤ 주문 완료 후(BetweenOrders) 필수 액션, ⑥ 위에 해당 없으면 가중치
+        // 기반 랜덤 손님/인카운터 선택. 더 뽑을 대상이 없으면 랜덤 손님 생성만 중단한다.
         private void AdvanceAtSafePoint()
         {
             if (forceCompletionRequested)
@@ -415,6 +428,9 @@ namespace Slainte.Business
                 rewardProfile = BusinessCustomerRules.ResolveRewardProfile(visit),
                 presentOrder = true,
                 presentFeedback = true,
+                // 세션이 자체적으로 보상을 지급하지 않게 막고, 완료 후 RecordSale()에서
+                // salePayoutPolicy를 통해 지급한다 — 정책(즉시 지급/정산 시 일괄 지급 등)을
+                // 교체 가능하게 하기 위해서다(TrySetSalePayoutPolicy).
                 applyProgressRewards = false,
                 clearCustomerOnComplete = true
             };
@@ -465,6 +481,8 @@ namespace Slainte.Business
             }
             else
             {
+                // 기술적 실패(세션 초기화 오류 등)는 손님 잘못이 아니므로 오늘 풀에 남겨 재시도
+                // 가능하게 하고, 그 외(거절·오답 제출 등 실제 결과가 난 실패)만 풀에서 제외한다.
                 bool excludeVisit = result != null && !result.technicalFailure;
                 if (excludeVisit
                     && visit != null
@@ -737,6 +755,8 @@ namespace Slainte.Business
             }
         }
 
+        // 오늘 발동 조건을 만족하는 필수(예약된) 인카운터의 대상 키를 모아, 랜덤 인카운터 풀
+        // 구성 시 같은 대상이 이중으로 뽑히지 않게 제외시키는 데 쓴다.
         private HashSet<string> BuildReservedEncounterTargetKeys(GameProgress progress)
         {
             HashSet<string> result = new(StringComparer.OrdinalIgnoreCase);

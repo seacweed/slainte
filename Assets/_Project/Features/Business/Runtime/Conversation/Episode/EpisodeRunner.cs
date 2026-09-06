@@ -5,6 +5,10 @@ using Slainte.Business;
 using Slainte.Shared.Input;
 using UnityEngine;
 
+// 에피소드 그래프(EpisodeData의 노드 그래프)를 한 스텝씩 해석해 대사·선택지·제조 노드를
+// 순서대로 실행하는 인터프리터. 일반 에피소드(BeginBusinessEncounter가 아닌 Begin으로 시작)와
+// 영업 중 끼어드는 "비즈니스 인카운터"(_isBusinessEncounter) 두 모드를 겸하며, 종료 시 어느
+// 쪽이었는지에 따라 FinishEncounter가 되돌아갈 곳(DayFlowController vs 영업 콜백)을 다르게 정한다.
 public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 {
     [Header("References")]
@@ -233,6 +237,9 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         }
     }
 
+    // 실제 제조 판정(EpisodeCraftingBridge)을 우선 시도하고, 대상 레시피가 없거나 브리지 자체가
+    // 기술적으로 실패하면 그때만 BeginManualCrafting(6버튼 수동 판정 패널)으로 전환한다.
+    // 수동 판정은 정상 경로가 아니라 판정 시스템이 망가졌을 때의 안전망이다.
     private IEnumerator HandleCraftingNode(EpisodeNode node)
     {
         _waitingForCrafting = true;
@@ -334,6 +341,9 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         EnterNode(nextId);
     }
 
+    // 분기 우선순위: 플래그 조건(flagBranches) → 특정 에피소드 완료 여부(episodeBranches) →
+    // 변수 조건(varBranches) → 그 어느 것도 안 맞으면 노드의 기본 nextNodeId. 각 목록 안에서는
+    // 먼저 조건을 만족하는 첫 항목이 선택된다(순서가 우선순위).
     private string ResolveNextNodeId(EpisodeNode node)
     {
         if (Progress != null)
@@ -570,6 +580,9 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         _businessEncounterCompleted = null;
         OnEncounterCompleted?.Invoke();
 
+        // 비즈니스 인카운터였다면 원래 진행 중이던 영업으로 모드만 되돌리고 그 호출자(콜백)에게
+        // 제어를 넘긴다 — 하루 진행(EpisodeManager/DayFlowController)에는 개입하지 않는다.
+        // 반대로 일반 에피소드는 하루 흐름의 일부이므로 완료 처리를 DayFlowController에 알린다.
         if (wasBusinessEncounter)
         {
             modeManager?.RequestModeChange(GameMode.OrderMode);

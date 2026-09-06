@@ -4,6 +4,10 @@ using TMPro;
 using UnityEngine;
 using System;
 
+// 대사창 하나를 담당하는 컨트롤러. 대사 큐(_queue)를 한 줄씩 타이핑 애니메이션(TypeLine)으로
+// 보여주고, Advance() 호출(클릭/스페이스)마다 "타이핑 중이면 스킵 → 다음 줄 있으면 다음 줄 →
+// 없으면 닫기" 순으로 진행한다. 선택지 UI가 뜨는 동안은 SlideUpForChoices로 말풍선을 위로
+// 밀어 겹치지 않게 한다.
 public class DialogueController : MonoBehaviour
 {
     [Header("UI")]
@@ -271,6 +275,7 @@ public class DialogueController : MonoBehaviour
         SetNextIndicator(visible);
     }
 
+    // 타이핑이 끝나 다음으로 넘어갈 수 있는 상태임을 알리는 깜빡이 인디케이터를 켜고 끈다.
     private void SetNextIndicator(bool on)
     {
         if (nextIndicator == null) return;

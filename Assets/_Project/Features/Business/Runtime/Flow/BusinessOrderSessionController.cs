@@ -8,6 +8,11 @@ using UnityEngine;
 
 namespace Slainte.Business
 {
+    // 영업 손님 주문과 에피소드 제조 노드가 공유하는 "주문 제시 → 제조 → 판정 → 결과 피드백"
+    // 세션(State: Idle → PresentingOrder → Crafting → Evaluating → PresentingFeedback → Completed).
+    // 호출자는 OrderSessionRequest의 owner/presentOrder/presentFeedback/applyProgressRewards 등
+    // 플래그로 어떤 단계를 건너뛰고 어떤 부수효과(보상 지급·판매 기록 등)를 적용할지 선택한다 —
+    // 예: 에피소드 제조는 손님 주문 제시·보상 지급을 생략하지만 판정 로직 자체는 영업과 동일하다.
     public sealed class BusinessOrderSessionController : MonoBehaviour
     {
         private GameModeManager modeManager;
@@ -575,6 +580,9 @@ namespace Slainte.Business
             CompleteCurrentOrder(result);
         }
 
+        // 기술적 실패(AbortForTechnicalFailure), 정상 판정 완료, 에디터 강제 결과 등 여러 경로가
+        // 이 메서드로 모이므로, completionDispatched 플래그로 같은 세션이 두 번 완료 처리되어
+        // 콜백이 중복 호출되지 않게 막는다.
         private void CompleteCurrentOrder(BusinessOrderSessionResult result)
         {
             if (result == null || completionDispatched)
@@ -587,6 +595,9 @@ namespace Slainte.Business
             result.owner = completedRequest?.owner ?? result.owner;
             result.customerVisitKey = completedRequest?.customerVisitKey ?? result.customerVisitKey;
 
+            // 지급·판매기록·평판 반영은 각각 독립 플래그다 — 영업 주문은 셋 다 켜지만, 에피소드
+            // 제조는 applyProgressRewards=false로 지갑/평판에 영향을 주지 않으면서도 판정 자체는
+            // 동일 경로를 통과한다(호출자가 결과를 보고 자체적으로 보상을 줄 수도 있음).
             GameProgress progress = GameProgress.Instance;
             if (progress != null && completedRequest != null)
             {
@@ -640,6 +651,9 @@ namespace Slainte.Business
             return evaluation != null ? 0 : -1;
         }
 
+        // 가격은 "무엇을 만들었는지"를 우선한다: 실제로 감지된 레시피가 성공 판정이면 그 가격을
+        // 매기고(엉뚱하지만 유효한 다른 레시피를 제출한 경우도 그 레시피 가격), 감지 실패 시에만
+        // 요청 레시피 기준(부분 일치 이상)으로 폴백한다.
         private static CocktailRecipe ResolveListedRecipe(
             GeneratedCocktailOrder order,
             CocktailOrderEvaluationResult evaluation)
@@ -683,6 +697,9 @@ namespace Slainte.Business
                 || orderType == CocktailOrderType.MoodOrder;
         }
 
+        // 바텐딩 씬/세션이 아직 준비되지 않은 상태로 제조 단계에 진입하면(씬 전환 지연 등)
+        // craftingPrepareTimeoutSeconds 동안만 기다리고, 그래도 준비되지 않으면 기술적 실패로
+        // 처리해 세션이 영구히 멈추지 않게 한다.
         private IEnumerator WaitForCraftingPreparation()
         {
             float elapsed = 0f;

@@ -1,3 +1,7 @@
+// 에피소드 시작 조건, 손님 등장 조건, 영업 필수 액션 조건 등 GameProgress 기반 등장/발동 조건을
+// 판정하는 단일 공용 로직(EpisodeManager.CanStart, BusinessSequencePlanner 등에서 재사용).
+// 조건은 minDay → requiredFlags → blockedFlags → prerequisiteEpisodeIds → requiredVars →
+// requiredCustomerAppearances 순서로 검사하며 모두 AND로 결합, 하나라도 어긋나면 즉시 false.
 public static class ProgressConditionEvaluator
 {
     public static bool IsMet(
@@ -11,6 +15,7 @@ public static class ProgressConditionEvaluator
         if (maxDay > 0 && progress.CurrentDay > maxDay)
             return false;
 
+        // condition 자체가 없으면(설정 안 함) 무조건 통과 — "항상 등장 가능" 대상에 쓰인다.
         if (condition == null)
             return true;
 

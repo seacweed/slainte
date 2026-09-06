@@ -3,6 +3,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+// 보드 사진을 클릭했을 때 옆에 뜨는 에피소드 정보 툴팁. 해금 조건(triggerConditionRows)은
+// 읽기 전용으로 충족 여부만 표시하고, 선택 조건(selectConditionGroups)은 ToggleGroup으로
+// 하나만 고를 수 있는 옵션이라 토글이 바뀔 때마다(OnSelectToggleChanged) 아이콘·문구·초상화가
+// 다시 갱신된다. 최종 선택 상태는 EpisodeBoardManager가 IsSelectOptionOn()으로 읽어가
+// 에피소드 시작 직전 GameProgress 플래그에 반영한다.
 public class EpisodeInfoUI : MonoBehaviour
 {
     [System.Serializable]

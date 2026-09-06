@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// 메인메뉴 진입 연출을 순서대로 재생한다: 팀 로고 페이드 인/아웃 → 타이틀 페이드 인 + 깜빡임
+// (titleBlinkSteps) → 배경 딤머 해제 + 타이틀이 위로 이동(배경과 함께) → 술집 창문 불빛
+// 깜빡임 → 메뉴 버튼 노출. Input.anyKeyDown이 들어오면 SkipIntro()가 모든 코루틴을 멈추고
+// ApplyFinalState()로 연출이 끝난 최종 상태를 즉시 적용한다.
 public class MainMenuIntroController : MonoBehaviour
 {
     [Serializable]

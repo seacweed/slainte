@@ -54,6 +54,9 @@ namespace Slainte.Business
         }
     }
 
+    // Unity 비의존 순수 C# 스케줄링 로직. 오늘 등장 가능한 손님/랜덤 인카운터 풀을 구성하고,
+    // TV 방송 효과(가중치 부스트)를 반영한 가중치 룰렛으로 다음에 무엇을 내보낼지 뽑는다.
+    // BusinessShiftController가 이 클래스의 결과만으로 진행을 결정하고 상태는 갖지 않는다.
     public static class BusinessSequencePlanner
     {
         public static List<CustomerVisitData> BuildEligibleVisitPool(
@@ -115,6 +118,9 @@ namespace Slainte.Business
             if (candidates.Count == 0 || totalWeight <= 0f)
                 return null;
 
+            // 가중치 룰렛: 0~totalWeight 사이 난수를 뽑아 누적 가중치(cursor)가 그 값을
+            // 처음으로 넘어서는 후보를 선택한다. 마지막 후보를 기본값으로 잡아두면 부동소수점
+            // 오차로 roll이 총합을 살짝 넘겨도 항상 유효한 후보가 선택된다.
             double roll = random.NextDouble() * totalWeight;
             float cursor = 0f;
             VisitCandidate selected = candidates[candidates.Count - 1];
@@ -320,6 +326,9 @@ namespace Slainte.Business
                     continue;
                 }
 
+                // 같은 타이밍에 조건을 만족하는 필수 액션이 여럿이면 priority가 가장 높은
+                // 하나만 이번에 실행한다(executedRuleIds/executedTargetKeys가 중복 실행과
+                // 대상 중복을 막아줌).
                 if (selected == null || rule.priority > selected.priority)
                     selected = rule;
             }
@@ -509,6 +518,9 @@ namespace Slainte.Business
             return false;
         }
 
+        // 손님 자체의 TV 가중치 부스트에 더해, 그 손님이 가진 주문들 중 일부가 개별적으로
+        // 부스트됐다면(boostedOrderWeight / baseOrderWeight 비율) 손님 선택 확률도 함께 끌어올린다.
+        // 그래야 "이 손님이 뽑혀도 정작 부스트된 주문이 안 나온다"는 상황을 피할 수 있다.
         private static float GetVisitWeight(
             CustomerVisitData visit,
             IReadOnlyList<CustomerVisitOrderOption> eligibleOrders,
@@ -601,6 +613,9 @@ namespace Slainte.Business
                 : EvaluateVisitAvailability(visit, progress, initialAvailability: true);
         }
 
+        // TV가 "이 손님 유형만 독점 등장"을 부스트하는 동안, 부스트 대상이 아닌 동일 손님의
+        // 평소(비부스트) 방문 데이터를 찾는다. 특별 변형 방문 항목은 자체 등장 조건이 완전하지
+        // 않을 수 있어, 실제 등장 가능 여부는 평소 버전의 조건으로 판단하는 게 더 안전하기 때문이다.
         private static CustomerVisitData FindCanonicalAvailabilityVisit(
             CustomerVisitData specialVisit,
             IReadOnlyList<CustomerVisitData> visits,

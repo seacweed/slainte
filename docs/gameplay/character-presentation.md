@@ -1,6 +1,6 @@
 # 캐릭터 표시 & 대화 렌더링
 
-## 캐릭터 표시 (`Assets/_Project/Features/Business/Runtime/Presentation/`)
+## 캐릭터 표시 (`Assets/_Project/Features/Business/Runtime/Presentation/`, `CharacterData`/`CharacterSlotEntry`는 `Runtime/Conversation/Episode/`)
 
 - `CharacterView` — 프리팹 루트에 부착. `Setup(Sprite, Sprite?, blinkSprite?, blinkOverlaySprite?)` + `SwapSprite(Sprite, Sprite?, blinkSprite?, blinkOverlaySprite?)` + `PlayAppearAnimation()` / `PlayDisappearAnimation()` 제공. fade+rise+pop 애니메이션 처리. 슬롯 하단 기준으로 배치.
   - **깜빡임**: 등장 애니메이션 완료 후 자동 시작. 5~15초 랜덤 간격으로 눈 감은 스프라이트로 교체 후 1초 뒤 복원. `blinkSprite`가 null이면 비활성화. `SwapSprite` 호출 시 새 blink 스프라이트로 재시작. 퇴장 애니메이션 시작 시 중단.
@@ -13,7 +13,7 @@
   - `ShowCharacters(IReadOnlyList<CharacterSlotEntry>, onAllShown)` — 신규 캐릭터는 입장 애니메이션, 기존 캐릭터는 스프라이트 교체만 수행. 점유된 슬롯을 추적해 신규 캐릭터는 지정 슬롯 또는 빈 슬롯에 배정합니다.
   - `SwapExpression(characterKey, expressionKey)` — 이미 스테이지에 있는 캐릭터의 표정만 교체.
   - `GetActiveGroupCenterWorldX()` — 활성 캐릭터 전체의 스프라이트 좌우 끝 X값(world space) 평균을 반환. 캐릭터가 없으면 `Screen.width * 0.5f` 반환.
-  - `CustomerSpawner`(영업 씬 손님)와 `EpisodeRunner`(에피소드) 모두 `CustomerStage` 하나를 공유합니다. 슬롯 5개.
+  - `CustomerSpawner`(영업 씬 손님)와 `EpisodeRunner`(에피소드) 모두 `CharacterStage` 하나를 공유합니다. 슬롯 5개.
 - `CharacterSlotEntry` — `{ characterKey, expressionKey, slotIndex }` 세 필드. `slotIndex`가 0 이상이면 해당 인덱스 슬롯에 직접 배치, `-1`(기본값)이면 빈 슬롯에 자동 배정. 슬롯 인덱스: 0=Center, 1=Left, 2=Right, 3=Left2, 4=Right2, 5~8=Interaction0~3(통합 스프라이트 전용).
 - `CharacterData` — 캐릭터 1명 = 파일 1개. `defaultSprite` + `defaultOverlaySprite` + `List<ExpressionEntry>` (`{ key, sprite, overlaySprite, blinkSprite, blinkOverlaySprite }`)로 모든 표정을 하나의 에셋에 보관.
   - `nameColor` — 대화창 이름 텍스트 색상. Inspector에서 캐릭터별로 지정. `overrideSpeakerName`이 있어도 항상 `speakerKey` 기준 색상이 적용됨.

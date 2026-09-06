@@ -3,6 +3,10 @@ using UnityEngine.UI;
 
 namespace Slainte.Bartending
 {
+    // 바텐딩 월드 카메라의 렌더텍스처를 UI RawImage로 출력하는 뷰포트이자, 화면-월드 좌표
+    // 변환의 단일 진입점(Active 정적 인스턴스). 포인터 클릭·드래그를 월드 좌표로 매핑하는
+    // TryGetPointerWorldPosition 등 static 헬퍼들이 항상 Active를 통해 라우팅되므로,
+    // 씬에 활성 뷰포트가 둘 이상 있으면 안 된다(OnEnable에서 마지막 것이 Active를 차지).
     [DisallowMultipleComponent]
     [RequireComponent(typeof(RawImage))]
     public sealed class BartendingViewport : MonoBehaviour
@@ -163,6 +167,10 @@ namespace Slainte.Bartending
             cameraFramingCaptured = true;
         }
 
+        // 도구장 서랍처럼 뷰포트 아래로 화면이 확장되는 UI(bottomExtensionRect)가 있으면,
+        // 뷰포트의 offsetMin.y를 그 확장분만큼 늘리고 월드 카메라의 orthographicSize/위치도
+        // 같은 비율로 키워 확장된 영역까지 같은 카메라로 커버되게 한다(비율이 어긋나면 렌더 결과가
+        // 늘어나 보이므로 heightRatio를 카메라와 뷰포트 양쪽에 동일하게 적용).
         private void ApplyBottomExtension()
         {
             RectTransform viewportRect = transform as RectTransform;
@@ -390,6 +398,10 @@ namespace Slainte.Bartending
             return TryMapPointerToWorld(screenPosition, out worldPosition, true);
         }
 
+        // 화면 좌표 → 뷰포트 RectTransform 로컬 좌표 → 정규화 뷰포트 좌표 → 월드 카메라 레이 →
+        // z=0 평면과의 교차점 순으로 변환한다. 카메라 리그 이동 애니메이션 중에는 이 매핑이
+        // 부정확해지므로 기본적으로 억제되며(inputSuspended), 이동 콜백 자체에서만
+        // ignoreInputSuspension=true로 예외적으로 허용한다.
         private bool TryMapPointerToWorld(
             Vector2 screenPosition,
             out Vector3 worldPosition,
@@ -476,6 +488,8 @@ namespace Slainte.Bartending
             return screenRect.width > Mathf.Epsilon && screenRect.height > Mathf.Epsilon;
         }
 
+        // 아이템을 좌우로 굴릴 때, 그 경계(currentLeft/Right)가 뷰포트 화면 영역(패딩 적용)을
+        // 벗어나지 않도록 요청된 이동량을 잘라낸다 — 화면 밖으로 밀려나가는 것을 방지.
         private static float ClampHorizontalScreenDelta(
             float requestedDelta,
             float currentLeft,

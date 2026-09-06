@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace Slainte.Bartending
 {
+    // 얼음 버킷 컨트롤러. Idle(대기) → PickedUp(손에 듦) → Tilting(우클릭 유지, 기울이며
+    // 자동으로 얼음 방출) → Returning(우클릭 해제, 원위치 각도로 애니메이션 복귀) → PickedUp
+    // 순서의 상태 머신으로 동작한다. 좌클릭은 일반 IBartendingItem처럼 집기/슬롯 반환을 담당하고,
+    // 우클릭은 Idle 상태에서 얼음 한 조각 드래그 방출, PickedUp 상태에서 기울이기 시작을 담당한다.
     [DisallowMultipleComponent]
     public sealed class IceBinController : MonoBehaviour,
         IBartendingItem,
@@ -462,6 +466,8 @@ namespace Slainte.Bartending
 
             currentState = BucketState.Returning;
             pourAccumulator = 0f;
+            // 기울인 채로 회전하면서 포인터로부터 멀어졌던 버킷 원점을, 되돌아오는 애니메이션과
+            // 어긋나지 않도록 커서를 버킷 쪽으로 워프시켜 다시 동기화한다.
             BeginPointerSynchronization(transform.position);
             if (returnCoroutine != null)
                 StopCoroutine(returnCoroutine);
@@ -522,6 +528,8 @@ namespace Slainte.Bartending
             ConsumeOneIce();
         }
 
+        // 기울기가 icePourStartAngle을 넘어서 있는 동안 일정 간격(icePourInterval)마다
+        // 얼음을 자동으로 흘려보낸다(프레임당 최대 3개까지, 재고가 바닥나면 중단).
         private void HandlePouring()
         {
             float startAngle = definition != null
@@ -626,6 +634,8 @@ namespace Slainte.Bartending
             RefreshBucketVisual();
         }
 
+        // 손에 든 버킷을 제빙기 위에 올려두면 시간에 비례해 얼음을 채우고(refillAccumulator),
+        // 매 프레임 살짝 흔들리는 연출(bucketVisualRoot 오프셋)로 충전 중임을 표시한다.
         private void UpdateCharging()
         {
             bool shouldCharge = currentState == BucketState.PickedUp
@@ -687,6 +697,10 @@ namespace Slainte.Bartending
             return false;
         }
 
+        // 기울인 버킷이 원위치로 회전 복귀하는 동안, 실제 마우스 커서를 버킷의 새 그립 지점으로
+        // 워프시켜(BartendingPointerAnchor) 손에서 놓치지 않은 것처럼 보이게 한다. 워프가
+        // 몇 프레임 안에 확인되지 않으면 CompletePointerSynchronization(false)로 포기하고
+        // 현재 포인터 기준 오프셋을 그대로 유지한다.
         private void BeginPointerSynchronization(Vector3 pivotWorld)
         {
             pointerSyncPivotWorld = pivotWorld;

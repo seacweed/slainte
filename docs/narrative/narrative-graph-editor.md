@@ -11,15 +11,15 @@ CSV와 양방향 호환 유지.
 ## 파일 구조
 
 ```
-Assets/
-  Scripts/Narrative/Data/
+Assets/_Project/Features/Narrative/
+  Runtime/Data/
     NarrativeGraphSO.cs       — 그래프 SO (노드 목록, 엣지 목록, 메타데이터)
     EpisodeNodeSO.cs          — Event Block 노드 (List<EpisodeEvent>, OutgoingBranches)
     TriggerNodeSO.cs          — 조건 라우터 노드 (List<GraphTriggerCondition>)
     NodeDataSO.cs             — 공통 베이스 (Guid, Position, CustomFields)
     EpisodeEvent.cs           — 시퀀스 이벤트 단위 (Dialogue/Choice/BusinessStart/…)
 
-  Editor/Narrative/
+  Editor/
     NarrativeGraphEditor.cs       — EditorWindow 진입점
     NarrativeGraphView.cs         — 메인 그래프 GraphView (노드 CRUD, 엣지 관리)
     NarrativeNodeView.cs          — 노드 카드 렌더링 (인라인 이벤트 요약 표시)

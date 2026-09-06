@@ -2,6 +2,10 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+// 현재 씬에 등장 중인 캐릭터 뷰들을 슬롯(Center/Left/Right...)에 배치·유지·정리하는 무대.
+// ShowCharacters()는 기존에 이미 떠 있는 캐릭터는 스프라이트만 교체하고, 새로 등장한 캐릭터만
+// 빈 슬롯에 스폰해 매번 전체를 다시 그리지 않는다. 이번 목록에 없는 캐릭터는 사라짐
+// 애니메이션 후 파괴된다.
 public class CharacterStage : MonoBehaviour
 {
     [Header("Prefab")]
@@ -63,6 +67,8 @@ public class CharacterStage : MonoBehaviour
             if (entries[i] != null && !string.IsNullOrWhiteSpace(entries[i].characterKey))
                 newKeySet.Add(entries[i].characterKey);
 
+        // 이번에도 계속 등장하는 캐릭터가 차지한 슬롯은 빈 슬롯 큐에서 미리 제외해,
+        // 새로 등장하는 캐릭터가 그 자리에 겹쳐 배치되지 않게 한다.
         var occupiedSlots = new HashSet<int>();
         foreach (var kvp in _activeSlotIndices)
             if (newKeySet.Contains(kvp.Key))

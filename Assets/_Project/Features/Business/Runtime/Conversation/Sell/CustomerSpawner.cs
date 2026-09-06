@@ -10,6 +10,9 @@ public enum CustomerDialoguePresentation
     IntentionallySkipped
 }
 
+// 영업 손님 한 팀을 무대에 표시하고, 주문 제시 대사와 결과 피드백 대사를 재생한다. 손님 데이터
+// 형식이 CustomerVisitData(다인원 members 목록) 이전/이후로 나뉘어 있어, 곳곳에 "새 형식이
+// 있으면 그것을, 없으면 옛 단일 characterKey 방식으로" 폴백하는 로직이 반복된다.
 public class CustomerSpawner : MonoBehaviour
 {
     [SerializeField] private CustomerOrderDatabase customerDB;
@@ -130,6 +133,11 @@ public class CustomerSpawner : MonoBehaviour
         return dialogue != null;
     }
 
+    // 결과 대사 우선순위: ① 작가가 의도적으로 대사를 생략하기로 한 경우(IntentionallySkipped —
+    // 예: 손님이 별 반응 없이 넘어가야 하는 연출), ② 결과 등급별로 직접 작성된 대사
+    // (TryGetAuthoredFeedback — Good/MidGlass/MidIce/... 세분화), ③ 그마저 없으면 Good/Mid/Bad
+    // 3단계로 뭉뚱그린 옛 legacyLines. 호출자는 반환값으로 대화가 실제로 재생됐는지 판단해
+    // 재생 안 됐을 때만 임시 폴백 대사를 붙인다(BusinessOrderSessionController.PresentPendingResult).
     public CustomerDialoguePresentation ShowFeedback(CraftingJobResult result)
     {
         if (_currentOrderData == null)
@@ -170,6 +178,9 @@ public class CustomerSpawner : MonoBehaviour
         characterStage?.Clear();
     }
 
+    // 주문 제시 시 보여줄 대사 우선순위: ① 작가가 직접 쓴 정식 대사(data.lines), ② 대사를
+    // 의도적으로 안 쓰기로 한 경우(orderDialogueAuthored — 침묵도 연출의 일부), ③ CSV 등에서
+    // 자동 생성된 한 줄짜리 fallbackOrderLine, ④ 아무것도 없으면 대화창을 그냥 닫는다.
     private bool OnCharactersShown(CustomerOrderData data, string fallbackOrderLine)
     {
         if (data == null) return false;

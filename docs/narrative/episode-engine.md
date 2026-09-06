@@ -6,7 +6,7 @@
 1. `EpisodeBoardManager`에서 에피소드 선택 → `EpisodeManager.StartEpisode(id)` 호출
 2. `GameManager.ChangeState(GameState.Episode)` → `SceneTransitionManager`가 BusinessScene 로드
 3. 씬 로드 완료 콜백에서 `EpisodeRunner.Begin(EpisodeData)` 호출
-4. `EpisodeRunner`가 `CustomerStage`, `DialogueController`, 선택지 UI를 구동
+4. `EpisodeRunner`가 `CharacterStage`, `DialogueController`, 선택지 UI를 구동
 5. 에피소드 종료 시 `EpisodeManager.ClearEpisode(id)` → `GameManager.ChangeState(GameState.Rest)`
 
 에피소드 조건 체크는 `EpisodeManager.CanStart(EpisodeData, GameProgress)` 에서 처리합니다 (`EpisodeTriggerCondition` 기반).

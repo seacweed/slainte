@@ -9,6 +9,11 @@ namespace Slainte.Bartending
         Rotating
     }
 
+    // 젓는 막대(바스푼) 컨트롤러. Idle → PickedUp(좌클릭으로 집어 자유 이동) →
+    // Rotating(우클릭 유지, 세로 드래그로 회전) 상태 머신이며, 손에 든 상태에서 막대의
+    // 실제 이동/회전 속도를 액체 파티클에 주입해(StirLiquidParticle) 물리적으로 젓는 느낌을 낸다.
+    // 일정 시간 이상 유효한 속도로 저었고 성분이 고르게 섞였으면(RegisterStirActivity)
+    // VesselLiquidTracker에 "저어짐" 상태를 기록해 레시피 판정에 반영한다.
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Collider2D))]
     public sealed class StirringRodController : MonoBehaviour, IBartendingItem, IPointerAnchoredPickup
@@ -373,6 +378,10 @@ namespace Slainte.Bartending
             RegisterStirActivity(particle.VesselOwner);
         }
 
+        // 저어지는 시간(activeStirTime)을 누적해 두 단계로 판정한다: stirAttemptDuration을
+        // 넘기면 "시도함"으로 한 번만 기록하고, stirCompletionDuration을 넘긴 뒤로는 주기적으로
+        // 성분 분산도(CalculateMeanCompositionDeviation)를 확인해 충분히 고르게 섞였을 때만
+        // "완료"로 표시한다. 그릇이 바뀌거나(vessel) 내용물이 변하면(ContentVersion) 처음부터 다시 센다.
         private void RegisterStirActivity(VesselLiquidTracker vessel)
         {
             if (vessel == null)

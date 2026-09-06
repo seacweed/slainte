@@ -6,6 +6,10 @@ using UnityEngine;
 
 namespace Slainte.Business
 {
+    // 에피소드 그래프의 제조 노드(craftingOrderTarget)를 영업과 동일한
+    // BusinessOrderSessionController 판정 세션으로 연결하는 다리 역할. EpisodeRunner가
+    // 제조 노드를 만나면 이 클래스를 거쳐 BusinessFlowBootstrap.StartEpisodeOrder()를 호출하고,
+    // 결과는 CraftingJobResult(Good/Mid.../Bad)로 다시 변환해 에피소드 분기에 넘긴다.
     public sealed class EpisodeCraftingBridge : MonoBehaviour
     {
         private BusinessFlowBootstrap businessFlow;
@@ -103,6 +107,9 @@ namespace Slainte.Business
                 paymentCurrency = node.craftingPaymentCurrency,
                 paymentMultiplier = BusinessOrderPriceRules.NormalizePaymentMultiplier(
                     node.craftingPaymentMultiplier),
+                // 손님 주문 제시/결과 대사는 에피소드 자체 연출(그래프의 대화 노드)이 대신하므로
+                // 세션에는 끄고, 진행 보상도 기본은 지급하지 않는다(영업 판매량·재등장 제한에서
+                // 제외). 다만 노드가 craftingPaymentEnabled를 켰다면 대금 지급·판매 기록만 예외적으로 활성화한다.
                 presentOrder = false,
                 presentFeedback = false,
                 applyProgressRewards = false,

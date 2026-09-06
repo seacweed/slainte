@@ -180,10 +180,10 @@ MetaballFluid(아래 절)는 순수 시각 레이어이고, 판정에 쓰이는 
 |---|---|---|
 | `Particles/LiquidPool.cs` | `LiquidPool` | `poolSize(900)`만큼 입자를 미리 생성하고, 캐시가 소진되면 필요한 만큼 추가 생성. 활성 입자를 `(GameObject, LiquidParticleRecycler, LiquidReaction)` 캐시 구조로 관리 |
 | `Particles/LiquidSpawner.cs` | `LiquidSpawner` | `spawnInterval`마다 풀에서 입자 꺼내 스폰, 초기 속도 0 보장 (테스트용 — 실제 게임 내 pour는 `BottleController.TrySpawnLiquid()`가 `pool.DefaultParticleVolumeMl`만큼씩 직접 `GetParticle()` 호출) |
-| `LiquidReaction.cs` | `LiquidReaction` | 입자 충돌 시 색상·물리 속성 평균화 혼합, 수면 최적화, 확산(Agitation) 믹싱 |
+| `Particles/LiquidReaction.cs` | `LiquidReaction` | 입자 충돌 시 색상·물리 속성 평균화 혼합, 수면 최적화, 확산(Agitation) 믹싱 |
 | `Particles/LiquidParticleRecycler.cs` | `LiquidParticleRecycler` | 화면 밖(OOB) 입자 자동 풀 반환. 용기 밖 유출 입자는 왼쪽/오른쪽/아래 화면 이탈 시 즉시 회수(위쪽은 제외) |
 | `Rendering/FullScreenQuad.cs` | `FullScreenQuad` | MetaballMat 적용 전체화면 쿼드, 해상도 변화에 실시간 대응 |
-| `Runtime/Interaction/DraggableBar.cs` | `DraggableBar` | 마우스 드래그 가능한 물리 오브젝트 |
+| (`Runtime/Interaction/DraggableBar.cs`, Liquid 폴더 밖) | `DraggableBar` | 마우스 드래그 가능한 물리 오브젝트 |
 
 ### 두 가지 믹싱 경로
 
