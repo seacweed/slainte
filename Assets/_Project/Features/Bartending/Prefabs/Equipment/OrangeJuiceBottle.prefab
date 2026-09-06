@@ -188,6 +188,13 @@ MonoBehaviour:
   currentCapacity: 10000
   pourMlPerSecond: 20
   maxParticlesPerFrame: 8
+  pourStartAngle: 90
+  fullPourAngle: 120
+  minimumPourFlowFactor: 0.65
+  pourExitSpeed: 1.6
+  mouthVelocityInheritance: 0.65
+  maximumInheritedMouthSpeed: 4
+  pourSpawnHalfWidth: 0.02
 --- !u!1 &7687632162397421003
 GameObject:
   m_ObjectHideFlags: 0

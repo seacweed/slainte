@@ -27,6 +27,7 @@ namespace Slainte.Bartending
             "Hold the serving glass over the translucent customer target and left-click to evaluate it.";
 
         public BartendingSessionInstance CurrentSession => session;
+        internal IReadOnlyList<BottleController> TestBottles => bottles;
 
         private void Start()
         {
@@ -153,6 +154,11 @@ namespace Slainte.Bartending
                 null);
             CocktailRecipeCatalog recipes = CocktailRecipeDataLoader.LoadDefault(itemCatalog);
             evaluator = new CocktailEvaluator(recipes);
+
+            LiquidStressHarness stressHarness = GetComponent<LiquidStressHarness>();
+            if (stressHarness == null)
+                stressHarness = gameObject.AddComponent<LiquidStressHarness>();
+            stressHarness.Initialize(this, session);
         }
 
         private void CreateTestBottles()

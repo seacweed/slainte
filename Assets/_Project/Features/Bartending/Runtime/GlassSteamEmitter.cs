@@ -22,6 +22,8 @@ namespace Slainte.Bartending
         private ParticleSystemRenderer steamRenderer;
         private Material runtimeMaterial;
         private Sprite smokeSprite;
+        private Sprite runtimeSmokeSprite;
+        private Texture2D runtimeSmokeTexture;
         private float startTemperatureC = 55f;
         private float stopTemperatureC = 48f;
         private float emissionRate = 5f;
@@ -31,6 +33,8 @@ namespace Slainte.Bartending
         private float lastSampleTime;
         private float emissionAccumulator;
         private bool isEmitting;
+        private bool gpuHotSurfaceAvailable;
+        private Vector2 gpuHotSurfaceWorldPosition;
         private int sourceCursor;
 
         public void Initialize(
@@ -64,7 +68,7 @@ namespace Slainte.Bartending
             nextSampleTime = now + SampleInterval;
 
             RefreshHotSurfaceParticles();
-            if (hotSurfaceParticles.Count == 0)
+            if (hotSurfaceParticles.Count == 0 && !gpuHotSurfaceAvailable)
             {
                 SetEmission(false);
                 return;
@@ -100,6 +104,26 @@ namespace Slainte.Bartending
         {
             hotSurfaceParticles.Clear();
             emissionStrength = 0f;
+            gpuHotSurfaceAvailable = false;
+
+            GpuLiquidSystem gpu = GpuLiquidSystem.Instance;
+            if (gpu != null
+                && gpu.IsOperational
+                && gpu.TryGetSnapshot(tracker, out GpuLiquidVesselSnapshot snapshot))
+            {
+                float gpuThreshold = isEmitting ? stopTemperatureC : startTemperatureC;
+                float temperatureC = useDebugTemperature
+                    ? debugTemperatureC
+                    : snapshot.SurfaceTemperatureC;
+                if (snapshot.HasSurfaceSample && temperatureC >= gpuThreshold)
+                {
+                    gpuHotSurfaceAvailable = true;
+                    gpuHotSurfaceWorldPosition = snapshot.SurfaceWorldPosition;
+                    emissionStrength = EvaluateEmissionStrength(temperatureC);
+                }
+                return;
+            }
+
             IReadOnlyCollection<LiquidParticleData> particles = tracker.Particles;
             float highestY = float.NegativeInfinity;
 
@@ -164,16 +188,25 @@ namespace Slainte.Bartending
 
         private void EmitFromNextHotParticle()
         {
-            if (hotSurfaceParticles.Count == 0)
-                return;
+            Vector3 sourceWorldPosition;
+            if (gpuHotSurfaceAvailable)
+            {
+                sourceWorldPosition = gpuHotSurfaceWorldPosition;
+            }
+            else
+            {
+                if (hotSurfaceParticles.Count == 0)
+                    return;
 
-            sourceCursor %= hotSurfaceParticles.Count;
-            LiquidParticleData source = hotSurfaceParticles[sourceCursor];
-            sourceCursor = (sourceCursor + 1) % hotSurfaceParticles.Count;
-            if (source == null)
-                return;
+                sourceCursor %= hotSurfaceParticles.Count;
+                LiquidParticleData source = hotSurfaceParticles[sourceCursor];
+                sourceCursor = (sourceCursor + 1) % hotSurfaceParticles.Count;
+                if (source == null)
+                    return;
+                sourceWorldPosition = source.transform.position;
+            }
 
-            Vector3 localPosition = transform.InverseTransformPoint(source.transform.position);
+            Vector3 localPosition = transform.InverseTransformPoint(sourceWorldPosition);
             float horizontalJitter = emissionHalfWidth * 0.06f;
             localPosition.x = Mathf.Clamp(
                 localPosition.x + Random.Range(-horizontalJitter, horizontalJitter),
@@ -310,6 +343,62 @@ namespace Slainte.Bartending
                 };
                 steamRenderer.sharedMaterial = runtimeMaterial;
             }
+
+            EnsureFallbackSmokeSprite();
+        }
+
+        private void EnsureFallbackSmokeSprite()
+        {
+            if (steam == null || smokeSprite != null)
+                return;
+
+            const int size = 32;
+            runtimeSmokeTexture = new Texture2D(
+                size,
+                size,
+                TextureFormat.RGBA32,
+                false,
+                true)
+            {
+                name = "실행 중 생성된 연기 텍스처",
+                filterMode = FilterMode.Bilinear,
+                wrapMode = TextureWrapMode.Clamp,
+                hideFlags = HideFlags.DontSave
+            };
+            Color[] pixels = new Color[size * size];
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    Vector2 point = new Vector2(
+                        (x + 0.5f) / size * 2f - 1f,
+                        (y + 0.5f) / size * 2f - 1f);
+                    float alpha = Mathf.SmoothStep(1f, 0f, point.sqrMagnitude);
+                    pixels[y * size + x] = new Color(1f, 1f, 1f, alpha);
+                }
+            }
+            runtimeSmokeTexture.SetPixels(pixels);
+            runtimeSmokeTexture.Apply(false, true);
+            runtimeSmokeSprite = Sprite.Create(
+                runtimeSmokeTexture,
+                new Rect(0f, 0f, size, size),
+                new Vector2(0.5f, 0.5f),
+                size);
+            runtimeSmokeSprite.name = "실행 중 생성된 연기 스프라이트";
+            smokeSprite = runtimeSmokeSprite;
+
+            ParticleSystem.TextureSheetAnimationModule animation = steam.textureSheetAnimation;
+            animation.enabled = true;
+            animation.mode = ParticleSystemAnimationMode.Sprites;
+            animation.AddSprite(smokeSprite);
+            if (runtimeMaterial != null)
+            {
+                runtimeMaterial.mainTexture = runtimeSmokeTexture;
+                if (runtimeMaterial.HasProperty("_BaseMap"))
+                    runtimeMaterial.SetTexture("_BaseMap", runtimeSmokeTexture);
+                if (runtimeMaterial.HasProperty("_MainTex"))
+                    runtimeMaterial.SetTexture("_MainTex", runtimeSmokeTexture);
+            }
         }
 
         private void SetEmission(bool enabled)
@@ -339,6 +428,10 @@ namespace Slainte.Bartending
         {
             if (runtimeMaterial != null)
                 Destroy(runtimeMaterial);
+            if (runtimeSmokeSprite != null)
+                Destroy(runtimeSmokeSprite);
+            if (runtimeSmokeTexture != null)
+                Destroy(runtimeSmokeTexture);
         }
     }
 }

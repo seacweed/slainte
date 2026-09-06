@@ -147,6 +147,17 @@ namespace Slainte.Bartending
 
         private void DrawParticles()
         {
+            GpuLiquidSystem gpuSystem = GpuLiquidSystem.Instance;
+            if (gpuSystem != null
+                && gpuSystem.TryGetRenderResources(
+                    out Material gpuMaterial,
+                    out MaterialPropertyBlock gpuProperties,
+                    out int gpuInstanceCount))
+            {
+                DrawGpuParticles(gpuMaterial, gpuProperties, gpuInstanceCount);
+                return;
+            }
+
             HashSet<LiquidParticleData> particles = VesselLiquidTracker.ActiveParticles;
             int batchCount = 0;
             foreach (LiquidParticleData particle in particles)
@@ -182,6 +193,62 @@ namespace Slainte.Bartending
             }
 
             FlushBatch(batchCount);
+        }
+
+        private void DrawGpuParticles(
+            Material material,
+            MaterialPropertyBlock properties,
+            int instanceCount)
+        {
+            if (material == null || instanceCount <= 0)
+                return;
+
+            if (UseSinglePassMrt)
+            {
+                commandBuffer.SetRenderTarget(
+                    accumulationTargets,
+                    BuiltinRenderTextureType.None);
+                commandBuffer.DrawProcedural(
+                    Matrix4x4.identity,
+                    material,
+                    MrtPass,
+                    MeshTopology.Triangles,
+                    6,
+                    instanceCount,
+                    properties);
+            }
+            else
+            {
+                commandBuffer.SetRenderTarget(densityTexture);
+                commandBuffer.DrawProcedural(
+                    Matrix4x4.identity,
+                    material,
+                    DensityFallbackPass,
+                    MeshTopology.Triangles,
+                    6,
+                    instanceCount,
+                    properties);
+
+                commandBuffer.SetRenderTarget(colorTexture);
+                commandBuffer.DrawProcedural(
+                    Matrix4x4.identity,
+                    material,
+                    ColorFallbackPass,
+                    MeshTopology.Triangles,
+                    6,
+                    instanceCount,
+                    properties);
+            }
+
+            commandBuffer.SetRenderTarget(shapeTexture);
+            commandBuffer.DrawProcedural(
+                Matrix4x4.identity,
+                material,
+                MaximumCoveragePass,
+                MeshTopology.Triangles,
+                6,
+                instanceCount,
+                properties);
         }
 
         private static Vector4 ConvertToShaderColor(Color color)

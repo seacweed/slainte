@@ -31,27 +31,28 @@
 
 ### 액체 시스템의 정확한 기술적 정의
 
-현재 액체는 **Unity Physics2D의 동적 Rigidbody2D 입자를 이용한 CPU 기반 2D 액체 근사 시스템**이다.
+현재 액체는 공통 `ILiquidSimulationBackend` 계약 아래 두 구현을 선택하는 구조다.
 
-- 각 액체 입자는 Rigidbody2D와 Collider2D를 가진다.
-- Unity Physics2D가 위치, 속도, 중력, 충돌을 계산한다.
-- 입자별로 재료 구성, 부피, 온도, 제조 기법 데이터를 보유한다.
-- 자체 SPH, PBF, 격자 기반 유체 해석이나 Compute Shader는 사용하지 않는다.
-- 실제 `BusinessScene`의 액체는 전용 카메라에서 RenderTexture로 렌더링되어 UI에 표시된다.
-- Shader Graph 기반 메타볼 렌더링은 `Sample_Scene`의 시각화 실험이며 현재 영업 플레이 경로와는 분리되어 있다.
+- `LegacyRigidbody2D`: Rigidbody2D·Collider2D·`LiquidPool`을 사용하는 기존 CPU 기반 2D 입자 근사 시스템.
+- `GpuPbfXpbd`: Compute Shader에서 공간 격자, 밀도·lambda, 위치 보정, 속도 및 조성 혼합을 계산하는 별도 GPU PBF/XPBD 시스템.
+- `Automatic`: GPU 실행 조건을 만족하면 GPU를 사용하고, 지원 또는 초기화 조건이 맞지 않으면 레거시로 폴백한다.
+- 레거시 입자는 `LiquidPayload`, GPU 입자는 GPU composition buffer에 재료 구성·부피·온도·제조 기법 상태를 보관하고, 둘 다 `CocktailComposition`으로 합산해 주문 판정에 사용한다.
+- 레거시는 기존 입자 프리팹의 `2 ml`, GPU는 독립 설정인 `gpuLiquidParticleVolumeMl`의 `0.5 ml`를 기본값으로 사용한다.
+- 모드는 `BusinessBartendingSettings.asset`에서 선택하며, 변경 후 바텐딩 세션 또는 씬을 다시 시작해야 한다. 실행 중 핫스왑은 지원하지 않는다.
+- 레거시 풀링·재활용 최적화와 GPU PBF/XPBD 구현은 별개의 기여 범위다.
 
 ## 2. 본인 역할
 
 사용자가 직접 확인한 역할은 다음 두 가지다.
 
-- **액체 물리 구현 담당**
+- **GPU PBF/XPBD 액체 백엔드 및 공용 바텐딩 통합 담당**
 - **게임 클라이언트 개발 담당**
 
 외부 포트폴리오에서는 다음과 같이 표현할 수 있다.
 
-> Physics2D 기반 입자 액체의 생성·혼합·용기 상호작용과, 해당 결과를 주문 판정 및 영업 흐름에 연결하는 게임 클라이언트 개발을 담당했습니다.
+> Compute Shader 기반 GPU PBF/XPBD 액체 백엔드를 구현하고, 기존 Physics2D 액체와 선택 가능한 구조로 병 따르기·용기·혼합·주문 판정 흐름에 통합했습니다.
 
-단, 코드만으로는 각 파일과 함수의 최종 작성자를 확인할 수 없다. 따라서 개인 구현 범위를 공개할 때는 본인이 실제 담당한 파일과 기능을 다시 확인해야 한다. 프로젝트 전체 구조, 모든 UI, 모든 데이터 및 모든 에디터 도구를 혼자 구현했다고 표현해서는 안 된다.
+레거시 `LiquidPool`의 풀링·재활용·혼합 최적화는 팀원 기여로 분리한다. 개인 구현 범위를 공개할 때는 GPU 백엔드와 공용 통합 변경만 본인 범위로 설명하고, 프로젝트 전체 구조나 모든 바텐딩 코드를 혼자 구현했다고 표현해서는 안 된다.
 
 ## 3. 핵심 구현 3개
 
@@ -182,15 +183,15 @@
 | 엔진 | Unity 6000.3.5f2 | 2D 게임 클라이언트 및 씬 구성 |
 | 언어 | C# | 게임플레이, 물리 상호작용, UI, 상태 및 데이터 처리 |
 | 렌더 파이프라인 | URP 17.3.0, 2D Renderer | 2D 월드와 UI 렌더링 |
-| 물리 | Unity Physics2D | Rigidbody2D 입자, 용기 Collider, 충돌 및 이동 |
-| 액체 표현 | CPU 기반 2D 입자 근사 | 입자 위치는 Physics2D, 혼합 상태는 커스텀 Payload로 처리 |
+| 물리 | Unity Physics2D + GPU Compute Shader | 레거시 Rigidbody2D 입자와 GPU PBF/XPBD 백엔드를 선택 가능하게 구성 |
+| 액체 표현 | 레거시 메타볼 + GPU accumulation | 레거시 입자 렌더링과 GPU 버퍼 기반 렌더링을 백엔드별로 처리 |
 | UI | uGUI, TextMeshPro | 주문표, 레시피, 선반, 피드백 등 |
 | 입력 | Legacy Input + Input System 일부 | 마우스 선택, 드래그, 커서 잠금, 기울기 조작 |
 | 화면 합성 | Camera, RenderTexture, RawImage | UI 내부에 별도 물리 월드 표시 |
 | 데이터 | ScriptableObject, CSV | 아이템과 칵테일 레시피 데이터 |
 | 저장 | JSON | 날짜, 자금, 평판, 인벤토리, 에피소드 상태 등 |
-| 시각 실험 | Shader Graph | `Sample_Scene`의 메타볼 임계값 표현 |
-| 개발 도구 | Custom Editor Validator | 바텐딩, 얼음, 영업 통합 규칙 검증 |
+| GPU 액체 | HLSL Compute Shader | 공간 격자, PBF/XPBD 제약 계산, 조성 혼합과 색상 갱신 |
+| 개발 도구 | Custom Editor Validator, `LiquidStressHarness` | GPU 구성 검증과 입자 부하·p95/p99 프레임 시간 계측 |
 
 ## 6. 추천 코드 발췌
 
@@ -331,25 +332,27 @@ result.score = Mathf.Clamp01(
 - 중앙의 RenderTexture 기반 바텐딩 영역과 주변 UI를 한 화면에 담는다.
 - 가능하다면 서로 다른 화면 비율에서도 조작이 유지되는 모습을 비교한다.
 
-### 7.6 선택 자료: 메타볼 시각화 실험
+### 7.6 레거시/GPU 백엔드 비교
 
-- `Sample_Scene`에서 원본 입자 화면과 Shader Graph 적용 화면을 비교한다.
-- 반드시 **“최종 영업 화면과 분리된 시각화 프로토타입”**이라고 표기한다.
-- 현재 BusinessScene의 실제 렌더링이라고 설명해서는 안 된다.
+- 같은 재료·용기·목표 부피 조건에서 `LegacyRigidbody2D`와 `GpuPbfXpbd`를 각각 실행한다.
+- 설정 변경 후 바텐딩 세션 또는 씬을 재시작하고, 실제 활성 백엔드를 로그나 런타임 컴포넌트로 확인한다.
+- 화면에는 백엔드 이름, 활성 입자 수, p95/p99 프레임 시간을 함께 표시한다.
+- `Sample_Scene`의 Shader Graph 비교는 레거시 메타볼 개발 과정 자료로만 별도 표기한다.
+- 두 모드의 성능 우열은 같은 하드웨어에서 측정한 수치가 있을 때만 설명한다.
 
 ## 8. 외부 제작 시 사실 경계
 
-다음 표현은 현재 코드 근거만으로 사용할 수 없다.
+현재 작업 트리의 코드 근거로 `GPU Compute Shader 기반 PBF/XPBD 액체 백엔드`라고 설명할 수 있다.
+다만 다음 표현은 사용할 수 없다.
 
-- GPU 유체 시뮬레이션
-- Compute Shader 기반 액체
-- 자체 SPH 또는 PBF 유체 솔버
+- 레거시 풀링·재활용 최적화를 GPU 백엔드 구현자의 단독 기여로 설명
+- GPU와 레거시를 포함한 전체 액체 시스템의 단독 구현
 - 프로젝트 전체 단독 개발
 - 모든 바텐딩 관련 파일의 단독 구현
 - 특정 FPS, 입자 수, 메모리 절감률 등 측정하지 않은 성능 수치
-- 메타볼 Shader Graph가 현재 BusinessScene에서 사용된다는 설명
+- 정적 빌드 성공만으로 실제 대상 기기 플레이모드와 성능까지 검증됐다는 설명
 - 개발 기간, 팀 규모, 수상, 출시 및 사용자 성과
 
 권장 포지셔닝은 다음과 같다.
 
-> **Physics2D 기반 입자 액체의 상호작용과 조성 데이터를 구현하고, 이를 주문 판정과 영업 진행으로 연결한 게임 클라이언트 프로젝트**
+> **기존 Physics2D 액체를 보존하면서 Compute Shader 기반 GPU PBF/XPBD 백엔드를 별도로 구현하고, 두 방식을 공통 바텐딩·주문 판정 흐름에 연결한 게임 클라이언트 프로젝트**

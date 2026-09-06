@@ -58,8 +58,25 @@ namespace Slainte.Bartending
         [Min(0.01f)] public float pourMlPerSecond = 20f;
         [Tooltip("Safety limit for catch-up emission after a slow frame.")]
         [SerializeField, Min(1)] private int maxParticlesPerFrame = 8;
+        [Tooltip("Bottle angle at which liquid starts leaving the mouth.")]
+        [SerializeField, Range(45f, 120f)] private float pourStartAngle = 90f;
+        [Tooltip("Bottle angle at which the configured ml/s and exit speed are fully reached.")]
+        [SerializeField, Range(90f, 180f)] private float fullPourAngle = 120f;
+        [Tooltip("Fraction of the configured flow emitted immediately after the pour angle is crossed.")]
+        [SerializeField, Range(0.1f, 1f)] private float minimumPourFlowFactor = 0.65f;
+        [Tooltip("Initial liquid speed along the bottle mouth direction, in world units per second.")]
+        [SerializeField, Min(0f)] private float pourExitSpeed = 2.4f;
+        [Tooltip("How much of the moving bottle mouth velocity is inherited by emitted liquid.")]
+        [SerializeField, Range(0f, 1f)] private float mouthVelocityInheritance;
+        [Tooltip("Maximum inherited bottle-mouth speed, preventing teleports from launching liquid.")]
+        [SerializeField, Min(0f)] private float maximumInheritedMouthSpeed = 3f;
+        [Tooltip("Half-width of the liquid nozzle. Jitter is applied perpendicular to the exit direction.")]
+        [SerializeField, Min(0f)] private float pourSpawnHalfWidth;
         private float pourTimer = 0f;
         private float? initialCapacityOverride;
+        private Vector2 previousLiquidSpawnPosition;
+        private Vector2 liquidMouthVelocity;
+        private bool hasLiquidMouthSample;
 
         public float CurrentCapacity => currentCapacity;
         public BottleRotationPivotMode RotationPivotMode => rotationPivotMode;
@@ -135,6 +152,7 @@ namespace Slainte.Bartending
             originalSortingOrder = spriteRenderer.sortingOrder;
 
             ApplyBottleData();
+            ResetLiquidMouthKinematics();
             interactionOrder = BartendingItemOrder.Attach(gameObject, col);
         }
 
@@ -176,6 +194,7 @@ namespace Slainte.Bartending
                 spriteRenderer.sprite = visualSprite;
 
             ApplyBottleGeometryOverride();
+            ResetLiquidMouthKinematics();
 
             maxCapacity = bottleData.capacityMl;
             currentCapacity = initialCapacityOverride.HasValue
@@ -290,6 +309,7 @@ namespace Slainte.Bartending
             bool synchronizingPointer = UpdatePointerSynchronization();
             if (!synchronizingPointer)
                 HandleInput();
+            UpdateLiquidMouthKinematics();
             HandlePouring();
         }
 
@@ -311,6 +331,7 @@ namespace Slainte.Bartending
                 return;
 
             viewTransitionSuspended = false;
+            ResetLiquidMouthKinematics();
             if (!IsPickedUp)
                 return;
 
@@ -359,20 +380,22 @@ namespace Slainte.Bartending
         private void OnDisable()
         {
             CancelPointerSynchronization();
+            ResetLiquidMouthKinematics();
             BartendingPointerAnchor.Release(this);
             BartendingSelection.Release(this);
         }
 
         private void HandlePouring()
         {
-            if (Mathf.Abs(currentAngle) < 90f || currentCapacity <= 0f)
+            float flowFactor = CalculatePourFlowFactor();
+            if (flowFactor <= 0f || currentCapacity <= 0f)
             {
                 pourTimer = 0f;
                 return;
             }
 
-            LiquidPool pool = LiquidPool.Instance;
-            if (pool == null)
+            ILiquidSimulationBackend backend = LiquidSimulationRuntime.ActiveBackend;
+            if (backend == null || !backend.IsOperational)
             {
                 pourTimer = 0f;
                 return;
@@ -381,16 +404,18 @@ namespace Slainte.Bartending
             pourTimer += Time.deltaTime;
             int emittedParticleCount = 0;
             int emissionLimit = Mathf.Max(1, maxParticlesPerFrame);
-            float mlPerSecond = Mathf.Max(0.01f, pourMlPerSecond);
+            float mlPerSecond = Mathf.Max(0.01f, pourMlPerSecond * flowFactor);
 
             while (currentCapacity > 0f && emittedParticleCount < emissionLimit)
             {
-                float volumeMl = Mathf.Min(pool.DefaultParticleVolumeMl, currentCapacity);
+                float volumeMl = Mathf.Min(backend.DefaultParticleVolumeMl, currentCapacity);
                 float emissionInterval = volumeMl / mlPerSecond;
                 if (pourTimer < emissionInterval)
                     break;
 
-                if (!TrySpawnLiquid(volumeMl))
+                if (!TrySpawnLiquid(
+                    volumeMl,
+                    emittedParticleCount * emissionInterval))
                 {
                     pourTimer = Mathf.Min(pourTimer, emissionInterval);
                     break;
@@ -401,10 +426,15 @@ namespace Slainte.Bartending
             }
         }
 
-        private bool TrySpawnLiquid(float requestedVolumeMl)
+        private bool TrySpawnLiquid(
+            float requestedVolumeMl,
+            float streamOffsetSeconds)
         {
-            LiquidPool pool = LiquidPool.Instance;
-            if (pool == null || requestedVolumeMl <= 0f || currentCapacity <= 0f)
+            ILiquidSimulationBackend backend = LiquidSimulationRuntime.ActiveBackend;
+            if (backend == null
+                || !backend.IsOperational
+                || requestedVolumeMl <= 0f
+                || currentCapacity <= 0f)
                 return false;
 
             if (liquidSpawnPoint == null)
@@ -412,21 +442,140 @@ namespace Slainte.Bartending
                 Debug.LogWarning("⚠️ Liquid Spawn Point가 인스펙터에 할당되지 않았습니다! 병의 중심(몸체)에서 스폰됩니다.");
             }
 
-            Vector3 spawnPos = liquidSpawnPoint != null ? liquidSpawnPoint.position : transform.position;
-            Vector3 randomOffset = new Vector3(Random.Range(-0.1f, 0.1f), 0, 0);
+            Vector2 spawnPosition = liquidSpawnPoint != null
+                ? liquidSpawnPoint.position
+                : transform.position;
+            Vector2 exitDirection = CalculateLiquidExitDirection(spawnPosition);
+            Vector2 randomOffset = Vector2.zero;
+            if (pourSpawnHalfWidth > 0f)
+            {
+                Vector2 nozzleDirection = Vector2.Perpendicular(exitDirection);
+                randomOffset = nozzleDirection
+                    * Random.Range(-pourSpawnHalfWidth, pourSpawnHalfWidth);
+            }
+            float flowFactor = Mathf.Max(minimumPourFlowFactor, CalculatePourFlowFactor());
+            Vector2 inheritedMouthVelocity = Vector2.ClampMagnitude(
+                liquidMouthVelocity,
+                Mathf.Max(0f, maximumInheritedMouthSpeed));
+            Vector2 initialVelocity = exitDirection
+                * Mathf.Max(0f, pourExitSpeed)
+                * Mathf.Lerp(0.72f, 1f, flowFactor)
+                + inheritedMouthVelocity * Mathf.Clamp01(mouthVelocityInheritance);
+            Vector2 streamOffset = initialVelocity
+                * Mathf.Max(0f, streamOffsetSeconds);
 
             float volumeMl = Mathf.Min(requestedVolumeMl, currentCapacity);
-            GameObject obj = pool.GetParticle(
-                spawnPos + randomOffset,
-                bottleData,
-                volumeMl);
-            if (obj == null)
+            if (!backend.TryEmit(
+                    spawnPosition + randomOffset + streamOffset,
+                    initialVelocity,
+                    bottleData,
+                    volumeMl))
                 return false;
 
             currentCapacity = Mathf.Max(0f, currentCapacity - volumeMl);
             initialCapacityOverride = currentCapacity;
             CapacityChanged?.Invoke(this, currentCapacity);
             return true;
+        }
+
+        private float CalculatePourFlowFactor()
+        {
+            float absoluteAngle = Mathf.Abs(currentAngle);
+            float startAngle = Mathf.Clamp(pourStartAngle, 45f, 120f);
+            if (absoluteAngle < startAngle)
+                return 0f;
+
+            float endAngle = Mathf.Max(startAngle + 0.1f, fullPourAngle);
+            float angleProgress = Mathf.InverseLerp(startAngle, endAngle, absoluteAngle);
+            return Mathf.Lerp(
+                Mathf.Clamp(minimumPourFlowFactor, 0.1f, 1f),
+                1f,
+                angleProgress);
+        }
+
+        private Vector2 CalculateLiquidExitDirection(Vector2 spawnPosition)
+        {
+            Vector2 bottleCenter = spriteRenderer != null && spriteRenderer.sprite != null
+                ? spriteRenderer.bounds.center
+                : (Vector2)transform.position;
+            Vector2 direction = spawnPosition - bottleCenter;
+            if (direction.sqrMagnitude <= 0.000001f)
+                direction = transform.up;
+            return direction.normalized;
+        }
+
+        private void UpdateLiquidMouthKinematics()
+        {
+            Vector2 currentPosition = liquidSpawnPoint != null
+                ? liquidSpawnPoint.position
+                : transform.position;
+            if (!hasLiquidMouthSample)
+            {
+                previousLiquidSpawnPosition = currentPosition;
+                liquidMouthVelocity = Vector2.zero;
+                hasLiquidMouthSample = true;
+                return;
+            }
+
+            float deltaTime = Mathf.Max(Time.deltaTime, 0.0001f);
+            liquidMouthVelocity = (currentPosition - previousLiquidSpawnPosition)
+                / deltaTime;
+            previousLiquidSpawnPosition = currentPosition;
+        }
+
+        private void ResetLiquidMouthKinematics()
+        {
+            previousLiquidSpawnPosition = liquidSpawnPoint != null
+                ? liquidSpawnPoint.position
+                : transform.position;
+            liquidMouthVelocity = Vector2.zero;
+            hasLiquidMouthSample = true;
+        }
+
+        internal void SetStressTestPourPose(Vector2 desiredMouthPosition, float angle)
+        {
+            ReleaseBottle();
+            Rigidbody2D body = GetComponent<Rigidbody2D>();
+            if (body != null)
+            {
+                body.position = transform.position;
+                body.rotation = 0f;
+                body.linearVelocity = Vector2.zero;
+                body.angularVelocity = 0f;
+            }
+            else
+            {
+                transform.rotation = Quaternion.identity;
+            }
+
+            currentAngle = 0f;
+            hasRotationPivotAnchor = false;
+            ApplyRotationAroundConfiguredPivot(Mathf.Clamp(angle, -maxTiltAngle, maxTiltAngle));
+            if (body != null)
+            {
+                transform.SetPositionAndRotation(
+                    body.position,
+                    Quaternion.Euler(0f, 0f, body.rotation));
+            }
+            Physics2D.SyncTransforms();
+
+            Vector2 currentMouthPosition = liquidSpawnPoint != null
+                ? liquidSpawnPoint.position
+                : transform.position;
+            Vector2 correction = desiredMouthPosition - currentMouthPosition;
+            transform.position += (Vector3)correction;
+            if (body != null)
+                body.position = transform.position;
+            Physics2D.SyncTransforms();
+
+            ResetLiquidMouthKinematics();
+        }
+
+        internal Vector2 GetStressTestMouthPosition()
+        {
+            return liquidSpawnPoint != null
+                ? liquidSpawnPoint.position
+                : transform.position;
         }
 
         private void HandleInput()
