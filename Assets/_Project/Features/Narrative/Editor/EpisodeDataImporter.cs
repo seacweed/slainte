@@ -7,6 +7,10 @@ using UnityEngine;
 
 namespace NarrativeFlow.Editor
 {
+    // EpisodeData(CSV로 컴파일된 런타임 데이터)를 NarrativeGraphSO 그래프 자산으로 역변환한다 —
+    // EpisodeDataCompiler(그래프→런타임)의 반대 방향. 노드는 firstNodeId부터 BFS 순서로 배치해
+    // 대략 실행 순서대로 격자에 늘어놓고, 분기 텍스트(BuildBranches)와 그 분기가 연결하는
+    // 엣지(Import 본문의 AddEdge 호출)는 반드시 같은 순서로 나열해야 포트 인덱스가 서로 맞는다.
     public static class EpisodeDataImporter
     {
         [MenuItem("Narrative/Import EpisodeData to Graph")]
@@ -102,6 +106,8 @@ namespace NarrativeFlow.Editor
                 else
                 {
                     // Flag/episode/var branches each get a port, nextNodeId gets the last port ("Next").
+                    // 이 순서(flag → episode → var → next)는 BuildBranches()가 생성하는 라벨 순서와
+                    // 반드시 일치해야 포트 인덱스가 어긋나지 않는다.
                     int port = 0;
                     foreach (var fb in rNode.flagBranches)
                         AddEdge(graph, srcEp, fb.nextNodeId, nodeViews, port++);

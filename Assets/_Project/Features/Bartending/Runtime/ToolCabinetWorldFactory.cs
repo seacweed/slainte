@@ -2,6 +2,8 @@ using UnityEngine;
 
 namespace Slainte.Bartending
 {
+    // ToolDef/GlassDef 정의로부터 도구장 인스턴스(지거/셰이커/바스푼/얼음통/글라스)를 생성하는 정적 팩토리.
+    // 도구 종류(ToolKind)별로 분기해 프리팹 생성 후 시각 레이어·충돌 지오메트리를 구성한다.
     public static class ToolCabinetWorldFactory
     {
         private static readonly int[] JiggerOrders = { 10, 13 };
@@ -247,6 +249,8 @@ namespace Slainte.Bartending
                 renderer.sortingOrder = i < sortingOrders.Length
                     ? sortingOrders[i]
                     : 10 + i;
+                // 셰이커의 몸통 레이어(0, 2)만 반투명하게 낮춰 스트레이너/캡이 분리되기 전에도
+                // 내용물(액체·얼음)이 몸통 너머로 비쳐 보이게 한다.
                 if (markShakerLayers && (i == 0 || i == 2))
                     renderer.color = new Color(1f, 1f, 1f, 0.65f);
 
@@ -273,6 +277,9 @@ namespace Slainte.Bartending
         }
     }
 
+    // 지거(계량컵)의 고정 용량(30ml) 판정을 담당. 스프라이트 기반 충돌 프로파일로부터
+    // 내용물 트리거·용량 스톱 콜라이더 위치를 계산해 배치하고, 30ml를 채우면 물리적으로
+    // 더 못 따르도록 capacityStop 콜라이더를 활성화한다(RefreshCapacityStop).
     [DisallowMultipleComponent]
     public sealed class JiggerMeasureController : MonoBehaviour
     {
@@ -307,6 +314,9 @@ namespace Slainte.Bartending
             if (beaker == null)
                 return;
 
+            // 충돌 프로파일이 정의하는 외곽선은 스프라이트 로컬 좌표계 기준이므로,
+            // 비주얼 레이어 → 월드 → 지거 루트 순으로 변환해 BeakerController가 쓸 수 있는
+            // 루트 기준 좌표로 맞춘다.
             Vector2[] spritePoints = profile.BuildEdgePath(visual.sprite);
             Vector2[] rootPoints = new Vector2[spritePoints.Length];
             for (int i = 0; i < spritePoints.Length; i++)
@@ -458,6 +468,8 @@ namespace Slainte.Bartending
                     return;
             }
 
+            // 손에 들려 있는 동안은 스톱을 닫지 않는다 — 붓는 중에는 콜라이더가 액체 흐름을
+            // 막아서는 안 되고, 내려놓인 뒤 용량에 도달했을 때만 물리적으로 막는다.
             float volumeMl = tracker != null
                 ? tracker.BuildComposition().TotalVolumeMl
                 : 0f;
@@ -541,6 +553,10 @@ namespace Slainte.Bartending
         }
     }
 
+    // 코블러 셰이커의 스트레이너/캡 부착 상태를 관리하는 조립체 컨트롤러.
+    // 두 부품은 클릭하면 ShakerPartController로 분리(detach)되어 독립적으로 집어 옮길 수 있고,
+    // 원래 자리 근처로 되돌리면(TryAttachPart) 다시 셰이커에 부착된다. 캡은 스트레이너가
+    // 먼저 부착돼 있어야만(또는 손에 든 스트레이너를 따라가는 중이어야만) 부착 가능하다.
     [DisallowMultipleComponent]
     public sealed class CobblerShakerPresentation : MonoBehaviour
     {
@@ -657,6 +673,8 @@ namespace Slainte.Bartending
             {
                 return false;
             }
+            // 스트레이너가 아직 셰이커에 없으면, 캡은 셰이커가 아니라 (내려놓여 있는) 스트레이너
+            // 자체에 부착시킨다 — 두 부품을 함께 든 채로 나중에 한 번에 셰이커에 부착하게 하기 위함.
             if (part.Role == ShakerVisualRole.Cap && !IsStrainerAttached)
             {
                 if (strainerPart == null
@@ -787,6 +805,10 @@ namespace Slainte.Bartending
         }
     }
 
+    // 셰이커에서 분리 가능한 부품(스트레이너/캡) 하나를 나타낸다. 두 가지 모드로 동작:
+    // attached=true일 때는 셰이커의 자식으로 고정된 시각 레이어일 뿐이고(포인터 입력 없음),
+    // DetachAndPickUp()으로 분리되면 attached=false가 되어 자체 Rigidbody2D/콜라이더를 얻고
+    // IBartendingItem처럼 집어서 슬롯에 놓거나 다시 셰이커/캐리어에 부착할 수 있게 된다.
     [DisallowMultipleComponent]
     public sealed class ShakerPartController : MonoBehaviour,
         IBartendingItem,
@@ -1209,6 +1231,7 @@ namespace Slainte.Bartending
             return Mathf.Abs(parent) > 0.0001f ? world / parent : world;
         }
 
+        // 상호작용 사각형 크기에 비례한 허용 오차 — 부품 크기가 클수록 더 널널하게 스냅되도록 한다.
         private float GetLocalAttachmentTolerance()
         {
             return Mathf.Max(

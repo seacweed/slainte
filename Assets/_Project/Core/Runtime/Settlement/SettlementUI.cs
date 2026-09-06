@@ -128,6 +128,8 @@ public class SettlementUI : MonoBehaviour
         _waitingForInput = true;
     }
 
+    // 값이 0인 항목(판매/팁/실수/배송 등)은 아예 스텝 목록에서 빼서, 정산 결과에 없는
+    // 줄을 빈 값으로 보여주지 않는다. 헤더 2줄과 소득 합계/구분선/보유 자산 3줄은 항상 포함.
     private List<Action> BuildRevealSteps(SettlementData data)
     {
         List<Action> steps = new()
@@ -177,6 +179,8 @@ public class SettlementUI : MonoBehaviour
         return value > 0 ? $"+{value:N0}" : value.ToString("N0");
     }
 
+    // 스텝을 lineRevealInterval 간격으로 하나씩 실행하되, 대기 중 클릭/스페이스가 들어오면
+    // 남은 스텝을 전부 즉시 실행해 스킵한다.
     private IEnumerator RevealSteps(List<Action> steps)
     {
         for (int i = 0; i < steps.Count; i++)

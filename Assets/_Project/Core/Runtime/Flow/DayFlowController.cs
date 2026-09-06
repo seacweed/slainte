@@ -13,6 +13,9 @@ public class DayFlowController : MonoSingleton<DayFlowController>
 
     [SerializeField] private string endingEpisodeId; // '지구로' 에피소드의 episodeId. Inspector에서 설정.
 
+    // 지금 막 StartEpisode()로 시작시키는 필수 에피소드가 끝난 뒤 무엇을 할지 미리 정해둔다
+    // (BeforeBusiness 에피소드는 GoToBusiness, 그 외/기본 에피소드는 GoToSettlement).
+    // OnEpisodeCompleted()가 소비하자마자 기본값으로 리셋한다.
     private PendingStep _afterEpisode = PendingStep.GoToSettlement;
     private string _pendingSettlementCutsceneId;
 

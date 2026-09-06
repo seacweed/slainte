@@ -26,7 +26,7 @@ CoreScene
 ├── DataManager
 ├── AudioManager
 └── 런타임 생성 가능
-    ├── DayFlowManager
+    ├── DayFlowController
     └── GameProgress
 ```
 
@@ -85,7 +85,7 @@ BusinessFlow (런타임)
 ├── BusinessFlowBootstrap
 ├── BusinessOrderSessionController
 ├── BusinessOrderSessionUI
-└── BusinessSequenceRunner
+└── BusinessShiftController
 ```
 
 씬에서 `GameModeManager`, `CustomerSpawner`, `DialogueController`, `OrderTicketManager`, `BusinessBartendingBootstrap`, 루트 Canvas를 찾아 연결한다.

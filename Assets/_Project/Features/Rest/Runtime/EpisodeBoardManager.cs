@@ -5,6 +5,10 @@ using TMPro;
 using UnityEngine.UI;
 
 // BaseUIManager를 상속받아 열기/닫기 슬라이드 애니메이션을 그대로 사용합니다.
+// RefreshBoard()가 노출 가능한 기본 에피소드를 6개 고정 슬롯에 배치(자리는 GameProgress에
+// 저장되어 재방문해도 유지)하고, 사진을 클릭하면 PinEpisode()가 선택 상태로 표시하며,
+// 시작 버튼(OnStartButtonClicked)은 선택된 에피소드가 있으면 그것을, 없으면(기본값) 영업을
+// 시작한다. 필수 에피소드 게이트가 걸려 있으면 기본 에피소드 선택만 막고 영업은 항상 허용한다.
 public class EpisodeBoardManager : BaseUIManager
 {
     [Header("Board Animation")]

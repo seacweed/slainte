@@ -6,6 +6,9 @@ using Slainte.Bartending;
 using UnityEngine;
 using UnityEngine.UI;
 
+// 술장 서랍 패널. 카테고리별 병 슬롯 표시/전환과, 같은 서랍 공간을 재사용하는 배송 상점 화면
+// 전환(TryOpenDelivery/EndDeliverySession)을 함께 관리한다. 재고(잔량)는 GameProgress에 저장된
+// 값을 슬롯이 공유하므로 상점과 술장이 자동으로 동기화된다(CLAUDE.md 상점/술장 데이터 공유 참고).
 public class LiquorShelfUI : MonoBehaviour
 {
     public static LiquorShelfUI Active { get; private set; }
@@ -102,6 +105,8 @@ public class LiquorShelfUI : MonoBehaviour
         LiquorShelfUI shelf = Active;
         if (shelf == null)
             return false;
+        // 같은 프레임에 여러 경로(다른 입력 핸들러 등)에서 반납 판정이 중복 호출될 수 있어,
+        // 이번 프레임에 이미 처리했으면 재실행 없이 성공만 알린다.
         if (shelf._bottleReturnFrame == Time.frameCount)
             return true;
         if (!shelf.ContainsReturnPoint(screenPosition))
@@ -178,6 +183,10 @@ public class LiquorShelfUI : MonoBehaviour
         }
     }
 
+    // 단축키/버튼으로 서랍 전체를 여닫을 때 쓰는 진입점. 배송 화면이 열려 있던 상태였다면
+    // Close()/OpenCategory()가 하는 셔터 연출·세션 종료를 다시 타지 않고, 패널만 슬라이드해서
+    // 배송 상태를 그대로 유지한 채 감췄다 되돌린다 — 그래야 서랍을 살짝 닫았다 열어도
+    // 장바구니·스크롤 위치 등 배송 화면 상태가 보존된다.
     public void Toggle()
     {
         if (!_interactable) return;
@@ -455,6 +464,9 @@ public class LiquorShelfUI : MonoBehaviour
         shutter?.ResetImmediate();
         if (closeButton != null) closeButton.gameObject.SetActive(true);
 
+        // 배송 캐릭터의 Hide() 애니메이션이 끝나야 세션을 완전히 닫는데, 그 사이 세션이 다시
+        // 열렸다 닫히는 등 EndDeliverySession이 재호출되면 버전 번호가 바뀐다. 콜백 시점에 버전이
+        // 달라져 있으면 이미 낡은 콜백이므로 최신 상태를 덮어쓰지 않고 무시한다.
         int transitionVersion = ++_deliveryTransitionVersion;
         if (_deliveryCharacter == null)
         {

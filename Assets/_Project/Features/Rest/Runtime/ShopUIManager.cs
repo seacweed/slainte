@@ -5,6 +5,11 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+// 일반 상점/이상한 상점 두 테마를 하나의 UI로 공유하는 매니저. 화면 전환은 SetScreen()이
+// 대상 패널만 켜고 나머지를 끄는 단일 진입점이며, GoBack()은 _parentScreenMap(화면→상위 화면
+// 고정 매핑, 히스토리 스택 아님)을 따라 한 단계만 올라간다. 코인 아이콘 클릭
+// (OnStrangeShopIconClicked)이 일반/이상한 상점을 토글하며, 그때마다 패널 밖 배경류
+// (윈도우 배경/오버레이/뒤로가기 버튼)도 ApplyShopSkin()으로 함께 테마가 바뀐다.
 public class ShopUIManager : BaseUIManager
 {
     // 패널과 무관하게 ShopWindow에 상시 깔려있는 배경류 이미지 하나를 상점 모드(일반/이상한)에 따라

@@ -8,6 +8,9 @@ using UnityEngine.UI;
 
 namespace Slainte.Bartending
 {
+    // 바 서랍(Drawer)에 붙는 도구/잔 보관함 UI. 슬롯 배경 이미지 하나(catalog.backgroundSprite)
+    // 위에 ToolCabinetCatalog가 정의한 픽셀 영역(ToolArea/GlassArea/IceMakerArea)을 정규화 좌표로
+    // 환산해 런타임에 슬롯을 생성한다 — 아트가 바뀌어도 씬을 직접 편집하지 않고 카탈로그만 갱신하면 된다.
     [DisallowMultipleComponent]
     public sealed class ToolCabinetController : MonoBehaviour
     {
@@ -125,6 +128,8 @@ namespace Slainte.Bartending
                     item,
                     target.DefinitionId,
                     out string failure);
+            // 도구를 서랍에 반납한 그 클릭이 그대로 "슬롯 클릭 → 다시 집기"로 이어지지 않도록
+            // 다음 픽업 한 번을 무시하게 예약한다(ConsumePickupSuppression/LateUpdate에서 해제).
             if (returned)
                 cabinet.SuppressNextPickup();
             else if (!string.IsNullOrWhiteSpace(failure))
@@ -580,6 +585,9 @@ namespace Slainte.Bartending
             }
         }
 
+        // 도구/잔의 실제 월드 스프라이트 경계를 화면 좌표로 투영한 뒤 이 슬롯의 로컬 rect 크기로
+        // 환산한다. 그 결과 서랍 아이콘이 실제 바텐딩 화면에서 보이는 크기 비율과 일치하게 되어,
+        // 아이템마다 아이콘 크기를 수동으로 맞출 필요가 없다.
         private void TryApplyWorldProjectedSize(IBartendingItem item)
         {
             if (contentRoot == null || item?.GameObject == null)

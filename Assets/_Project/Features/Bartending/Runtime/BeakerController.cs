@@ -12,6 +12,10 @@ namespace Slainte.Bartending
         Returning
     }
 
+    // GlassController와 동일한 드래그/기울임/포인터 동기화 구조를 쓰는 비커류 용기.
+    // 차이점 두 가지: (1) 콜라이더 형태를 스스로 정하지 않고 외부(예: 셰이커 세트 조립기)가
+    // ConfigureCollisionGeometry/ConfigureCustomCollisionGeometry로 주입할 수 있고,
+    // (2) 코블러 셰이커의 일부일 경우 클릭을 CobblerShakerPresentation에 먼저 위임한다(HandleInput).
     [ExecuteInEditMode]
     [RequireComponent(typeof(EdgeCollider2D), typeof(Collider2D))]
     public class BeakerController : MonoBehaviour, IBartendingItem, IPointerAnchoredPickup,
@@ -88,6 +92,8 @@ namespace Slainte.Bartending
             rotationHorizontalScreenPadding = Mathf.Max(0f, screenPadding);
         }
 
+        // 단순 사각/사다리꼴 비커용: 폭·높이와 트리거 박스 크기만으로 콜라이더를 재구성한다.
+        // 셰이커 부품처럼 형태가 복잡하면 ConfigureCustomCollisionGeometry를 대신 쓴다.
         public void ConfigureCollisionGeometry(
             float configuredBottomWidth,
             float configuredTopWidth,
@@ -117,6 +123,8 @@ namespace Slainte.Bartending
             liquidTracker?.RefreshCollisionGeometry();
         }
 
+        // 임의의 외곽선(edgePoints)과 클릭 판정 함수를 그대로 주입받는 경로. 절차적으로 생성된
+        // 형태(예: 코블러 셰이커의 컵/캡 파츠)처럼 폭·높이 파라미터로 표현할 수 없는 경우에 쓴다.
         public void ConfigureCustomCollisionGeometry(
             IReadOnlyList<Vector2> edgePoints,
             float configuredEdgeRadius,
@@ -318,6 +326,8 @@ namespace Slainte.Bartending
             // Left Click (Pickup / Drop Toggle)
             if (Input.GetMouseButtonDown(0))
             {
+                // 이 비커가 코블러 셰이커의 일부(컵/캡)라면, 일반 픽업보다 셰이커 조립/분해
+                // 상호작용이 우선이므로 먼저 위임하고 그쪽이 처리하면 여기서 더 진행하지 않는다.
                 CobblerShakerPresentation shakerPresentation =
                     GetComponent<CobblerShakerPresentation>();
                 if (currentState == BeakerState.Idle
@@ -858,6 +868,9 @@ namespace Slainte.Bartending
                 && mainCollider.OverlapPoint(worldPoint);
         }
 
+        // 사다리꼴 옆벽(halfBottom→halfTop 경사)과 만나는 모서리를 둥글리기 위해, 벽의 기울기 각도
+        // phi를 구해 라운딩 원호의 시작각으로 삼는다(경사와 자연스럽게 이어지도록). Glass의
+        // GenerateCurvedCollider와 목적은 같지만 여기선 곡선 프로파일 커브 없이 원호만 사용한다.
         public void GenerateCurvedCollider()
         {
             if (edgeCollider == null)

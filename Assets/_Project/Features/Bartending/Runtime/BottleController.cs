@@ -11,6 +11,9 @@ namespace Slainte.Bartending
         Returning
     }
 
+    // 병을 기울일 때 어느 점을 축으로 회전시킬지 결정한다. TransformOrigin(오브젝트 원점)으로 그냥
+    // 돌리면 병입구가 아니라 병 전체가 허공에서 스핀하는 것처럼 보이므로, 실제로는 입구 근처의
+    // 점(HeightPercentage 또는 DistanceFromMouth)을 축으로 잡아 "따르는" 동작처럼 보이게 한다.
     public enum BottleRotationPivotMode
     {
         TransformOrigin,
@@ -18,6 +21,9 @@ namespace Slainte.Bartending
         DistanceFromMouth
     }
 
+    // 드래그로 들고 기울여 액체를 따르는 병 오브젝트. GlassController와 상태 머신/포인터 동기화
+    // 구조는 동일하지만, 회전축을 병 입구 쪽으로 옮기는 로직(ApplyRotationAroundConfiguredPivot)과
+    // 기울기 각도에 따라 실제 액체 입자를 스폰하는 로직(HandlePouring)이 이 클래스의 핵심이다.
     [RequireComponent(typeof(SpriteRenderer), typeof(Collider2D))]
     public class BottleController : MonoBehaviour, IBartendingItem,
         IBartendingViewTransitionParticipant
@@ -183,6 +189,9 @@ namespace Slainte.Bartending
                 : bottleData.capacityMl;
         }
 
+        // ItemDef가 지정한 정규화 좌표(스프라이트 bounds 기준 0~1)로 액체 스폰 지점과 클릭 콜라이더를
+        // 재배치한다. 아트마다 병입구 위치가 다르고 flipX/flipY로 좌우·상하 반전될 수 있으므로,
+        // 픽셀 좌표 대신 정규화 좌표로 저장해두고 매번 실제 스프라이트 bounds에 맞춰 환산한다.
         private void ApplyBottleGeometryOverride()
         {
             if (spriteRenderer == null
@@ -363,6 +372,9 @@ namespace Slainte.Bartending
             BartendingSelection.Release(this);
         }
 
+        // 기울기가 90도를 넘으면(옆으로 눕기 시작하면) 붓는 것으로 간주해 pourMlPerSecond 유량을
+        // pourTimer 누적 방식으로 입자 스폰 타이밍으로 변환한다. 프레임 드랍 후 한꺼번에 몰아
+        // 스폰되는 것을 막기 위해 한 프레임당 스폰 개수를 maxParticlesPerFrame으로 제한한다.
         private void HandlePouring()
         {
             if (Mathf.Abs(currentAngle) < 90f || currentCapacity <= 0f)
@@ -618,6 +630,9 @@ namespace Slainte.Bartending
             return transform.TransformPoint(GetRotationPivotLocalPosition());
         }
 
+        // 기울이기 시작하는 순간 "축이 될 월드 좌표"와 "그 축에서 오브젝트 원점까지의 오프셋"을
+        // 고정해둔다. 이후 ApplyRotationAroundConfiguredPivot은 이 오프셋을 회전시켜 원점 위치를
+        // 재계산하므로, 축(rotationPivotAnchorWorld)은 화면에서 움직이지 않고 병 몸체만 그 주위로 돈다.
         private void CaptureRotationPivotAnchor()
         {
             rotationPivotAnchorWorld = GetConfiguredRotationPivotWorldPosition();

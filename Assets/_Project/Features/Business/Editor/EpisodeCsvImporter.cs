@@ -10,6 +10,11 @@ using Slainte.EditorTools;
 using UnityEditor;
 using UnityEngine;
 
+// 기획자가 작성한 에피소드 CSV(#SECTION 헤더로 구분된 여러 표)를 EpisodeData 에셋으로
+// 컴파일하는 임포터 창. 이미 같은 episodeId의 에셋이 있으면 덮어쓰지 않고
+// EditorUtility.CopySerialized로 병합하되, CSV에 해당 섹션이 아예 없으면(예: BOARD_CHARS를
+// 지운 경우) 인스펙터에서 수기로 채운 기존 값을 그대로 보존한다 — CSV에 섹션이 있으면
+// 비어 있어도 그 필드의 source of truth가 CSV로 바뀐다.
 public class EpisodeCsvImporter : EditorWindow
 {
     private const string OrderTicketDatabasePath = BusinessAssetPaths.OrderTicketDatabase;
@@ -162,6 +167,8 @@ public class EpisodeCsvImporter : EditorWindow
         return data;
     }
 
+    // "#SECTION_NAME" 줄을 만나면 새 섹션을 시작하고, 그 다음 줄을 헤더(컬럼명)로,
+    // 이후 줄들을 데이터 행으로 모은다. 섹션이 바뀌기 전까지의 모든 행이 그 섹션에 속한다.
     private static Dictionary<string, List<string[]>> SplitIntoSections(
         string[] lines,
         out Dictionary<string, string[]> sectionHeaders)

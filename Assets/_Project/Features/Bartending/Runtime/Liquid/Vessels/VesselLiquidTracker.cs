@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace Slainte.Bartending
 {
+    // VesselLiquidTracker.BuildComposition()이 특정 순간 용기 안에 있는 입자들을 합산해 만드는 스냅샷.
+    // CocktailEvaluator/CocktailOrderEvaluator가 이 데이터만 보고 레시피 판정을 한다.
     public sealed class CocktailComposition
     {
         private readonly Dictionary<ItemDef, float> volumes = new();
@@ -22,6 +24,7 @@ namespace Slainte.Bartending
 
         public IReadOnlyDictionary<ItemDef, float> Volumes => volumes;
         public float TotalVolumeMl { get; private set; }
+        // 입자 부피로 가중 평균한 온도. 아직 샘플이 없으면(빈 용기) 상온(20C)으로 취급.
         public float AverageTemperatureC => thermalVolumeMl > 0f
             ? weightedTemperature / thermalVolumeMl
             : 20f;
@@ -30,8 +33,11 @@ namespace Slainte.Bartending
         public int IceCount { get; private set; }
         public bool StirAttempted => (explicitTechniques & CocktailTechnique.Stir) != 0
             || stirAttemptedVolumeMl > 0.0001f;
+        // 얼음과 함께 흔든 게 "완료"로 인정되려면 현재 총량 전체가 그 상태를 거쳐야 한다(CoversAllContents 참고).
         public bool WasShakenWithIce => explicitShakenWithIce
             || CoversAllContents(shakenWithIceVolumeMl);
+        // 입자 단위로 누적된 부피(stirredVolumeMl 등)만으로는 "완료"를 보장할 수 없으므로,
+        // 여기서는 관측된 적 있는 기법만 표시하고 완료 여부 판정은 GetEffectiveTechniques()가 담당한다.
         public CocktailTechnique Techniques
         {
             get
@@ -115,6 +121,9 @@ namespace Slainte.Bartending
             HasIce = IceCount > 0;
         }
 
+        // 기법이 "완료"로 인정되는 기준: 해당 기법을 거친 부피가 현재 총 부피 전체를 덮어야 한다.
+        // 예를 들어 젓다가 중간에 새 재료를 더 부으면, 새로 들어온 부피만큼은 아직 저어지지 않았으므로
+        // 완료로 치지 않는다(CoversAllContents가 이 "전량 커버" 조건을 검사).
         public CocktailTechnique GetEffectiveTechniques()
         {
             CocktailTechnique completed = explicitTechniques;
@@ -125,6 +134,8 @@ namespace Slainte.Bartending
             return completed == CocktailTechnique.None ? CocktailTechnique.Build : completed;
         }
 
+        // 레시피가 요구하는 기법과 실제로 이 용기에서 관측된 상태를 비교한다.
+        // Build는 "아무 기법도 시도되지 않았어야" 성립하는 소거법 조건이라 별도 분기로 처리한다.
         public bool MatchesRequiredTechnique(CocktailTechnique required)
         {
             if (required == CocktailTechnique.None)
@@ -158,12 +169,16 @@ namespace Slainte.Bartending
             return !explicitShakenWithIce && shakenWithIceVolumeMl <= 0.0001f;
         }
 
+        // "완료" 판정의 공통 기준. coveredVolumeMl(예: 저어진 부피)이 현재 총 부피를 전부 덮어야
+        // true — 부분적으로만 기법이 적용된 상태는 완료로 인정하지 않는다.
         private bool CoversAllContents(float coveredVolumeMl)
         {
             return TotalVolumeMl > 0.0001f
                 && coveredVolumeMl >= TotalVolumeMl - 0.0001f;
         }
 
+        // 색상 계산은 비용이 있어(portions 재구성 + 혼합 연산) Add()가 호출될 때만 dirty로 표시하고,
+        // 실제 계산은 요청 시점까지 지연한다.
         public Color EvaluateFinalColor()
         {
             if (!finalColorDirty)
@@ -189,9 +204,15 @@ namespace Slainte.Bartending
         }
     }
 
+    // 병/잔/비커 등 액체를 담는 오브젝트에 붙는 컴포넌트. Trigger Collider2D 안에 들어온
+    // LiquidParticleData/IceCubeController를 "소유"하고, 물리적으로 겹치는 다른 용기의 내용물과는
+    // 서로 충돌을 무시하도록 Physics2D.IgnoreCollision 행렬을 관리해 용기별 액체를 격리한다.
+    // 레시피 판정은 이 컴포넌트가 BuildComposition()으로 만든 스냅샷(CocktailComposition)만 본다.
     [RequireComponent(typeof(Collider2D))]
     public sealed class VesselLiquidTracker : MonoBehaviour
     {
+        // 전역 레지스트리. 새 용기/입자/얼음이 등록될 때마다 기존 전체와의 충돌 무시 여부를
+        // 다시 계산해야 하므로(RefreshParticleIsolation 등) static으로 모든 인스턴스가 공유한다.
         private static readonly HashSet<VesselLiquidTracker> activeVessels = new();
         private static readonly HashSet<LiquidParticleData> activeParticles = new();
         private static readonly HashSet<IceCubeController> activeIceCubes = new();
@@ -386,6 +407,9 @@ namespace Slainte.Bartending
             Track(other);
         }
 
+        // 트리거를 벗어나도 곧바로 소유권을 놓지 않고 pending 목록에 넣어둔다. 실제 반환 여부는
+        // FixedUpdate의 ProcessPendingOwnerReleases에서 한 번 더 확인한다(경계에서의 떨림으로
+        // 같은 프레임에 재진입하는 경우까지 소유권을 뺏기지 않게 하기 위함).
         private void OnTriggerExit2D(Collider2D other)
         {
             if (other.TryGetComponent(out LiquidParticleData particle))
@@ -404,6 +428,8 @@ namespace Slainte.Bartending
                 pendingIceReleases.Add(iceCube);
         }
 
+        // 현재 이 용기가 소유한 입자·얼음을 스캔해 CocktailComposition 스냅샷으로 합산한다.
+        // 판정(CocktailEvaluator)과 디버그 표시 양쪽이 이 메서드 하나로 통일된 결과를 얻는다.
         public CocktailComposition BuildComposition()
         {
             Cleanup();
@@ -460,6 +486,9 @@ namespace Slainte.Bartending
             }
         }
 
+        // 용기 안 입자들이 서로 얼마나 고르게 섞였는지 나타내는 0~1 지표.
+        // 각 입자의 재료 비율을 용기 전체 평균 비율과 비교해 편차를 부피 가중 평균한다 —
+        // 0이면 모든 입자가 전체 평균과 동일한 조성(완전히 섞임), 1에 가까울수록 재료별로 분리된 상태.
         public float CalculateMeanCompositionDeviation()
         {
             Cleanup();
@@ -626,6 +655,9 @@ namespace Slainte.Bartending
                 TrackIceCube(iceCube);
         }
 
+        // 소유권 전이 규칙: 이미 다른 용기가 소유 중이면(그리고 그 용기 트리거를 실제로 벗어났다면)
+        // 먼저 반환시킨 뒤, 소유자가 없을 때만 이 지점에서 우선순위가 가장 높은 용기가 새로 가져간다.
+        // 이렇게 하면 두 용기가 겹치는 구간에서 같은 입자가 양쪽에 동시에 카운트되지 않는다.
         private void TrackParticle(LiquidParticleData particle)
         {
             if (particle == null)
@@ -673,6 +705,9 @@ namespace Slainte.Bartending
                 iceCubes.Add(iceCube);
         }
 
+        // 한 지점을 여러 용기의 트리거가 동시에 덮을 수 있으므로(예: 잔이 병 위에 겹칠 때)
+        // interactionPriority가 더 높은 쪽을 우선하고, 우선순위가 같으면 InstanceID로
+        // 결정적인(매 프레임 결과가 바뀌지 않는) 타이브레이크를 한다.
         private static VesselLiquidTracker FindPreferredOwner(Vector2 worldPoint)
         {
             VesselLiquidTracker preferred = null;
@@ -728,6 +763,9 @@ namespace Slainte.Bartending
                 iceCube => IsInvalidIceCube(iceCube) || iceCube.VesselOwner != this);
         }
 
+        // OnTriggerExit2D에서 pending 처리된 항목들을 매 FixedUpdate마다 재확인해,
+        // 그새 다시 트리거 안으로 들어왔다면(ContainsTriggerPoint) 소유권을 유지하고
+        // 정말로 벗어난 경우에만 실제로 반환한다.
         private void ProcessPendingOwnerReleases()
         {
             Cleanup();
@@ -930,6 +968,9 @@ namespace Slainte.Bartending
             activeParticles.Remove(particle);
         }
 
+        // 소유자가 다른 입자·얼음·용기 벽끼리는 Physics2D.IgnoreCollision으로 서로 충돌을 꺼서,
+        // 겹쳐 보이는 두 용기(예: 잔 위의 병)의 내용물이 물리적으로 밀어내거나 섞이지 않게 한다.
+        // 소유자가 없는(아직 배정 전) 입자는 모든 용기와 충돌 가능 상태로 둬서 Track()이 담당 용기를 정할 수 있게 한다.
         internal static void RefreshParticleIsolation(LiquidParticleData particle)
         {
             if (particle == null || !particle.isActiveAndEnabled)
@@ -1186,6 +1227,7 @@ namespace Slainte.Bartending
             InvalidateRuntimeDebugSnapshot();
         }
 
+        // ── 이하 디버그 전용 시각화(Gizmo/OnGUI) — 게임플레이 판정 로직과 무관, 개발 중 조성 확인용 ──
         private void OnDrawGizmos()
         {
             if (!drawDebugGizmos || drawOnlyWhenSelected)

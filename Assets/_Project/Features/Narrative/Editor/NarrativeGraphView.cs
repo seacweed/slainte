@@ -8,6 +8,10 @@ using UnityEngine.UIElements;
 
 namespace NarrativeFlow.Editor
 {
+    // 내러티브 그래프 에디터의 GraphView 구현체. NarrativeGraphSO(영속 데이터: Nodes/Edges)와
+    // 화면에 그려진 NarrativeNodeView/Edge 사이의 동기화를 담당한다 — 노드/엣지를 그래프에서
+    // 추가·삭제할 때마다(OnGraphViewChanged) 영속 데이터에도 같은 변경을 반영하고, 순환 참조가
+    // 생기는 연결은 IsCircular()로 걸러 거부한다.
     public class NarrativeGraphView : GraphView
     {
         public NarrativeGraphEditor window;
@@ -187,6 +191,9 @@ namespace NarrativeFlow.Editor
             }
         }
 
+        // 노드의 포트 구성이 바뀌었을 때(분기 추가/삭제 등) 호출된다. 화면상의 연결선을 일단 모두
+        // 지우고 포트를 다시 그린 뒤, 영속 데이터(currentGraph.Edges)에 남아있는 연결 정보를 새
+        // 포트 인덱스에 맞춰 복원한다 — 복원할 포트가 더 이상 없는 엣지(삭제된 분기)는 데이터에서도 함께 제거한다.
         public void NotifyNodeStructureChanged(NarrativeNodeView nodeView)
         {
             if (currentGraph == null) return;
@@ -325,6 +332,8 @@ namespace NarrativeFlow.Editor
             return change;
         }
 
+        // startNode → targetNode로의 새 연결이 순환을 만드는지 확인한다. 순환 여부는
+        // "targetNode에서 출발해 startNode에 도달할 수 있는가"와 동치이므로 역방향으로 탐색한다.
         private bool IsCircular(Node startNode, Node targetNode)
         {
             bool IsReachable(Node from, Node to)

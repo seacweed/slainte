@@ -46,6 +46,8 @@ public class SettlementManager : MonoSingleton<SettlementManager>
             OnSettlementClosed();
     }
 
+    // 음료 판매는 판매 즉시 지갑에 지급되므로 DayTotalIncome과 DayPaidMoneyIncome이 대부분 같다.
+    // 그 차액은 아직 지급되지 않은 몫(예: 에피소드 커스텀 보상)이며, 여기서 실제로 지급한다.
     public static int ApplyRecordedIncome(GameProgress progress)
     {
         if (progress == null)
@@ -76,6 +78,8 @@ public class SettlementManager : MonoSingleton<SettlementManager>
             data.totalSalesCount += 1;
             data.totalSalesRevenue += record.listedPrice;
 
+            // 별도 등급 필드 대신 팁/페널티가 실제로 기록됐는지로 Good/Bad 건수를 센다
+            // (팁이 있으면 Good, 페널티가 있으면 Bad — 둘 다 없는 Mid 등급은 이 집계에서 빠진다).
             if (record.tipAmount != 0)
             {
                 data.goodCount += 1;

@@ -8,6 +8,10 @@ using UnityEngine.UI;
 
 namespace Slainte.Bartending
 {
+    // BusinessScene 진입 시 바텐딩 조리대 전체(술병/도구/글라스/도구장/뷰포트)를 동적으로 조립·해체하는
+    // 최상위 오케스트레이터. GameMode가 CraftingMode로 바뀌면 CreateSession()이 월드를 세우고,
+    // 벗어나면 DestroySession()이 정리한다. FrontCameraRig 이동 애니메이션 중에는 물리·포인터 매핑을
+    // 일시 정지시켜(SuspendSessionForViewTransition) 카메라가 흔들리는 동안 오브젝트가 튀지 않게 한다.
     public sealed class BusinessBartendingBootstrap : MonoBehaviour
     {
         private struct SuspendedBodyState
@@ -69,6 +73,7 @@ namespace Slainte.Bartending
         public event Action SessionDestroyed;
         public event Action<VesselLiquidTracker> ServeRequested;
 
+        // BusinessScene이 로드될 때마다 이 컴포넌트를 자동 설치하는 진입점 그룹(씬에 수동 배치 불필요).
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void RegisterSceneHook()
         {
@@ -170,6 +175,8 @@ namespace Slainte.Bartending
             }
             else if (oldMode == GameMode.CraftingMode || sessionRoot != null)
             {
+                // oldMode 조건 외에 sessionRoot != null도 함께 검사 — 다른 모드로 바뀌었는데
+                // 세션이 아직 정리되지 않은 예외 상황까지 방어적으로 정리한다.
                 DestroySession(clearBottleSelections: true);
             }
         }
@@ -227,6 +234,8 @@ namespace Slainte.Bartending
             readyRoutine = StartCoroutine(CaptureTargetTracker(builtSession.ServingGlass));
             toolCabinet?.NotifySessionReady();
 
+            // 메인 카메라가 바텐딩 전용 월드 카메라와 별개라면, 바텐딩 렌더 레이어를 메인 카메라의
+            // 컬링에서 빼 같은 오브젝트가 두 카메라에 겹쳐 그려지지 않게 한다.
             sourceCamera = Camera.main;
             if (sourceCamera != null && sourceCamera != builtSession.WorldCamera)
             {
@@ -234,6 +243,8 @@ namespace Slainte.Bartending
                 sourceCamera.cullingMask &= ~(1 << sessionRenderLayer);
             }
 
+            // 카메라 리그가 이동 애니메이션 도중이면 물리가 그 사이 먼저 굴러가 버릴 수 있으므로
+            // 세션을 만들자마자 바로 일시정지 상태로 시작한다.
             if (frontCameraRig != null && frontCameraRig.IsAnimating)
                 SuspendSessionForViewTransition();
         }
@@ -332,6 +343,9 @@ namespace Slainte.Bartending
             }
         }
 
+        // 카메라 리그 이동 중에는 물리 시뮬레이션과 스크린→월드 포인터 매핑이 부정확해지므로,
+        // 이동이 시작되면 Rigidbody2D를 모두 일시 정지시키고 IBartendingViewTransitionParticipant들에게
+        // 알려 좌표 갱신을 HandleFrontWorldMoveUpdated 콜백으로 대체한다. 이동이 끝나면 원 상태로 복원한다.
         private void SuspendSessionForViewTransition()
         {
             if (resumeViewTransitionRoutine != null)
@@ -458,6 +472,8 @@ namespace Slainte.Bartending
             builtSession?.InteractionOverlay?.SetServingGlass(glass);
         }
 
+        // 도구장 카탈로그에 정의된 도구/글라스를 세션 월드에 미리 생성해 캐비닛 슬롯에 대기시킨다
+        // (정의 하나당 인스턴스 1개, 이미 있으면 건너뜀).
         public void PrepareCabinetInventory(ToolCabinetCatalog catalog)
         {
             if (catalog == null || sessionWorld == null || settings == null)
@@ -608,6 +624,8 @@ namespace Slainte.Bartending
             return slotObject.AddComponent<SlotController>();
         }
 
+        // 캐비닛 슬롯에 대기 중인 도구/글라스를 꺼내 지정한 화면 좌표로 스냅한다.
+        // 실패 사유는 out failure로 반환하고(예외 없이) false를 돌려준다.
         public bool TryPickUpCabinetItem(
             string definitionId,
             Vector2 screenPosition,
@@ -686,6 +704,8 @@ namespace Slainte.Bartending
             return true;
         }
 
+        // 스프라이트 바운즈를 합산해 시각적 중심을 구하되, 액체 파티클/얼음 조각 렌더러는
+        // 도구 자체의 외형이 아니므로 계산에서 제외한다(포함하면 담긴 내용물에 따라 중심이 흔들림).
         private static Vector3 GetVisualCenterOffset(GameObject itemObject)
         {
             if (itemObject == null)
@@ -725,6 +745,7 @@ namespace Slainte.Bartending
             return offset;
         }
 
+        // 선택 코디네이터에 아직 반영되지 않은 도구까지 포함해, 현재 손에 든 아이템이 있는지 전수 조사한다.
         private bool HasHeldBartendingItem()
         {
             if (sessionWorld == null)
@@ -743,6 +764,8 @@ namespace Slainte.Bartending
             return false;
         }
 
+        // 들고 있는 도구를 원래 캐비닛 슬롯으로 반환한다. 대상 슬롯 id가 다르거나(잘못된 슬롯에 반환
+        // 시도) 셰이커가 분해된 상태면 거부한다.
         public bool TryReturnCabinetItem(
             IBartendingItem item,
             string targetDefinitionId,
@@ -1059,6 +1082,7 @@ namespace Slainte.Bartending
                     : null;
         }
 
+        // 테이블 왼쪽부터 술병이 순서대로 채워지는 연출을 유지하기 위해 가장 오른쪽 빈 슬롯부터 찾는다.
         private SlotController FindRightmostFreeSlot()
         {
             for (int i = sessionSlots.Count - 1; i >= 0; i--)
@@ -1078,6 +1102,9 @@ namespace Slainte.Bartending
             ItemDef item = bottle.BottleData;
             if (item != null && !string.IsNullOrWhiteSpace(item.id) && GameProgress.Instance != null)
             {
+                // 저장된 총 재고(totalAmount)를 병 하나의 용량(bottleCapacity)으로 나눈 나머지를
+                // "지금 손에 든 병"의 양으로 삼고, 나머지 전체 병 수량은 reserve(예비 재고)로 미뤄둔다.
+                // 병이 완전히 비면 HandleBottleCapacityChanged가 이 reserve에서 자동으로 새 병을 채운다.
                 float totalAmount = Mathf.Max(
                     0f,
                     GameProgress.Instance.GetBottleAmount(item.id, defaultInventoryAmount));
@@ -1105,6 +1132,8 @@ namespace Slainte.Bartending
 
             bottleReserveAmounts.TryGetValue(bottle, out float reserveAmount);
             float activeAmount = Mathf.Max(0f, amount);
+            // 들고 있는 병이 완전히 비었는데 예비 재고가 남아있으면, 새 병 한 개 분량을
+            // reserve에서 덜어와 자동으로 리필한다(빈 병을 새로 꺼낼 필요 없이 자연스럽게 이어짐).
             if (activeAmount <= Mathf.Epsilon && reserveAmount > Mathf.Epsilon)
             {
                 float refillAmount = Mathf.Min(Mathf.Max(0f, item.capacityMl), reserveAmount);
@@ -1175,6 +1204,8 @@ namespace Slainte.Bartending
             return viewport;
         }
 
+        // UI의 TableSlots(UIDropSlot 배치)를 바텐딩 월드 카메라 좌표로 변환해 슬롯 위치와
+        // 아이템 스케일(슬롯 프리팹 대비 실제 UI 슬롯 크기의 비율)을 산출한다.
         private static void GetSlotLayout(
             RectTransform tableSlots,
             BartendingViewport viewport,
@@ -1264,6 +1295,8 @@ namespace Slainte.Bartending
             return layout;
         }
 
+        // 슬롯 레이아웃 복제본을, 실제 화면에 보이는 카운터 영역(뷰포트와 겹치는 부분)의 중앙에 맞춘다 —
+        // 스크롤/마스킹으로 카운터 일부가 가려져도 슬롯이 항상 보이는 범위 안에 놓이게 하기 위함.
         private static void AlignSlotLayoutToVisibleTable(
             RectTransform layout,
             RectTransform content,
