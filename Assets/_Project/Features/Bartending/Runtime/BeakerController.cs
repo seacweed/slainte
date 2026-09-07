@@ -524,7 +524,9 @@ namespace Slainte.Bartending
 
             MoveVesselAndContents(targetPosition);
             SetRotationImmediately(0f);
-            liquidTracker?.SettleAfterImmediateMotion();
+            GpuLiquidSystem gpu = GpuLiquidSystem.Instance;
+            if (gpu != null && gpu.IsOperational)
+                gpu.SettleVesselAfterImmediateMotion(liquidTracker);
             ReleaseBeaker();
         }
 

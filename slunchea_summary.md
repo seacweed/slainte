@@ -31,7 +31,9 @@
 
 ### 액체 시스템의 정확한 기술적 정의
 
-현재 액체는 공통 `ILiquidSimulationBackend` 계약 아래 두 구현을 선택하는 구조다.
+현재 액체는 세션 설정으로 두 구현을 선택한다. GPU 구현은
+`ILiquidSimulationBackend`를 직접 구현하고, 기존 `LiquidPool`은 원본 코드를 수정하지 않은 채
+`LegacyLiquidSimulationBackend` 어댑터가 세션 계약에 연결한다.
 
 - `LegacyRigidbody2D`: Rigidbody2D·Collider2D·`LiquidPool`을 사용하는 기존 CPU 기반 2D 입자 근사 시스템.
 - `GpuPbfXpbd`: Compute Shader에서 공간 격자, 밀도·lambda, 위치 보정, 속도 및 조성 혼합을 계산하는 별도 GPU PBF/XPBD 시스템.
@@ -39,6 +41,7 @@
 - 레거시 입자는 `LiquidPayload`, GPU 입자는 GPU composition buffer에 재료 구성·부피·온도·제조 기법 상태를 보관하고, 둘 다 `CocktailComposition`으로 합산해 주문 판정에 사용한다.
 - 레거시는 기존 입자 프리팹의 `2 ml`, GPU는 독립 설정인 `gpuLiquidParticleVolumeMl`의 `0.5 ml`를 기본값으로 사용한다.
 - 모드는 `BusinessBartendingSettings.asset`에서 선택하며, 변경 후 바텐딩 세션 또는 씬을 다시 시작해야 한다. 실행 중 핫스왑은 지원하지 않는다.
+- 레거시는 기존 따르기(90도 임계값·고정 유량·가로 지터·초기속도 0)와 젓기(평균 조성 편차 10%) 판정을 유지하고, 기울기별 유량·몸체 콜라이더에서 실제 입구로 향하는 초기속도와 최대 조성 편차 판정은 GPU에서만 사용한다.
 - 레거시 풀링·재활용 최적화와 GPU PBF/XPBD 구현은 별개의 기여 범위다.
 
 ## 2. 본인 역할

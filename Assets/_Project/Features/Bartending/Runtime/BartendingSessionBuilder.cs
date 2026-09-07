@@ -897,17 +897,6 @@ namespace Slainte.Bartending
             session.ItemScale = itemScale;
             session.Slots.AddRange(CreateSlots(world.transform, settings, slotPositions, itemScale));
 
-            if (!isPreview)
-            {
-                session.LiquidBackend = CreateLiquidSimulation(
-                    world.transform,
-                    settings,
-                    renderLayer,
-                    itemScale);
-                session.LiquidPool = session.LiquidBackend as LiquidPool;
-                session.GpuLiquidSystem = session.LiquidBackend as GpuLiquidSystem;
-            }
-
             if (!useToolCabinet)
             {
                 session.Beaker = CreateItem(
@@ -953,6 +942,13 @@ namespace Slainte.Bartending
 
             if (!isPreview)
             {
+                session.LiquidBackend = CreateLiquidSimulation(
+                    world.transform,
+                    settings,
+                    renderLayer,
+                    itemScale);
+                session.LiquidPool = (session.LiquidBackend as LegacyLiquidSimulationBackend)?.Pool;
+                session.GpuLiquidSystem = session.LiquidBackend as GpuLiquidSystem;
                 session.InteractionOverlay = BartendingInteractionOverlay.Create(
                     session.Viewport,
                     session.WorldCamera,
@@ -1414,7 +1410,8 @@ namespace Slainte.Bartending
                     $"[BartendingSessionBuilder] GPU liquid is unavailable; using the legacy Rigidbody2D backend. {reason}");
             }
 
-            return CreateLiquidPool(parent, settings, renderLayer, itemScale);
+            LiquidPool pool = CreateLiquidPool(parent, settings, renderLayer, itemScale);
+            return LiquidSimulationRuntime.GetLegacyBackend(pool);
         }
 
         public static void SetLayerRecursively(GameObject root, int layer)

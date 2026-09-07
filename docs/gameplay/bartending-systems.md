@@ -117,7 +117,12 @@ QHD(`2560×1440`) 화면에서 도구·잔·병·얼음은 원본 `Sprite` 픽�
 
 ### 병 따르기 (`BottleController`)
 
-프레임 기반 타이머 대신 `pourMlPerSecond`(용기별 필드, `Bottle.prefab` 현재값 `20 ml/s`)와 병의 기울기에 따른 유량 계수로 초당 배출량을 계산한다. `BottleController.TrySpawnLiquid()`는 활성 `ILiquidSimulationBackend`의 `DefaultParticleVolumeMl` 단위로 `TryEmit()`을 호출한다. 프레임당 최대 `maxParticlesPerFrame`(기본 8개)까지만 한 번에 catch-up 스폰해 프레임 드랍 시 순간 폭발적 스폰을 막는다. 병 내부 `currentCapacity`가 소진되면 더 이상 부피를 차감하지 않는다.
+두 백엔드는 따르기 계산을 공유하지 않는다.
+
+- **레거시**: GPU 도입 전 `HandlePouring()` 계산을 그대로 사용한다. 절대 기울기 90도부터 고정 `pourMlPerSecond`로 배출하며, `LiquidPool.DefaultParticleVolumeMl` 단위로 `LiquidPool.GetParticle()`을 직접 호출한다. 스폰 위치는 월드 X축 `-0.1~0.1` 지터이고 초기속도는 풀의 기존 초기화값 0이다.
+- **GPU**: 기울기에 따른 유량 계수를 적용하고, 실제 몸체 `Collider2D.bounds.center → liquidSpawnPoint` 방향의 초기속도·입구 이동속도 상속·노즐 폭·catch-up 스트림 오프셋을 계산해 `GpuLiquidSystem.TryEmit()`을 호출한다. 스프라이트 bounds는 투명 여백과 병별 아트 구도가 달라 방향 기준으로 사용하지 않는다.
+
+두 경로 모두 프레임당 최대 `maxParticlesPerFrame`(기본 8개)까지만 catch-up 스폰하고, 실제 배출된 부피만 `currentCapacity`에서 차감한다.
 
 ---
 
@@ -128,7 +133,7 @@ QHD(`2560×1440`) 화면에서 도구·잔·병·얼음은 원본 `Sprite` 픽�
 
 | 설정값 | 생성되는 백엔드 | 실패 시 동작 |
 |---|---|---|
-| `LegacyRigidbody2D` | `LiquidPool` | GPU를 시도하지 않음 |
+| `LegacyRigidbody2D` | `LiquidPool` + 외부 어댑터 | GPU를 시도하지 않음 |
 | `GpuPbfXpbd` | `GpuLiquidSystem` 우선 | Compute Shader 또는 초기화 조건이 맞지 않으면 `LiquidPool`로 폴백 |
 | `Automatic` | `GpuLiquidSystem` 우선 | GPU를 사용할 수 없으면 `LiquidPool`로 폴백 |
 
@@ -146,9 +151,11 @@ QHD(`2560×1440`) 화면에서 도구·잔·병·얼음은 원본 `Sprite` 픽�
 레거시 `LiquidPool`의 활성 입자 컴포넌트 캐시, 프레임 단위 화면 경계 계산, 자동 반환,
 `LiquidReaction`의 최근 혼합 상대 중복 방지·수면·지터·32개 이웃 버퍼 최적화는 그대로 유지한다.
 GPU PBF/XPBD는 `Infrastructure/GpuFluid`의 Compute Shader와 `Runtime/Liquid/Gpu`의 런타임 코드에
-분리된 별도 구현이다. `BottleController`, `VesselLiquidTracker`, 젓기·셰이킹 코드는 두 구현이
-공유하는 통합 경로이므로, 레거시 풀링 최적화와 GPU 백엔드를 한 사람의 단독 구현으로 묶어
-설명해서는 안 된다.
+분리된 별도 구현이다. `LiquidPool.cs`는 GPU 인터페이스를 구현하지 않으며
+`LegacyLiquidSimulationBackend`가 외부에서 어댑트한다. `BottleController`, `VesselLiquidTracker`,
+젓기·셰이킹 코드의 통합 지점은 백엔드별로 명시적으로 분기하고, 레거시 분기는 GPU 도입 전
+계산·호출 순서를 유지한다. 따라서 레거시 풀링 최적화와 GPU 백엔드를 한 사람의 단독 구현으로
+묶어 설명해서는 안 된다.
 
 ---
 
@@ -171,7 +178,7 @@ GPU PBF/XPBD는 `Infrastructure/GpuFluid`의 Compute Shader와 `Runtime/Liquid/G
 - 재료별 목표량과 총량은 고정 `±5 ml` 경계를 포함해 검사한다.
 - 허용되지 않은 추가 재료는 양과 관계없이 실패한다.
 - 숫자 점수와 유사도 판정은 사용하지 않는다. 기본 레시피가 모두 맞으면 `Good`, 핵심 배합·기법이 맞고 완성 잔/얼음만 다르면 `MidGlass`/`MidIce`/`MidIceGlass`, 다른 주문 가능 기본 레시피가 정확히 맞으면 `MidWrongMenu`, 나머지는 `Bad`다.
-- `Build`는 별도 기법 미사용, `Stir`는 바스푼의 유효 혼합 0.35초 이상 시도 및 1초 이상 진행한 뒤 최대 조성 편차 8% 이하·허용 범위 밖 입자 0개 상태를 0.15초 유지하면 완료, `Shake`는 닫힌 셰이커의 기존 동작 조건으로 구분한다.
+- `Build`는 별도 기법 미사용, `Stir`는 바스푼의 유효 혼합 0.35초 이상 시도 및 1초 이상 진행한 뒤 백엔드별 기준으로 완료한다. 레거시는 GPU 도입 전 기준인 평균 조성 편차 10% 이하, GPU는 최대 조성 편차가 `gpuLiquidStirCompositionTolerance`(기본 8%) 이하이고 허용 범위 밖 입자가 0개인 상태를 0.15초 유지해야 한다. `Shake`는 닫힌 셰이커의 기존 동작 조건으로 구분한다.
 
 ## 레시피 에셋 (`CocktailRecipeDataLoader.cs`)
 
@@ -211,11 +218,11 @@ GPU PBF/XPBD는 `Infrastructure/GpuFluid`의 Compute Shader와 `Runtime/Liquid/G
 
 | 스크립트 | 클래스명 | 역할 |
 |---|---|---|
-| `LiquidSimulationBackend.cs` | `ILiquidSimulationBackend` | 레거시/GPU 공통 상태·ml 단위 배출·초기화 계약과 현재 활성 백엔드 조회 |
-| `Particles/LiquidPool.cs` | `LiquidPool` | settings의 `liquidPoolSize`만큼 입자를 미리 생성하고, 캐시가 소진되면 필요한 만큼 추가 생성. 활성 입자를 `(GameObject, LiquidParticleRecycler, LiquidReaction)` 캐시 구조로 관리하는 레거시 백엔드 |
+| `LiquidSimulationBackend.cs` | `ILiquidSimulationBackend`, `LegacyLiquidSimulationBackend` | GPU 상태·ml 단위 배출·초기화 계약, 현재 활성 백엔드 조회, 원본 `LiquidPool`을 수정하지 않고 연결하는 레거시 어댑터 |
+| `Particles/LiquidPool.cs` | `LiquidPool` | settings의 `liquidPoolSize`만큼 입자를 미리 생성하고, 캐시가 소진되면 필요한 만큼 추가 생성. 활성 입자를 `(GameObject, LiquidParticleRecycler, LiquidReaction)` 캐시 구조로 관리하는 기존 레거시 구현 |
 | `Gpu/GpuLiquidSystem.cs` | `GpuLiquidSystem` | Compute Shader 버퍼, PBF/XPBD 스텝, GPU 혼합·색상·용기 snapshot 및 렌더링을 관리하는 GPU 백엔드 |
 | `Gpu/GpuLiquidVesselProxy.cs` | `GpuLiquidVesselProxy` | 용기 경계와 트리거 정보를 GPU 시뮬레이션 데이터로 변환 |
-| `Particles/LiquidSpawner.cs` | `LiquidSpawner` | `spawnInterval`마다 레거시 풀에서 입자를 꺼내는 테스트용 스포너. 실제 게임의 병 따르기는 `BottleController.TrySpawnLiquid()`가 활성 백엔드의 `TryEmit()` 호출 |
+| `Particles/LiquidSpawner.cs` | `LiquidSpawner` | `spawnInterval`마다 레거시 풀에서 입자를 꺼내는 테스트용 스포너. 실제 병 따르기는 `BottleController`가 레거시에서 `LiquidPool.GetParticle()`, GPU에서 `GpuLiquidSystem.TryEmit()`을 각각 호출 |
 | `Particles/LiquidReaction.cs` | `LiquidReaction` | 입자 충돌 시 색상·물리 속성 평균화 혼합, 수면 최적화, 확산(Agitation) 믹싱 |
 | `Particles/LiquidParticleRecycler.cs` | `LiquidParticleRecycler` | 화면 밖(OOB) 입자 자동 풀 반환. 용기 밖 유출 입자는 왼쪽/오른쪽/아래 화면 이탈 시 즉시 회수(위쪽은 제외) |
 | `Rendering/FullScreenQuad.cs` | `FullScreenQuad` | MetaballMat 적용 전체화면 쿼드, 해상도 변화에 실시간 대응 |
@@ -253,7 +260,7 @@ GPU PBF/XPBD는 `Infrastructure/GpuFluid`의 Compute Shader와 `Runtime/Liquid/G
 ### GPU PBF/XPBD 검증
 
 - 정적 구성 검증: Unity 메뉴 `Slainte > Bartending > Validate GPU Liquid PBF-XPBD`
-- 부하 계측: `LiquidStressHarness`의 활성 입자 수, p95 및 p99 프레임 시간
+- 부하 계측: GPU 세션에서만 생성되는 `LiquidStressHarness`의 활성 입자 수, p95 및 p99 프레임 시간
 - Compute Shader 미지원, 필수 커널·셰이더·설정 누락 또는 초기화 실패 시 레거시 백엔드로 폴백
 
 빌드 성공과 정적 검증은 플레이모드의 시각 결과나 대상 GPU의 성능을 증명하지 않는다.

@@ -146,7 +146,29 @@ namespace Slainte.Bartending
                 return;
 
             bool hasIce = tracker.IceCount > 0;
-            tracker.MarkContentsAsShaken(hasIce);
+            GpuLiquidSystem gpu = GpuLiquidSystem.Instance;
+            if (gpu != null
+                && gpu.IsOperational
+                && gpu.TryGetSnapshot(tracker, out _))
+            {
+                gpu.MarkTechnique(
+                    tracker,
+                    CocktailTechnique.Shake,
+                    false,
+                    hasIce);
+            }
+            else
+            {
+                foreach (LiquidParticleData particle in tracker.Particles)
+                {
+                    if (particle == null)
+                        continue;
+
+                    particle.RecordTechnique(CocktailTechnique.Shake);
+                    if (particle.payload != null)
+                        particle.payload.wasShakenWithIce |= hasIce;
+                }
+            }
 
             shakeComplete = true;
             qualifiedShakeTime = requiredShakeDuration;
@@ -424,7 +446,8 @@ namespace Slainte.Bartending
             {
                 int sum = 17;
                 int xor = 0;
-                if (LiquidSimulationRuntime.IsGpuActive)
+                if (GpuLiquidSystem.Instance != null
+                    && GpuLiquidSystem.Instance.IsOperational)
                 {
                     sum = sum * 397 ^ tracker.ContentVersion;
                     sum = sum * 397 ^ tracker.ParticleCount;

@@ -152,14 +152,20 @@ namespace Slainte.Bartending
 
         private void SetSimulation(bool simulated)
         {
-            VesselLiquidTracker tracker = GetComponent<VesselLiquidTracker>();
-            GpuLiquidSystem.Instance?.SetVesselSuspended(tracker, !simulated);
+            GpuLiquidSystem gpu = GpuLiquidSystem.Instance;
+            if (gpu != null && gpu.IsOperational)
+            {
+                gpu.SetVesselSuspended(
+                    GetComponent<VesselLiquidTracker>(),
+                    !simulated);
+            }
 
             if (!simulated)
             {
                 suspendedBodies.Clear();
                 AddBodies(GetComponentsInChildren<Rigidbody2D>(true));
 
+                VesselLiquidTracker tracker = GetComponent<VesselLiquidTracker>();
                 if (tracker != null)
                 {
                     foreach (LiquidParticleData particle in tracker.Particles)

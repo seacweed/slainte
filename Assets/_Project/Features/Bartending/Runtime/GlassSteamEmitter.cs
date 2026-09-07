@@ -344,7 +344,9 @@ namespace Slainte.Bartending
                 steamRenderer.sharedMaterial = runtimeMaterial;
             }
 
-            EnsureFallbackSmokeSprite();
+            if (GpuLiquidSystem.Instance != null
+                && GpuLiquidSystem.Instance.IsOperational)
+                EnsureFallbackSmokeSprite();
         }
 
         private void EnsureFallbackSmokeSprite()

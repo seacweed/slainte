@@ -155,10 +155,13 @@ namespace Slainte.Bartending
             CocktailRecipeCatalog recipes = CocktailRecipeDataLoader.LoadDefault(itemCatalog);
             evaluator = new CocktailEvaluator(recipes);
 
-            LiquidStressHarness stressHarness = GetComponent<LiquidStressHarness>();
-            if (stressHarness == null)
-                stressHarness = gameObject.AddComponent<LiquidStressHarness>();
-            stressHarness.Initialize(this, session);
+            if (session.GpuLiquidSystem != null)
+            {
+                LiquidStressHarness stressHarness = GetComponent<LiquidStressHarness>();
+                if (stressHarness == null)
+                    stressHarness = gameObject.AddComponent<LiquidStressHarness>();
+                stressHarness.Initialize(this, session);
+            }
         }
 
         private void CreateTestBottles()

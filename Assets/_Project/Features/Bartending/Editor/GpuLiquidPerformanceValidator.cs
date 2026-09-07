@@ -17,6 +17,7 @@ namespace Slainte.Bartending.EditorTools
             "Assets/_Project/Features/Bartending/Infrastructure/GpuFluid/Graphics/GpuLiquidAccumulation.shader";
         private const string BottlePrefabPath =
             "Assets/_Project/Features/Bartending/Prefabs/Equipment/Bottle.prefab";
+        private const string ItemAssetRoot = "Assets/Resources/Bartending/Items";
         private const string SandboxScenePath = ProjectScenePaths.BartendingSandbox;
         private const string RunningKey = "Slainte.GpuLiquidPerformanceValidator.Running";
         private const int StressParticleCount = 1500;
@@ -74,6 +75,11 @@ namespace Slainte.Bartending.EditorTools
             BusinessBartendingSettings settings = AssetDatabase.LoadAssetAtPath<
                 BusinessBartendingSettings>(SettingsPath);
             Require(settings != null, "Bartending settings asset is missing.");
+            Require(!typeof(ILiquidSimulationBackend).IsAssignableFrom(typeof(LiquidPool)),
+                "Legacy LiquidPool must remain independent of the GPU backend interface.");
+            Require(typeof(ILiquidSimulationBackend).IsAssignableFrom(
+                    typeof(LegacyLiquidSimulationBackend)),
+                "The legacy pool must be connected through its external backend adapter.");
             Require(settings.liquidSimulationBackend != LiquidSimulationBackendMode.LegacyRigidbody2D,
                 "Bartending settings explicitly select the legacy liquid backend.");
             Require(settings.gpuLiquidParticleCapacity >= StressParticleCount,
@@ -158,6 +164,32 @@ namespace Slainte.Bartending.EditorTools
             Require(pourExitSpeed / particlesPerSecond
                 >= settings.gpuLiquidParticleRadius * 0.85f,
                 "Bottle particles spawn too closely and will split under density pressure.");
+
+            int validatedBottleMouths = 0;
+            string[] itemGuids = AssetDatabase.FindAssets(
+                "t:ItemDef",
+                new[] { ItemAssetRoot });
+            for (int i = 0; i < itemGuids.Length; i++)
+            {
+                string itemPath = AssetDatabase.GUIDToAssetPath(itemGuids[i]);
+                ItemDef item = AssetDatabase.LoadAssetAtPath<ItemDef>(itemPath);
+                if (item == null
+                    || item.type != ItemType.Bottle
+                    || !item.overrideBottleLiquidSpawn
+                    || !item.overrideBottleClickCollider)
+                {
+                    continue;
+                }
+
+                Vector2 mouthFromBody = item.liquidSpawnNormalized
+                    - item.colliderCenterNormalized;
+                Require(mouthFromBody.sqrMagnitude > 0.000001f
+                    && mouthFromBody.y > 0f,
+                    $"{item.id} has a bottle mouth behind its body collider center.");
+                validatedBottleMouths++;
+            }
+            Require(validatedBottleMouths > 0,
+                "No bottle mouth/body-center pairs were available for validation.");
 
             ComputeShader compute = AssetDatabase.LoadAssetAtPath<ComputeShader>(ComputePath);
             Require(compute != null, "GPU liquid compute shader is missing.");

@@ -64,19 +64,20 @@ namespace Slainte.Bartending
         [Min(0.01f)] public float pourMlPerSecond = 20f;
         [Tooltip("Safety limit for catch-up emission after a slow frame.")]
         [SerializeField, Min(1)] private int maxParticlesPerFrame = 8;
-        [Tooltip("Bottle angle at which liquid starts leaving the mouth.")]
+        [Header("GPU Liquid Pouring")]
+        [Tooltip("GPU backend only: bottle angle at which liquid starts leaving the mouth.")]
         [SerializeField, Range(45f, 120f)] private float pourStartAngle = 90f;
-        [Tooltip("Bottle angle at which the configured ml/s and exit speed are fully reached.")]
+        [Tooltip("GPU backend only: bottle angle at which the configured ml/s and exit speed are fully reached.")]
         [SerializeField, Range(90f, 180f)] private float fullPourAngle = 120f;
-        [Tooltip("Fraction of the configured flow emitted immediately after the pour angle is crossed.")]
+        [Tooltip("GPU backend only: fraction of the configured flow emitted immediately after the pour angle is crossed.")]
         [SerializeField, Range(0.1f, 1f)] private float minimumPourFlowFactor = 0.65f;
-        [Tooltip("Initial liquid speed along the bottle mouth direction, in world units per second.")]
+        [Tooltip("GPU backend only: initial liquid speed along the bottle mouth direction, in world units per second.")]
         [SerializeField, Min(0f)] private float pourExitSpeed = 2.4f;
-        [Tooltip("How much of the moving bottle mouth velocity is inherited by emitted liquid.")]
+        [Tooltip("GPU backend only: how much of the moving bottle mouth velocity is inherited by emitted liquid.")]
         [SerializeField, Range(0f, 1f)] private float mouthVelocityInheritance;
-        [Tooltip("Maximum inherited bottle-mouth speed, preventing teleports from launching liquid.")]
+        [Tooltip("GPU backend only: maximum inherited bottle-mouth speed, preventing teleports from launching liquid.")]
         [SerializeField, Min(0f)] private float maximumInheritedMouthSpeed = 3f;
-        [Tooltip("Half-width of the liquid nozzle. Jitter is applied perpendicular to the exit direction.")]
+        [Tooltip("GPU backend only: half-width of the liquid nozzle. Jitter is applied perpendicular to the exit direction.")]
         [SerializeField, Min(0f)] private float pourSpawnHalfWidth;
         private float pourTimer = 0f;
         private float? initialCapacityOverride;
@@ -158,7 +159,8 @@ namespace Slainte.Bartending
             originalSortingOrder = spriteRenderer.sortingOrder;
 
             ApplyBottleData();
-            ResetLiquidMouthKinematics();
+            if (IsGpuLiquidActive())
+                ResetLiquidMouthKinematics();
             interactionOrder = BartendingItemOrder.Attach(gameObject, col);
         }
 
@@ -200,7 +202,8 @@ namespace Slainte.Bartending
                 spriteRenderer.sprite = visualSprite;
 
             ApplyBottleGeometryOverride();
-            ResetLiquidMouthKinematics();
+            if (IsGpuLiquidActive())
+                ResetLiquidMouthKinematics();
 
             maxCapacity = bottleData.capacityMl;
             currentCapacity = initialCapacityOverride.HasValue
@@ -318,7 +321,8 @@ namespace Slainte.Bartending
             bool synchronizingPointer = UpdatePointerSynchronization();
             if (!synchronizingPointer)
                 HandleInput();
-            UpdateLiquidMouthKinematics();
+            if (IsGpuLiquidActive())
+                UpdateLiquidMouthKinematics();
             HandlePouring();
         }
 
@@ -340,7 +344,8 @@ namespace Slainte.Bartending
                 return;
 
             viewTransitionSuspended = false;
-            ResetLiquidMouthKinematics();
+            if (IsGpuLiquidActive())
+                ResetLiquidMouthKinematics();
             if (!IsPickedUp)
                 return;
 
@@ -389,15 +394,99 @@ namespace Slainte.Bartending
         private void OnDisable()
         {
             CancelPointerSynchronization();
-            ResetLiquidMouthKinematics();
+            if (IsGpuLiquidActive())
+                ResetLiquidMouthKinematics();
             BartendingPointerAnchor.Release(this);
             BartendingSelection.Release(this);
         }
 
-        // 기울기가 90도를 넘으면(옆으로 눕기 시작하면) 붓는 것으로 간주해 pourMlPerSecond 유량을
-        // pourTimer 누적 방식으로 입자 스폰 타이밍으로 변환한다. 프레임 드랍 후 한꺼번에 몰아
-        // 스폰되는 것을 막기 위해 한 프레임당 스폰 개수를 maxParticlesPerFrame으로 제한한다.
         private void HandlePouring()
+        {
+            GpuLiquidSystem gpu = GpuLiquidSystem.Instance;
+            if (gpu != null && gpu.IsOperational)
+            {
+                HandleGpuPouring(gpu);
+                return;
+            }
+
+            HandleLegacyPouring();
+        }
+
+        private static bool IsGpuLiquidActive()
+        {
+            return GpuLiquidSystem.Instance != null
+                && GpuLiquidSystem.Instance.IsOperational;
+        }
+
+        // This is intentionally the pre-GPU LiquidPool path. Keep its threshold,
+        // fixed flow, horizontal jitter, and zero-velocity spawn semantics unchanged.
+        private void HandleLegacyPouring()
+        {
+            if (Mathf.Abs(currentAngle) < 90f || currentCapacity <= 0f)
+            {
+                pourTimer = 0f;
+                return;
+            }
+
+            LiquidPool pool = LiquidPool.Instance;
+            if (pool == null)
+            {
+                pourTimer = 0f;
+                return;
+            }
+
+            pourTimer += Time.deltaTime;
+            int emittedParticleCount = 0;
+            int emissionLimit = Mathf.Max(1, maxParticlesPerFrame);
+            float mlPerSecond = Mathf.Max(0.01f, pourMlPerSecond);
+
+            while (currentCapacity > 0f && emittedParticleCount < emissionLimit)
+            {
+                float volumeMl = Mathf.Min(pool.DefaultParticleVolumeMl, currentCapacity);
+                float emissionInterval = volumeMl / mlPerSecond;
+                if (pourTimer < emissionInterval)
+                    break;
+
+                if (!TrySpawnLegacyLiquid(volumeMl))
+                {
+                    pourTimer = Mathf.Min(pourTimer, emissionInterval);
+                    break;
+                }
+
+                pourTimer -= emissionInterval;
+                emittedParticleCount++;
+            }
+        }
+
+        private bool TrySpawnLegacyLiquid(float requestedVolumeMl)
+        {
+            LiquidPool pool = LiquidPool.Instance;
+            if (pool == null || requestedVolumeMl <= 0f || currentCapacity <= 0f)
+                return false;
+
+            if (liquidSpawnPoint == null)
+            {
+                Debug.LogWarning("⚠️ Liquid Spawn Point가 인스펙터에 할당되지 않았습니다! 병의 중심(몸체)에서 스폰됩니다.");
+            }
+
+            Vector3 spawnPos = liquidSpawnPoint != null ? liquidSpawnPoint.position : transform.position;
+            Vector3 randomOffset = new Vector3(Random.Range(-0.1f, 0.1f), 0, 0);
+
+            float volumeMl = Mathf.Min(requestedVolumeMl, currentCapacity);
+            GameObject obj = pool.GetParticle(
+                spawnPos + randomOffset,
+                bottleData,
+                volumeMl);
+            if (obj == null)
+                return false;
+
+            currentCapacity = Mathf.Max(0f, currentCapacity - volumeMl);
+            initialCapacityOverride = currentCapacity;
+            CapacityChanged?.Invoke(this, currentCapacity);
+            return true;
+        }
+
+        private void HandleGpuPouring(ILiquidSimulationBackend backend)
         {
             float flowFactor = CalculatePourFlowFactor();
             if (flowFactor <= 0f || currentCapacity <= 0f)
@@ -406,7 +495,6 @@ namespace Slainte.Bartending
                 return;
             }
 
-            ILiquidSimulationBackend backend = LiquidSimulationRuntime.ActiveBackend;
             if (backend == null || !backend.IsOperational)
             {
                 pourTimer = 0f;
@@ -425,7 +513,8 @@ namespace Slainte.Bartending
                 if (pourTimer < emissionInterval)
                     break;
 
-                if (!TrySpawnLiquid(
+                if (!TrySpawnGpuLiquid(
+                    backend,
                     volumeMl,
                     emittedParticleCount * emissionInterval))
                 {
@@ -438,11 +527,11 @@ namespace Slainte.Bartending
             }
         }
 
-        private bool TrySpawnLiquid(
+        private bool TrySpawnGpuLiquid(
+            ILiquidSimulationBackend backend,
             float requestedVolumeMl,
             float streamOffsetSeconds)
         {
-            ILiquidSimulationBackend backend = LiquidSimulationRuntime.ActiveBackend;
             if (backend == null
                 || !backend.IsOperational
                 || requestedVolumeMl <= 0f
@@ -507,9 +596,14 @@ namespace Slainte.Bartending
 
         private Vector2 CalculateLiquidExitDirection(Vector2 spawnPosition)
         {
-            Vector2 bottleCenter = spriteRenderer != null && spriteRenderer.sprite != null
-                ? spriteRenderer.bounds.center
-                : (Vector2)transform.position;
+            // Sprite bounds include transparent/artwork margins, so their center is
+            // not a reliable bottle-body center. Synthetic Lemon's mouth is below
+            // that visual center even though it is correctly above its collider.
+            Vector2 bottleCenter = col != null
+                ? col.bounds.center
+                : spriteRenderer != null && spriteRenderer.sprite != null
+                    ? spriteRenderer.bounds.center
+                    : (Vector2)transform.position;
             Vector2 direction = spawnPosition - bottleCenter;
             if (direction.sqrMagnitude <= 0.000001f)
                 direction = transform.up;

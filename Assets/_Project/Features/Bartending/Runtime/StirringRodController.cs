@@ -34,9 +34,10 @@ namespace Slainte.Bartending
         [SerializeField] private float stirMinimumAngularSpeed = 5f;
         [SerializeField, Min(0.05f)] private float stirAttemptDuration = 0.35f;
         [SerializeField, Min(0.1f)] private float stirCompletionDuration = 1f;
-        [SerializeField, Range(0f, 1f)] private float maximumCompositionDeviation = 0.08f;
+        [SerializeField, Range(0f, 1f)] private float maximumCompositionDeviation = 0.1f;
         [SerializeField, Min(0.05f)] private float compositionCheckInterval = 0.2f;
-        [SerializeField, Min(0f)] private float compositionStabilityDuration = 0.15f;
+        [Tooltip("GPU backend only: time that every particle must remain within the GPU composition tolerance.")]
+        [SerializeField, Min(0f)] private float gpuCompositionStabilityDuration = 0.15f;
 
         [Header("Generated Visual Fallback")]
         [SerializeField] private float generatedVisualLength = 3f;
@@ -383,10 +384,9 @@ namespace Slainte.Bartending
             RegisterStirActivity(particle.VesselOwner);
         }
 
-        // 저어지는 시간(activeStirTime)을 누적해 두 단계로 판정한다: stirAttemptDuration을
-        // 넘기면 "시도함"으로 한 번만 기록하고, stirCompletionDuration을 넘긴 뒤로는 주기적으로
-        // 성분 분산도(CalculateMeanCompositionDeviation)를 확인해 충분히 고르게 섞였을 때만
-        // "완료"로 표시한다. 그릇이 바뀌거나(vessel) 내용물이 변하면(ContentVersion) 처음부터 다시 센다.
+        // Timing is shared, but completion deliberately branches here: the legacy
+        // pool keeps its original mean-deviation check while GPU uses its stricter
+        // all-particle snapshot criterion.
         private void RegisterStirActivity(VesselLiquidTracker vessel)
         {
             if (vessel == null)
@@ -408,16 +408,34 @@ namespace Slainte.Bartending
             if (Mathf.Approximately(lastStirSampleFixedTime, Time.fixedTime))
                 return;
 
+            GpuLiquidSystem gpu = GpuLiquidSystem.Instance;
+            GpuLiquidVesselSnapshot gpuSnapshot = null;
+            bool isGpuVessel = gpu != null
+                && gpu.IsOperational
+                && gpu.TryGetSnapshot(
+                    vessel,
+                    out gpuSnapshot);
+
             lastStirSampleFixedTime = Time.fixedTime;
             activeStirTime += Time.fixedDeltaTime;
             if (activeStirTime >= stirAttemptDuration && !stirAttemptRecorded)
             {
-                vessel.MarkContentsAsStirAttempted();
+                if (isGpuVessel)
+                {
+                    gpu.MarkTechnique(
+                        vessel,
+                        CocktailTechnique.None,
+                        true,
+                        false);
+                }
+                else
+                {
+                    vessel.MarkContentsAsStirAttempted();
+                }
                 stirAttemptRecorded = true;
             }
 
-            if (stirCompleted
-                || activeStirTime < stirCompletionDuration
+            if (activeStirTime < stirCompletionDuration
                 || Time.unscaledTime < nextCompositionCheckTime)
             {
                 return;
@@ -425,19 +443,36 @@ namespace Slainte.Bartending
 
             nextCompositionCheckTime = Time.unscaledTime
                 + Mathf.Max(0.05f, compositionCheckInterval);
-            float tolerance = Mathf.Clamp01(maximumCompositionDeviation);
-            float maximumDeviation = vessel.CalculateMaximumCompositionDeviation(
-                tolerance,
-                out int outlierCount);
+
+            if (!isGpuVessel)
+            {
+                if (vessel.CalculateMeanCompositionDeviation()
+                    <= Mathf.Clamp01(maximumCompositionDeviation))
+                {
+                    vessel.MarkContentsAsStirred();
+                }
+                return;
+            }
+
+            if (stirCompleted)
+                return;
+
+            float tolerance = gpu.StirCompositionTolerance;
+            float maximumDeviation = gpuSnapshot.MaximumCompositionDeviation;
+            int outlierCount = gpuSnapshot.OutOfToleranceParticleCount;
             if (maximumDeviation <= tolerance && outlierCount == 0)
             {
                 if (uniformCompositionSince < 0f)
                     uniformCompositionSince = Time.unscaledTime;
 
                 if (Time.unscaledTime - uniformCompositionSince
-                    >= Mathf.Max(0f, compositionStabilityDuration))
+                    >= Mathf.Max(0f, gpuCompositionStabilityDuration))
                 {
-                    vessel.MarkContentsAsStirred();
+                    gpu.MarkTechnique(
+                        vessel,
+                        CocktailTechnique.Stir,
+                        true,
+                        false);
                     stirCompleted = true;
                 }
             }
