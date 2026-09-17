@@ -262,6 +262,7 @@ GPU PBF/XPBD는 `Infrastructure/GpuFluid`의 Compute Shader와 `Runtime/Liquid/G
 - 정적 구성 검증: Unity 메뉴 `Slainte > Bartending > Validate GPU Liquid PBF-XPBD`
 - 부하 계측: GPU 세션에서만 생성되는 `LiquidStressHarness`의 활성 입자 수, p95 및 p99 프레임 시간
 - Compute Shader 미지원, 필수 커널·셰이더·설정 누락 또는 초기화 실패 시 레거시 백엔드로 폴백
+- 빌드 포함: 컴퓨트 셰이더(`gpuLiquidComputeShader`)와 렌더링 셰이더(`gpuLiquidAccumulationShader`)는 모두 `Resources`의 settings asset이 직접 참조해야 플레이어 빌드에 포함된다. `Shader.Find` 폴백은 두지 않으므로 참조가 비면 에디터에서도 레거시로 폴백해 에디터·빌드 동작이 항상 일치한다
 
 빌드 성공과 정적 검증은 플레이모드의 시각 결과나 대상 GPU의 성능을 증명하지 않는다.
 공개 성능 수치는 실제 대상 기기에서 측정한 결과만 사용한다.

@@ -73,6 +73,7 @@ MonoBehaviour:
   liquidMinimumVisibleAlpha: 0.05
   liquidSortingOrder: 12
   gpuLiquidComputeShader: {fileID: 7200000, guid: 48d5c9bfae2e4a94ac90110d9d6a3c7b, type: 3}
+  gpuLiquidAccumulationShader: {fileID: 4800000, guid: 6e1f03b97db049859db6b6a8bec7e03f, type: 3}
   gpuLiquidParticleCapacity: 4096
   gpuLiquidParticleVolumeMl: 0.5
   gpuLiquidMaximumIngredients: 16
