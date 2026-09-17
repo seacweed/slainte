@@ -14,6 +14,7 @@ public class GameModeManager : SceneSingleton<GameModeManager>
     [SerializeField] private RecipeBookUI  recipeBook;
     [SerializeField] private OrderTicketUI orderTicketUI;
     [SerializeField] private LiquorShelfUI liquorShelf;
+    [SerializeField] private Slainte.Bartending.IngredientSelectionUI ingredientSelection;
 
     [Header("Initial Mode")]
     [SerializeField] private GameMode initialMode = GameMode.OrderMode;
@@ -69,6 +70,8 @@ public class GameModeManager : SceneSingleton<GameModeManager>
         recipeBook?.SetInteractable(!isEpisode);
         orderTicketUI?.SetInteractable(!isEpisode);
         liquorShelf?.SetInteractable(!isEpisode);
+        // 술 선택 공간은 사용자가 여닫지 못하고, 제조 가능 여부에 따라서만 올라오거나 내려간다.
+        ingredientSelection?.SetCraftingAvailable(mode == GameMode.CraftingMode);
 
         if (!isEpisode)
         {

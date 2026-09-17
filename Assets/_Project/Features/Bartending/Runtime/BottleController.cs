@@ -958,7 +958,7 @@ namespace Slainte.Bartending
 
         private void TryDropBottle()
         {
-            if (LiquorShelfUI.TryReturnHeldBottle(Input.mousePosition))
+            if (BottleReturnZones.TryReturnHeldBottle(Input.mousePosition))
                 return;
 
             if (!BartendingViewport.TryGetPointerWorldPosition(mainCamera, Input.mousePosition, out Vector3 mousePos))

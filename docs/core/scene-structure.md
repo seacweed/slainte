@@ -44,24 +44,21 @@ BusinessScene
 │
 └── Canvas [ScreenSpace-Overlay]
     ├── FrontWorldPanel        (모든 모드에서 표시)
-    │   ├── FrontCameraRig     (이 RectTransform 전체가 이동하는 단위)
-    │   │   ├── BarCounter     (UIDropSlot들, 기본 뷰)
+    │   ├── FrontCameraRig     (이 RectTransform 전체가 이동하는 단위 — 아래 순서가 그리기 순서)
+    │   │   ├── (바 배경)
     │   │   ├── CustomerStage  (CharacterStage — 영업/에피소드 공용)
-    │   │   └── DrawerArea     (DrawerUI, 아래쪽 오프스크린 — S키로 이동해서 노출)
+    │   │   ├── (바테이블 배경)
+    │   │   ├── BarCounter     (손님 바 테이블, 비물리 — TableSlots: 런타임 슬롯 간격·배율 가이드, 지우지 말 것)
+    │   │   ├── IngredientSelection  (IngredientSelectionUI — 제조 모드에서만 올라옴, A/D 대분류 전환)
+    │   │   ├── DrawerArea     (DrawerUI, 아래쪽 오프스크린 — S키로 이동해서 노출)
+    │   │   └── CraftingSpace  (제작 공간 — 가림 배경 + CraftingSlotRow + 런타임 BartendingViewport)
     │   └── EpisodeRunner      (FrontCameraRig 밖 — 카메라 이동 영향 없음)
     ├── DialoguePanel          (모든 모드에서 표시)
     │   ├── DialogueController (공용 대화 렌더러)
     │   └── ChoiceContainer    (선택지 버튼 동적 생성)
     ├── VerticalCameraFollowGroup   (런타임 생성, FrontCameraRig.Awake — 씬 파일에는 없음)
     │   ├── OrderTicketPanel   (OrderTicketUI, OrderMode/CraftingMode 진입 시 자동 open, EpisodeMode에서 잠금·슬라이드 닫힘)
-    │   ├── RecipeBookPanel    (RecipeBookUI, OrderTicketPanel과 동일한 open/lock 패턴)
-    │   └── LiquorShelfPanel             (LiquorShelfUI, 우측 슬라이드 — D키 토글, EpisodeMode에서 잠금·슬라이드 닫힘)
-    │       ├── CategoryButtonsArea  (ScrollRect, 카테고리 탭 — 닫힌 상태에서도 화면 우측에 노출)
-    │       └── LiquorShelf      (vertical 스크롤, 술장 배경+슬롯)
-    │           └── Viewport
-    │               └── Content      (ContentHeightToBackground)
-    │                   ├── ShelfBGImage              (Image + AspectRatioFitter, 카테고리 전환 시 sprite 교체)
-    │                   └── [CategoryContainer × N]   (카테고리별, SetActive로 전환 — LiquorBottleSlotUI 수동 배치)
+    │   └── RecipeBookPanel    (RecipeBookUI, OrderTicketPanel과 동일한 open/lock 패턴)
     ├── CraftingJudgePanel     (CraftingJudgeUI, CraftingMode에서만 표시 — 임시 판정 버튼 6개, goodjob/badjob/midjob 4종)
     │   ├── GoodJobButton
     │   ├── MidIceButton
@@ -99,8 +96,8 @@ BartendingRuntime (런타임)
 ├── 전용 Orthographic Camera
 ├── RenderTexture / BartendingViewport
 ├── LiquidPool
-├── 물리 슬롯들
-├── 선택한 BottleController들
+├── 물리 슬롯들              (줄 중심 = CraftingSlotRow, 없으면 BarCounter)
+├── 술 선택 공간에서 꺼낸 BottleController들
 ├── BeakerController
 ├── CobblerShaker
 │   └── CobblerShakerTechniqueController
@@ -110,7 +107,7 @@ BartendingRuntime (런타임)
     └── GlassSteamEmitter
 ```
 
-제조 모드를 벗어나면 이 루트를 제거한다. 병 재고는 오브젝트가 사라져도 `GameProgress`에 남는다.
+제조 모드를 벗어나면 이 루트를 제거한다. 슬롯에 남은 병의 잔량은 자동으로 술장 재고에 합쳐진다([ingredient-selection.md](../ui/ingredient-selection.md#재고-규칙)).
 
 ## 5. 카메라 추종 UI
 
@@ -118,9 +115,10 @@ BartendingRuntime (런타임)
 
 - `OrderTicketPanel`
 - `RecipeBookPanel`
-- `LiquorShelfPanel`
 
-이 그룹은 `frontWorld`의 세로 이동만 따라간다. 서랍을 열 때 배경과 함께 이동하지만 캐릭터 포커스용 가로 이동에는 영향을 받지 않는다.
+이 그룹은 `frontWorld`의 세로 이동만 따라간다. 서랍을 열 때 배경과 함께 이동하지만 캐릭터 포커스용 가로 이동에는 영향을 받지 않는다. 술 선택 공간은 이 그룹이 아니라 `FrontCameraRig` 안에 있어 가로·세로 이동을 모두 따라간다.
+
+단축키: 도감 Q, 주문서 E, 대분류 전환 A/D(제조 모드), 도구장 서랍 S/W.
 
 ## 6. 모드별 표시
 
@@ -131,7 +129,7 @@ BartendingRuntime (런타임)
 | ChoiceContainer | 숨김 | 표시 | 숨김 |
 | 주문서 | 조작 가능 | 잠금·닫힘 | 조작 가능 |
 | 레시피북 | 조작 가능 | 잠금·닫힘 | 조작 가능 |
-| 술장 | 조작 가능 | 잠금·닫힘 | 조작 가능 |
+| 술 선택 공간 | 내려가 가려짐 | 내려가 가려짐 | 올라옴·조작 가능 |
 | 제조 물리 월드 | 없음 | 없음 | 생성 |
 
 ## 7. RestScene

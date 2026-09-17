@@ -25,12 +25,13 @@ namespace Slainte.Bartending
         private const string SceneName = "BusinessScene";
         private const string SettingsResourcePath = ProjectResourcePaths.BartendingSettings;
 
+        private const string CraftingSpaceName = "CraftingSpace";
+        private const string CraftingSlotRowName = "CraftingSlotRow";
+
         private readonly List<GameObject> hiddenCanvasItems = new List<GameObject>();
-        private readonly List<BottleController> sessionBottles = new List<BottleController>();
-        private readonly List<LiquorBottleDef> selectedBottleDefinitions = new List<LiquorBottleDef>();
+        private readonly BartendingBottleStock bottleStock = new BartendingBottleStock();
         private readonly List<SlotController> sessionSlots = new List<SlotController>();
-        private readonly Dictionary<BottleController, float> bottleReserveAmounts =
-            new Dictionary<BottleController, float>();
+        private readonly List<Collider2D> pointerOverlapBuffer = new List<Collider2D>();
         private readonly Dictionary<string, GameObject> cabinetInstances =
             new Dictionary<string, GameObject>(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<GlassController> deployedServingGlasses =
@@ -68,7 +69,12 @@ namespace Slainte.Bartending
             new List<IBartendingViewTransitionParticipant>();
 
         public bool IsSessionReady => sessionRoot != null && builtSession != null;
-        public int SessionBottleCount => sessionBottles.Count;
+        public int SessionBottleCount => bottleStock.DeployedCount;
+        public event Action<string> StockChanged
+        {
+            add => bottleStock.StockChanged += value;
+            remove => bottleStock.StockChanged -= value;
+        }
         public event Action SessionReady;
         public event Action SessionDestroyed;
         public event Action<VesselLiquidTracker> ServeRequested;
@@ -177,7 +183,7 @@ namespace Slainte.Bartending
             {
                 // oldMode 조건 외에 sessionRoot != null도 함께 검사 — 다른 모드로 바뀌었는데
                 // 세션이 아직 정리되지 않은 예외 상황까지 방어적으로 정리한다.
-                DestroySession(clearBottleSelections: true);
+                DestroySession();
             }
         }
 
@@ -195,6 +201,13 @@ namespace Slainte.Bartending
                 return;
             }
 
+            // 제작 공간 레이어(CraftingSpace)와 슬롯 줄 기준(CraftingSlotRow)이 씬에 있으면 그쪽을 쓰고,
+            // 없으면 기존처럼 BarCounter 기준으로 조립한다.
+            BartendingSessionLayoutAnchors anchors = new BartendingSessionLayoutAnchors
+            {
+                ViewportParent = FindNamedRectTransform(targetScene, CraftingSpaceName),
+                SlotAlignmentTarget = FindNamedRectTransform(targetScene, CraftingSlotRowName)
+            };
             builtSession = BartendingSessionBuilder.Build(
                 transform,
                 counter,
@@ -202,7 +215,8 @@ namespace Slainte.Bartending
                 settings,
                 BartendingSessionBuildMode.Runtime,
                 settings.useToolCabinet && toolCabinet != null && toolCabinet.IsConfigured,
-                toolCabinet != null ? toolCabinet.WorldRenderExtensionRect : null);
+                toolCabinet != null ? toolCabinet.WorldRenderExtensionRect : null,
+                anchors);
             if (builtSession == null)
             {
                 Debug.LogError("영업 제조 세션을 생성하지 못했습니다.");
@@ -228,8 +242,7 @@ namespace Slainte.Bartending
                 characterStage,
                 counter,
                 allowFallbackTarget: false);
-            List<BottleController> selectedBottles = CreateSelectedBottles();
-            snapRoutine = StartCoroutine(SnapStartingItems(builtSession.StartingTools, selectedBottles));
+            snapRoutine = StartCoroutine(SnapStartingItems(builtSession.StartingTools));
 
             readyRoutine = StartCoroutine(CaptureTargetTracker(builtSession.ServingGlass));
             toolCabinet?.NotifySessionReady();
@@ -249,7 +262,7 @@ namespace Slainte.Bartending
                 SuspendSessionForViewTransition();
         }
 
-        private void DestroySession(bool clearBottleSelections)
+        private void DestroySession()
         {
             ClearViewTransitionState();
             UnregisterAllServingGlasses();
@@ -259,19 +272,15 @@ namespace Slainte.Bartending
                 snapRoutine = null;
             }
 
-            for (int i = 0; i < sessionBottles.Count; i++)
-            {
-                if (sessionBottles[i] != null)
-                    sessionBottles[i].CapacityChanged -= HandleBottleCapacityChanged;
-            }
+            // 슬롯에 남은 병은 오브젝트만 사라지고 잔량은 총량에 그대로 남아 있으므로,
+            // 등록만 해제하면 자동으로 술장에 반환된 것과 같다.
+            bottleStock.ReleaseAll();
 
             if (readyRoutine != null)
             {
                 StopCoroutine(readyRoutine);
                 readyRoutine = null;
             }
-            sessionBottles.Clear();
-            bottleReserveAmounts.Clear();
             cabinetInstances.Clear();
             deployedServingGlasses.Clear();
             cabinetIceBucket = null;
@@ -295,9 +304,6 @@ namespace Slainte.Bartending
             sessionViewport = null;
             sessionSlotLayout = null;
             sessionLiquidPool = null;
-
-            if (clearBottleSelections)
-                selectedBottleDefinitions.Clear();
 
             RestoreSessionOverrides();
             toolCabinet?.NotifySessionDestroyed();
@@ -746,7 +752,7 @@ namespace Slainte.Bartending
         }
 
         // 선택 코디네이터에 아직 반영되지 않은 도구까지 포함해, 현재 손에 든 아이템이 있는지 전수 조사한다.
-        private bool HasHeldBartendingItem()
+        public bool HasHeldBartendingItem()
         {
             if (sessionWorld == null)
                 return false;
@@ -892,81 +898,71 @@ namespace Slainte.Bartending
                 UnregisterServingGlass(glasses[i]);
         }
 
+        // 술 선택 공간에서 재료를 클릭했을 때 병 하나를 꺼내 가장 오른쪽 빈 슬롯에 놓는다.
+        // 같은 재료도 여러 병 꺼낼 수 있고, 꺼낼 양은 BartendingBottleStock이 따 둔 병부터 계산한다.
         public bool TryPlaceBottleFromShelf(LiquorBottleDef shelfDefinition, out string failure)
         {
             failure = string.Empty;
             if (modeManager == null || modeManager.CurrentMode != GameMode.CraftingMode
                 || sessionRoot == null || sessionWorld == null)
             {
-                failure = "칵테일 제작 중에만 술병을 꺼낼 수 있습니다.";
+                failure = "Bottles can be taken out only while crafting.";
                 return false;
             }
 
             if (shelfDefinition == null || string.IsNullOrWhiteSpace(shelfDefinition.id))
             {
-                failure = "술장 병 데이터가 비어 있습니다.";
+                failure = "The shelf bottle definition is empty.";
                 return false;
             }
 
             string inventoryId = shelfDefinition.InventoryId;
-            if (FindSelectedDefinition(inventoryId) != null)
-            {
-                failure = $"{shelfDefinition.displayName} 병은 이미 테이블에 있습니다.";
-                return false;
-            }
-
             ItemDef item = ResolveShelfItem(shelfDefinition);
             if (item == null || item.type != ItemType.Bottle)
             {
-                failure = $"{shelfDefinition.displayName}에 연결된 제작용 재료가 없습니다. "
-                    + $"(병 ID: {shelfDefinition.id}, 재고 ID: {inventoryId})";
+                failure = $"No crafting item is linked to {shelfDefinition.id} (inventory ID: {inventoryId}).";
                 return false;
             }
 
-            GameProgress progress = GameProgress.Instance;
-            float inventoryAmount = progress != null
-                ? progress.EnsureBottleAmount(inventoryId, shelfDefinition.DefaultAmount)
-                : shelfDefinition.DefaultAmount;
-            if (inventoryAmount <= 0f)
+            float spawnAmount = BartendingBottleStock.CalculateNextBottleAmount(
+                bottleStock.GetShelfAmount(shelfDefinition),
+                item.capacityMl);
+            if (spawnAmount <= Mathf.Epsilon)
             {
-                failure = $"{shelfDefinition.displayName} 재고가 없습니다.";
+                failure = $"{shelfDefinition.id} is out of stock.";
                 return false;
             }
 
             SlotController targetSlot = FindRightmostFreeSlot();
             if (targetSlot == null)
             {
-                failure = "테이블에 빈 슬롯이 없습니다.";
+                failure = "There is no free slot on the counter.";
                 return false;
             }
 
-            BottleController bottle = CreateBottle(item, shelfDefinition, shelfDefinition.DefaultAmount);
+            BottleController bottle = CreateBottle(item, shelfDefinition, spawnAmount);
             if (bottle == null)
             {
-                failure = "술병 오브젝트를 만들지 못했습니다.";
+                failure = "The bottle object could not be created.";
                 return false;
             }
 
-            selectedBottleDefinitions.Add(shelfDefinition);
             targetSlot.Occupy(bottle);
             bottle.SnapToSlot(targetSlot.transform, targetSlot);
             return true;
         }
 
+        public float GetShelfAmount(LiquorBottleDef shelfDefinition)
+        {
+            return bottleStock.GetShelfAmount(shelfDefinition);
+        }
+
+        // 들고 있는 병을 술장에 반환한다. 총량은 따른 양만큼만 이미 줄어 있으므로 병 등록만 해제하면
+        // 남은 잔량이 술장 재고에 그대로 합쳐진다.
         public bool TryReturnHeldBottleToShelf(out string failure)
         {
             failure = string.Empty;
-            BottleController heldBottle = null;
-            for (int i = sessionBottles.Count - 1; i >= 0; i--)
-            {
-                BottleController candidate = sessionBottles[i];
-                if (candidate != null && candidate.IsPickedUp)
-                {
-                    heldBottle = candidate;
-                    break;
-                }
-            }
-
+            BottleController heldBottle = bottleStock.FindPickedUpBottle();
             if (heldBottle == null)
                 return false;
 
@@ -974,53 +970,56 @@ namespace Slainte.Bartending
                 || modeManager.CurrentMode != GameMode.CraftingMode
                 || sessionWorld == null)
             {
-                failure = "칵테일 제작 중에만 술병을 반환할 수 있습니다.";
+                failure = "Bottles can be returned only while crafting.";
                 return false;
             }
 
-            ItemDef item = heldBottle.BottleData;
-            LiquorBottleDef shelfDefinition = item != null
-                ? FindSelectedDefinition(item.id)
-                : null;
-            if (shelfDefinition == null)
+            if (!bottleStock.TryGetDefinition(heldBottle, out _))
             {
-                failure = "들고 있는 재료 병에 연결된 술장 데이터를 찾지 못했습니다.";
+                failure = "The held bottle has no linked shelf definition.";
                 return false;
             }
 
-            heldBottle.CapacityChanged -= HandleBottleCapacityChanged;
-            sessionBottles.Remove(heldBottle);
-            bottleReserveAmounts.Remove(heldBottle);
-            selectedBottleDefinitions.Remove(shelfDefinition);
+            bottleStock.Release(heldBottle);
             heldBottle.PrepareForShelfReturn();
             Destroy(heldBottle.gameObject);
             return true;
         }
 
-        private List<BottleController> CreateSelectedBottles()
+        // 화면 좌표 아래에 제작 공간 물체(도구·병·잔)가 있는지 검사한다. 제작 공간이 술 선택 공간보다
+        // 위에 그려지므로, 물체가 재료 아이콘을 덮고 있을 때는 재료 호버·클릭보다 물체 조작이 우선해야 한다.
+        public bool IsPointerOverWorldItem(Vector2 screenPosition)
         {
-            List<BottleController> bottles = new List<BottleController>();
-            for (int i = 0; i < selectedBottleDefinitions.Count; i++)
+            if (sessionWorld == null
+                || !BartendingViewport.TryGetPointerWorldPosition(
+                    null,
+                    screenPosition,
+                    out Vector3 pointerWorld))
             {
-                LiquorBottleDef shelfDefinition = selectedBottleDefinitions[i];
-                ItemDef item = ResolveShelfItem(shelfDefinition);
-                if (shelfDefinition == null || item == null || item.type != ItemType.Bottle)
-                {
-                    continue;
-                }
-
-                BottleController bottle = CreateBottle(item, shelfDefinition, shelfDefinition.DefaultAmount);
-                if (bottle != null)
-                    bottles.Add(bottle);
+                return false;
             }
 
-            return bottles;
+            ContactFilter2D filter = ContactFilter2D.noFilter;
+            filter.useTriggers = true;
+            int count = Physics2D.OverlapPoint(pointerWorld, filter, pointerOverlapBuffer);
+            for (int i = 0; i < count; i++)
+            {
+                Collider2D hit = pointerOverlapBuffer[i];
+                if (hit != null
+                    && hit.transform.IsChildOf(sessionWorld)
+                    && hit.GetComponentInParent<IBartendingItem>() != null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private BottleController CreateBottle(
             ItemDef item,
             LiquorBottleDef shelfDefinition,
-            float defaultInventoryAmount)
+            float bottleAmount)
         {
             if (item == null || sessionWorld == null)
                 return null;
@@ -1050,23 +1049,9 @@ namespace Slainte.Bartending
                 BartendingNativeSpriteSizer.FindReferenceRenderer(
                     bottle.gameObject));
             bottle.transform.localScale *= 0.7f;
-            RegisterBottle(bottle, defaultInventoryAmount);
+            bottle.SetCurrentCapacity(bottleAmount);
+            bottleStock.Register(bottle, shelfDefinition);
             return bottle;
-        }
-
-        private LiquorBottleDef FindSelectedDefinition(string itemId)
-        {
-            for (int i = 0; i < selectedBottleDefinitions.Count; i++)
-            {
-                LiquorBottleDef definition = selectedBottleDefinitions[i];
-                if (definition != null
-                    && string.Equals(definition.InventoryId, itemId, StringComparison.OrdinalIgnoreCase))
-                {
-                    return definition;
-                }
-            }
-
-            return null;
         }
 
         private ItemDef ResolveShelfItem(LiquorBottleDef shelfDefinition)
@@ -1092,61 +1077,6 @@ namespace Slainte.Bartending
             }
 
             return null;
-        }
-
-        private void RegisterBottle(BottleController bottle, float defaultInventoryAmount)
-        {
-            if (bottle == null || sessionBottles.Contains(bottle))
-                return;
-
-            ItemDef item = bottle.BottleData;
-            if (item != null && !string.IsNullOrWhiteSpace(item.id) && GameProgress.Instance != null)
-            {
-                // 저장된 총 재고(totalAmount)를 병 하나의 용량(bottleCapacity)으로 나눈 나머지를
-                // "지금 손에 든 병"의 양으로 삼고, 나머지 전체 병 수량은 reserve(예비 재고)로 미뤄둔다.
-                // 병이 완전히 비면 HandleBottleCapacityChanged가 이 reserve에서 자동으로 새 병을 채운다.
-                float totalAmount = Mathf.Max(
-                    0f,
-                    GameProgress.Instance.GetBottleAmount(item.id, defaultInventoryAmount));
-                float bottleCapacity = Mathf.Max(1f, item.capacityMl);
-                float activeBottleAmount = totalAmount % bottleCapacity;
-                if (totalAmount > 0f && activeBottleAmount <= Mathf.Epsilon)
-                    activeBottleAmount = Mathf.Min(bottleCapacity, totalAmount);
-                bottleReserveAmounts[bottle] = Mathf.Max(0f, totalAmount - activeBottleAmount);
-                bottle.SetCurrentCapacity(activeBottleAmount);
-            }
-            else
-            {
-                bottleReserveAmounts[bottle] = 0f;
-            }
-
-            bottle.CapacityChanged += HandleBottleCapacityChanged;
-            sessionBottles.Add(bottle);
-        }
-
-        private void HandleBottleCapacityChanged(BottleController bottle, float amount)
-        {
-            ItemDef item = bottle != null ? bottle.BottleData : null;
-            if (item == null || string.IsNullOrWhiteSpace(item.id) || GameProgress.Instance == null)
-                return;
-
-            bottleReserveAmounts.TryGetValue(bottle, out float reserveAmount);
-            float activeAmount = Mathf.Max(0f, amount);
-            // 들고 있는 병이 완전히 비었는데 예비 재고가 남아있으면, 새 병 한 개 분량을
-            // reserve에서 덜어와 자동으로 리필한다(빈 병을 새로 꺼낼 필요 없이 자연스럽게 이어짐).
-            if (activeAmount <= Mathf.Epsilon && reserveAmount > Mathf.Epsilon)
-            {
-                float refillAmount = Mathf.Min(Mathf.Max(0f, item.capacityMl), reserveAmount);
-                if (refillAmount > Mathf.Epsilon)
-                {
-                    reserveAmount = Mathf.Max(0f, reserveAmount - refillAmount);
-                    bottleReserveAmounts[bottle] = reserveAmount;
-                    bottle.SetCurrentCapacity(refillAmount);
-                    activeAmount = refillAmount;
-                }
-            }
-
-            GameProgress.Instance.SetBottleAmount(item.id, reserveAmount + activeAmount);
         }
 
         private Camera CreateWorldCamera(Transform parent, BusinessBartendingSettings settings, int renderLayer)
@@ -1482,9 +1412,7 @@ namespace Slainte.Bartending
             return item.GetComponent<IBartendingItem>();
         }
 
-        private IEnumerator SnapStartingItems(
-            List<IBartendingItem> tools,
-            List<BottleController> bottles)
+        private IEnumerator SnapStartingItems(List<IBartendingItem> tools)
         {
             yield return null;
 
@@ -1492,19 +1420,6 @@ namespace Slainte.Bartending
             {
                 for (int i = 0; i < tools.Count && i < sessionSlots.Count; i++)
                     SnapToStartingSlot(tools[i], sessionSlots, i);
-            }
-
-            if (bottles != null)
-            {
-                for (int i = 0; i < bottles.Count; i++)
-                {
-                    SlotController targetSlot = FindRightmostFreeSlot();
-                    if (targetSlot == null || bottles[i] == null)
-                        continue;
-
-                    targetSlot.Occupy(bottles[i]);
-                    bottles[i].SnapToSlot(targetSlot.transform, targetSlot);
-                }
             }
 
             sessionViewport?.SetOutputVisible(true);
@@ -1613,7 +1528,7 @@ namespace Slainte.Bartending
                 modeManager.OnModeChanged -= HandleModeChanged;
             }
 
-            DestroySession(clearBottleSelections: true);
+            DestroySession();
             RestoreHiddenCanvasItems();
             RestoreSlotLayoutTemplate();
         }

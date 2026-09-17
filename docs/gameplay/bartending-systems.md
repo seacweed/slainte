@@ -84,6 +84,10 @@ LayerMask slotLayer;     // 빈 값이면 "Slot" 레이어를 자동 탐색
 
 트리거 Enter/Stay/Exit에서 픽업 중인 도구에만 에메랄드 녹색(`#66FF66, alpha 0.5`) 하이라이트를 표시하며, 이미 점유된 슬롯에는 하이라이트 없음.
 
+**슬롯 위치**: 영업 세션의 슬롯(`BartendingSlot_0~7`)은 `BarCounter/TableSlots`의 `UIDropSlot` 가이드로 가로 간격과 아이템 배율을 정한다. 슬롯 줄 중심은 `BartendingSessionLayoutAnchors.SlotAlignmentTarget`에 맞춘다. 영업 씬에서는 `CraftingSlotRow`이고, 없으면 `BarCounter`다. 병 바닥은 슬롯 중심 높이에 놓인다. 바닥 콜라이더는 없다.
+
+**병 재고**: 술 선택 공간에서 꺼낸 병과 `GameProgress` 재고의 관계(따 둔 병 우선, 중복 꺼내기, 소비량만 차감, 반환·세션 종료 시 자동 합산)는 `BartendingBottleStock`이 관리한다. 자세한 내용은 [ingredient-selection.md](../ui/ingredient-selection.md#재고-규칙)를 참고한다.
+
 ### 프리팹 (`Assets/_Project/Features/Bartending/Prefabs/Equipment/`)
 
 | 프리팹 | 비고 |

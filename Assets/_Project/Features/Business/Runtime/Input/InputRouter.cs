@@ -1,3 +1,4 @@
+using Slainte.Bartending;
 using Slainte.Shared.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -10,7 +11,7 @@ public class InputRouter : MonoBehaviour
     [SerializeField] private FrontCameraRig     cameraRig;
     [SerializeField] private RecipeBookUI       recipeBook;
     [SerializeField] private OrderTicketManager orderTicketManager;
-    [SerializeField] private LiquorShelfUI      liquorShelf;
+    [SerializeField] private IngredientSelectionUI ingredientSelection;
     [SerializeField] private DialogueController dialogue;
 
     [Header("Dialogue Handlers")]
@@ -27,9 +28,10 @@ public class InputRouter : MonoBehaviour
 
         bool advancePressed = Input.GetMouseButtonDown(0)
             || (!searchFocused && WasPressed(keyboard?.spaceKey, KeyCode.Space));
-        bool bookPressed    = !searchFocused && WasPressed(keyboard?.aKey, KeyCode.A);
-        bool ticketPressed  = !searchFocused && WasPressed(keyboard?.tabKey, KeyCode.Tab);
-        bool shelfPressed   = !searchFocused && WasPressed(keyboard?.dKey, KeyCode.D);
+        bool bookPressed     = !searchFocused && WasPressed(keyboard?.qKey, KeyCode.Q);
+        bool ticketPressed   = !searchFocused && WasPressed(keyboard?.eKey, KeyCode.E);
+        bool previousPressed = !searchFocused && WasPressed(keyboard?.aKey, KeyCode.A);
+        bool nextPressed     = !searchFocused && WasPressed(keyboard?.dKey, KeyCode.D);
 
         GameMode mode = modeManager != null ? modeManager.CurrentMode : GameMode.OrderMode;
 
@@ -40,7 +42,6 @@ public class InputRouter : MonoBehaviour
                 if (advancePressed) dialogue?.Advance();
                 if (bookPressed)    recipeBook?.Toggle();
                 if (ticketPressed)  orderTicketManager?.ToggleTicket();
-                if (shelfPressed)   liquorShelf?.Toggle();
                 if (WasPressed(keyboard?.digit1Key, KeyCode.Alpha1))
                     customerSpawner?.ShowCustomers(new[] { "yukari" });
                 if (WasPressed(keyboard?.digit2Key, KeyCode.Alpha2) && testEpisode != null)
@@ -59,7 +60,9 @@ public class InputRouter : MonoBehaviour
                 if (advancePressed) RouteAdvanceToEncounter();
                 if (bookPressed)    recipeBook?.Toggle();
                 if (ticketPressed)  orderTicketManager?.ToggleTicket();
-                if (shelfPressed)   liquorShelf?.Toggle();
+                // 술 선택 공간은 제조 중에만 올라와 있으므로 대분류 전환도 제조 모드에서만 받는다.
+                if (previousPressed) ingredientSelection?.ShowPrevious();
+                if (nextPressed)     ingredientSelection?.ShowNext();
                 break;
         }
     }

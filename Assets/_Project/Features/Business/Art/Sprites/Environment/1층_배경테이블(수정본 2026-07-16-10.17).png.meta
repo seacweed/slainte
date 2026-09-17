@@ -72,7 +72,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 8192
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -104,11 +104,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
+        y: 313
         width: 5020
-        height: 497
+        height: 180
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -121,11 +121,33 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: "1\uCE35_\uBC30\uACBD\uD14C\uC774\uBE14(\uC218\uC815\uBCF8 2026-07-16-10.17)_1"
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 161
+        width: 5020
+        height: 150
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bac373f1e42df194fa07c9f4ef39a1e9
+      internalID: -804099548
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: ede38206cb5e0d94d807a3c3684145bf
     internalID: 0
     vertices: []
     indices: 
@@ -136,6 +158,7 @@ TextureImporter:
       entries: []
     nameFileIdTable:
       "1\uCE35_\uBC30\uACBD\uD14C\uC774\uBE14(\uC218\uC815\uBCF8 2026-07-16-10.17)_0": -8491770529939395260
+      "1\uCE35_\uBC30\uACBD\uD14C\uC774\uBE14(\uC218\uC815\uBCF8 2026-07-16-10.17)_1": -804099548
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

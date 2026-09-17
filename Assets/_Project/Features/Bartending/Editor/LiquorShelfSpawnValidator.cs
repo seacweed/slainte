@@ -7,7 +7,6 @@ using Slainte.EditorTools;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public static class LiquorShelfSpawnValidator
@@ -210,8 +209,21 @@ public static class LiquorShelfSpawnValidator
                         return;
 
                     ValidateSpawnedBottleGeometry(spawnedBottle, spawnedDefinition);
+                    ConsumeFromSpawnedBottle(spawnedBottle, spawnedDefinition);
+                    modeManager.RequestModeChange(GameMode.OrderMode);
+                    phase = 3;
+                    phaseFrames = 0;
+                    phaseStartedAt = EditorApplication.timeSinceStartup;
+                    break;
+
+                case 3:
+                    if (bartending == null || bartending.IsSessionReady || phaseFrames < 2)
+                        return;
+
+                    ValidateAutomaticReturn(bartending, spawnedDefinition);
                     Finish(true,
-                        "BusinessScene shelf click spawned one bottle, rejected a duplicate, "
+                        "Ingredient stock spawned the opened bottle first, allowed duplicates, "
+                        + "stopped at zero stock, merged remaining volume back on session end, "
                         + "and applied the barSprite-specific click collider.");
                     break;
             }
@@ -222,17 +234,56 @@ public static class LiquorShelfSpawnValidator
         }
     }
 
+    private const float PartialBottleMl = 100f;
+    private const float ConsumedMl = 50f;
+    private static float expectedTotalAfterConsume;
+
+    // 재고를 "가득 찬 병 1개 + 따 둔 병(100ml)"으로 맞춘 뒤, 같은 재료를 연속으로 꺼내
+    // 따 둔 병 우선·중복 허용·재고 0에서 거부를 확인한다. 반환된 병은 기하 검증에 쓰인다.
     private static BottleController ValidateShelfClick(
         BusinessBartendingBootstrap bartending,
         out LiquorBottleDef definition)
     {
-        LiquorBottleSlotUI slot = FindUsableSlot();
-        Require(slot != null, "No unlocked shelf bottle with a matching ItemDef was found.");
-        definition = GetSlotDefinition(slot);
+        IngredientSlotUI slot = FindUsableSlot();
+        Require(slot != null, "No unlocked ingredient slot with a matching ItemDef was found.");
+        definition = slot.Definition;
         Require(definition != null && definition.item != null,
-            "The usable shelf slot has no bottle definition.");
+            "The usable ingredient slot has no bottle definition.");
+
+        float capacity = Mathf.Max(1f, definition.item.capacityMl);
+        float partial = Mathf.Min(PartialBottleMl, capacity * 0.5f);
+        GameProgress.Instance.SetBottleAmount(definition.InventoryId, capacity + partial);
+        Require(Mathf.Abs(bartending.GetShelfAmount(definition) - (capacity + partial)) <= 0.01f,
+            "Shelf amount does not match the prepared inventory total.");
 
         int before = bartending.SessionBottleCount;
+        BottleController opened = PlaceAndFind(bartending, definition);
+        Require(bartending.SessionBottleCount == before + 1,
+            $"The first take-out did not add exactly one bottle: {before} -> {bartending.SessionBottleCount}.");
+        Require(Mathf.Abs(opened.CurrentCapacity - partial) <= 0.01f,
+            $"The opened bottle was not taken out first: capacity={opened.CurrentCapacity}, expected={partial}.");
+
+        BottleController full = PlaceAndFind(bartending, definition);
+        Require(bartending.SessionBottleCount == before + 2,
+            "Taking out the same ingredient twice was rejected.");
+        Require(Mathf.Abs(full.CurrentCapacity - capacity) <= 0.01f,
+            $"The second bottle was not full: capacity={full.CurrentCapacity}, expected={capacity}.");
+        Require(bartending.GetShelfAmount(definition) <= 0.01f,
+            "Shelf amount did not reach zero after taking out every bottle.");
+
+        Require(!bartending.TryPlaceBottleFromShelf(definition, out _),
+            "An out-of-stock ingredient still produced a bottle.");
+        Require(bartending.SessionBottleCount == before + 2,
+            "An out-of-stock take-out changed the session bottle count.");
+
+        expectedTotalAfterConsume = capacity + partial - ConsumedMl;
+        return full;
+    }
+
+    private static BottleController PlaceAndFind(
+        BusinessBartendingBootstrap bartending,
+        LiquorBottleDef definition)
+    {
         HashSet<int> existingBottleIds = new HashSet<int>();
         foreach (BottleController existing in UnityEngine.Object.FindObjectsByType<BottleController>(
                      FindObjectsSortMode.None))
@@ -240,33 +291,42 @@ public static class LiquorShelfSpawnValidator
             existingBottleIds.Add(existing.GetInstanceID());
         }
 
-        PointerEventData click = new PointerEventData(EventSystem.current)
-        {
-            button = PointerEventData.InputButton.Left
-        };
+        Require(bartending.TryPlaceBottleFromShelf(definition, out string failure),
+            $"Taking out {definition.id} failed: {failure}");
 
-        slot.OnPointerClick(click);
-        Require(bartending.SessionBottleCount == before + 1,
-            $"Shelf click did not add exactly one bottle: {before} -> {bartending.SessionBottleCount}.");
-
-        BottleController created = null;
         foreach (BottleController candidate in UnityEngine.Object.FindObjectsByType<BottleController>(
                      FindObjectsSortMode.None))
         {
             if (!existingBottleIds.Contains(candidate.GetInstanceID())
                 && candidate.BottleData == definition.item)
             {
-                created = candidate;
-                break;
+                return candidate;
             }
         }
-        Require(created != null,
-            $"Shelf click created no runtime BottleController for {definition.id}.");
 
-        slot.OnPointerClick(click);
-        Require(bartending.SessionBottleCount == before + 1,
-            "A duplicate shelf click added the same bottle twice.");
-        return created;
+        throw new InvalidOperationException($"No runtime BottleController was created for {definition.id}.");
+    }
+
+    // 따른 것과 같은 경로(CapacityChanged)로 잔량을 줄여 총량이 소비량만큼만 줄어드는지 확인한다.
+    private static void ConsumeFromSpawnedBottle(BottleController bottle, LiquorBottleDef definition)
+    {
+        bottle.SetCurrentCapacity(bottle.CurrentCapacity - ConsumedMl, notify: true);
+        float total = GameProgress.Instance.GetBottleAmount(definition.InventoryId, -1f);
+        Require(Mathf.Abs(total - expectedTotalAfterConsume) <= 0.01f,
+            $"Pouring did not reduce the inventory total by the consumed volume: total={total}, "
+            + $"expected={expectedTotalAfterConsume}.");
+    }
+
+    // 제조 세션이 끝나면 슬롯에 남은 병의 잔량이 술장 재고로 합쳐져야 한다.
+    private static void ValidateAutomaticReturn(
+        BusinessBartendingBootstrap bartending,
+        LiquorBottleDef definition)
+    {
+        Require(bartending.SessionBottleCount == 0,
+            "Bottles are still registered after the crafting session ended.");
+        Require(Mathf.Abs(bartending.GetShelfAmount(definition) - expectedTotalAfterConsume) <= 0.01f,
+            $"Remaining bottle volume was not merged back into the shelf: "
+            + $"shelf={bartending.GetShelfAmount(definition)}, expected={expectedTotalAfterConsume}.");
     }
 
     private static void ValidateSpawnedBottleGeometry(
@@ -360,13 +420,6 @@ public static class LiquorShelfSpawnValidator
         }
     }
 
-    private static LiquorBottleDef GetSlotDefinition(LiquorBottleSlotUI slot)
-    {
-        SerializedProperty definitionProperty =
-            new SerializedObject(slot).FindProperty("def");
-        return definitionProperty?.objectReferenceValue as LiquorBottleDef;
-    }
-
     private static void ValidateSpriteSize(
         GameObject itemObject,
         SpriteRenderer renderer,
@@ -386,9 +439,9 @@ public static class LiquorShelfSpawnValidator
             + $"expected={expectedWorldSize}, sprite={renderer.sprite.rect.size}.");
     }
 
-    private static LiquorBottleSlotUI FindUsableSlot()
+    private static IngredientSlotUI FindUsableSlot()
     {
-        foreach (LiquorBottleSlotUI slot in Resources.FindObjectsOfTypeAll<LiquorBottleSlotUI>())
+        foreach (IngredientSlotUI slot in Resources.FindObjectsOfTypeAll<IngredientSlotUI>())
         {
             if (slot == null
                 || EditorUtility.IsPersistent(slot)
@@ -397,20 +450,11 @@ public static class LiquorShelfSpawnValidator
                 continue;
             }
 
-            LiquorBottleDef definition = GetSlotDefinition(slot);
+            LiquorBottleDef definition = slot.Definition;
             if (definition == null
                 || string.IsNullOrWhiteSpace(definition.id)
                 || definition.item == null
-                || !string.Equals(
-                    definition.InventoryId,
-                    definition.id,
-                    StringComparison.OrdinalIgnoreCase)
-                || (!string.IsNullOrEmpty(definition.unlockFlagKey)
-                    && !GameProgress.Instance.HasFlag(definition.unlockFlagKey))
-                || definition.item.type != ItemType.Bottle
-                || GameProgress.Instance.EnsureBottleAmount(
-                    definition.InventoryId,
-                    definition.DefaultAmount) <= 0f)
+                || definition.item.type != ItemType.Bottle)
             {
                 continue;
             }

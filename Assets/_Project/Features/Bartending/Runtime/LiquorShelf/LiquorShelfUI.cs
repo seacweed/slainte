@@ -9,7 +9,7 @@ using UnityEngine.UI;
 // 술장 서랍 패널. 카테고리별 병 슬롯 표시/전환과, 같은 서랍 공간을 재사용하는 배송 상점 화면
 // 전환(TryOpenDelivery/EndDeliverySession)을 함께 관리한다. 재고(잔량)는 GameProgress에 저장된
 // 값을 슬롯이 공유하므로 상점과 술장이 자동으로 동기화된다(CLAUDE.md 상점/술장 데이터 공유 참고).
-public class LiquorShelfUI : MonoBehaviour
+public class LiquorShelfUI : MonoBehaviour, IBottleReturnZone
 {
     public static LiquorShelfUI Active { get; private set; }
 
@@ -73,7 +73,6 @@ public class LiquorShelfUI : MonoBehaviour
     private bool                                  _deliverySessionActive;
     private int                                   _deliveryTransitionVersion;
     private Coroutine                             _deliveryCharacterPresentation;
-    private int                                   _bottleReturnFrame = -1;
 
     public bool IsDeliveryUnlocked => _deliveryUnlocked;
     public bool IsDeliveryAvailable => _deliveryUnlocked && _deliveryAvailable;
@@ -100,40 +99,28 @@ public class LiquorShelfUI : MonoBehaviour
         BuildDelivery();
     }
 
+    // 반환 판정과 같은 프레임 중복 방지는 BottleReturnZones가 담당하고, 술장은 영역만 제공한다.
     public static bool TryReturnHeldBottle(Vector2 screenPosition)
     {
-        LiquorShelfUI shelf = Active;
-        if (shelf == null)
-            return false;
-        // 같은 프레임에 여러 경로(다른 입력 핸들러 등)에서 반납 판정이 중복 호출될 수 있어,
-        // 이번 프레임에 이미 처리했으면 재실행 없이 성공만 알린다.
-        if (shelf._bottleReturnFrame == Time.frameCount)
-            return true;
-        if (!shelf.ContainsReturnPoint(screenPosition))
-            return false;
-
-        BusinessBartendingBootstrap bartending =
-            FindFirstObjectByType<BusinessBartendingBootstrap>();
-        if (bartending == null)
-            return false;
-
-        if (!bartending.TryReturnHeldBottleToShelf(out string failure))
-        {
-            if (!string.IsNullOrWhiteSpace(failure))
-            {
-                Debug.LogWarning("[LiquorShelf] " + failure);
-                return true;
-            }
-
-            return false;
-        }
-
-        shelf._bottleReturnFrame = Time.frameCount;
-        shelf.RefreshShelfSlots();
-        return true;
+        return BottleReturnZones.TryReturnHeldBottle(screenPosition);
     }
 
-    private bool ContainsReturnPoint(Vector2 screenPosition)
+    void OnEnable()
+    {
+        BottleReturnZones.Register(this);
+    }
+
+    void OnDisable()
+    {
+        BottleReturnZones.Unregister(this);
+    }
+
+    void IBottleReturnZone.OnBottleReturned()
+    {
+        RefreshShelfSlots();
+    }
+
+    public bool ContainsReturnPoint(Vector2 screenPosition)
     {
         if (!_isOpen
             || !_interactable
