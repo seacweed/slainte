@@ -12,7 +12,7 @@
 - 재료는 윗부분만 보이고, 아래쪽은 제작 공간 배경에 가려진다.
 - A/D 키로 대분류를 순환 전환한다.
 - 제조 모드에서만 제작 공간 뒤에서 올라온다. 다른 모드에서는 아래로 내려가 완전히 가려진다. 사용자가 직접 여닫을 수는 없다.
-- `FrontCameraRig` 아래에 있어서 도구장처럼 카메라의 가로·세로 이동을 따라간다.
+- `FrontCameraRig` 아래에 있어서 도구장처럼 카메라의 세로 이동을 따라간다. 가로 팬은 제조 중에만 역보정된다(아래 [카메라 가로 팬 보정](#카메라-가로-팬-보정)).
 
 해금되지 않은 재료, 잔여량 표시, 배송 버튼은 임시로 제외했다. 기존 `LiquorShelfUI`와 배송 코드는 삭제하지 않았으므로 복원할 때 참고한다([liquor-shelf.md](liquor-shelf.md)).
 
@@ -48,10 +48,25 @@
 | 호버 | 조작 가능 + 들고 있는 물체 없음 + 포인터 아래 제작 공간 물체 없음일 때만 올라옴 |
 | 좌클릭 | 위 조건과 같음. 병을 꺼내 가장 오른쪽 빈 슬롯에 스냅 |
 | 병을 들고 영역 안에서 좌클릭 | 술장 반환(`BottleReturnZones`). 같은 누름으로 새 병이 나오지 않도록 `LastReturnFrame`으로 클릭을 무시 |
+| 잔·도구를 들고 좌클릭 | 슬롯 안착 등 놓기만 일어난다. 재료는 나오지 않는다 |
 
+- **놓기에 소비된 누름**: 물체 놓기는 **누른 프레임**(`Input.GetMouseButtonDown`)에 처리되고 슬롯 클릭(`OnPointerClick`)은 **뗀 프레임**에 온다. 뗄 때는 이미 손이 비어 호버·스폰 가드를 통과해 버리므로, `IngredientSlotUI`는 `OnPointerDown` 시점의 "손에 든 것이 있었는지"(`IngredientSelectionUI.HasHeldItem()`)를 기억해 그 누름의 클릭을 무시한다. 술장 반환의 `LastReturnFrame` 가드와 같은 계열의 방어다.
 - **제작 공간 물체 우선**: 제작 공간이 술 선택 공간보다 위에 그려지므로, 물체가 재료 아이콘을 덮고 있으면 물체 조작이 우선한다(`IsPointerOverWorldItem`).
 - **조작 가능 시점**: 제조 모드로 바뀐 뒤 올라오는 슬라이드가 끝나야 조작할 수 있다. 내려가기 시작하는 순간 조작이 막힌다.
 - **도감·주문서 단축키**: 도감 Q, 주문서 E(기존 A/Tab에서 변경).
+
+## 카메라 가로 팬 보정
+
+에피소드 대화 중에는 `EpisodeRunner`가 캐릭터를 화면 중앙에 두려고 `FrontCameraRig`를 가로로 팬한다(`PanToWorldCenterX`). 팬은 `frontWorld` RectTransform 자체를 옮기므로, 그 자식인 제작 공간과 술 선택 공간도 함께 밀려 제조에 들어가면 재료 줄이 한쪽으로 치우친다.
+
+`FrontCameraRig.SetHorizontalFixed(bool)`이 `horizontalFixedPanels`(`CraftingSlotRow`, `IngredientSelection`)의 `anchoredPosition.x`를 `기준값 - _focusX`로 밀어 화면 가로 위치를 고정한다. **서랍(`SetDrawer`)이 `drawerArea.x = -_focusX`로 자리를 잡는 것과 같은 방식**이며, `GameModeManager.RefreshPanels()`가 `CraftingMode` 여부로 켜고 끈다.
+
+- **보간하지 않고 한 번에 옮긴다.** 재료가 올라오기 전에 자리만 바꿔 놓아야 한다. 보간하면 제작 시퀀스 진입 때 재료들이 좌우로 미끄러지며 등장해 부자연스럽다.
+- **제조 중에만 켠다.** 대화 중에도 고정하면 슬롯 줄만 바 카운터·배경에서 떨어져 미끄러진다.
+- **`CraftingSpace`가 아니라 `CraftingSlotRow`를 넣는다.** 제작 공간 전체를 옮기면 배경까지 함께 튀므로, 슬롯 기준 사각형만 옮겨 배경은 그대로 두고 병이 놓이는 줄만 화면 중앙에 맞춘다. 렌더 출력(`BartendingViewport` RawImage)은 `CraftingSpace` 전체를 덮고 있어 그대로 두어도 슬롯의 화면 위치는 따라 움직이고, 포인터 매핑도 뷰포트 rect 기준이라 어긋나지 않는다.
+- **기준값은 `Awake` 시점의 X**를 쓰므로, 런타임에 이 패널들의 X를 따로 옮기는 코드를 추가하면 안 된다. 같은 이유로 서랍(`DrawerArea`)은 이 배열에 넣지 않는다 — 이미 `SetDrawer`가 같은 값을 관리하므로 두 로직이 충돌한다.
+- **모드 전환 시점에 호출되는 것이 중요하다.** 슬롯 줄 정렬(`AlignSlotLayoutToVisibleTable`)은 세션 생성 때 한 번만 계산되는데, `RefreshPanels()`가 `OnModeChanged`(= 세션 생성)보다 먼저 실행되므로 보정된 위치가 반영된다.
+- `_focusX`가 바뀌는 `PanToWorldCenterX`/`ResetPan`에서도 다시 적용해, 고정이 켜진 동안 팬이 일어나도 기준이 어긋나지 않게 한다.
 
 ## 슬롯 위치 기준
 
@@ -87,6 +102,10 @@
      - `hoverLabelRoot` > `nameLabel`(크게, 흰색) / `subCategoryLabel`(작게, 색은 대분류 색으로 자동 설정)
 5. `LiquorShelfPanel`을 끄거나 제거하고, `FrontCameraRig.verticalFollowPanels`에서 뺀다.
 6. `InputRouter.ingredientSelection`, `GameModeManager.ingredientSelection`을 연결한다.
+7. `FrontCameraRig.horizontalFixedPanels`에 `CraftingSlotRow`와 `IngredientSelection` **루트**를 넣는다.
+   - `IngredientSelection`은 루트여야 한다. `Content` 자식을 넣으면 숨김/표시 슬라이드와 `x`를 두고 충돌한다.
+   - 제작 공간은 `CraftingSpace`가 아니라 `CraftingSlotRow`를 넣는다([위 설명](#카메라-가로-팬-보정)).
+   - `GameModeManager.cameraRig`도 연결한다(비워 두면 런타임에 씬에서 찾는다).
 
 ## 검증
 

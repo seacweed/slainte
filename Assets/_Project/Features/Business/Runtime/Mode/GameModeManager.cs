@@ -16,6 +16,9 @@ public class GameModeManager : SceneSingleton<GameModeManager>
     [SerializeField] private LiquorShelfUI liquorShelf;
     [SerializeField] private Slainte.Bartending.IngredientSelectionUI ingredientSelection;
 
+    [Header("Camera")]
+    [SerializeField] private FrontCameraRig cameraRig;
+
     [Header("Initial Mode")]
     [SerializeField] private GameMode initialMode = GameMode.OrderMode;
 
@@ -73,10 +76,23 @@ public class GameModeManager : SceneSingleton<GameModeManager>
         // 술 선택 공간은 사용자가 여닫지 못하고, 제조 가능 여부에 따라서만 올라오거나 내려간다.
         ingredientSelection?.SetCraftingAvailable(mode == GameMode.CraftingMode);
 
+        // 에피소드 대화 중에는 카메라가 캐릭터를 따라 가로로 팬한 상태일 수 있다. 제조 구간에서는
+        // 조작 영역(제작 공간·술 선택 공간)만 화면 가로 중앙에 고정해 한쪽으로 치우치지 않게 한다.
+        // 대화 구간에는 꺼야 한다 — 계속 고정하면 제작대만 바 카운터에서 떨어져 미끄러진다.
+        ResolveCameraRig()?.SetHorizontalFixed(mode == GameMode.CraftingMode);
+
         if (!isEpisode)
         {
             recipeBook?.Open();
         }
+    }
+
+    // 인스펙터 연결이 비어 있어도 동작하도록 씬에서 한 번 찾아 캐시한다.
+    private FrontCameraRig ResolveCameraRig()
+    {
+        if (cameraRig == null)
+            cameraRig = FindFirstObjectByType<FrontCameraRig>();
+        return cameraRig;
     }
 
     private static void SetGroup(CanvasGroup cg, bool on)

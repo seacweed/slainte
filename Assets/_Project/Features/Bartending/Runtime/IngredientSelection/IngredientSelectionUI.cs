@@ -146,6 +146,13 @@ namespace Slainte.Bartending
                 && !session.IsPointerOverWorldItem(screenPosition);
         }
 
+        // 슬롯이 바텐딩 부트스트랩을 직접 알지 않도록 "지금 손에 든 것이 있는지"만 중계한다.
+        public bool HasHeldItem()
+        {
+            BusinessBartendingBootstrap session = ResolveBartending();
+            return session != null && session.HasHeldBartendingItem();
+        }
+
         public void TrySpawn(IngredientSlotUI slot, Vector2 screenPosition)
         {
             if (slot == null || slot.Definition == null || !CanHover(screenPosition))

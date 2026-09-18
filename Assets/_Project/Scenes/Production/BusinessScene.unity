@@ -8111,6 +8111,7 @@ MonoBehaviour:
   orderTicketUI: {fileID: 1953085072}
   liquorShelf: {fileID: 0}
   ingredientSelection: {fileID: 1732809633}
+  cameraRig: {fileID: 0}
   initialMode: 0
 --- !u!4 &1001296950
 Transform:
@@ -8215,6 +8216,9 @@ MonoBehaviour:
   verticalFollowPanels:
   - {fileID: 1953085068}
   - {fileID: 1710869726}
+  horizontalFixedPanels:
+  - {fileID: 1732809632}
+  - {fileID: 1698853690}
 --- !u!1 &1004696545
 GameObject:
   m_ObjectHideFlags: 0
@@ -9289,11 +9293,11 @@ RectTransform:
   - {fileID: 656756357}
   m_Father: {fileID: 1953085068}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 40, y: 0}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -40, y: 0}
   m_SizeDelta: {x: 914, y: 368}
-  m_Pivot: {x: 0, y: 1}
+  m_Pivot: {x: 1, y: 1}
 --- !u!114 &1120782017
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9378,7 +9382,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1130427528
 RectTransform:
   m_ObjectHideFlags: 0

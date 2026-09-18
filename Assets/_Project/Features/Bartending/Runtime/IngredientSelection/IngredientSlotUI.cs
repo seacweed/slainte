@@ -39,6 +39,7 @@ namespace Slainte.Bartending
         private bool initialized;
         private bool hovered;
         private int pressFrame = -1;
+        private bool pressConsumedByDrop;
         private Coroutine slideRoutine;
 
         public LiquorBottleDef Definition { get; private set; }
@@ -147,6 +148,10 @@ namespace Slainte.Bartending
         public void OnPointerDown(PointerEventData eventData)
         {
             pressFrame = Time.frameCount;
+            // 도구·병 놓기는 누른 프레임에 처리되고 이 슬롯의 클릭은 뗀 프레임에 오므로, 뗄 때는
+            // 이미 손이 비어 있어 스폰 가드(CanHover)를 그대로 통과한다. 그래서 "누른 순간"의
+            // 상태로 판단해 놓기에 소비된 누름이면 재료를 꺼내지 않는다.
+            pressConsumedByDrop = owner != null && owner.HasHeldItem();
         }
 
         public void OnPointerClick(PointerEventData eventData)
@@ -158,7 +163,10 @@ namespace Slainte.Bartending
                 return;
             }
 
-            // 같은 누름이 들고 있던 병의 반환으로 이미 소비됐다면 새 병을 꺼내지 않는다.
+            // 같은 누름이 들고 있던 것을 놓는 데(술장 반환 또는 슬롯 안착) 이미 소비됐다면
+            // 새 병을 꺼내지 않는다.
+            if (pressConsumedByDrop)
+                return;
             if (pressFrame >= 0 && BottleReturnZones.LastReturnFrame >= pressFrame)
                 return;
 

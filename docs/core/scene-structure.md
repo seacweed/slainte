@@ -116,7 +116,9 @@ BartendingRuntime (런타임)
 - `OrderTicketPanel`
 - `RecipeBookPanel`
 
-이 그룹은 `frontWorld`의 세로 이동만 따라간다. 서랍을 열 때 배경과 함께 이동하지만 캐릭터 포커스용 가로 이동에는 영향을 받지 않는다. 술 선택 공간은 이 그룹이 아니라 `FrontCameraRig` 안에 있어 가로·세로 이동을 모두 따라간다.
+이 그룹은 `frontWorld`의 세로 이동만 따라간다. 서랍을 열 때 배경과 함께 이동하지만 캐릭터 포커스용 가로 이동에는 영향을 받지 않는다. 술 선택 공간과 제작 공간은 이 그룹이 아니라 `FrontCameraRig` 안에 있어 기본적으로 가로·세로 이동을 모두 따라간다.
+
+다만 제조 모드에서는 `FrontCameraRig.horizontalFixedPanels`에 등록된 패널(`CraftingSlotRow`, `IngredientSelection`)이 가로 팬만 역보정되어 화면 중앙에 고정된다. 제작 공간 배경(`CraftingSpace`)은 보정 대상이 아니므로 그대로 팬을 따라간다. 자세한 내용은 [ingredient-selection.md](../ui/ingredient-selection.md#카메라-가로-팬-보정)를 참고한다.
 
 단축키: 도감 Q, 주문서 E, 대분류 전환 A/D(제조 모드), 도구장 서랍 S/W.
 
