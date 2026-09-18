@@ -84,6 +84,10 @@ LayerMask slotLayer;     // 빈 값이면 "Slot" 레이어를 자동 탐색
 
 트리거 Enter/Stay/Exit에서 픽업 중인 도구에만 에메랄드 녹색(`#66FF66, alpha 0.5`) 하이라이트를 표시하며, 이미 점유된 슬롯에는 하이라이트 없음.
 
+**슬롯 위치**: 영업 세션의 슬롯(`BartendingSlot_0~7`)은 `BarCounter/TableSlots`의 `UIDropSlot` 가이드로 가로 간격과 아이템 배율을 정한다. 슬롯 줄 중심은 `BartendingSessionLayoutAnchors.SlotAlignmentTarget`에 맞춘다. 영업 씬에서는 `CraftingSlotRow`이고, 없으면 `BarCounter`다. 병 바닥은 슬롯 중심 높이에 놓인다. 바닥 콜라이더는 없다.
+
+**병 재고**: 술 선택 공간에서 꺼낸 병과 `GameProgress` 재고의 관계(따 둔 병 우선, 중복 꺼내기, 소비량만 차감, 반환·세션 종료 시 자동 합산)는 `BartendingBottleStock`이 관리한다. 자세한 내용은 [ingredient-selection.md](../ui/ingredient-selection.md#재고-규칙)를 참고한다.
+
 ### 프리팹 (`Assets/_Project/Features/Bartending/Prefabs/Equipment/`)
 
 | 프리팹 | 비고 |
@@ -262,6 +266,7 @@ GPU PBF/XPBD는 `Infrastructure/GpuFluid`의 Compute Shader와 `Runtime/Liquid/G
 - 정적 구성 검증: Unity 메뉴 `Slainte > Bartending > Validate GPU Liquid PBF-XPBD`
 - 부하 계측: GPU 세션에서만 생성되는 `LiquidStressHarness`의 활성 입자 수, p95 및 p99 프레임 시간
 - Compute Shader 미지원, 필수 커널·셰이더·설정 누락 또는 초기화 실패 시 레거시 백엔드로 폴백
+- 빌드 포함: 컴퓨트 셰이더(`gpuLiquidComputeShader`)와 렌더링 셰이더(`gpuLiquidAccumulationShader`)는 모두 `Resources`의 settings asset이 직접 참조해야 플레이어 빌드에 포함된다. `Shader.Find` 폴백은 두지 않으므로 참조가 비면 에디터에서도 레거시로 폴백해 에디터·빌드 동작이 항상 일치한다
 
 빌드 성공과 정적 검증은 플레이모드의 시각 결과나 대상 GPU의 성능을 증명하지 않는다.
 공개 성능 수치는 실제 대상 기기에서 측정한 결과만 사용한다.

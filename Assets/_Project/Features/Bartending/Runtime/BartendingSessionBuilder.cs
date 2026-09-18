@@ -13,6 +13,15 @@ namespace Slainte.Bartending
         Preview
     }
 
+    // 씬마다 달라지는 세션 배치 기준점 묶음. 비어 있는 항목은 기존 BarCounter 기준 동작으로 폴백한다.
+    // ViewportParent: 제작 공간 렌더 출력(RawImage)을 붙일 레이어 — 형제 순서는 씬 배치가 결정한다.
+    // SlotAlignmentTarget: 슬롯 줄 중심을 맞출 사각형 — 병 바닥이 이 사각형의 세로 중심 높이에 선다.
+    public sealed class BartendingSessionLayoutAnchors
+    {
+        public RectTransform ViewportParent { get; set; }
+        public RectTransform SlotAlignmentTarget { get; set; }
+    }
+
     // BartendingSessionBuilder.Build()가 조립한 세션의 산출물을 한데 묶은 핸들.
     // Destroy()가 호출될 때까지 이 인스턴스가 세션의 모든 런타임 컴포넌트에 대한 유일한 참조를 들고 있다.
     public sealed class BartendingSessionInstance
@@ -832,7 +841,8 @@ namespace Slainte.Bartending
             BusinessBartendingSettings settings,
             BartendingSessionBuildMode mode = BartendingSessionBuildMode.Runtime,
             bool? useToolCabinetOverride = null,
-            RectTransform viewportBottomExtension = null)
+            RectTransform viewportBottomExtension = null,
+            BartendingSessionLayoutAnchors anchors = null)
         {
             if (parent == null || counter == null || settings == null)
                 return null;
@@ -871,7 +881,8 @@ namespace Slainte.Bartending
                 session.WorldCamera,
                 settings,
                 !isPreview,
-                useToolCabinet ? viewportBottomExtension : null);
+                useToolCabinet ? viewportBottomExtension : null,
+                anchors?.ViewportParent);
             if (!isPreview)
             {
                 session.LiquidMetaballRenderer = CreateLiquidMetaballRenderer(
@@ -884,7 +895,7 @@ namespace Slainte.Bartending
             session.SlotLayout = CreateSessionSlotLayout(
                 slotLayoutTemplate,
                 session.Viewport != null ? session.Viewport.transform as RectTransform : null,
-                counter,
+                anchors?.SlotAlignmentTarget != null ? anchors.SlotAlignmentTarget : counter,
                 settings.slotPositions != null ? settings.slotPositions.Length : 0);
             Canvas.ForceUpdateCanvases();
 
@@ -1096,7 +1107,8 @@ namespace Slainte.Bartending
             Camera camera,
             BusinessBartendingSettings settings,
             bool registerForInput,
-            RectTransform bottomExtension = null)
+            RectTransform bottomExtension = null,
+            RectTransform layerParent = null)
         {
             GameObject viewObject = new GameObject(
                 "BartendingViewport",
@@ -1104,7 +1116,9 @@ namespace Slainte.Bartending
                 typeof(CanvasRenderer),
                 typeof(RawImage));
             RectTransform viewRect = (RectTransform)viewObject.transform;
-            Transform viewportParent = counter.parent != null ? counter.parent : counter;
+            Transform viewportParent = layerParent != null
+                ? layerParent
+                : counter.parent != null ? counter.parent : counter;
             viewRect.SetParent(viewportParent, false);
             viewRect.anchorMin = Vector2.zero;
             viewRect.anchorMax = Vector2.one;
@@ -1112,13 +1126,18 @@ namespace Slainte.Bartending
             viewRect.sizeDelta = Vector2.zero;
             viewRect.anchoredPosition = Vector2.zero;
 
-            Transform extensionSibling = FindDirectChild(bottomExtension, viewportParent);
-            if (extensionSibling != null)
-                viewRect.SetSiblingIndex(extensionSibling.GetSiblingIndex() + 1);
-            else if (counter.parent != null)
-                viewRect.SetSiblingIndex(counter.GetSiblingIndex() + 1);
-            else
-                viewRect.SetAsFirstSibling();
+            // 전용 제작 공간 레이어가 주어지면 그 레이어 자체의 씬 배치가 그리기 순서를 결정하므로
+            // 형제 순서를 코드로 끼워 넣지 않는다(레이어 안에서는 마지막 자식으로 붙어 배경 위에 그려짐).
+            if (layerParent == null)
+            {
+                Transform extensionSibling = FindDirectChild(bottomExtension, viewportParent);
+                if (extensionSibling != null)
+                    viewRect.SetSiblingIndex(extensionSibling.GetSiblingIndex() + 1);
+                else if (counter.parent != null)
+                    viewRect.SetSiblingIndex(counter.GetSiblingIndex() + 1);
+                else
+                    viewRect.SetAsFirstSibling();
+            }
 
             RawImage image = viewObject.GetComponent<RawImage>();
             image.raycastTarget = false;

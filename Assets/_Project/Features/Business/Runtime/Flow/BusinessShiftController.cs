@@ -688,7 +688,9 @@ namespace Slainte.Business
             shiftActive = false;
             forceCompletionRequested = false;
             SetState(BusinessShiftState.Completed);
-            sessionUi?.SetShiftTime(0f, false);
+            // 영업이 끝나면 타이머는 갱신되지 않으므로, 뒤이어 진행되는 에피소드·정산 화면에
+            // 멈춘 시계가 남지 않도록 패널 자체를 내린다.
+            sessionUi?.HideShiftTime();
             sessionUi?.ShowDayComplete();
             ShiftCompleted?.Invoke();
         }

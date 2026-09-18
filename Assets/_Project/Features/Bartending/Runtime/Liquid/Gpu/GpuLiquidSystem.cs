@@ -18,7 +18,6 @@ namespace Slainte.Bartending
         private const int MaximumBoundarySegments = 512;
         private const int MaximumVesselTriggers = 64;
         private const int MaximumAgitators = 8;
-        private const string AccumulationShaderName = "Hidden/Slainte/GpuLiquidAccumulation";
 
         public static GpuLiquidSystem Instance { get; private set; }
 
@@ -149,10 +148,18 @@ namespace Slainte.Bartending
                 return false;
             }
 
-            Shader renderShader = Shader.Find(AccumulationShaderName);
-            if (renderShader == null || !renderShader.isSupported)
+            // Shader.Find 폴백을 두지 않는다 — 에디터에서만 찾히고 빌드에서는 제외돼
+            // 에디터(GPU)와 빌드(레거시)의 백엔드가 조용히 달라지는 문제를 숨기게 되기 때문.
+            Shader renderShader = candidate.gpuLiquidAccumulationShader;
+            if (renderShader == null)
             {
-                reason = $"Shader '{AccumulationShaderName}' is unavailable or unsupported.";
+                reason = "BusinessBartendingSettings has no GPU liquid accumulation shader.";
+                return false;
+            }
+
+            if (!renderShader.isSupported)
+            {
+                reason = $"Shader '{renderShader.name}' is not supported on the active graphics device.";
                 return false;
             }
 
@@ -210,8 +217,7 @@ namespace Slainte.Bartending
                 CacheKernels();
                 AllocateBuffers();
 
-                Shader renderShader = Shader.Find(AccumulationShaderName);
-                accumulationMaterial = new Material(renderShader)
+                accumulationMaterial = new Material(settings.gpuLiquidAccumulationShader)
                 {
                     name = "GPU Liquid Accumulation (Runtime)",
                     hideFlags = HideFlags.DontSave

@@ -466,7 +466,7 @@ namespace Slainte.Bartending
 
             if (liquidSpawnPoint == null)
             {
-                Debug.LogWarning("⚠️ Liquid Spawn Point가 인스펙터에 할당되지 않았습니다! 병의 중심(몸체)에서 스폰됩니다.");
+                Debug.LogWarning("[BottleController] Liquid Spawn Point is not assigned in the Inspector; spawning from the bottle body center.");
             }
 
             Vector3 spawnPos = liquidSpawnPoint != null ? liquidSpawnPoint.position : transform.position;
@@ -540,7 +540,7 @@ namespace Slainte.Bartending
 
             if (liquidSpawnPoint == null)
             {
-                Debug.LogWarning("⚠️ Liquid Spawn Point가 인스펙터에 할당되지 않았습니다! 병의 중심(몸체)에서 스폰됩니다.");
+                Debug.LogWarning("[BottleController] Liquid Spawn Point is not assigned in the Inspector; spawning from the bottle body center.");
             }
 
             Vector2 spawnPosition = liquidSpawnPoint != null
@@ -958,7 +958,7 @@ namespace Slainte.Bartending
 
         private void TryDropBottle()
         {
-            if (LiquorShelfUI.TryReturnHeldBottle(Input.mousePosition))
+            if (BottleReturnZones.TryReturnHeldBottle(Input.mousePosition))
                 return;
 
             if (!BartendingViewport.TryGetPointerWorldPosition(mainCamera, Input.mousePosition, out Vector3 mousePos))

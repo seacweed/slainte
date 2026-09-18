@@ -362,7 +362,7 @@ namespace Slainte.Bartending
                 false,
                 true)
             {
-                name = "실행 중 생성된 연기 텍스처",
+                name = "Runtime Smoke Texture",
                 filterMode = FilterMode.Bilinear,
                 wrapMode = TextureWrapMode.Clamp,
                 hideFlags = HideFlags.DontSave
@@ -386,7 +386,7 @@ namespace Slainte.Bartending
                 new Rect(0f, 0f, size, size),
                 new Vector2(0.5f, 0.5f),
                 size);
-            runtimeSmokeSprite.name = "실행 중 생성된 연기 스프라이트";
+            runtimeSmokeSprite.name = "Runtime Smoke Sprite";
             smokeSprite = runtimeSmokeSprite;
 
             ParticleSystem.TextureSheetAnimationModule animation = steam.textureSheetAnimation;

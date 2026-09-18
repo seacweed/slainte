@@ -218,6 +218,8 @@ namespace Slainte.Bartending.EditorTools
 
             Shader renderShader = AssetDatabase.LoadAssetAtPath<Shader>(RenderShaderPath);
             Require(renderShader != null, "GPU liquid accumulation shader is missing.");
+            Require(settings.gpuLiquidAccumulationShader == renderShader,
+                "Bartending settings do not reference the canonical GPU liquid accumulation shader; it would be stripped from player builds.");
             Require(renderShader.passCount >= 4,
                 "GPU liquid accumulation shader must expose MRT and three fallback passes.");
             Require(AssetDatabase.LoadAssetAtPath<SceneAsset>(SandboxScenePath) != null,

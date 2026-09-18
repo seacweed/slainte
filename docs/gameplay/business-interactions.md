@@ -7,7 +7,7 @@
 - `BusinessFlowBootstrap`는 씬 안의 의존성을 연결하고, 진행 중인 에피소드가 없으면 시간 기반 영업을 시작합니다.
 - `BusinessShiftController`는 기본 180초의 남은 영업시간, 손님별 쿨다운, 필수 손님·인카운터, 정산 진입을 관리합니다. 주문 중에는 시간이 흐르고 영업 인카운터 중에는 영업시간과 쿨다운이 함께 멈춥니다.
 - `BusinessOrderSessionController`는 주문 제시, 자동 제조 진입, 판정, 반응 대사, 보상, 정리, 완료 처리를 담당합니다.
-- `BusinessOrderSessionUI`는 조작 없는 상태·결과 문구만 표시하며 주문 행동 버튼을 만들지 않습니다.
+- `BusinessOrderSessionUI`는 조작 없는 상태·결과 문구만 표시하며 주문 행동 버튼을 만들지 않습니다. 상태 패널은 표시할 문구가 없으면, 타이머 패널은 시간 기반 영업이 돌지 않는 동안(에피소드 단독 제조, 영업 종료 후) 자동으로 숨겨집니다.
 - `BusinessOrderFlowSettings`에는 영업 제한시간, 손님 풀, 필수 영업 액션, Good·Mid·Bad 판정 기준, 보상(돈·명성), 기본 반응 대사가 있습니다.
 - `BusinessBartendingBootstrap`는 도구만 놓인 상태로 시작합니다. `LiquorBottleSlotUI`를 왼쪽 클릭하면 같은 ID의 `ItemDef`를 찾아 가장 오른쪽의 빈 테이블 슬롯부터 술병을 배치합니다.
 - 씬의 `TableSlots`는 숨겨진 배치 틀입니다. 제조 중에만 화면상 테이블 영역에 맞춘 임시 배치와 월드 충돌 슬롯을 만들고, 제조가 끝나면 함께 제거합니다.
@@ -101,4 +101,5 @@ CustomerOrderData
 - `FrontCameraRig`: `ICameraInputHandler` 구현. `InputRouter`로부터 `CameraDirection` 명령 수신. `frontWorld` RectTransform을 이동시켜 화면 전체를 pan.
   - **에피소드 캐릭터 포커스**: `_focusX` 필드로 현재 X 오프셋(canvas units)을 추적. `PanToWorldCenterX(worldX)` — world X 좌표가 화면 중앙에 오도록 `_focusX`를 계산 후 이동. `ResetPan()` — `_focusX = 0`, 원점 복귀.
   - **서랍 열기/닫기**: `SetDrawer(true)` — `drawerArea.anchoredPosition.x = -_focusX`로 drawer를 화면 중앙에 배치 후 카메라는 Y축만 이동(`_focusX` 유지). `SetDrawer(false)` — pan 완료 콜백에서 `drawerArea.anchoredPosition.x = 0` 복원. pan 완료 콜백은 `BeginMove`의 `onComplete` 파라미터로 전달.
+  - **제조 중 가로 고정**: `SetHorizontalFixed(bool)` — 서랍과 같은 방식으로 `horizontalFixedPanels`(`CraftingSlotRow`, `IngredientSelection`)의 `x`를 `기준값 - _focusX`로 한 번에 옮겨 화면 가로 위치에 고정한다. `GameModeManager`가 `CraftingMode` 진입·이탈 시 켜고 끈다([ingredient-selection.md](../ui/ingredient-selection.md#카메라-가로-팬-보정)).
   - **주의**: `VisualOverlay`가 `frontContainer`(FrontCameraRig 자식)에 reparent된 이후에는 CharacterStage나 슬롯을 이동하면 Visual/Overlay가 desynced됨. 수평 pan은 반드시 `FrontCameraRig` 이동으로만 처리할 것. 배경/바 테이블 에셋은 화면보다 넓어야 함(와이드 에셋 필요, 현재 미완).

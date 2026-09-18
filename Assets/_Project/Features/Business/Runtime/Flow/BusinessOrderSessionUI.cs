@@ -28,6 +28,9 @@ namespace Slainte.Business
             timerText = CreateTimerText(uiRoot);
 
             ShowIdle();
+            // 타이머는 시간 기반 영업에서만 의미가 있다. 에피소드 단독 제조처럼 영업이 돌지 않는
+            // 흐름에서는 갱신 호출 자체가 없어, 숨긴 채로 시작하지 않으면 빈 텍스트와 배경만 남는다.
+            HideShiftTime();
         }
 
         public void SetShiftTime(float remainingSeconds, bool paused)
@@ -44,6 +47,14 @@ namespace Slainte.Business
             timerText.color = paused
                 ? new Color(0.72f, 0.78f, 0.88f, 1f)
                 : new Color(1f, 0.9f, 0.72f, 1f);
+        }
+
+        public void HideShiftTime()
+        {
+            if (timerPanel != null)
+                timerPanel.gameObject.SetActive(false);
+            if (timerText != null)
+                timerText.text = string.Empty;
         }
 
         public void ShowWaitingForCustomer()

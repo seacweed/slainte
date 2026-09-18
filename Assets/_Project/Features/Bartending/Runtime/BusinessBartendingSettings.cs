@@ -106,6 +106,8 @@ namespace Slainte.Bartending
 
         [Header("GPU Liquid PBF/XPBD")]
         public ComputeShader gpuLiquidComputeShader;
+        // Shader.Find로 찾으면 참조가 없어 빌드에서 제외되므로, 이 에셋이 직접 참조해 빌드 포함을 보장한다.
+        public Shader gpuLiquidAccumulationShader;
         [Min(64)] public int gpuLiquidParticleCapacity = 4096;
         [Min(0.01f)] public float gpuLiquidParticleVolumeMl = 0.5f;
         [Range(1, 32)] public int gpuLiquidMaximumIngredients = 16;

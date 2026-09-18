@@ -1,5 +1,7 @@
 # 술장 시스템 (LiquorShelf)
 
+> **영업 씬에서 임시 제외**: 영업 씬의 재료 선택은 [술 선택 공간(IngredientSelection)](ingredient-selection.md)으로 교체됐다. 이 문서의 `LiquorShelfUI`·정보카드·배송 코드는 삭제하지 않고 남겨 두었으니, 배송·잔여량 표시를 복원할 때 참고한다. 병 반환 판정은 `BottleReturnZones`로 옮겼고, `LiquorShelfUI`는 반환 영역으로 등록만 한다.
+
 ## 개요
 
 화면 우측에서 슬라이드로 열리는 카테고리형 술 진열장 UI. D키로 토글, 카테고리 버튼 클릭으로 해당 카테고리 열기.
