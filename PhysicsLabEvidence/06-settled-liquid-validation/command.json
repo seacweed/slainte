@@ -1,0 +1,15 @@
+{
+  "started": "2026-09-19T17:41:05.7784353+09:00",
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe",
+  "workingDirectory": "A:/UnityHub/proj/slainte",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte",
+    "-executeMethod",
+    "Slainte.Bartending.PhysicsLab.Editor.PhysicsLabValidator.BuildAndValidate",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\PhysicsLabEvidence\\06-settled-liquid-validation\\Editor.log"
+  ]
+}

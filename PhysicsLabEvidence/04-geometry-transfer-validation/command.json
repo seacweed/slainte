@@ -1,0 +1,15 @@
+{
+  "started": "2026-09-19T17:35:11.5087770+09:00",
+  "workingDirectory": "A:/UnityHub/proj/slainte",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte",
+    "-executeMethod",
+    "Slainte.Bartending.PhysicsLab.Editor.PhysicsLabValidator.BuildAndValidate",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\PhysicsLabEvidence\\04-geometry-transfer-validation\\Editor.log"
+  ],
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe"
+}

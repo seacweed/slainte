@@ -1,0 +1,9 @@
+# Raw evidence remains on this workstation; tracked reports and hashes identify it.
+*.log
+*.png
+*.dmp
+stdout.txt
+stderr.txt
+validation.raw.txt
+ProjectSettings.before.asset
+/validation.txt

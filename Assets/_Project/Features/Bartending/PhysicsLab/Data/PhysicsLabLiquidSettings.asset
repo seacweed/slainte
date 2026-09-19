@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 063ac4e0e0991ea499c0f54992e19ef1, type: 3}
+  m_Name: PhysicsLabLiquidSettings
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.PhysicsLab.PhysicsLabLiquidSettings
+  gpuLiquidAgitationMixRate: 8
+  gpuLiquidArtificialPressureRadiusRatio: 0.3
+  gpuLiquidArtificialPressureStrength: 0.00035
+  gpuLiquidBottomImpactSpread: 0
+  gpuLiquidBoundaryDensityScale: 4
+  gpuLiquidClosedVesselDampingRate: 2
+  gpuLiquidClosedVesselMaximumRelativeSpeed: 6
+  gpuLiquidComputeShader: {fileID: 7200000, guid: 08c89dba03d71a4468631920c4b26ba4, type: 3}
+  gpuLiquidDensityCompliance: 0.000001
+  gpuLiquidFullMixRelativeSpeed: 0.8
+  gpuLiquidLambdaEpsilon: 0.01
+  gpuLiquidMaximumIngredients: 16
+  gpuLiquidMaximumMixPerSubstep: 0.3
+  gpuLiquidMaximumSpeed: 20
+  gpuLiquidParticleCapacity: 4096
+  gpuLiquidParticleRadius: 0.065
+  gpuLiquidParticleVolumeMl: 0.5
+  gpuLiquidPassiveMixRate: 0.02
+  gpuLiquidRestDensity: 150
+  gpuLiquidSmoothingRadius: 0.16
+  gpuLiquidSolverIterations: 5
+  gpuLiquidSplashMinimumImpactSpeed: 1.1
+  gpuLiquidSplashTransfer: 0.06
+  gpuLiquidSubsteps: 2
+  gpuLiquidVelocityDamping: 0.003
+  gpuLiquidViscosity: 0.02
+  gpuLiquidWallFriction: 0.01
+  gpuLiquidWallRestitution: 0
+  gpuLiquidWorldMax: {x: 25, y: 20}
+  gpuLiquidWorldMin: {x: -25, y: -12}
+  liquidMinimumVisibleAlpha: 0.05

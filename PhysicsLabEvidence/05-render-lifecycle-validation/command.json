@@ -1,0 +1,15 @@
+{
+  "workingDirectory": "A:/UnityHub/proj/slainte",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte",
+    "-executeMethod",
+    "Slainte.Bartending.PhysicsLab.Editor.PhysicsLabValidator.BuildAndValidate",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\PhysicsLabEvidence\\05-render-lifecycle-validation\\Editor.log"
+  ],
+  "started": "2026-09-19T17:38:14.9879826+09:00",
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe"
+}

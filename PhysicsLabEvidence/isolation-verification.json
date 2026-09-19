@@ -1,0 +1,25 @@
+{
+  "scope": "Only new PhysicsLab assets and evidence reports are to be committed",
+  "prefabs": 24,
+  "playModePassedAssertions": 37,
+  "unityExitCode": 0,
+  "preexistingProjectSettingsSha256": "04cbf9e21ba4556e72dad9c729e669e764ea128ec908f29933a329ded3c8f2be",
+  "existingTrackedChangesAfterRestore": [
+    "ProjectSettings/ProjectSettings.asset"
+  ],
+  "existingFontAssetsRestored": true,
+  "rawEvidenceFiles": 40,
+  "runtimeSourceWorktreeSha256": {
+    "Assets/_Project/Features/Bartending/PhysicsLab/Editor/PhysicsLabBuilder.cs": "56f878dde9d25031a76d19a8039d4ba9d98642a1f08cd354f110e4456d598247",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Editor/PhysicsLabValidator.cs": "84c249900062afb5864d706e0b7ee4f48d7e27caf6cd6999fbe16b1589b6596e",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabBody.cs": "199cc9e259e2848524e5ad13cb4559afd9a4fb21469d0c5189bad12a3084753c",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabGpuLiquid.Buffers.cs": "c7f95e62680a236e832f8d82300b8300c732aeadeff72670cea27a38f7f49ec6",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabGpuLiquid.cs": "e3e1dd9e0a46de357a4b60905215a92500a84d89058d4d4051880f19479d616e",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabGpuTypes.cs": "ac6b0d5bbb14671e806f9372c9fcfb6afa59ca1751d454bf50b1ea7bef59f1d3",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabInteractor.cs": "add29285465e2bb47eab3ea3b64ae54330e65c1de7be6816ad1034b0aa41cf17",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabLiquidSettings.cs": "b977919c101e0929fd1cbd07e37d591ec075d7c4a84eb1f6cca43bc774f7c5c8",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabWorld.cs": "4f4864e67feb8d2d4bcd626a7290f7ca976d2ecee1bda369c7a2c17d9f38a07f",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Shaders/PhysicsLabLiquid.compute": "9f8fec101dd5df284e8872bf83de0c9e36673f8de7fc1975ee273db69db9f27f",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Shaders/PhysicsLabLiquid.shader": "d06229cb1a538928eb6cae3f787cfe407de5fa4386ab49d541dedc19504ffe2a"
+  }
+}
