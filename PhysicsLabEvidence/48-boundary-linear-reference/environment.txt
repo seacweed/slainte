@@ -1,0 +1,6 @@
+Unity 6000.3.5f2
+NVIDIA GeForce RTX 3070 / Direct3D11
+capacity=4096, iterations=5, substeps=2
+linearReference=True
+Measurement: synchronized CPU submission + GPU completion wall time; NOT GPU timestamps or gameplay FPS.
+Static authored nine-body scene; controlled contained liquid + falling streams. Snapshot restored outside timing.

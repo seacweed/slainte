@@ -23,6 +23,7 @@
 #pragma kernel MergeStreamContacts
 
 #pragma target 5.0
+#pragma multi_compile_local __ PHYSICSLAB_LINEAR_BOUNDARIES
 
 #include "PhysicsLabStreamTypes.hlsl"
 
@@ -184,6 +185,8 @@ int _SwapA;
 int _SwapB;
 float2 _SwapDeltaA;
 float2 _SwapDeltaB;
+
+#include "PhysicsLabBoundaryRanges.hlsl"
 
 int2 GetCell(float2 position)
 {
@@ -372,17 +375,23 @@ void SweepBoundaries(uint3 dispatchId : SV_DispatchThreadID)
     LiquidParticle particle = _Particles[index];
     if (_StreamParticles[index].stepDt <= 0.000001 || particle.active == 0u || (particle.stateFlags & STATE_SUSPENDED) != 0u) return;
     float2 position = particle.position;
-    for (int i = 0; i < _BoundaryCount; ++i)
+    for (int group = 0; group < BoundarySearchGroupCount(); group++)
     {
-        BoundarySegment edge = _Boundaries[i];
-        if (!IsBoundaryCompatible(particle.vesselId, edge.vesselId, edge.flags)) continue;
-        float fraction = _StreamParticles[index].startFraction;
-        edge.startPosition = lerp(edge.startPosition, edge.endPosition, fraction);
-        edge.startAngle += edge.angleDelta * fraction;
-        edge.angleDelta *= 1.0 - fraction;
-        float2 swept = SweepAgainstBoundary(particle.previousPosition, position, edge);
-        if (dot(swept - position, swept - position) > 1e-10) _StreamParticles[index].detached = 1u;
-        position = swept;
+        uint first, end;
+        if (!BoundarySearchRange(group, min(particle.previousPosition, position) - _ParticleRadius,
+            max(particle.previousPosition, position) + _ParticleRadius, true, first, end)) continue;
+        for (uint i = first; i < end; ++i)
+        {
+            BoundarySegment edge = _Boundaries[i];
+            if (!IsBoundaryCompatible(particle.vesselId, edge.vesselId, edge.flags)) continue;
+            float fraction = _StreamParticles[index].startFraction;
+            edge.startPosition = lerp(edge.startPosition, edge.endPosition, fraction);
+            edge.startAngle += edge.angleDelta * fraction;
+            edge.angleDelta *= 1.0 - fraction;
+            float2 swept = SweepAgainstBoundary(particle.previousPosition, position, edge);
+            if (dot(swept - position, swept - position) > 1e-10) _StreamParticles[index].detached = 1u;
+            position = swept;
+        }
     }
     particle.position = position;
     _Particles[index] = particle;
@@ -424,35 +433,40 @@ bool TryFindNearestCompatibleBoundary(
     boundaryVelocity = 0.0;
     bool found = false;
 
-    for (int boundaryIndex = 0; boundaryIndex < _BoundaryCount; boundaryIndex++)
+    for (int group = 0; group < BoundarySearchGroupCount(); group++)
     {
-        BoundarySegment boundary = _Boundaries[boundaryIndex];
-        if (!IsBoundaryCompatible(vesselId, boundary.vesselId, boundary.flags))
-            continue;
+        uint first, end;
+        if (!BoundarySearchRange(group, position - maximumDistance, position + maximumDistance, false, first, end)) continue;
+        for (uint boundaryIndex = first; boundaryIndex < end; boundaryIndex++)
+        {
+            BoundarySegment boundary = _Boundaries[boundaryIndex];
+            if (!IsBoundaryCompatible(vesselId, boundary.vesselId, boundary.flags))
+                continue;
 
-        float candidateT;
-        float2 candidateClosest = ClosestPointOnSegment(
-            position,
-            boundary.a,
-            boundary.b,
-            candidateT);
-        float2 difference = position - candidateClosest;
-        float candidateDistance = length(difference);
-        if (candidateDistance >= distance)
-            continue;
+            float candidateT;
+            float2 candidateClosest = ClosestPointOnSegment(
+                position,
+                boundary.a,
+                boundary.b,
+                candidateT);
+            float2 difference = position - candidateClosest;
+            float candidateDistance = length(difference);
+            if (candidateDistance >= distance)
+                continue;
 
-        float2 tangent = boundary.b - boundary.a;
-        closestPoint = candidateClosest;
-        normal = candidateDistance > 1e-5
-            ? difference / candidateDistance
-            : normalize(float2(-tangent.y, tangent.x));
-        distance = candidateDistance;
-        segmentT = candidateT;
-        boundaryVelocity = lerp(
-            boundary.velocityA,
-            boundary.velocityB,
-            candidateT);
-        found = true;
+            float2 tangent = boundary.b - boundary.a;
+            closestPoint = candidateClosest;
+            normal = candidateDistance > 1e-5
+                ? difference / candidateDistance
+                : normalize(float2(-tangent.y, tangent.x));
+            distance = candidateDistance;
+            segmentT = candidateT;
+            boundaryVelocity = lerp(
+                boundary.velocityA,
+                boundary.velocityB,
+                candidateT);
+            found = true;
+        }
     }
 
     return found;
@@ -475,7 +489,9 @@ bool IsInsideVesselTrigger(
 bool IsInsideVesselContour(float2 position, uint vesselId)
 {
     bool inside = false;
-    for (int i = 0; i < _BoundaryCount; ++i)
+    uint first, end;
+    VesselContourRange(vesselId, first, end);
+    for (uint i = first; i < end; ++i)
     {
         BoundarySegment edge = _Boundaries[i];
         if (edge.vesselId != vesselId || (edge.flags & 8u) == 0u) continue;
@@ -536,13 +552,15 @@ float2 ConstrainToClosedVessel(float2 position, uint vesselId)
 
         if ((trigger.flags & 32u) != 0u)
         {
+            uint first, end;
+            VesselContourRange(vesselId, first, end);
             // Profile interiors are CCW. The broad-phase rectangle is never a
             // wall: recover escaped/squeezed particles against the actual bowl and lid.
             for (int correction = 0; correction < 4; correction++)
             {
                 float nearest = 1e20;
                 float2 closestPosition = position, normal = 0.0;
-                for (int i = 0; i < _BoundaryCount; i++)
+                for (uint i = first; i < end; i++)
                 {
                     BoundarySegment edge = _Boundaries[i];
                     if (edge.vesselId != vesselId || (edge.flags & 8u) == 0u) continue;
@@ -1061,50 +1079,59 @@ void ApplyDeltaAndBoundaries(uint3 dispatchId : SV_DispatchThreadID)
     float2 position = particle.position + _PositionDeltas[index];
     float bestCorrectionScore = -1.0;
     float2 bestCorrectedPosition = position;
-    for (int boundaryIndex = 0; boundaryIndex < _BoundaryCount; boundaryIndex++)
+    // A pressure projection can cross an edge and end beyond the collision radius.
+    // Include its full travel length, also preserving the existing side-change rule
+    // where projection onto the edge (rather than path intersection) chooses contact.
+    float searchRadius = _ParticleRadius + length(_PositionDeltas[index]);
+    for (int group = 0; group < BoundarySearchGroupCount(); group++)
     {
-        BoundarySegment boundary = _Boundaries[boundaryIndex];
-        if (!IsBoundaryCompatible(particle.vesselId, boundary.vesselId, boundary.flags))
-            continue;
-
-        float segmentT;
-        float2 closest = ClosestPointOnSegment(position, boundary.a, boundary.b, segmentT);
-        float2 difference = position - closest;
-        float distance = length(difference);
-
-        // The sweep already handled wall motion. Keep each pressure projection on its original
-        // side of the current edge instead of replaying the whole moving-wall trajectory per iteration.
-        float2 edgeDirection = boundary.b - boundary.a;
-        float previousSide = Cross2D(edgeDirection, particle.position - boundary.a);
-        float currentSide = Cross2D(edgeDirection, position - boundary.a);
-        if (previousSide * currentSide < 0.0 && segmentT > 0.0 && segmentT < 1.0)
+        uint first, end;
+        if (!BoundarySearchRange(group, position - searchRadius, position + searchRadius, false, first, end)) continue;
+        for (uint boundaryIndex = first; boundaryIndex < end; boundaryIndex++)
         {
-            float2 normal = normalize(float2(-edgeDirection.y, edgeDirection.x));
-            normal *= previousSide >= 0.0 ? 1.0 : -1.0;
-            float score = _ParticleRadius + distance;
-            if (score > bestCorrectionScore)
-            {
-                bestCorrectionScore = score;
-                bestCorrectedPosition = closest + normal * _ParticleRadius;
-            }
-            continue;
-        }
+            BoundarySegment boundary = _Boundaries[boundaryIndex];
+            if (!IsBoundaryCompatible(particle.vesselId, boundary.vesselId, boundary.flags))
+                continue;
 
-        if (distance < _ParticleRadius)
-        {
-            float2 tangent = boundary.b - boundary.a;
-            float2 normal = distance > 1e-5
-                ? difference / distance
-                : normalize(float2(-tangent.y, tangent.x));
-            float correctionScore = _ParticleRadius - distance;
-            if (correctionScore > bestCorrectionScore)
-            {
-                bestCorrectionScore = correctionScore;
-                bestCorrectedPosition = closest + normal * _ParticleRadius;
-            }
-            continue;
-        }
+            float segmentT;
+            float2 closest = ClosestPointOnSegment(position, boundary.a, boundary.b, segmentT);
+            float2 difference = position - closest;
+            float distance = length(difference);
 
+            // The sweep already handled wall motion. Keep each pressure projection on its original
+            // side of the current edge instead of replaying the whole moving-wall trajectory per iteration.
+            float2 edgeDirection = boundary.b - boundary.a;
+            float previousSide = Cross2D(edgeDirection, particle.position - boundary.a);
+            float currentSide = Cross2D(edgeDirection, position - boundary.a);
+            if (previousSide * currentSide < 0.0 && segmentT > 0.0 && segmentT < 1.0)
+            {
+                float2 normal = normalize(float2(-edgeDirection.y, edgeDirection.x));
+                normal *= previousSide >= 0.0 ? 1.0 : -1.0;
+                float score = _ParticleRadius + distance;
+                if (score > bestCorrectionScore)
+                {
+                    bestCorrectionScore = score;
+                    bestCorrectedPosition = closest + normal * _ParticleRadius;
+                }
+                continue;
+            }
+
+            if (distance < _ParticleRadius)
+            {
+                float2 tangent = boundary.b - boundary.a;
+                float2 normal = distance > 1e-5
+                    ? difference / distance
+                    : normalize(float2(-tangent.y, tangent.x));
+                float correctionScore = _ParticleRadius - distance;
+                if (correctionScore > bestCorrectionScore)
+                {
+                    bestCorrectionScore = correctionScore;
+                    bestCorrectedPosition = closest + normal * _ParticleRadius;
+                }
+                continue;
+            }
+
+        }
     }
 
     if (bestCorrectionScore >= 0.0)

@@ -1,0 +1,15 @@
+{
+  "started": "2026-09-22T01:57:55.5685316+09:00",
+  "workingDirectory": "A:/UnityHub/proj/slainte",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/PhysicsLabEvidence/HarnessProject",
+    "-executeMethod",
+    "IsolationHarness.Begin",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\PhysicsLabEvidence\\51-boundary-isolation\\Editor.log"
+  ],
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe"
+}

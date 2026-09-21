@@ -178,7 +178,7 @@ namespace Slainte.Bartending.PhysicsLab
         }
         private void UploadGeometry(float from, float to, float dt)
         {
-            int boundaryCount = 0, triggerCount = 0;
+            int boundaryCount = 0, triggerCount = 0, groupCount = 0;
             foreach (PhysicsLabBody item in world.Items)
             {
                 if (item == null) continue;
@@ -187,6 +187,7 @@ namespace Slainte.Bartending.PhysicsLab
                 float previousAngle = item.PreviousAngle + item.StepAngle * from;
                 float angle = item.PreviousAngle + item.StepAngle * to;
                 uint flags = (item.IsHeld ? 2u : 0u) | (item.kind == LabItemKind.Ice ? 4u : 0u);
+                int first = boundaryCount, contourFirst, contourEnd;
                 void UploadPath(Vector2[] path, bool closed, bool vesselContour = false, bool ownershipOnly = false)
                 {
                     int segments = closed ? path.Length : path.Length - 1;
@@ -218,13 +219,19 @@ namespace Slainte.Bartending.PhysicsLab
                 {
                     foreach (PhysicsLabHull hull in item.collisionProfile.solids) UploadPath(hull.points, true);
                     if (item.sealedVessel) UploadPath(item.collisionProfile.lid, true);
+                    contourFirst = boundaryCount;
                     UploadPath(item.collisionProfile.interior, true, true, true);
+                    contourEnd = boundaryCount;
                 }
                 else
                 {
+                    contourFirst = boundaryCount;
                     UploadPath(item.liquidWall, item.wallClosed || item.IsVessel, item.IsVessel);
+                    contourEnd = item.IsVessel ? boundaryCount : contourFirst;
                     foreach (PhysicsLabHull hull in item.extraSolidHulls) UploadPath(hull.points, true);
                 }
+                if (boundaryCount > first)
+                    UploadBoundaryGroup(groupCount++, item.Id, first, boundaryCount, contourFirst, contourEnd);
                 foreach (Rect rect in item.contentRegions)
                 {
                     if (triggerCount >= MaximumVesselTriggers) throw new InvalidOperationException("PhysicsLab trigger budget exceeded.");
@@ -240,8 +247,10 @@ namespace Slainte.Bartending.PhysicsLab
                 }
             }
             if (boundaryCount > 0) boundaryBuffer.SetData(boundaryUpload, 0, 0, boundaryCount);
+            if (groupCount > 0) boundaryGroupBuffer.SetData(boundaryGroups, 0, 0, groupCount);
             if (triggerCount > 0) triggerBuffer.SetData(triggerUpload, 0, 0, triggerCount);
             simulationShader.SetInt("_BoundaryCount", boundaryCount);
+            simulationShader.SetInt("_BoundaryGroupCount", groupCount);
             simulationShader.SetInt("_VesselTriggerCount", triggerCount);
         }
         public void SwapContents(uint a, Vector2 deltaA, uint b, Vector2 deltaB)
@@ -349,6 +358,7 @@ namespace Slainte.Bartending.PhysicsLab
             RenderPipelineManager.beginCameraRendering -= QueueDraw;
             DisposeSurfaceRendering();
             DisposeStreamBuffers();
+            boundaryGroupBuffer?.Dispose(); boundaryGroupBuffer = null;
             GraphicsBuffer[] buffers = { particleBuffer, compositionA, compositionB, particleColorBuffer, positionDeltaBuffer,
                 lambdaBuffer, gridHeadBuffer, gridNextBuffer, freeIndexBuffer, freeCountBuffer, spawnCommandBuffer,
                 ingredientVisualBuffer, boundaryBuffer, triggerBuffer, agitatorBuffer, statisticsBuffer, velocitySnapshotBuffer };

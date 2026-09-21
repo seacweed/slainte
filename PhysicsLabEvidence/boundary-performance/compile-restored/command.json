@@ -1,0 +1,11 @@
+{
+  "reason": "Temp project.assets.json was absent after the user closed Unity. Restore generated build metadata before compilation.",
+  "command": [
+    "dotnet",
+    "build",
+    "Assembly-CSharp-Editor.csproj",
+    "-v:minimal",
+    "-p:RestoreIgnoreFailedSources=true",
+    "-p:CustomAfterMicrosoftCommonTargets=A:\\UnityHub\\proj\\slainte\\PhysicsLabEvidence\\boundary-performance\\compile-restored\\IncludePhysicsLab.targets"
+  ]
+}

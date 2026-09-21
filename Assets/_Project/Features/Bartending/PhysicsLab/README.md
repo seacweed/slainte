@@ -79,6 +79,8 @@ Settings의 `streamMaximumTimeGap`(기본 0.075초)보다 늦게 나온 방울�
 
 ## 검증
 
+2026-09-22 성능 개선은 오브젝트별 충돌 범위와 용기별 내부 윤곽 범위를 사용해 GPU의 전체 선분 검색을 줄인다. 입자·콜라이더 형상·시뮬레이션 간격은 유지한다. 최종 통제 측정에서 1000입자의 동기 완료 시간은 20.37ms에서 5.67ms로 감소했다. 실제 게임 FPS가 아닌 CPU 제출과 GPU 완료 대기의 합이며, 350개 씬 검사·10개 독립성 검사·25개 GPU 대조 검사를 통과했다. 방법, 범위와 실패 기록은 루트의 `PhysicsLabEvidence/boundary-performance/README.md`를 참조한다.
+
 `Slainte > Physics Lab > Validate Play Mode`는 저장된 샌드박스를 열고 실제 Play Mode/GPU에서 검증한다. `PhysicsLabValidator.BuildAndValidate`는 생성과 검증을 함께 수행하므로 새 PhysicsLab 프리팹/씬을 다시 생성한다. 편집한 PhysicsLab 에셋을 보존하려면 재생성 대신 Validate만 사용한다.
 
 2026-09-19의 기존 실행 `PhysicsLabEvidence/07-final-isolation-validation`은 37개 검사에 통과했지만 원거리 액체의 위치·속도 독립성은 검사하지 않았다. 이 누락으로 발견하지 못한 전역 서브스텝 문제를 2026-09-21에 재설계했다. 자세한 구조와 대조 실험은 `REDESIGN.md`를 참조한다.

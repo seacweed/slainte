@@ -49,6 +49,10 @@ manifest = {'dependencies': {'com.unity.ugui':'2.0.0', 'com.unity.render-pipelin
     **{'com.unity.modules.'+name:'1.0.0' for name in ('physics2d','physics','imgui','ui','imageconversion','jsonserialize','animation')}}}
 (target / 'Packages/manifest.json').write_text(json.dumps(manifest,indent=2),encoding='utf-8')
 (target / 'ProjectSettings').mkdir(exist_ok=True)
+# A disposable benchmark project does not need a search index. Unity 6000.3.5f2
+# can throw in SearchDatabase.EnumerateAll during batch startup with no index.
+(target / 'UserSettings').mkdir(exist_ok=True)
+(target / 'UserSettings/Search.settings').write_text('{"indexOnEditorStartup": false}\n', encoding='utf-8')
 for name in ('ProjectVersion.txt','GraphicsSettings.asset','QualitySettings.asset','TimeManager.asset','TagManager.asset','Physics2DSettings.asset'):
     source=root/'ProjectSettings'/name
     shutil.copy2(source,target/'ProjectSettings'/name)
@@ -66,6 +70,8 @@ for line in source.splitlines():
 for partial in (root / lab / 'Editor').glob('PhysicsLabValidator.*.cs'):
     shutil.copy2(partial, editor / partial.name)
 for source in (root / lab / 'Editor').glob('PhysicsLabGeometry*.cs'):
+    shutil.copy2(source, editor / source.name)
+for source in (root / 'PhysicsLabEvidence/HarnessSource').glob('BoundaryBenchmark*.cs'):
     shutil.copy2(source, editor / source.name)
 (editor/'PhysicsLabBuilder.cs').write_text('''namespace Slainte.Bartending.PhysicsLab.Editor {
 public static class PhysicsLabBuilder {

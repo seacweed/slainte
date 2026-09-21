@@ -56,24 +56,29 @@ bool ResolveStreamToken(uint token, out uint index)
 }
 bool StreamBlocked(float2 a, float2 b, float radius, uint ignoreSource)
 {
-    for (int i = 0; i < _BoundaryCount; i++)
+    for (int group = 0; group < BoundarySearchGroupCount(); group++)
     {
-        BoundarySegment edge = _Boundaries[i];
-        // Visible held tools must also occlude a ribbon. Keep the existing physical contact policy separate.
-        if ((ignoreSource != 0u && edge.vesselId == ignoreSource) || (edge.flags & 16u) != 0u) continue;
-        if (any(max(a, b) + radius < min(edge.a, edge.b)) || any(min(a, b) - radius > max(edge.a, edge.b))) continue;
-        float denominator = Cross2D(b - a, edge.b - edge.a);
-        if (abs(denominator) > 1e-7)
+        uint first, end;
+        if (!BoundarySearchRange(group, min(a, b) - radius, max(a, b) + radius, false, first, end)) continue;
+        for (uint i = first; i < end; i++)
         {
-            float t = Cross2D(edge.a - a, edge.b - edge.a) / denominator;
-            float u = Cross2D(edge.a - a, b - a) / denominator;
-            if (t >= 0.0 && t <= 1.0 && u >= 0.0 && u <= 1.0) return true;
+            BoundarySegment edge = _Boundaries[i];
+            // Visible held tools must also occlude a ribbon. Keep the existing physical contact policy separate.
+            if ((ignoreSource != 0u && edge.vesselId == ignoreSource) || (edge.flags & 16u) != 0u) continue;
+            if (any(max(a, b) + radius < min(edge.a, edge.b)) || any(min(a, b) - radius > max(edge.a, edge.b))) continue;
+            float denominator = Cross2D(b - a, edge.b - edge.a);
+            if (abs(denominator) > 1e-7)
+            {
+                float t = Cross2D(edge.a - a, edge.b - edge.a) / denominator;
+                float u = Cross2D(edge.a - a, b - a) / denominator;
+                if (t >= 0.0 && t <= 1.0 && u >= 0.0 && u <= 1.0) return true;
+            }
+            float unused;
+            if (distance(a, ClosestPointOnSegment(a, edge.a, edge.b, unused)) < radius
+                || distance(b, ClosestPointOnSegment(b, edge.a, edge.b, unused)) < radius
+                || distance(edge.a, ClosestPointOnSegment(edge.a, a, b, unused)) < radius
+                || distance(edge.b, ClosestPointOnSegment(edge.b, a, b, unused)) < radius) return true;
         }
-        float unused;
-        if (distance(a, ClosestPointOnSegment(a, edge.a, edge.b, unused)) < radius
-            || distance(b, ClosestPointOnSegment(b, edge.a, edge.b, unused)) < radius
-            || distance(edge.a, ClosestPointOnSegment(edge.a, a, b, unused)) < radius
-            || distance(edge.b, ClosestPointOnSegment(edge.b, a, b, unused)) < radius) return true;
     }
     return false;
 }

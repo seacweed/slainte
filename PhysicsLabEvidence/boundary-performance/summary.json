@@ -1,0 +1,136 @@
+{
+  "48-boundary-linear-reference": {
+    "100/Step": {
+      "median_ms": 20.167267,
+      "p95_ms": 22.468033,
+      "samples": 9
+    },
+    "300/Step": {
+      "median_ms": 19.468633,
+      "p95_ms": 19.9424,
+      "samples": 9
+    },
+    "600/Step": {
+      "median_ms": 20.516567,
+      "p95_ms": 21.245533,
+      "samples": 9
+    },
+    "1000/Step": {
+      "median_ms": 20.371267,
+      "p95_ms": 21.140433,
+      "samples": 9
+    },
+    "1000/SweepBoundaries": {
+      "median_ms": 0.495658,
+      "p95_ms": 0.568058,
+      "samples": 9
+    },
+    "1000/CalculateDensityLambda": {
+      "median_ms": 0.502533,
+      "p95_ms": 0.591175,
+      "samples": 9
+    },
+    "1000/CalculatePositionDelta": {
+      "median_ms": 0.501942,
+      "p95_ms": 0.52705,
+      "samples": 9
+    },
+    "1000/ApplyDeltaAndBoundaries": {
+      "median_ms": 0.786375,
+      "p95_ms": 0.921383,
+      "samples": 9
+    },
+    "1000/UpdateVelocities": {
+      "median_ms": 0.48515,
+      "p95_ms": 0.514433,
+      "samples": 9
+    },
+    "1000/MixComposition": {
+      "median_ms": 0.0201,
+      "p95_ms": 0.033733,
+      "samples": 9
+    },
+    "1000/BuildStreamSurface": {
+      "median_ms": 0.253325,
+      "p95_ms": 0.323167,
+      "samples": 9
+    },
+    "1000/UploadGeometry": {
+      "median_ms": 1.066558,
+      "p95_ms": 1.686817,
+      "samples": 9
+    },
+    "1000/Camera1600x900": {
+      "median_ms": 1.235533,
+      "p95_ms": 1.414033,
+      "samples": 9
+    }
+  },
+  "49-boundary-optimized-final": {
+    "100/Step": {
+      "median_ms": 4.0777,
+      "p95_ms": 4.4934,
+      "samples": 9
+    },
+    "300/Step": {
+      "median_ms": 4.8841,
+      "p95_ms": 5.2518,
+      "samples": 9
+    },
+    "600/Step": {
+      "median_ms": 5.4046,
+      "p95_ms": 5.7826,
+      "samples": 9
+    },
+    "1000/Step": {
+      "median_ms": 5.6725,
+      "p95_ms": 5.849233,
+      "samples": 9
+    },
+    "1000/SweepBoundaries": {
+      "median_ms": 0.076825,
+      "p95_ms": 0.149008,
+      "samples": 9
+    },
+    "1000/CalculateDensityLambda": {
+      "median_ms": 0.072667,
+      "p95_ms": 0.141125,
+      "samples": 9
+    },
+    "1000/CalculatePositionDelta": {
+      "median_ms": 0.067083,
+      "p95_ms": 0.1105,
+      "samples": 9
+    },
+    "1000/ApplyDeltaAndBoundaries": {
+      "median_ms": 0.071233,
+      "p95_ms": 0.112408,
+      "samples": 9
+    },
+    "1000/UpdateVelocities": {
+      "median_ms": 0.510108,
+      "p95_ms": 0.547233,
+      "samples": 9
+    },
+    "1000/MixComposition": {
+      "median_ms": 0.031167,
+      "p95_ms": 0.115358,
+      "samples": 9
+    },
+    "1000/BuildStreamSurface": {
+      "median_ms": 0.038033,
+      "p95_ms": 0.140992,
+      "samples": 9
+    },
+    "1000/UploadGeometry": {
+      "median_ms": 0.986517,
+      "p95_ms": 1.083358,
+      "samples": 9
+    },
+    "1000/Camera1600x900": {
+      "median_ms": 0.793267,
+      "p95_ms": 0.965367,
+      "samples": 9
+    }
+  }
+}

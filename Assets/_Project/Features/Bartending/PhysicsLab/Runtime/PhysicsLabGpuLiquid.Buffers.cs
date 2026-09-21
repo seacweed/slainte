@@ -76,6 +76,9 @@ namespace Slainte.Bartending.PhysicsLab
             spawnCommandBuffer = CreateStructured<GpuLiquidSpawnCommand>(particleCapacity);
             ingredientVisualBuffer = CreateStructured<GpuLiquidIngredientVisual>(maximumIngredients);
             boundaryBuffer = CreateStructured<GpuLiquidBoundarySegment>(MaximumBoundarySegments);
+            // Every group owns at least one edge, so the existing edge budget also bounds groups.
+            boundaryGroupBuffer = CreateStructured<GpuLiquidBoundaryGroup>(MaximumBoundarySegments);
+            boundaryGroups = new GpuLiquidBoundaryGroup[MaximumBoundarySegments];
             triggerBuffer = CreateStructured<GpuLiquidVesselTrigger>(MaximumVesselTriggers);
             agitatorBuffer = CreateStructured<GpuLiquidAgitator>(MaximumAgitators);
             statisticsBuffer = new GraphicsBuffer(
@@ -215,6 +218,7 @@ namespace Slainte.Bartending.PhysicsLab
             simulationShader.SetBuffer(kernel, "_SpawnCommands", spawnCommandBuffer);
             simulationShader.SetBuffer(kernel, "_IngredientVisuals", ingredientVisualBuffer);
             simulationShader.SetBuffer(kernel, "_Boundaries", boundaryBuffer);
+            simulationShader.SetBuffer(kernel, "_BoundaryGroups", boundaryGroupBuffer);
             simulationShader.SetBuffer(kernel, "_VesselTriggers", triggerBuffer);
             simulationShader.SetBuffer(kernel, "_Agitators", agitatorBuffer);
             simulationShader.SetBuffer(kernel, "_Statistics", statisticsBuffer);

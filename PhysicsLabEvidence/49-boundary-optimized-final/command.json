@@ -1,0 +1,15 @@
+{
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/PhysicsLabEvidence/SceneHarnessProject",
+    "-executeMethod",
+    "BoundaryBenchmark.Begin",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\PhysicsLabEvidence\\49-boundary-optimized-final\\Editor.log"
+  ],
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe",
+  "started": "2026-09-22T01:55:49.5718735+09:00",
+  "workingDirectory": "A:/UnityHub/proj/slainte"
+}
