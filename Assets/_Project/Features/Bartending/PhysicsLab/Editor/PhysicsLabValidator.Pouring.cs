@@ -96,6 +96,7 @@ namespace Slainte.Bartending.PhysicsLab.Editor
                 gpu.ResetSimulation();
                 gpu.TryEmitStream(new Vector2(0,5),Vector2.zero,ingredient,.5f,101,stream,older,0,.055f,out newer);gpu.Step(.0001f);
                 Require(gpu.ReadStreamSegments().All(x=>x.Active==0 || (x.B-x.A).sqrMagnitude<.00001f),"Reset and reused particle slots cannot resurrect an old connection");
+                ValidateContainedStreams(ingredient);
                 ValidateBottleEmissionSchedule();
             }
             finally
@@ -143,14 +144,22 @@ namespace Slainte.Bartending.PhysicsLab.Editor
             bottle.pourMlPerSecond=20;bottle.ResetSupply(700,0);bottle.Teleport(new Vector2(0,3.5f),180);glass.Teleport(new Vector2(0,-.4f),0);
             Camera camera=gpu.outputCamera;camera.transform.position=new Vector3(0,1.6f,-20);camera.orthographicSize=4;
             gpu.ResetSimulation();
+            float filled=gpu.Fill(glass,bottle.ingredient,60);
+            bottle.pourMlPerSecond=0;
+            yield return Frames(25);
+            bottle.pourMlPerSecond=20;
             for(int frame=0;frame<35;frame++)
             {
                 yield return new WaitForFixedUpdate();
                 if(frame==10 || frame==20 || frame==34)CaptureCamera(Path.Combine(PhysicsLabValidator.EvidenceDirectory,"pour-steady-"+frame+".png"));
             }
             gpu.ReadbackNow();
-            Require(gpu.EmittedMl>5 && Mathf.Abs((700-bottle.remainingMl)-gpu.EmittedMl)<.001f,"Controlled bottle stream conserves stock and emitted ml");
+            Require(gpu.EmittedMl-filled>5 && Mathf.Abs((700-bottle.remainingMl)-(gpu.EmittedMl-filled))<.001f,"Controlled bottle stream conserves stock and emitted ml above prefilled liquid");
             Require(gpu.ReadStreamSegments().Any(x=>x.Active!=0 && (x.B-x.A).sqrMagnitude>.00001f),"Controlled pour has a continuous GPU stream");
+            var contained=gpu.ReadStreamSegments().Where(x=>x.Active!=0 && (x.B-x.A).sqrMagnitude>.00001f
+                && gpu.Snapshot[x.ParticleIndex].VesselId==glass.Id).ToArray();
+            Require(contained.Length>0,"Real highball keeps the falling stream connected below its rim");
+            Require(gpu.ReadStreamParticles().Any(x=>x.Detached==2),"Real pour joins the prefilled liquid surface");
             gpu.useStreamRendering=false;CaptureCamera(Path.Combine(PhysicsLabValidator.EvidenceDirectory,"pour-metaballs.png"));
             gpu.useStreamRendering=true;CaptureCamera(Path.Combine(PhysicsLabValidator.EvidenceDirectory,"pour-stream.png"));
             yield return MeasureStreamSurfaceCost();

@@ -167,7 +167,9 @@ namespace Slainte.Bartending.PhysicsLab
                 }
                 RebuildGrid();
                 DispatchForCount(snapshotVelocityKernel, particleCapacity);
-                DispatchForCount(velocityKernel, particleCapacity); DispatchMix();
+                DispatchForCount(velocityKernel, particleCapacity);
+                DispatchForCount(mergeStreamContactsKernel, particleCapacity);
+                DispatchMix();
             }
             BindCurrentComposition(colorKernel); DispatchForCount(colorKernel, particleCapacity);
             simulationTime += dt;

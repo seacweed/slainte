@@ -8,10 +8,10 @@ namespace Slainte.Bartending.PhysicsLab
         public bool useStreamRendering = true;
         private const int MaximumStreamHeads = 64;
         private GraphicsBuffer streamParticleBuffer, spawnStreamBuffer, streamLookupBuffer, streamHeadBuffer,
-            streamSegmentBuffer, surfaceParticleBuffer;
+            streamSegmentBuffer, surfaceParticleBuffer, streamContactSnapshotBuffer;
         private GpuLiquidStreamParticle[] spawnStreams;
         private readonly GpuLiquidStreamHead[] streamHeads = new GpuLiquidStreamHead[MaximumStreamHeads];
-        private int streamSurfaceKernel, resetStreamLookupKernel;
+        private int streamSurfaceKernel, resetStreamLookupKernel, mergeStreamContactsKernel;
         private uint nextStreamId, nextStreamToken;
         private float simulationTime;
 
@@ -33,12 +33,14 @@ namespace Slainte.Bartending.PhysicsLab
         {
             streamSurfaceKernel = simulationShader.FindKernel("BuildStreamSurface");
             resetStreamLookupKernel = simulationShader.FindKernel("ResetStreamLookup");
+            mergeStreamContactsKernel = simulationShader.FindKernel("MergeStreamContacts");
             streamParticleBuffer = CreateStructured<GpuLiquidStreamParticle>(particleCapacity);
             spawnStreamBuffer = CreateStructured<GpuLiquidStreamParticle>(particleCapacity);
             streamLookupBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, particleCapacity * 2, sizeof(uint) * 2);
             streamHeadBuffer = CreateStructured<GpuLiquidStreamHead>(MaximumStreamHeads);
             streamSegmentBuffer = CreateStructured<GpuLiquidStreamSegment>(particleCapacity + MaximumStreamHeads);
             surfaceParticleBuffer = CreateStructured<GpuLiquidParticle>(particleCapacity);
+            streamContactSnapshotBuffer = CreateStructured<uint>(particleCapacity);
             spawnStreams = new GpuLiquidStreamParticle[particleCapacity];
         }
         private void BindStreamBuffers(int kernel)
@@ -49,6 +51,7 @@ namespace Slainte.Bartending.PhysicsLab
             simulationShader.SetBuffer(kernel, "_StreamHeads", streamHeadBuffer);
             simulationShader.SetBuffer(kernel, "_StreamSegments", streamSegmentBuffer);
             simulationShader.SetBuffer(kernel, "_SurfaceParticles", surfaceParticleBuffer);
+            simulationShader.SetBuffer(kernel, "_StreamContactSnapshot", streamContactSnapshotBuffer);
         }
         private void PrepareStreamSurface(CommandBuffer commands = null)
         {
@@ -80,8 +83,8 @@ namespace Slainte.Bartending.PhysicsLab
         private void DisposeStreamBuffers()
         {
             foreach (GraphicsBuffer buffer in new[] { streamParticleBuffer, spawnStreamBuffer, streamLookupBuffer,
-                streamHeadBuffer, streamSegmentBuffer, surfaceParticleBuffer }) buffer?.Dispose();
-            streamParticleBuffer = spawnStreamBuffer = streamLookupBuffer = streamHeadBuffer = streamSegmentBuffer = surfaceParticleBuffer = null;
+                streamHeadBuffer, streamSegmentBuffer, surfaceParticleBuffer, streamContactSnapshotBuffer }) buffer?.Dispose();
+            streamParticleBuffer = spawnStreamBuffer = streamLookupBuffer = streamHeadBuffer = streamSegmentBuffer = surfaceParticleBuffer = streamContactSnapshotBuffer = null;
         }
     }
 }

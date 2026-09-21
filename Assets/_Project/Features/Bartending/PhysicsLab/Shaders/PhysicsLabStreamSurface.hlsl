@@ -1,4 +1,45 @@
-// Runs after simulation. Writes only display buffers, never particle positions or composition.
+// Stream lifecycle and display only; never changes particle positions, velocity or composition.
+bool StreamBlocked(float2 a, float2 b, float radius, uint ignoreSource);
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void MergeStreamContacts(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint index = dispatchId.x;
+    if (index >= (uint)_ParticleCapacity) return;
+    LiquidParticle particle = _Particles[index];
+    StreamParticle stream = _StreamParticles[index];
+    if (particle.active == 0u || particle.vesselId == 0u || stream.token == 0u
+        || stream.detached != 0u || stream.stepDt <= 0.000001
+        || (particle.stateFlags & STATE_SUSPENDED) != 0u) return;
+
+    // Reuse the final solver grid. Other free-falling stream particles are not
+    // a pool: only non-stream liquid or previously contacted liquid can absorb it.
+    float contactRadius = min(_SmoothingRadius, _ParticleRadius * 2.2);
+    int2 originCell = GetCell(particle.position);
+    for (int y = -1; y <= 1; y++)
+    for (int x = -1; x <= 1; x++)
+    {
+        int2 cell = originCell + int2(x, y);
+        if (!IsCellValid(cell)) continue;
+        int neighborIndex = _GridHeads[GetCellIndex(cell)];
+        int guard = 0;
+        while (neighborIndex >= 0 && guard++ < _ParticleCapacity)
+        {
+            LiquidParticle neighbor = _Particles[neighborIndex];
+            float2 offset = particle.position - neighbor.position;
+            if (neighborIndex != (int)index && neighbor.active != 0u
+                && neighbor.vesselId == particle.vesselId
+                && (neighbor.stateFlags & STATE_SUSPENDED) == 0u
+                && (_StreamParticles[neighborIndex].token == 0u || _StreamContactSnapshot[neighborIndex] != 0u)
+                && dot(offset, offset) <= contactRadius * contactRadius
+                && !StreamBlocked(particle.position, neighbor.position, 0.0, 0u))
+            {
+                _StreamParticles[index].detached = 2u;
+                return;
+            }
+            neighborIndex = _GridNext[neighborIndex];
+        }
+    }
+}
 [numthreads(THREAD_GROUP_SIZE, 1, 1)]
 void ResetStreamLookup(uint3 dispatchId : SV_DispatchThreadID)
 {
@@ -11,8 +52,7 @@ bool ResolveStreamToken(uint token, out uint index)
     uint2 entry = _StreamLookup[token % ((uint)_ParticleCapacity * 2u)];
     if (entry.x != token || entry.y >= (uint)_ParticleCapacity) return false;
     index = entry.y;
-    return _StreamParticles[index].token == token && _StreamParticles[index].detached == 0u
-        && _Particles[index].active != 0u && _Particles[index].vesselId == 0u;
+    return _StreamParticles[index].token == token && _Particles[index].active != 0u;
 }
 bool StreamBlocked(float2 a, float2 b, float radius, uint ignoreSource)
 {
@@ -53,7 +93,7 @@ void BuildStreamSurface(uint3 dispatchId : SV_DispatchThreadID)
         LiquidParticle particle = _Particles[index];
         StreamParticle stream = _StreamParticles[index];
         LiquidParticle display = particle;
-        if (_StreamRenderingEnabled != 0 && particle.active != 0u && particle.vesselId == 0u
+        if (_StreamRenderingEnabled != 0 && particle.active != 0u
             && stream.token != 0u && stream.detached == 0u)
         {
             display.active = 0u;
@@ -66,8 +106,14 @@ void BuildStreamSurface(uint3 dispatchId : SV_DispatchThreadID)
                 StreamParticle older = _StreamParticles[previous];
                 float gap = stream.birthTime - older.birthTime;
                 float2 other = _Particles[previous].position;
+                uint otherVessel = _Particles[previous].vesselId;
+                bool sameVessel = particle.vesselId != 0u && particle.vesselId == otherVessel;
+                // A last segment may end on absorbed liquid, but never on a wall-hit
+                // particle. The absorbed endpoint itself stays in the metaball surface.
+                bool validEndpoint = older.detached == 0u || (older.detached == 2u && sameVessel);
+                bool compatibleOwners = particle.vesselId == 0u || otherVessel == 0u || sameVessel;
                 float radius = max(segment.radiusA, StreamRadius(previous));
-                if (older.streamId == stream.streamId && older.sourceId == stream.sourceId
+                if (validEndpoint && compatibleOwners && older.streamId == stream.streamId && older.sourceId == stream.sourceId
                     && gap > 0.0 && gap <= _StreamMaximumGap
                     && distance(other, particle.position) <= _StreamMaximumLength
                     && !StreamBlocked(particle.position, other, radius, 0u))
@@ -84,7 +130,7 @@ void BuildStreamSurface(uint3 dispatchId : SV_DispatchThreadID)
         {
             StreamParticle stream = _StreamParticles[newest];
             float2 position = _Particles[newest].position;
-            if (stream.streamId == head.streamId && stream.sourceId == head.sourceId
+            if (stream.detached == 0u && stream.streamId == head.streamId && stream.sourceId == head.sourceId
                 && _SimulationTime - stream.birthTime <= _StreamMaximumGap
                 && distance(head.lip, position) <= _StreamMaximumLength
                 && !StreamBlocked(head.lip, position, head.radius, head.sourceId))

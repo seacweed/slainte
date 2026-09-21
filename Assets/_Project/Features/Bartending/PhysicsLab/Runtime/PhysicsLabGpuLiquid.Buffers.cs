@@ -183,6 +183,7 @@ namespace Slainte.Bartending.PhysicsLab
             BindCommonBuffers(translateVesselKernel);
             BindCommonBuffers(suspendVesselKernel);
             BindCommonBuffers(streamSurfaceKernel);
+            BindCommonBuffers(mergeStreamContactsKernel);
             BindStreamBuffers(resetStreamLookupKernel);
             simulationShader.SetBuffer(clearGridKernel, "_GridHeads", gridHeadBuffer);
         }

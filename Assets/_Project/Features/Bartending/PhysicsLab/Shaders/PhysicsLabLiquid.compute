@@ -20,6 +20,7 @@
 #pragma kernel ReleaseOwner
 #pragma kernel ResetStreamLookup
 #pragma kernel BuildStreamSurface
+#pragma kernel MergeStreamContacts
 
 #pragma target 5.0
 
@@ -129,6 +130,7 @@ RWStructuredBuffer<uint2> _StreamLookup;
 StructuredBuffer<StreamHead> _StreamHeads;
 RWStructuredBuffer<StreamSegment> _StreamSegments;
 RWStructuredBuffer<LiquidParticle> _SurfaceParticles;
+RWStructuredBuffer<uint> _StreamContactSnapshot;
 int _StreamHeadCount, _StreamRenderingEnabled;
 float _SimulationTime, _StreamMaximumGap, _StreamMaximumLength;
 
@@ -390,7 +392,13 @@ void SweepBoundaries(uint3 dispatchId : SV_DispatchThreadID)
 void SnapshotVelocities(uint3 dispatchId : SV_DispatchThreadID)
 {
     uint index = dispatchId.x;
-    if (index < (uint)_ParticleCapacity) _VelocitySnapshot[index] = _Particles[index].velocity;
+    if (index < (uint)_ParticleCapacity)
+    {
+        _VelocitySnapshot[index] = _Particles[index].velocity;
+        // Snapshot before merging so a contact cannot cascade through a whole stream
+        // in one dispatch according to GPU thread scheduling.
+        _StreamContactSnapshot[index] = _StreamParticles[index].detached;
+    }
 }
 
 // Preserve the existing coefficients at the original 0.01-second reference step.
@@ -1080,7 +1088,8 @@ void ApplyDeltaAndBoundaries(uint3 dispatchId : SV_DispatchThreadID)
     particle.vesselId = preserveClosedVessel
         ? previousVesselId
         : FindContainingVessel(position, previousVesselId);
-    if (bestCorrectionScore >= 0.0 || particle.vesselId != 0u) _StreamParticles[index].detached = 1u;
+    // Ownership changes at the open rim, which is not a physical impact.
+    if (bestCorrectionScore >= 0.0) _StreamParticles[index].detached = 1u;
     _Particles[index] = particle;
 }
 

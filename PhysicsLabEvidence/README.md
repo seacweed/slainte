@@ -2,6 +2,8 @@
 
 ## 최종 상태
 
+잔 내부 물줄기 수정은 `32-contained-stream-filled-glass`의 137개 PASS/2개 SKIP/종료 0과 `31-contained-stream-isolation`의 10개 PASS/종료 0으로 확인했다. 이전 커밋 `433fab0`에서는 새 입구 통과 검사가 실패하여 문제를 재현했다(`29-contained-stream-baseline`, 종료 1). 수정본은 입구 아래에서도 연결을 유지하고 실제 벽/고인 액체 접촉에서만 표시를 전환한다. 60ml를 미리 채운 실제 하이볼 잔의 정지·이동 따르기 화면을 확인했다. 원거리 위치·속도 차이는 0이고 전역 서브스텝은 2회로 유지된다. 원본 Unity는 종료하거나 재시작하지 않았다.
+
 병 방출 개선 최종 실행은 `27-pour-spacing-visual-validation`의 126개 PASS/2개 SKIP/종료 0과 `28-final-pour-isolation`의 10개 PASS/종료 0이다. 원거리 위치·속도 차이는 0, 고정 서브스텝은 2회다. 원본 C# 빌드는 오류 0개/기존 경고 8개다. 실제 GPU 입자의 방출 시각, 보존량, 연결 조건과 픽셀 출력을 검사하고, 같은 상태의 메타볼/연속 물줄기 화면과 이동·중단 화면을 보존했다. GPU 마커 시간은 배치 에디터에서 얻지 못했으며 성능 측정 완료나 FPS 개선으로 간주하지 않는다.
 
 2026-09-21 표면 표시: `18-metaball-surface/validation.txt`는 75개 PASS/2개 SKIP, Unity 종료 0이다. 기존 누적/합성 셰이더를 재사용한 메타볼 연결, 공중 입자 늘어남과 얇은 하이라이트를 실제 카메라 픽셀로 검사했다. 렌더링 전후 GPU 위치·속도·소유권·ml 불변, 해상도 변경, 자원 재생성과 기존 조작/액체 회귀도 통과했다. 원본 C# 빌드는 오류 0개/기존 경고 8개다. 새 partial을 포함하는 `IncludeSurface.targets`를 빌드에만 전달했으며 Unity가 생성한 csproj는 수정하지 않았다.
@@ -43,6 +45,10 @@ Unity 6000.3.5f2, NVIDIA RTX 3070, Direct3D11에서 실행했다. `initial-sandb
 | 26-pour-final-validation | 종료 0. 126개 PASS/2개 SKIP, 원본 빌드 오류 0. 실제 화면에서 꺾임·옆 튐이 남아 출구 간격 추가 보정 |
 | 27-pour-spacing-visual-validation | 종료 0. 출구 속도에 기존 Fill 간격을 반영한 최종 코드, 126개 PASS/2개 SKIP. 같은 상태 전후 및 이동·중단 캡처 확인, 원본 빌드 오류 0 |
 | 28-final-pour-isolation | 종료 0. 최종 소스의 원거리 위치·속도 차이 0, 고정 2회 적분과 기존 접촉·감쇠 대조 검사 10개 PASS |
+| 29-contained-stream-baseline | 종료 1. 이전 커밋 433fab0의 런타임/셰이더에 새 검사를 실행해 잔 입구 통과 시 강제 분리를 재현. 의도한 회귀 재현이며 Unity 충돌이나 정상 완료로 취급하지 않음 |
+| 30-contained-stream-fix | 종료 0. 잔 내부 연결·픽셀·수면 접촉과 기존 회귀 137개 PASS/2개 SKIP. 12ml를 미리 채운 촬영, 원본 빌드 오류 0/기존 경고 8개 |
+| 31-contained-stream-isolation | 종료 0. 수정된 GPU 코드의 원거리 위치·속도 차이 0, 기존 접촉·감쇠 검사 10개 PASS |
+| 32-contained-stream-filled-glass | 종료 0. 같은 수정본에 60ml 사전 충전을 적용한 최종 화면, 137개 PASS/2개 SKIP. 줄기가 잔 내부에서 수면까지 이어지는 정지/이동 화면 확인 |
 
 12/13의 새 복사 프로젝트에서 UnityEditor.Search.SearchDatabase의 초기 인덱서 ArgumentOutOfRangeException도 기록되었다. 런타임 검증은 끝까지 실행되어 보고서와 종료 코드가 확보됐지만, 에디터 로그 전체가 무오류라는 뜻은 아니다. 원본 프로젝트나 사용자의 Unity를 종료/재실행하지 않았다.
 
