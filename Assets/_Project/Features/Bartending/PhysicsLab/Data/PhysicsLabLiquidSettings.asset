@@ -43,3 +43,16 @@ MonoBehaviour:
   gpuLiquidWorldMax: {x: 25, y: 20}
   gpuLiquidWorldMin: {x: -25, y: -12}
   liquidMinimumVisibleAlpha: 0.05
+  surfaceAccumulationShader: {fileID: 4800000, guid: 6e1f03b97db049859db6b6a8bec7e03f, type: 3}
+  surfaceCompositeShader: {fileID: 4800000, guid: 520f8b5dfca5448ca064624708336b8f, type: 3}
+  surfaceDisplayShader: {fileID: 4800000, guid: 9732d16047da4965bfee56becf991475, type: 3}
+  surfaceResolutionScale: 1
+  containedRenderRadius: 1.45
+  airborneRenderRadius: 1.6
+  airborneStretch: 2.2
+  airborneFullStretchSpeed: 4
+  surfaceThreshold: 0.3
+  surfaceMergeStrength: 0.8
+  surfaceEdgeSoftness: 0.035
+  surfaceHighlightStrength: 0.3
+  surfaceHighlightWidth: 1.5

@@ -35,5 +35,20 @@ namespace Slainte.Bartending.PhysicsLab
         public Vector2 gpuLiquidWorldMax = new Vector2(20f, 15f);
         public Vector2 gpuLiquidWorldMin = new Vector2(-20f, -15f);
         public float liquidMinimumVisibleAlpha = 0.05f;
+
+        [Header("Surface rendering (does not affect physics or ml)")]
+        public Shader surfaceAccumulationShader;
+        public Shader surfaceCompositeShader;
+        public Shader surfaceDisplayShader;
+        [Range(.25f, 1f)] public float surfaceResolutionScale = 1;
+        [Range(1f, 2f)] public float containedRenderRadius = 1.45f;
+        [Range(1f, 2f)] public float airborneRenderRadius = 1.6f;
+        [Range(1f, 3f)] public float airborneStretch = 2.2f;
+        [Min(.1f)] public float airborneFullStretchSpeed = 4;
+        [Range(.05f, .8f)] public float surfaceThreshold = .3f;
+        [Range(0, 1)] public float surfaceMergeStrength = .8f;
+        [Range(.005f, .15f)] public float surfaceEdgeSoftness = .035f;
+        [Range(0, 1)] public float surfaceHighlightStrength = .3f;
+        [Range(.5f, 4f)] public float surfaceHighlightWidth = 1.5f;
     }
 }

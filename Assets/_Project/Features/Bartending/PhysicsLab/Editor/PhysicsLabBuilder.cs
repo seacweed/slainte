@@ -47,6 +47,10 @@ namespace Slainte.Bartending.PhysicsLab.Editor
                 settings.gpuLiquidWorldMax = new Vector2(25, 20);
                 AssetDatabase.CreateAsset(settings, SettingsPath);
             }
+            settings.surfaceAccumulationShader = AssetDatabase.LoadAssetAtPath<Shader>("Assets/_Project/Features/Bartending/Infrastructure/GpuFluid/Graphics/GpuLiquidAccumulation.shader");
+            settings.surfaceCompositeShader = AssetDatabase.LoadAssetAtPath<Shader>("Assets/_Project/Features/Bartending/Infrastructure/MetaballFluid/Graphics/LiquidMetaballComposite.shader");
+            settings.surfaceDisplayShader = AssetDatabase.LoadAssetAtPath<Shader>(Root + "/Shaders/PhysicsLabLiquidSurface.shader");
+            EditorUtility.SetDirty(settings);
             prefabs.Clear();
             foreach (string guid in AssetDatabase.FindAssets("t:ItemDef", new[] { "Assets/Resources/Bartending/Items" }))
             {

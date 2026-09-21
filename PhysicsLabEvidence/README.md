@@ -2,6 +2,8 @@
 
 ## 최종 상태
 
+2026-09-21 표면 표시: `18-metaball-surface/validation.txt`는 75개 PASS/2개 SKIP, Unity 종료 0이다. 기존 누적/합성 셰이더를 재사용한 메타볼 연결, 공중 입자 늘어남과 얇은 하이라이트를 실제 카메라 픽셀로 검사했다. 렌더링 전후 GPU 위치·속도·소유권·ml 불변, 해상도 변경, 자원 재생성과 기존 조작/액체 회귀도 통과했다. 원본 C# 빌드는 오류 0개/기존 경고 8개다. 새 partial을 포함하는 `IncludeSurface.targets`를 빌드에만 전달했으며 Unity가 생성한 csproj는 수정하지 않았다.
+
 2026-09-21 재설계: `13-final-authored-scene/validation.txt`는 실제 씬 복사본의 검사 38개 통과/기존 시스템 존재 검사 2개 SKIP, `14-final-isolation-and-damping/validation.txt`는 실제 GPU 대조 검사 10개 통과다. 두 Unity 프로세스 종료 코드는 0이다. 원본 C# 프로젝트 빌드는 `redesign-compile-restored.json`에서 종료 0을 확인한다.
 
 Unity 6000.3.5f2, NVIDIA RTX 3070, Direct3D11에서 실행했다. `initial-sandbox.png`, `pour-transfer.png`는 실제 카메라 출력이다. Batch 프레임 간격은 GPU 처리 시간 또는 게임 FPS 측정값이 아니다. 이전 37개 검사는 원거리 액체 위치·속도 독립성을 검사하지 않았으므로 새 대조 실험과 구분한다.
@@ -28,12 +30,15 @@ Unity 6000.3.5f2, NVIDIA RTX 3070, Direct3D11에서 실행했다. `initial-sandb
 | 15-upright-pickup-and-return | 종료 0. 집기·우클릭 해제 시 제자리 0도 복귀와 액체 보존 등 63개 PASS/2개 SKIP |
 | 16-final-upright-controls | 종료 0. 즉시 복귀 중간 버전. 회전 중 내려놓기가 취소될 때 포인터 오프셋도 보정, 63개 PASS/2개 SKIP. 원본 C# 빌드 오류 0개 |
 | 17-animated-return-and-cursor | 종료 0. 0.15초 제자리 복귀·커서 목표 추적·복귀 중 재조작을 포함한 최종 버전, 66개 PASS/2개 SKIP. 원본 C# 빌드 오류 0개 |
+| 18-metaball-surface | 종료 0. 표면 연결·얇은 하이라이트·속도 방향 늘어남·렌더링의 물리 불변성을 포함해 75개 PASS/2개 SKIP. 원본 C# 빌드 오류 0개 |
 
 12/13의 새 복사 프로젝트에서 UnityEditor.Search.SearchDatabase의 초기 인덱서 ArgumentOutOfRangeException도 기록되었다. 런타임 검증은 끝까지 실행되어 보고서와 종료 코드가 확보됐지만, 에디터 로그 전체가 무오류라는 뜻은 아니다. 원본 프로젝트나 사용자의 Unity를 종료/재실행하지 않았다.
 
 15/16에서도 같은 SearchDatabase 시작 예외가 기록되었으며 검증 완료 및 프로세스 종료 0을 각각 확인했다. 16의 `verification.json`에 실제 사용한 런타임 소스 일치 여부, 소스·원시 로그 해시, 기존 설정 보존을 기록했다. 검사는 조작 API 기반이며 사람의 실제 마우스 조작감 검증을 뜻하지 않는다.
 
 17은 기존 `BartendingPointerAnchor`와 `BartendingViewport` 소스를 그대로 복사해 커서 모듈을 재사용했다. 회전 보간과 커서 목표 지점은 검사하지만 배치 환경에서 사용자 OS 커서를 강제로 옮기지 않는다. 실제 OS 커서 이동과 조작감은 미검증이다. 이 실행에도 SearchDatabase 시작 예외가 있으며 런타임 보고서와 종료 0을 별도 확인했다. `verification.json`에 최종 코드·원시 로그 해시를 기록한다.
+
+18의 `initial-particles.png`와 `initial-sandbox.png`는 동일한 GPU 상태의 원형/메타볼 표시 비교다. `probe-*.png`는 두 입자의 연결·하이라이트·해상도 및 한 입자의 속도 방향 늘어남을 검증한 출력이다. `pour-transfer.png`와 월드 재활성화 출력도 보존했다. 원본과 테스트 복사본의 소스·의존 에셋 일치, 물리 compute 및 재사용 셰이더 미수정, 기존 ProjectSettings 보존은 `verification.json`에 기록한다. SearchDatabase 시작 예외와 라이선스 토큰 갱신 메시지가 있지만 검증은 끝까지 실행되어 별도 판정과 종료 0을 확보했다. 에디터 로그 전체가 무오류라는 주장은 아니다. 용기별 표면 마스킹, GPU 처리 시간 및 사람의 조작감 검증은 이번 실행 범위가 아니다.
 
 `redesign-compile.json`은 SDK 탐색 경로 접근 거부, `redesign-compile-authorized.json`은 복원 메타데이터 누락으로 각각 종료 1이다. `redesign-compile-restored.json`은 메타데이터 복원 후 컴파일 오류 0/종료 0이다. 실패 기록을 뒤의 성공 기록으로 덮어쓰지 않았다.
 

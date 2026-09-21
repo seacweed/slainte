@@ -14,6 +14,7 @@ namespace Slainte.Bartending.PhysicsLab
         public Camera outputCamera;
         public bool automaticReadback = true;
         public bool renderParticles = true;
+        public bool useSurfaceRendering = true;
         private PhysicsLabWorld world;
         private ComputeShader simulationShader;
         private Material drawMaterial;
@@ -312,7 +313,9 @@ namespace Slainte.Bartending.PhysicsLab
         }
         private void QueueDraw(ScriptableRenderContext context, Camera camera)
         {
+            if (surfaceRenderer != null) surfaceRenderer.forceRenderingOff = true;
             if (!IsOperational || !renderParticles || drawMaterial == null || camera != outputCamera) return;
+            if (useSurfaceRendering && DrawLiquidSurface(context, camera)) return;
             Graphics.DrawProcedural(drawMaterial, new Bounds(Vector3.zero, Vector3.one * 100), MeshTopology.Triangles,
                 6, particleCapacity, outputCamera, properties, ShadowCastingMode.Off, false, world.itemLayer);
         }
@@ -323,6 +326,7 @@ namespace Slainte.Bartending.PhysicsLab
         {
             generation++; IsOperational = false; readbackInFlight = false;
             RenderPipelineManager.beginCameraRendering -= QueueDraw;
+            DisposeSurfaceRendering();
             GraphicsBuffer[] buffers = { particleBuffer, compositionA, compositionB, particleColorBuffer, positionDeltaBuffer,
                 lambdaBuffer, gridHeadBuffer, gridNextBuffer, freeIndexBuffer, freeCountBuffer, spawnCommandBuffer,
                 ingredientVisualBuffer, boundaryBuffer, triggerBuffer, agitatorBuffer, statisticsBuffer, velocitySnapshotBuffer };

@@ -137,6 +137,11 @@ namespace Slainte.Bartending.PhysicsLab.Editor
             }
             yield return null;
             CaptureCamera(Path.Combine(PhysicsLabValidator.EvidenceDirectory,"initial-sandbox.png"));
+            Require(gpu.SurfaceRenderingReady && gpu.SurfaceRenderingError==null,"Metaball surface uses the existing accumulation and composite shaders");
+            gpu.useSurfaceRendering=false;
+            CaptureCamera(Path.Combine(PhysicsLabValidator.EvidenceDirectory,"initial-particles.png"));
+            gpu.useSurfaceRendering=true;
+            ValidateSurfaceRendering();
             PhysicsLabBody bottle=world.Items.First(x=>x.kind==LabItemKind.Bottle);
             PhysicsLabBody glass=world.Items.First(x=>x.kind==LabItemKind.Glass);
             PhysicsLabBody shaker=world.Items.First(x=>x.kind==LabItemKind.Shaker);
@@ -336,19 +341,86 @@ namespace Slainte.Bartending.PhysicsLab.Editor
             world.gameObject.SetActive(false);yield return null;world.gameObject.SetActive(true);
             yield return Frames(3);
             Require(gpu.IsOperational && world.Items.Count==9 && world.Items.All(x=>x.Body.bodyType==RigidbodyType2D.Dynamic),"World re-enable rebuilds GPU resources and item registration");
+            CaptureCamera(Path.Combine(PhysicsLabValidator.EvidenceDirectory,"surface-after-reenable.png"));
+            Require(gpu.SurfaceRenderingReady,"World re-enable recreates surface textures and renderer");
+        }
+
+        private void ValidateSurfaceRendering()
+        {
+            Camera camera=gpu.outputCamera;
+            Vector3 originalPosition=camera.transform.position;
+            float originalSize=camera.orthographicSize,highlight=gpu.settings.surfaceHighlightStrength,stretch=gpu.settings.airborneStretch;
+            Color background=camera.backgroundColor;
+            var ingredient=ScriptableObject.CreateInstance<ItemDef>();
+            ingredient.liquidColor=new Color(.1f,.35f,.7f,1);ingredient.inheritMixedLiquidColor=false;
+            string folder=PhysicsLabValidator.EvidenceDirectory;
+            try
+            {
+                camera.transform.position=new Vector3(0,4,-20);camera.orthographicSize=.5f;camera.backgroundColor=Color.black;
+                gpu.ResetSimulation();
+                Require(gpu.TryEmit(new Vector2(-.0875f,4),Vector2.zero,ingredient,.5f,0)
+                    && gpu.TryEmit(new Vector2(.0875f,4),Vector2.zero,ingredient,.5f,0),"Surface comparison uses the same two GPU particles");
+                gpu.Step(.0001f);gpu.ReadbackNow();
+                var before=(GpuLiquidParticle[])gpu.Snapshot.Clone();
+                gpu.useSurfaceRendering=false;
+                Color32[] dots=CaptureCamera(Path.Combine(folder,"probe-particles.png"));
+                gpu.useSurfaceRendering=true;
+                Color32[] surface=CaptureCamera(Path.Combine(folder,"probe-surface.png"));
+                int middle=450*1600+800;
+                Require(dots[middle].b<25 && surface[middle].b>70,
+                    "Metaballs connect the gap between separate particle discs ("+dots[middle].b+" -> "+surface[middle].b+")");
+                gpu.settings.surfaceHighlightStrength=0;
+                Color32[] flat=CaptureCamera(Path.Combine(folder,"probe-no-highlight.png"));
+                int lightDifference=0;
+                for(int i=0;i<surface.Length;i++)lightDifference=Mathf.Max(lightDifference,surface[i].r-flat[i].r);
+                Require(lightDifference>3,"Thin contour highlight contributes visible light (max red delta "+lightDifference+")");
+                gpu.settings.surfaceHighlightStrength=highlight;
+                CaptureCamera(Path.Combine(folder,"probe-resized.png"),800,450);
+                Require(gpu.SurfaceTextureSize==new Vector2Int(800,450),"Surface textures follow camera target resolution");
+                gpu.ReadbackNow();
+                Require(before.Where((p,i)=>p.Position!=gpu.Snapshot[i].Position || p.Velocity!=gpu.Snapshot[i].Velocity
+                    || p.VolumeMl!=gpu.Snapshot[i].VolumeMl || p.VesselId!=gpu.Snapshot[i].VesselId).Count()==0,
+                    "Rendering mode, highlight and resolution changes leave GPU physics and ml untouched");
+                gpu.ResetSimulation();gpu.TryEmit(new Vector2(0,4.15f),Vector2.down*4,ingredient,.5f,0);gpu.Step(.0001f);
+                gpu.settings.airborneStretch=1;
+                RectInt round=LitBounds(CaptureCamera(Path.Combine(folder,"probe-round.png")),1600,900);
+                gpu.settings.airborneStretch=stretch;
+                RectInt stream=LitBounds(CaptureCamera(Path.Combine(folder,"probe-stretched.png")),1600,900);
+                Require(stream.height>round.height*1.2f && stream.width<round.width*.9f,"Airborne particle stretches along velocity while narrowing across it");
+                Require(stream.center.y>450 && Mathf.Abs(stream.center.y-round.center.y)<3,"Surface UV orientation keeps liquid at its world position");
+            }
+            finally
+            {
+                camera.transform.position=originalPosition;camera.orthographicSize=originalSize;camera.backgroundColor=background;
+                gpu.settings.surfaceHighlightStrength=highlight;gpu.settings.airborneStretch=stretch;
+                gpu.useSurfaceRendering=true;gpu.ResetSimulation();Destroy(ingredient);
+            }
+        }
+
+        private static RectInt LitBounds(Color32[] pixels,int width,int height)
+        {
+            int xMin=width,yMin=height,xMax=-1,yMax=-1;
+            for(int y=0;y<height;y++)for(int x=0;x<width;x++)
+            {
+                if(pixels[y*width+x].b<40)continue;
+                xMin=Mathf.Min(xMin,x);yMin=Mathf.Min(yMin,y);xMax=Mathf.Max(xMax,x);yMax=Mathf.Max(yMax,y);
+            }
+            return new RectInt(xMin,yMin,Mathf.Max(0,xMax-xMin+1),Mathf.Max(0,yMax-yMin+1));
         }
         private float Percentile(float percentile)=>frameTimes[Mathf.Clamp(Mathf.CeilToInt(frameTimes.Count*percentile)-1,0,frameTimes.Count-1)];
-        private static void CaptureCamera(string path)
+        private static Color32[] CaptureCamera(string path,int width=1600,int height=900)
         {
             Camera camera=FindFirstObjectByType<PhysicsLabWorld>().interactor.inputCamera;
-            var target=new RenderTexture(1600,900,24);
+            var target=new RenderTexture(width,height,24);
             RenderTexture old=camera.targetTexture,active=RenderTexture.active;
             camera.targetTexture=target;camera.Render();RenderTexture.active=target;
-            var image=new Texture2D(1600,900,TextureFormat.RGB24,false);
-            image.ReadPixels(new Rect(0,0,1600,900),0,0);image.Apply();
+            var image=new Texture2D(width,height,TextureFormat.RGB24,false);
+            image.ReadPixels(new Rect(0,0,width,height),0,0);image.Apply();
+            Color32[] pixels=image.GetPixels32();
             Directory.CreateDirectory(Path.GetDirectoryName(path));File.WriteAllBytes(path,image.EncodeToPNG());
             camera.targetTexture=old;RenderTexture.active=active;
             Destroy(image);target.Release();Destroy(target);
+            return pixels;
         }
         private void Require(bool condition,string message)
         {

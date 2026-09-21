@@ -31,7 +31,16 @@
 - 감쇠·점성·벽 마찰·스플래시 전달 계수는 0.01초 기준에서 실제 시뮬레이션 시간으로 환산한다. 이웃 입자의 속도는 별도 스냅샷에서 읽어 같은 GPU 커널의 읽기/쓰기 순서가 결과에 섞이지 않게 한다.
 - 열린 잔의 액체 소유권은 실제 잔 윤곽과 충돌하지 않는 가상 입구 선으로 판정한다. 주둥이를 벗어나면 소유권을 해제한다. 스왑은 양쪽 소유자 ID를 한 커널에서 옮겨 이중 이동을 방지한다.
 - 기본 GPU 입자는 0.5ml, 버퍼는 4096개다. 가득 차면 방출을 보류한다. 비동기 readback 이전/이후의 예약 수를 분리해 중복 예약을 막는다. GPU 미지원/초기화 실패는 화면에 오류로 표시하며 성공으로 간주하거나 기존 CPU 풀을 자동 실행하지 않는다.
-- 렌더링은 해당 카메라의 URP 렌더링 직전에 GPU 버퍼에서 직접 원형 입자를 그린다. 기존 메타볼 렌더러나 전역 Render Pipeline 에셋을 변경하지 않는다.
+- 렌더링은 해당 카메라의 URP 렌더링 직전에 GPU 버퍼를 읽어 밀도·색·최대 커버리지를 누적하고 메타볼 표면으로 합성한다. 기존 `GpuLiquidAccumulation`과 `LiquidMetaballComposite` 셰이더를 그대로 재사용하며, `PhysicsLabGpuLiquid.Rendering.cs`가 이 월드의 버퍼·재질·RenderTexture만 관리한다. 기존 메타볼 컴포넌트, GPU 싱글턴과 전역 Render Pipeline 에셋은 변경하지 않는다.
+- 공중 입자는 속도 방향으로 길어지고 폭이 줄어 물줄기를 표현한다. 마지막 표시 패스는 표면 가장자리에 얇은 하이라이트를 더한다. 표시 반경·길이·연결 강도는 물리 반경, 입자 위치·속도·소유권과 ml에 영향을 주지 않는다. 액체는 잔/도구의 뒷면 위, 앞면 아래에 그린다.
+
+## 액체 표시 조절
+
+`Data/PhysicsLabLiquidSettings.asset`의 Surface rendering 항목을 사용한다. `containedRenderRadius`는 용기 안 입자의 표시 반경, `airborneRenderRadius`와 `airborneStretch`는 공중 물줄기의 굵기와 길이, `surfaceMergeStrength`는 가까운 입자 사이 연결 강도다. `surfaceHighlightStrength`와 `surfaceHighlightWidth`로 가장자리 빛을 조절한다. `surfaceResolutionScale`은 표면 텍스처 해상도이며, 가장 긴 변은 2048픽셀로 제한한다.
+
+`PhysicsLabGpuLiquid.useSurfaceRendering`을 끄면 같은 GPU 입자를 이전 원형 표시로 비교할 수 있다. 표면 셰이더가 없거나 지원되지 않으면 경고와 `SurfaceRenderingError`를 남기고 원형 표시로 돌아간다. GPU 시뮬레이션 실패와 구분한다. 창/카메라 출력 크기가 바뀌면 텍스처를 재생성하고, 월드를 끄면 렌더링 자원을 해제한다.
+
+이번 단계는 표면 연결·물줄기·하이라이트다. 용기별 마스킹이나 별도 합성은 아직 없으므로, 아주 가까운 용기 사이에 표면이 시각적으로 이어지거나 경계에서 표시 반경만큼 번질 수 있다. 굴절·거품·테이블 웅덩이도 포함하지 않는다.
 
 ## 다른 테스트 씬에서 재사용
 
@@ -51,6 +60,8 @@
 
 커서 추적을 포함한 최종 실행 `PhysicsLabEvidence/17-animated-return-and-cursor`는 66개 PASS/2개 SKIP, 종료 0이다. 중간 각도 보간, 잡은 지점에 맞춘 커서 목표 변화, 복귀 도중 수동 회전 재개와 기존 GPU 회귀를 확인했다. 원본 C# 빌드 오류는 0개다. 자동 검증은 사용자 데스크톱 커서를 움직이지 않으므로 실제 OS 커서 이동과 마우스 조작감은 수동 검증 범위다.
 
-자동 검증은 조작 API와 물리/GPU 실행을 확인한다. 마우스 감도와 플레이 감각은 사람의 플레이테스트가 추가로 필요하다. 보고서의 batch 프레임 간격은 GPU 시간이나 실제 게임 FPS/최적화 성과가 아니다. 이 버전은 원형 입자 표시를 사용하고, 흘린 액체는 월드 경계 밖에서 회수하며 테이블 웅덩이는 만들지 않는다.
+표면 표시 실행 `PhysicsLabEvidence/18-metaball-surface`는 75개 PASS/2개 SKIP, 종료 0이다. 실제 카메라 픽셀로 입자 사이 연결, 하이라이트, 속도 방향 늘어남·폭 감소, UV 방향과 해상도 변경을 검사했다. 같은 GPU 버퍼를 표시하기 전후의 위치·속도·소유권·ml가 같은지, 월드 재활성화 시 렌더링 자원이 복원되는지도 확인했다. 원본 C# 빌드는 새 partial 파일을 명시적으로 포함하여 오류 0개, 기존 경고 8개다. `initial-particles.png`와 `initial-sandbox.png`는 같은 상태의 전후 비교이고 `pour-transfer.png`는 실제 따르기 출력이다. Unity SearchDatabase 시작 예외는 별도 보존했다.
+
+자동 검증은 조작 API와 물리/GPU 실행을 확인한다. 마우스 감도와 플레이 감각은 사람의 플레이테스트가 추가로 필요하다. 보고서의 batch 프레임 간격은 GPU 시간이나 실제 게임 FPS/최적화 성과가 아니다. 흘린 액체는 월드 경계 밖에서 회수하며 테이블 웅덩이는 만들지 않는다.
 
 Unity 실행은 루트의 `PhysicsLabEvidence/Run-Unity.ps1`로 실행별 폴더에 명령, Editor 로그, stdout/stderr, 종료 코드와 새로운 충돌 덤프를 보존한다. 기존 폴더를 덮어쓰거나 자동 재시도하지 않는다. 초기 샌드박스 캐시 접근 충돌과 중간 검증 실패도 별도로 남아 있다. 기록 요약은 `PhysicsLabEvidence/README.md`를 참조한다.

@@ -1,0 +1,11 @@
+<Project>
+  <!-- Include the new partial before Unity regenerates its ignored IDE project file. -->
+  <Target Name="IncludePhysicsLabSurface" BeforeTargets="CoreCompile"
+          Condition="'$(MSBuildProjectName)' == 'Assembly-CSharp'">
+    <ItemGroup>
+      <Compile Remove="Assets\_Project\Features\Bartending\PhysicsLab\Runtime\PhysicsLabGpuLiquid.Rendering.cs" />
+      <Compile Include="Assets\_Project\Features\Bartending\PhysicsLab\Runtime\PhysicsLabGpuLiquid.Rendering.cs" />
+    </ItemGroup>
+    <Message Importance="high" Text="Compiling PhysicsLabGpuLiquid.Rendering.cs in the original Assembly-CSharp project." />
+  </Target>
+</Project>

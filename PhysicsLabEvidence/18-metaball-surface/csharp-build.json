@@ -1,0 +1,14 @@
+{
+  "command": "dotnet",
+  "arguments": [
+    "build",
+    "Assembly-CSharp-Editor.csproj",
+    "--no-restore",
+    "-v:minimal",
+    "-p:CustomAfterMicrosoftCommonTargets=A:\\UnityHub\\proj\\slainte\\PhysicsLabEvidence\\18-metaball-surface\\IncludeSurface.targets"
+  ],
+  "started": "2026-09-21T18:43:20.9477219+09:00",
+  "finished": "2026-09-21T18:43:27.5296472+09:00",
+  "exitCode": 0,
+  "generatedProjectFilesChanged": false
+}
