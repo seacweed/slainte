@@ -1,0 +1,15 @@
+{
+  "started": "2026-09-21T20:55:12.6786171+09:00",
+  "workingDirectory": "A:/UnityHub/proj/slainte",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/PhysicsLabEvidence/SceneHarnessProject",
+    "-executeMethod",
+    "Slainte.Bartending.PhysicsLab.Editor.PhysicsLabValidator.Begin",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\PhysicsLabEvidence\\39-shared-contour-regression\\Editor.log"
+  ],
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe"
+}

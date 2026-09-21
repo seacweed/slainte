@@ -2,6 +2,12 @@
 
 ## 최종 상태
 
+스프라이트/콜라이더 일치 개편은 `40-vessel-contour-validation`의 350개 PASS/2개 SKIP와 `42-collision-profile-isolation`의 10개 PASS, 두 프로세스 종료 0으로 검증했다. 24개 프리팹의 공통 폴리곤, 손잡이 구멍, 0도/67도 CPU·GPU 접촉, 집기 영역 안의 투명 공간, 열린 입구 무충돌, 실제 내부 윤곽에 따른 닫힌 셰이커 복구와 기존 조작·액체 검사를 포함한다. 원거리 위치/속도 RMS 차이는 0, 전역 서브스텝은 2다. 원본 C# 최초 빌드는 오류 0/기존 경고 8, 최종 증분 빌드는 오류 0/경고 0이다.
+
+`33-collision-profile-authoring/geometry-before.png`와 `38-alpha-contour-authoring/geometry-after.png`가 실제 Unity 카메라로 만든 윤곽 전후 화면이다. `41-profile-reapply-idempotence/verification.json`은 프로파일·프리팹·메타 96개의 재적용 전후 바이트 일치를 기록한다. `collision-scope-audit/verification.json`은 기준 커밋 c2d6a21 대비 그림, Transform, Rigidbody, 집기 영역, 게임 수치와 씬 보존, 기존 사용자 ProjectSettings 변경 보존 및 복사된 의존 에셋 137개의 일치를 확인한다. `mouthWidth: 0.14`는 기존 C# 기본값을 Unity가 직렬화한 것이며 수치 변경이 아니다.
+
+34~37의 컴파일/검사 실패도 개별 로그와 분석을 보존했다. 35의 HLSL 예약어 오류는 수정했고 모든 compute kernel의 지원 여부를 초기화에서 검사한다. 36/37의 접촉 수치 차이는 GPU의 기하학적 간격과 Unity 거리 조회를 따로 기록하여 검증한다. 이번 실행에 native crash는 없었다. 복사 프로젝트에서 기존 SearchDatabase 시작 예외는 계속 관측됐으며 최종 보고서와 종료 0을 별도로 확인했다. 에디터 로그 전체 무오류, 기존 게임 씬 전체 회귀, FPS/성능 개선을 주장하지 않는다.
+
 잔 내부 물줄기 수정은 `32-contained-stream-filled-glass`의 137개 PASS/2개 SKIP/종료 0과 `31-contained-stream-isolation`의 10개 PASS/종료 0으로 확인했다. 이전 커밋 `433fab0`에서는 새 입구 통과 검사가 실패하여 문제를 재현했다(`29-contained-stream-baseline`, 종료 1). 수정본은 입구 아래에서도 연결을 유지하고 실제 벽/고인 액체 접촉에서만 표시를 전환한다. 60ml를 미리 채운 실제 하이볼 잔의 정지·이동 따르기 화면을 확인했다. 원거리 위치·속도 차이는 0이고 전역 서브스텝은 2회로 유지된다. 원본 Unity는 종료하거나 재시작하지 않았다.
 
 병 방출 개선 최종 실행은 `27-pour-spacing-visual-validation`의 126개 PASS/2개 SKIP/종료 0과 `28-final-pour-isolation`의 10개 PASS/종료 0이다. 원거리 위치·속도 차이는 0, 고정 서브스텝은 2회다. 원본 C# 빌드는 오류 0개/기존 경고 8개다. 실제 GPU 입자의 방출 시각, 보존량, 연결 조건과 픽셀 출력을 검사하고, 같은 상태의 메타볼/연속 물줄기 화면과 이동·중단 화면을 보존했다. GPU 마커 시간은 배치 에디터에서 얻지 못했으며 성능 측정 완료나 FPS 개선으로 간주하지 않는다.
@@ -16,6 +22,16 @@ Unity 6000.3.5f2, NVIDIA RTX 3070, Direct3D11에서 실행했다. `initial-sandb
 
 | 폴더 | 판정 |
 | --- | --- |
+| 33-collision-profile-authoring | 종료 0. 24개 윤곽 프로파일과 프리팹, 실제 전후 겹침 화면 생성 |
+| 34-collision-profile-regression | 종료 1. 검증 코드의 지역 변수명 중복으로 C# 컴파일 실패. 이름 수정 후 진행 |
+| 35-collision-surface-validation | 종료 1. 새 HLSL 코드의 예약어 point 사용으로 커널 무효. 원인 수정 및 초기화 지원 검사 추가 |
+| 36-collision-contact-validation | 종료 1. GPU 해결 후 Unity 거리 조회가 -0.009여서 엄격 일치 검사 실패. 원시 좌표/형상 반경 진단 추가 |
+| 37-collision-skin-diagnostic | 종료 1. GetShapes의 반경 0으로 거리 차이를 설명할 수 없음. 기하 간격과 기존 contact offset 기준을 분리하여 검사 |
+| 38-alpha-contour-authoring | 종료 0. 손잡이 구멍을 남기는 복합 폴리곤 생성, 24개 총 1705선분 |
+| 39-shared-contour-regression | 종료 0. 실제 CPU/GPU 접촉과 손잡이를 포함한 320개 PASS/2개 SKIP |
+| 40-vessel-contour-validation | 종료 0. 열린 입구와 닫힌 셰이커의 내부 복구까지 350개 PASS/2개 SKIP |
+| 41-profile-reapply-idempotence | 종료 0. 재적용 전후 프로파일·프리팹·메타 96개 바이트 동일 |
+| 42-collision-profile-isolation | 종료 0. 원거리 독립성·빠른 접촉·유출·감쇠 10개 PASS |
 | 00-startup-failures | 제한된 파일 접근 환경에서 Unity 시작 실패 3회. 개별 dump, exception 요약, 관측한 콘솔 오류와 명령 보존. 정상 완료로 취급하지 않음 |
 | 01-prefab-build | 정상 캐시 접근 권한으로 전환 후 생성/컴파일 완료. Play Mode 검증은 아님 |
 | 02-playmode-validation | 종료 1. 도구 타격 fixture가 실제 콜라이더 중심과 어긋나 쓰러짐 기준 미달 |

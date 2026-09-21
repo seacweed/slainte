@@ -1,0 +1,11 @@
+{
+  "started": "2026-09-21T20:53:32.1455145+09:00",
+  "executable": "dotnet",
+  "arguments": [
+    "build",
+    "Assembly-CSharp-Editor.csproj",
+    "--no-restore",
+    "-v:minimal",
+    "-p:CustomAfterMicrosoftCommonTargets=A:\\UnityHub\\proj\\slainte\\PhysicsLabEvidence\\collision-profile-compile\\IncludePhysicsLab.targets"
+  ]
+}

@@ -148,6 +148,7 @@ namespace Slainte.Bartending.PhysicsLab.Editor
             gpu.useSurfaceRendering=true;
             ValidateSurfaceRendering();
             ValidatePouring();
+            ValidateCollisionProfiles();
             PhysicsLabBody bottle=world.Items.First(x=>x.kind==LabItemKind.Bottle);
             PhysicsLabBody glass=world.Items.First(x=>x.kind==LabItemKind.Glass);
             PhysicsLabBody shaker=world.Items.First(x=>x.kind==LabItemKind.Shaker);

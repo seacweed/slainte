@@ -1,0 +1,15 @@
+{
+  "started": "2026-09-21T20:57:21.2091894+09:00",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/PhysicsLabEvidence/SceneHarnessProject",
+    "-executeMethod",
+    "Slainte.Bartending.PhysicsLab.Editor.PhysicsLabValidator.Begin",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\PhysicsLabEvidence\\40-vessel-contour-validation\\Editor.log"
+  ],
+  "workingDirectory": "A:/UnityHub/proj/slainte",
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe"
+}

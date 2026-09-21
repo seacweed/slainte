@@ -1,0 +1,1 @@
+The run exited 1 before Play Mode: CS0136 in PhysicsLabValidator.Pouring.cs. The added pick-box fixture reused the enclosing camera fixture variable name `savedSize`. Renamed it to `savedPickSize`. No native Unity crash occurred; the command and original compiler log are retained. This attempt is not a successful runtime validation.

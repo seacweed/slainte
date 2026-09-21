@@ -7,25 +7,35 @@ namespace Slainte.Bartending.PhysicsLab
 {
     public sealed partial class PhysicsLabGpuLiquid
     {
+        private int RequireKernel(string name)
+        {
+            if (!simulationShader.HasKernel(name))
+                throw new InvalidOperationException("PhysicsLab compute kernel is missing: " + name);
+            int kernel = simulationShader.FindKernel(name);
+            if (!simulationShader.IsSupported(kernel))
+                throw new InvalidOperationException("PhysicsLab compute kernel failed compilation or is unsupported: " + name);
+            return kernel;
+        }
+
         private void CacheKernels()
         {
-            resetKernel = simulationShader.FindKernel("ResetParticles");
-            resetCompositionKernel = simulationShader.FindKernel("ResetCompositionBuffers");
-            spawnKernel = simulationShader.FindKernel("SpawnParticles");
-            integrateKernel = simulationShader.FindKernel("IntegrateParticles");
-            sweepKernel = simulationShader.FindKernel("SweepBoundaries");
-            snapshotVelocityKernel = simulationShader.FindKernel("SnapshotVelocities");
-            clearGridKernel = simulationShader.FindKernel("ClearGrid");
-            buildGridKernel = simulationShader.FindKernel("BuildGrid");
-            lambdaKernel = simulationShader.FindKernel("CalculateDensityLambda");
-            deltaKernel = simulationShader.FindKernel("CalculatePositionDelta");
-            applyKernel = simulationShader.FindKernel("ApplyDeltaAndBoundaries");
-            velocityKernel = simulationShader.FindKernel("UpdateVelocities");
-            mixKernel = simulationShader.FindKernel("MixComposition");
-            colorKernel = simulationShader.FindKernel("UpdateParticleColors");
-            techniqueKernel = simulationShader.FindKernel("ApplyTechnique");
-            translateVesselKernel = simulationShader.FindKernel("TranslateVesselContents");
-            suspendVesselKernel = simulationShader.FindKernel("SetVesselSuspended");
+            resetKernel = RequireKernel("ResetParticles");
+            resetCompositionKernel = RequireKernel("ResetCompositionBuffers");
+            spawnKernel = RequireKernel("SpawnParticles");
+            integrateKernel = RequireKernel("IntegrateParticles");
+            sweepKernel = RequireKernel("SweepBoundaries");
+            snapshotVelocityKernel = RequireKernel("SnapshotVelocities");
+            clearGridKernel = RequireKernel("ClearGrid");
+            buildGridKernel = RequireKernel("BuildGrid");
+            lambdaKernel = RequireKernel("CalculateDensityLambda");
+            deltaKernel = RequireKernel("CalculatePositionDelta");
+            applyKernel = RequireKernel("ApplyDeltaAndBoundaries");
+            velocityKernel = RequireKernel("UpdateVelocities");
+            mixKernel = RequireKernel("MixComposition");
+            colorKernel = RequireKernel("UpdateParticleColors");
+            techniqueKernel = RequireKernel("ApplyTechnique");
+            translateVesselKernel = RequireKernel("TranslateVesselContents");
+            suspendVesselKernel = RequireKernel("SetVesselSuspended");
         }
 
         private void AllocateBuffers()

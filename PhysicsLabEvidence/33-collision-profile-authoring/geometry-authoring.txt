@@ -1,0 +1,24 @@
+Bottle_item_1009: 41 edges; breezevodka
+Bottle_item_1006: 47 edges; cotton
+Shaker: 64 edges; cobbler_cup_back_white, cobbler_cup_back_line, cobbler_cup_front_white, cobbler_cup_front_line
+Bottle_item_1010: 36 edges; johnnydogs
+Bottle_item_1005: 59 edges; nanangna
+Bottle_item_1008: 67 edges; bless
+Bottle_item_1002: 43 edges; siltrop
+Glass_hurricane: 98 edges; hurricane_back_white, hurricane_back_line, hurricane_front_white, hurricane_front_line
+IceBucket: 54 edges; bucket_back, bucket_front_6
+Bottle_item_1015: 34 edges; coffeepowder
+Bottle_item_1007: 37 edges; hectar
+Ice: 11 edges; ice_01
+Glass_rock: 75 edges; rock_back_white, rock_back_line, rock_front_white, rock_front_line
+Bottle_item_1001: 60 edges; tropicaljuice
+Bottle_item_1011: 62 edges; burnhambourbon
+Spoon: 106 edges; barspoon
+Bottle_item_1013: 52 edges; minutefizz
+Bottle_item_1014: 57 edges; hotwater
+Glass_highball: 64 edges; highball_back_white, highball_back_line, highball_front_color, highball_front_white
+Jigger: 72 edges; jigger_back, jigger_front
+Bottle_item_1012: 46 edges; beatha
+Glass_martini: 68 edges; cocktail_back_white, cocktail_back_line, cocktail_front_white, cocktail_front_line
+Bottle_item_1003: 30 edges; syntheticlemon
+Bottle_item_1004: 20 edges; slop

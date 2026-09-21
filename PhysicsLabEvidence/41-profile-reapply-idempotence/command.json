@@ -1,0 +1,16 @@
+{
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/PhysicsLabEvidence/SceneHarnessProject",
+    "-executeMethod",
+    "Slainte.Bartending.PhysicsLab.Editor.PhysicsLabGeometryAuthoring.UpgradeAll",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\PhysicsLabEvidence\\41-profile-reapply-idempotence\\Editor.log",
+    "-quit"
+  ],
+  "started": "2026-09-21T20:59:52.2774861+09:00",
+  "workingDirectory": "A:/UnityHub/proj/slainte",
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe"
+}

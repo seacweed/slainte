@@ -41,6 +41,18 @@ namespace Slainte.Bartending.PhysicsLab
             Vector2 mouth = PointAt(mouthLocal, Vector2.zero, 0);
             Vector2 direction = PointAt(ExitDirectionLocal, Vector2.zero, 0).normalized;
             float offset = World.Liquid.Radius * 1.5f;
+            if (collisionProfile != null)
+            {
+                Vector2 nozzle = PointAt(LipLocal, Vector2.zero, 0);
+                float radius = World.Liquid.Radius * 1.05f;
+                for (int i = 0; i < 512; i++)
+                {
+                    float clearance = SolidClearance(nozzle);
+                    if (clearance >= radius) return position + Rotate(nozzle, angle);
+                    nozzle += direction * Mathf.Max(radius * .25f, radius - clearance);
+                }
+                throw new System.InvalidOperationException(name + ": mouth direction cannot clear the solid profile.");
+            }
             if (pickCollider is BoxCollider2D box)
             {
                 Vector2 a = PointAt(box.offset - box.size * .5f, Vector2.zero, 0);

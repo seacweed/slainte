@@ -31,9 +31,11 @@ namespace Slainte.Bartending.PhysicsLab.Editor
                         c=bottle.PourFlowAt(upright+105),d=bottle.PourFlowAt(upright+120);
                     Vector2 nozzle=bottle.WorldToLocal(bottle.NozzleAt(1));
                     var box=(BoxCollider2D)bottle.pickCollider;
-                    Vector2 closest=new Vector2(Mathf.Clamp(nozzle.x,box.offset.x-box.size.x*.5f,box.offset.x+box.size.x*.5f),
-                        Mathf.Clamp(nozzle.y,box.offset.y-box.size.y*.5f,box.offset.y+box.size.y*.5f));
-                    Require((nozzle-closest).magnitude>=gpu.Radius*.99f,"Nozzle starts outside the bottle hull: "+prefab.name);
+                    Require(bottle.SolidClearance(bottle.PointAt(nozzle,Vector2.zero,0))>=gpu.Radius*.99f,"Nozzle starts outside the actual bottle hull: "+prefab.name);
+                    Vector2 savedPickSize=box.size,savedOffset=box.offset; Vector2 beforeNozzle=bottle.NozzleAt(1);
+                    box.size*=3;box.offset+=new Vector2(.3f,.2f);
+                    Require((beforeNozzle-bottle.NozzleAt(1)).sqrMagnitude<.000001f,"Pick area changes cannot move bottle emission: "+prefab.name);
+                    box.size=savedPickSize;box.offset=savedOffset;
                     Require(a<.00001f && b>0 && b<.02f && c>b && d>.999f,"Bottle flow rises smoothly from zero to full: "+prefab.name);
                     bottle.gameObject.SetActive(false);Destroy(bottle.gameObject);bottles++;
                 }

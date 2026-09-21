@@ -1,0 +1,16 @@
+{
+  "started": "2026-09-21T20:53:00.2359210+09:00",
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/PhysicsLabEvidence/SceneHarnessProject",
+    "-executeMethod",
+    "Slainte.Bartending.PhysicsLab.Editor.PhysicsLabGeometryAuthoring.RebuildSolidProfiles",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\PhysicsLabEvidence\\38-alpha-contour-authoring\\Editor.log",
+    "-quit"
+  ],
+  "workingDirectory": "A:/UnityHub/proj/slainte"
+}

@@ -534,6 +534,35 @@ float2 ConstrainToClosedVessel(float2 position, uint vesselId)
             continue;
         }
 
+        if ((trigger.flags & 32u) != 0u)
+        {
+            // Profile interiors are CCW. The broad-phase rectangle is never a
+            // wall: recover escaped/squeezed particles against the actual bowl and lid.
+            for (int correction = 0; correction < 4; correction++)
+            {
+                float nearest = 1e20;
+                float2 closestPosition = position, normal = 0.0;
+                for (int i = 0; i < _BoundaryCount; i++)
+                {
+                    BoundarySegment edge = _Boundaries[i];
+                    if (edge.vesselId != vesselId || (edge.flags & 8u) == 0u) continue;
+                    float unused;
+                    float2 q = ClosestPointOnSegment(position, edge.a, edge.b, unused);
+                    float distanceToEdge = distance(position, q);
+                    if (distanceToEdge < nearest)
+                    {
+                        nearest = distanceToEdge; closestPosition = q;
+                        float2 tangent = edge.b - edge.a;
+                        normal = normalize(float2(-tangent.y, tangent.x));
+                    }
+                }
+                bool inside = IsInsideVesselContour(position, vesselId);
+                if (nearest >= 1e19 || (inside && nearest >= _ParticleRadius)) break;
+                position = closestPosition + normal * (_ParticleRadius + 0.00001);
+            }
+            return position;
+        }
+
         float2 offset = position - trigger.center;
         float2 local = float2(
             dot(offset, trigger.axisX),

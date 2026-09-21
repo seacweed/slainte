@@ -31,9 +31,9 @@ namespace Slainte.Bartending.PhysicsLab
         }
         private void AllocateStreamBuffers()
         {
-            streamSurfaceKernel = simulationShader.FindKernel("BuildStreamSurface");
-            resetStreamLookupKernel = simulationShader.FindKernel("ResetStreamLookup");
-            mergeStreamContactsKernel = simulationShader.FindKernel("MergeStreamContacts");
+            streamSurfaceKernel = RequireKernel("BuildStreamSurface");
+            resetStreamLookupKernel = RequireKernel("ResetStreamLookup");
+            mergeStreamContactsKernel = RequireKernel("MergeStreamContacts");
             streamParticleBuffer = CreateStructured<GpuLiquidStreamParticle>(particleCapacity);
             spawnStreamBuffer = CreateStructured<GpuLiquidStreamParticle>(particleCapacity);
             streamLookupBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, particleCapacity * 2, sizeof(uint) * 2);

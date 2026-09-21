@@ -65,6 +65,8 @@ for line in source.splitlines():
 (editor/'PhysicsLabValidator.cs').write_text('\n'.join(lines)+'\n',encoding='utf-8')
 for partial in (root / lab / 'Editor').glob('PhysicsLabValidator.*.cs'):
     shutil.copy2(partial, editor / partial.name)
+for source in (root / lab / 'Editor').glob('PhysicsLabGeometry*.cs'):
+    shutil.copy2(source, editor / source.name)
 (editor/'PhysicsLabBuilder.cs').write_text('''namespace Slainte.Bartending.PhysicsLab.Editor {
 public static class PhysicsLabBuilder {
 public const string Root = "Assets/_Project/Features/Bartending/PhysicsLab";

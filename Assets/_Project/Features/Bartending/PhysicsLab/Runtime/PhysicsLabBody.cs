@@ -65,6 +65,7 @@ namespace Slainte.Bartending.PhysicsLab
             targetPosition = Body.position;
             targetAngle = Body.rotation;
             SynchronizeHistory();
+            ApplyCollisionProfile();
             SetSealed(sealedVessel);
         }
 
@@ -196,6 +197,7 @@ namespace Slainte.Bartending.PhysicsLab
         public bool ContainsLiquid(Vector2 point)
         {
             Vector2 local = WorldToLocal(point);
+            if (collisionProfile != null) return PhysicsLabCollisionProfile.Contains(collisionProfile.interior, local);
             foreach (Rect rect in contentRegions) if (rect.Contains(local)) return true;
             return false;
         }

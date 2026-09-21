@@ -152,6 +152,7 @@ namespace Slainte.Bartending.PhysicsLab.Editor
         }
         private static PhysicsLabBody Save(PhysicsLabBody body, string name)
         {
+            PhysicsLabGeometryAuthoring.Apply(body, name);
             GameObject saved = PrefabUtility.SaveAsPrefabAsset(body.gameObject, Root + "/Prefabs/" + name + ".prefab");
             UnityEngine.Object.DestroyImmediate(body.gameObject);
             PhysicsLabBody prefab = saved.GetComponent<PhysicsLabBody>();

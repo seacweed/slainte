@@ -70,8 +70,8 @@ namespace Slainte.Bartending.PhysicsLab
                 gridCellCount = gridWidth * gridHeight;
                 simulationShader = Instantiate(settings.gpuLiquidComputeShader);
                 CacheKernels();
-                swapKernel = simulationShader.FindKernel("SwapContents");
-                releaseOwnerKernel = simulationShader.FindKernel("ReleaseOwner");
+                swapKernel = RequireKernel("SwapContents");
+                releaseOwnerKernel = RequireKernel("ReleaseOwner");
                 AllocateBuffers(); BindStaticParameters();
                 BindCommonBuffers(swapKernel); BindCommonBuffers(releaseOwnerKernel);
                 DispatchReset();
@@ -122,6 +122,7 @@ namespace Slainte.Bartending.PhysicsLab
                 for (float y = region.yMin + dy; y < region.yMax - dy && emitted < volume; y += dy)
                 for (float x = region.xMin + dx; x < region.xMax - dx && emitted < volume; x += dx)
                 {
+                    if (vessel.collisionProfile != null && !vessel.ContainsLiquidDisk(new Vector2(x, y), Radius)) continue;
                     float amount = Mathf.Min(ParticleVolumeMl, volume - emitted);
                     if (!TryEmit(vessel.LocalToWorld(new Vector2(x, y)), Vector2.zero, ingredient, amount, vessel.Id)) return emitted;
                     emitted += amount;
@@ -186,7 +187,7 @@ namespace Slainte.Bartending.PhysicsLab
                 float previousAngle = item.PreviousAngle + item.StepAngle * from;
                 float angle = item.PreviousAngle + item.StepAngle * to;
                 uint flags = (item.IsHeld ? 2u : 0u) | (item.kind == LabItemKind.Ice ? 4u : 0u);
-                void UploadPath(Vector2[] path, bool closed, bool vesselContour = false)
+                void UploadPath(Vector2[] path, bool closed, bool vesselContour = false, bool ownershipOnly = false)
                 {
                     int segments = closed ? path.Length : path.Length - 1;
                     for (int i = 0; i < segments; i++)
@@ -199,6 +200,7 @@ namespace Slainte.Bartending.PhysicsLab
                         Vector2 linearVelocity = (position - previousPosition) / dt;
                         Vector2 offsetA = a - position, offsetB = b - position;
                         uint edgeFlags = flags | (vesselContour ? 8u : 0u);
+                        if (ownershipOnly) edgeFlags |= 16u;
                         if (vesselContour && !item.sealedVessel && i == path.Length - 1) edgeFlags |= 16u;
                         boundaryUpload[boundaryCount++] = new GpuLiquidBoundarySegment
                         {
@@ -212,8 +214,17 @@ namespace Slainte.Bartending.PhysicsLab
                     }
                 }
                 // A virtual rim completes the ownership polygon but never collides with open-vessel fluid.
-                UploadPath(item.liquidWall, item.wallClosed || item.IsVessel, item.IsVessel);
-                foreach (PhysicsLabHull hull in item.extraSolidHulls) UploadPath(hull.points, true);
+                if (item.collisionProfile != null)
+                {
+                    foreach (PhysicsLabHull hull in item.collisionProfile.solids) UploadPath(hull.points, true);
+                    if (item.sealedVessel) UploadPath(item.collisionProfile.lid, true);
+                    UploadPath(item.collisionProfile.interior, true, true, true);
+                }
+                else
+                {
+                    UploadPath(item.liquidWall, item.wallClosed || item.IsVessel, item.IsVessel);
+                    foreach (PhysicsLabHull hull in item.extraSolidHulls) UploadPath(hull.points, true);
+                }
                 foreach (Rect rect in item.contentRegions)
                 {
                     if (triggerCount >= MaximumVesselTriggers) throw new InvalidOperationException("PhysicsLab trigger budget exceeded.");
@@ -224,7 +235,7 @@ namespace Slainte.Bartending.PhysicsLab
                         AxisX = PhysicsLabBody.Rotate(Vector2.right, angle), AxisY = PhysicsLabBody.Rotate(Vector2.up, angle),
                         HalfExtents = new Vector2(rect.width * scale.x, rect.height * scale.y) * .5f,
                         VesselId = item.Id, Priority = (int)item.Id, Active = 1,
-                        Flags = flags | (item.sealedVessel ? 1u : 0u)
+                        Flags = flags | (item.sealedVessel ? 1u : 0u) | (item.collisionProfile != null ? 32u : 0u)
                     };
                 }
             }

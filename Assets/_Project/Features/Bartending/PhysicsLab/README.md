@@ -2,6 +2,20 @@
 
 기존 게임플레이와 분리한 병·잔·도구 프리팹 실험 환경이다. 기존 컨트롤러, 슬롯, 액체 풀, GPU 싱글턴, 제작/영업 시스템과 씬은 수정하지 않는다. 기존 ItemDef, GlassDef, ToolDef와 그림은 읽기 전용 원본으로 사용한다.
 
+## 그림과 충돌 형상
+
+24개 프리팹의 `Data/CollisionProfiles/` 에셋이 물체와 GPU 액체의 공통 충돌 원본이다. `solids`를 Unity PolygonCollider2D와 GPU 선분으로 함께 사용한다. 병·스푼·얼음은 실제 그림의 알파 윤곽을 따르며 주스통과 주전자의 손잡이 구멍도 남긴다. 구멍이 있는 그림은 여러 개의 단순 폴리곤으로 나눈다. 아주 좁은 구멍은 입자의 물리 반경보다 작으면 통과할 수 없다.
+
+잔·지거·버킷·셰이커는 기존 액체 내부 경로를 재사용하면서 보이는 외곽, 바닥, 받침을 포함하는 속이 빈 벽을 만든다. `interior`는 액체 소유권 판정용이며 열린 입구에 벽을 만들지 않는다. `lid`는 닫힌 셰이커에서만 충돌한다. 닫힌 용기의 액체 복구도 사각형 영역 대신 실제 내부 윤곽을 사용한다. 초기 채우기는 벽과 입자 반경만큼 간격을 둔다.
+
+집기 트리거는 기존 크기로 유지하며 충돌 형상이나 병의 방출점 계산에 사용하지 않는다. 병의 `mouth`와 `exitDirection`으로 출구를 정하고 실제 고체 밖에 입자를 생성한다. 회전 피벗, 유량, 물리 반경, 시뮬레이션 간격과 기존 조작 정책은 유지한다.
+
+PhysicsLabBody를 선택하면 Scene 뷰에 물체 콜라이더(초록), GPU 경계(청록), 내부 소유권 경로(주황), 집기 영역(노랑)이 표시된다. 프로파일을 Inspector에서 수정한 뒤 `Slainte > Physics Lab > Update Collision Profiles and Prefabs`를 실행하면 기존 프로파일과 프리팹을 연결한다. 이 메뉴는 그림, 배치 씬, 집기 영역과 조작 수치를 재생성하지 않는다. 새 프로파일 생성 시에만 원본 PNG를 읽으며 공유 Sprite Importer의 Read/Write나 Physics Shape 설정은 바꾸지 않는다.
+
+`Rebuild Solid Profiles From Artwork`는 병·스푼·얼음 프로파일의 수동 편집을 그림에서 다시 생성하는 명시적 재생성 메뉴다. 용기 내부 경로는 이 메뉴에서 재생성하지 않는다. 일반 재적용은 기존 수동 프로파일을 보존한다.
+
+2026-09-21 최종 검사는 `PhysicsLabEvidence/40-vessel-contour-validation`의 350개 PASS/2개 SKIP와 `42-collision-profile-isolation`의 10개 PASS, 모두 종료 0이다. 24종의 0도/67도 실제 CPU·GPU 접촉, 손잡이, 열린 입구, 닫힌 셰이커 복구와 기존 조작·물줄기 회귀를 확인했다. GPU는 폴리곤 꼭짓점 경계에서 약 0.001의 여유를 두며 Unity 접촉 거리 조회의 약 0.009 차이는 기존 contact offset 0.01 범위 안이다. 프로파일·프리팹·메타 96개는 재적용 전후 바이트가 같고, 그림/변환/리지드바디/집기/조작 수치와 기존 씬 보존도 별도로 확인했다. 실제 사람의 마우스 조작감이나 기존 게임 씬 전체 검증을 뜻하지 않는다.
+
 ## 실행
 
 `Scenes/BartendingPhysicsSandbox.unity`를 열어 Play하거나 `Slainte > Physics Lab > Create or Open Sandbox` 메뉴를 선택한다. 프리팹 24개(병 15, 잔 4, 도구 4, 얼음 1)가 `Prefabs/`에 있다. 씬에는 병 3개, 잔 2개, 도구 4개가 배치된다. Build Settings에 기존 씬을 추가하거나 바꾸지 않는다.
