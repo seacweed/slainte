@@ -1,0 +1,55 @@
+{
+  "baselineCommit": "9054657",
+  "tests": [
+    {
+      "attempt": "15-upright-pickup-and-return",
+      "passed": 63,
+      "skipped": 2,
+      "exitCode": 0,
+      "csharpBuildExitCode": 0
+    },
+    {
+      "attempt": "16-final-upright-controls",
+      "passed": 63,
+      "skipped": 2,
+      "exitCode": 0,
+      "csharpBuildExitCode": 0
+    }
+  ],
+  "testedSourceMatches": true,
+  "preexistingProjectSettingsSha256": "04cbf9e21ba4556e72dad9c729e669e764ea128ec908f29933a329ded3c8f2be",
+  "originalEditorNotStoppedOrRestarted": true,
+  "limitations": [
+    "Two legacy presence checks skipped in scene copy",
+    "Unity SearchDatabase startup indexing exception retained in both Editor logs",
+    "Automated API checks; no claim of human mouse-feel validation"
+  ],
+  "sourceSha256": {
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabBody.cs": "9edc6fe30a8cf0595e0bf95b5d9f8000a8c479cc71222ba5b2fe738b772ab5f7",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabGpuLiquid.Buffers.cs": "4897e93bf3206e514dcf9ff4541885af70eca7aa0b64dc217e3b0533c598edcf",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabGpuLiquid.cs": "802f60e43db49769cc7e1d10feecca39d2a662c0cd5ab4929b86a3a7d0d69474",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabGpuTypes.cs": "9ce159629d4ec454b814d375677b1893803f15e25b8eb2063d65dc35882a2e5b",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabInteractor.cs": "be2816944565afd9075851c8841e5ed334b68028128d075c489fd4dd8ea1bc97",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabLiquidSettings.cs": "b977919c101e0929fd1cbd07e37d591ec075d7c4a84eb1f6cca43bc774f7c5c8",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabWorld.cs": "105e8af67a2f6b1709548bce5d150a3f1766cf3ed9b988f81621071be8231f7a",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Shaders/PhysicsLabLiquid.compute": "e97b9fdc5877c6b58f743f0f1ce6a07c478b298f6c1e1c344b418f01b1310438",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Scenes/BartendingPhysicsSandbox.unity": "a308f0d4162f4fe6caf172f202480a092d03658cfd65d1c441d5032a9acaeb2f",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Editor/PhysicsLabValidator.cs": "5f5740bccd4fc7f7992db83377231854fe1c0e1a0fe493a9f80774ebdf27df80"
+  },
+  "rawEvidenceSha256": {
+    "PhysicsLabEvidence/15-upright-pickup-and-return/csharp-build.log": "b00a7a2b58f636d3c5bf3735d89ee5f7271626de1cc1909c29cbe45add8a9039",
+    "PhysicsLabEvidence/15-upright-pickup-and-return/Editor.log": "8f9e8930f4457305373f7aabcec0f09c4f2bf9ff306d47f352fbaf11329a5932",
+    "PhysicsLabEvidence/15-upright-pickup-and-return/initial-sandbox.png": "f2b5ac3150e8d2c7c24cd115d18093d6b93bd37ba5e3a3546fdf68cb43b47c0c",
+    "PhysicsLabEvidence/15-upright-pickup-and-return/pour-transfer.png": "97db61dc1602d4b2a14737d79f4bd0ed6eb1f00c75ed2fa3ddd44c1b57201ec5",
+    "PhysicsLabEvidence/15-upright-pickup-and-return/sandbox.png": "a636f97b08a16752ecd718fdaf166a7071bd61141d901e7d99cb65ce664e289e",
+    "PhysicsLabEvidence/15-upright-pickup-and-return/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "PhysicsLabEvidence/15-upright-pickup-and-return/stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "PhysicsLabEvidence/16-final-upright-controls/csharp-build.log": "1afc0ec3b32649b3617890ab562c6494ee4d426050aad85cded974127d9e841d",
+    "PhysicsLabEvidence/16-final-upright-controls/Editor.log": "f416ff3a4265e621105913b66d9acf8cb4270122bb19b4c5d79a0c6c9caf1c8c",
+    "PhysicsLabEvidence/16-final-upright-controls/initial-sandbox.png": "1c763463bf29451da6661cc7da187dce8e3660c8f3777b96b1c098378ac3cbfb",
+    "PhysicsLabEvidence/16-final-upright-controls/pour-transfer.png": "68cc60a65bbbeae8304864e573bc6b704397e78e94716dea479c97b9a20da581",
+    "PhysicsLabEvidence/16-final-upright-controls/sandbox.png": "26759415e2db0d652c107a5e592ca9de5a3a2127294a89ec8d8ba635e15383b6",
+    "PhysicsLabEvidence/16-final-upright-controls/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "PhysicsLabEvidence/16-final-upright-controls/stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

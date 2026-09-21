@@ -100,6 +100,16 @@ namespace Slainte.Bartending.PhysicsLab.Editor
         {
             for(int i=0;i<count;i++)yield return new WaitForFixedUpdate();
         }
+        private IEnumerator CompleteUprightReturn()
+        {
+            int frames=0;
+            while(input.Returning && frames++<100)
+            {
+                input.AdvanceUprightReturn(Time.fixedDeltaTime);
+                yield return new WaitForFixedUpdate();
+            }
+            if(input.Returning)throw new Exception("Upright return did not finish.");
+        }
         private IEnumerator Run()
         {
             yield return null;
@@ -113,6 +123,18 @@ namespace Slainte.Bartending.PhysicsLab.Editor
             Require(world.Items.All(x=>x.gameObject.layer==world.itemLayer),"All bodies share one layer");
             Require(world.Items.All(x=>x.Body.bodyType==RigidbodyType2D.Dynamic),"All resting bodies are Dynamic");
             Require(world.Items.All(x=>x.SolidBounds.min.y> -3.6f),"Every item rests above the physical floor");
+            foreach(PhysicsLabBody item in world.Items)
+            {
+                Vector2 originalPosition=item.Position;float originalAngle=item.Angle;
+                item.Teleport(originalPosition,73);
+                Vector2 pointer=originalPosition+new Vector2(.17f,.11f);
+                Require(input.Pick(item,pointer) && Mathf.Abs(item.Angle)<.001f && Mathf.Abs(item.HeldAngle)<.001f
+                    && Vector2.Distance(item.Position,originalPosition)<.001f,"Pickup resets angle to zero without moving: "+item.name);
+                input.MoveHeld(pointer);
+                Require(Vector2.Distance(item.TargetPosition,originalPosition)<.001f,"Pickup preserves the pointer grab offset: "+item.name);
+                input.ReleaseWithVelocity(Vector2.zero);
+                item.Teleport(originalPosition,originalAngle);
+            }
             yield return null;
             CaptureCamera(Path.Combine(PhysicsLabValidator.EvidenceDirectory,"initial-sandbox.png"));
             PhysicsLabBody bottle=world.Items.First(x=>x.kind==LabItemKind.Bottle);
@@ -123,18 +145,45 @@ namespace Slainte.Bartending.PhysicsLab.Editor
             Require(Physics2D.GetIgnoreCollision(bottle.solidColliders[0],glass.solidColliders[0]),"Held body collision suppressed");
             bottle.Teleport(new Vector2(-8,4),23);
             input.EndRotation(bottle.Position);
-            // A new pickup captures the physically tilted pose.
+            // A new pickup resets the physically tilted pose before rotation begins.
             input.ReleaseWithVelocity(Vector2.zero);
-            input.Pick(bottle,bottle.Position);
+            Vector2 gripLocal=new Vector2(.25f,.35f);
+            input.Pick(bottle,bottle.Position+gripLocal);
+            Require(Mathf.Abs(bottle.Angle)<.001f,"Tilted bottle pickup is upright immediately");
             float before=bottle.Angle;
             input.BeginRotation();input.RotateBy(720+135);
             yield return Frames(2);
             Require(Mathf.Abs(bottle.HeldAngle-before-855)<.1f,"Unlimited 855 degree accumulated rotation");
             Require(gpu.LastSubsteps==Mathf.Clamp(gpu.settings.gpuLiquidSubsteps,1,16),"Fast rotation leaves the fluid integration schedule fixed");
-            Vector2 pose=bottle.Position;float a=bottle.Angle;
+            Vector2 pose=bottle.Position;
+            input.SendMessage("Sample",Time.unscaledTime);
             input.EndRotation(pose);input.MoveHeld(pose);
+            Vector2 firstGrip=input.ReturnGrabPoint;
+            input.AdvanceUprightReturn(input.uprightReturnDuration*.5f);
+            Require(input.Returning && Mathf.Abs(bottle.Angle)>.1f && Mathf.Abs(bottle.Angle)<134.9f
+                && Vector2.Distance(pose,bottle.Position)<.002f,"Upright return interpolates quickly without translating the body");
+            Require(Vector2.Distance(input.ReturnGrabPoint,bottle.LocalToWorld(gripLocal))<.001f
+                && Vector2.Distance(firstGrip,input.ReturnGrabPoint)>.01f,"Return cursor target follows the rotating grab point");
+            input.EstimateRelease(out Vector2 resetVelocity,out float resetSpin);
+            Require(resetVelocity==Vector2.zero && resetSpin==0,"Automatic upright return does not generate throw velocity or spin");
+            Require(Mathf.Abs(bottle.PreviousAngle)<=180,"Automatic return does not unwind completed turns in GPU motion history");
+            yield return CompleteUprightReturn();
+            input.MoveHeld(pose);
             yield return Frames(3);
-            Require(Vector2.Distance(pose,bottle.Position)<.002f && Mathf.Abs(Mathf.DeltaAngle(a,bottle.Angle))<.05f,"RMB release preserves position and rotation");
+            Require(Vector2.Distance(pose,bottle.Position)<.002f && Mathf.Abs(bottle.Angle)<.05f && Mathf.Abs(bottle.HeldAngle)<.05f,
+                "RMB release resets to zero at the current position without a pointer jump");
+            input.BeginRotation();input.RotateBy(-495);yield return Frames(2);
+            pose=bottle.Position;
+            input.EndRotation(pose);yield return CompleteUprightReturn();input.MoveHeld(pose);yield return Frames(2);
+            Require(Vector2.Distance(pose,bottle.Position)<.002f && Mathf.Abs(bottle.Angle)<.05f,
+                "Repeated negative rotation also returns upright at the current position");
+            input.BeginRotation();input.RotateBy(90);yield return Frames(2);input.EndRotation(bottle.Position);
+            input.AdvanceUprightReturn(input.uprightReturnDuration*.5f);
+            float interruptedAngle=bottle.Angle;
+            input.BeginRotation();input.RotateBy(10);yield return Frames(2);
+            Require(!input.Returning && input.Rotating && Mathf.Abs(bottle.HeldAngle-interruptedAngle-10)<.05f,
+                "New RMB rotation interrupts upright return from its current angle");
+            input.EndRotation(bottle.Position);yield return CompleteUprightReturn();
             // One complete turn is upright for pouring, regardless of accumulated angle.
             bottle.Teleport(new Vector2(-8,4),720);
             float capacity=bottle.remainingMl;
@@ -146,9 +195,10 @@ namespace Slainte.Bartending.PhysicsLab.Editor
             Require(bottle.remainingMl<capacity,"Unheld physically tilted bottle pours");
             Require(!Physics2D.GetIgnoreCollision(bottle.solidColliders[0],glass.solidColliders[0]),"Dropped body collision restored");
             bottle.Teleport(new Vector2(-8,3),35);input.Pick(bottle,bottle.Position);
+            float throwStartAngle=bottle.Angle;
             input.ReleaseWithVelocity(new Vector2(5,4),120);
             yield return Frames(5);
-            Require(bottle.Position.x> -7.8f && Mathf.Abs(Mathf.DeltaAngle(35,bottle.Angle))>3,"Throw transfers linear and angular velocity");
+            Require(bottle.Position.x> -7.8f && Mathf.Abs(Mathf.DeltaAngle(throwStartAngle,bottle.Angle))>3,"Throw transfers linear and angular velocity");
             // Keep emitters upright and out of subsequent volume tests.
             foreach(PhysicsLabBody item in world.Items.Where(x=>x.kind==LabItemKind.Bottle))
             {item.Teleport(new Vector2(-18+item.Id,1),0);item.pourMlPerSecond=0;}
@@ -162,10 +212,26 @@ namespace Slainte.Bartending.PhysicsLab.Editor
             Require(Mathf.Abs(gpu.SnapshotTotalMl-filled)<.001f && Mathf.Abs(gpu.VolumeIn(shaker.Id)-filled)<.001f,"GPU volume and ownership after fill");
             input.Pick(shaker,shaker.Position);input.BeginRotation();
             for(int i=0;i<36;i++){input.RotateBy(20);yield return new WaitForFixedUpdate();}
-            input.EndRotation(shaker.Position);gpu.ReadbackNow();
+            input.EndRotation(shaker.Position);yield return CompleteUprightReturn();gpu.ReadbackNow();
             Require(Mathf.Abs(gpu.VolumeIn(shaker.Id)-filled)<.001f,"Sealed vessel retains liquid through two full rotations");
+            input.BeginRotation();input.RotateBy(135);yield return Frames(2);
+            Vector2 returnPosition=shaker.Position;
+            input.EndRotation(returnPosition);yield return CompleteUprightReturn();yield return Frames(3);gpu.ReadbackNow();
+            Require(Vector2.Distance(shaker.Position,returnPosition)<.002f && Mathf.Abs(shaker.Angle)<.05f
+                && Mathf.Abs(gpu.VolumeIn(shaker.Id)-filled)<.001f,"Sealed vessel keeps GPU contents through upright return in place");
+            input.BeginRotation();input.RotateBy(45);yield return Frames(2);
+            input.ReleaseWithVelocity(Vector2.zero);input.Pick(shaker,shaker.Position);
+            yield return Frames(3);gpu.ReadbackNow();
+            Require(Mathf.Abs(shaker.Angle)<.05f && Mathf.Abs(gpu.VolumeIn(shaker.Id)-filled)<.001f,
+                "Picking up a tilted sealed vessel restores upright and keeps its GPU contents");
             Require(gpu.Snapshot.Where(p=>p.Active!=0).All(p=>float.IsFinite(p.Position.x)&&float.IsFinite(p.Position.y)),"GPU positions remain finite");
             input.ReleaseWithVelocity(Vector2.zero);
+            // A left-click drop during rotation must retain its actual tilted throw pose.
+            bottle.Teleport(new Vector2(-8,4),0);input.Pick(bottle,bottle.Position);
+            input.BeginRotation();input.RotateBy(35);yield return Frames(2);
+            float droppedAngle=bottle.Angle;
+            Require(input.Drop(bottle.Position) && !input.Rotating && !bottle.IsHeld
+                && Mathf.Abs(Mathf.DeltaAngle(droppedAngle,bottle.Angle))<.05f,"Drop during rotation preserves the release angle");
             shaker.Teleport(new Vector2(5,2),0);
             gpu.ResetSimulation();
             filled=gpu.Fill(shaker,ingredient,40);
@@ -200,7 +266,7 @@ namespace Slainte.Bartending.PhysicsLab.Editor
             filled=gpu.Fill(shaker,ingredient,40);yield return Frames(3);
             input.Pick(shaker,shaker.Position);input.BeginRotation();
             for(int i=0;i<18;i++){input.RotateBy(10);yield return new WaitForFixedUpdate();}
-            input.EndRotation(shaker.Position);shaker.SetSealed(false);
+            shaker.SetSealed(false); // Keep RMB held: releasing it now restores the upright pose.
             yield return Frames(50);gpu.ReadbackNow();
             Require(gpu.VolumeIn(shaker.Id)<filled*.8f,"Open inverted vessel spills and releases ownership");
             input.ReleaseWithVelocity(Vector2.zero);

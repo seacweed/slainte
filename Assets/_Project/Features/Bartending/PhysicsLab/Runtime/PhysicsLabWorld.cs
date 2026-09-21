@@ -272,7 +272,7 @@ namespace Slainte.Bartending.PhysicsLab
             if (!showControls) return;
             GUI.Box(new Rect(12, 12, 690, 112), "PHYSICS LAB  |  independent slot-free prefabs\n"
                 + "LMB: pick / place / throw    RMB + mouse Y: unlimited rotation\n"
-                + "Release RMB: keep pose    Slow place on an item: swap\n"
+                + "Pick / release RMB: angle 0    Slow place on an item: swap\n"
                 + "C: toggle held shaker lid    R: restart sandbox\n"
                 + (liquid != null && liquid.IsOperational ? "GPU PBF/XPBD active" : "GPU unavailable: " + liquid?.Error));
         }

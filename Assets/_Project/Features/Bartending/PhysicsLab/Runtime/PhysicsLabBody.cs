@@ -114,6 +114,17 @@ namespace Slainte.Bartending.PhysicsLab
             targetAngle = unwrappedAngle;
         }
 
+        internal void RestoreHeldPose(Vector2 position, float angle)
+        {
+            if (!IsHeld) return;
+            ApplyHeldPose();
+            // Automatic restoration takes the shortest arc, without unwinding completed turns.
+            // Rebase only whole turns so the GPU still sees any motion pending this physics tick.
+            PreviousAngle += angle - (HeldAngle + Mathf.DeltaAngle(HeldAngle, angle));
+            SetHeldPose(position, angle);
+            ApplyHeldPose();
+        }
+
         internal void ApplyHeldPose()
         {
             if (!IsHeld) return;

@@ -1,0 +1,39 @@
+{
+  "baselineCommit": "9054657",
+  "passed": 66,
+  "skipped": 2,
+  "exitCode": 0,
+  "csharpBuildExitCode": 0,
+  "testedSourceMatches": true,
+  "sharedPointerModulesUnmodified": true,
+  "preexistingProjectSettingsSha256": "04cbf9e21ba4556e72dad9c729e669e764ea128ec908f29933a329ded3c8f2be",
+  "originalEditorNotStoppedOrRestarted": true,
+  "limitations": [
+    "Legacy-system presence excluded in the scene copy",
+    "Unity SearchDatabase startup exception retained",
+    "Batch mode verifies cursor target geometry, not OS cursor motion or human handling feel"
+  ],
+  "sourceSha256": {
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabBody.cs": "9edc6fe30a8cf0595e0bf95b5d9f8000a8c479cc71222ba5b2fe738b772ab5f7",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabGpuLiquid.Buffers.cs": "4897e93bf3206e514dcf9ff4541885af70eca7aa0b64dc217e3b0533c598edcf",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabGpuLiquid.cs": "802f60e43db49769cc7e1d10feecca39d2a662c0cd5ab4929b86a3a7d0d69474",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabGpuTypes.cs": "9ce159629d4ec454b814d375677b1893803f15e25b8eb2063d65dc35882a2e5b",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabInteractor.cs": "5d63dcc0c0e4ddc01ae10c49437e018a9745cc98c6bdedd3de967731c92fb126",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabLiquidSettings.cs": "b977919c101e0929fd1cbd07e37d591ec075d7c4a84eb1f6cca43bc774f7c5c8",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabWorld.cs": "105e8af67a2f6b1709548bce5d150a3f1766cf3ed9b988f81621071be8231f7a",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Shaders/PhysicsLabLiquid.compute": "e97b9fdc5877c6b58f743f0f1ce6a07c478b298f6c1e1c344b418f01b1310438",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Scenes/BartendingPhysicsSandbox.unity": "be6feb9c285461bcb608a8ccdb7a1f5f23fb178816b83db445742a3166a0cda4",
+    "Assets/_Project/Features/Bartending/Runtime/BartendingPointerAnchor.cs": "7090cdd0e6d0f3196be6c117a2ca563d50f454181ad52a621c7ac60b86996347",
+    "Assets/_Project/Features/Bartending/Runtime/BartendingViewport.cs": "0ff585ae0c7f1b1e8cff188c864dd5284081b296e074b0fc2074bd6f11c2b72b",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Editor/PhysicsLabValidator.cs": "40ca78158f2ac85e5de57ed578a2b6e29378c6eb4baee23c88c73961fbaddea2"
+  },
+  "rawEvidenceSha256": {
+    "PhysicsLabEvidence/17-animated-return-and-cursor/csharp-build.log": "c87de69d2fcbd0d52e8c1d023a8170079cea02991defefb3d175785444e2275e",
+    "PhysicsLabEvidence/17-animated-return-and-cursor/Editor.log": "3b4dbea697ce3882de774da9290d021d962fc4922bf629f2d2095803af5256b0",
+    "PhysicsLabEvidence/17-animated-return-and-cursor/initial-sandbox.png": "300e33fc39fe2ad33d8587b2b8b15629195d1c6b6f88ddfc4374b6ed05601c0f",
+    "PhysicsLabEvidence/17-animated-return-and-cursor/pour-transfer.png": "2cf5ee9c50ec268467948505c5af2a4a31a210a91c3c4dcf0f3f4672cf020e86",
+    "PhysicsLabEvidence/17-animated-return-and-cursor/sandbox.png": "ecb5a7f228a8c96add9cf7f821a0213f21c754297abcc7256c7bfc49b81e6e72",
+    "PhysicsLabEvidence/17-animated-return-and-cursor/stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "PhysicsLabEvidence/17-animated-return-and-cursor/stdout.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

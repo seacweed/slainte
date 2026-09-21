@@ -42,8 +42,10 @@ for directory in ('Runtime', 'Shaders', 'Prefabs', 'Scenes', 'Data'):
         if source.is_file() and source.suffix != '.meta':
             copy_asset(source.relative_to(root))
 copy_asset(Path('Assets/_Project/Features/Bartending/Runtime/Interaction/ItemDef.cs'))
+copy_asset(Path('Assets/_Project/Features/Bartending/Runtime/BartendingPointerAnchor.cs'))
+copy_asset(Path('Assets/_Project/Features/Bartending/Runtime/BartendingViewport.cs'))
 (target / 'Packages').mkdir(exist_ok=True)
-manifest = {'dependencies': {'com.unity.ugui':'2.0.0', 'com.unity.render-pipelines.universal':'17.3.0',
+manifest = {'dependencies': {'com.unity.ugui':'2.0.0', 'com.unity.render-pipelines.universal':'17.3.0', 'com.unity.inputsystem':'1.17.0',
     **{'com.unity.modules.'+name:'1.0.0' for name in ('physics2d','physics','imgui','ui','imageconversion','jsonserialize','animation')}}}
 (target / 'Packages/manifest.json').write_text(json.dumps(manifest,indent=2),encoding='utf-8')
 (target / 'ProjectSettings').mkdir(exist_ok=True)

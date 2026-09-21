@@ -279,6 +279,7 @@ MonoBehaviour:
   rotationSensitivity: 5
   swapMaximumSpeed: 1.4
   velocityWindow: 0.1
+  uprightReturnDuration: 0.15
 --- !u!114 &379435367
 MonoBehaviour:
   m_ObjectHideFlags: 0

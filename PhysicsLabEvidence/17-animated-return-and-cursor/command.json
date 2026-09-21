@@ -1,0 +1,15 @@
+{
+  "workingDirectory": "A:/UnityHub/proj/slainte",
+  "started": "2026-09-21T18:16:45.4096218+09:00",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/PhysicsLabEvidence/SceneHarnessProject",
+    "-executeMethod",
+    "Slainte.Bartending.PhysicsLab.Editor.PhysicsLabValidator.Begin",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\PhysicsLabEvidence\\17-animated-return-and-cursor\\Editor.log"
+  ],
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe"
+}

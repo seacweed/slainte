@@ -25,8 +25,15 @@ Unity 6000.3.5f2, NVIDIA RTX 3070, Direct3D11에서 실행했다. `initial-sandb
 | 12-authored-scene-regression | 종료 0. 실제 씬 복사본 회귀 검사 통과(기존 시스템 존재 검사 2개 SKIP) |
 | 13-final-authored-scene | 종료 0. 실제 씬의 국소 검사 한도까지 확인, 38개 PASS/2개 SKIP |
 | 14-final-isolation-and-damping | 종료 0. 원거리 위치/속도 차이 0, 실제 접촉 유지, 시간 기준 감쇠 포함 10개 PASS |
+| 15-upright-pickup-and-return | 종료 0. 집기·우클릭 해제 시 제자리 0도 복귀와 액체 보존 등 63개 PASS/2개 SKIP |
+| 16-final-upright-controls | 종료 0. 즉시 복귀 중간 버전. 회전 중 내려놓기가 취소될 때 포인터 오프셋도 보정, 63개 PASS/2개 SKIP. 원본 C# 빌드 오류 0개 |
+| 17-animated-return-and-cursor | 종료 0. 0.15초 제자리 복귀·커서 목표 추적·복귀 중 재조작을 포함한 최종 버전, 66개 PASS/2개 SKIP. 원본 C# 빌드 오류 0개 |
 
 12/13의 새 복사 프로젝트에서 UnityEditor.Search.SearchDatabase의 초기 인덱서 ArgumentOutOfRangeException도 기록되었다. 런타임 검증은 끝까지 실행되어 보고서와 종료 코드가 확보됐지만, 에디터 로그 전체가 무오류라는 뜻은 아니다. 원본 프로젝트나 사용자의 Unity를 종료/재실행하지 않았다.
+
+15/16에서도 같은 SearchDatabase 시작 예외가 기록되었으며 검증 완료 및 프로세스 종료 0을 각각 확인했다. 16의 `verification.json`에 실제 사용한 런타임 소스 일치 여부, 소스·원시 로그 해시, 기존 설정 보존을 기록했다. 검사는 조작 API 기반이며 사람의 실제 마우스 조작감 검증을 뜻하지 않는다.
+
+17은 기존 `BartendingPointerAnchor`와 `BartendingViewport` 소스를 그대로 복사해 커서 모듈을 재사용했다. 회전 보간과 커서 목표 지점은 검사하지만 배치 환경에서 사용자 OS 커서를 강제로 옮기지 않는다. 실제 OS 커서 이동과 조작감은 미검증이다. 이 실행에도 SearchDatabase 시작 예외가 있으며 런타임 보고서와 종료 0을 별도 확인했다. `verification.json`에 최종 코드·원시 로그 해시를 기록한다.
 
 `redesign-compile.json`은 SDK 탐색 경로 접근 거부, `redesign-compile-authorized.json`은 복원 메타데이터 누락으로 각각 종료 1이다. `redesign-compile-restored.json`은 메타데이터 복원 후 컴파일 오류 0/종료 0이다. 실패 기록을 뒤의 성공 기록으로 덮어쓰지 않았다.
 
