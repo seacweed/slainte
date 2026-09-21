@@ -1,0 +1,15 @@
+{
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe",
+  "started": "2026-09-21T17:25:12.7699784+09:00",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/PhysicsLabEvidence/HarnessProject",
+    "-executeMethod",
+    "IsolationHarness.Begin",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\PhysicsLabEvidence\\14-final-isolation-and-damping\\Editor.log"
+  ],
+  "workingDirectory": "A:/UnityHub/proj/slainte"
+}

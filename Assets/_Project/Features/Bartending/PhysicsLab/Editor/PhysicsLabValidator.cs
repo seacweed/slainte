@@ -130,6 +130,7 @@ namespace Slainte.Bartending.PhysicsLab.Editor
             input.BeginRotation();input.RotateBy(720+135);
             yield return Frames(2);
             Require(Mathf.Abs(bottle.HeldAngle-before-855)<.1f,"Unlimited 855 degree accumulated rotation");
+            Require(gpu.LastSubsteps==Mathf.Clamp(gpu.settings.gpuLiquidSubsteps,1,16),"Fast rotation leaves the fluid integration schedule fixed");
             Vector2 pose=bottle.Position;float a=bottle.Angle;
             input.EndRotation(pose);input.MoveHeld(pose);
             yield return Frames(3);
@@ -152,6 +153,7 @@ namespace Slainte.Bartending.PhysicsLab.Editor
             foreach(PhysicsLabBody item in world.Items.Where(x=>x.kind==LabItemKind.Bottle))
             {item.Teleport(new Vector2(-18+item.Id,1),0);item.pourMlPerSecond=0;}
             yield return Frames(5);
+            Require(gpu.ReadSweepExhaustions()==0,"Pickup/rotation/throw contacts stay within the local sweep budget");
             gpu.ResetSimulation();
             shaker.SetSealed(true);shaker.Teleport(new Vector2(5,1),0);
             float filled=gpu.Fill(shaker,ingredient,40);
@@ -192,6 +194,7 @@ namespace Slainte.Bartending.PhysicsLab.Editor
             float greatestAngle=0;
             for(int i=0;i<50;i++){yield return new WaitForFixedUpdate();greatestAngle=Mathf.Max(greatestAngle,Mathf.Abs(Mathf.DeltaAngle(0,bottle.Angle)));}
             Require(greatestAngle>5,"Tool collision tips a bottle ("+greatestAngle.ToString("F1")+" degrees)");
+            Require(gpu.ReadSweepExhaustions()==0,"Filled vessel rotation, swap and impact contacts stay within the local sweep budget");
             // Open a filled shaker and invert it: particles must leave its ownership.
             gpu.ResetSimulation();shaker.Teleport(new Vector2(5,3),0);shaker.SetSealed(true);
             filled=gpu.Fill(shaker,ingredient,40);yield return Frames(3);

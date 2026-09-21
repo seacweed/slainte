@@ -1,0 +1,8 @@
+PASS: Actual compute GPU: NVIDIA GeForce RTX 3070 / Direct3D11
+A/A repeat RMS position=0, velocity=0
+Remote drag RMS position=0.277184576, velocity=0.601512849; steps=21
+Remote rotation RMS position=0.360767722, velocity=0.571906447; steps=23
+FAIL: Unrelated motion leaves the liquid solver step count fixed
+System.Exception: Unrelated motion leaves the liquid solver step count fixed
+  at IsolationHarness.Require (System.Boolean condition, System.String message) [0x00029] in A:\UnityHub\proj\slainte\PhysicsLabEvidence\HarnessProject\Assets\Editor\IsolationHarness.cs:39
+  at IsolationHarness.Run () [0x000e4] in A:\UnityHub\proj\slainte\PhysicsLabEvidence\HarnessProject\Assets\Editor\IsolationHarness.cs:127

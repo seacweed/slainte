@@ -21,7 +21,7 @@ namespace Slainte.Bartending.PhysicsLab
         private const int ThreadGroupSize = 64, MaximumBoundarySegments = 2048, MaximumVesselTriggers = 256, MaximumAgitators = 8;
         private GraphicsBuffer particleBuffer, compositionA, compositionB, particleColorBuffer, positionDeltaBuffer,
             lambdaBuffer, gridHeadBuffer, gridNextBuffer, freeIndexBuffer, freeCountBuffer, spawnCommandBuffer,
-            ingredientVisualBuffer, boundaryBuffer, triggerBuffer, agitatorBuffer, statisticsBuffer;
+            ingredientVisualBuffer, boundaryBuffer, triggerBuffer, agitatorBuffer, statisticsBuffer, velocitySnapshotBuffer;
         private GpuLiquidSpawnCommand[] spawnCommands;
         private GpuLiquidIngredientVisual[] ingredientVisuals;
         private GpuLiquidBoundarySegment[] boundaryUpload;
@@ -31,7 +31,7 @@ namespace Slainte.Bartending.PhysicsLab
         private float[] snapshotComposition;
         private int resetKernel, resetCompositionKernel, spawnKernel, integrateKernel, clearGridKernel, buildGridKernel,
             lambdaKernel, deltaKernel, applyKernel, velocityKernel, mixKernel, colorKernel, techniqueKernel,
-            translateVesselKernel, suspendVesselKernel, swapKernel, releaseOwnerKernel;
+            translateVesselKernel, suspendVesselKernel, swapKernel, releaseOwnerKernel, sweepKernel, snapshotVelocityKernel;
         private int particleCapacity, maximumIngredients, gridWidth, gridHeight, gridCellCount, pendingSpawnCount, activeParticleCount;
         private bool compositionAIsCurrent = true;
         private readonly Dictionary<ItemDef, int> ingredientIndices = new Dictionary<ItemDef, int>();
@@ -137,15 +137,9 @@ namespace Slainte.Bartending.PhysicsLab
                 DispatchForCount(spawnKernel, pendingSpawnCount);
                 pendingSpawnCount = 0;
             }
-            int steps = Mathf.Max(2, settings.gpuLiquidSubsteps);
-            foreach (PhysicsLabBody body in world.Items)
-            {
-                if (body == null) continue;
-                steps = Mathf.Max(steps, Mathf.CeilToInt(Mathf.Abs(body.StepAngle) / 8f));
-                steps = Mathf.Max(steps, Mathf.CeilToInt(Vector2.Distance(body.PreviousPosition, body.Position) / Mathf.Max(.05f, Radius * 2)));
-            }
-            // Numerical workload guard, not a limit on the accumulated user rotation.
-            steps = Mathf.Clamp(steps, 2, 128);
+            // Fluid time integration is independent of every object's movement and selection state.
+            // Fast boundaries are handled by particle-local continuous collision detection instead.
+            int steps = Mathf.Clamp(settings.gpuLiquidSubsteps, 1, 16);
             LastSubsteps = steps;
             float subDt = dt / steps;
             simulationShader.SetFloat("_DeltaTime", subDt);
@@ -155,6 +149,7 @@ namespace Slainte.Bartending.PhysicsLab
             {
                 UploadGeometry(step / (float)steps, (step + 1f) / steps, subDt);
                 DispatchForCount(integrateKernel, particleCapacity);
+                DispatchForCount(sweepKernel, particleCapacity);
                 for (int iteration = 0; iteration < settings.gpuLiquidSolverIterations; iteration++)
                 {
                     RebuildGrid();
@@ -162,7 +157,9 @@ namespace Slainte.Bartending.PhysicsLab
                     DispatchForCount(deltaKernel, particleCapacity);
                     DispatchForCount(applyKernel, particleCapacity);
                 }
-                RebuildGrid(); DispatchForCount(velocityKernel, particleCapacity); DispatchMix();
+                RebuildGrid();
+                DispatchForCount(snapshotVelocityKernel, particleCapacity);
+                DispatchForCount(velocityKernel, particleCapacity); DispatchMix();
             }
             BindCurrentComposition(colorKernel); DispatchForCount(colorKernel, particleCapacity);
             if (automaticReadback && Time.unscaledTime >= nextReadback) RequestReadback();
@@ -186,11 +183,21 @@ namespace Slainte.Bartending.PhysicsLab
                         if (boundaryCount >= MaximumBoundarySegments) throw new InvalidOperationException("PhysicsLab boundary budget exceeded.");
                         Vector2 la = path[i], lb = path[(i + 1) % path.Length];
                         Vector2 a = item.PointAt(la, position, angle), b = item.PointAt(lb, position, angle);
-                        Vector2 oldA = item.PointAt(la, previousPosition, previousAngle), oldB = item.PointAt(lb, previousPosition, previousAngle);
+                        Vector2 localA = item.PointAt(la, Vector2.zero, 0), localB = item.PointAt(lb, Vector2.zero, 0);
+                        float angleDelta = (angle - previousAngle) * Mathf.Deg2Rad;
+                        Vector2 linearVelocity = (position - previousPosition) / dt;
+                        Vector2 offsetA = a - position, offsetB = b - position;
                         uint edgeFlags = flags | (vesselContour ? 8u : 0u);
                         if (vesselContour && !item.sealedVessel && i == path.Length - 1) edgeFlags |= 16u;
                         boundaryUpload[boundaryCount++] = new GpuLiquidBoundarySegment
-                        { A = a, B = b, VelocityA = (a - oldA) / dt, VelocityB = (b - oldB) / dt, VesselId = item.Id, Flags = edgeFlags };
+                        {
+                            A = a, B = b,
+                            VelocityA = linearVelocity + new Vector2(-offsetA.y, offsetA.x) * (angleDelta / dt),
+                            VelocityB = linearVelocity + new Vector2(-offsetB.y, offsetB.x) * (angleDelta / dt),
+                            VesselId = item.Id, Flags = edgeFlags, LocalA = localA, LocalB = localB,
+                            StartPosition = previousPosition, EndPosition = position,
+                            StartAngle = previousAngle * Mathf.Deg2Rad, AngleDelta = angleDelta
+                        };
                     }
                 }
                 // A virtual rim completes the ownership polygon but never collides with open-vessel fluid.
@@ -297,6 +304,12 @@ namespace Slainte.Bartending.PhysicsLab
             foreach (GpuLiquidParticle particle in snapshotParticles) if (particle.Active != 0 && particle.VesselId == id) volume += particle.VolumeMl;
             return volume;
         }
+        public uint ReadSweepExhaustions()
+        {
+            if (!IsOperational) return 0;
+            var counters = new uint[4]; statisticsBuffer.GetData(counters);
+            return counters[2];
+        }
         private void QueueDraw(ScriptableRenderContext context, Camera camera)
         {
             if (!IsOperational || !renderParticles || drawMaterial == null || camera != outputCamera) return;
@@ -312,11 +325,12 @@ namespace Slainte.Bartending.PhysicsLab
             RenderPipelineManager.beginCameraRendering -= QueueDraw;
             GraphicsBuffer[] buffers = { particleBuffer, compositionA, compositionB, particleColorBuffer, positionDeltaBuffer,
                 lambdaBuffer, gridHeadBuffer, gridNextBuffer, freeIndexBuffer, freeCountBuffer, spawnCommandBuffer,
-                ingredientVisualBuffer, boundaryBuffer, triggerBuffer, agitatorBuffer, statisticsBuffer };
+                ingredientVisualBuffer, boundaryBuffer, triggerBuffer, agitatorBuffer, statisticsBuffer, velocitySnapshotBuffer };
             foreach (GraphicsBuffer buffer in buffers) buffer?.Dispose();
             particleBuffer = compositionA = compositionB = particleColorBuffer = positionDeltaBuffer = null;
             lambdaBuffer = gridHeadBuffer = gridNextBuffer = freeIndexBuffer = freeCountBuffer = spawnCommandBuffer = null;
             ingredientVisualBuffer = boundaryBuffer = triggerBuffer = agitatorBuffer = statisticsBuffer = null;
+            velocitySnapshotBuffer = null;
             if (simulationShader != null) Destroy(simulationShader);
             if (drawMaterial != null) Destroy(drawMaterial);
             ingredients.Clear(); ingredientIndices.Clear();

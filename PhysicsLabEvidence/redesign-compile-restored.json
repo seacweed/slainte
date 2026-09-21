@@ -1,0 +1,6 @@
+{
+  "finished": "2026-09-21T17:26:36.2353771+09:00",
+  "command": "dotnet build Assembly-CSharp-Editor.csproj --ignore-failed-sources -v:minimal",
+  "exitCode": 0,
+  "condition": "Restore missing generated project.assets.json before compilation"
+}

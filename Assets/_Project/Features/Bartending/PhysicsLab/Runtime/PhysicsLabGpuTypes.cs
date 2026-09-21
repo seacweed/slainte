@@ -49,6 +49,12 @@ namespace Slainte.Bartending.PhysicsLab
         public Vector2 VelocityB;
         public uint VesselId;
         public uint Flags;
+        public Vector2 LocalA;
+        public Vector2 LocalB;
+        public Vector2 StartPosition;
+        public Vector2 EndPosition;
+        public float StartAngle;
+        public float AngleDelta;
     }
 
     [StructLayout(LayoutKind.Sequential)]

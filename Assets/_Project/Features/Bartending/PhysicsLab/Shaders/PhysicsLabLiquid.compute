@@ -3,6 +3,8 @@
 #pragma kernel ResetCompositionBuffers
 #pragma kernel SpawnParticles
 #pragma kernel IntegrateParticles
+#pragma kernel SweepBoundaries
+#pragma kernel SnapshotVelocities
 #pragma kernel ClearGrid
 #pragma kernel BuildGrid
 #pragma kernel CalculateDensityLambda
@@ -67,6 +69,12 @@ struct BoundarySegment
     float2 velocityB;
     uint vesselId;
     uint flags;
+    float2 localA;
+    float2 localB;
+    float2 startPosition;
+    float2 endPosition;
+    float startAngle;
+    float angleDelta;
 };
 
 struct VesselTrigger
@@ -99,6 +107,7 @@ RWStructuredBuffer<float> _CompositionRead;
 RWStructuredBuffer<float> _CompositionWrite;
 RWStructuredBuffer<float4> _ParticleColors;
 RWStructuredBuffer<float2> _PositionDeltas;
+RWStructuredBuffer<float2> _VelocitySnapshot;
 RWStructuredBuffer<float> _Lambdas;
 RWStructuredBuffer<int> _GridHeads;
 RWStructuredBuffer<int> _GridNext;
@@ -258,6 +267,118 @@ bool IsBoundaryCompatible(uint particleVesselId, uint boundaryVesselId, uint fla
     // Held objects may overlap, while their contents remain isolated. Free world fluid sees all resting solids.
     if ((flags & 2u) != 0u || IsHeldVessel(particleVesselId)) return false;
     return true;
+}
+
+float2 RotateBoundaryPoint(float2 p, float radians)
+{
+    float s, c;
+    sincos(radians, s, c);
+    return float2(c * p.x - s * p.y, s * p.x + c * p.y);
+}
+
+// Conservative advancement along the actual unwrapped rigid-body trajectory.
+// Only the particle/edge pair is refined; fluid integration, pressure and mixing are never repeated here.
+float2 SweepAgainstBoundary(float2 start, float2 end, BoundarySegment edge)
+{
+    float2 originDelta = edge.endPosition - edge.startPosition;
+    float radius = max(length(edge.localA), length(edge.localB));
+    float2 boundsMin, boundsMax;
+    if (abs(edge.angleDelta) < 1e-6)
+    {
+        boundsMin = min(min(edge.a, edge.b), min(edge.a - originDelta, edge.b - originDelta));
+        boundsMax = max(max(edge.a, edge.b), max(edge.a - originDelta, edge.b - originDelta));
+    }
+    else
+    {
+        boundsMin = min(edge.startPosition, edge.endPosition) - radius;
+        boundsMax = max(edge.startPosition, edge.endPosition) + radius;
+    }
+    if (any(max(start, end) < boundsMin - _ParticleRadius)
+        || any(min(start, end) > boundsMax + _ParticleRadius)) return end;
+    float2 travel = end - start;
+    float speedBound = length(travel - originDelta) + abs(edge.angleDelta) * radius;
+    if (speedBound < 1e-7) return end;
+    float time = 0.0;
+    const float tolerance = 0.0005;
+    // Multiple turns require more geometric refinement for this pair only. This never changes _DeltaTime.
+    int maximumRefinements = min(2048, 128 + (int)ceil(abs(edge.angleDelta) * 64.0));
+    for (int iteration = 0; iteration < maximumRefinements; ++iteration)
+    {
+        float angle = edge.startAngle + edge.angleDelta * time;
+        float2 origin = edge.startPosition + originDelta * time;
+        float2 a = origin + RotateBoundaryPoint(edge.localA, angle);
+        float2 b = origin + RotateBoundaryPoint(edge.localB, angle);
+        float2 p = lerp(start, end, time);
+        float segmentT;
+        float2 closest = ClosestPointOnSegment(p, a, b, segmentT);
+        float2 difference = p - closest;
+        float distance = length(difference);
+        if (distance <= _ParticleRadius + tolerance)
+        {
+            float2 tangent = b - a;
+            float2 normal = distance > 1e-7 ? difference / distance
+                : normalize(float2(-tangent.y, tangent.x));
+            float2 localContact = lerp(edge.localA, edge.localB, segmentT);
+            float2 rotatedContact = closest - origin;
+            float2 edgeTravel = originDelta + edge.angleDelta * float2(-rotatedContact.y, rotatedContact.x);
+            if (dot(travel - edgeTravel, normal) < -1e-7)
+            {
+                float2 finalContact = edge.endPosition + RotateBoundaryPoint(localContact, edge.startAngle + edge.angleDelta);
+                float2 finalNormal = RotateBoundaryPoint(normal, edge.angleDelta * (1.0 - time));
+                float penetration = _ParticleRadius - dot(end - finalContact, finalNormal);
+                InterlockedMax(_Statistics[3], (uint)(iteration + 1));
+                return end + finalNormal * max(0.0, penetration);
+            }
+            // A separating, translating edge cannot turn back into the particle. A rotating edge can.
+            if (abs(edge.angleDelta) < 1e-6)
+            {
+                InterlockedMax(_Statistics[3], (uint)(iteration + 1));
+                return end;
+            }
+            time += min(0.05, 0.04 / abs(edge.angleDelta));
+        }
+        else time += max(1e-6, (distance - _ParticleRadius) / speedBound * 0.9);
+        if (time >= 1.0)
+        {
+            InterlockedMax(_Statistics[3], (uint)(iteration + 1));
+            return end;
+        }
+    }
+    // Report bounded-work exhaustion rather than silently treating it as a successful sweep.
+    InterlockedAdd(_Statistics[2], 1u);
+    InterlockedMax(_Statistics[3], (uint)maximumRefinements);
+    return end;
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void SweepBoundaries(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint index = dispatchId.x;
+    if (index >= (uint)_ParticleCapacity) return;
+    LiquidParticle particle = _Particles[index];
+    if (particle.active == 0u || (particle.stateFlags & STATE_SUSPENDED) != 0u) return;
+    float2 position = particle.position;
+    for (int i = 0; i < _BoundaryCount; ++i)
+    {
+        BoundarySegment edge = _Boundaries[i];
+        if (!IsBoundaryCompatible(particle.vesselId, edge.vesselId, edge.flags)) continue;
+        position = SweepAgainstBoundary(particle.previousPosition, position, edge);
+    }
+    particle.position = position;
+    _Particles[index] = particle;
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void SnapshotVelocities(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint index = dispatchId.x;
+    if (index < (uint)_ParticleCapacity) _VelocitySnapshot[index] = _Particles[index].velocity;
+}
+
+// Preserve the existing coefficients at the original 0.01-second reference step.
+float TimeScaledBlend(float referenceBlend)
+{
+    return 1.0 - pow(max(0.0, 1.0 - saturate(referenceBlend)), _DeltaTime / 0.01);
 }
 
 bool TryFindNearestCompatibleBoundary(
@@ -876,6 +997,24 @@ void ApplyDeltaAndBoundaries(uint3 dispatchId : SV_DispatchThreadID)
         float2 difference = position - closest;
         float distance = length(difference);
 
+        // The sweep already handled wall motion. Keep each pressure projection on its original
+        // side of the current edge instead of replaying the whole moving-wall trajectory per iteration.
+        float2 edgeDirection = boundary.b - boundary.a;
+        float previousSide = Cross2D(edgeDirection, particle.position - boundary.a);
+        float currentSide = Cross2D(edgeDirection, position - boundary.a);
+        if (previousSide * currentSide < 0.0 && segmentT > 0.0 && segmentT < 1.0)
+        {
+            float2 normal = normalize(float2(-edgeDirection.y, edgeDirection.x));
+            normal *= previousSide >= 0.0 ? 1.0 : -1.0;
+            float score = _ParticleRadius + distance;
+            if (score > bestCorrectionScore)
+            {
+                bestCorrectionScore = score;
+                bestCorrectedPosition = closest + normal * _ParticleRadius;
+            }
+            continue;
+        }
+
         if (distance < _ParticleRadius)
         {
             float2 tangent = boundary.b - boundary.a;
@@ -891,36 +1030,6 @@ void ApplyDeltaAndBoundaries(uint3 dispatchId : SV_DispatchThreadID)
             continue;
         }
 
-        float2 previousA = boundary.a - boundary.velocityA * _DeltaTime;
-        float2 previousB = boundary.b - boundary.velocityB * _DeltaTime;
-        float previousSide = Cross2D(
-            previousB - previousA,
-            particle.previousPosition - previousA);
-        float currentSide = Cross2D(boundary.b - boundary.a, position - boundary.a);
-        if (previousSide * currentSide < 0.0)
-        {
-            float crossingT;
-            float2 crossingClosest = ClosestPointOnSegment(
-                position,
-                boundary.a,
-                boundary.b,
-                crossingT);
-            if (crossingT > 0.0 && crossingT < 1.0)
-            {
-                float2 normal = normalize(float2(
-                    -(boundary.b - boundary.a).y,
-                    (boundary.b - boundary.a).x));
-                normal *= previousSide >= 0.0 ? 1.0 : -1.0;
-                float correctionScore = _ParticleRadius
-                    + length(position - crossingClosest);
-                if (correctionScore > bestCorrectionScore)
-                {
-                    bestCorrectionScore = correctionScore;
-                    bestCorrectedPosition = crossingClosest
-                        + normal * _ParticleRadius;
-                }
-            }
-        }
     }
 
     if (bestCorrectionScore >= 0.0)
@@ -995,7 +1104,8 @@ void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
                         && distanceSquared < _SmoothingRadius * _SmoothingRadius)
                     {
                         float weight = KernelPoly6(distanceSquared);
-                        neighborVelocity += neighbor.velocity * weight;
+                        float2 previousNeighborVelocity = _VelocitySnapshot[neighborIndex];
+                        neighborVelocity += previousNeighborVelocity * weight;
                         neighborWeight += weight;
 
                         float distance = sqrt(distanceSquared);
@@ -1007,7 +1117,7 @@ void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
                             float closingSpeed = max(
                                 0.0,
                                 -dot(
-                                    velocity - neighbor.velocity,
+                                    velocity - previousNeighborVelocity,
                                     collisionNormal));
                             // Tangential splash transfer is useful for an open
                             // pour, but repeatedly adds energy inside a sealed
@@ -1047,13 +1157,13 @@ void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
         velocity = lerp(
             velocity,
             neighborVelocity / neighborWeight,
-            saturate(_Viscosity));
+            TimeScaledBlend(_Viscosity));
     }
     if (splashWeight > 1e-5)
     {
         velocity += splashVelocity
             / splashWeight
-            * saturate(_SplashTransfer);
+            * TimeScaledBlend(_SplashTransfer);
     }
 
     float2 boundaryPoint;
@@ -1110,7 +1220,7 @@ void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
         float2 tangentVelocity = relativeVelocity
             - retainedNormalSpeed * boundaryNormal;
         relativeVelocity = retainedNormalSpeed * boundaryNormal
-            + tangentVelocity * (1.0 - saturate(_WallFriction));
+            + tangentVelocity * (1.0 - TimeScaledBlend(_WallFriction));
         velocity = boundaryVelocity + relativeVelocity;
     }
 
@@ -1131,7 +1241,7 @@ void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
         velocity = boundaryVelocity + relativeVelocity;
     }
 
-    velocity *= 1.0 - saturate(_VelocityDamping);
+    velocity *= 1.0 - TimeScaledBlend(_VelocityDamping);
     float speed = length(velocity);
     if (speed > _MaximumSpeed)
         velocity *= _MaximumSpeed / speed;

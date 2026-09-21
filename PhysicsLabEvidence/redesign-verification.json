@@ -1,0 +1,42 @@
+{
+  "sourceBaselineCommit": "20826b0",
+  "tests": [
+    {
+      "attempt": "13-final-authored-scene",
+      "passed": 38,
+      "skipped": 2,
+      "exitCode": 0
+    },
+    {
+      "attempt": "14-final-isolation-and-damping",
+      "passed": 10,
+      "skipped": 0,
+      "exitCode": 0
+    }
+  ],
+  "originalProjectCSharpCompileExitCode": 0,
+  "preexistingProjectSettingsSha256": "04cbf9e21ba4556e72dad9c729e669e764ea128ec908f29933a329ded3c8f2be",
+  "unrelatedTrackedChanges": [
+    "ProjectSettings/ProjectSettings.asset"
+  ],
+  "productionSourceCopiesMatch": true,
+  "originalEditorNotStoppedOrRestarted": true,
+  "limitations": [
+    "Legacy-system presence checks skipped in separate scene project",
+    "Unity SearchDatabase startup indexing exception remains recorded in scene harness Editor.log",
+    "No gameplay FPS or human mouse-feel claim"
+  ],
+  "modifiedRuntimeSha256": {
+    "Assets/_Project/Features/Bartending/PhysicsLab/Editor/PhysicsLabBuilder.cs": "56f878dde9d25031a76d19a8039d4ba9d98642a1f08cd354f110e4456d598247",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Editor/PhysicsLabValidator.cs": "5a375e54bf731ec426f6833ef2fc8ad493ab0e1425a054f2a42d707e048789e4",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabBody.cs": "199cc9e259e2848524e5ad13cb4559afd9a4fb21469d0c5189bad12a3084753c",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabGpuLiquid.Buffers.cs": "4897e93bf3206e514dcf9ff4541885af70eca7aa0b64dc217e3b0533c598edcf",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabGpuLiquid.cs": "802f60e43db49769cc7e1d10feecca39d2a662c0cd5ab4929b86a3a7d0d69474",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabGpuTypes.cs": "9ce159629d4ec454b814d375677b1893803f15e25b8eb2063d65dc35882a2e5b",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabInteractor.cs": "add29285465e2bb47eab3ea3b64ae54330e65c1de7be6816ad1034b0aa41cf17",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabLiquidSettings.cs": "b977919c101e0929fd1cbd07e37d591ec075d7c4a84eb1f6cca43bc774f7c5c8",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabWorld.cs": "4f4864e67feb8d2d4bcd626a7290f7ca976d2ecee1bda369c7a2c17d9f38a07f",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Shaders/PhysicsLabLiquid.compute": "e97b9fdc5877c6b58f743f0f1ce6a07c478b298f6c1e1c344b418f01b1310438",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Shaders/PhysicsLabLiquid.shader": "d06229cb1a538928eb6cae3f787cfe407de5fa4386ab49d541dedc19504ffe2a"
+  }
+}

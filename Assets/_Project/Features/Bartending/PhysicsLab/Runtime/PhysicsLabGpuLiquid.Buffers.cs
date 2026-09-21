@@ -13,6 +13,8 @@ namespace Slainte.Bartending.PhysicsLab
             resetCompositionKernel = simulationShader.FindKernel("ResetCompositionBuffers");
             spawnKernel = simulationShader.FindKernel("SpawnParticles");
             integrateKernel = simulationShader.FindKernel("IntegrateParticles");
+            sweepKernel = simulationShader.FindKernel("SweepBoundaries");
+            snapshotVelocityKernel = simulationShader.FindKernel("SnapshotVelocities");
             clearGridKernel = simulationShader.FindKernel("ClearGrid");
             buildGridKernel = simulationShader.FindKernel("BuildGrid");
             lambdaKernel = simulationShader.FindKernel("CalculateDensityLambda");
@@ -39,6 +41,7 @@ namespace Slainte.Bartending.PhysicsLab
                 sizeof(float));
             particleColorBuffer = CreateStructured<Vector4>(particleCapacity);
             positionDeltaBuffer = CreateStructured<Vector2>(particleCapacity);
+            velocitySnapshotBuffer = CreateStructured<Vector2>(particleCapacity);
             lambdaBuffer = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
                 particleCapacity,
@@ -166,6 +169,8 @@ namespace Slainte.Bartending.PhysicsLab
             BindCommonBuffers(resetCompositionKernel);
             BindCommonBuffers(spawnKernel);
             BindCommonBuffers(integrateKernel);
+            BindCommonBuffers(sweepKernel);
+            BindCommonBuffers(snapshotVelocityKernel);
             BindCommonBuffers(buildGridKernel);
             BindCommonBuffers(lambdaKernel);
             BindCommonBuffers(deltaKernel);
@@ -186,6 +191,7 @@ namespace Slainte.Bartending.PhysicsLab
             simulationShader.SetBuffer(kernel, "_CompositionB", compositionB);
             simulationShader.SetBuffer(kernel, "_ParticleColors", particleColorBuffer);
             simulationShader.SetBuffer(kernel, "_PositionDeltas", positionDeltaBuffer);
+            simulationShader.SetBuffer(kernel, "_VelocitySnapshot", velocitySnapshotBuffer);
             simulationShader.SetBuffer(kernel, "_Lambdas", lambdaBuffer);
             simulationShader.SetBuffer(kernel, "_GridHeads", gridHeadBuffer);
             simulationShader.SetBuffer(kernel, "_GridNext", gridNextBuffer);
