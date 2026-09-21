@@ -1,0 +1,15 @@
+{
+  "workingDirectory": "A:/UnityHub/proj/slainte",
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/PhysicsLabEvidence/SceneHarnessProject",
+    "-executeMethod",
+    "Slainte.Bartending.PhysicsLab.Editor.PhysicsLabValidator.Begin",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\PhysicsLabEvidence\\22-birth-timing-and-stream-contracts\\Editor.log"
+  ],
+  "started": "2026-09-21T19:21:14.3006627+09:00"
+}

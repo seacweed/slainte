@@ -1,0 +1,15 @@
+<Project>
+  <!-- Include new partials without editing Unity's generated IDE project files. -->
+  <Target Name="IncludePhysicsLabPartials" BeforeTargets="CoreCompile">
+    <ItemGroup Condition="'$(MSBuildProjectName)' == 'Assembly-CSharp'">
+      <Compile Remove="Assets\_Project\Features\Bartending\PhysicsLab\Runtime\*.cs" />
+      <Compile Include="Assets\_Project\Features\Bartending\PhysicsLab\Runtime\*.cs" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(MSBuildProjectName)' == 'Assembly-CSharp-Editor'">
+      <Compile Remove="Assets\_Project\Features\Bartending\PhysicsLab\Editor\*.cs" />
+      <Compile Include="Assets\_Project\Features\Bartending\PhysicsLab\Editor\*.cs" />
+    </ItemGroup>
+    <Message Importance="high" Condition="'$(MSBuildProjectName)' == 'Assembly-CSharp' Or '$(MSBuildProjectName)' == 'Assembly-CSharp-Editor'"
+             Text="Compiling all PhysicsLab sources, including pouring and stream partials in $(MSBuildProjectName)." />
+  </Target>
+</Project>

@@ -50,6 +50,7 @@ namespace Slainte.Bartending.PhysicsLab.Editor
             settings.surfaceAccumulationShader = AssetDatabase.LoadAssetAtPath<Shader>("Assets/_Project/Features/Bartending/Infrastructure/GpuFluid/Graphics/GpuLiquidAccumulation.shader");
             settings.surfaceCompositeShader = AssetDatabase.LoadAssetAtPath<Shader>("Assets/_Project/Features/Bartending/Infrastructure/MetaballFluid/Graphics/LiquidMetaballComposite.shader");
             settings.surfaceDisplayShader = AssetDatabase.LoadAssetAtPath<Shader>(Root + "/Shaders/PhysicsLabLiquidSurface.shader");
+            settings.streamAccumulationShader = AssetDatabase.LoadAssetAtPath<Shader>(Root + "/Shaders/PhysicsLabStreamAccumulation.shader");
             EditorUtility.SetDirty(settings);
             prefabs.Clear();
             foreach (string guid in AssetDatabase.FindAssets("t:ItemDef", new[] { "Assets/Resources/Bartending/Items" }))
@@ -174,6 +175,8 @@ namespace Slainte.Bartending.PhysicsLab.Editor
             body.mouthLocal = minimum + Vector2.Scale(size, item.liquidSpawnNormalized)
                 + Vector2.up * (item.liquidSpawnOutwardPixels / sprite.pixelsPerUnit * scale);
             body.rotationPivotLocal = Vector2.Lerp(rect.center, body.mouthLocal, .65f);
+            body.mouthLipLocal = minimum + Vector2.Scale(size, item.liquidSpawnNormalized);
+            body.overrideMouthLip = true;
             Save(body, "Bottle_" + item.id);
         }
         private static void CreateGlass(GlassDef definition)

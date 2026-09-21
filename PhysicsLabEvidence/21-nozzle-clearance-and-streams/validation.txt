@@ -1,0 +1,69 @@
+PASS: Isolated world exists
+PASS: GPU compute active: NVIDIA GeForce RTX 3070 / Direct3D11
+SKIP: Legacy-system presence is not tested in the isolated scene-copy project.
+SKIP: Legacy-system presence is not tested in the isolated scene-copy project.
+PASS: All bodies share one layer
+PASS: All resting bodies are Dynamic
+PASS: Every item rests above the physical floor
+PASS: Pickup resets angle to zero without moving: Bottle_item_1003
+PASS: Pickup preserves the pointer grab offset: Bottle_item_1003
+PASS: Pickup resets angle to zero without moving: Glass_highball
+PASS: Pickup preserves the pointer grab offset: Glass_highball
+PASS: Pickup resets angle to zero without moving: Bottle_item_1001
+PASS: Pickup preserves the pointer grab offset: Bottle_item_1001
+PASS: Pickup resets angle to zero without moving: Spoon
+PASS: Pickup preserves the pointer grab offset: Spoon
+PASS: Pickup resets angle to zero without moving: Shaker
+PASS: Pickup preserves the pointer grab offset: Shaker
+PASS: Pickup resets angle to zero without moving: Glass_hurricane
+PASS: Pickup preserves the pointer grab offset: Glass_hurricane
+PASS: Pickup resets angle to zero without moving: Jigger
+PASS: Pickup preserves the pointer grab offset: Jigger
+PASS: Pickup resets angle to zero without moving: Bottle_item_1002
+PASS: Pickup preserves the pointer grab offset: Bottle_item_1002
+PASS: Pickup resets angle to zero without moving: IceBucket
+PASS: Pickup preserves the pointer grab offset: IceBucket
+PASS: Metaball surface uses the existing accumulation and composite shaders
+PASS: Surface comparison uses the same two GPU particles
+PASS: Metaballs connect the gap between separate particle discs (0 -> 178)
+PASS: Thin contour highlight contributes visible light (max red delta 65)
+PASS: Surface textures follow camera target resolution
+PASS: Rendering mode, highlight and resolution changes leave GPU physics and ml untouched
+PASS: Airborne particle stretches along velocity while narrowing across it
+PASS: Surface UV orientation keeps liquid at its world position
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1001
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1001
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1002
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1002
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1003
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1003
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1004
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1004
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1005
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1005
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1006
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1006
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1007
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1007
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1008
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1008
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1009
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1009
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1010
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1010
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1011
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1011
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1012
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1012
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1013
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1013
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1014
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1014
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1015
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1015
+PASS: All 15 bottle profiles checked without changing shared ItemDefs
+System.Exception: Birth offsets integrate only 15 ms and 5 ms of a 20 ms tick
+  at Slainte.Bartending.PhysicsLab.Editor.PhysicsLabValidationRunner.Require (System.Boolean condition, System.String message) [0x00020] in A:\UnityHub\proj\slainte\PhysicsLabEvidence\SceneHarnessProject\Assets\_Project\Features\Bartending\PhysicsLab\Editor\PhysicsLabValidator.cs:431
+  at Slainte.Bartending.PhysicsLab.Editor.PhysicsLabValidationRunner.ValidatePouring () [0x003e0] in A:\UnityHub\proj\slainte\PhysicsLabEvidence\SceneHarnessProject\Assets\_Project\Features\Bartending\PhysicsLab\Editor\PhysicsLabValidator.Pouring.cs:49
+  at Slainte.Bartending.PhysicsLab.Editor.PhysicsLabValidationRunner+<Run>d__13.MoveNext () [0x00423] in A:\UnityHub\proj\slainte\PhysicsLabEvidence\SceneHarnessProject\Assets\_Project\Features\Bartending\PhysicsLab\Editor\PhysicsLabValidator.cs:145
+  at Slainte.Bartending.PhysicsLab.Editor.PhysicsLabValidationRunner+<Guard>d__10.MoveNext () [0x0002d] in A:\UnityHub\proj\slainte\PhysicsLabEvidence\SceneHarnessProject\Assets\_Project\Features\Bartending\PhysicsLab\Editor\PhysicsLabValidator.cs:92

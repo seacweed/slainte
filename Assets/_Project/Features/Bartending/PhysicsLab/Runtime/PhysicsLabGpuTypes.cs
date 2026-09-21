@@ -30,6 +30,30 @@ namespace Slainte.Bartending.PhysicsLab
         public uint StateFlags;
     }
 
+    // Sidecars preserve the shared particle layout consumed by the existing accumulation shader.
+    [StructLayout(LayoutKind.Sequential)]
+    public struct GpuLiquidStreamParticle
+    {
+        public uint Token, PreviousToken, StreamId, SourceId;
+        public float Delay, StepDt, StartFraction, BirthTime;
+        public float Radius;
+        public uint Detached, Pending, Padding;
+    }
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct GpuLiquidStreamHead
+    {
+        public Vector2 Lip;
+        public uint Token, StreamId, SourceId;
+        public float Radius;
+    }
+    [StructLayout(LayoutKind.Sequential)]
+    public struct GpuLiquidStreamSegment
+    {
+        public Vector2 A, B;
+        public float RadiusA, RadiusB;
+        public uint Active, ParticleIndex;
+    }
+
     [StructLayout(LayoutKind.Sequential)]
     internal struct GpuLiquidIngredientVisual
     {

@@ -40,6 +40,9 @@ namespace Slainte.Bartending.PhysicsLab
         public Shader surfaceAccumulationShader;
         public Shader surfaceCompositeShader;
         public Shader surfaceDisplayShader;
+        public Shader streamAccumulationShader;
+        [Min(.01f)] public float streamMaximumTimeGap = .075f;
+        [Min(.05f)] public float streamMaximumLength = .65f;
         [Range(.25f, 1f)] public float surfaceResolutionScale = 1;
         [Range(1f, 2f)] public float containedRenderRadius = 1.45f;
         [Range(1f, 2f)] public float airborneRenderRadius = 1.6f;

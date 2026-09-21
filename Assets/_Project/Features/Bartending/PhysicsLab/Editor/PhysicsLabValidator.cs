@@ -66,7 +66,7 @@ namespace Slainte.Bartending.PhysicsLab.Editor
         }
     }
 
-    public sealed class PhysicsLabValidationRunner:MonoBehaviour
+    public sealed partial class PhysicsLabValidationRunner:MonoBehaviour
     {
         private readonly List<string> results=new List<string>();
         private readonly List<float> frameTimes=new List<float>();
@@ -84,14 +84,19 @@ namespace Slainte.Bartending.PhysicsLab.Editor
         }
         private IEnumerator Guard()
         {
-            IEnumerator run=Run();
-            while(true)
+            var runs=new Stack<IEnumerator>();runs.Push(Run());
+            while(runs.Count>0)
             {
                 bool more;
                 object current=null;
-                try{more=run.MoveNext();if(more)current=run.Current;}
-                catch(Exception ex){Finish(false,ex.ToString());yield break;}
-                if(!more)break;
+                try{more=runs.Peek().MoveNext();if(more)current=runs.Peek().Current;}
+                catch(Exception ex)
+                {
+                    while(runs.Count>0)(runs.Pop() as IDisposable)?.Dispose();
+                    Finish(false,ex.ToString());yield break;
+                }
+                if(!more){(runs.Pop() as IDisposable)?.Dispose();continue;}
+                if(current is IEnumerator nested){runs.Push(nested);continue;}
                 yield return current;
             }
             Finish(true,"All runtime checks passed.");
@@ -142,6 +147,7 @@ namespace Slainte.Bartending.PhysicsLab.Editor
             CaptureCamera(Path.Combine(PhysicsLabValidator.EvidenceDirectory,"initial-particles.png"));
             gpu.useSurfaceRendering=true;
             ValidateSurfaceRendering();
+            ValidatePouring();
             PhysicsLabBody bottle=world.Items.First(x=>x.kind==LabItemKind.Bottle);
             PhysicsLabBody glass=world.Items.First(x=>x.kind==LabItemKind.Glass);
             PhysicsLabBody shaker=world.Items.First(x=>x.kind==LabItemKind.Shaker);
@@ -343,6 +349,7 @@ namespace Slainte.Bartending.PhysicsLab.Editor
             Require(gpu.IsOperational && world.Items.Count==9 && world.Items.All(x=>x.Body.bodyType==RigidbodyType2D.Dynamic),"World re-enable rebuilds GPU resources and item registration");
             CaptureCamera(Path.Combine(PhysicsLabValidator.EvidenceDirectory,"surface-after-reenable.png"));
             Require(gpu.SurfaceRenderingReady,"World re-enable recreates surface textures and renderer");
+            yield return CapturePourSequence();
         }
 
         private void ValidateSurfaceRendering()

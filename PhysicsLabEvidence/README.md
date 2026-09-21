@@ -2,6 +2,8 @@
 
 ## 최종 상태
 
+병 방출 개선 최종 실행은 `27-pour-spacing-visual-validation`의 126개 PASS/2개 SKIP/종료 0과 `28-final-pour-isolation`의 10개 PASS/종료 0이다. 원거리 위치·속도 차이는 0, 고정 서브스텝은 2회다. 원본 C# 빌드는 오류 0개/기존 경고 8개다. 실제 GPU 입자의 방출 시각, 보존량, 연결 조건과 픽셀 출력을 검사하고, 같은 상태의 메타볼/연속 물줄기 화면과 이동·중단 화면을 보존했다. GPU 마커 시간은 배치 에디터에서 얻지 못했으며 성능 측정 완료나 FPS 개선으로 간주하지 않는다.
+
 2026-09-21 표면 표시: `18-metaball-surface/validation.txt`는 75개 PASS/2개 SKIP, Unity 종료 0이다. 기존 누적/합성 셰이더를 재사용한 메타볼 연결, 공중 입자 늘어남과 얇은 하이라이트를 실제 카메라 픽셀로 검사했다. 렌더링 전후 GPU 위치·속도·소유권·ml 불변, 해상도 변경, 자원 재생성과 기존 조작/액체 회귀도 통과했다. 원본 C# 빌드는 오류 0개/기존 경고 8개다. 새 partial을 포함하는 `IncludeSurface.targets`를 빌드에만 전달했으며 Unity가 생성한 csproj는 수정하지 않았다.
 
 2026-09-21 재설계: `13-final-authored-scene/validation.txt`는 실제 씬 복사본의 검사 38개 통과/기존 시스템 존재 검사 2개 SKIP, `14-final-isolation-and-damping/validation.txt`는 실제 GPU 대조 검사 10개 통과다. 두 Unity 프로세스 종료 코드는 0이다. 원본 C# 프로젝트 빌드는 `redesign-compile-restored.json`에서 종료 0을 확인한다.
@@ -31,6 +33,16 @@ Unity 6000.3.5f2, NVIDIA RTX 3070, Direct3D11에서 실행했다. `initial-sandb
 | 16-final-upright-controls | 종료 0. 즉시 복귀 중간 버전. 회전 중 내려놓기가 취소될 때 포인터 오프셋도 보정, 63개 PASS/2개 SKIP. 원본 C# 빌드 오류 0개 |
 | 17-animated-return-and-cursor | 종료 0. 0.15초 제자리 복귀·커서 목표 추적·복귀 중 재조작을 포함한 최종 버전, 66개 PASS/2개 SKIP. 원본 C# 빌드 오류 0개 |
 | 18-metaball-surface | 종료 0. 표면 연결·얇은 하이라이트·속도 방향 늘어남·렌더링의 물리 불변성을 포함해 75개 PASS/2개 SKIP. 원본 C# 빌드 오류 0개 |
+| 19-pour-stream-integration | 종료 0. 방출 시간 및 물줄기 초기 구현의 기존 회귀 75개 PASS/2개 SKIP |
+| 20-pour-contract-validation | 종료 1. 병 1001의 고정 입구 오프셋이 실제 콜라이더와 충분한 간격을 확보하지 못함. 확대 박스 경계 밖으로 생성점 보정 |
+| 21-nozzle-clearance-and-streams | 종료 1. 병 15종 통과 후 방출 시각 검사의 예상값에 기존 속도 감쇠가 빠진 것을 확인. 분석 기대값 보정 |
+| 22-birth-timing-and-stream-contracts | 종료 1. 잡힌 도구를 물리 호환성 필터가 제외해 연결 표면도 관통함. 시각적 차단과 기존 물리 정책을 분리하고 실제 충돌 fixture는 놓인 고체로 보정 |
+| 23-stream-physics-isolation | 종료 0. 원거리 위치·속도 차이 0과 기존 접촉·감쇠 검사 10개 PASS |
+| 24-complete-pour-validation | 종료 1. 두 바퀴를 20ms에 도는 fixture에서 각 기울임 구간이 0.5ml 미만이어서 방출이 없었음. 해당 검사 유량을 200ml/s로 보정 |
+| 25-pour-surface-and-regression | 종료 -1. 이전 회귀가 유량을 0으로 만든 상태를 촬영 fixture가 재사용. 중첩 IEnumerator 예외가 Guard 밖에서 발생해 실패 보고가 지연되어, 식별한 테스트 PID만 종료하고 로그 보존 |
+| 26-pour-final-validation | 종료 0. 126개 PASS/2개 SKIP, 원본 빌드 오류 0. 실제 화면에서 꺾임·옆 튐이 남아 출구 간격 추가 보정 |
+| 27-pour-spacing-visual-validation | 종료 0. 출구 속도에 기존 Fill 간격을 반영한 최종 코드, 126개 PASS/2개 SKIP. 같은 상태 전후 및 이동·중단 캡처 확인, 원본 빌드 오류 0 |
+| 28-final-pour-isolation | 종료 0. 최종 소스의 원거리 위치·속도 차이 0, 고정 2회 적분과 기존 접촉·감쇠 대조 검사 10개 PASS |
 
 12/13의 새 복사 프로젝트에서 UnityEditor.Search.SearchDatabase의 초기 인덱서 ArgumentOutOfRangeException도 기록되었다. 런타임 검증은 끝까지 실행되어 보고서와 종료 코드가 확보됐지만, 에디터 로그 전체가 무오류라는 뜻은 아니다. 원본 프로젝트나 사용자의 Unity를 종료/재실행하지 않았다.
 

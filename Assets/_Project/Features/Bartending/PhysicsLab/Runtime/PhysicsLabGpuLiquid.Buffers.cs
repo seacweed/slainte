@@ -30,6 +30,7 @@ namespace Slainte.Bartending.PhysicsLab
 
         private void AllocateBuffers()
         {
+            AllocateStreamBuffers();
             particleBuffer = CreateStructured<GpuLiquidParticle>(particleCapacity);
             compositionA = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
@@ -181,11 +182,14 @@ namespace Slainte.Bartending.PhysicsLab
             BindCommonBuffers(techniqueKernel);
             BindCommonBuffers(translateVesselKernel);
             BindCommonBuffers(suspendVesselKernel);
+            BindCommonBuffers(streamSurfaceKernel);
+            BindStreamBuffers(resetStreamLookupKernel);
             simulationShader.SetBuffer(clearGridKernel, "_GridHeads", gridHeadBuffer);
         }
 
         private void BindCommonBuffers(int kernel)
         {
+            BindStreamBuffers(kernel);
             simulationShader.SetBuffer(kernel, "_Particles", particleBuffer);
             simulationShader.SetBuffer(kernel, "_CompositionA", compositionA);
             simulationShader.SetBuffer(kernel, "_CompositionB", compositionB);
@@ -207,11 +211,13 @@ namespace Slainte.Bartending.PhysicsLab
 
         private void DispatchReset()
         {
+            simulationTime = 0;
             compositionAIsCurrent = true;
             pendingSpawnCount = 0;
             activeParticleCount = 0;
             DispatchForCount(resetKernel, particleCapacity);
             DispatchForCount(resetCompositionKernel, particleCapacity);
+            DispatchForCount(resetStreamLookupKernel, particleCapacity * 2);
         }
 
         private void RebuildGrid()

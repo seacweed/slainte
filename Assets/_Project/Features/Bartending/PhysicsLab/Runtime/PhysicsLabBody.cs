@@ -9,7 +9,7 @@ namespace Slainte.Bartending.PhysicsLab
 
     /// <summary>Opt-in, slot-free body. No legacy controllers or global registries.</summary>
     [DisallowMultipleComponent, RequireComponent(typeof(Rigidbody2D))]
-    public sealed class PhysicsLabBody : MonoBehaviour
+    public sealed partial class PhysicsLabBody : MonoBehaviour
     {
         public LabItemKind kind;
         public string displayName;
@@ -76,6 +76,7 @@ namespace Slainte.Bartending.PhysicsLab
 
         private void OnDisable()
         {
+            EndPourStream();
             if (IsHeld) SetHeld(false);
             if (World != null) World.Unregister(this);
             World = null;
@@ -143,6 +144,7 @@ namespace Slainte.Bartending.PhysicsLab
 
         public void Teleport(Vector2 position, float angle)
         {
+            EndPourStream();
             Body.position = position;
             Body.rotation = angle;
             Body.linearVelocity = Vector2.zero;
@@ -154,6 +156,7 @@ namespace Slainte.Bartending.PhysicsLab
 
         public void ResetSupply(float volume, int ice)
         {
+            EndPourStream();
             remainingMl = volume; iceStock = ice; pourCredit = 0; iceTimer = 0;
         }
 
@@ -227,24 +230,7 @@ namespace Slainte.Bartending.PhysicsLab
             if (World == null) return;
             if (kind == LabItemKind.Bottle && World.Liquid != null && World.Liquid.IsOperational)
             {
-                float tilt = PourTilt;
-                if (tilt < pourStartAngle || remainingMl <= 0) { pourCredit = 0; return; }
-                float flow = Mathf.Lerp(.65f, 1, Mathf.InverseLerp(pourStartAngle, fullPourAngle, tilt));
-                pourCredit += dt * pourMlPerSecond * flow;
-                Vector2 direction = Rotate(Vector2.up, Angle);
-                Vector2 mouth = LocalToWorld(mouthLocal);
-                Vector2 velocity = MouthVelocity(dt) + direction * exitSpeed * flow;
-                int count = 0;
-                while (remainingMl > 0 && count++ < 64)
-                {
-                    float volume = Mathf.Min(World.Liquid.ParticleVolumeMl, remainingMl);
-                    if (pourCredit < volume) break;
-                    // Place the nozzle outside the body's solid boundary.
-                    if (!World.Liquid.TryEmit(mouth + direction * World.Liquid.Radius * 1.5f,
-                            velocity, ingredient, volume, 0)) break;
-                    remainingMl -= volume;
-                    pourCredit -= volume;
-                }
+                EmitBottle(dt);
             }
             if (kind == LabItemKind.IceBucket && icePrefab != null && iceStock > 0)
             {

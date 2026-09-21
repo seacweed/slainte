@@ -18,8 +18,12 @@
 #pragma kernel SetVesselSuspended
 #pragma kernel SwapContents
 #pragma kernel ReleaseOwner
+#pragma kernel ResetStreamLookup
+#pragma kernel BuildStreamSurface
 
 #pragma target 5.0
+
+#include "PhysicsLabStreamTypes.hlsl"
 
 #define THREAD_GROUP_SIZE 64
 #define STATE_STIR_ATTEMPTED 1u
@@ -119,6 +123,14 @@ StructuredBuffer<BoundarySegment> _Boundaries;
 StructuredBuffer<VesselTrigger> _VesselTriggers;
 StructuredBuffer<Agitator> _Agitators;
 RWStructuredBuffer<uint> _Statistics;
+RWStructuredBuffer<StreamParticle> _StreamParticles;
+StructuredBuffer<StreamParticle> _SpawnStreams;
+RWStructuredBuffer<uint2> _StreamLookup;
+StructuredBuffer<StreamHead> _StreamHeads;
+RWStructuredBuffer<StreamSegment> _StreamSegments;
+RWStructuredBuffer<LiquidParticle> _SurfaceParticles;
+int _StreamHeadCount, _StreamRenderingEnabled;
+float _SimulationTime, _StreamMaximumGap, _StreamMaximumLength;
 
 int _ParticleCapacity;
 int _MaximumIngredients;
@@ -356,13 +368,19 @@ void SweepBoundaries(uint3 dispatchId : SV_DispatchThreadID)
     uint index = dispatchId.x;
     if (index >= (uint)_ParticleCapacity) return;
     LiquidParticle particle = _Particles[index];
-    if (particle.active == 0u || (particle.stateFlags & STATE_SUSPENDED) != 0u) return;
+    if (_StreamParticles[index].stepDt <= 0.000001 || particle.active == 0u || (particle.stateFlags & STATE_SUSPENDED) != 0u) return;
     float2 position = particle.position;
     for (int i = 0; i < _BoundaryCount; ++i)
     {
         BoundarySegment edge = _Boundaries[i];
         if (!IsBoundaryCompatible(particle.vesselId, edge.vesselId, edge.flags)) continue;
-        position = SweepAgainstBoundary(particle.previousPosition, position, edge);
+        float fraction = _StreamParticles[index].startFraction;
+        edge.startPosition = lerp(edge.startPosition, edge.endPosition, fraction);
+        edge.startAngle += edge.angleDelta * fraction;
+        edge.angleDelta *= 1.0 - fraction;
+        float2 swept = SweepAgainstBoundary(particle.previousPosition, position, edge);
+        if (dot(swept - position, swept - position) > 1e-10) _StreamParticles[index].detached = 1u;
+        position = swept;
     }
     particle.position = position;
     _Particles[index] = particle;
@@ -376,9 +394,9 @@ void SnapshotVelocities(uint3 dispatchId : SV_DispatchThreadID)
 }
 
 // Preserve the existing coefficients at the original 0.01-second reference step.
-float TimeScaledBlend(float referenceBlend)
+float TimeScaledBlend(float referenceBlend, float dt)
 {
-    return 1.0 - pow(max(0.0, 1.0 - saturate(referenceBlend)), _DeltaTime / 0.01);
+    return 1.0 - pow(max(0.0, 1.0 - saturate(referenceBlend)), dt / 0.01);
 }
 
 bool TryFindNearestCompatibleBoundary(
@@ -552,6 +570,7 @@ void ResetParticles(uint3 dispatchId : SV_DispatchThreadID)
     LiquidParticle particle = (LiquidParticle)0;
     particle.temperatureC = 20.0;
     _Particles[index] = particle;
+    _StreamParticles[index] = (StreamParticle)0;
     _ParticleColors[index] = 0.0;
     _PositionDeltas[index] = 0.0;
     _Lambdas[index] = 0.0;
@@ -611,8 +630,12 @@ void SpawnParticles(uint3 dispatchId : SV_DispatchThreadID)
     particle.vesselId = command.vesselId;
     particle.techniqueFlags = 0u;
     particle.stateFlags = command.stateFlags;
-    particle.active = 1u;
+    particle.active = 0u; // Reserved, activated only once its birth time is reached.
     _Particles[particleIndex] = particle;
+    StreamParticle stream = _SpawnStreams[commandIndex];
+    _StreamParticles[particleIndex] = stream;
+    if (stream.token != 0u)
+        _StreamLookup[stream.token % ((uint)_ParticleCapacity * 2u)] = uint2(stream.token, particleIndex);
 
     uint compositionOffset = particleIndex * (uint)_MaximumIngredients;
     for (int ingredient = 0; ingredient < _MaximumIngredients; ingredient++)
@@ -685,12 +708,27 @@ void IntegrateParticles(uint3 dispatchId : SV_DispatchThreadID)
         return;
 
     LiquidParticle particle = _Particles[index];
-    if (particle.active == 0u
+    StreamParticle stream = _StreamParticles[index];
+    float dt = _DeltaTime;
+    if (stream.pending != 0u)
+    {
+        dt = max(0.0, _DeltaTime - stream.delay);
+        stream.delay = max(0.0, stream.delay - _DeltaTime);
+        stream.stepDt = dt;
+        stream.startFraction = 1.0 - dt / _DeltaTime;
+        if (stream.delay > 0.0) { _StreamParticles[index] = stream; return; }
+        stream.pending = 0u;
+        particle.active = 1u;
+    }
+    else { stream.stepDt = dt; stream.startFraction = 0.0; }
+    _StreamParticles[index] = stream;
+    _Particles[index] = particle;
+    if (dt <= 0.000001 || particle.active == 0u
         || (particle.stateFlags & STATE_SUSPENDED) != 0u)
         return;
 
     particle.previousPosition = particle.position;
-    particle.velocity += _Gravity * _DeltaTime;
+    particle.velocity += _Gravity * dt;
 
     for (int agitatorIndex = 0; agitatorIndex < _AgitatorCount; agitatorIndex++)
     {
@@ -714,14 +752,14 @@ void IntegrateParticles(uint3 dispatchId : SV_DispatchThreadID)
             float influence = saturate(
                 1.0 - distanceToAgitator / max(1e-5, agitator.radius + _SmoothingRadius));
             float response = 1.0 - exp(
-                -max(0.0, agitator.strength) * _DeltaTime);
+                -max(0.0, agitator.strength) * dt);
             particle.velocity += (agitator.velocity - particle.velocity)
                 * influence
                 * response;
         }
     }
 
-    particle.position += particle.velocity * _DeltaTime;
+    particle.position += particle.velocity * dt;
     _Particles[index] = particle;
 }
 
@@ -741,7 +779,7 @@ void BuildGrid(uint3 dispatchId : SV_DispatchThreadID)
         return;
 
     LiquidParticle particle = _Particles[index];
-    if (particle.active == 0u
+    if (_StreamParticles[index].stepDt <= 0.000001 || particle.active == 0u
         || (particle.stateFlags & STATE_SUSPENDED) != 0u)
     {
         _GridNext[index] = -1;
@@ -768,7 +806,7 @@ void CalculateDensityLambda(uint3 dispatchId : SV_DispatchThreadID)
         return;
 
     LiquidParticle particle = _Particles[index];
-    if (particle.active == 0u
+    if (_StreamParticles[index].stepDt <= 0.000001 || particle.active == 0u
         || (particle.stateFlags & STATE_SUSPENDED) != 0u)
     {
         _Lambdas[index] = 0.0;
@@ -858,7 +896,7 @@ void CalculateDensityLambda(uint3 dispatchId : SV_DispatchThreadID)
     float constraint = max(
         0.0,
         density / max(0.01, _RestDensity) - 1.0);
-    float alpha = _DensityCompliance / max(1e-8, _DeltaTime * _DeltaTime);
+    float alpha = _DensityCompliance / max(1e-8, _StreamParticles[index].stepDt * _StreamParticles[index].stepDt);
     _Lambdas[index] = -constraint / (gradientSum + _LambdaEpsilon + alpha);
 }
 
@@ -870,7 +908,7 @@ void CalculatePositionDelta(uint3 dispatchId : SV_DispatchThreadID)
         return;
 
     LiquidParticle particle = _Particles[index];
-    if (particle.active == 0u
+    if (_StreamParticles[index].stepDt <= 0.000001 || particle.active == 0u
         || (particle.stateFlags & STATE_SUSPENDED) != 0u)
     {
         _PositionDeltas[index] = 0.0;
@@ -979,7 +1017,7 @@ void ApplyDeltaAndBoundaries(uint3 dispatchId : SV_DispatchThreadID)
         return;
 
     LiquidParticle particle = _Particles[index];
-    if (particle.active == 0u
+    if (_StreamParticles[index].stepDt <= 0.000001 || particle.active == 0u
         || (particle.stateFlags & STATE_SUSPENDED) != 0u)
         return;
 
@@ -1042,6 +1080,7 @@ void ApplyDeltaAndBoundaries(uint3 dispatchId : SV_DispatchThreadID)
     particle.vesselId = preserveClosedVessel
         ? previousVesselId
         : FindContainingVessel(position, previousVesselId);
+    if (bestCorrectionScore >= 0.0 || particle.vesselId != 0u) _StreamParticles[index].detached = 1u;
     _Particles[index] = particle;
 }
 
@@ -1053,7 +1092,7 @@ void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
         return;
 
     LiquidParticle particle = _Particles[index];
-    if (particle.active == 0u
+    if (_StreamParticles[index].stepDt <= 0.000001 || particle.active == 0u
         || (particle.stateFlags & STATE_SUSPENDED) != 0u)
         return;
 
@@ -1062,6 +1101,7 @@ void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
         || particle.position.x > _WorldMax.x
         || particle.position.y > _WorldMax.y)
     {
+        _StreamParticles[index].detached = 1u;
         particle.active = 0u;
         particle.vesselId = 0u;
         _Particles[index] = particle;
@@ -1074,7 +1114,7 @@ void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
     }
 
     float2 velocity = (particle.position - particle.previousPosition)
-        / max(1e-5, _DeltaTime);
+        / max(1e-5, _StreamParticles[index].stepDt);
     bool closedVessel = IsClosedVessel(particle.vesselId);
     float2 neighborVelocity = 0.0;
     float neighborWeight = 0.0;
@@ -1157,13 +1197,13 @@ void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
         velocity = lerp(
             velocity,
             neighborVelocity / neighborWeight,
-            TimeScaledBlend(_Viscosity));
+            TimeScaledBlend(_Viscosity, _StreamParticles[index].stepDt));
     }
     if (splashWeight > 1e-5)
     {
         velocity += splashVelocity
             / splashWeight
-            * TimeScaledBlend(_SplashTransfer);
+            * TimeScaledBlend(_SplashTransfer, _StreamParticles[index].stepDt);
     }
 
     float2 boundaryPoint;
@@ -1220,7 +1260,7 @@ void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
         float2 tangentVelocity = relativeVelocity
             - retainedNormalSpeed * boundaryNormal;
         relativeVelocity = retainedNormalSpeed * boundaryNormal
-            + tangentVelocity * (1.0 - TimeScaledBlend(_WallFriction));
+            + tangentVelocity * (1.0 - TimeScaledBlend(_WallFriction, _StreamParticles[index].stepDt));
         velocity = boundaryVelocity + relativeVelocity;
     }
 
@@ -1231,7 +1271,7 @@ void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
         // longer ratchet the internal kinetic energy toward the global cap.
         float2 relativeVelocity = velocity - boundaryVelocity;
         relativeVelocity *= exp(
-            -max(0.0, _ClosedVesselDampingRate) * _DeltaTime);
+            -max(0.0, _ClosedVesselDampingRate) * _StreamParticles[index].stepDt);
         float relativeSpeed = length(relativeVelocity);
         float maximumRelativeSpeed = max(
             0.1,
@@ -1241,7 +1281,7 @@ void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
         velocity = boundaryVelocity + relativeVelocity;
     }
 
-    velocity *= 1.0 - TimeScaledBlend(_VelocityDamping);
+    velocity *= 1.0 - TimeScaledBlend(_VelocityDamping, _StreamParticles[index].stepDt);
     float speed = length(velocity);
     if (speed > _MaximumSpeed)
         velocity *= _MaximumSpeed / speed;
@@ -1258,7 +1298,7 @@ void MixComposition(uint3 dispatchId : SV_DispatchThreadID)
 
     LiquidParticle particle = _Particles[index];
     uint compositionOffset = index * (uint)_MaximumIngredients;
-    if (particle.active == 0u
+    if (_StreamParticles[index].stepDt <= 0.000001 || particle.active == 0u
         || (particle.stateFlags & STATE_SUSPENDED) != 0u
         || _IngredientCount <= 0)
     {
@@ -1313,7 +1353,7 @@ void MixComposition(uint3 dispatchId : SV_DispatchThreadID)
                                 _PassiveMixRate
                                 + _AgitationMixRate * agitation)
                                 * distanceWeight
-                                * _DeltaTime
+                                * _StreamParticles[index].stepDt
                                 / MIX_NEIGHBOR_NORMALIZATION;
                             mixWeight = min(
                                 mixWeight,
@@ -1445,3 +1485,4 @@ void ReleaseOwner(uint3 dispatchId : SV_DispatchThreadID)
     if (p.vesselId == (uint)_TransformTargetVessel) p.vesselId = 0u;
     _Particles[i] = p;
 }
+#include "PhysicsLabStreamSurface.hlsl"

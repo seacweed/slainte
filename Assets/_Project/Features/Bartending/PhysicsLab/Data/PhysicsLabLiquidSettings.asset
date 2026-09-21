@@ -56,3 +56,6 @@ MonoBehaviour:
   surfaceEdgeSoftness: 0.035
   surfaceHighlightStrength: 0.3
   surfaceHighlightWidth: 1.5
+  streamAccumulationShader: {fileID: 4800000, guid: f959a1d349b44401a2d625920e7a1a14, type: 3}
+  streamMaximumTimeGap: 0.075
+  streamMaximumLength: 0.65

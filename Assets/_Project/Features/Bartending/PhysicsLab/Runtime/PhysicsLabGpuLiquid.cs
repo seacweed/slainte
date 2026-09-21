@@ -102,6 +102,7 @@ namespace Slainte.Bartending.PhysicsLab
                 ingredientVisualBuffer.SetData(ingredientVisuals, index, index, 1);
                 simulationShader.SetInt("_IngredientCount", ingredients.Count);
             }
+            spawnStreams[pendingSpawnCount] = new GpuLiquidStreamParticle { Pending = 1, BirthTime = simulationTime };
             spawnCommands[pendingSpawnCount++] = new GpuLiquidSpawnCommand
             {
                 Position = position, Velocity = velocity, VolumeMl = volumeMl,
@@ -133,7 +134,13 @@ namespace Slainte.Bartending.PhysicsLab
             if (!IsOperational || dt <= 0) return;
             if (pendingSpawnCount > 0)
             {
+                for (int i = 0; i < pendingSpawnCount; i++)
+                {
+                    spawnStreams[i].Delay = Mathf.Clamp(spawnStreams[i].Delay, 0, dt);
+                    spawnStreams[i].BirthTime = simulationTime + spawnStreams[i].Delay;
+                }
                 spawnCommandBuffer.SetData(spawnCommands, 0, 0, pendingSpawnCount);
+                spawnStreamBuffer.SetData(spawnStreams, 0, 0, pendingSpawnCount);
                 simulationShader.SetInt("_SpawnCount", pendingSpawnCount);
                 DispatchForCount(spawnKernel, pendingSpawnCount);
                 pendingSpawnCount = 0;
@@ -163,6 +170,7 @@ namespace Slainte.Bartending.PhysicsLab
                 DispatchForCount(velocityKernel, particleCapacity); DispatchMix();
             }
             BindCurrentComposition(colorKernel); DispatchForCount(colorKernel, particleCapacity);
+            simulationTime += dt;
             if (automaticReadback && Time.unscaledTime >= nextReadback) RequestReadback();
         }
         private void UploadGeometry(float from, float to, float dt)
@@ -327,6 +335,7 @@ namespace Slainte.Bartending.PhysicsLab
             generation++; IsOperational = false; readbackInFlight = false;
             RenderPipelineManager.beginCameraRendering -= QueueDraw;
             DisposeSurfaceRendering();
+            DisposeStreamBuffers();
             GraphicsBuffer[] buffers = { particleBuffer, compositionA, compositionB, particleColorBuffer, positionDeltaBuffer,
                 lambdaBuffer, gridHeadBuffer, gridNextBuffer, freeIndexBuffer, freeCountBuffer, spawnCommandBuffer,
                 ingredientVisualBuffer, boundaryBuffer, triggerBuffer, agitatorBuffer, statisticsBuffer, velocitySnapshotBuffer };

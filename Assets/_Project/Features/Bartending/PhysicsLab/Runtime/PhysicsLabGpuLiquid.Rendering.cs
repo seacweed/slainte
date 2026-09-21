@@ -7,6 +7,7 @@ namespace Slainte.Bartending.PhysicsLab
     {
         private RenderTexture surfaceDensity, surfaceColor, surfaceShape, surfaceComposite;
         private Material surfaceAccumulationMaterial, surfaceCompositeMaterial, surfaceDisplayMaterial;
+        private Material streamAccumulationMaterial;
         private MaterialPropertyBlock surfaceParticleProperties, surfaceOutputProperties;
         private CommandBuffer surfaceCommands;
         private Mesh surfaceQuad;
@@ -21,7 +22,8 @@ namespace Slainte.Bartending.PhysicsLab
         {
             if (!EnsureSurfaceResources(camera)) return false;
             // Reuse the existing GPU particle layout and accumulation passes without readback.
-            surfaceParticleProperties.SetBuffer("_GpuLiquidParticles", particleBuffer);
+            surfaceParticleProperties.SetBuffer("_GpuLiquidParticles", useStreamRendering ? surfaceParticleBuffer : particleBuffer);
+            surfaceParticleProperties.SetBuffer("_StreamSegments", streamSegmentBuffer);
             surfaceParticleProperties.SetBuffer("_GpuLiquidColors", particleColorBuffer);
             surfaceParticleProperties.SetFloat("_GpuContainedParticleRadius", Radius * Mathf.Clamp(settings.containedRenderRadius, 1, 2));
             surfaceParticleProperties.SetFloat("_GpuAirborneParticleRadius", Radius * Mathf.Clamp(settings.airborneRenderRadius, 1, 2));
@@ -37,6 +39,8 @@ namespace Slainte.Bartending.PhysicsLab
             surfaceCompositeMaterial.SetFloat("_EdgeSoftness", settings.surfaceEdgeSoftness);
 
             surfaceCommands.Clear();
+            surfaceCommands.BeginSample("PhysicsLab Stream Surface");
+            if (useStreamRendering) PrepareStreamSurface(surfaceCommands);
             ClearSurfaceTarget(surfaceDensity); ClearSurfaceTarget(surfaceColor);
             ClearSurfaceTarget(surfaceShape); ClearSurfaceTarget(surfaceComposite);
             surfaceCommands.SetViewProjectionMatrices(camera.worldToCameraMatrix, GL.GetGPUProjectionMatrix(camera.projectionMatrix, true));
@@ -55,6 +59,7 @@ namespace Slainte.Bartending.PhysicsLab
             surfaceCommands.SetViewProjectionMatrices(Matrix4x4.identity,
                 GL.GetGPUProjectionMatrix(Matrix4x4.Ortho(-1, 1, -1, 1, -1, 1), true));
             surfaceCommands.DrawMesh(surfaceQuad, Matrix4x4.identity, surfaceCompositeMaterial, 0, 0);
+            surfaceCommands.EndSample("PhysicsLab Stream Surface");
             context.ExecuteCommandBuffer(surfaceCommands);
 
             surfaceOutputProperties.SetTexture("_SurfaceTex", surfaceComposite);
@@ -75,8 +80,13 @@ namespace Slainte.Bartending.PhysicsLab
             return true;
         }
 
-        private void AccumulateSurface(int pass) => surfaceCommands.DrawProcedural(Matrix4x4.identity,
-            surfaceAccumulationMaterial, pass, MeshTopology.Triangles, 6, particleCapacity, surfaceParticleProperties);
+        private void AccumulateSurface(int pass)
+        {
+            surfaceCommands.DrawProcedural(Matrix4x4.identity, surfaceAccumulationMaterial, pass,
+                MeshTopology.Triangles, 6, particleCapacity, surfaceParticleProperties);
+            if (useStreamRendering) surfaceCommands.DrawProcedural(Matrix4x4.identity, streamAccumulationMaterial, pass,
+                MeshTopology.Triangles, 6, particleCapacity + MaximumStreamHeads, surfaceParticleProperties);
+        }
 
         private void ClearSurfaceTarget(RenderTexture target)
         {
@@ -87,7 +97,8 @@ namespace Slainte.Bartending.PhysicsLab
         private bool EnsureSurfaceResources(Camera camera)
         {
             if (settings.surfaceAccumulationShader == null || settings.surfaceCompositeShader == null
-                || settings.surfaceDisplayShader == null || !settings.surfaceAccumulationShader.isSupported
+                || settings.surfaceDisplayShader == null || settings.streamAccumulationShader == null
+                || !settings.streamAccumulationShader.isSupported || !settings.surfaceAccumulationShader.isSupported
                 || !settings.surfaceCompositeShader.isSupported || !settings.surfaceDisplayShader.isSupported)
             {
                 if (SurfaceRenderingError == null)
@@ -101,6 +112,7 @@ namespace Slainte.Bartending.PhysicsLab
                 surfaceAccumulationMaterial = new Material(settings.surfaceAccumulationShader) { hideFlags = HideFlags.DontSave };
                 surfaceCompositeMaterial = new Material(settings.surfaceCompositeShader) { hideFlags = HideFlags.DontSave };
                 surfaceDisplayMaterial = new Material(settings.surfaceDisplayShader) { hideFlags = HideFlags.DontSave };
+                streamAccumulationMaterial = new Material(settings.streamAccumulationShader) { hideFlags = HideFlags.DontSave };
                 surfaceParticleProperties = new MaterialPropertyBlock();
                 surfaceOutputProperties = new MaterialPropertyBlock();
                 surfaceCommands = new CommandBuffer { name = "PhysicsLab Liquid Surface" };
@@ -157,6 +169,8 @@ namespace Slainte.Bartending.PhysicsLab
             if (surfaceAccumulationMaterial != null) Destroy(surfaceAccumulationMaterial);
             if (surfaceCompositeMaterial != null) Destroy(surfaceCompositeMaterial);
             if (surfaceDisplayMaterial != null) Destroy(surfaceDisplayMaterial);
+            if (streamAccumulationMaterial != null) Destroy(streamAccumulationMaterial);
+            streamAccumulationMaterial = null;
             surfaceRenderer = null; surfaceQuad = null;
             surfaceAccumulationMaterial = surfaceCompositeMaterial = surfaceDisplayMaterial = null;
             SurfaceRenderingError = null;

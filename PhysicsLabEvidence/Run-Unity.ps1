@@ -16,6 +16,7 @@ $started = Get-Date
 $env:PHYSICSLAB_EVIDENCE_DIR = $attemptDirectory
 @{executable=$unityExecutable;arguments=$arguments;started=$started.ToString('o');workingDirectory=$workspace} | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $attemptDirectory 'command.json') -Encoding utf8
 $process = Start-Process -FilePath $unityExecutable -ArgumentList $arguments -WorkingDirectory $workspace -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $attemptDirectory 'stdout.txt') -RedirectStandardError (Join-Path $attemptDirectory 'stderr.txt')
+@{pid=$process.Id;started=$started.ToString('o')} | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $attemptDirectory 'process.json') -Encoding utf8
 $timedOut = -not $process.WaitForExit(240000)
 if ($timedOut) { $process.Kill(); $process.WaitForExit() }
 $process.Refresh()
