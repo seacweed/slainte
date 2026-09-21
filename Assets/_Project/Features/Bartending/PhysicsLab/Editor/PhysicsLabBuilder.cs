@@ -300,6 +300,16 @@ namespace Slainte.Bartending.PhysicsLab.Editor
             floor.transform.position=new Vector3(0,-3.5f,0);
             BoxCollider2D floorCollider=floor.AddComponent<BoxCollider2D>();floorCollider.size=new Vector2(40,.5f);floorCollider.sharedMaterial=material;
             world.floorColliders=new Collider2D[]{floorCollider};
+            // Static screen boundaries use the project's default game-view aspect ratio.
+            float halfWidth=camera.orthographicSize*PlayerSettings.defaultScreenWidth/PlayerSettings.defaultScreenHeight;
+            float top=camera.transform.position.y+camera.orthographicSize;
+            float bottom=floor.transform.position.y-floorCollider.size.y*.5f;
+            const float wallThickness=.5f;
+            float wallHeight=top+wallThickness-bottom;
+            float wallCenterY=bottom+wallHeight*.5f;
+            CreateBoundaryCollider(root.transform,"LeftBoundary",new Vector2(-halfWidth-wallThickness*.5f,wallCenterY),new Vector2(wallThickness,wallHeight));
+            CreateBoundaryCollider(root.transform,"RightBoundary",new Vector2(halfWidth+wallThickness*.5f,wallCenterY),new Vector2(wallThickness,wallHeight));
+            CreateBoundaryCollider(root.transform,"TopBoundary",new Vector2(0,top+wallThickness*.5f),new Vector2((halfWidth+wallThickness)*2,wallThickness));
             LineRenderer line=floor.AddComponent<LineRenderer>();line.positionCount=2;
             line.SetPositions(new[]{new Vector3(-20,-3.25f,0),new Vector3(20,-3.25f,0)});line.startWidth=line.endWidth=.09f;
             var lineMaterial=new Material(Shader.Find("Sprites/Default"));lineMaterial.color=new Color(.55f,.65f,.45f);
@@ -322,6 +332,14 @@ namespace Slainte.Bartending.PhysicsLab.Editor
                 item.transform.position=new Vector3(x,0,0);x+=2.7f;
             }
             EditorSceneManager.SaveScene(scene,ScenePath);
+        }
+
+        private static void CreateBoundaryCollider(Transform parent,string name,Vector2 position,Vector2 size)
+        {
+            var boundary=new GameObject(name);boundary.layer=29;
+            boundary.transform.SetParent(parent,false);boundary.transform.localPosition=position;
+            BoxCollider2D collider=boundary.AddComponent<BoxCollider2D>();
+            collider.size=size;collider.sharedMaterial=material;
         }
     }
 }
