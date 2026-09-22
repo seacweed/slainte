@@ -1,0 +1,50 @@
+PASS: Comparison controller exists in the authored scene
+PASS: Compute-capable device: NVIDIA GeForce RTX 3070 / Direct3D11
+PASS: No original PhysicsLab behaviour is active in the comparison scene
+PASS: ACurrent: actual GPU initializes ()
+PASS: ACurrent: controller reports the selected mode
+PASS: ACurrent: exactly one active experiment world
+PASS: ACurrent: mutable solver settings are a runtime copy
+PASS: ACurrent: compute asset belongs to the isolated experiment
+PASS: ACurrent: same initial liquid quantity and particle count (60 ml / 120)
+PASS: ACurrent initial state: active particle position, velocity, volume and composition are finite and valid
+PASS: ACurrent initial state: fixed configured integration schedule
+PASS: ACurrent resting state: active particle position, velocity, volume and composition are finite and valid
+PASS: ACurrent resting state: fixed configured integration schedule
+PASS: ACurrent: resting liquid volume conserved
+PASS: ACurrent-rest: GPU surface produces visible camera pixels (2683 changed pixels)
+PASS: ACurrent-rest: rendering leaves particle positions and velocities unchanged
+PASS: ACurrent: consecutive resets cannot duplicate or retain stale particles
+PASS: ACurrent: explicit GPU reset clears particle and composition buffers
+PASS: Remote fixture starts from 120 identically authored, individually tagged births
+PASS: Remote fixture preserves every birth identity through settling and motion
+PASS: Remote fixture starts from 120 identically authored, individually tagged births
+PASS: Remote fixture preserves every birth identity through settling and motion
+PASS: Remote fixture starts from 120 identically authored, individually tagged births
+PASS: Remote fixture preserves every birth identity through settling and motion
+ACurrent remote control RMS: repeat=(0.0641553, 0.1136334); moved=(0.02834965, 0.1154246)
+PASS: ACurrent: moving and spinning an unrelated held bottle does not perturb distant liquid beyond repeat noise
+PASS: ACurrent fast closed rotation: active particle position, velocity, volume and composition are finite and valid
+PASS: ACurrent fast closed rotation: fixed configured integration schedule
+PASS: ACurrent: sealed shaker retains all liquid after 855-degree rotation and translation
+PASS: ACurrent: retained liquid is geometrically inside the moved sealed shaker
+PASS: ACurrent: fast closed rotation does not exhaust local collision sweep budget
+PASS: ACurrent real bottle pour: active particle position, velocity, volume and composition are finite and valid
+PASS: ACurrent real bottle pour: fixed configured integration schedule
+PASS: ACurrent: authored bottle emitter conserves stock and emitted volume (62 ml)
+PASS: ACurrent: real pour conserves all prefilled and newly emitted GPU liquid
+PASS: ACurrent: particles born from the actual bottle reach a real glass (55.5 ml)
+PASS: ACurrent-pour-visible: GPU surface produces visible camera pixels (7838 changed pixels)
+PASS: ACurrent-pour-visible: rendering leaves particle positions and velocities unchanged
+PASS: ACurrent Tilt: active particle position, velocity, volume and composition are finite and valid
+PASS: ACurrent Tilt: fixed configured integration schedule
+PASS: ACurrent Tilt: all accepted liquid remains accounted for
+PASS: ACurrent Tilt: accepted volume is monotonic
+PASS: ACurrent: stir replay permits actual spoon-to-owned-liquid contacts
+PASS: ACurrent Stir: active particle position, velocity, volume and composition are finite and valid
+PASS: ACurrent Stir: fixed configured integration schedule
+FAIL: ACurrent Stir: all accepted liquid remains accounted for
+System.Exception: ACurrent Stir: all accepted liquid remains accounted for
+  at ExperimentValidationRunner.Require (System.Boolean condition, System.String message) [0x0004e] in A:\UnityHub\proj\slainte\FluidGpuExperimentEvidence\HarnessProject\Assets\Editor\ExperimentValidation.cs:595 
+  at ExperimentValidationRunner+<Run>d__13.MoveNext () [0x0042f] in A:\UnityHub\proj\slainte\FluidGpuExperimentEvidence\HarnessProject\Assets\Editor\ExperimentValidation.cs:158 
+  at ExperimentValidationRunner+<Guard>d__12.MoveNext () [0x00045] in A:\UnityHub\proj\slainte\FluidGpuExperimentEvidence\HarnessProject\Assets\Editor\ExperimentValidation.cs:95 

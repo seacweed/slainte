@@ -1,0 +1,25 @@
+PASS: Comparison controller exists in the authored scene
+PASS: Compute-capable device: NVIDIA GeForce RTX 3070 / Direct3D11
+PASS: No original PhysicsLab behaviour is active in the comparison scene
+PASS: ACurrent: actual GPU initializes ()
+PASS: ACurrent: controller reports the selected mode
+PASS: ACurrent: exactly one active experiment world
+PASS: ACurrent: mutable solver settings are a runtime copy
+PASS: ACurrent: compute asset belongs to the isolated experiment
+PASS: ACurrent: same initial liquid quantity and particle count (60 ml / 120)
+PASS: ACurrent initial state: active particle position, velocity, volume and composition are finite and valid
+PASS: ACurrent initial state: fixed configured integration schedule
+PASS: ACurrent resting state: active particle position, velocity, volume and composition are finite and valid
+PASS: ACurrent resting state: fixed configured integration schedule
+PASS: ACurrent: resting liquid volume conserved
+PASS: ACurrent-rest: GPU surface produces visible camera pixels (2654 changed pixels)
+PASS: ACurrent-rest: rendering leaves particle positions and velocities unchanged
+PASS: ACurrent: consecutive resets cannot duplicate or retain stale particles
+PASS: ACurrent: explicit GPU reset clears particle and composition buffers
+ACurrent remote control RMS: repeat=(0.06938094, 0.1450869); moved=(0.2509999, 0.1373993)
+FAIL: ACurrent: moving and spinning an unrelated held bottle does not perturb distant liquid beyond repeat noise
+System.Exception: ACurrent: moving and spinning an unrelated held bottle does not perturb distant liquid beyond repeat noise
+  at ExperimentValidationRunner.Require (System.Boolean condition, System.String message) [0x0004e] in A:\UnityHub\proj\slainte\FluidGpuExperimentEvidence\HarnessProject\Assets\Editor\ExperimentValidation.cs:571 
+  at ExperimentValidationRunner.ValidateRemoteIndependence (Slainte.Bartending.FluidGpuExperiment.FluidExperimentMode mode) [0x00082] in A:\UnityHub\proj\slainte\FluidGpuExperimentEvidence\HarnessProject\Assets\Editor\ExperimentValidation.cs:278 
+  at ExperimentValidationRunner+<Run>d__13.MoveNext () [0x0030e] in A:\UnityHub\proj\slainte\FluidGpuExperimentEvidence\HarnessProject\Assets\Editor\ExperimentValidation.cs:144 
+  at ExperimentValidationRunner+<Guard>d__12.MoveNext () [0x00045] in A:\UnityHub\proj\slainte\FluidGpuExperimentEvidence\HarnessProject\Assets\Editor\ExperimentValidation.cs:95 

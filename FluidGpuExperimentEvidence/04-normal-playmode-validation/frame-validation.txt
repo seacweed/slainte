@@ -1,0 +1,81 @@
+PASS: Authored comparison controller exists
+PASS: GPU operational on NVIDIA GeForce RTX 3070 / Direct3D11
+PASS: Normal fixed-update physics and advancing game time are enabled
+PASS: Authored automatic replay and World coroutine remain enabled
+PASS: Every authored Rigidbody2D remains simulated
+PASS: ACurrent: GPU mode initializes
+PASS: ACurrent: real frames advance Pour to 2.419998s
+PASS: ACurrent: physics and GPU coroutine stayed active throughout Pour
+PASS: ACurrent normal Pour: all active GPU particle states are finite
+PASS: ACurrent normal Pour: active liquid volume is conserved (98 ml)
+PASS: ACurrent: actual bottle emits and deducts the same volume (38 ml)
+PASS: ACurrent: source-tagged bottle liquid reaches the glass (31.5 ml)
+PASS: ACurrent normal Pour: visual Transform agrees with Rigidbody2D within .03 units (maximum 0)
+PASS: ACurrent-frame-pour: saved nonuniform camera PNG with an operational GPU surface (46260 foreground pixels)
+PASS: ACurrent: Stir cup and spoon are unheld kinematic collision participants
+PASS: ACurrent Stir early: visual Transform agrees with Rigidbody2D within .03 units (maximum 0)
+PASS: ACurrent-frame-stir-early: saved nonuniform camera PNG with an operational GPU surface (29911 foreground pixels)
+PASS: ACurrent: real replay moves spoon physics and sprite (0.494448364/0.494448364)
+PASS: ACurrent: unheld kinematic cup remains stationary while spoon moves
+PASS: ACurrent: Stir keeps cup and spoon unheld and kinematic during playback
+PASS: ACurrent Stir late: visual Transform agrees with Rigidbody2D within .03 units (maximum 0)
+PASS: ACurrent normal Stir: all active GPU particle states are finite
+PASS: ACurrent normal Stir: active liquid volume is conserved (60 ml)
+PASS: ACurrent-frame-stir-late: saved nonuniform camera PNG with an operational GPU surface (28029 foreground pixels)
+PASS: ACurrent: Manual resets replay state
+PASS: ACurrent: Manual restores every body's original emission rate and supply
+PASS: ACurrent: Manual releases replay bodies and restores dynamic physics
+PASS: ACurrent: Manual restores authored camera position and size
+PASS: ACurrent: Manual enables picking and retains the controls' pointer exclusion rectangle
+PASS: ACurrent: normal simulation survives returning to Manual
+PASS: BReferencePhysics: GPU mode initializes
+PASS: BReferencePhysics: real frames advance Pour to 2.419998s
+PASS: BReferencePhysics: physics and GPU coroutine stayed active throughout Pour
+PASS: BReferencePhysics normal Pour: all active GPU particle states are finite
+PASS: BReferencePhysics normal Pour: active liquid volume is conserved (98 ml)
+PASS: BReferencePhysics: actual bottle emits and deducts the same volume (38 ml)
+PASS: BReferencePhysics: source-tagged bottle liquid reaches the glass (31.5 ml)
+PASS: BReferencePhysics normal Pour: visual Transform agrees with Rigidbody2D within .03 units (maximum 0)
+PASS: BReferencePhysics-frame-pour: saved nonuniform camera PNG with an operational GPU surface (46260 foreground pixels)
+PASS: BReferencePhysics: Stir cup and spoon are unheld kinematic collision participants
+PASS: BReferencePhysics Stir early: visual Transform agrees with Rigidbody2D within .03 units (maximum 0)
+PASS: BReferencePhysics-frame-stir-early: saved nonuniform camera PNG with an operational GPU surface (29045 foreground pixels)
+PASS: BReferencePhysics: real replay moves spoon physics and sprite (0.494448364/0.494448364)
+PASS: BReferencePhysics: unheld kinematic cup remains stationary while spoon moves
+PASS: BReferencePhysics: Stir keeps cup and spoon unheld and kinematic during playback
+PASS: BReferencePhysics Stir late: visual Transform agrees with Rigidbody2D within .03 units (maximum 0)
+PASS: BReferencePhysics normal Stir: all active GPU particle states are finite
+PASS: BReferencePhysics normal Stir: active liquid volume is conserved (60 ml)
+PASS: BReferencePhysics-frame-stir-late: saved nonuniform camera PNG with an operational GPU surface (28171 foreground pixels)
+PASS: BReferencePhysics: Manual resets replay state
+PASS: BReferencePhysics: Manual restores every body's original emission rate and supply
+PASS: BReferencePhysics: Manual releases replay bodies and restores dynamic physics
+PASS: BReferencePhysics: Manual restores authored camera position and size
+PASS: BReferencePhysics: Manual enables picking and retains the controls' pointer exclusion rectangle
+PASS: BReferencePhysics: normal simulation survives returning to Manual
+PASS: CReferenceSurface: GPU mode initializes
+PASS: CReferenceSurface: real frames advance Pour to 2.419998s
+PASS: CReferenceSurface: physics and GPU coroutine stayed active throughout Pour
+PASS: CReferenceSurface normal Pour: all active GPU particle states are finite
+PASS: CReferenceSurface normal Pour: active liquid volume is conserved (98 ml)
+PASS: CReferenceSurface: actual bottle emits and deducts the same volume (38 ml)
+PASS: CReferenceSurface: source-tagged bottle liquid reaches the glass (31.5 ml)
+PASS: CReferenceSurface normal Pour: visual Transform agrees with Rigidbody2D within .03 units (maximum 2.98023224E-08)
+PASS: CReferenceSurface-frame-pour: saved nonuniform camera PNG with an operational GPU surface (46756 foreground pixels)
+PASS: CReferenceSurface: Stir cup and spoon are unheld kinematic collision participants
+PASS: CReferenceSurface Stir early: visual Transform agrees with Rigidbody2D within .03 units (maximum 0)
+PASS: CReferenceSurface-frame-stir-early: saved nonuniform camera PNG with an operational GPU surface (28946 foreground pixels)
+PASS: CReferenceSurface: real replay moves spoon physics and sprite (0.494448364/0.494448364)
+PASS: CReferenceSurface: unheld kinematic cup remains stationary while spoon moves
+PASS: CReferenceSurface: Stir keeps cup and spoon unheld and kinematic during playback
+PASS: CReferenceSurface Stir late: visual Transform agrees with Rigidbody2D within .03 units (maximum 5.96046448E-08)
+PASS: CReferenceSurface normal Stir: all active GPU particle states are finite
+PASS: CReferenceSurface normal Stir: active liquid volume is conserved (60 ml)
+PASS: CReferenceSurface-frame-stir-late: saved nonuniform camera PNG with an operational GPU surface (28113 foreground pixels)
+PASS: CReferenceSurface: Manual resets replay state
+PASS: CReferenceSurface: Manual restores every body's original emission rate and supply
+PASS: CReferenceSurface: Manual releases replay bodies and restores dynamic physics
+PASS: CReferenceSurface: Manual restores authored camera position and size
+PASS: CReferenceSurface: Manual enables picking and retains the controls' pointer exclusion rectangle
+PASS: CReferenceSurface: normal simulation survives returning to Manual
+Normal PlayerLoop A/B/C pouring, stirring, camera output and Manual restoration passed.

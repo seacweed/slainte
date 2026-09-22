@@ -1,0 +1,74 @@
+[
+  {
+    "group": "ACurrent, 100",
+    "average_ms": 3.792,
+    "minimum_ms": 3.56,
+    "maximum_ms": 4.448
+  },
+  {
+    "group": "ACurrent, 1000",
+    "average_ms": 4.391,
+    "minimum_ms": 3.715,
+    "maximum_ms": 6.699
+  },
+  {
+    "group": "ACurrent, 300",
+    "average_ms": 3.842,
+    "minimum_ms": 3.251,
+    "maximum_ms": 4.214
+  },
+  {
+    "group": "ACurrent, 600",
+    "average_ms": 3.806,
+    "minimum_ms": 3.621,
+    "maximum_ms": 4.083
+  },
+  {
+    "group": "BReferencePhysics, 100",
+    "average_ms": 2.97,
+    "minimum_ms": 2.821,
+    "maximum_ms": 3.178
+  },
+  {
+    "group": "BReferencePhysics, 1000",
+    "average_ms": 3.095,
+    "minimum_ms": 2.92,
+    "maximum_ms": 3.3
+  },
+  {
+    "group": "BReferencePhysics, 300",
+    "average_ms": 3.002,
+    "minimum_ms": 2.733,
+    "maximum_ms": 3.454
+  },
+  {
+    "group": "BReferencePhysics, 600",
+    "average_ms": 3.098,
+    "minimum_ms": 2.789,
+    "maximum_ms": 3.41
+  },
+  {
+    "group": "CReferenceSurface, 100",
+    "average_ms": 2.962,
+    "minimum_ms": 2.626,
+    "maximum_ms": 3.204
+  },
+  {
+    "group": "CReferenceSurface, 1000",
+    "average_ms": 3.151,
+    "minimum_ms": 2.833,
+    "maximum_ms": 3.464
+  },
+  {
+    "group": "CReferenceSurface, 300",
+    "average_ms": 3.297,
+    "minimum_ms": 3.109,
+    "maximum_ms": 3.619
+  },
+  {
+    "group": "CReferenceSurface, 600",
+    "average_ms": 3.226,
+    "minimum_ms": 3.125,
+    "maximum_ms": 3.465
+  }
+]

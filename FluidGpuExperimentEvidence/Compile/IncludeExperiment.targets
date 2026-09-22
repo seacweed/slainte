@@ -1,0 +1,17 @@
+<Project>
+  <Target Name="IncludeFluidExperiment" BeforeTargets="CoreCompile">
+    <ItemGroup Condition="'$(MSBuildProjectName)' == 'Assembly-CSharp'">
+      <Compile Remove="Assets\_Project\Features\Bartending\PhysicsLab\Runtime\*.cs" />
+      <Compile Include="Assets\_Project\Features\Bartending\PhysicsLab\Runtime\*.cs" />
+      <Compile Remove="Assets\_Project\Features\Bartending\FluidGpuExperiment\Runtime\*.cs" />
+      <Compile Include="Assets\_Project\Features\Bartending\FluidGpuExperiment\Runtime\*.cs" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(MSBuildProjectName)' == 'Assembly-CSharp-Editor'">
+      <Compile Remove="Assets\_Project\Features\Bartending\PhysicsLab\Editor\*.cs" />
+      <Compile Include="Assets\_Project\Features\Bartending\PhysicsLab\Editor\*.cs" />
+      <Compile Remove="Assets\_Project\Features\Bartending\FluidGpuExperiment\Editor\*.cs" />
+      <Compile Include="Assets\_Project\Features\Bartending\FluidGpuExperiment\Editor\*.cs" />
+    </ItemGroup>
+    <Message Importance="high" Text="Include isolated FluidGpuExperiment sources alongside unchanged PhysicsLab." />
+  </Target>
+</Project>

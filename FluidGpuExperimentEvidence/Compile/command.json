@@ -1,0 +1,11 @@
+{
+  "arguments": [
+    "build",
+    "Assembly-CSharp-Editor.csproj",
+    "-v:minimal",
+    "-p:RestoreIgnoreFailedSources=true",
+    "-p:CustomAfterMicrosoftCommonTargets=A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\Compile\\IncludeExperiment.targets"
+  ],
+  "executable": "dotnet",
+  "started": "2026-09-22T17:31:28.3669247+09:00"
+}
