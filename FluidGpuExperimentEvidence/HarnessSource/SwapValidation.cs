@@ -552,8 +552,8 @@ public sealed class ExperimentSwapValidationRunner : MonoBehaviour
             label + ": unheld glass positive control permits ice-to-liquid contact");
         Require(hand.Pick(vessel, vessel.Position), label + ": pick glass while ice intersects its liquid");
         GpuLiquidParticle heldContents = ProbeParticle(seed, vessel.Id);
-        Near(heldContents.Position, baseline.Position,
-            label + ": held glass liquid ignores external unheld ice");
+        Require(ice.ContainingVesselId == vessel.Id && Vector2.Distance(heldContents.Position, seed) > .005f,
+            label + ": held glass liquid retains contact with its contained ice");
         Require(heldContents.VesselId == vessel.Id,
             label + ": held glass retains its liquid owner ID");
         hand.ReleaseWithVelocity(Vector2.zero);
@@ -571,6 +571,7 @@ public sealed class ExperimentSwapValidationRunner : MonoBehaviour
         Require(initial.VesselId == 0, label + ": initially free particle stays unowned");
         Near(initial.Position, seed, label + ": initially free particle has no external impulse");
         Require(hand.Pick(vessel, start), label + ": pick vessel for lateral sweep");
+        bool wallMovedParticle = false;
         for (int step = 1; step <= 16; step++)
         {
             hand.MoveHeld(Vector2.Lerp(start, finish, step / 16f));
@@ -578,18 +579,18 @@ public sealed class ExperimentSwapValidationRunner : MonoBehaviour
             Require(gpu.ActiveCount == 1, label + ": sweep retains the free particle");
             GpuLiquidParticle particle = gpu.Snapshot.Single(p => p.Active != 0);
             Require(particle.VesselId == 0, label + ": held wall crossing never captures owner-zero liquid");
-            Near(particle.Position, seed, label + ": held wall crossing leaves free liquid undisturbed");
+            wallMovedParticle |= Vector2.Distance(particle.Position, seed) > gpu.Radius;
         }
-        Require(vessel.ContainsLiquid(seed), label + ": sweep ends with the free particle inside the held contour");
+        Require(vessel.ContainsLiquid(seed) && wallMovedParticle,
+            label + ": held wall displaces free liquid without absorbing it through its side");
         for (int step = 0; step < 8; step++) world.TickLiquid(.02f);
         gpu.ReadbackNow();
         GpuLiquidParticle enclosed = gpu.Snapshot.Single(p => p.Active != 0);
         Require(enclosed.VesselId == 0, label + ": continued overlap does not convert free liquid into held contents");
-        Near(enclosed.Position, seed, label + ": continued overlap adds no wall impulse");
         hand.ReleaseWithVelocity(Vector2.zero);
         world.TickLiquid(.02f); gpu.ReadbackNow();
-        Require(gpu.Snapshot.Single(p => p.Active != 0).VesselId == vessel.Id,
-            label + ": unheld positive control acquires the same interior free particle");
+        Require(gpu.Snapshot.Single(p => p.Active != 0).VesselId == 0,
+            label + ": release does not bypass the open-mouth entry requirement");
     }
 
     private GpuLiquidParticle ProbeParticle(Vector2 seed, uint owner)

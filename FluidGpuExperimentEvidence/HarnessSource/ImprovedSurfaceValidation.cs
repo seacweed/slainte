@@ -263,7 +263,7 @@ public static class ExperimentImprovedSurfaceValidation
                         Vector2 point = camera.ViewportToWorldPoint(new Vector3((x + .5f) / ghost.width, (y + .5f) / ghost.height, 20));
                         if (vessel.SolidClearance(point - vessel.Position) < -.0001f && ghost.pixels[y * ghost.width + x].a > .01f) ghostWallPixels++;
                     }
-                    require(ghostWallPixels > 0, mode + ": held foreign vessel remains visually ghosted for free liquid");
+                    require(ghostWallPixels == 0, mode + ": held receiver masks its solid wall for free liquid too");
                     vessel.SetHeld(false);
 
                     gpu.ResetSimulation();

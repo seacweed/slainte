@@ -1,0 +1,52 @@
+PASS Authored comparison scene initializes
+PASS Pick body at an off-center grab point
+PASS Releasing rotation introduces no initial position jump (actual (-5.53828, 5.21765), expected (-5.53828, 5.21765))
+PASS Mouse translation continues during the first quarter of return (actual (-4.93828, 5.01765), expected (-4.93828, 5.01765))
+PASS Multiple turns restore over the shortest arc while still returning
+PASS User translation is retained in release samples during return (actual (15.00000, -5.00000), expected (15.00000, -5.00000))
+PASS Automatic upright rotation contributes no sampled spin
+PASS Return completes at angle zero
+PASS Final return frame still tracks the cursor (actual (-4.03828, 5.61765), expected (-4.03828, 5.61765))
+PASS Normal dragging begins without an end-of-return jump (actual (-4.03828, 5.61765), expected (-4.03828, 5.61765))
+PASS No blocked synchronization frames after return (actual (-4.03828, 6.61765), expected (-4.03828, 6.61765))
+PASS Finishing return cannot introduce delayed release spin
+PASS Stationary cursor return creates no throw impulse (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS Stationary cursor return creates no spin impulse
+PASS New manual rotation interrupts return at the current angle
+PASS Dropping while moving during return succeeds
+PASS Drop during return preserves real user translation (actual (4.00000, 2.66666), expected (4.00000, 2.66666))
+PASS Drop during return excludes automatic spin
+PASS Existing cap and strainer sprites become separate interactive parts
+PASS Closed shaker blocks liquid and ice
+PASS Cap click selects the cap before the overlapping body and strainer
+PASS Cap detaches without jumping (actual (-0.00297, 5.67627), expected (-0.00297, 5.67627))
+PASS Cap removal opens liquid flow while keeping the ice barrier
+PASS Strainer has liquid guide walls and a usable outlet aperture
+PASS Ownership contour closes across the actual strainer outlet (actual (0.00000, 0.81864), expected (0.00000, 0.81864))
+PASS Strainer neck is included in liquid containment
+PASS Cap can be placed independently in the world
+PASS Detached cap can be picked up again
+PASS Cap snaps back onto the attached strainer and seals liquid
+PASS Strainer click detaches the strainer independently of the shaker body
+PASS Removing the strainer opens the bowl to both ice and liquid
+PASS Attached cap remains on a detached strainer
+PASS Cap follows the moved strainer as one assembly (actual (2.49703, 6.67627), expected (2.49703, 6.67627))
+PASS Detached combined lid can be placed as one physical body
+PASS Cap can be removed from the separately placed strainer
+PASS Cap cannot attach directly to the shaker while its strainer is elsewhere
+PASS Pick free cap for attachment to detached strainer
+PASS Cap attaches to a detached strainer without falsely sealing the shaker
+PASS Pick the combined detached assembly
+PASS Combined strainer and cap reattach and close the shaker together
+PASS C cycle exposes the straining state
+PASS C cycle exposes the fully open state
+PASS C cycle restores both parts
+PASS Disabling the owner also disables its detached combined lid
+PASS Re-enabling the owner restores detached parts without changing assembly state
+PASS Owner disable and re-enable preserve the detached part pose (actual (1.54703, 5.48814), expected (1.54703, 5.48814))
+PASS Hold a detached cap before resetting the session
+PASS Session reset releases the held part and restores the initial complete assembly
+PASS Repeated open and close operations reuse exactly the two original parts
+PASS No runtime error, exception or assertion was logged
+Input continuity and detachable shaker checks passed in Model D.
+

@@ -14,7 +14,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
     {
         public FluidExperimentWorld world;
         public Shader effectsShader;
-        public FluidExperimentMode initialMode = FluidExperimentMode.ECalibratedLiquid;
+        public FluidExperimentMode initialMode = FluidExperimentMode.DImprovedSurface;
         public bool automaticScenario = true;
         public bool showControls = true;
         public FluidExperimentWorld World => world;
@@ -296,7 +296,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             GUILayout.EndHorizontal();
             if (ActiveScenario == FluidExperimentScenario.VolumeCheck) DrawVolumeControls();
             GUILayout.Label("Replay: " + ActiveScenario + "  " + ScenarioTime.ToString("F1") + "s");
-            GUILayout.Label("1 - 5: compare    R: restart    Manual: LMB pick/place/swap, RMB rotate, C lid");
+            GUILayout.Label("1 - 5: compare    R: restart    LMB: pick/place/parts    RMB: rotate    C: shaker state");
             GUILayout.Label(Ready ? "GPU: " + SystemInfo.graphicsDeviceName + "  |  particles: " + Gpu.ActiveCount
                 + "  |  " + Gpu.SnapshotTotalMl.ToString("F1") + " ml" : "GPU unavailable: " + (Error ?? Gpu?.Error));
             GUILayout.Label("A: baseline | B: reference physics | C: density surface | D: new surface | E: calibrated liquid");

@@ -330,6 +330,9 @@ MonoBehaviour:
   interactor: {fileID: 379435366}
   floorColliders:
   - {fileID: 632590627}
+  leftBoundary: {fileID: 2100000102}
+  rightBoundary: {fileID: 2100000202}
+  topBoundary: {fileID: 2100000302}
   itemLayer: 29
   showControls: 0
   seedLiquids: 1
@@ -374,7 +377,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentComparison
   world: {fileID: 379435368}
-  initialMode: 4
+  initialMode: 3
   effectsShader: {fileID: 4800000, guid: 7a6c5bbed65742ce821d1edc646bd796, type: 3}
   automaticScenario: 1
   showControls: 1

@@ -1,0 +1,7 @@
+{
+  "command": "dotnet build Assembly-CSharp-Editor.csproj --no-restore -p:CustomAfterMicrosoftCommonTargets=A:/UnityHub/proj/slainte/FluidGpuExperimentEvidence/Compile/IncludeExperiment.targets -v:minimal",
+  "started": "2026-09-30T23:02:55.5430637+09:00",
+  "finished": "2026-09-30T23:03:10.2054071+09:00",
+  "exitCode": 0,
+  "scope": "Full project CSharp compile only; no Unity Editor or runtime execution"
+}

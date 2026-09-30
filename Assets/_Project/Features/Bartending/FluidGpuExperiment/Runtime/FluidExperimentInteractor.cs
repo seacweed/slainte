@@ -14,6 +14,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public float velocityWindow = .1f;
         [Min(.01f)] public float uprightReturnDuration = .15f;
         public FluidExperimentBody Held { get; private set; }
+        public FluidExperimentShakerPart HeldPart { get; private set; }
         public bool Rotating { get; private set; }
         public bool Returning { get; private set; }
         public Vector2 ReturnGrabPoint { get; private set; }
@@ -23,11 +24,10 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private Vector2 lastPointer;
         private float angle;
         private Vector2 returnPosition;
-        private Vector2 returnPointerScreen;
+        private Vector2 returnStartPointer;
         private float returnStartAngle;
         private float returnElapsed;
-        private int pointerSyncFrames;
-        private bool pointerSyncPending;
+        private float sampledUserAngle;
         private readonly List<MotionSample> samples = new List<MotionSample>(32);
         private struct MotionSample { public float time; public Vector2 position; public float angle; }
 
@@ -42,24 +42,33 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 if (Input.GetMouseButtonDown(1) && !pointerBlockRect.Contains(new Vector2(screen.x, Screen.height - screen.y))) BeginRotation();
                 if (Rotating && Input.GetMouseButton(1)) RotateBy(Input.GetAxisRaw("Mouse Y") * rotationSensitivity);
                 if (Rotating && Input.GetMouseButtonUp(1)) EndRotation(pointer);
-                if (Returning) AdvanceUprightReturn(Time.unscaledDeltaTime);
-                else if (pointerSyncPending) SynchronizeReturnPointer(pointer);
+                if (Returning) AdvanceUprightReturn(Time.unscaledDeltaTime, pointer);
                 else if (!Rotating) MoveHeld(pointer);
                 if (Input.GetKeyDown(KeyCode.C) && Held.kind == LabItemKind.Shaker)
-                    Held.SetSealed(!Held.sealedVessel);
+                    Held.CycleShakerClosure();
+                Sample(Time.unscaledTime);
+            }
+            else if (HeldPart != null)
+            {
+                MoveHeld(pointer);
                 Sample(Time.unscaledTime);
             }
             if (Input.GetMouseButtonDown(0)
                 && !pointerBlockRect.Contains(new Vector2(screen.x, Screen.height - screen.y))
                 && (EventSystem.current == null || !EventSystem.current.IsPointerOverGameObject()))
             {
-                if (Held == null) PickAt(pointer);
+                if (Held == null && HeldPart == null) PickAt(pointer);
                 else Drop(pointer);
             }
         }
 
         public bool PickAt(Vector2 point)
         {
+            if (Held != null || HeldPart != null) return false;
+            // Part hit areas exclude the transparent margins of the source sprites.
+            // Try the cap before the overlapping strainer and the shaker body.
+            if (PickShakerPartAt(point, FluidExperimentShakerPartRole.Cap)
+                || PickShakerPartAt(point, FluidExperimentShakerPartRole.Strainer)) return true;
             FluidExperimentBody candidate = null;
             float distance = float.MaxValue;
             foreach (FluidExperimentBody item in world.Items)
@@ -70,13 +79,36 @@ namespace Slainte.Bartending.FluidGpuExperiment
             }
             return Pick(candidate, point);
         }
+        private bool PickShakerPartAt(Vector2 point, FluidExperimentShakerPartRole role)
+        {
+            foreach (FluidExperimentBody item in world.Items)
+            {
+                if (item == null || item.kind != LabItemKind.Shaker || item.IsHeld) continue;
+                FluidExperimentShakerPart part = role == FluidExperimentShakerPartRole.Cap
+                    ? item.ShakerCap : item.ShakerStrainer;
+                if (part != null && part.ContainsWorldPoint(point) && PickPart(part, point)) return true;
+            }
+            return false;
+        }
+        public bool PickPart(FluidExperimentShakerPart part, Vector2 point)
+        {
+            if (Held != null || HeldPart != null || part == null || part.Owner == null
+                || part.Owner.World != world || !part.TryPickUp(point)) return false;
+            HeldPart = part;
+            lastPointer = point;
+            sampledUserAngle = 0;
+            samples.Clear();
+            Sample(Time.unscaledTime);
+            return true;
+        }
         public bool Pick(FluidExperimentBody item, Vector2 point)
         {
-            if (Held != null || item == null || item.World != world) return false;
+            if (Held != null || HeldPart != null || item == null || item.World != world) return false;
             Held = item;
             PickupOrigin = item.Position;
             item.SetHeld(true);
             angle = 0;
+            sampledUserAngle = 0;
             item.RestoreHeldPose(PickupOrigin, angle);
             grabLocal = item.WorldToLocal(point);
             lastPointer = point;
@@ -86,17 +118,25 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         public void MoveHeld(Vector2 pointer)
         {
-            if (Held == null || Rotating || Returning || pointerSyncPending) return;
+            lastPointer = pointer;
+            if (HeldPart != null) { HeldPart.MoveToPointer(pointer); return; }
+            if (Held == null || Rotating) return;
+            if (Returning)
+            {
+                Held.SetHeldPose(returnPosition + pointer - returnStartPointer, angle);
+                return;
+            }
             Vector2 offset = Held.PointAt(grabLocal, Vector2.zero, angle);
             Held.SetHeldPose(pointer - offset, angle);
         }
         public void BeginRotation()
         {
             if (Held == null || Rotating) return;
-            if (Returning || pointerSyncPending)
+            if (Returning)
             {
-                Returning = pointerSyncPending = false;
+                Returning = false;
                 samples.Clear();
+                sampledUserAngle = 0;
             }
             Held.ApplyHeldPose();
             angle = Held.HeldAngle;
@@ -107,6 +147,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         {
             if (Held == null || !Rotating) return;
             angle += deltaDegrees; // Deliberately unbounded, including multiple complete turns.
+            sampledUserAngle += deltaDegrees;
             Vector2 offset = Held.PointAt(Held.rotationPivotLocal, Vector2.zero, angle);
             Held.SetHeldPose(rotationAnchor - offset, angle);
         }
@@ -116,69 +157,50 @@ namespace Slainte.Bartending.FluidGpuExperiment
             Held.ApplyHeldPose();
             Rotating = false;
             returnPosition = Held.Position;
+            returnStartPointer = pointer;
             returnStartAngle = Mathf.DeltaAngle(0, Held.HeldAngle);
             angle = returnStartAngle;
             Held.RestoreHeldPose(returnPosition, angle);
             ReturnGrabPoint = Held.LocalToWorld(grabLocal);
             returnElapsed = 0;
             Returning = true;
-            pointerSyncPending = false;
             lastPointer = pointer;
-            // Automatic restoration must never become a throw or spin impulse.
-            samples.Clear();
-        }
-
-        public void AdvanceUprightReturn(float dt)
-        {
-            if (Held == null || !Returning) return;
-            returnElapsed += Mathf.Max(0, dt);
-            float t = Mathf.Clamp01(returnElapsed / Mathf.Max(.01f, uprightReturnDuration));
-            angle = Mathf.Lerp(returnStartAngle, 0, Mathf.SmoothStep(0, 1, t));
-            Held.RestoreHeldPose(returnPosition, angle);
-            ReturnGrabPoint = Held.LocalToWorld(grabLocal);
-            bool requested = FollowReturnCursor();
-            if (t < 1) return;
-            Returning = false;
-            pointerSyncPending = requested;
-            pointerSyncFrames = 8;
-            if (!requested) FinishPointerSynchronization(lastPointer);
-        }
-
-        private bool FollowReturnCursor()
-        {
-            // Batch validation must not move the user's desktop cursor. A legacy viewport
-            // must also never redirect this isolated camera's pointer mapping.
-            if (Application.isBatchMode || !Application.isFocused || inputCamera == null
-                || BartendingViewport.Active != null) return false;
-            return BartendingPointerAnchor.TryWarpToWorld(inputCamera, ReturnGrabPoint, out returnPointerScreen);
-        }
-
-        private void SynchronizeReturnPointer(Vector2 pointer)
-        {
-            if (BartendingPointerAnchor.IsPointerAt(returnPointerScreen)
-                || --pointerSyncFrames <= 0 || !FollowReturnCursor())
-                FinishPointerSynchronization(pointer);
-        }
-
-        private void FinishPointerSynchronization(Vector2 pointer)
-        {
-            pointerSyncPending = false;
-            grabLocal = Held.WorldToLocal(pointer);
-            lastPointer = pointer;
+            // Only mouse translation is sampled during restoration. The angle driven
+            // by this animation must never become a release spin.
+            sampledUserAngle = 0;
             samples.Clear();
             Sample(Time.unscaledTime);
         }
+
+        public void AdvanceUprightReturn(float dt) => AdvanceUprightReturn(dt, lastPointer);
+
+        public void AdvanceUprightReturn(float dt, Vector2 pointer)
+        {
+            if (Held == null || !Returning) return;
+            lastPointer = pointer;
+            returnElapsed += Mathf.Max(0, dt);
+            float t = Mathf.Clamp01(returnElapsed / Mathf.Max(.01f, uprightReturnDuration));
+            angle = Mathf.Lerp(returnStartAngle, 0, Mathf.SmoothStep(0, 1, t));
+            Held.RestoreHeldPose(returnPosition + pointer - returnStartPointer, angle);
+            ReturnGrabPoint = Held.LocalToWorld(grabLocal);
+            if (t < 1) return;
+            Returning = false;
+            // Rebase the normal drag at this exact pose, with no cursor warp or
+            // extra blocked frames when the return animation finishes.
+            grabLocal = Held.WorldToLocal(pointer);
+        }
         private void Sample(float time)
         {
-            if (Held == null || Returning || pointerSyncPending) return;
+            if (Held == null && HeldPart == null) return;
             // Sample input targets, so release velocity does not depend on render/fixed-step phasing.
-            samples.Add(new MotionSample { time = time, position = Held.TargetPosition, angle = angle });
+            samples.Add(new MotionSample { time = time,
+                position = Held != null ? Held.TargetPosition : HeldPart.Position,
+                angle = sampledUserAngle });
             while (samples.Count > 2 && samples[1].time < time - velocityWindow) samples.RemoveAt(0);
         }
         public void EstimateRelease(out Vector2 velocity, out float angularVelocity)
         {
             velocity = Vector2.zero; angularVelocity = 0;
-            if (Returning || pointerSyncPending) return;
             if (samples.Count < 2) return;
             MotionSample a = samples[0], b = samples[samples.Count - 1];
             float dt = b.time - a.time;
@@ -188,6 +210,15 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         public bool Drop(Vector2 pointer)
         {
+            if (HeldPart != null)
+            {
+                FluidExperimentShakerPart part = HeldPart;
+                EstimateRelease(out Vector2 partVelocity, out _);
+                HeldPart = null;
+                samples.Clear();
+                if (!part.TryAttach()) part.Release(partVelocity);
+                return true;
+            }
             if (Held == null) return false;
             // Dropping the object keeps its throw pose; only ending RMB rotation restores upright.
             Held.ApplyHeldPose();
@@ -202,24 +233,38 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public void ReleaseWithVelocity(Vector2 velocity, float angularVelocity = 0)
         {
             if (Held != null) FinishDrop(velocity, angularVelocity);
+            if (HeldPart != null)
+            {
+                FluidExperimentShakerPart part = HeldPart;
+                HeldPart = null;
+                samples.Clear();
+                part.Release(velocity);
+            }
         }
         private void FinishDrop(Vector2 velocity, float spin)
         {
             FluidExperimentBody item = Held;
             Held = null;
             Rotating = false;
-            Returning = pointerSyncPending = false;
+            Returning = false;
             samples.Clear();
             item.Release(velocity, spin);
         }
         internal void Forget(FluidExperimentBody item)
         {
+            if (HeldPart != null && HeldPart.Owner == item) ForgetShakerPart(HeldPart);
             if (Held != item) return;
-            Held = null; Rotating = Returning = pointerSyncPending = false; samples.Clear();
+            Held = null; Rotating = Returning = false; samples.Clear();
+        }
+        internal void ForgetShakerPart(FluidExperimentShakerPart part)
+        {
+            if (HeldPart != part) return;
+            HeldPart = null;
+            samples.Clear();
         }
         private void OnDisable()
         {
-            if (Held != null) FinishDrop(Vector2.zero, 0);
+            ReleaseWithVelocity(Vector2.zero);
         }
         private void OnApplicationFocus(bool focused)
         {

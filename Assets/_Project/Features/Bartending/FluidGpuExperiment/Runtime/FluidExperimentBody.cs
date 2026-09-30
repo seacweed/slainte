@@ -66,6 +66,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             targetAngle = Body.rotation;
             SynchronizeHistory();
             ApplyCollisionProfile();
+            InitializeShakerParts();
             SetSealed(sealedVessel);
         }
 
@@ -73,11 +74,14 @@ namespace Slainte.Bartending.FluidGpuExperiment
         {
             World = GetComponentInParent<FluidExperimentWorld>();
             if (World != null) World.Register(this);
+            ResumeShakerParts();
         }
 
         private void OnDisable()
         {
+            SuspendShakerParts();
             EndPourStream();
+            ClearIceContainer();
             if (IsHeld) SetHeld(false);
             if (World != null) World.Unregister(this);
             World = null;
@@ -95,6 +99,9 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public void SetHeld(bool value)
         {
             if (Body == null) Body = GetComponent<Rigidbody2D>();
+            // Capture contents before enabling the held/external collision policy.
+            if (value && !IsHeld) World?.RefreshIceContainment();
+            if (value && kind == LabItemKind.Ice) ClearIceContainer();
             IsHeld = value;
             Body.bodyType = value ? RigidbodyType2D.Kinematic : RigidbodyType2D.Dynamic;
             Body.linearVelocity = Vector2.zero;
@@ -112,7 +119,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public void SetHeldPose(Vector2 position, float unwrappedAngle)
         {
             if (!IsHeld) return;
-            targetPosition = position;
+            targetPosition = World != null ? World.ConstrainHeldPosition(this, position, unwrappedAngle) : position;
             targetAngle = unwrappedAngle;
         }
 
@@ -130,6 +137,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         internal void ApplyHeldPose()
         {
             if (!IsHeld) return;
+            TransportContainedIce(Position, HeldAngle, targetPosition, targetAngle);
             Body.position = targetPosition;
             Body.rotation = targetAngle;
             HeldAngle = targetAngle;
@@ -138,6 +146,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public void Release(Vector2 velocity, float angularVelocity)
         {
             ApplyHeldPose();
+            ReleaseContainedIceVelocity(velocity, angularVelocity);
             SetHeld(false);
             Body.linearVelocity = velocity;
             Body.angularVelocity = angularVelocity;
@@ -146,6 +155,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public void Teleport(Vector2 position, float angle)
         {
             EndPourStream();
+            if (kind == LabItemKind.Ice) ClearIceContainer();
             Body.position = position;
             Body.rotation = angle;
             Body.linearVelocity = Vector2.zero;
@@ -164,10 +174,14 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public void SetSealed(bool value)
         {
             sealedVessel = value;
-            if (capVisual != null) capVisual.SetActive(value);
-            if (capCollider != null) capCollider.enabled = value;
+            ApplyShakerSeal(value);
             World?.RefreshCollisionPairs();
         }
+
+        partial void InitializeShakerParts();
+        partial void ApplyShakerSeal(bool value);
+        partial void SuspendShakerParts();
+        partial void ResumeShakerParts();
 
         public Vector2 LocalToWorld(Vector2 local) => PointAt(local, Position, Angle);
         public Vector2 WorldToLocal(Vector2 point)
@@ -197,7 +211,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public bool ContainsLiquid(Vector2 point)
         {
             Vector2 local = WorldToLocal(point);
-            if (collisionProfile != null) return FluidExperimentCollisionProfile.Contains(collisionProfile.interior, local);
+            if (collisionProfile != null) return FluidExperimentCollisionProfile.Contains(LiquidInteriorPath, local);
             foreach (Rect rect in contentRegions) if (rect.Contains(local)) return true;
             return false;
         }

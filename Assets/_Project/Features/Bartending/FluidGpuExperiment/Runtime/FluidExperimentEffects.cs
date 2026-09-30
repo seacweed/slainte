@@ -120,7 +120,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 foreach (var pair in vessels)
                 {
                     VesselSample vessel = pair.Value;
-                    if (vessel.body.IsHeld || !vessel.body.ContainsLiquid(bounds.center)) continue;
+                    if ((vessel.body.IsHeld && ice.ContainingVesselId != vessel.body.Id)
+                        || !vessel.body.ContainsLiquid(bounds.center)) continue;
                     float amount = 0, localSurface = float.NegativeInfinity;
                     Vector2 velocity = Vector2.zero;
                     int neighbors = 0;
@@ -162,7 +163,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
             foreach (IceContact contact in iceContacts)
             {
                 var ice = contact.ice; var vessel = contact.vessel;
-                if (ice == null || vessel == null || ice.IsHeld || vessel.IsHeld || !ice.Body.simulated
+                if (ice == null || vessel == null || ice.IsHeld
+                    || (vessel.IsHeld && ice.ContainingVesselId != vessel.Id) || !ice.Body.simulated
                     || ice.Body.bodyType != RigidbodyType2D.Dynamic || !vessel.ContainsLiquid(ice.Position)
                     || Vector2.Distance(contact.vesselPosition, vessel.Position) > world.Liquid.Radius * 2
                     || Mathf.Abs(Mathf.DeltaAngle(contact.vesselAngle, vessel.Angle)) > 5) continue;

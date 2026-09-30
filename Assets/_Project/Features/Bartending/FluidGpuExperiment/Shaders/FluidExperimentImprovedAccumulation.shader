@@ -53,9 +53,16 @@ Shader "Hidden/Slainte/FluidExperiment/ImprovedAccumulation"
         // splat rectangle and the rectangle's center is outside that hull. This also
         // excludes the empty interior of a large concave glass hull. Surviving hulls
         // retain the exact pixel containment and center-to-pixel intersection test.
+        bool CompatibleHull(Hull hull, uint owner, uint held)
+        {
+            if ((hull.held & 4u) != 0u) return true;
+            if (owner != 0u && hull.vesselId == owner) return true;
+            if (owner == 0u && (hull.held & 2u) != 0u) return true;
+            return (hull.held & 1u) == 0u && held == 0u;
+        }
         bool HullCanReachSplat(Hull hull, float2 center, float2 extent, uint owner, uint held)
         {
-            if (hull.vesselId != owner && (hull.held != 0u || held != 0u)) return false;
+            if (!CompatibleHull(hull, owner, held)) return false;
             float2 low = center - extent, high = center + extent;
             if (any(high < hull.bounds.xy) || any(low > hull.bounds.zw)) return false;
             bool inside = false;
@@ -114,9 +121,8 @@ Shader "Hidden/Slainte/FluidExperiment/ImprovedAccumulation"
         bool OccludedByHull(float2 samplePoint, float2 center, uint owner, uint held, uint hullIndex)
         {
             Hull hull = _ImprovedHulls[hullIndex];
-            // Match the explicit held-object isolation policy. A held vessel's own
-            // solid walls still mask its contents; unrelated ghosted bodies do not.
-            if (hull.vesselId != owner && (hull.held != 0u || held != 0u)) return false;
+            // Same receiver, owned-ice and environment policy as GPU collision.
+            if (!CompatibleHull(hull, owner, held)) return false;
             // Testing only whether this pixel is inside solid glass leaves the far side
             // of a wide splat visible beyond thin walls. Trace support from its physical
             // center so a real wall blocks the entire contribution behind that wall.

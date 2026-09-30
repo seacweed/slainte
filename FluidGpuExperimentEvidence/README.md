@@ -1,6 +1,34 @@
 # Fluid GPU Experiment validation
 
-Unity 6000.3.5f2, Direct3D11. Earlier baseline runs used NVIDIA GeForce RTX 3070; the 2026-09-30 runs below use AMD Radeon(TM) Graphics. The experiment was exercised in disposable Unity projects under `HarnessProject` or `Library/FluidSwapHarness`, with source assets and read-only dependencies copied from the working tree. The game project was not opened or saved by Unity for this work.
+Unity 6000.3.5f2, Direct3D11. Earlier baseline runs used NVIDIA GeForce RTX 3070; the D/E development and performance runs below used AMD Radeon(TM) Graphics. The latest Model D interaction runs (51–65) use NVIDIA GeForce RTX 3070. The experiment was exercised in disposable Unity projects under `HarnessProject`, `Library/FluidSwapHarness` or `Library/FluidModelDHarness`, with source assets and read-only dependencies copied from the working tree. The game project was not opened or saved by Unity for this work.
+
+## Model D interaction baseline (2026-09-30, attempts 51–65)
+
+D is now the authored scene and builder default. It retains reference physics and the improved surface; E's calibrated liquid model remains a separate comparison mode. These interaction rules supersede the older held/free-liquid policies recorded in historical runs below.
+
+- A held vessel keeps contact with its contained dynamic ice. Swept containment protects side/bottom walls during rapid translation and rotation, while an open mouth still permits pouring ice out. Release carries the vessel's motion into its contents; disabling a vessel clears stale ownership and collision exceptions.
+- The ice bucket is a finite source with a closed exterior, like a bottle. It has no liquid interior or liquid capacity; tilting still spends stock to emit ice.
+- Rotation return changes the held angle while mouse translation continues. Automatic return spin is excluded from throw samples, while the user's actual translation is retained.
+- The authored side walls and ceiling collide with free liquid and mask D's displayed surface. Their transformed box geometry also limits the exterior of held objects.
+- Active free liquid can enter a held or released receiver through an inward crossing of its open mouth, including moving/rotating receivers. Side/bottom overlap and dropping a vessel do not capture it. Capture changes ownership while preserving ml and ingredients. Liquid already retired outside the simulation bounds cannot be recovered.
+- Shaker cap and strainer are separately selectable, detachable and attachable. An attached cap moves with a detached strainer. Closed holds liquid and ice; Straining opens the actual narrow outlet for liquid while retaining ice; Open permits both. C cycles the three states. Reset and enable/disable preserve a single set of parts.
+
+| Final verification | Outcome | Evidence and scope |
+| --- | --- | --- |
+| `53-model-d-compile/build-final.log` | PASS, 0 errors, 8 existing CS0649 warnings | Full project runtime/editor C# compilation including the experiment; compilation is separate from runtime evidence. |
+| `59-model-d-input-shaker` | PASS, 50 checks, exit 0 | Public input API: off-center pickup, continuous cursor motion during return, interruption/release, independent part pickup, cap/strainer assembly movement and attachment, lifecycle and reset. |
+| `62-model-d-integrated` | PASS, 600 checks, exit 0 | Actual D compute dispatches: wall/ceiling response, moving/rotating mouth entry, no overlap capture, same-cup recovery, ingredient/retirement accounting, Physics2D ice containment, bucket stock and geometry, three shaker closure states with liquid and ice. |
+| `62-model-d-integrated/D-world-mask.png` | PASS, rendered mask and positive control | D surface has zero pixels beyond the tested side/top bounds; disabling those colliders produces visible leakage. Shaker scene/liquid PNGs verify rendering in all three closure states without changing the physical state. |
+| `63-model-d-swap-regression` | PASS, 986 checks, exit 0 | A/B/C/D/E swap, throw, held contents, revised free-liquid side contact and no-overlap-capture rules, and released-ice table fall. |
+| `64-model-d-surface-regression` | PASS, 114 checks, exit 0 | D/E interpolation, covariance, fractional volume, delayed births/reset, solid wall masks, open rim, spill and display history. |
+| `65-model-d-normal-playmode` | PASS, 160 checks, exit 0 | Ordinary A/B/C/D/E PlayerLoop Pour/Stir, rendered camera PNGs, ledgers, physical/displayed poses, and Manual restoration. |
+| `model-d-final-scope-audit.json` | PASS | Validated source/scene/shader/harness parity, metadata GUIDs, shared dependency hashes and changes confined to the experiment/evidence directories. |
+
+Failed and intermediate attempts remain available. Attempt 51 exited before creating an Editor log under the restricted launcher; 52 passed the first 326 GPU checks. Attempt 53 first lacked restore assets, then completed offline restore and compilation. Attempt 54 captured an incomplete source copy during editing. Attempt 55 exposed a return-motion fixture placed against the intentional ceiling clamp; its position was corrected without relaxing its tolerance. Attempts 56–58 exposed real detached-part Rigidbody/Transform synchronization defects; parts now use their carrier's authoritative pose and synchronize physics/displayed pose on detach and movement. Attempt 60 used an invalid render-frame increment assertion for multiple captures within one frame; 61 seeded liquid inside the real closed-lid skirt. Those fixtures now check the current rendered frame and explicit seed clearance respectively. Attempts 59 and 62–65 contain the accepted final runtime evidence.
+
+To reproduce, first finish `HarnessSource/prepare_experiment.py --target Library/FluidModelDHarness`, then run `Run-Unity.ps1` sequentially with that project path and fresh attempt names. Entry points are `ExperimentInputShakerValidation.Begin`, `ExperimentModelDInteractionValidation.Begin`, `ExperimentSwapValidation.Begin`, `ExperimentSurfaceValidation.Begin` and `ExperimentFrameValidation.Begin`; the recorded `command.json` files contain exact invocations. `IceBucketValidation.cs` is included by the integrated D fixture.
+
+This completes implementation and automated verification in the isolated comparison scene. It does not establish hardware mouse interaction feel, human playtest approval, production-scene integration, a rebuilt standalone player for these changes, or new performance measurements. The D normal-frame Pour capture and inverted Straining shaker capture were also visually inspected.
 
 ## D / E implementation and completed verification
 

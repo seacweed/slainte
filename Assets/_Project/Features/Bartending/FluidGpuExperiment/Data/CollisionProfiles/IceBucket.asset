@@ -58,19 +58,9 @@ MonoBehaviour:
     - {x: 0.8423729, y: 0.8927965}
     - {x: 0.8483051, y: 0.91059315}
     - {x: 0.8423729, y: 1.1300846}
-    - {x: 0.82458276, y: 1.1300846}
-    - {x: 0.59860367, y: -1.6520251}
-    - {x: -0.00023278924, y: -1.7093842}
-    - {x: -0.5995787, y: -1.6555184}
-    - {x: -0.8364407, y: 1.1300846}
   lid: []
-  interior:
-  - {x: -0.8364407, y: 1.1300846}
-  - {x: -0.5995787, y: -1.6555184}
-  - {x: -0.00023278924, y: -1.7093842}
-  - {x: 0.59860367, y: -1.6520251}
-  - {x: 0.82458276, y: 1.1300846}
+  interior: []
   mouth: {x: -0.0059289634, y: 1.1300846}
   exitDirection: {x: 0, y: 1}
   sourcePixelSize: 0.0059322035
-  sourceDescription: bucket_back, bucket_front_6
+  sourceDescription: bucket_back, bucket_front_6; closed stock-source exterior

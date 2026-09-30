@@ -220,7 +220,10 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 float angleDelta = (angle - previousAngle) * Mathf.Deg2Rad;
                 Vector2 linearVelocity = (position - previousPosition) / dt;
                 float angularVelocity = angleDelta / dt;
-                uint flags = (item.IsHeld ? 2u : 0u) | (item.kind == LabItemKind.Ice ? 4u : 0u);
+                uint flags = (item.IsHeld ? 2u : 0u) | (item.kind == LabItemKind.Ice ? 4u : 0u)
+                    | (item.IsVessel ? 64u : 0u);
+                uint contactOwner = item.kind == LabItemKind.Ice && item.ContainingVesselId != 0
+                    ? item.ContainingVesselId : item.Id;
                 int first = boundaryCount, contourFirst, contourEnd;
                 void UploadPath(Vector2[] path, bool closed, bool vesselContour = false, bool ownershipOnly = false)
                 {
@@ -238,13 +241,13 @@ namespace Slainte.Bartending.FluidGpuExperiment
                         Vector2 offsetA = a - position, offsetB = b - position;
                         uint edgeFlags = flags | (vesselContour ? 8u : 0u);
                         if (ownershipOnly) edgeFlags |= 16u;
-                        if (vesselContour && !item.sealedVessel && i == path.Length - 1) edgeFlags |= 16u;
+                        if (vesselContour && !item.sealedVessel && i == path.Length - 1) edgeFlags |= 16u | 128u;
                         boundaryUpload[boundaryCount++] = new GpuLiquidBoundarySegment
                         {
                             A = a, B = b,
                             VelocityA = linearVelocity + new Vector2(-offsetA.y, offsetA.x) * angularVelocity,
                             VelocityB = linearVelocity + new Vector2(-offsetB.y, offsetB.x) * angularVelocity,
-                            VesselId = item.Id, Flags = edgeFlags, LocalA = localA, LocalB = localB,
+                            VesselId = contactOwner, Flags = edgeFlags, LocalA = localA, LocalB = localB,
                             StartPosition = previousPosition, EndPosition = position,
                             StartAngle = previousAngle * Mathf.Deg2Rad, AngleDelta = angleDelta
                         };
@@ -255,8 +258,10 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 {
                     foreach (FluidExperimentHull hull in item.collisionProfile.solids) UploadPath(hull.points, true);
                     if (item.sealedVessel) UploadPath(item.collisionProfile.lid, true);
+                    else if (item.kind == LabItemKind.Shaker && item.HasStrainer)
+                        foreach (FluidExperimentHull hull in item.ShakerStrainerLiquidHulls) UploadPath(hull.points, true);
                     contourFirst = boundaryCount;
-                    UploadPath(item.collisionProfile.interior, true, true, true);
+                    if (item.IsVessel) UploadPath(item.LiquidInteriorPath, true, true, true);
                     contourEnd = boundaryCount;
                 }
                 else
@@ -268,8 +273,9 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 }
                 if (boundaryCount > first)
                     UploadBoundaryGroup(groupCount++, item.Id, first, boundaryCount, contourFirst, contourEnd);
-                foreach (Rect rect in item.contentRegions)
+                if (item.IsVessel)
                 {
+                    Rect rect = FluidExperimentCollisionProfile.BoundsOf(item.LiquidInteriorPath);
                     if (triggerCount >= MaximumVesselTriggers) throw new InvalidOperationException("FluidExperiment trigger budget exceeded.");
                     Vector2 center = new Vector2(rect.center.x * bodyScale.x, rect.center.y * bodyScale.y);
                     triggerUpload[triggerCount++] = new GpuLiquidVesselTrigger
@@ -281,6 +287,21 @@ namespace Slainte.Bartending.FluidGpuExperiment
                         Flags = flags | (item.sealedVessel ? 1u : 0u) | (item.collisionProfile != null ? 32u : 0u)
                     };
                 }
+            }
+            // Static world solids share the exact CPU shape and the D surface mask.
+            // They have no content trigger and an explicit environment bit, not a vessel owner.
+            foreach (var hull in world.EnvironmentHulls)
+            {
+                if (hull.Collider == null || !hull.Collider.isActiveAndEnabled) continue;
+                int first = boundaryCount;
+                for (int i = 0; i < hull.Points.Length; i++)
+                {
+                    if (boundaryCount >= MaximumBoundarySegments) throw new InvalidOperationException("FluidExperiment environment boundary budget exceeded.");
+                    Vector2 a = hull.Points[i], b = hull.Points[(i + 1) % hull.Points.Length];
+                    boundaryUpload[boundaryCount++] = new GpuLiquidBoundarySegment
+                        { A = a, B = b, LocalA = a, LocalB = b, VesselId = 0, Flags = 256u };
+                }
+                UploadBoundaryGroup(groupCount++, 0, first, boundaryCount, first, first);
             }
             if (boundaryCount > 0) boundaryBuffer.SetData(boundaryUpload, 0, 0, boundaryCount);
             if (groupCount > 0) boundaryGroupBuffer.SetData(boundaryGroups, 0, 0, groupCount);

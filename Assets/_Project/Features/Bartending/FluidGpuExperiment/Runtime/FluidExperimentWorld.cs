@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Slainte.Bartending.FluidGpuExperiment
 {
     [DefaultExecutionOrder(200)]
-    public sealed class FluidExperimentWorld : MonoBehaviour
+    public sealed partial class FluidExperimentWorld : MonoBehaviour
     {
         public FluidExperimentGpuLiquid liquid;
         public FluidExperimentInteractor interactor;
@@ -40,6 +40,9 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public void Unregister(FluidExperimentBody item)
         {
             items.Remove(item);
+            foreach (FluidExperimentBody other in items)
+                if (other != null && other.ContainingVesselId == item.Id) other.ClearIceContainer();
+            RefreshCollisionPairs();
             if (interactor != null) interactor.Forget(item);
             if (liquid != null) liquid.ReleaseOwner(item.Id);
         }
@@ -73,6 +76,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         private void FixedUpdate()
         {
+            RefreshIceContainment();
             foreach (FluidExperimentBody item in items) if (item != null) item.ApplyHeldPose();
         }
         private IEnumerator SimulateAfterPhysics()
@@ -86,6 +90,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         public void TickLiquid(float dt)
         {
+            RefreshIceContainment();
             for (int i = 0; i < items.Count; i++)
             {
                 FluidExperimentBody item = items[i];
@@ -117,7 +122,11 @@ namespace Slainte.Bartending.FluidGpuExperiment
                     {
                         FluidExperimentBody b = items[j];
                         if (b == null) continue;
-                        bool ignore = a.IsHeld || b.IsHeld;
+                        bool sameContents = a.ContainingVesselId == b.Id || b.ContainingVesselId == a.Id
+                            || (a.ContainingVesselId != 0 && a.ContainingVesselId == b.ContainingVesselId);
+                        bool ignore = (a.IsHeld || b.IsHeld) && !sameContents;
+                        // Contents follow the same external isolation as their held container.
+                        if (!sameContents && (a.IsInHeldVessel || b.IsInHeldVessel)) ignore = true;
                         foreach (Collider2D other in b.solidColliders)
                             if (other != null && other.enabled) Physics2D.IgnoreCollision(c, other, ignore);
                     }
@@ -165,6 +174,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 {
                     Vector2 delta = item.Position - original;
                     liquid?.SwapContents(item.Id, delta, 0, Vector2.zero);
+                    item.TransportContainedIce(original, item.Angle, item.Position, item.Angle);
                     item.Teleport(item.Position, item.Angle);
                     return true;
                 }
@@ -191,7 +201,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         public void ResetSession()
         {
-            if (interactor != null && interactor.Held != null) interactor.ReleaseWithVelocity(Vector2.zero);
+            if (interactor != null) interactor.ReleaseWithVelocity(Vector2.zero);
             for(int i=items.Count-1;i>=0;i--)
             {
                 FluidExperimentBody item=items[i];
@@ -216,7 +226,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             GUI.Box(new Rect(12, 12, 690, 112), "PHYSICS LAB  |  independent slot-free prefabs\n"
                 + "LMB: pick / place / throw    RMB + mouse Y: unlimited rotation\n"
                 + "Pick / release RMB: angle 0    Click on an item: release/throw held, pick target\n"
-                + "C: toggle held shaker lid    R: restart sandbox\n"
+                + "Click shaker cap/strainer to detach    C: cycle closure    R: restart sandbox\n"
                 + (liquid != null && liquid.IsOperational ? "GPU PBF/XPBD active" : "GPU unavailable: " + liquid?.Error));
         }
     }

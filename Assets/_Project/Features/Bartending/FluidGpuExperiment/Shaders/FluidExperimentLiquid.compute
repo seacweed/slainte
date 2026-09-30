@@ -309,11 +309,19 @@ bool IsHeldVessel(uint id)
 bool IsBoundaryCompatible(uint particleVesselId, uint boundaryVesselId, uint flags)
 {
     if ((flags & 16u) != 0u) return false;
-    if (particleVesselId == boundaryVesselId) return true;
-    // Held objects, including ice, ignore external contacts while retaining their own contents.
+    if ((flags & 256u) != 0u) return true; // Environment never participates in ownership or held isolation.
+    if (particleVesselId != 0u && particleVesselId == boundaryVesselId) return true;
+    // Free drops contact an open or closed receiver even while it is held. Merely
+    // crossing its side does not acquire ownership; acquisition uses the moving mouth.
+    if (particleVesselId == 0u && (flags & 64u) != 0u) return true;
+    // Owned ice uploads its containing vessel ID, so the equality above preserves
+    // contents contact without enabling unrelated held tools or foreign-vessel contact.
     if ((flags & 2u) != 0u || IsHeldVessel(particleVesselId)) return false;
     return true;
 }
+
+uint ResolveParticleOwner(float2 start, float2 position, uint previousVesselId, float startFraction);
+bool IsClosedVessel(uint vesselId);
 
 float2 RotateBoundaryPoint(float2 p, float radians)
 {
@@ -433,6 +441,8 @@ void SweepBoundaries(uint3 dispatchId : SV_DispatchThreadID)
             position = swept;
         }
     }
+    particle.vesselId = ResolveParticleOwner(particle.previousPosition, position, particle.vesselId,
+        _StreamParticles[index].startFraction);
     particle.position = position;
     _Particles[index] = particle;
 }
@@ -546,35 +556,81 @@ bool IsInsideVesselContour(float2 position, uint vesselId)
 
 uint FindContainingVessel(float2 position, uint previousVesselId)
 {
-    uint selectedVessel = 0u;
-    int selectedPriority = -2147483647;
+    return previousVesselId != 0u && IsInsideVesselContour(position, previousVesselId)
+        ? previousVesselId : 0u;
+}
 
-    // Authoring trigger rectangles are inset and may leave gaps. Ownership uses
-    // the actual bowl contour so settled fluid stays with its glass until it exits the mouth.
-    if (previousVesselId != 0u && IsInsideVesselContour(position, previousVesselId))
+float2 MouthLocalPoint(BoundarySegment rim, float2 start, float2 finish, float t)
+{
+    float2 origin = lerp(rim.startPosition, rim.endPosition, t);
+    return RotateBoundaryPoint(lerp(start, finish, t) - origin, -(rim.startAngle + rim.angleDelta * t));
+}
+
+// The CCW contour closes from the right lip to the left lip. Its left normal
+// therefore points into the bowl, including during unwrapped holder rotation.
+bool EnteredMouth(BoundarySegment rim, float2 start, float2 finish, out float hitTime)
+{
+    hitTime = 2.0;
+    float2 edge = rim.localB - rim.localA;
+    float width = length(edge);
+    if (width <= 2.0 * _ParticleRadius) return false;
+    float2 tangent = edge / width;
+    float2 inward = float2(-tangent.y, tangent.x);
+    float relativeTravel = length((finish - start) - (rim.endPosition - rim.startPosition));
+    int samples = min(1024, max(1, (int)ceil(abs(rim.angleDelta) * 16.0
+        + relativeTravel / max(width * 0.25, _ParticleRadius))));
+    float previousT = 0.0;
+    float previousSide = dot(MouthLocalPoint(rim, start, finish, 0.0) - rim.localA, inward);
+    for (int sample = 1; sample <= samples; sample++)
     {
-        return previousVesselId;
-    }
-
-    for (int triggerIndex = 0;
-         selectedVessel == 0u && triggerIndex < _VesselTriggerCount;
-         triggerIndex++)
-    {
-        VesselTrigger trigger = _VesselTriggers[triggerIndex];
-        // Held vessels ghost through all external liquid, including owner-zero airborne drops.
-        // Only particles already owned by this held vessel may retain/reacquire its trigger.
-        if (trigger.active == 0u || ((trigger.flags & 2u) != 0u && trigger.vesselId != previousVesselId))
-            continue;
-
-        if (IsInsideVesselTrigger(trigger, position, _SmoothingRadius + _ParticleRadius)
-            && IsInsideVesselContour(position, trigger.vesselId)
-            && trigger.priority >= selectedPriority)
+        float t = sample / (float)samples;
+        float side = dot(MouthLocalPoint(rim, start, finish, t) - rim.localA, inward);
+        if (previousSide <= 0.0 && side > 0.0)
         {
-            selectedPriority = trigger.priority;
-            selectedVessel = trigger.vesselId;
+            float low = previousT, high = t;
+            for (int refine = 0; refine < 10; refine++)
+            {
+                float middle = (low + high) * 0.5;
+                if (dot(MouthLocalPoint(rim, start, finish, middle) - rim.localA, inward) > 0.0) high = middle;
+                else low = middle;
+            }
+            float along = dot(MouthLocalPoint(rim, start, finish, high) - rim.localA, tangent);
+            if (along >= _ParticleRadius && along <= width - _ParticleRadius)
+            { hitTime = high; return true; }
+        }
+        previousSide = side; previousT = t;
+    }
+    return false;
+}
+
+uint ResolveParticleOwner(float2 start, float2 position, uint previousVesselId, float startFraction)
+{
+    if (previousVesselId != 0u && (IsClosedVessel(previousVesselId)
+        || IsInsideVesselContour(position, previousVesselId))) return previousVesselId;
+    uint selected = 0u;
+    float earliest = 2.0;
+    for (int i = 0; i < _VesselTriggerCount; i++)
+    {
+        VesselTrigger trigger = _VesselTriggers[i];
+        if (trigger.active == 0u || (trigger.flags & 1u) != 0u) continue;
+        if (!IsInsideVesselTrigger(trigger, position, _ParticleRadius)
+            || !IsInsideVesselContour(position, trigger.vesselId)) continue;
+        uint first, end;
+        VesselContourRange(trigger.vesselId, first, end);
+        for (uint j = first; j < end; j++)
+        {
+            BoundarySegment rim = _Boundaries[j];
+            if (rim.vesselId != trigger.vesselId || (rim.flags & 128u) == 0u) continue;
+            rim.startPosition = lerp(rim.startPosition, rim.endPosition, startFraction);
+            rim.startAngle += rim.angleDelta * startFraction;
+            rim.angleDelta *= 1.0 - startFraction;
+            float hitTime;
+            if (EnteredMouth(rim, start, position, hitTime)
+                && (hitTime < earliest || (hitTime == earliest && trigger.vesselId < selected)))
+            { selected = trigger.vesselId; earliest = hitTime; }
         }
     }
-    return selectedVessel;
+    return selected;
 }
 
 float2 ConstrainToClosedVessel(float2 position, uint vesselId)
@@ -772,16 +828,7 @@ void TranslateVesselContents(uint3 dispatchId : SV_DispatchThreadID)
     }
 
     uint targetVesselId = (uint)_TransformTargetVessel;
-    if (particle.vesselId != targetVesselId)
-    {
-        if (particle.vesselId != 0u
-            || FindContainingVessel(particle.position, targetVesselId)
-            != targetVesselId)
-        {
-            return;
-        }
-        particle.vesselId = targetVesselId;
-    }
+    if (particle.vesselId != targetVesselId) return;
 
     particle.position += _TransformDelta;
     particle.previousPosition += _TransformDelta;
@@ -1197,10 +1244,10 @@ void ApplyDeltaAndBoundaries(uint3 dispatchId : SV_DispatchThreadID)
     uint previousVesselId = particle.vesselId;
     bool preserveClosedVessel = IsClosedVessel(previousVesselId);
     position = ConstrainToClosedVessel(position, previousVesselId);
-    particle.position = position;
     particle.vesselId = preserveClosedVessel
         ? previousVesselId
-        : FindContainingVessel(position, previousVesselId);
+        : ResolveParticleOwner(particle.position, position, previousVesselId, 1.0);
+    particle.position = position;
     // Ownership changes at the open rim, which is not a physical impact.
     if (bestCorrectionScore >= 0.0) _StreamParticles[index].detached = 1u;
     _Particles[index] = particle;

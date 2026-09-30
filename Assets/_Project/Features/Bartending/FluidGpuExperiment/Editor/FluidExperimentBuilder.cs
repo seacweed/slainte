@@ -24,7 +24,7 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
             if (world == null) throw new InvalidOperationException("Copied experiment world is missing.");
             var comparison = world.GetComponent<FluidExperimentComparison>();
             if (comparison == null) comparison = world.gameObject.AddComponent<FluidExperimentComparison>();
-            comparison.world = world; comparison.initialMode = FluidExperimentMode.ECalibratedLiquid;
+            comparison.world = world; comparison.initialMode = FluidExperimentMode.DImprovedSurface;
             comparison.effectsShader = AssetDatabase.LoadAssetAtPath<Shader>(Root + "/Shaders/FluidExperimentEffects.shader");
             if (comparison.effectsShader == null) throw new InvalidOperationException("Liquid effects shader is missing.");
             world.showControls = false;

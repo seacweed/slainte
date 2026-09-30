@@ -1,0 +1,420 @@
+FAIL 389 checks; mode=D; GPU=NVIDIA GeForce RTX 3070
+PASS authored comparison scene initializes
+PASS D compute shader operational: 
+PASS D uses reference physics with improved surface and no E calibration
+PASS two authored ingredients available for conservation checks
+CASE held environment clamp
+PASS held solid envelope clamps to side/top at angle 0
+PASS held solid envelope clamps to side/top at angle 0
+PASS held solid envelope clamps to side/top at angle 45
+PASS held solid envelope clamps to side/top at angle 45
+PASS held solid envelope clamps to side/top at angle 90
+PASS held solid envelope clamps to side/top at angle 90
+PASS held solid envelope clamps to side/top at angle 225
+PASS held solid envelope clamps to side/top at angle 225
+PASS held position preserves bottom drain access: actual=-17 expected=-17
+CASE LeftBoundary free drop
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS LeftBoundary retains exactly one active particle
+PASS LeftBoundary blocks fast disk on inside face; clearance=0.06499958
+PASS LeftBoundary removes outward normal velocity
+PASS LeftBoundary impact does not retire liquid: actual=0 expected=0
+PASS LeftBoundary coherent ledger revision
+PASS LeftBoundary generated ml: actual=0.5 expected=0.5
+PASS LeftBoundary active ml: actual=0.5 expected=0.5
+PASS LeftBoundary retired ml: actual=0 expected=0
+PASS LeftBoundary item_1002 conservation error: actual=0 expected=0
+PASS LeftBoundary item_1002 queue error: actual=0 expected=0
+PASS LeftBoundary TOTAL conservation error: actual=0 expected=0
+PASS LeftBoundary TOTAL queue error: actual=0 expected=0
+PASS active probe remains finite
+PASS LeftBoundary recapture retains exactly one active particle
+PASS LeftBoundary contacted drop remains catchable through a moving open mouth
+PASS LeftBoundary recapture coherent ledger revision
+PASS LeftBoundary recapture generated ml: actual=0.5 expected=0.5
+PASS LeftBoundary recapture active ml: actual=0.5 expected=0.5
+PASS LeftBoundary recapture retired ml: actual=0 expected=0
+PASS LeftBoundary recapture item_1002 conservation error: actual=0 expected=0
+PASS LeftBoundary recapture item_1002 queue error: actual=0 expected=0
+PASS LeftBoundary recapture TOTAL conservation error: actual=0 expected=0
+PASS LeftBoundary recapture TOTAL queue error: actual=0 expected=0
+CASE LeftBoundary held-owned mouth exit
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS LeftBoundary retains exactly one active particle
+PASS LeftBoundary blocks fast disk on inside face; clearance=0.06499958
+PASS LeftBoundary removes outward normal velocity
+PASS LeftBoundary impact does not retire liquid: actual=0 expected=0
+PASS LeftBoundary coherent ledger revision
+PASS LeftBoundary generated ml: actual=0.5 expected=0.5
+PASS LeftBoundary active ml: actual=0.5 expected=0.5
+PASS LeftBoundary retired ml: actual=0 expected=0
+PASS LeftBoundary item_1002 conservation error: actual=0 expected=0
+PASS LeftBoundary item_1002 queue error: actual=0 expected=0
+PASS LeftBoundary TOTAL conservation error: actual=0 expected=0
+PASS LeftBoundary TOTAL queue error: actual=0 expected=0
+CASE RightBoundary free drop
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS RightBoundary retains exactly one active particle
+PASS RightBoundary blocks fast disk on inside face; clearance=0.06499958
+PASS RightBoundary removes outward normal velocity
+PASS RightBoundary impact does not retire liquid: actual=0 expected=0
+PASS RightBoundary coherent ledger revision
+PASS RightBoundary generated ml: actual=0.5 expected=0.5
+PASS RightBoundary active ml: actual=0.5 expected=0.5
+PASS RightBoundary retired ml: actual=0 expected=0
+PASS RightBoundary item_1002 conservation error: actual=0 expected=0
+PASS RightBoundary item_1002 queue error: actual=0 expected=0
+PASS RightBoundary TOTAL conservation error: actual=0 expected=0
+PASS RightBoundary TOTAL queue error: actual=0 expected=0
+PASS active probe remains finite
+PASS RightBoundary recapture retains exactly one active particle
+PASS RightBoundary contacted drop remains catchable through a moving open mouth
+PASS RightBoundary recapture coherent ledger revision
+PASS RightBoundary recapture generated ml: actual=0.5 expected=0.5
+PASS RightBoundary recapture active ml: actual=0.5 expected=0.5
+PASS RightBoundary recapture retired ml: actual=0 expected=0
+PASS RightBoundary recapture item_1002 conservation error: actual=0 expected=0
+PASS RightBoundary recapture item_1002 queue error: actual=0 expected=0
+PASS RightBoundary recapture TOTAL conservation error: actual=0 expected=0
+PASS RightBoundary recapture TOTAL queue error: actual=0 expected=0
+CASE RightBoundary held-owned mouth exit
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS RightBoundary retains exactly one active particle
+PASS RightBoundary blocks fast disk on inside face; clearance=0.06499958
+PASS RightBoundary removes outward normal velocity
+PASS RightBoundary impact does not retire liquid: actual=0 expected=0
+PASS RightBoundary coherent ledger revision
+PASS RightBoundary generated ml: actual=0.5 expected=0.5
+PASS RightBoundary active ml: actual=0.5 expected=0.5
+PASS RightBoundary retired ml: actual=0 expected=0
+PASS RightBoundary item_1002 conservation error: actual=0 expected=0
+PASS RightBoundary item_1002 queue error: actual=0 expected=0
+PASS RightBoundary TOTAL conservation error: actual=0 expected=0
+PASS RightBoundary TOTAL queue error: actual=0 expected=0
+CASE TopBoundary free drop
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS TopBoundary retains exactly one active particle
+PASS TopBoundary blocks fast disk on inside face; clearance=0.06499958
+PASS TopBoundary removes outward normal velocity
+PASS TopBoundary impact does not retire liquid: actual=0 expected=0
+PASS TopBoundary coherent ledger revision
+PASS TopBoundary generated ml: actual=0.5 expected=0.5
+PASS TopBoundary active ml: actual=0.5 expected=0.5
+PASS TopBoundary retired ml: actual=0 expected=0
+PASS TopBoundary item_1002 conservation error: actual=0 expected=0
+PASS TopBoundary item_1002 queue error: actual=0 expected=0
+PASS TopBoundary TOTAL conservation error: actual=0 expected=0
+PASS TopBoundary TOTAL queue error: actual=0 expected=0
+PASS active probe remains finite
+PASS TopBoundary recapture retains exactly one active particle
+PASS TopBoundary contacted drop remains catchable through a moving open mouth
+PASS TopBoundary recapture coherent ledger revision
+PASS TopBoundary recapture generated ml: actual=0.5 expected=0.5
+PASS TopBoundary recapture active ml: actual=0.5 expected=0.5
+PASS TopBoundary recapture retired ml: actual=0 expected=0
+PASS TopBoundary recapture item_1002 conservation error: actual=0 expected=0
+PASS TopBoundary recapture item_1002 queue error: actual=0 expected=0
+PASS TopBoundary recapture TOTAL conservation error: actual=0 expected=0
+PASS TopBoundary recapture TOTAL queue error: actual=0 expected=0
+CASE TopBoundary held-owned mouth exit
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS TopBoundary retains exactly one active particle
+PASS TopBoundary blocks fast disk on inside face; clearance=0.06499958
+PASS TopBoundary removes outward normal velocity
+PASS TopBoundary impact does not retire liquid: actual=0 expected=0
+PASS TopBoundary coherent ledger revision
+PASS TopBoundary generated ml: actual=0.5 expected=0.5
+PASS TopBoundary active ml: actual=0.5 expected=0.5
+PASS TopBoundary retired ml: actual=0 expected=0
+PASS TopBoundary item_1002 conservation error: actual=0 expected=0
+PASS TopBoundary item_1002 queue error: actual=0 expected=0
+PASS TopBoundary TOTAL conservation error: actual=0 expected=0
+PASS TopBoundary TOTAL queue error: actual=0 expected=0
+CASE ceiling-right corner
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS corner retains exactly one active particle
+PASS both corner faces constrain the particle disk
+PASS corner coherent ledger revision
+PASS corner generated ml: actual=0.5 expected=0.5
+PASS corner active ml: actual=0.5 expected=0.5
+PASS corner retired ml: actual=0 expected=0
+PASS corner item_1002 conservation error: actual=0 expected=0
+PASS corner item_1002 queue error: actual=0 expected=0
+PASS corner TOTAL conservation error: actual=0 expected=0
+PASS corner TOTAL queue error: actual=0 expected=0
+CASE D environment surface mask
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS D environment mask keeps real visible liquid
+PASS D surface has zero visible pixels beyond the wall and ceiling
+PASS D environment mask keeps real visible liquid
+PASS disabled-boundary control proves the same splat reaches the forbidden area
+CASE unheld open mouth
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS unheld open mouth retains exactly one active particle
+PASS unheld open mouth captures inward crossing
+PASS unheld open mouth owns captured volume: actual=0.5 expected=0.5
+PASS unheld open mouth coherent ledger revision
+PASS unheld open mouth generated ml: actual=0.5 expected=0.5
+PASS unheld open mouth active ml: actual=0.5 expected=0.5
+PASS unheld open mouth retired ml: actual=0 expected=0
+PASS unheld open mouth item_1002 conservation error: actual=0 expected=0
+PASS unheld open mouth item_1002 queue error: actual=0 expected=0
+PASS unheld open mouth TOTAL conservation error: actual=0 expected=0
+PASS unheld open mouth TOTAL queue error: actual=0 expected=0
+CASE held open mouth
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS held open mouth retains exactly one active particle
+PASS held open mouth captures inward crossing
+PASS held open mouth owns captured volume: actual=0.5 expected=0.5
+PASS held open mouth coherent ledger revision
+PASS held open mouth generated ml: actual=0.5 expected=0.5
+PASS held open mouth active ml: actual=0.5 expected=0.5
+PASS held open mouth retired ml: actual=0 expected=0
+PASS held open mouth item_1002 conservation error: actual=0 expected=0
+PASS held open mouth item_1002 queue error: actual=0 expected=0
+PASS held open mouth TOTAL conservation error: actual=0 expected=0
+PASS held open mouth TOTAL queue error: actual=0 expected=0
+PASS authored highball and hurricane fixtures available
+CASE authored held mouth Glass_highball
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS authored held mouth Glass_highball retains exactly one active particle
+PASS authored held mouth Glass_highball acquires a slow drop through the actual authored rim
+PASS authored held mouth Glass_highball coherent ledger revision
+PASS authored held mouth Glass_highball generated ml: actual=0.5 expected=0.5
+PASS authored held mouth Glass_highball active ml: actual=0.5 expected=0.5
+PASS authored held mouth Glass_highball retired ml: actual=0 expected=0
+PASS authored held mouth Glass_highball item_1002 conservation error: actual=0 expected=0
+PASS authored held mouth Glass_highball item_1002 queue error: actual=0 expected=0
+PASS authored held mouth Glass_highball TOTAL conservation error: actual=0 expected=0
+PASS authored held mouth Glass_highball TOTAL queue error: actual=0 expected=0
+CASE authored held mouth Glass_hurricane
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS authored held mouth Glass_hurricane retains exactly one active particle
+PASS authored held mouth Glass_hurricane acquires a slow drop through the actual authored rim
+PASS authored held mouth Glass_hurricane coherent ledger revision
+PASS authored held mouth Glass_hurricane generated ml: actual=0.5 expected=0.5
+PASS authored held mouth Glass_hurricane active ml: actual=0.5 expected=0.5
+PASS authored held mouth Glass_hurricane retired ml: actual=0 expected=0
+PASS authored held mouth Glass_hurricane item_1002 conservation error: actual=0 expected=0
+PASS authored held mouth Glass_hurricane item_1002 queue error: actual=0 expected=0
+PASS authored held mouth Glass_hurricane TOTAL conservation error: actual=0 expected=0
+PASS authored held mouth Glass_hurricane TOTAL queue error: actual=0 expected=0
+CASE moving open mouth
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS before moving mouth retains exactly one active particle
+PASS drop begins outside mouth and unowned
+PASS active probe remains finite
+PASS moving mouth retains exactly one active particle
+PASS relative inward crossing captures a stationary drop
+PASS moving mouth coherent ledger revision
+PASS moving mouth generated ml: actual=0.5 expected=0.5
+PASS moving mouth active ml: actual=0.5 expected=0.5
+PASS moving mouth retired ml: actual=0 expected=0
+PASS moving mouth item_1002 conservation error: actual=0 expected=0
+PASS moving mouth item_1002 queue error: actual=0 expected=0
+PASS moving mouth TOTAL conservation error: actual=0 expected=0
+PASS moving mouth TOTAL queue error: actual=0 expected=0
+CASE rotating open mouth
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS before rotating mouth retains exactly one active particle
+PASS rotation probe begins outside mouth
+PASS active probe remains finite
+PASS rotating mouth retains exactly one active particle
+PASS rotating mouth uses relative swept entry
+PASS rotating mouth coherent ledger revision
+PASS rotating mouth generated ml: actual=0.5 expected=0.5
+PASS rotating mouth active ml: actual=0.5 expected=0.5
+PASS rotating mouth retired ml: actual=0 expected=0
+PASS rotating mouth item_1002 conservation error: actual=0 expected=0
+PASS rotating mouth item_1002 queue error: actual=0 expected=0
+PASS rotating mouth TOTAL conservation error: actual=0 expected=0
+PASS rotating mouth TOTAL queue error: actual=0 expected=0
+CASE interior overlap held=False
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS interior overlap retains exactly one active particle
+PASS interior overlap without mouth entry never acquires ownership
+PASS interior overlap coherent ledger revision
+PASS interior overlap generated ml: actual=0.5 expected=0.5
+PASS interior overlap active ml: actual=0.5 expected=0.5
+PASS interior overlap retired ml: actual=0 expected=0
+PASS interior overlap item_1002 conservation error: actual=0 expected=0
+PASS interior overlap item_1002 queue error: actual=0 expected=0
+PASS interior overlap TOTAL conservation error: actual=0 expected=0
+PASS interior overlap TOTAL queue error: actual=0 expected=0
+CASE interior overlap held=True
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS interior overlap retains exactly one active particle
+PASS interior overlap without mouth entry never acquires ownership
+PASS interior overlap coherent ledger revision
+PASS interior overlap generated ml: actual=0.5 expected=0.5
+PASS interior overlap active ml: actual=0.5 expected=0.5
+PASS interior overlap retired ml: actual=0 expected=0
+PASS interior overlap item_1002 conservation error: actual=0 expected=0
+PASS interior overlap item_1002 queue error: actual=0 expected=0
+PASS interior overlap TOTAL conservation error: actual=0 expected=0
+PASS interior overlap TOTAL queue error: actual=0 expected=0
+CASE side sweep
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS active probe remains finite
+PASS side or bottom sweep retains exactly one active particle
+PASS sweeping a held side or bottom through a drop does not capture it
+PASS non-mouth sweep coherent ledger revision
+PASS non-mouth sweep generated ml: actual=0.5 expected=0.5
+PASS non-mouth sweep active ml: actual=0.5 expected=0.5
+PASS non-mouth sweep retired ml: actual=0 expected=0
+PASS non-mouth sweep item_1002 conservation error: actual=0 expected=0
+PASS non-mouth sweep item_1002 queue error: actual=0 expected=0
+PASS non-mouth sweep TOTAL conservation error: actual=0 expected=0
+PASS non-mouth sweep TOTAL queue error: actual=0 expected=0
+CASE bottom sweep
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS active probe remains finite
+PASS side or bottom sweep retains exactly one active particle
+PASS sweeping a held side or bottom through a drop does not capture it
+PASS non-mouth sweep coherent ledger revision
+PASS non-mouth sweep generated ml: actual=0.5 expected=0.5
+PASS non-mouth sweep active ml: actual=0.5 expected=0.5
+PASS non-mouth sweep retired ml: actual=0 expected=0
+PASS non-mouth sweep item_1002 conservation error: actual=0 expected=0
+PASS non-mouth sweep item_1002 queue error: actual=0 expected=0
+PASS non-mouth sweep TOTAL conservation error: actual=0 expected=0
+PASS non-mouth sweep TOTAL queue error: actual=0 expected=0
+CASE closed mouth
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS closed mouth retains exactly one active particle
+PASS closed vessel cannot capture an external drop
+PASS closed mouth coherent ledger revision
+PASS closed mouth generated ml: actual=0.5 expected=0.5
+PASS closed mouth active ml: actual=0.5 expected=0.5
+PASS closed mouth retired ml: actual=0 expected=0
+PASS closed mouth item_1002 conservation error: actual=0 expected=0
+PASS closed mouth item_1002 queue error: actual=0 expected=0
+PASS closed mouth TOTAL conservation error: actual=0 expected=0
+PASS closed mouth TOTAL queue error: actual=0 expected=0
+CASE foreign contents
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS active probe remains finite
+PASS foreign contents retains exactly one active particle
+PASS moving open mouth cannot steal liquid still inside its source vessel
+PASS receiver acquires none of the foreign contents: actual=0 expected=0
+PASS foreign contents coherent ledger revision
+PASS foreign contents generated ml: actual=0.5 expected=0.5
+PASS foreign contents active ml: actual=0.5 expected=0.5
+PASS foreign contents retired ml: actual=0 expected=0
+PASS foreign contents item_1002 conservation error: actual=0 expected=0
+PASS foreign contents item_1002 queue error: actual=0 expected=0
+PASS foreign contents TOTAL conservation error: actual=0 expected=0
+PASS foreign contents TOTAL queue error: actual=0 expected=0
+CASE same-cup spill and recapture
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS spilled retains exactly one active particle
+PASS actual outward mouth crossing releases owner
+PASS airborne spill remains active and recoverable: actual=0 expected=0
+PASS active probe remains finite
+PASS recaptured retains exactly one active particle
+PASS same held cup recaptures its active spilled drop through its mouth
+PASS same-cup recapture coherent ledger revision
+PASS same-cup recapture generated ml: actual=0.5 expected=0.5
+PASS same-cup recapture active ml: actual=0.5 expected=0.5
+PASS same-cup recapture retired ml: actual=0 expected=0
+PASS same-cup recapture item_1002 conservation error: actual=0 expected=0
+PASS same-cup recapture item_1002 queue error: actual=0 expected=0
+PASS same-cup recapture TOTAL conservation error: actual=0 expected=0
+PASS same-cup recapture TOTAL queue error: actual=0 expected=0
+CASE ingredient-preserving capture
+PASS accepted explicit 0.375 ml probe
+PASS accepted explicit 0.125 ml probe
+PASS active probe remains finite
+PASS active probe remains finite
+PASS both ingredient drops enter through the held mouth
+PASS capture preserves first ingredient ml: actual=0.375 expected=0.375
+PASS capture preserves second ingredient ml: actual=0.125 expected=0.125
+PASS ingredient capture coherent ledger revision
+PASS ingredient capture generated ml: actual=0.5 expected=0.5
+PASS ingredient capture active ml: actual=0.5 expected=0.5
+PASS ingredient capture retired ml: actual=0 expected=0
+PASS ingredient capture item_1002 conservation error: actual=0 expected=0
+PASS ingredient capture item_1002 queue error: actual=0 expected=0
+PASS ingredient capture item_1003 conservation error: actual=0 expected=0
+PASS ingredient capture item_1003 queue error: actual=0 expected=0
+PASS ingredient capture TOTAL conservation error: actual=0 expected=0
+PASS ingredient capture TOTAL queue error: actual=0 expected=0
+CASE terminal retirement
+PASS accepted explicit 0.375 ml probe
+PASS out-of-domain particle retires
+PASS placing a cup over the retired position cannot resurrect liquid
+PASS retired overlap coherent ledger revision
+PASS retired overlap generated ml: actual=0.375 expected=0.375
+PASS retired overlap active ml: actual=0 expected=0
+PASS retired overlap retired ml: actual=0.375 expected=0.375
+PASS retired overlap item_1003 conservation error: actual=0 expected=0
+PASS retired overlap item_1003 queue error: actual=0 expected=0
+PASS retired overlap TOTAL conservation error: actual=0 expected=0
+PASS retired overlap TOTAL queue error: actual=0 expected=0
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS post-retirement new birth retains exactly one active particle
+PASS subsequent legitimate birth can enter the cup
+PASS retired ingredient never reappears after slot reuse: actual=0 expected=0
+PASS post-retirement birth coherent ledger revision
+PASS post-retirement birth generated ml: actual=0.875 expected=0.875
+PASS post-retirement birth active ml: actual=0.5 expected=0.5
+PASS post-retirement birth retired ml: actual=0.375 expected=0.375
+PASS post-retirement birth item_1003 conservation error: actual=0 expected=0
+PASS post-retirement birth item_1003 queue error: actual=0 expected=0
+PASS post-retirement birth item_1002 conservation error: actual=0 expected=0
+PASS post-retirement birth item_1002 queue error: actual=0 expected=0
+PASS post-retirement birth TOTAL conservation error: actual=0 expected=0
+PASS post-retirement birth TOTAL queue error: actual=0 expected=0
+CASE authored inverted shaker Open
+PASS authored inverted shaker Open uses a physically passable D outlet
+PASS accepted explicit 0.5 ml probe
+PASS active probe remains finite
+PASS authored inverted shaker Open retains exactly one active particle
+PASS authored inverted shaker Open retains its own owner until a real exit
+PASS active probe remains finite
+PASS authored inverted shaker Open retains exactly one active particle
+PASS authored inverted shaker Open retains its own owner until a real exit
+PASS active probe remains finite
+PASS authored inverted shaker Open retains exactly one active particle
+PASS authored inverted shaker Open permits a driven liquid drop to leave
+PASS authored inverted shaker Open releases ownership only beyond its actual outlet plane at step 3
+PASS authored inverted shaker Open accounts exited liquid as active free liquid: actual=0 expected=0
+PASS active probe remains finite
+PASS authored inverted shaker Open coherent ledger revision
+PASS authored inverted shaker Open generated ml: actual=0.5 expected=0.5
+PASS authored inverted shaker Open active ml: actual=0.5 expected=0.5
+PASS authored inverted shaker Open retired ml: actual=0 expected=0
+PASS authored inverted shaker Open item_1002 conservation error: actual=0 expected=0
+PASS authored inverted shaker Open item_1002 queue error: actual=0 expected=0
+PASS authored inverted shaker Open TOTAL conservation error: actual=0 expected=0
+PASS authored inverted shaker Open TOTAL queue error: actual=0 expected=0
+PASS D shaker capture uses the authored output camera
+PASS before shaker capture retains exactly one active particle
+FAIL D Open capture submitted actual improved surface rendering
+System.Exception: D Open capture submitted actual improved surface rendering
+  at ExperimentModelDInteractionValidationRunner.Check (System.Boolean condition, System.String label) [0x00038] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\ModelDInteractionValidation.cs:654 
+  at ExperimentModelDInteractionValidationRunner.CaptureShakerEvidence (Slainte.Bartending.FluidGpuExperiment.FluidExperimentBody shaker, System.String closure) [0x00190] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\ModelDInteractionValidation.cs:594 
+  at ExperimentModelDInteractionValidationRunner.ValidateAuthoredShakerLiquidPassage () [0x00317] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\ModelDInteractionValidation.cs:552 
+  at ExperimentModelDInteractionValidationRunner+<Start>d__17.MoveNext () [0x00356] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\ModelDInteractionValidation.cs:121 

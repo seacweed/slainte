@@ -1,0 +1,14 @@
+PASS Authored comparison scene initializes
+PASS Pick body at an off-center grab point
+PASS Releasing rotation introduces no initial position jump (actual (-5.53828, 8.43841), expected (-5.53828, 8.43841))
+PASS Mouse translation continues during the first quarter of return (actual (-4.93828, 8.23841), expected (-4.93828, 8.23841))
+PASS Multiple turns restore over the shortest arc while still returning
+PASS User translation is retained in release samples during return (actual (15.00000, -5.00002), expected (15.00000, -5.00000))
+PASS Automatic upright rotation contributes no sampled spin
+PASS Return completes at angle zero
+FAIL Final return frame still tracks the cursor (actual (-4.03828, 8.75602), expected (-4.03828, 8.83841))
+System.Exception: Final return frame still tracks the cursor (actual (-4.03828, 8.75602), expected (-4.03828, 8.83841))
+  at ExperimentInputShakerValidationRunner.Require (System.Boolean condition, System.String label) [0x0002a] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\InputShakerValidation.cs:255 
+  at ExperimentInputShakerValidationRunner.Near (UnityEngine.Vector2 actual, UnityEngine.Vector2 expected, System.String label, System.Single tolerance) [0x00000] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\InputShakerValidation.cs:249 
+  at ExperimentInputShakerValidationRunner.ValidateReturn (Slainte.Bartending.FluidGpuExperiment.FluidExperimentBody item) [0x001f6] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\InputShakerValidation.cs:124 
+  at ExperimentInputShakerValidationRunner+<Start>d__9.MoveNext () [0x001ea] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\InputShakerValidation.cs:91 

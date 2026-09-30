@@ -24,7 +24,13 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 contentRegions = new[] { p.InteriorBounds };
                 wallClosed = false;
             }
-            else { liquidWall = p.solids[0].points; wallClosed = true; }
+            else
+            {
+                liquidWall = p.solids[0].points;
+                wallClosed = true;
+                // Profile changes from a receptacle to a stock source must remove stale triggers.
+                contentRegions = Array.Empty<Rect>();
+            }
             extraSolidHulls = Array.Empty<FluidExperimentHull>();
             mouthLocal = p.mouth;
             if (kind == LabItemKind.Bottle)
@@ -37,7 +43,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public bool ContainsLiquidDisk(Vector2 local, float worldRadius)
         {
             if (collisionProfile == null) return ContainsLiquid(LocalToWorld(local));
-            var path = collisionProfile.interior;
+            var path = LiquidInteriorPath;
             if (!FluidExperimentCollisionProfile.Contains(path, local)) return false;
             Vector3 scale = transform.lossyScale;
             float radius = worldRadius / Mathf.Max(.0001f, Mathf.Min(Mathf.Abs(scale.x), Mathf.Abs(scale.y)));
