@@ -278,7 +278,6 @@ MonoBehaviour:
   world: {fileID: 379435368}
   inputCamera: {fileID: 1805964270}
   rotationSensitivity: 5
-  swapMaximumSpeed: 1.4
   velocityWindow: 0.1
   uprightReturnDuration: 0.15
 --- !u!114 &379435367
@@ -303,6 +302,9 @@ MonoBehaviour:
   useReferenceSurface: 0
   referenceAccumulationShader: {fileID: 4800000, guid: e005f3520b8e4c51b8880437561bb97f, type: 3}
   referenceCompositeShader: {fileID: 4800000, guid: 589fb51fc5ba458a802369d1b8ef6b2b, type: 3}
+  improvedSurfaceCompute: {fileID: 7200000, guid: 370cbf91fbab42449764f71a37fddc8f, type: 3}
+  improvedAccumulationShader: {fileID: 4800000, guid: afc7584e75394ea58d77fe99c70ff01c, type: 3}
+  improvedCompositeShader: {fileID: 4800000, guid: 4dd823d0fe7243bcb5cee2c3d6192efa, type: 3}
   referenceSupportRadius: 1.9
   referenceMaximumAspect: 6
   referenceFullStretchSpeed: 10
@@ -372,7 +374,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentComparison
   world: {fileID: 379435368}
-  initialMode: 2
+  initialMode: 4
+  effectsShader: {fileID: 4800000, guid: 7a6c5bbed65742ce821d1edc646bd796, type: 3}
   automaticScenario: 1
   showControls: 1
 --- !u!1 &632590626

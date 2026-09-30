@@ -1,0 +1,19 @@
+PASS Authored comparison controller exists
+Protocol: D highball and E highball/hurricane at 30/60/120 requested ml; 300 fixed .02s ticks, readback every .2s. E target height tolerance:20%; visible area tolerance:20%; generated quantity tolerance:.005ml.
+Heights are world units above the authored interior's lowest point. P95 is volume-weighted owned-particle center height; max extent adds collision radius.
+Unsettled is an observation when the final 1s p95 range exceeds half a particle radius or mean owned-particle RMS speed exceeds .15 world units/s; these are provisional diagnostic thresholds.
+Surface area is actual premultiplied-alpha output before scene compositing, normalized by measured GPU particle opacity; coverage thresholds .05 and .25, raw alpha sum and normalized coverage sum are reported separately.
+PASS Synthetic oracle partitions owned/free/other liquid and excludes inactive slots
+PASS Synthetic oracle measures volume-weighted P95, radius-inclusive max and weighted mean speed
+PASS Synthetic square has known area and nominal quarter-capacity height
+PASS Unowned ID zero is not treated as a selected vessel
+PASS Synthetic triangle nominal half-capacity height follows clipped area rather than linear height
+PASS DImprovedSurface: GPU operational on AMD Radeon(TM) Graphics
+PASS DImprovedSurface-Glass_highball-30ml: public measurement scenario preserves selection and requested amount
+PASS DImprovedSurface-Glass_highball-30ml: accepted Fill quantity is positive, bounded and agrees with GPU reservations
+PASS DImprovedSurface-Glass_highball-30ml: measured glass is stationary and unheld
+PASS DImprovedSurface-Glass_highball-30ml: reset clears prior slots while the new fill is still queued
+System.Exception: Accepted ml do not equal active plus unreused retired ml.
+  at ExperimentVolumeValidationRunner.ReadSample (Slainte.Bartending.FluidGpuExperiment.FluidExperimentBody vessel, System.Single accepted, System.Single bottom) [0x0023a] in C:\unity_proj\slainte\slainte\Library\FluidSwapHarness\Assets\Editor\VolumeValidation.cs:305 
+  at ExperimentVolumeValidationRunner+<MeasureCase>d__20.MoveNext () [0x0027d] in C:\unity_proj\slainte\slainte\Library\FluidSwapHarness\Assets\Editor\VolumeValidation.cs:210 
+  at ExperimentVolumeValidationRunner+<Guard>d__18.MoveNext () [0x00086] in C:\unity_proj\slainte\slainte\Library\FluidSwapHarness\Assets\Editor\VolumeValidation.cs:125 

@@ -1,0 +1,128 @@
+{
+  "status": "PASS",
+  "cases": 48,
+  "conditions": "Controlled standalone-player offscreen workload: one explicit Camera.Render in LateUpdate per regular player frame, with a dedicated RenderTexture and normal fixed ticks. This is not automatic camera rendering, gameplay FPS, or proof of a 60 FPS budget. Target frame rate 60 is only sampling cadence. Every case measures at least two seconds and 50 physics steps, and verifies surface submission on every measured frame. CPU Camera.Render wall time is recorded separately from CPU physics submission and includes any render-call waits; neither is GPU solver time. No GPU readback inside measurement. FrameTiming samples have their own timestamps; GPU surface marker is delayed three frames. Unsupported metrics use status and -1 percentiles, CSV blanks. Case PNG readback occurs after timing.",
+  "minimum_measured_frames": 112,
+  "minimum_physics_steps": 100,
+  "minimum_seconds": 2.0000152587890625,
+  "total_verified_surface_frames": 5751,
+  "gpu_metric_statuses": {
+    "gpuFrame": [
+      "UNSUPPORTED_OR_NO_VALID_SAMPLES: FrameTiming GPU"
+    ],
+    "gpuSurface": [
+      "UNSUPPORTED_OR_NO_VALID_SAMPLES: CommandBuffer GPU surface marker"
+    ],
+    "computeGpuTiming": [
+      "UNSUPPORTED: separate compute-dispatch GPU timestamps are not recorded; total GPU frame and CPU submission timings are not compute GPU timings"
+    ]
+  },
+  "e_1000_particles_16_ingredients": {
+    "mode": "ECalibratedLiquid",
+    "status": "COMPLETE",
+    "requestedParticles": 1000,
+    "initialParticles": 1000,
+    "finalParticles": 1000,
+    "ingredientCount": 16,
+    "capacity": 2048,
+    "vessels": 2,
+    "width": 1280,
+    "height": 720,
+    "surfaceWidth": 1280,
+    "surfaceHeight": 720,
+    "warmupFrames": 30,
+    "measuredFrames": 112,
+    "measuredPhysicsSteps": 100,
+    "verifiedSurfaceFrames": 112,
+    "measurementSeconds": 2.00238037109375,
+    "screenshot": "48-ECalibratedLiquid-1000p-16i.png",
+    "workload": "Controlled offscreen Camera.Render once per player frame plus normal fixed ticks; cadence capped at 60 Hz, not gameplay FPS",
+    "cameraCenter": {
+      "x": -0.0031354427337646484,
+      "y": -0.9894915819168091
+    },
+    "vesselBoundsMin": {
+      "x": -1.7894914150238037,
+      "y": -2.2343220710754395
+    },
+    "vesselBoundsMax": {
+      "x": 1.7832205295562744,
+      "y": 0.2553389072418213
+    },
+    "cameraOrthographicSize": 1.4937965869903564,
+    "framingViewportMargin": 0.05000000074505806,
+    "requestedVolumeMl": 500.0,
+    "volumeMl": 500.0,
+    "vesselCapacityMl": 800.0,
+    "requestedFillFraction": 0.625,
+    "fillFraction": 0.625,
+    "gridCellMaxOccupancy": 32,
+    "gridCellSize": 0.30000001192092896,
+    "gridOccupancySnapshotTime": 2.559997797012329,
+    "gridOccupancyStatus": "CPU reconstruction after timed region: active nonsuspended snapshot particles, solver floor cell coordinates and bounds; no GPU grid readback",
+    "frameInterval": {
+      "status": "MEASURED: wall frame interval",
+      "samples": 112,
+      "meanMs": 17.87903658779604,
+      "p50Ms": 16.666999086737633,
+      "p95Ms": 27.45499648153782,
+      "p99Ms": 41.99320450425148
+    },
+    "cpuFrame": {
+      "status": "MEASURED: FrameTiming CPU",
+      "samples": 112,
+      "meanMs": 17.87560803571428,
+      "p50Ms": 16.6677,
+      "p95Ms": 27.4446,
+      "p99Ms": 41.9948
+    },
+    "gpuFrame": {
+      "status": "UNSUPPORTED_OR_NO_VALID_SAMPLES: FrameTiming GPU",
+      "samples": 0,
+      "meanMs": -1.0,
+      "p50Ms": -1.0,
+      "p95Ms": -1.0,
+      "p99Ms": -1.0
+    },
+    "cpuPhysicsSubmission": {
+      "status": "MEASURED: CustomSampler scope stopwatch CPU submission",
+      "samples": 112,
+      "meanMs": 1.1857741071428574,
+      "p50Ms": 1.3435,
+      "p95Ms": 1.9434,
+      "p99Ms": 2.6142000000000003
+    },
+    "cpuPhysicsStep": {
+      "status": "MEASURED: per fixed-step CPU submission stopwatch",
+      "samples": 100,
+      "meanMs": 1.3279740000000007,
+      "p50Ms": 1.3454,
+      "p95Ms": 1.5227,
+      "p99Ms": 1.604
+    },
+    "cpuManualCameraRender": {
+      "status": "MEASURED: explicit Camera.Render CPU wall time, including any render-call waits",
+      "samples": 112,
+      "meanMs": 0.9681866071428571,
+      "p50Ms": 0.9658,
+      "p95Ms": 1.1428,
+      "p99Ms": 1.3164
+    },
+    "gpuSurface": {
+      "status": "UNSUPPORTED_OR_NO_VALID_SAMPLES: CommandBuffer GPU surface marker",
+      "samples": 0,
+      "meanMs": -1.0,
+      "p50Ms": -1.0,
+      "p95Ms": -1.0,
+      "p99Ms": -1.0
+    },
+    "computeGpuTiming": {
+      "status": "UNSUPPORTED: separate compute-dispatch GPU timestamps are not recorded; total GPU frame and CPU submission timings are not compute GPU timings",
+      "samples": 0,
+      "meanMs": -1.0,
+      "p50Ms": -1.0,
+      "p95Ms": -1.0,
+      "p99Ms": -1.0
+    }
+  }
+}

@@ -5,15 +5,16 @@ using UnityEngine;
 
 namespace Slainte.Bartending.FluidGpuExperiment
 {
-    public enum FluidExperimentMode { ACurrent, BReferencePhysics, CReferenceSurface }
-    public enum FluidExperimentScenario { Manual, Rest, Pour, Tilt, Stir, SealedShake }
+    public enum FluidExperimentMode { ACurrent, BReferencePhysics, CReferenceSurface, DImprovedSurface, ECalibratedLiquid }
+    public enum FluidExperimentScenario { Manual, Rest, Pour, Tilt, Stir, SealedShake, VolumeCheck }
 
     /// <summary>One world at a time, reset to the same authored state for every comparison.</summary>
     [DefaultExecutionOrder(100)]
     public sealed class FluidExperimentComparison : MonoBehaviour
     {
         public FluidExperimentWorld world;
-        public FluidExperimentMode initialMode = FluidExperimentMode.CReferenceSurface;
+        public Shader effectsShader;
+        public FluidExperimentMode initialMode = FluidExperimentMode.ECalibratedLiquid;
         public bool automaticScenario = true;
         public bool showControls = true;
         public FluidExperimentWorld World => world;
@@ -23,7 +24,26 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public bool Ready { get; private set; }
         public float ScenarioTime { get; private set; }
         public string Error { get; private set; }
+        public FluidExperimentBody VolumeVessel { get; private set; }
+        public float RequestedVolumeMl { get; private set; } = 60;
+        public float QueuedVolumeMl { get; private set; }
+        public FluidExperimentVolumeMetrics VolumeMetrics { get; } = new FluidExperimentVolumeMetrics();
+        public bool VolumeSampleAvailable => ActiveScenario == FluidExperimentScenario.VolumeCheck
+            && Gpu != null && Gpu.SnapshotRevision != volumeSnapshotAtStart;
         public static Rect ControlsRect => new Rect(12, 12, 545, 225);
+        private Rect LogicalControlsRect => new Rect(12, 12, 545, 256
+            + (ActiveScenario == FluidExperimentScenario.VolumeCheck ? 145 : 0)
+            + (ActiveMode == FluidExperimentMode.ECalibratedLiquid ? 48 : 0));
+        private float ControlsScale => Mathf.Min(1, Screen.width / 960f, Screen.height / 640f);
+        private Rect ActiveControlsRect
+        {
+            get
+            {
+                Rect rect = LogicalControlsRect;
+                float scale = ControlsScale;
+                return new Rect(rect.x * scale, rect.y * scale, rect.width * scale, rect.height * scale);
+            }
+        }
 
         private FluidExperimentLiquidSettings runtimeSettings;
         private FluidExperimentLiquidSettings sourceSettings;
@@ -31,12 +51,18 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private Vector3 initialCameraPosition;
         private float initialCameraSize;
         private FluidExperimentBody bottle, glass, shaker, spoon;
+        private FluidExperimentBody preferredVolumeVessel;
+        private int volumeSnapshotAtStart, lastVolumeSnapshot = -1;
 
         private void Awake()
         {
             if (world == null) world = GetComponent<FluidExperimentWorld>();
             if (world == null || Gpu == null) { Error = "Comparison world is missing."; return; }
             world.showControls = false;
+            var effects = GetComponent<FluidExperimentEffects>();
+            if (effects == null) effects = gameObject.AddComponent<FluidExperimentEffects>();
+            effects.world = world;
+            effects.cosmeticShader = effectsShader;
             sourceSettings = Gpu.settings;
             if (sourceSettings != null)
             {
@@ -62,9 +88,14 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private void ApplyMode(FluidExperimentMode mode)
         {
             ActiveMode = mode;
+            Gpu.useImprovedPhysics = mode == FluidExperimentMode.ECalibratedLiquid;
+            Gpu.useImprovedSurface = mode == FluidExperimentMode.DImprovedSurface || Gpu.useImprovedPhysics;
+            if (runtimeSettings != null && sourceSettings != null)
+                runtimeSettings.gpuLiquidParticleRadius = Gpu.useImprovedPhysics
+                    ? runtimeSettings.improvedParticleRadius : sourceSettings.gpuLiquidParticleRadius;
             Gpu.solver = mode == FluidExperimentMode.ACurrent
                 ? FluidExperimentSolver.BaselinePbf : FluidExperimentSolver.ReferenceSph;
-            Gpu.useReferenceSurface = mode == FluidExperimentMode.CReferenceSurface;
+            Gpu.useReferenceSurface = mode >= FluidExperimentMode.CReferenceSurface;
             Gpu.useSurfaceRendering = true;
             Gpu.useStreamRendering = true;
         }
@@ -95,11 +126,24 @@ namespace Slainte.Bartending.FluidGpuExperiment
             world.interactor.inputCamera.transform.position = initialCameraPosition;
             world.interactor.inputCamera.orthographicSize = initialCameraSize;
             bottle = glass = shaker = spoon = null;
+            VolumeVessel = null; QueuedVolumeMl = 0;
+            world.interactor.pointerBlockRect = ActiveControlsRect;
+        }
+        public void StartVolumeCheck(FluidExperimentBody vessel, float requestedMl)
+        {
+            if (vessel == null || vessel.World != world || vessel.kind != LabItemKind.Glass)
+                throw new ArgumentException("Volume checks require a glass from this comparison world.", nameof(vessel));
+            if (!float.IsFinite(requestedMl) || requestedMl <= 0)
+                throw new ArgumentOutOfRangeException(nameof(requestedMl));
+            preferredVolumeVessel = vessel;
+            RequestedVolumeMl = requestedMl;
+            StartScenario(FluidExperimentScenario.VolumeCheck);
         }
         public void StartScenario(FluidExperimentScenario scenario)
         {
             if (!Ready) return;
             ResetComparison(); ActiveScenario = scenario;
+            world.interactor.pointerBlockRect = ActiveControlsRect;
             if (scenario == FluidExperimentScenario.Manual) return;
             world.interactor.enabled = false;
             foreach (var body in world.Items)
@@ -123,10 +167,24 @@ namespace Slainte.Bartending.FluidGpuExperiment
             }
             else
             {
+                if (scenario == FluidExperimentScenario.VolumeCheck && preferredVolumeVessel != null
+                    && preferredVolumeVessel.World == world) glass = preferredVolumeVessel;
                 glass.Teleport(new Vector2(0, -.4f), 0);
-                Gpu.Fill(glass, bottle.ingredient, 60);
+                if (scenario == FluidExperimentScenario.VolumeCheck)
+                {
+                    VolumeVessel = glass;
+                    glass.SetHeld(false); glass.Body.bodyType = RigidbodyType2D.Kinematic;
+                    glass.SetSealed(false);
+                    QueuedVolumeMl = Gpu.Fill(glass, bottle.ingredient, RequestedVolumeMl);
+                    volumeSnapshotAtStart = Gpu.SnapshotRevision;
+                    lastVolumeSnapshot = -1;
+                    VolumeMetrics.Measure(Gpu, glass, RequestedVolumeMl);
+                    FrameVolumeVessel();
+                }
+                else Gpu.Fill(glass, bottle.ingredient, 60);
                 if (scenario == FluidExperimentScenario.Pour)
                 {
+                    glass.SetHeld(false); glass.Body.bodyType = RigidbodyType2D.Kinematic;
                     bottle.Teleport(new Vector2(0, 3.5f), 180); bottle.ResetSupply(700, 0);
                 }
                 if (scenario == FluidExperimentScenario.Stir)
@@ -134,7 +192,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                     // Held vessels intentionally ignore unrelated tool boundaries.
                     // Keep both participants unheld and kinematic for this replay.
                     glass.SetHeld(false); glass.Body.bodyType = RigidbodyType2D.Kinematic;
-                    spoon.Teleport(new Vector2(0, .7f), 0);
+                    spoon.Teleport(new Vector2(0, Gpu.useImprovedPhysics ? -.35f : .7f), 0);
                     // The existing held-body policy excludes other held tools from fluid.
                     // A kinematic, unheld spoon exercises actual moving-solid contacts.
                     spoon.SetHeld(false); spoon.Body.bodyType = RigidbodyType2D.Kinematic;
@@ -157,7 +215,9 @@ namespace Slainte.Bartending.FluidGpuExperiment
                     glass.SetHeldPose(new Vector2(0, -.4f), 135 * Mathf.SmoothStep(0, 1, Mathf.Clamp01((t - 1) / 2)));
                     break;
                 case FluidExperimentScenario.Stir:
-                    spoon.Body.position = new Vector2(.28f * Mathf.Sin(t * 3), .7f + .12f * Mathf.Sin(t * 6));
+                    float stirHeight = Gpu.useImprovedPhysics ? -.35f : .7f;
+                    float stirAmplitude = Gpu.useImprovedPhysics ? .08f : .12f;
+                    spoon.Body.position = new Vector2(.28f * Mathf.Sin(t * 3), stirHeight + stirAmplitude * Mathf.Sin(t * 6));
                     spoon.Body.rotation = 12 * Mathf.Sin(t * 3);
                     break;
                 case FluidExperimentScenario.SealedShake:
@@ -172,34 +232,109 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private void Update()
         {
             if (!Ready) return;
+            world.interactor.pointerBlockRect = ActiveControlsRect;
+            if (ActiveScenario == FluidExperimentScenario.VolumeCheck) FrameVolumeVessel();
+            if (VolumeSampleAvailable && lastVolumeSnapshot != Gpu.SnapshotRevision)
+            {
+                VolumeMetrics.Measure(Gpu, VolumeVessel, RequestedVolumeMl);
+                lastVolumeSnapshot = Gpu.SnapshotRevision;
+            }
             if (Input.GetKeyDown(KeyCode.Alpha1)) SwitchMode(FluidExperimentMode.ACurrent);
             if (Input.GetKeyDown(KeyCode.Alpha2)) SwitchMode(FluidExperimentMode.BReferencePhysics);
             if (Input.GetKeyDown(KeyCode.Alpha3)) SwitchMode(FluidExperimentMode.CReferenceSurface);
+            if (Input.GetKeyDown(KeyCode.Alpha4)) SwitchMode(FluidExperimentMode.DImprovedSurface);
+            if (Input.GetKeyDown(KeyCode.Alpha5)) SwitchMode(FluidExperimentMode.ECalibratedLiquid);
             if (Input.GetKeyDown(KeyCode.R)) StartScenario(ActiveScenario);
+        }
+        private void FrameVolumeVessel()
+        {
+            if (VolumeVessel == null) return;
+            Camera camera = world.interactor.inputCamera;
+            Rect interior = VolumeVessel.collisionProfile != null
+                ? VolumeVessel.collisionProfile.InteriorBounds : VolumeVessel.contentRegions[0];
+            Vector2 center = VolumeVessel.LocalToWorld(interior.center);
+            Vector3 scale = VolumeVessel.transform.lossyScale;
+            float width = Mathf.Max(1, camera.pixelWidth), height = Mathf.Max(1, camera.pixelHeight);
+            float panelWidth = showControls ? ActiveControlsRect.xMax + 12 : 0;
+            float availableWidth = Mathf.Max(1, width - panelWidth);
+            camera.orthographicSize = Mathf.Max(1.5f, interior.height * Mathf.Abs(scale.y) * .8f,
+                interior.width * Mathf.Abs(scale.x) * .7f * height / availableWidth);
+            // Keep the measured liquid visible beside the controls, including resized Game views.
+            float centerOffset = panelWidth / width * camera.orthographicSize * camera.aspect;
+            camera.transform.position = new Vector3(center.x - centerOffset, center.y, -20);
         }
         private void OnGUI()
         {
             if (!showControls) return;
-            GUILayout.BeginArea(ControlsRect, GUI.skin.box);
+            Matrix4x4 previousMatrix = GUI.matrix;
+            GUI.matrix = previousMatrix * Matrix4x4.Scale(new Vector3(ControlsScale, ControlsScale, 1));
+            GUILayout.BeginArea(LogicalControlsRect, GUI.skin.box);
             GUILayout.Label("GPU FLUID EXPERIMENT  |  " + ModeName(ActiveMode));
             GUILayout.BeginHorizontal();
             foreach (FluidExperimentMode mode in Enum.GetValues(typeof(FluidExperimentMode)))
+            {
+                if (mode == FluidExperimentMode.DImprovedSurface) { GUILayout.EndHorizontal(); GUILayout.BeginHorizontal(); }
                 if (GUILayout.Button(ModeName(mode), GUILayout.Height(27)) && Ready) SwitchMode(mode);
+            }
             GUILayout.EndHorizontal();
-            GUILayout.Label("Same scene / particle volume / replay. Switching modes restarts the selected replay.");
+            GUILayout.Label("Same scene / requested ml / replay. D: C physics. E: calibrated area and new physics.");
+            if (ActiveMode == FluidExperimentMode.ECalibratedLiquid)
+            {
+                GUILayout.BeginHorizontal();
+                foreach (FluidExperimentMaterial material in Enum.GetValues(typeof(FluidExperimentMaterial)))
+                    if (GUILayout.Button(material.ToString(), GUILayout.Height(23)))
+                    {
+                        Gpu.improvedMaterial = material;
+                        StartScenario(ActiveScenario);
+                    }
+                GUILayout.EndHorizontal();
+                GUILayout.Label("Material: " + Gpu.improvedMaterial + " | volume from each vessel's capacity and interior area");
+            }
             GUILayout.BeginHorizontal();
             foreach (FluidExperimentScenario scenario in Enum.GetValues(typeof(FluidExperimentScenario)))
                 if (GUILayout.Button(scenario.ToString(), GUILayout.Height(25)) && Ready) StartScenario(scenario);
             GUILayout.EndHorizontal();
+            if (ActiveScenario == FluidExperimentScenario.VolumeCheck) DrawVolumeControls();
             GUILayout.Label("Replay: " + ActiveScenario + "  " + ScenarioTime.ToString("F1") + "s");
-            GUILayout.Label("1 / 2 / 3: compare    R: restart    Manual: LMB pick/place, RMB rotate, C lid");
+            GUILayout.Label("1 - 5: compare    R: restart    Manual: LMB pick/place/swap, RMB rotate, C lid");
             GUILayout.Label(Ready ? "GPU: " + SystemInfo.graphicsDeviceName + "  |  particles: " + Gpu.ActiveCount
                 + "  |  " + Gpu.SnapshotTotalMl.ToString("F1") + " ml" : "GPU unavailable: " + (Error ?? Gpu?.Error));
-            GUILayout.Label("A = existing PBF copy    B = reference GPU physics    C = reference physics + density surface");
+            GUILayout.Label("A: baseline | B: reference physics | C: density surface | D: new surface | E: calibrated liquid");
             GUILayout.EndArea();
+            GUI.matrix = previousMatrix;
         }
-        public static string ModeName(FluidExperimentMode mode) => mode == FluidExperimentMode.ACurrent ? "1: A Current"
-            : mode == FluidExperimentMode.BReferencePhysics ? "2: B Physics" : "3: C Surface";
+        private void DrawVolumeControls()
+        {
+            FluidExperimentBody selectedVessel = null;
+            GUILayout.BeginHorizontal();
+            foreach (FluidExperimentBody body in world.Items)
+                if (body.kind == LabItemKind.Glass
+                    && GUILayout.Button(body.displayName, GUILayout.Height(23)))
+                    selectedVessel = body;
+            GUILayout.EndHorizontal();
+            if (selectedVessel != null) StartVolumeCheck(selectedVessel, RequestedVolumeMl);
+            GUILayout.BeginHorizontal();
+            foreach (float ml in new[] { 30f, 60f, 120f })
+                if (GUILayout.Button(ml + " ml", GUILayout.Height(23)) && VolumeVessel != null)
+                    StartVolumeCheck(VolumeVessel, ml);
+            GUILayout.EndHorizontal();
+            GUILayout.Label("Requested " + RequestedVolumeMl.ToString("F1") + " ml | Queued "
+                + QueuedVolumeMl.ToString("F1") + " ml | Not filled "
+                + Mathf.Max(0, RequestedVolumeMl - QueuedVolumeMl).ToString("F1") + " ml");
+            if (!VolumeSampleAvailable) { GUILayout.Label("Waiting for liquid measurement..."); return; }
+            GUILayout.Label("In glass " + VolumeMetrics.ContainedMl.ToString("F1") + " ml | Outside "
+                + VolumeMetrics.OutsideMl.ToString("F1") + " ml | Active " + VolumeMetrics.ActiveMl.ToString("F1") + " ml");
+            GUILayout.Label("Particle height (95%) " + VolumeMetrics.ParticleHeight95.ToString("F3")
+                + " u | Mean speed " + VolumeMetrics.MeanSpeed.ToString("F3") + " u/s");
+            GUILayout.Label("Not filled is an initial fill limit, not spilled liquid.");
+        }
+        public static string ModeName(FluidExperimentMode mode) => mode switch {
+            FluidExperimentMode.ACurrent => "1: A Current",
+            FluidExperimentMode.BReferencePhysics => "2: B Physics",
+            FluidExperimentMode.CReferenceSurface => "3: C Surface",
+            FluidExperimentMode.DImprovedSurface => "4: D New Surface",
+            _ => "5: E Calibrated Liquid"
+        };
         private void OnDestroy()
         {
             if (Gpu != null && Gpu.settings == runtimeSettings) Gpu.settings = sourceSettings;

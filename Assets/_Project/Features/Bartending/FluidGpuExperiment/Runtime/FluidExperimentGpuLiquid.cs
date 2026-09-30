@@ -50,6 +50,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public int LastSubsteps { get; private set; }
         public float EmittedMl { get; private set; }
         public float SnapshotTotalMl { get; private set; }
+        // Changes only after a complete particle/composition snapshot has been processed.
+        public int SnapshotRevision { get; private set; }
         public GpuLiquidParticle[] Snapshot => snapshotParticles;
         public float[] CompositionSnapshot => snapshotComposition;
         public int IngredientStride => maximumIngredients;
@@ -92,10 +94,14 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         public bool TryEmit(Vector2 position, Vector2 velocity, ItemDef ingredient, float volumeMl, uint vesselId)
         {
-            if (!IsOperational || ingredient == null || volumeMl <= 0 || availableSlots <= 0 || pendingSpawnCount >= particleCapacity) return false;
+            if (ingredient == null || volumeMl <= 0 || !float.IsFinite(volumeMl)
+                || !float.IsFinite(position.x) || !float.IsFinite(position.y)
+                || !float.IsFinite(velocity.x) || !float.IsFinite(velocity.y)) return false;
+            RecordEmissionRequest(ingredient, volumeMl);
+            if (!IsOperational || availableSlots <= 0 || pendingSpawnCount >= particleCapacity) return RejectEmission(ingredient, volumeMl);
             if (!ingredientIndices.TryGetValue(ingredient, out int index))
             {
-                if (ingredients.Count >= maximumIngredients) return false;
+                if (ingredients.Count >= maximumIngredients) return RejectEmission(ingredient, volumeMl);
                 index = ingredients.Count; ingredients.Add(ingredient); ingredientIndices.Add(ingredient, index);
                 Color color = ingredient.liquidColor;
                 if (QualitySettings.activeColorSpace == ColorSpace.Linear) color = color.linear;
@@ -110,11 +116,13 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 TemperatureC = ingredient.servingTemperatureC, SourceIngredient = (uint)index, VesselId = vesselId
             };
             availableSlots--; reservations++; EmittedMl += volumeMl;
+            RecordEmissionQueued(ingredient, volumeMl);
             return true;
         }
         public float Fill(FluidExperimentBody vessel, ItemDef ingredient, float volume)
         {
             if (!vessel.IsVessel || !IsOperational) return 0;
+            if (useImprovedPhysics) return FillCalibrated(vessel, ingredient, volume);
             float emitted = 0;
             foreach (Rect region in vessel.contentRegions)
             {
@@ -134,6 +142,19 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public void Step(float dt)
         {
             if (!IsOperational || dt <= 0) return;
+            bool record = FluidExperimentPerformance.IsRecording;
+            long started = record ? System.Diagnostics.Stopwatch.GetTimestamp() : 0;
+            FluidExperimentPerformance.PhysicsSampler?.Begin();
+            try { StepMeasured(dt); }
+            finally
+            {
+                FluidExperimentPerformance.PhysicsSampler?.End();
+                if (record) FluidExperimentPerformance.RecordPhysics(System.Diagnostics.Stopwatch.GetTimestamp() - started);
+            }
+        }
+        private void StepMeasured(float dt)
+        {
+            liquidStateVersion++;
             if (pendingSpawnCount > 0)
             {
                 for (int i = 0; i < pendingSpawnCount; i++)
@@ -147,6 +168,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 DispatchForCount(spawnKernel, pendingSpawnCount);
                 pendingSpawnCount = 0;
             }
+            BeginImprovedSurfaceTick(dt);
             // Fluid time integration is independent of every object's movement and selection state.
             // Fast boundaries are handled by particle-local continuous collision detection instead.
             int steps = Mathf.Clamp(settings.gpuLiquidSubsteps, 1, 16);
@@ -173,11 +195,13 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 }
                 RebuildGrid();
                 DispatchForCount(snapshotVelocityKernel, particleCapacity);
+                BindCurrentComposition(velocityKernel);
                 DispatchForCount(velocityKernel, particleCapacity);
                 DispatchForCount(mergeStreamContactsKernel, particleCapacity);
                 DispatchMix();
             }
             BindCurrentComposition(colorKernel); DispatchForCount(colorKernel, particleCapacity);
+            EndImprovedSurfaceTick(dt);
             simulationTime += dt;
             if (automaticReadback && Time.unscaledTime >= nextReadback) RequestReadback();
         }
@@ -191,6 +215,11 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 Vector2 position = Vector2.Lerp(item.PreviousPosition, item.Position, to);
                 float previousAngle = item.PreviousAngle + item.StepAngle * from;
                 float angle = item.PreviousAngle + item.StepAngle * to;
+                Vector3 bodyScale = item.transform.lossyScale;
+                float radians = angle * Mathf.Deg2Rad, sine = Mathf.Sin(radians), cosine = Mathf.Cos(radians);
+                float angleDelta = (angle - previousAngle) * Mathf.Deg2Rad;
+                Vector2 linearVelocity = (position - previousPosition) / dt;
+                float angularVelocity = angleDelta / dt;
                 uint flags = (item.IsHeld ? 2u : 0u) | (item.kind == LabItemKind.Ice ? 4u : 0u);
                 int first = boundaryCount, contourFirst, contourEnd;
                 void UploadPath(Vector2[] path, bool closed, bool vesselContour = false, bool ownershipOnly = false)
@@ -200,10 +229,12 @@ namespace Slainte.Bartending.FluidGpuExperiment
                     {
                         if (boundaryCount >= MaximumBoundarySegments) throw new InvalidOperationException("FluidExperiment boundary budget exceeded.");
                         Vector2 la = path[i], lb = path[(i + 1) % path.Length];
-                        Vector2 a = item.PointAt(la, position, angle), b = item.PointAt(lb, position, angle);
-                        Vector2 localA = item.PointAt(la, Vector2.zero, 0), localB = item.PointAt(lb, Vector2.zero, 0);
-                        float angleDelta = (angle - previousAngle) * Mathf.Deg2Rad;
-                        Vector2 linearVelocity = (position - previousPosition) / dt;
+                        // Body pose/scale is fixed for this substep. Reuse its transform
+                        // instead of repeated native lossyScale reads and trig per edge.
+                        Vector2 localA = new Vector2(la.x * bodyScale.x, la.y * bodyScale.y);
+                        Vector2 localB = new Vector2(lb.x * bodyScale.x, lb.y * bodyScale.y);
+                        Vector2 a = position + new Vector2(localA.x * cosine - localA.y * sine, localA.x * sine + localA.y * cosine);
+                        Vector2 b = position + new Vector2(localB.x * cosine - localB.y * sine, localB.x * sine + localB.y * cosine);
                         Vector2 offsetA = a - position, offsetB = b - position;
                         uint edgeFlags = flags | (vesselContour ? 8u : 0u);
                         if (ownershipOnly) edgeFlags |= 16u;
@@ -211,8 +242,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
                         boundaryUpload[boundaryCount++] = new GpuLiquidBoundarySegment
                         {
                             A = a, B = b,
-                            VelocityA = linearVelocity + new Vector2(-offsetA.y, offsetA.x) * (angleDelta / dt),
-                            VelocityB = linearVelocity + new Vector2(-offsetB.y, offsetB.x) * (angleDelta / dt),
+                            VelocityA = linearVelocity + new Vector2(-offsetA.y, offsetA.x) * angularVelocity,
+                            VelocityB = linearVelocity + new Vector2(-offsetB.y, offsetB.x) * angularVelocity,
                             VesselId = item.Id, Flags = edgeFlags, LocalA = localA, LocalB = localB,
                             StartPosition = previousPosition, EndPosition = position,
                             StartAngle = previousAngle * Mathf.Deg2Rad, AngleDelta = angleDelta
@@ -240,12 +271,12 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 foreach (Rect rect in item.contentRegions)
                 {
                     if (triggerCount >= MaximumVesselTriggers) throw new InvalidOperationException("FluidExperiment trigger budget exceeded.");
-                    Vector3 scale = item.transform.lossyScale;
+                    Vector2 center = new Vector2(rect.center.x * bodyScale.x, rect.center.y * bodyScale.y);
                     triggerUpload[triggerCount++] = new GpuLiquidVesselTrigger
                     {
-                        Center = item.PointAt(rect.center, position, angle),
-                        AxisX = FluidExperimentBody.Rotate(Vector2.right, angle), AxisY = FluidExperimentBody.Rotate(Vector2.up, angle),
-                        HalfExtents = new Vector2(rect.width * scale.x, rect.height * scale.y) * .5f,
+                        Center = position + new Vector2(center.x * cosine - center.y * sine, center.x * sine + center.y * cosine),
+                        AxisX = new Vector2(cosine, sine), AxisY = new Vector2(-sine, cosine),
+                        HalfExtents = new Vector2(rect.width * bodyScale.x, rect.height * bodyScale.y) * .5f,
                         VesselId = item.Id, Priority = (int)item.Id, Active = 1,
                         Flags = flags | (item.sealedVessel ? 1u : 0u) | (item.collisionProfile != null ? 32u : 0u)
                     };
@@ -261,9 +292,12 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public void SwapContents(uint a, Vector2 deltaA, uint b, Vector2 deltaB)
         {
             if (!IsOperational) return;
+            liquidStateVersion++;
             simulationShader.SetInt("_SwapA", (int)a); simulationShader.SetInt("_SwapB", (int)b);
             simulationShader.SetVector("_SwapDeltaA", deltaA); simulationShader.SetVector("_SwapDeltaB", deltaB);
             DispatchForCount(swapKernel, particleCapacity);
+            InvalidateImprovedSurfaceHistory(a);
+            if (b != 0) InvalidateImprovedSurfaceHistory(b);
             for (int i = 0; i < pendingSpawnCount; i++)
             {
                 if (spawnCommands[i].VesselId == a) spawnCommands[i].Position += deltaA;
@@ -273,15 +307,22 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public void ReleaseOwner(uint id)
         {
             if (!IsOperational || id == 0) return;
+            liquidStateVersion++;
             simulationShader.SetInt("_TransformTargetVessel", (int)id);
             DispatchForCount(releaseOwnerKernel, particleCapacity);
+            ResetImprovedSurfaceHistory();
         }
         public void ReadbackNow()
         {
             if (!IsOperational) return;
+            // A synchronous read supersedes any older async request, including its staging callbacks.
+            snapshotRequestToken++; readbackInFlight = false;
+            LedgerCapture capture = CaptureLedger();
+            CollectLedger();
             particleBuffer.GetData(snapshotParticles);
             (compositionAIsCurrent ? compositionA : compositionB).GetData(snapshotComposition);
-            ProcessSnapshot(reservations - pendingSpawnCount);
+            ledgerSnapshotBuffer.GetData(ledgerReadback);
+            ProcessSnapshot(capture);
         }
         public void ResetSimulation()
         {
@@ -292,38 +333,56 @@ namespace Slainte.Bartending.FluidGpuExperiment
             EmittedMl = SnapshotTotalMl = 0;
             Array.Clear(snapshotParticles, 0, snapshotParticles.Length);
             Array.Clear(snapshotComposition, 0, snapshotComposition.Length);
+            ResetImprovedSurfaceHistory();
         }
         private void RequestReadback()
         {
             if (readbackInFlight || !SystemInfo.supportsAsyncGPUReadback) return;
             readbackInFlight = true; nextReadback = Time.unscaledTime + .2f;
             int expectedGeneration = generation;
-            long capturedReservations = reservations - pendingSpawnCount;
+            int expectedRequest = ++snapshotRequestToken;
+            LedgerCapture capture = CaptureLedger();
+            CollectLedger();
             int completed = 0;
             bool failed = false;
             Action finish = () =>
             {
-                if (generation != expectedGeneration || !IsOperational) return;
-                if (++completed != 2) return;
+                if (generation != expectedGeneration || snapshotRequestToken != expectedRequest || !IsOperational) return;
+                if (++completed != 3) return;
                 readbackInFlight = false;
-                if (!failed) ProcessSnapshot(capturedReservations);
+                if (!failed)
+                {
+                    // Publish all three datasets together. A failed/partial callback never exposes
+                    // particle positions from one tick with ingredient ratios from another.
+                    Array.Copy(stagingParticles, snapshotParticles, snapshotParticles.Length);
+                    Array.Copy(stagingComposition, snapshotComposition, snapshotComposition.Length);
+                    Array.Copy(stagingLedger, ledgerReadback, ledgerReadback.Length);
+                    ProcessSnapshot(capture);
+                }
             };
             AsyncGPUReadback.Request(particleBuffer, request =>
             {
-                if (generation != expectedGeneration || !IsOperational) return;
+                if (generation != expectedGeneration || snapshotRequestToken != expectedRequest || !IsOperational) return;
                 if (request.hasError) failed = true;
-                else request.GetData<GpuLiquidParticle>().CopyTo(snapshotParticles);
+                else request.GetData<GpuLiquidParticle>().CopyTo(stagingParticles);
                 finish();
             });
             AsyncGPUReadback.Request(compositionAIsCurrent ? compositionA : compositionB, request =>
             {
-                if (generation != expectedGeneration || !IsOperational) return;
+                if (generation != expectedGeneration || snapshotRequestToken != expectedRequest || !IsOperational) return;
                 if (request.hasError) failed = true;
-                else request.GetData<float>().CopyTo(snapshotComposition);
+                else request.GetData<float>().CopyTo(stagingComposition);
+                finish();
+            });
+            AsyncGPUReadback.Request(ledgerSnapshotBuffer, request =>
+            {
+                if (generation != expectedGeneration || snapshotRequestToken != expectedRequest || !IsOperational) return;
+                if (request.hasError) failed = true;
+                else request.GetData<Vector4>().CopyTo(stagingLedger);
                 finish();
             });
         }
-        private void ProcessSnapshot(long capturedReservations)
+        private void ProcessSnapshot(LedgerCapture capture)
         {
             activeParticleCount = 0; SnapshotTotalMl = 0;
             foreach (GpuLiquidParticle particle in snapshotParticles)
@@ -331,7 +390,14 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 if (particle.Active == 0) continue;
                 activeParticleCount++; SnapshotTotalMl += particle.VolumeMl;
             }
-            availableSlots = Mathf.Max(0, particleCapacity - activeParticleCount - (int)(reservations - capturedReservations));
+            // Reserved but not-yet-born GPU particles occupy slots even when Active == 0.
+            Vector4 counts = ledgerReadback[(maximumIngredients + 1) * 2];
+            int occupied = Mathf.RoundToInt(counts.x);
+            int actualFree = Mathf.Clamp(Mathf.RoundToInt(counts.w), 0, particleCapacity);
+            int freeAtCapture = Mathf.Min(particleCapacity - occupied, actualFree);
+            availableSlots = Mathf.Max(0, freeAtCapture - (int)(reservations - capture.reservations));
+            SnapshotRevision++;
+            PublishLedger(capture);
         }
         public float VolumeIn(uint id)
         {
@@ -364,6 +430,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             DisposeSurfaceRendering();
             DisposeStreamBuffers();
             DisposeReferenceBuffers();
+            DisposeLedgerBuffers();
             boundaryGroupBuffer?.Dispose(); boundaryGroupBuffer = null;
             GraphicsBuffer[] buffers = { particleBuffer, compositionA, compositionB, particleColorBuffer, positionDeltaBuffer,
                 lambdaBuffer, gridHeadBuffer, gridNextBuffer, freeIndexBuffer, freeCountBuffer, spawnCommandBuffer,

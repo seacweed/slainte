@@ -1,0 +1,16 @@
+{
+  "timeoutSeconds": 300,
+  "executable": "C:\\Program Files\\Unity\\Hub\\Editor\\6000.3.5f2\\Editor\\Unity.exe",
+  "workingDirectory": "C:\\unity_proj\\slainte\\slainte",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "C:/unity_proj/slainte/slainte/Library/FluidSwapHarness",
+    "-executeMethod",
+    "ExperimentSurfaceValidation.Begin",
+    "-logFile",
+    "C:\\unity_proj\\slainte\\slainte\\FluidGpuExperimentEvidence\\46-motion-surface-regression\\Editor.log"
+  ],
+  "started": "2026-09-30T19:35:14.0130931+09:00"
+}

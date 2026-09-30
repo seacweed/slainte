@@ -1,0 +1,157 @@
+[
+  {
+    "kernel": "ResetParticles",
+    "uavCount": 7,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "ResetCompositionBuffers",
+    "uavCount": 5,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "SpawnParticles",
+    "uavCount": 8,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "IntegrateParticles",
+    "uavCount": 2,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "SweepBoundaries",
+    "uavCount": 3,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "SnapshotVelocities",
+    "uavCount": 4,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "ClearGrid",
+    "uavCount": 1,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "BuildGrid",
+    "uavCount": 4,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "CalculateDensityLambda",
+    "uavCount": 5,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "CalculatePositionDelta",
+    "uavCount": 6,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "ApplyDeltaAndBoundaries",
+    "uavCount": 3,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "UpdateVelocities",
+    "uavCount": 8,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "MixComposition",
+    "uavCount": 5,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "CalculateConservativeMixWeights",
+    "uavCount": 5,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "MixCompositionConservative",
+    "uavCount": 6,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "CollectLiquidLedger",
+    "uavCount": 5,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "TransferVesselContents",
+    "uavCount": 5,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "UpdateParticleColors",
+    "uavCount": 2,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "ApplyTechnique",
+    "uavCount": 1,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "TranslateVesselContents",
+    "uavCount": 1,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "SetVesselSuspended",
+    "uavCount": 1,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "SwapContents",
+    "uavCount": 1,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "ReleaseOwner",
+    "uavCount": 1,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "ResetStreamLookup",
+    "uavCount": 1,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "BuildStreamSurface",
+    "uavCount": 5,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "MergeStreamContacts",
+    "uavCount": 5,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "CalculateReferenceDensityPressure",
+    "uavCount": 5,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "CalculateReferenceDelta",
+    "uavCount": 7,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "CalculateImprovedDensity",
+    "uavCount": 7,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "CalculateImprovedDelta",
+    "uavCount": 7,
+    "profile": "cs_5_0"
+  },
+  {
+    "kernel": "CalculateImprovedViscosity",
+    "uavCount": 7,
+    "profile": "cs_5_0"
+  }
+]

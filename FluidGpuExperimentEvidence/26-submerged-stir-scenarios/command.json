@@ -1,0 +1,16 @@
+{
+  "workingDirectory": "C:\\unity_proj\\slainte\\slainte",
+  "executable": "C:\\Program Files\\Unity\\Hub\\Editor\\6000.3.5f2\\Editor\\Unity.exe",
+  "timeoutSeconds": 240,
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "C:/unity_proj/slainte/slainte/Library/FluidSwapHarness",
+    "-executeMethod",
+    "ExperimentScenarioValidation.Begin",
+    "-logFile",
+    "C:\\unity_proj\\slainte\\slainte\\FluidGpuExperimentEvidence\\26-submerged-stir-scenarios\\Editor.log"
+  ],
+  "started": "2026-09-30T18:12:14.9836373+09:00"
+}

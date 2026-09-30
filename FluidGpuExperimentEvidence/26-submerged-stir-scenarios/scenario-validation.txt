@@ -1,0 +1,79 @@
+PASS Authored comparison scene exists
+PASS Actual E secondary effects component exists
+Protocol: E Water Rest/Pour/Tilt/Stir/SealedShake, matched held ghost-spoon Stir, Syrup Pour and Milk Stir; .02s fixed ticks, .2s coherent measurements; independent exact-quantity and bounded-response assertions.
+Diagnostics are the final E density/projection pass of each sampled tick, before its final velocity reconstruction; snapshot RMS speed is measured separately. Compression/correction-cap rates are recorded, not described as a general naturalness score.
+PASS Rest-Water: replay starts with exactly 60 queued ml
+PASS Rest-Water: all active particles and velocities remain finite and bounded
+PASS Rest-Water: every sampled completed tick conserves total and ingredient ml
+PASS Rest-Water: secondary effects remain bounded
+PASS Rest-Water: moving replay cannot generate liquid
+PASS Rest-Water: resting glass retains its seeded contents
+PASS Rest-Water: stationary liquid's final one-second RMS speed stays below .5 units/s
+OBSERVATION Rest-Water emitted=0 owned=60 outsidePeak=0 retired=0 tailSpeed=0.030211 tailRms=0.047996 tailCompression=0.00002 tailCorrectionCap=0 spoonImmersedSamples=0 tipMaxDepth=0 cosmeticsPeak=0
+PASS Pour-Water: receiving glass is unheld so incoming bottle liquid can collide
+PASS Pour-Water: replay starts with exactly 60 queued ml
+PASS Pour-Water: all active particles and velocities remain finite and bounded
+PASS Pour-Water: every sampled completed tick conserves total and ingredient ml
+PASS Pour-Water: secondary effects remain bounded
+PASS Pour-Water: the real bottle emits and debits only accepted stock
+PASS Pour-Water: the receiving glass captures actual new bottle liquid
+PASS Pour-Water: restored upright bottle ends the finite drip tail
+PASS Pour-Water: final one-second tail contains no deferred emitter births
+OBSERVATION Pour-Water emitted=78.350006 owned=138 outsidePeak=6.5 retired=0.35 tailSpeed=0.31566 tailRms=0.290598 tailCompression=0.000596 tailCorrectionCap=0 spoonImmersedSamples=0 tipMaxDepth=0 cosmeticsPeak=3
+PASS Tilt-Water: replay starts with exactly 60 queued ml
+PASS Tilt-Water: all active particles and velocities remain finite and bounded
+PASS Tilt-Water: every sampled completed tick conserves total and ingredient ml
+PASS Tilt-Water: secondary effects remain bounded
+PASS Tilt-Water: moving replay cannot generate liquid
+PASS Tilt-Water: actual vessel tilt spills liquid through its open mouth
+OBSERVATION Tilt-Water emitted=0 owned=0 outsidePeak=60 retired=0 tailSpeed=0 tailRms=2.865457 tailCompression=0 tailCorrectionCap=0 spoonImmersedSamples=0 tipMaxDepth=0 cosmeticsPeak=9
+PASS Stir-Water: tool/owner held policy matches the fixture
+PASS Stir-Water: replay starts with exactly 60 queued ml
+PASS Stir-Water: all active particles and velocities remain finite and bounded
+PASS Stir-Water: every sampled completed tick conserves total and ingredient ml
+PASS Stir-Water: secondary effects remain bounded
+PASS Stir-Water: moving replay cannot generate liquid
+PASS Stir-Water: authored moving geometry drives the replay
+PASS Stir-Water: authored spoon tip actually enters the bowl below the measured particle surface with neighboring liquid (20/20samples; max depth 2.099541u)
+OBSERVATION Stir-Water emitted=0 owned=38.5 outsidePeak=11.5 retired=15.5 tailSpeed=1.023861 tailRms=1.104337 tailCompression=0.000581 tailCorrectionCap=0 spoonImmersedSamples=20 tipMaxDepth=2.099541 cosmeticsPeak=4
+PASS SealedShake-Water: replay starts with exactly 60 queued ml
+PASS SealedShake-Water: all active particles and velocities remain finite and bounded
+PASS SealedShake-Water: every sampled completed tick conserves total and ingredient ml
+PASS SealedShake-Water: secondary effects remain bounded
+PASS SealedShake-Water: moving replay cannot generate liquid
+PASS SealedShake-Water: authored moving geometry drives the replay
+PASS SealedShake-Water: sealed moving shaker retains its contents without teleporting or loss
+OBSERVATION SealedShake-Water emitted=0 owned=60 outsidePeak=0 retired=0 tailSpeed=1.117303 tailRms=1.940932 tailCompression=0.000001 tailCorrectionCap=0 spoonImmersedSamples=0 tipMaxDepth=0 cosmeticsPeak=11
+PASS Stir-Water-ghost: tool/owner held policy matches the fixture
+PASS Stir-Water-ghost: replay starts with exactly 60 queued ml
+PASS Stir-Water-ghost: all active particles and velocities remain finite and bounded
+PASS Stir-Water-ghost: every sampled completed tick conserves total and ingredient ml
+PASS Stir-Water-ghost: secondary effects remain bounded
+PASS Stir-Water-ghost: moving replay cannot generate liquid
+PASS Stir-Water-ghost: authored moving geometry drives the replay
+PASS Stir-Water-ghost: authored spoon tip actually enters the bowl below the measured particle surface with neighboring liquid (20/20samples; max depth 0.239668u)
+OBSERVATION Stir-Water-ghost emitted=0 owned=60 outsidePeak=0 retired=0 tailSpeed=0.059648 tailRms=0.044457 tailCompression=0.000004 tailCorrectionCap=0 spoonImmersedSamples=20 tipMaxDepth=0.239668 cosmeticsPeak=0
+PASS Pour-Syrup: receiving glass is unheld so incoming bottle liquid can collide
+PASS Pour-Syrup: replay starts with exactly 60 queued ml
+PASS Pour-Syrup: all active particles and velocities remain finite and bounded
+PASS Pour-Syrup: every sampled completed tick conserves total and ingredient ml
+PASS Pour-Syrup: secondary effects remain bounded
+PASS Pour-Syrup: the real bottle emits and debits only accepted stock
+PASS Pour-Syrup: the receiving glass captures actual new bottle liquid
+PASS Pour-Syrup: restored upright bottle ends the finite drip tail
+PASS Pour-Syrup: final one-second tail contains no deferred emitter births
+OBSERVATION Pour-Syrup emitted=18.930023 owned=78 outsidePeak=1.5 retired=0 tailSpeed=0.056644 tailRms=0.076802 tailCompression=0.000017 tailCorrectionCap=0 spoonImmersedSamples=0 tipMaxDepth=0 cosmeticsPeak=3
+PASS Stir-Milk: tool/owner held policy matches the fixture
+PASS Stir-Milk: replay starts with exactly 60 queued ml
+PASS Stir-Milk: all active particles and velocities remain finite and bounded
+PASS Stir-Milk: every sampled completed tick conserves total and ingredient ml
+PASS Stir-Milk: secondary effects remain bounded
+PASS Stir-Milk: moving replay cannot generate liquid
+PASS Stir-Milk: authored moving geometry drives the replay
+PASS Stir-Milk: authored spoon tip actually enters the bowl below the measured particle surface with neighboring liquid (20/20samples; max depth 2.185125u)
+OBSERVATION Stir-Milk emitted=0 owned=40.5 outsidePeak=13.5 retired=13 tailSpeed=1.092142 tailRms=1.136854 tailCompression=0.000306 tailCorrectionCap=0 spoonImmersedSamples=20 tipMaxDepth=2.185125 cosmeticsPeak=3
+PASS Immersed unheld spoon measurably changes liquid versus identical held ghost-spoon motion across at least3samples (max center 0.350151u; RMS 2.146555u/s; separated samples 20)
+PASS Global syrup preset reduces actual delivered ml relative to water under the same scripted motion
+OBSERVATION milk/water stir cosmetic peaks: 3/4; material lifetime and clip/disposal guarantees are tested by the dedicated pour/effects suite.
+PASS Finishing replay restores manual input and authored unheld state
+E replay, conservation, material and tool-contact validation completed.

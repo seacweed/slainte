@@ -37,6 +37,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             translateVesselKernel = RequireKernel("TranslateVesselContents");
             suspendVesselKernel = RequireKernel("SetVesselSuspended");
             CacheReferenceKernels();
+            CacheLedgerKernels();
         }
 
         private void AllocateBuffers()
@@ -95,6 +96,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             snapshotParticles = new GpuLiquidParticle[particleCapacity];
             snapshotComposition = new float[particleCapacity * maximumIngredients];
             AllocateReferenceBuffers();
+            AllocateLedgerBuffers();
         }
 
         private static GraphicsBuffer CreateStructured<T>(int count) where T : struct => new GraphicsBuffer(GraphicsBuffer.Target.Structured, count, Marshal.SizeOf<T>());
@@ -200,6 +202,10 @@ namespace Slainte.Bartending.FluidGpuExperiment
             BindStreamBuffers(resetStreamLookupKernel);
             simulationShader.SetBuffer(clearGridKernel, "_GridHeads", gridHeadBuffer);
             BindReferenceParameters();
+            BindCommonBuffers(conservativeMixWeightsKernel);
+            BindCommonBuffers(conservativeMixKernel);
+            BindCommonBuffers(collectLedgerKernel);
+            BindCommonBuffers(transferContentsKernel);
         }
 
         private void BindCommonBuffers(int kernel)
@@ -211,10 +217,12 @@ namespace Slainte.Bartending.FluidGpuExperiment
             simulationShader.SetBuffer(kernel, "_ParticleColors", particleColorBuffer);
             simulationShader.SetBuffer(kernel, "_PositionDeltas", positionDeltaBuffer);
             simulationShader.SetBuffer(kernel, "_VelocitySnapshot", velocitySnapshotBuffer);
+            simulationShader.SetBuffer(kernel, "_VelocityRead", velocitySnapshotBuffer);
             simulationShader.SetBuffer(kernel, "_Lambdas", lambdaBuffer);
             simulationShader.SetBuffer(kernel, "_GridHeads", gridHeadBuffer);
             simulationShader.SetBuffer(kernel, "_GridNext", gridNextBuffer);
             simulationShader.SetBuffer(kernel, "_FreeIndices", freeIndexBuffer);
+            simulationShader.SetBuffer(kernel, "_FreeIndicesRead", freeIndexBuffer);
             simulationShader.SetBuffer(kernel, "_FreeCount", freeCountBuffer);
             simulationShader.SetBuffer(kernel, "_SpawnCommands", spawnCommandBuffer);
             simulationShader.SetBuffer(kernel, "_IngredientVisuals", ingredientVisualBuffer);
@@ -224,6 +232,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             simulationShader.SetBuffer(kernel, "_Agitators", agitatorBuffer);
             simulationShader.SetBuffer(kernel, "_Statistics", statisticsBuffer);
             simulationShader.SetBuffer(kernel, "_ReferenceDensityPressure", referenceDensityPressureBuffer);
+            BindLedgerBuffers(kernel);
         }
 
         private void DispatchReset()
@@ -232,6 +241,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             compositionAIsCurrent = true;
             pendingSpawnCount = 0;
             activeParticleCount = 0;
+            ResetLedgerState();
             DispatchForCount(resetKernel, particleCapacity);
             DispatchForCount(resetCompositionKernel, particleCapacity);
             DispatchForCount(resetStreamLookupKernel, particleCapacity * 2);
@@ -245,11 +255,13 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         private void DispatchMix()
         {
+            int selectedMixKernel = useImprovedPhysics ? conservativeMixKernel : mixKernel;
+            if (useImprovedPhysics) DispatchForCount(conservativeMixWeightsKernel, particleCapacity);
             GraphicsBuffer read = compositionAIsCurrent ? compositionA : compositionB;
             GraphicsBuffer write = compositionAIsCurrent ? compositionB : compositionA;
-            simulationShader.SetBuffer(mixKernel, "_CompositionRead", read);
-            simulationShader.SetBuffer(mixKernel, "_CompositionWrite", write);
-            DispatchForCount(mixKernel, particleCapacity);
+            simulationShader.SetBuffer(selectedMixKernel, "_CompositionRead", read);
+            simulationShader.SetBuffer(selectedMixKernel, "_CompositionWrite", write);
+            DispatchForCount(selectedMixKernel, particleCapacity);
             compositionAIsCurrent = !compositionAIsCurrent;
         }
 

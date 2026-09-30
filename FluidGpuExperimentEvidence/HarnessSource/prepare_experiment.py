@@ -4,21 +4,15 @@ import hashlib
 import json
 import re
 import shutil
-import uuid
+import argparse
 
 root = Path(__file__).resolve().parents[2]
 feature = Path('Assets/_Project/Features/Bartending/FluidGpuExperiment')
-target = root / 'FluidGpuExperimentEvidence/HarnessProject'
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--target', type=Path, default=root / 'FluidGpuExperimentEvidence/HarnessProject')
+args = parser.parse_args()
+target = args.target.resolve()
 target.mkdir(parents=True, exist_ok=True)
-
-# Author new metadata only under the new feature. Never refresh the original project.
-for path in [root / feature, *(root / feature).rglob('*')]:
-    if path.suffix == '.meta':
-        continue
-    meta = Path(str(path) + '.meta')
-    if not meta.exists():
-        meta.write_text('fileFormatVersion: 2\nguid: ' + uuid.uuid4().hex + '\n'
-                        + ('folderAsset: yes\n' if path.is_dir() else ''), encoding='utf-8')
 
 index = {}
 for meta in (root / 'Assets').rglob('*.meta'):
@@ -54,7 +48,7 @@ for folder in ('Packages', 'ProjectSettings', 'UserSettings', 'Assets/Editor'):
     (target / folder).mkdir(parents=True, exist_ok=True)
 dependencies = {'com.unity.ugui': '2.0.0', 'com.unity.render-pipelines.universal': '17.3.0', 'com.unity.inputsystem': '1.17.0'}
 dependencies.update({'com.unity.modules.' + name: '1.0.0' for name in
-    ('physics2d', 'physics', 'imgui', 'ui', 'imageconversion', 'jsonserialize', 'animation')})
+    ('physics2d', 'physics', 'imgui', 'ui', 'imageconversion', 'jsonserialize', 'animation', 'screencapture', 'audio')})
 (target / 'Packages/manifest.json').write_text(json.dumps({'dependencies': dependencies}, indent=2))
 (target / 'UserSettings/Search.settings').write_text('{"indexOnEditorStartup": false}\n')
 for name in ('ProjectVersion.txt', 'ProjectSettings.asset', 'GraphicsSettings.asset', 'QualitySettings.asset', 'TimeManager.asset', 'TagManager.asset', 'Physics2DSettings.asset'):

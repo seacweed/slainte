@@ -51,6 +51,19 @@ namespace Slainte.Bartending.FluidGpuExperiment
         [Min(1)] public float referenceMaximumAcceleration = 250f;
         [Range(.05f, .75f)] public float referenceMaximumDisplacementRatio = .5f;
 
+        [Header("Calibrated liquid (E only)")]
+        [Min(.001f)] public float improvedAreaPerMl = .00678f;
+        [Min(.01f)] public float improvedParticleRadius = .024f;
+        [Range(1.8f, 3.5f)] public float improvedKernelRatio = 2.4f;
+        [Min(.05f)] public float improvedMaximumKernelRadius = .3f;
+        [Range(2, 16)] public int improvedSolverIterations = 8;
+        [Min(0)] public float improvedDensityCompliance = .0000001f;
+        [Range(.1f, 1)] public float improvedMaximumCorrectionRatio = .75f;
+        [Range(0, 1)] public float improvedWallDensity = 1f;
+        [Min(0)] public float improvedShearViscosity = 1f;
+        [Min(0)] public float improvedSurfaceTension = 1f;
+        [Min(0)] public float improvedWetting = 1f;
+
         [Header("Surface rendering (does not affect physics or ml)")]
         public Shader surfaceAccumulationShader;
         public Shader surfaceCompositeShader;

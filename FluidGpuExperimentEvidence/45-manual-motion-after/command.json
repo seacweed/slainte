@@ -1,0 +1,16 @@
+{
+  "timeoutSeconds": 300,
+  "workingDirectory": "C:\\unity_proj\\slainte\\slainte",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "C:/unity_proj/slainte/slainte/Library/FluidSwapHarness",
+    "-executeMethod",
+    "ExperimentManualPerformanceValidation.Begin",
+    "-logFile",
+    "C:\\unity_proj\\slainte\\slainte\\FluidGpuExperimentEvidence\\45-manual-motion-after\\Editor.log"
+  ],
+  "executable": "C:\\Program Files\\Unity\\Hub\\Editor\\6000.3.5f2\\Editor\\Unity.exe",
+  "started": "2026-09-30T19:33:41.6773222+09:00"
+}

@@ -11,7 +11,6 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public Camera inputCamera;
         [System.NonSerialized] public Rect pointerBlockRect;
         public float rotationSensitivity = 5;
-        public float swapMaximumSpeed = 1.4f;
         public float velocityWindow = .1f;
         [Min(.01f)] public float uprightReturnDuration = .15f;
         public FluidExperimentBody Held { get; private set; }
@@ -192,28 +191,13 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (Held == null) return false;
             // Dropping the object keeps its throw pose; only ending RMB rotation restores upright.
             Held.ApplyHeldPose();
-            if (Rotating || Returning || pointerSyncPending)
-            {
-                if (Returning || pointerSyncPending) samples.Clear();
-                Rotating = false;
-                Returning = pointerSyncPending = false;
-                grabLocal = Held.WorldToLocal(pointer);
-                lastPointer = pointer;
-            }
+            Physics2D.SyncTransforms();
             EstimateRelease(out Vector2 velocity, out float spin);
-            if (velocity.magnitude <= swapMaximumSpeed && Mathf.Abs(spin) < 45)
-            {
-                FluidExperimentBody target = world.FindSwapTarget(Held, pointer);
-                if (target != null)
-                {
-                    if (!world.TrySwap(Held, target, PickupOrigin)) return false;
-                    FinishDrop(Vector2.zero, 0);
-                    return true;
-                }
-            }
-            if (!world.TryResolveRelease(Held)) return false;
+            FluidExperimentBody target = world.FindSwapTarget(Held, pointer);
+            // Every drop retains the sampled motion. A target only adds the next pickup.
+            if (!world.TryResolveRelease(Held, target)) return false;
             FinishDrop(velocity, spin);
-            return true;
+            return target == null || Pick(target, pointer);
         }
         public void ReleaseWithVelocity(Vector2 velocity, float angularVelocity = 0)
         {

@@ -1,0 +1,42 @@
+PASS Authored comparison scene exists
+PASS Reservoir model solves a known quarter-full rectangle free surface
+PASS Analytic response volume is invariant to emitter time subdivision
+PASS Analytic inverse places each birth at its integrated-volume crossing
+PASS Material metadata/explicit overrides select distinct syrup and milk responses
+PASS E reservoir validation initializes the actual GPU
+PASS E actual bottle starts pouring at a lower tilt when fuller (75 vs 105 degrees)
+PASS E upright full bottle does not pour
+PASS E neck response delays the first discrete birth at 0.5ml resolution
+PASS E inverted flow debits exactly accepted source ml
+PASS E stopping yields a bounded physical last-droplet volume
+PASS E upright bottle becomes completely quiet after the finite tail
+PASS E final droplets preserve accepted stock accounting
+PASS E emitted particles retain genuine source and bounded birth-time metadata
+PASS E neck response delays the first discrete birth at 0.25ml resolution
+PASS E inverted flow debits exactly accepted source ml
+PASS E stopping yields a bounded physical last-droplet volume
+PASS E upright bottle becomes completely quiet after the finite tail
+PASS E final droplets preserve accepted stock accounting
+PASS E emitted particles retain genuine source and bounded birth-time metadata
+PASS E flow target is resolution-independent; completed .5/.25ml runs agree within quantization (38.17188 vs 38.17188ml)
+PASS E finite reservoir emits the fractional last stock exactly once and cannot overdraw
+PASS Reservation rejection fixture actually fills the particle reservation budget
+PASS E rejected spawn debits no stock and clears deferred emission pressure/credit
+PASS E capacity recovery cannot release a deferred burst
+PASS Water supports submerged ice with the .917 density ratio
+PASS Dry ice receives no fluid force and keeps table pass-through gravity
+PASS High relative speed and syrup viscosity produce bounded opposing drag
+PASS Comparison owns the isolated E effects component
+PASS Actual vessel-owned GPU liquid supplies the effects fixture
+PASS Actual completed owned-liquid snapshot applies ice response
+PASS Held ice receives no fluid force
+PASS Liquid owned by a held vessel cannot push external ice
+PASS Ice outside the liquid receives no stale snapshot force
+PASS Foam/bubble candidates use a bounded 128-effect pool
+PASS Cosmetics create zero logical liquid ml
+PASS Every cosmetic expires after its bounded material lifetime
+PASS Audio defaults off without allocating audio resources
+PASS Opt-in audio creates exactly two bounded procedural sources
+PASS Disabling optional audio releases sources and clips
+PASS Leaving E immediately removes all secondary response and cosmetic state
+Finite-reservoir/material/effects validation completed.

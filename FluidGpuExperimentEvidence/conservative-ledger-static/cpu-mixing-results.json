@@ -1,0 +1,49 @@
+{
+  "result": "PASS",
+  "evidence_kind": "CPU mathematical model; no Unity/GPU execution",
+  "cases": [
+    {
+      "case": "unequal_pair_partial_birth",
+      "particles": 2,
+      "steps": 600,
+      "max_ingredient_ml_error": 8.949637408939282e-08,
+      "max_ratio_sum_error": 7.450580596923828e-07
+    },
+    {
+      "case": "dense_normalized",
+      "particles": 160,
+      "steps": 12,
+      "max_ingredient_ml_error": 4.175253771165899e-06,
+      "max_ratio_sum_error": 3.3527612686157227e-07
+    },
+    {
+      "case": "long_mixture",
+      "particles": 24,
+      "steps": 1200,
+      "max_ingredient_ml_error": 1.7458353891441902e-06,
+      "max_ratio_sum_error": 3.948807716369629e-07
+    },
+    {
+      "case": "zero_birth_dt",
+      "particles": 5,
+      "steps": 20,
+      "max_ingredient_ml_error": 1.1494061102901298e-07,
+      "max_ratio_sum_error": 1.3969838619232178e-07
+    },
+    {
+      "case": "ownership_isolation",
+      "owners": [
+        1,
+        2,
+        0
+      ],
+      "unchanged": true
+    },
+    {
+      "case": "slot_lifetime_model",
+      "lifetimes": 10000,
+      "generated_ml": 4999.25,
+      "retired_ml": 4999.25
+    }
+  ]
+}

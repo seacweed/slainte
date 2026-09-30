@@ -111,13 +111,13 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 {
                     if (c == null || !c.enabled) continue;
                     foreach (Collider2D floor in floorColliders)
-                        if (floor != null && floor.enabled) Physics2D.IgnoreCollision(c, floor, a.IsHeld);
+                        if (floor != null && floor.enabled)
+                            Physics2D.IgnoreCollision(c, floor, a.IsHeld || a.kind == LabItemKind.Ice);
                     for (int j = i + 1; j < items.Count; j++)
                     {
                         FluidExperimentBody b = items[j];
                         if (b == null) continue;
-                        bool ignore = (a.IsHeld || b.IsHeld)
-                            && a.kind != LabItemKind.Ice && b.kind != LabItemKind.Ice;
+                        bool ignore = a.IsHeld || b.IsHeld;
                         foreach (Collider2D other in b.solidColliders)
                             if (other != null && other.enabled) Physics2D.IgnoreCollision(c, other, ignore);
                     }
@@ -137,49 +137,9 @@ namespace Slainte.Bartending.FluidGpuExperiment
             }
             return best;
         }
-        public bool TrySwap(FluidExperimentBody a, FluidExperimentBody b, Vector2 origin)
+        public bool TryResolveRelease(FluidExperimentBody item, FluidExperimentBody nextHeld = null)
         {
-            if (a == null || b == null || a == b || !a.IsHeld || b.IsHeld) return false;
-            Vector2 oldA = a.Position, oldB = b.Position;
-            float bottomB = b.SolidBounds.min.y;
-            var carriedA = CaptureIce(a);
-            var carriedB = CaptureIce(b);
-            a.Body.position = oldB;
-            b.Body.position = origin;
             Physics2D.SyncTransforms();
-            a.Body.position += Vector2.up * (bottomB - a.SolidBounds.min.y);
-            LiftAboveFloor(b);
-            Physics2D.SyncTransforms();
-            bool valid = !OverlapsSolids(a, b, carriedA, carriedB)
-                && !OverlapsSolids(b, a, carriedA, carriedB)
-                && !BodiesOverlap(a, b);
-            Vector2 newA = a.Position, newB = b.Position;
-            a.Body.position = oldA; b.Body.position = oldB;
-            Physics2D.SyncTransforms();
-            if (!valid) return false;
-            // Both GPU translations execute in a single kernel against the original owner IDs.
-            liquid?.SwapContents(a.Id, newA - oldA, b.Id, newB - oldB);
-            a.Teleport(newA, a.Angle);
-            b.Teleport(newB, b.Angle);
-            TranslateIce(carriedA, newA - oldA);
-            TranslateIce(carriedB, newB - oldB);
-            Physics2D.SyncTransforms();
-            return true;
-        }
-        private List<FluidExperimentBody> CaptureIce(FluidExperimentBody vessel)
-        {
-            var result = new List<FluidExperimentBody>();
-            if (!vessel.IsVessel) return result;
-            foreach (FluidExperimentBody item in items)
-                if (item != null && item.kind == LabItemKind.Ice && !item.IsHeld && vessel.ContainsLiquid(item.Position)) result.Add(item);
-            return result;
-        }
-        private static void TranslateIce(List<FluidExperimentBody> ice, Vector2 delta)
-        {
-            foreach (FluidExperimentBody body in ice) body.Teleport(body.Position + delta, body.Angle);
-        }
-        public bool TryResolveRelease(FluidExperimentBody item)
-        {
             Vector2 original = item.Position;
             LiftAboveFloor(item);
             Physics2D.SyncTransforms();
@@ -189,7 +149,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 bool overlap = false;
                 foreach (FluidExperimentBody other in items)
                 {
-                    if (other == null || other == item || other.kind == LabItemKind.Ice) continue;
+                    if (other == null || other == item || other == nextHeld || other.IsHeld
+                        || other.kind == LabItemKind.Ice) continue;
                     foreach (Collider2D c in item.solidColliders)
                     foreach (Collider2D d in other.solidColliders)
                     {
@@ -214,6 +175,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         private void LiftAboveFloor(FluidExperimentBody item)
         {
+            if (item.kind == LabItemKind.Ice) return;
             Bounds bounds = item.SolidBounds;
             foreach (Collider2D floor in floorColliders)
             {
@@ -222,25 +184,6 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 if (bounds.max.x < f.min.x || bounds.min.x > f.max.x) continue;
                 if (bounds.min.y < f.max.y) item.Body.position += Vector2.up * (f.max.y - bounds.min.y + .005f);
             }
-        }
-        private bool OverlapsSolids(FluidExperimentBody body, FluidExperimentBody exclude, List<FluidExperimentBody> carryA, List<FluidExperimentBody> carryB)
-        {
-            foreach (FluidExperimentBody other in items)
-            {
-                if (other == null || other == body || other == exclude || carryA.Contains(other) || carryB.Contains(other)) continue;
-                if (BodiesOverlap(body, other)) return true;
-            }
-            foreach (Collider2D c in body.solidColliders)
-            foreach (Collider2D f in floorColliders)
-                if (c != null && c.enabled && f != null && c.Distance(f).distance < -.01f) return true;
-            return false;
-        }
-        private static bool BodiesOverlap(FluidExperimentBody a, FluidExperimentBody b)
-        {
-            foreach (Collider2D c in a.solidColliders)
-            foreach (Collider2D d in b.solidColliders)
-                if (c != null && d != null && c.enabled && d.enabled && c.Distance(d).distance < -.01f) return true;
-            return false;
         }
         private void Update()
         {
@@ -272,7 +215,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (!showControls) return;
             GUI.Box(new Rect(12, 12, 690, 112), "PHYSICS LAB  |  independent slot-free prefabs\n"
                 + "LMB: pick / place / throw    RMB + mouse Y: unlimited rotation\n"
-                + "Pick / release RMB: angle 0    Slow place on an item: swap\n"
+                + "Pick / release RMB: angle 0    Click on an item: release/throw held, pick target\n"
                 + "C: toggle held shaker lid    R: restart sandbox\n"
                 + (liquid != null && liquid.IsOperational ? "GPU PBF/XPBD active" : "GPU unavailable: " + liquid?.Error));
         }

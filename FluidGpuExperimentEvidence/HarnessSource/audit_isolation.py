@@ -3,9 +3,15 @@ from pathlib import Path
 import hashlib
 import json
 import re
+import argparse
 
 root = Path(__file__).resolve().parents[2]
 evidence = root / 'FluidGpuExperimentEvidence'
+parser = argparse.ArgumentParser()
+parser.add_argument('--target', default='FluidGpuExperimentEvidence/HarnessProject')
+parser.add_argument('--output', default='FluidGpuExperimentEvidence/isolation-audit.json')
+args = parser.parse_args()
+harness = (root / args.target).resolve()
 feature = root / 'Assets/_Project/Features/Bartending/FluidGpuExperiment'
 original = json.loads((evidence / 'original-tracked-sha256.json').read_text(encoding='utf-8-sig'))
 changed = [name for name, expected in original.items()
@@ -35,7 +41,7 @@ for path in [feature, *feature.rglob('*')]:
         if refs & old_guids:
             old_references.append(str(path.relative_to(root)))
     if path.is_file() and path.suffix in {'.cs', '.compute', '.hlsl', '.shader', '.unity', '.asset', '.prefab', '.mat'}:
-        validated = evidence / 'HarnessProject' / path.relative_to(root)
+        validated = harness / path.relative_to(root)
         if not validated.exists() or path.read_bytes() != validated.read_bytes():
             stale_harness.append(str(path.relative_to(root)))
 
@@ -44,6 +50,6 @@ result = dict(original_file_count=len(original), changed_original_files=changed,
               missing_metadata=missing_meta, references_to_original_forked_assets=old_references,
               source_differs_from_validation_copy=stale_harness)
 result['passed'] = not any((changed, duplicate_guids, missing_meta, old_references, stale_harness))
-(evidence / 'isolation-audit.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
+(root / args.output).write_text(json.dumps(result, indent=2), encoding='utf-8')
 print(json.dumps(result, indent=2))
 raise SystemExit(0 if result['passed'] else 1)

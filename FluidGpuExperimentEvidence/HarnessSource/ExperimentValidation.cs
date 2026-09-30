@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -51,7 +52,8 @@ public static class ExperimentValidation
 
     public static void Finish(bool success, string report)
     {
-        File.WriteAllText(Path.Combine(Evidence, "validation.txt"), report);
+        // Keep the live progress file append-only: Windows readers may map it while Unity runs.
+        File.WriteAllText(Path.Combine(Evidence, "validation-final.txt"), report);
         if (success) Debug.Log("[FluidExperimentValidation] PASS\n" + report);
         else Debug.LogError("[FluidExperimentValidation] FAIL\n" + report);
         EditorApplication.isPlaying = false;
@@ -267,7 +269,7 @@ public sealed class ExperimentValidationRunner : MonoBehaviour
         report.Add(mode + " " + scenario + " accounting: emitted=" + gpu.EmittedMl + ", active=" + gpu.SnapshotTotalMl
             + ", retiredOutside=" + retiredMl + " ml / " + retiredCount + " particles; bounds=" + minimum + ".." + maximum);
         File.WriteAllLines(Path.Combine(ExperimentValidation.Evidence, mode + "-" + scenario + "-trajectory.csv"), rows);
-        File.WriteAllText(Path.Combine(ExperimentValidation.Evidence, "validation.txt"), string.Join("\n", report));
+        File.AppendAllText(Path.Combine(ExperimentValidation.Evidence, "validation.txt"), report[report.Count - 1] + "\n");
         Require(Mathf.Abs(initialAccepted - gpu.EmittedMl) < .001f,
             mode + " " + scenario + ": no further emission or retired-slot reuse during the replay");
         GpuLiquidParticle[] retired = gpu.Snapshot.Where(x => x.Active == 0 && x.VolumeMl > 0).ToArray();
@@ -340,6 +342,14 @@ public sealed class ExperimentValidationRunner : MonoBehaviour
         if (!gpu.TryEmitStream(vessel.LocalToWorld(local), new Vector2(.15f, .1f), ingredient,
             gpu.ParticleVolumeMl, 0, gpu.NewPourStream(), 0, 0, gpu.Radius, out uint token))
             throw new Exception("Remote fixture tagged emission rejected");
+        // This fixture starts with existing glass contents. A held glass deliberately
+        // cannot acquire a free droplet, so author ownership before the tagged birth.
+        const BindingFlags privateInstance = BindingFlags.Instance | BindingFlags.NonPublic;
+        var commands = (Array)typeof(FluidExperimentGpuLiquid).GetField("spawnCommands", privateInstance).GetValue(gpu);
+        int commandIndex = (int)typeof(FluidExperimentGpuLiquid).GetField("pendingSpawnCount", privateInstance).GetValue(gpu) - 1;
+        object command = commands.GetValue(commandIndex);
+        command.GetType().GetField("VesselId").SetValue(command, vessel.Id);
+        commands.SetValue(command, commandIndex);
         gpu.Step(.00002f);
         gpu.ReadbackNow();
         int index = Array.FindIndex(gpu.ReadStreamParticles(), particle => particle.Token == token);

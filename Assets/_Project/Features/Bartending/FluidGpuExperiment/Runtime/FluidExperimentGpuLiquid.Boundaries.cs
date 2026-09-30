@@ -21,6 +21,9 @@ namespace Slainte.Bartending.FluidGpuExperiment
         {
             Vector2 min = new Vector2(float.MaxValue, float.MaxValue), max = -min;
             Vector2 sweptMin = min, sweptMax = max;
+            // Each contiguous group belongs to one rigid body and shares its pose.
+            float startSine = Mathf.Sin(boundaryUpload[first].StartAngle);
+            float startCosine = Mathf.Cos(boundaryUpload[first].StartAngle);
             for (int i = first; i < end; i++)
             {
                 GpuLiquidBoundarySegment edge = boundaryUpload[i];
@@ -31,6 +34,23 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 {
                     edgeMin = Vector2.Min(edgeMin, edgeMin - travel);
                     edgeMax = Vector2.Max(edgeMax, edgeMax - travel);
+                }
+                else if (Mathf.Abs(edge.AngleDelta) <= 1f)
+                {
+                    // A rotating endpoint differs from its linear chord by at most
+                    // max|p''(t)| / 8 = radius * angleDelta^2 / 8. Translation is linear.
+                    // This conservative arc envelope avoids treating a small rotation
+                    // as a full turn, while retaining every point of the swept segment.
+                    Vector2 startA = edge.StartPosition + new Vector2(
+                        startCosine * edge.LocalA.x - startSine * edge.LocalA.y,
+                        startSine * edge.LocalA.x + startCosine * edge.LocalA.y);
+                    Vector2 startB = edge.StartPosition + new Vector2(
+                        startCosine * edge.LocalB.x - startSine * edge.LocalB.y,
+                        startSine * edge.LocalB.x + startCosine * edge.LocalB.y);
+                    float radius = Mathf.Max(edge.LocalA.magnitude, edge.LocalB.magnitude);
+                    Vector2 arcPadding = Vector2.one * (radius * edge.AngleDelta * edge.AngleDelta * .125f);
+                    edgeMin = Vector2.Min(edgeMin, Vector2.Min(startA, startB)) - arcPadding;
+                    edgeMax = Vector2.Max(edgeMax, Vector2.Max(startA, startB)) + arcPadding;
                 }
                 else
                 {

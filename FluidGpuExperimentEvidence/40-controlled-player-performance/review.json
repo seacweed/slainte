@@ -1,0 +1,4 @@
+{
+  "status": "INVALID_WORKLOAD",
+  "reason": "Visual inspection of case PNGs showed vessel bottoms and liquid clipped by benchmark camera. Rendering existed, but the intended complete two-vessel workload was not visible."
+}

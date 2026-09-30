@@ -1,0 +1,204 @@
+#pragma kernel CaptureTickStart
+#pragma kernel BuildSurfaceEllipses
+#pragma kernel ResetSurfaceHistory
+#pragma kernel RebaseSurfaceOwner
+#pragma target 5.0
+
+// Read-only view of the simulation. All writes target renderer-owned sidecars.
+struct Particle
+{
+    float2 position, previousPosition, velocity;
+    float volumeMl, temperatureC;
+    uint vesselId, techniqueFlags, stateFlags, active, padding;
+};
+struct Stream
+{
+    uint token, previousToken, streamId, sourceId;
+    float delay, stepDt, startFraction, birthTime, radius;
+    uint detached, pending, padding;
+};
+struct History
+{
+    float2 position;
+    float birthTime;
+    uint token, active, pending;
+    float2 padding;
+};
+struct Ellipse
+{
+    float2 startPosition, endPosition, direction, radii;
+    float coverageWeight, birthFraction;
+    uint active, vesselId;
+    float birthTime;
+    uint token;
+    float neighborhoodWeight;
+    float opacityScale;
+};
+StructuredBuffer<Particle> _Particles;
+StructuredBuffer<Stream> _Streams;
+RWStructuredBuffer<History> _History;
+RWStructuredBuffer<Ellipse> _Ellipses;
+StructuredBuffer<int> _GridHeads, _GridNext;
+StructuredBuffer<float4> _SurfaceVessels;
+StructuredBuffer<float4> _SurfaceMaterials;
+StructuredBuffer<float> _CompositionRead;
+int _ParticleCapacity, _GridWidth, _GridHeight, _SurfaceVesselCount, _UseAreaCalibration, _RebaseVessel;
+int _IngredientCount, _MaximumIngredients;
+float _TickStartTime, _TickDuration, _ParticleRadius, _NominalVolume, _SupportMultiplier, _MaximumAspect, _CellSize;
+float2 _GridOrigin;
+
+float4 VesselParameters(uint owner)
+{
+    for (int i = 1; i < _SurfaceVesselCount; ++i)
+        if ((uint)_SurfaceVessels[i].x == owner) return _SurfaceVessels[i];
+    return _SurfaceVessels[0];
+}
+bool Visible(Particle p, Stream s)
+{
+    return p.active != 0u && (p.stateFlags & 4u) == 0u && s.pending == 0u
+        && p.volumeMl > 0 && all(isfinite(p.position));
+}
+
+[numthreads(64, 1, 1)]
+void CaptureTickStart(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= (uint)_ParticleCapacity) return;
+    Particle p = _Particles[id.x]; Stream s = _Streams[id.x];
+    History h = (History)0;
+    h.position = p.position; h.birthTime = s.birthTime; h.token = s.token;
+    h.active = p.active; h.pending = s.pending;
+    _History[id.x] = h;
+}
+
+[numthreads(64, 1, 1)]
+void ResetSurfaceHistory(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= (uint)_ParticleCapacity) return;
+    _History[id.x] = (History)0;
+    _Ellipses[id.x] = (Ellipse)0;
+}
+
+[numthreads(64, 1, 1)]
+void RebaseSurfaceOwner(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= (uint)_ParticleCapacity) return;
+    Particle p = _Particles[id.x];
+    if (p.vesselId != (uint)_RebaseVessel) return;
+    Stream s = _Streams[id.x];
+    History h = (History)0;
+    h.position = p.position; h.birthTime = s.birthTime; h.token = s.token;
+    h.active = p.active; h.pending = s.pending; _History[id.x] = h;
+    Ellipse e = _Ellipses[id.x];
+    e.startPosition = e.endPosition = p.position;
+    e.birthFraction = 0; e.vesselId = p.vesselId;
+    e.birthTime = s.birthTime; e.token = s.token;
+    e.active = Visible(p, s) ? 1u : 0u;
+    _Ellipses[id.x] = e;
+}
+
+[numthreads(64, 1, 1)]
+void BuildSurfaceEllipses(uint3 id : SV_DispatchThreadID)
+{
+    uint index = id.x;
+    if (index >= (uint)_ParticleCapacity) return;
+    Particle p = _Particles[index]; Stream stream = _Streams[index];
+    Ellipse old = _Ellipses[index];
+    Ellipse result = (Ellipse)0;
+    if (!Visible(p, stream)) { _Ellipses[index] = result; return; }
+    History history = _History[index];
+    bool identity = history.token == stream.token && asuint(history.birthTime) == asuint(stream.birthTime);
+    result.startPosition = identity && (history.active != 0u || history.pending != 0u) ? history.position : p.position;
+    result.endPosition = p.position;
+    result.birthFraction = identity && history.pending != 0u
+        ? saturate((stream.birthTime - _TickStartTime) / max(.00001, _TickDuration)) : 0;
+    result.birthTime = stream.birthTime; result.token = stream.token;
+    result.vesselId = p.vesselId; result.active = 1u;
+    result.opacityScale = 1;
+    if (_UseAreaCalibration != 0 && _IngredientCount > 0)
+    {
+        float opacity = 0, composition = 0;
+        for (int ingredient = 0; ingredient < _IngredientCount; ++ingredient)
+        {
+            float ratio = max(0, _CompositionRead[index * (uint)_MaximumIngredients + ingredient]);
+            opacity += ratio * _SurfaceMaterials[ingredient].x; composition += ratio;
+        }
+        if (composition > .00001) result.opacityScale = clamp(opacity / composition, .1, 4);
+    }
+
+    float4 vessel = VesselParameters(p.vesselId);
+    float support = _UseAreaCalibration != 0
+        ? sqrt(max(.000001, _NominalVolume * vessel.y)) * 1.5
+        : _ParticleRadius * _SupportMultiplier;
+    float h = max(_CellSize * .5, vessel.z);
+    float mass = p.volumeMl / max(.00001, _NominalVolume);
+    float weightSum = max(.000001, mass);
+    float2 firstMoment = 0;
+    float3 secondMoment = 0;
+    uint neighbors = 0;
+    int2 cell = (int2)floor((p.position - _GridOrigin) / max(.00001, _CellSize));
+    int reach = clamp((int)ceil(h / max(.00001, _CellSize)), 1, 8);
+    for (int y = -reach; y <= reach; ++y)
+    for (int x = -reach; x <= reach; ++x)
+    {
+        int2 c = cell + int2(x, y);
+        if (c.x < 0 || c.y < 0 || c.x >= _GridWidth || c.y >= _GridHeight) continue;
+        int neighborIndex = _GridHeads[c.y * _GridWidth + c.x];
+        int guard = 0;
+        while (neighborIndex >= 0 && neighborIndex < _ParticleCapacity && guard++ < _ParticleCapacity)
+        {
+            if ((uint)neighborIndex != index)
+            {
+                Particle other = _Particles[neighborIndex];
+                if (other.vesselId == p.vesselId && Visible(other, _Streams[neighborIndex]))
+                {
+                    float2 offset = other.position - p.position;
+                    float distance = length(offset);
+                    if (distance < h)
+                    {
+                        float q = 1 - distance / h;
+                        float weight = q * q * max(0, other.volumeMl) / max(.00001, _NominalVolume);
+                        weightSum += weight; firstMoment += offset * weight;
+                        secondMoment += float3(offset.x * offset.x, offset.x * offset.y, offset.y * offset.y) * weight;
+                        neighbors++;
+                    }
+                }
+            }
+            neighborIndex = _GridNext[neighborIndex];
+        }
+    }
+    result.neighborhoodWeight = weightSum;
+    float speed = length(p.velocity);
+    float2 direction = speed > .001 ? p.velocity / speed : float2(1, 0);
+    float aspect = lerp(1, 1.8, saturate(speed / 10));
+    if (neighbors >= 3 && weightSum - mass > .25)
+    {
+        float2 mean = firstMoment / weightSum;
+        float3 covariance = secondMoment / weightSum - float3(mean.x * mean.x, mean.x * mean.y, mean.y * mean.y);
+        float trace = covariance.x + covariance.z;
+        float gap = sqrt(max(0, (covariance.x - covariance.z) * (covariance.x - covariance.z) + 4 * covariance.y * covariance.y));
+        float regularizer = max(.0000001, support * support * .03);
+        float major = max(regularizer, .5 * (trace + gap));
+        float minor = max(regularizer, .5 * (trace - gap));
+        aspect = clamp(sqrt(major / minor), 1, _MaximumAspect);
+        float angle = .5 * atan2(2 * covariance.y, covariance.x - covariance.z);
+        direction = float2(cos(angle), sin(angle));
+    }
+    // Smooth only the ellipse descriptor. Neither the rendered center nor the physical
+    // state is moved toward a neighbor. Eigenvector sign is immaterial but must be aligned.
+    bool sameOld = old.active != 0u && old.token == stream.token && old.vesselId == p.vesselId
+        && asuint(old.birthTime) == asuint(stream.birthTime) && dot(old.direction, old.direction) > .5;
+    if (sameOld)
+    {
+        if (dot(direction, old.direction) < 0) direction = -direction;
+        direction = normalize(lerp(old.direction, direction, .65));
+        aspect = lerp(clamp(old.radii.x / max(.000001, old.radii.y), 1, _MaximumAspect), aspect, .65);
+    }
+    float areaScale = clamp(mass, .01, 4);
+    float rootAspect = sqrt(aspect);
+    result.direction = direction;
+    result.radii = support * sqrt(areaScale) * float2(rootAspect, 1 / rootAspect);
+    // Integrated splat contribution remains proportional to ml, even when the smallest
+    // visual footprint is limited. Partial final particles cannot acquire full-drop area.
+    result.coverageWeight = mass / areaScale;
+    _Ellipses[index] = result;
+}

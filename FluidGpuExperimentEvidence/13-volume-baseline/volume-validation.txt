@@ -1,0 +1,228 @@
+PASS Authored comparison controller exists
+Protocol: 12 cases; A/B/C highball and C hurricane at 30/60/120 requested ml; 300 fixed .02s ticks, readback every .2s.
+Heights are world units above the authored interior's lowest point. P95 is volume-weighted owned-particle center height; max extent adds collision radius.
+Unsettled is an observation when the final 1s p95 range exceeds half a particle radius or mean owned-particle RMS speed exceeds .15 world units/s; these are provisional diagnostic thresholds.
+Surface area is actual premultiplied-alpha output before scene compositing, normalized by measured GPU particle opacity; coverage thresholds .05 and .25, raw alpha sum and normalized coverage sum are reported separately.
+PASS Synthetic oracle partitions owned/free/other liquid and excludes inactive slots
+PASS Synthetic oracle measures volume-weighted P95, radius-inclusive max and weighted mean speed
+PASS Synthetic square has known area and nominal quarter-capacity height
+PASS Unowned ID zero is not treated as a selected vessel
+PASS Synthetic triangle nominal half-capacity height follows clipped area rather than linear height
+PASS ACurrent: GPU operational on AMD Radeon(TM) Graphics
+PASS ACurrent-Glass_highball-30ml: public measurement scenario preserves selection and requested amount
+PASS ACurrent-Glass_highball-30ml: accepted Fill quantity is positive, bounded and agrees with GPU reservations
+PASS ACurrent-Glass_highball-30ml: measured glass is stationary and unheld
+PASS ACurrent-Glass_highball-30ml: reset clears prior slots while the new fill is still queued
+PASS ACurrent-Glass_highball-30ml: six independent tail observations cover the final second
+PASS ACurrent-Glass_highball-30ml: runtime metrics agree with independent ownership accounting
+PASS ACurrent-Glass_highball-30ml: runtime particle heights agree with independently sorted volume weights
+PASS ACurrent-Glass_highball-30ml: actual liquid-only surface target is available
+PASS ACurrent-Glass_highball-30ml: GPU ingredient opacity is measurable
+PASS ACurrent-Glass_highball-30ml: area measurement uses a valid rendered image
+PASS ACurrent-Glass_highball-30ml: capturing scene and surface leaves physical state unchanged
+OBSERVATION ACurrent-Glass_highball-30ml: accepted 30/30 ml, owned 30 ml, free 0 ml, retired 0 ml, p95 height 0.27889621257781982, visible area 0.38278836011886597, unsettled=False, edge pixels=0.
+PASS ACurrent-Glass_highball-60ml: public measurement scenario preserves selection and requested amount
+PASS ACurrent-Glass_highball-60ml: accepted Fill quantity is positive, bounded and agrees with GPU reservations
+PASS ACurrent-Glass_highball-60ml: measured glass is stationary and unheld
+PASS ACurrent-Glass_highball-60ml: reset clears prior slots while the new fill is still queued
+PASS ACurrent-Glass_highball-60ml: six independent tail observations cover the final second
+PASS ACurrent-Glass_highball-60ml: runtime metrics agree with independent ownership accounting
+PASS ACurrent-Glass_highball-60ml: runtime particle heights agree with independently sorted volume weights
+PASS ACurrent-Glass_highball-60ml: actual liquid-only surface target is available
+PASS ACurrent-Glass_highball-60ml: GPU ingredient opacity is measurable
+PASS ACurrent-Glass_highball-60ml: area measurement uses a valid rendered image
+PASS ACurrent-Glass_highball-60ml: capturing scene and surface leaves physical state unchanged
+OBSERVATION ACurrent-Glass_highball-60ml: accepted 60/60 ml, owned 60 ml, free 0 ml, retired 0 ml, p95 height 0.47458493709564209, visible area 0.62046307325363159, unsettled=False, edge pixels=0.
+PASS ACurrent-Glass_highball-120ml: public measurement scenario preserves selection and requested amount
+PASS ACurrent-Glass_highball-120ml: accepted Fill quantity is positive, bounded and agrees with GPU reservations
+PASS ACurrent-Glass_highball-120ml: measured glass is stationary and unheld
+PASS ACurrent-Glass_highball-120ml: reset clears prior slots while the new fill is still queued
+PASS ACurrent-Glass_highball-120ml: six independent tail observations cover the final second
+PASS ACurrent-Glass_highball-120ml: runtime metrics agree with independent ownership accounting
+PASS ACurrent-Glass_highball-120ml: runtime particle heights agree with independently sorted volume weights
+PASS ACurrent-Glass_highball-120ml: actual liquid-only surface target is available
+PASS ACurrent-Glass_highball-120ml: GPU ingredient opacity is measurable
+PASS ACurrent-Glass_highball-120ml: area measurement uses a valid rendered image
+PASS ACurrent-Glass_highball-120ml: capturing scene and surface leaves physical state unchanged
+OBSERVATION ACurrent-Glass_highball-120ml: accepted 80/120 ml, owned 80 ml, free 0 ml, retired 0 ml, p95 height 0.609005331993103, visible area 0.77008891105651855, unsettled=False, edge pixels=0.
+PASS BReferencePhysics: GPU operational on AMD Radeon(TM) Graphics
+PASS BReferencePhysics-Glass_highball-30ml: public measurement scenario preserves selection and requested amount
+PASS BReferencePhysics-Glass_highball-30ml: accepted Fill quantity is positive, bounded and agrees with GPU reservations
+PASS BReferencePhysics-Glass_highball-30ml: measured glass is stationary and unheld
+PASS BReferencePhysics-Glass_highball-30ml: reset clears prior slots while the new fill is still queued
+PASS BReferencePhysics-Glass_highball-30ml: six independent tail observations cover the final second
+PASS BReferencePhysics-Glass_highball-30ml: runtime metrics agree with independent ownership accounting
+PASS BReferencePhysics-Glass_highball-30ml: runtime particle heights agree with independently sorted volume weights
+PASS BReferencePhysics-Glass_highball-30ml: actual liquid-only surface target is available
+PASS BReferencePhysics-Glass_highball-30ml: GPU ingredient opacity is measurable
+PASS BReferencePhysics-Glass_highball-30ml: area measurement uses a valid rendered image
+PASS BReferencePhysics-Glass_highball-30ml: capturing scene and surface leaves physical state unchanged
+OBSERVATION BReferencePhysics-Glass_highball-30ml: accepted 30/30 ml, owned 30 ml, free 0 ml, retired 0 ml, p95 height 0.619492769241333, visible area 0.77490198612213135, unsettled=False, edge pixels=0.
+PASS BReferencePhysics-Glass_highball-60ml: public measurement scenario preserves selection and requested amount
+PASS BReferencePhysics-Glass_highball-60ml: accepted Fill quantity is positive, bounded and agrees with GPU reservations
+PASS BReferencePhysics-Glass_highball-60ml: measured glass is stationary and unheld
+PASS BReferencePhysics-Glass_highball-60ml: reset clears prior slots while the new fill is still queued
+PASS BReferencePhysics-Glass_highball-60ml: six independent tail observations cover the final second
+PASS BReferencePhysics-Glass_highball-60ml: runtime metrics agree with independent ownership accounting
+PASS BReferencePhysics-Glass_highball-60ml: runtime particle heights agree with independently sorted volume weights
+PASS BReferencePhysics-Glass_highball-60ml: actual liquid-only surface target is available
+PASS BReferencePhysics-Glass_highball-60ml: GPU ingredient opacity is measurable
+PASS BReferencePhysics-Glass_highball-60ml: area measurement uses a valid rendered image
+PASS BReferencePhysics-Glass_highball-60ml: capturing scene and surface leaves physical state unchanged
+OBSERVATION BReferencePhysics-Glass_highball-60ml: accepted 60/60 ml, owned 60 ml, free 0 ml, retired 0 ml, p95 height 1.1088528633117676, visible area 1.360891580581665, unsettled=False, edge pixels=0.
+PASS BReferencePhysics-Glass_highball-120ml: public measurement scenario preserves selection and requested amount
+PASS BReferencePhysics-Glass_highball-120ml: accepted Fill quantity is positive, bounded and agrees with GPU reservations
+PASS BReferencePhysics-Glass_highball-120ml: measured glass is stationary and unheld
+PASS BReferencePhysics-Glass_highball-120ml: reset clears prior slots while the new fill is still queued
+PASS BReferencePhysics-Glass_highball-120ml: six independent tail observations cover the final second
+PASS BReferencePhysics-Glass_highball-120ml: runtime metrics agree with independent ownership accounting
+PASS BReferencePhysics-Glass_highball-120ml: runtime particle heights agree with independently sorted volume weights
+PASS BReferencePhysics-Glass_highball-120ml: actual liquid-only surface target is available
+PASS BReferencePhysics-Glass_highball-120ml: GPU ingredient opacity is measurable
+PASS BReferencePhysics-Glass_highball-120ml: area measurement uses a valid rendered image
+PASS BReferencePhysics-Glass_highball-120ml: capturing scene and surface leaves physical state unchanged
+OBSERVATION BReferencePhysics-Glass_highball-120ml: accepted 80/120 ml, owned 80 ml, free 0 ml, retired 0 ml, p95 height 1.3924027681350708, visible area 1.701926589012146, unsettled=False, edge pixels=0.
+PASS CReferenceSurface: GPU operational on AMD Radeon(TM) Graphics
+PASS CReferenceSurface-Glass_highball-30ml: public measurement scenario preserves selection and requested amount
+PASS CReferenceSurface-Glass_highball-30ml: accepted Fill quantity is positive, bounded and agrees with GPU reservations
+PASS CReferenceSurface-Glass_highball-30ml: measured glass is stationary and unheld
+PASS CReferenceSurface-Glass_highball-30ml: reset clears prior slots while the new fill is still queued
+PASS CReferenceSurface-Glass_highball-30ml: six independent tail observations cover the final second
+PASS CReferenceSurface-Glass_highball-30ml: runtime metrics agree with independent ownership accounting
+PASS CReferenceSurface-Glass_highball-30ml: runtime particle heights agree with independently sorted volume weights
+PASS CReferenceSurface-Glass_highball-30ml: actual liquid-only surface target is available
+PASS CReferenceSurface-Glass_highball-30ml: GPU ingredient opacity is measurable
+PASS CReferenceSurface-Glass_highball-30ml: area measurement uses a valid rendered image
+PASS CReferenceSurface-Glass_highball-30ml: capturing scene and surface leaves physical state unchanged
+OBSERVATION CReferenceSurface-Glass_highball-30ml: accepted 30/30 ml, owned 30 ml, free 0 ml, retired 0 ml, p95 height 0.619492769241333, visible area 0.7772182822227478, unsettled=False, edge pixels=0.
+PASS CReferenceSurface-Glass_highball-60ml: public measurement scenario preserves selection and requested amount
+PASS CReferenceSurface-Glass_highball-60ml: accepted Fill quantity is positive, bounded and agrees with GPU reservations
+PASS CReferenceSurface-Glass_highball-60ml: measured glass is stationary and unheld
+PASS CReferenceSurface-Glass_highball-60ml: reset clears prior slots while the new fill is still queued
+PASS CReferenceSurface-Glass_highball-60ml: six independent tail observations cover the final second
+PASS CReferenceSurface-Glass_highball-60ml: runtime metrics agree with independent ownership accounting
+PASS CReferenceSurface-Glass_highball-60ml: runtime particle heights agree with independently sorted volume weights
+PASS CReferenceSurface-Glass_highball-60ml: actual liquid-only surface target is available
+PASS CReferenceSurface-Glass_highball-60ml: GPU ingredient opacity is measurable
+PASS CReferenceSurface-Glass_highball-60ml: area measurement uses a valid rendered image
+PASS CReferenceSurface-Glass_highball-60ml: capturing scene and surface leaves physical state unchanged
+OBSERVATION CReferenceSurface-Glass_highball-60ml: accepted 60/60 ml, owned 60 ml, free 0 ml, retired 0 ml, p95 height 1.1153503656387329, visible area 1.3695549964904785, unsettled=False, edge pixels=0.
+PASS CReferenceSurface-Glass_highball-120ml: public measurement scenario preserves selection and requested amount
+PASS CReferenceSurface-Glass_highball-120ml: accepted Fill quantity is positive, bounded and agrees with GPU reservations
+PASS CReferenceSurface-Glass_highball-120ml: measured glass is stationary and unheld
+PASS CReferenceSurface-Glass_highball-120ml: reset clears prior slots while the new fill is still queued
+PASS CReferenceSurface-Glass_highball-120ml: six independent tail observations cover the final second
+PASS CReferenceSurface-Glass_highball-120ml: runtime metrics agree with independent ownership accounting
+PASS CReferenceSurface-Glass_highball-120ml: runtime particle heights agree with independently sorted volume weights
+PASS CReferenceSurface-Glass_highball-120ml: actual liquid-only surface target is available
+PASS CReferenceSurface-Glass_highball-120ml: GPU ingredient opacity is measurable
+PASS CReferenceSurface-Glass_highball-120ml: area measurement uses a valid rendered image
+PASS CReferenceSurface-Glass_highball-120ml: capturing scene and surface leaves physical state unchanged
+OBSERVATION CReferenceSurface-Glass_highball-120ml: accepted 80/120 ml, owned 80 ml, free 0 ml, retired 0 ml, p95 height 1.3969295024871826, visible area 1.7180804014205933, unsettled=True, edge pixels=0.
+PASS CReferenceSurface-Glass_hurricane-30ml: public measurement scenario preserves selection and requested amount
+PASS CReferenceSurface-Glass_hurricane-30ml: accepted Fill quantity is positive, bounded and agrees with GPU reservations
+PASS CReferenceSurface-Glass_hurricane-30ml: measured glass is stationary and unheld
+PASS CReferenceSurface-Glass_hurricane-30ml: reset clears prior slots while the new fill is still queued
+PASS CReferenceSurface-Glass_hurricane-30ml: six independent tail observations cover the final second
+PASS CReferenceSurface-Glass_hurricane-30ml: runtime metrics agree with independent ownership accounting
+PASS CReferenceSurface-Glass_hurricane-30ml: runtime particle heights agree with independently sorted volume weights
+PASS CReferenceSurface-Glass_hurricane-30ml: actual liquid-only surface target is available
+PASS CReferenceSurface-Glass_hurricane-30ml: GPU ingredient opacity is measurable
+PASS CReferenceSurface-Glass_hurricane-30ml: area measurement uses a valid rendered image
+PASS CReferenceSurface-Glass_hurricane-30ml: capturing scene and surface leaves physical state unchanged
+OBSERVATION CReferenceSurface-Glass_hurricane-30ml: accepted 30/30 ml, owned 30 ml, free 0 ml, retired 0 ml, p95 height 0.70566254854202271, visible area 0.78815054893493652, unsettled=False, edge pixels=0.
+PASS CReferenceSurface-Glass_hurricane-60ml: public measurement scenario preserves selection and requested amount
+PASS CReferenceSurface-Glass_hurricane-60ml: accepted Fill quantity is positive, bounded and agrees with GPU reservations
+PASS CReferenceSurface-Glass_hurricane-60ml: measured glass is stationary and unheld
+PASS CReferenceSurface-Glass_hurricane-60ml: reset clears prior slots while the new fill is still queued
+PASS CReferenceSurface-Glass_hurricane-60ml: six independent tail observations cover the final second
+PASS CReferenceSurface-Glass_hurricane-60ml: runtime metrics agree with independent ownership accounting
+PASS CReferenceSurface-Glass_hurricane-60ml: runtime particle heights agree with independently sorted volume weights
+PASS CReferenceSurface-Glass_hurricane-60ml: actual liquid-only surface target is available
+PASS CReferenceSurface-Glass_hurricane-60ml: GPU ingredient opacity is measurable
+PASS CReferenceSurface-Glass_hurricane-60ml: area measurement uses a valid rendered image
+PASS CReferenceSurface-Glass_hurricane-60ml: capturing scene and surface leaves physical state unchanged
+OBSERVATION CReferenceSurface-Glass_hurricane-60ml: accepted 60/60 ml, owned 60 ml, free 0 ml, retired 0 ml, p95 height 1.164312481880188, visible area 1.3871598243713379, unsettled=False, edge pixels=0.
+PASS CReferenceSurface-Glass_hurricane-120ml: public measurement scenario preserves selection and requested amount
+PASS CReferenceSurface-Glass_hurricane-120ml: accepted Fill quantity is positive, bounded and agrees with GPU reservations
+PASS CReferenceSurface-Glass_hurricane-120ml: measured glass is stationary and unheld
+PASS CReferenceSurface-Glass_hurricane-120ml: reset clears prior slots while the new fill is still queued
+PASS CReferenceSurface-Glass_hurricane-120ml: six independent tail observations cover the final second
+PASS CReferenceSurface-Glass_hurricane-120ml: runtime metrics agree with independent ownership accounting
+PASS CReferenceSurface-Glass_hurricane-120ml: runtime particle heights agree with independently sorted volume weights
+PASS CReferenceSurface-Glass_hurricane-120ml: actual liquid-only surface target is available
+PASS CReferenceSurface-Glass_hurricane-120ml: GPU ingredient opacity is measurable
+PASS CReferenceSurface-Glass_hurricane-120ml: area measurement uses a valid rendered image
+PASS CReferenceSurface-Glass_hurricane-120ml: capturing scene and surface leaves physical state unchanged
+OBSERVATION CReferenceSurface-Glass_hurricane-120ml: accepted 66/120 ml, owned 66 ml, free 0 ml, retired 0 ml, p95 height 1.2383882999420166, visible area 1.4887059926986694, unsettled=False, edge pixels=0.
+LIMITATION batch viewport did not accept 960x640; actual controls frame is 640x480. Layout is checked at that actual size.
+PASS Controls layout uses the authored vessel profile
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+FAIL Controls-visible profile envelope clears the panel and screen edges by 12px: (528.8, 140.6)..(623.2, 341.1), panel right 557
+System.Exception: Controls-visible profile envelope clears the panel and screen edges by 12px: (528.8, 140.6)..(623.2, 341.1), panel right 557
+  at ExperimentVolumeValidationRunner.Require (System.Boolean condition, System.String message) [0x0002a] in C:\unity_proj\slainte\slainte\Library\FluidSwapHarness\Assets\Editor\VolumeValidation.cs:593 
+  at ExperimentVolumeValidationRunner+<ValidateControlsFrame>d__25.MoveNext () [0x0047f] in C:\unity_proj\slainte\slainte\Library\FluidSwapHarness\Assets\Editor\VolumeValidation.cs:473 
+  at ExperimentVolumeValidationRunner+<Guard>d__17.MoveNext () [0x00086] in C:\unity_proj\slainte\slainte\Library\FluidSwapHarness\Assets\Editor\VolumeValidation.cs:118 

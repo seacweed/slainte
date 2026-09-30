@@ -1,0 +1,18 @@
+{
+    "status": "FAILED: System.InvalidOperationException: Benchmark surface did not render during warmup. surfaceError=none; operational=True; renderParticles=True; surfaceEnabled=True; cameraEnabled=True; cameraTargetCreated=True; pipeline=UniversalRP (UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset); draw=Slainte/FluidExperiment/Liquid supported=True; accumulation=Hidden/Slainte/FluidExperiment/ReferenceAccumulation supported=True; composite=Hidden/Slainte/FluidExperiment/ReferenceComposite supported=True; display=Slainte/FluidExperiment/LiquidSurface supported=True\r\n  at Slainte.Bartending.FluidGpuExperiment.FluidExperimentPerformance+<Run>d__29.MoveNext () [0x006bf] in <3e2424b74ca444fb8e8e5bf66892faed>:0 \r\n  at Slainte.Bartending.FluidGpuExperiment.FluidExperimentPerformance+<Start>d__28.MoveNext () [0x0003c] in <3e2424b74ca444fb8e8e5bf66892faed>:0 ",
+    "unityVersion": "6000.3.5f2",
+    "operatingSystem": "Windows 11  (10.0.26200)",
+    "cpu": "AMD Ryzen 5 5600H with Radeon Graphics ",
+    "gpu": "AMD Radeon(TM) Graphics",
+    "graphicsApi": "Direct3D11",
+    "evidence": "Standalone player offscreen camera workload through the regular render loop, with a dedicated camera RenderTexture and normal fixed ticks; this is not gameplay FPS. Target frame rate 60; every case measures at least two seconds and 50 physics steps, and verifies surface submission on every measured frame. No manual Camera.Render or GPU readback inside measurement. CPU physics is dispatch/submission wall time, not GPU solver time. FrameTiming samples have their own timestamps; GPU surface marker is delayed three frames. Unsupported metrics use status and -1 percentiles, CSV blanks. Case PNG readback occurs after timing.",
+    "editor": false,
+    "developmentBuild": false,
+    "frameTimingEnabled": true,
+    "width": 1280,
+    "height": 720,
+    "vSyncCount": 0,
+    "targetFrameRate": 60,
+    "fixedDeltaTime": 0.019999992102384568,
+    "cases": []
+}

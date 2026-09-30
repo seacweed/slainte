@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -46,7 +47,8 @@ public static class ExperimentFrameValidation
 
     public static void Finish(bool success, string report)
     {
-        File.WriteAllText(Path.Combine(Evidence, "frame-validation.txt"), report);
+        File.WriteAllText(Path.Combine(Evidence, "frame-validation-final.txt"), report);
+        File.AppendAllText(Path.Combine(Evidence, "frame-validation.txt"), "\nFINISHED: " + (success ? "PASS\n" : "FAIL\n"));
         File.WriteAllText(Path.Combine(Evidence, "frame-result.txt"), success ? "PASS\n" : "FAIL\n");
         if (success) Debug.Log("[FluidExperimentFrameValidation] PASS\n" + report);
         else Debug.LogError("[FluidExperimentFrameValidation] FAIL\n" + report);
@@ -115,7 +117,7 @@ public sealed class ExperimentFrameValidationRunner : MonoBehaviour
             yield return next;
         }
         if (!finished) Finish(errors.Count == 0, errors.Count == 0
-            ? "Normal PlayerLoop A/B/C pouring, stirring, camera output and Manual restoration passed."
+            ? "Normal PlayerLoop A/B/C/D/E pouring, stirring, camera output and Manual restoration passed."
             : string.Join("\n", errors));
     }
 
@@ -227,8 +229,19 @@ public sealed class ExperimentFrameValidationRunner : MonoBehaviour
             Finite(particle.Position) && Finite(particle.PreviousPosition) && Finite(particle.Velocity)
             && float.IsFinite(particle.VolumeMl) && particle.VolumeMl > 0 && float.IsFinite(particle.TemperatureC)),
             label + ": all active GPU particle states are finite");
-        Require(Mathf.Abs(gpu.SnapshotTotalMl - gpu.EmittedMl) < .005f,
-            label + ": active liquid volume is conserved (" + F(gpu.SnapshotTotalMl) + " ml)");
+        FluidExperimentLedgerSnapshot ledger = gpu.Ledger;
+        Require(ledger != null, label + ": a coherent completed GPU ledger is available");
+        FluidExperimentLedgerEntry total = ledger.Total;
+        Require(Math.Abs(gpu.SnapshotTotalMl - total.ActiveMl) < .005,
+            label + ": particle snapshot and ledger agree on active volume (" + F(gpu.SnapshotTotalMl) + " ml)");
+        Require(Math.Abs(total.ConservationErrorMl) < .005,
+            label + ": generated liquid equals active + retired + transferred + GPU pending (generated="
+            + total.GeneratedMl.ToString("R", CultureInfo.InvariantCulture) + ", active="
+            + total.ActiveMl.ToString("R", CultureInfo.InvariantCulture) + ", retired="
+            + total.RetiredMl.ToString("R", CultureInfo.InvariantCulture) + " ml)");
+        Require(Math.Abs(total.QueueErrorMl) < .005
+            && Math.Abs(total.RequestedMl - total.QueuedMl - total.CpuRejectedMl) < .005,
+            label + ": requested and queued volume are fully accounted, including pending and rejected births");
     }
 
     private void CheckTransforms(string label)
@@ -260,7 +273,9 @@ public sealed class ExperimentFrameValidationRunner : MonoBehaviour
         Require(Vector3.Distance(camera.transform.position, initialCameraPosition) < .0001f
             && Mathf.Abs(camera.orthographicSize - initialCameraSize) < .0001f,
             mode + ": Manual restores authored camera position and size");
-        Require(world.interactor.enabled && world.interactor.pointerBlockRect == FluidExperimentComparison.ControlsRect,
+        Rect controlsRect = (Rect)typeof(FluidExperimentComparison).GetProperty("ActiveControlsRect",
+            BindingFlags.Instance | BindingFlags.NonPublic).GetValue(comparison);
+        Require(world.interactor.enabled && world.interactor.pointerBlockRect == controlsRect,
             mode + ": Manual enables picking and retains the controls' pointer exclusion rectangle");
     }
 
@@ -300,7 +315,7 @@ public sealed class ExperimentFrameValidationRunner : MonoBehaviour
     private void Require(bool condition, string message)
     {
         report.Add((condition ? "PASS: " : "FAIL: ") + message);
-        File.WriteAllLines(Path.Combine(ExperimentFrameValidation.Evidence, "frame-validation.txt"), report);
+        File.AppendAllText(Path.Combine(ExperimentFrameValidation.Evidence, "frame-validation.txt"), report[report.Count - 1] + "\n");
         if (!condition) throw new Exception(message);
     }
 

@@ -1,0 +1,16 @@
+{
+  "workingDirectory": "C:\\unity_proj\\slainte\\slainte",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "C:/unity_proj/slainte/slainte/Library/FluidSwapHarness",
+    "-executeMethod",
+    "ExperimentPerformanceBuild.BuildBenchmark",
+    "-logFile",
+    "C:\\unity_proj\\slainte\\slainte\\FluidGpuExperimentEvidence\\41-framed-player-build\\Editor.log"
+  ],
+  "executable": "C:\\Program Files\\Unity\\Hub\\Editor\\6000.3.5f2\\Editor\\Unity.exe",
+  "timeoutSeconds": 900,
+  "started": "2026-09-30T18:45:58.5592139+09:00"
+}

@@ -49,13 +49,17 @@ namespace Slainte.Bartending.FluidGpuExperiment
         {
             float best = float.PositiveInfinity;
             if (collisionProfile == null) return best;
+            // PointAt(local, Vector2.zero, 0) is local * lossyScale. The scale is
+            // constant throughout this query; avoid two Transform reads and rotations per edge.
+            Vector3 scale = transform.lossyScale;
             foreach (var hull in collisionProfile.solids)
             {
                 bool inside = false;
                 float distance = float.PositiveInfinity;
                 for (int i = 0, j = hull.points.Length - 1; i < hull.points.Length; j = i++)
                 {
-                    Vector2 a = PointAt(hull.points[j], Vector2.zero, 0), b = PointAt(hull.points[i], Vector2.zero, 0);
+                    Vector2 a = new Vector2(hull.points[j].x * scale.x, hull.points[j].y * scale.y);
+                    Vector2 b = new Vector2(hull.points[i].x * scale.x, hull.points[i].y * scale.y);
                     distance = Mathf.Min(distance, Vector2.Distance(point, FluidExperimentCollisionProfile.Closest(point, a, b)));
                     if ((a.y > point.y) != (b.y > point.y) && point.x < (b.x-a.x)*(point.y-a.y)/(b.y-a.y)+a.x) inside = !inside;
                 }

@@ -144,3 +144,5 @@ void CalculateReferenceDelta(uint3 dispatchId : SV_DispatchThreadID)
     if (deltaLength > maximumDelta) delta *= maximumDelta / deltaLength;
     _PositionDeltas[index] = all(isfinite(delta)) ? delta : float2(0.0, 0.0);
 }
+
+#include "FluidExperimentImproved.hlsl"

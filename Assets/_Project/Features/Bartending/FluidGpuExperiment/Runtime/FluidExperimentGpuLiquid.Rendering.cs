@@ -35,41 +35,53 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public Vector2Int SurfaceTextureSize => surfaceComposite != null
             ? new Vector2Int(surfaceComposite.width, surfaceComposite.height) : Vector2Int.zero;
         public string SurfaceRenderingError { get; private set; }
+        public long RenderedSurfaceFrames { get; private set; }
+        public int LastRenderedSurfaceFrame { get; private set; } = -1;
 
         private bool DrawLiquidSurface(ScriptableRenderContext context, Camera camera)
         {
             if (!EnsureSurfaceResources(camera)) return false;
+            bool particleSurface = useReferenceSurface || useImprovedSurface;
             // Reuse the existing GPU particle layout and accumulation passes without readback.
             // C uses every physical particle, including falling particles inside a glass.
             // It never hides them in favor of a source-linked ribbon.
-            surfaceParticleProperties.SetBuffer("_GpuLiquidParticles", !useReferenceSurface && useStreamRendering
-                ? surfaceParticleBuffer : particleBuffer);
-            surfaceParticleProperties.SetBuffer("_StreamSegments", streamSegmentBuffer);
             surfaceParticleProperties.SetBuffer("_GpuLiquidColors", particleColorBuffer);
-            surfaceParticleProperties.SetFloat("_GpuContainedParticleRadius", Radius * Mathf.Clamp(settings.containedRenderRadius, 1, 2));
-            surfaceParticleProperties.SetFloat("_GpuAirborneParticleRadius", Radius * Mathf.Clamp(settings.airborneRenderRadius, 1, 2));
             surfaceParticleProperties.SetFloat("_GpuParticleZ", 0);
-            surfaceParticleProperties.SetFloat("_GpuAirborneStretchMultiplier", Mathf.Clamp(settings.airborneStretch, 1, 3));
-            surfaceParticleProperties.SetFloat("_GpuAirborneFullStretchSpeed", Mathf.Max(.1f, settings.airborneFullStretchSpeed));
-            surfaceParticleProperties.SetFloat("_ReferenceSupportRadius", Radius * Mathf.Clamp(referenceSupportRadius, 1f, 3f));
-            surfaceParticleProperties.SetFloat("_ReferenceMaximumAspect", Mathf.Clamp(referenceMaximumAspect, 1f, 10f));
-            surfaceParticleProperties.SetFloat("_ReferenceFullStretchSpeed", Mathf.Max(.1f, referenceFullStretchSpeed));
-            if (useReferenceSurface) PrepareReferenceNozzles();
+            if (!useImprovedSurface)
+            {
+                surfaceParticleProperties.SetBuffer("_GpuLiquidParticles", !particleSurface && useStreamRendering
+                    ? surfaceParticleBuffer : particleBuffer);
+                surfaceParticleProperties.SetBuffer("_StreamSegments", streamSegmentBuffer);
+                surfaceParticleProperties.SetFloat("_GpuContainedParticleRadius", Radius * Mathf.Clamp(settings.containedRenderRadius, 1, 2));
+                surfaceParticleProperties.SetFloat("_GpuAirborneParticleRadius", Radius * Mathf.Clamp(settings.airborneRenderRadius, 1, 2));
+                surfaceParticleProperties.SetFloat("_GpuAirborneStretchMultiplier", Mathf.Clamp(settings.airborneStretch, 1, 3));
+                surfaceParticleProperties.SetFloat("_GpuAirborneFullStretchSpeed", Mathf.Max(.1f, settings.airborneFullStretchSpeed));
+                surfaceParticleProperties.SetFloat("_ReferenceSupportRadius", Radius * Mathf.Clamp(referenceSupportRadius, 1f, 3f));
+                surfaceParticleProperties.SetFloat("_ReferenceMaximumAspect", Mathf.Clamp(referenceMaximumAspect, 1f, 10f));
+                surfaceParticleProperties.SetFloat("_ReferenceFullStretchSpeed", Mathf.Max(.1f, referenceFullStretchSpeed));
+            }
+            if (useImprovedSurface)
+            {
+                if (!PrepareImprovedSurface()) return false;
+            }
+            else if (useReferenceSurface) PrepareReferenceNozzles();
 
             surfaceCompositeMaterial.SetTexture("_DensityTex", surfaceDensity);
             surfaceCompositeMaterial.SetTexture("_ColorTex", surfaceColor);
-            if (!useReferenceSurface) surfaceCompositeMaterial.SetTexture("_ShapeTex", surfaceShape);
-            surfaceCompositeMaterial.SetFloat("_Threshold", useReferenceSurface ? referenceDensityThreshold : settings.surfaceThreshold);
-            if (!useReferenceSurface) surfaceCompositeMaterial.SetFloat("_MergeStrength", settings.surfaceMergeStrength);
-            surfaceCompositeMaterial.SetFloat("_EdgeSoftness", useReferenceSurface ? referenceEdgeSoftness : settings.surfaceEdgeSoftness);
+            if (!particleSurface) surfaceCompositeMaterial.SetTexture("_ShapeTex", surfaceShape);
+            surfaceCompositeMaterial.SetFloat("_Threshold", particleSurface ? referenceDensityThreshold : settings.surfaceThreshold);
+            if (!particleSurface) surfaceCompositeMaterial.SetFloat("_MergeStrength", settings.surfaceMergeStrength);
+            surfaceCompositeMaterial.SetFloat("_EdgeSoftness", particleSurface ? referenceEdgeSoftness : settings.surfaceEdgeSoftness);
 
             surfaceCommands.Clear();
-            string sample = useReferenceSurface ? "FluidExperiment Particle Density Surface" : "FluidExperiment Stream Surface";
+            string sample = useImprovedSurface ? "FluidExperiment Improved Surface" :
+                useReferenceSurface ? "FluidExperiment Particle Density Surface" : "FluidExperiment Stream Surface";
             surfaceCommands.BeginSample(sample);
-            if (!useReferenceSurface && useStreamRendering) PrepareStreamSurface(surfaceCommands);
+            if (!particleSurface && useStreamRendering) PrepareStreamSurface(surfaceCommands);
             ClearSurfaceTarget(surfaceDensity); ClearSurfaceTarget(surfaceColor);
-            if (!useReferenceSurface) ClearSurfaceTarget(surfaceShape);
-            ClearSurfaceTarget(surfaceComposite);
+            if (!particleSurface) ClearSurfaceTarget(surfaceShape);
+            // D/E composite overwrites every pixel, including exact zero in empty space.
+            if (!useImprovedSurface) ClearSurfaceTarget(surfaceComposite);
             surfaceCommands.SetViewProjectionMatrices(camera.worldToCameraMatrix, GL.GetGPUProjectionMatrix(camera.projectionMatrix, true));
             if (SystemInfo.supportedRenderTargetCount >= 2)
             {
@@ -81,7 +93,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 surfaceCommands.SetRenderTarget(surfaceDensity); AccumulateSurface(1);
                 surfaceCommands.SetRenderTarget(surfaceColor); AccumulateSurface(2);
             }
-            if (!useReferenceSurface) { surfaceCommands.SetRenderTarget(surfaceShape); AccumulateSurface(3); }
+            if (!particleSurface) { surfaceCommands.SetRenderTarget(surfaceShape); AccumulateSurface(3); }
             surfaceCommands.SetRenderTarget(surfaceComposite);
             surfaceCommands.SetViewProjectionMatrices(Matrix4x4.identity,
                 GL.GetGPUProjectionMatrix(Matrix4x4.Ortho(-1, 1, -1, 1, -1, 1), true));
@@ -104,14 +116,20 @@ namespace Slainte.Bartending.FluidGpuExperiment
             output.localScale = new Vector3(Vector3.Dot(topRight - bottomLeft, camera.transform.right) * .5f,
                 Vector3.Dot(topRight - bottomLeft, camera.transform.up) * .5f, 1);
             surfaceRenderer.forceRenderingOff = false;
+            // Count only successful surface submissions from the actual camera render path.
+            if (LastRenderedSurfaceFrame != Time.frameCount)
+            {
+                LastRenderedSurfaceFrame = Time.frameCount;
+                RenderedSurfaceFrames++;
+            }
             return true;
         }
 
         private void AccumulateSurface(int pass)
         {
             surfaceCommands.DrawProcedural(Matrix4x4.identity, surfaceAccumulationMaterial, pass,
-                MeshTopology.Triangles, 6, particleCapacity + (useReferenceSurface ? referenceHeadCount : 0), surfaceParticleProperties);
-            if (!useReferenceSurface && useStreamRendering) surfaceCommands.DrawProcedural(Matrix4x4.identity, streamAccumulationMaterial, pass,
+                MeshTopology.Triangles, 6, particleCapacity + (useReferenceSurface && !useImprovedSurface ? referenceHeadCount : 0), surfaceParticleProperties);
+            if (!useReferenceSurface && !useImprovedSurface && useStreamRendering) surfaceCommands.DrawProcedural(Matrix4x4.identity, streamAccumulationMaterial, pass,
                 MeshTopology.Triangles, 6, particleCapacity + MaximumStreamHeads, surfaceParticleProperties);
         }
 
@@ -123,16 +141,25 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         private bool EnsureSurfaceResources(Camera camera)
         {
-            if (useReferenceSurface)
+            if (useImprovedSurface)
+            {
+                if (improvedAccumulationShader == null)
+                    improvedAccumulationShader = Shader.Find("Hidden/Slainte/FluidExperiment/ImprovedAccumulation");
+                if (improvedCompositeShader == null)
+                    improvedCompositeShader = Shader.Find("Hidden/Slainte/FluidExperiment/ImprovedComposite");
+            }
+            else if (useReferenceSurface)
             {
                 if (referenceAccumulationShader == null)
                     referenceAccumulationShader = Shader.Find("Hidden/Slainte/FluidExperiment/ReferenceAccumulation");
                 if (referenceCompositeShader == null)
                     referenceCompositeShader = Shader.Find("Hidden/Slainte/FluidExperiment/ReferenceComposite");
             }
-            Shader accumulation = useReferenceSurface ? referenceAccumulationShader : settings.surfaceAccumulationShader;
-            Shader composite = useReferenceSurface ? referenceCompositeShader : settings.surfaceCompositeShader;
-            bool ribbons = !useReferenceSurface && useStreamRendering;
+            Shader accumulation = useImprovedSurface ? improvedAccumulationShader :
+                useReferenceSurface ? referenceAccumulationShader : settings.surfaceAccumulationShader;
+            Shader composite = useImprovedSurface ? improvedCompositeShader :
+                useReferenceSurface ? referenceCompositeShader : settings.surfaceCompositeShader;
+            bool ribbons = !useReferenceSurface && !useImprovedSurface && useStreamRendering;
             if (accumulation == null || composite == null || settings.surfaceDisplayShader == null
                 || !accumulation.isSupported || !composite.isSupported || !settings.surfaceDisplayShader.isSupported
                 || (ribbons && (settings.streamAccumulationShader == null || !settings.streamAccumulationShader.isSupported)))
@@ -172,13 +199,14 @@ namespace Slainte.Bartending.FluidGpuExperiment
             scale = Mathf.Min(scale, 2048f / Mathf.Max(camera.pixelWidth, camera.pixelHeight, 1));
             int width = Mathf.Max(32, Mathf.RoundToInt(camera.pixelWidth * scale));
             int height = Mathf.Max(32, Mathf.RoundToInt(camera.pixelHeight * scale));
-            if (surfaceComposite != null && surfaceComposite.width == width && surfaceComposite.height == height) return true;
+            if (surfaceComposite != null && surfaceComposite.width == width && surfaceComposite.height == height
+                && (useImprovedSurface || surfaceShape != null)) return true;
             ReleaseSurfaceTargets();
             RenderTextureFormat densityFormat = SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.RHalf)
                 ? RenderTextureFormat.RHalf : RenderTextureFormat.ARGBHalf;
             surfaceDensity = CreateSurfaceTarget("Density", width, height, densityFormat);
             surfaceColor = CreateSurfaceTarget("Color", width, height, RenderTextureFormat.ARGBHalf);
-            surfaceShape = CreateSurfaceTarget("Shape", width, height, densityFormat);
+            surfaceShape = useImprovedSurface ? null : CreateSurfaceTarget("Shape", width, height, densityFormat);
             surfaceComposite = CreateSurfaceTarget("Composite", width, height, RenderTextureFormat.ARGBHalf);
             surfaceMrt[0] = surfaceDensity; surfaceMrt[1] = surfaceColor;
             return true;
@@ -227,6 +255,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         private void DisposeSurfaceRendering()
         {
+            DisposeImprovedSurface();
             ReleaseSurfaceTargets();
             surfaceCommands?.Release(); surfaceCommands = null;
             if (surfaceRenderer != null) { surfaceRenderer.forceRenderingOff = true; Destroy(surfaceRenderer.gameObject); }

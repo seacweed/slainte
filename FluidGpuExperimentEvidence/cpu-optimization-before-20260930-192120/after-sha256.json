@@ -1,0 +1,22 @@
+[
+  {
+    "source": "Assets\\_Project\\Features\\Bartending\\FluidGpuExperiment\\Runtime\\FluidExperimentGpuLiquid.Improved.cs",
+    "sha256": "617880619CCBFA7D41A0FB6B707B83D9C609C2C74C960471249AC08021526F08"
+  },
+  {
+    "source": "Assets\\_Project\\Features\\Bartending\\FluidGpuExperiment\\Runtime\\FluidExperimentGpuLiquid.CalibratedFill.cs",
+    "sha256": "5166773B9491E7F61480564834775AFB6F52C0DB15146005DFD65577CB9BE515"
+  },
+  {
+    "source": "Assets\\_Project\\Features\\Bartending\\FluidGpuExperiment\\Runtime\\FluidExperimentBody.Reservoir.cs",
+    "sha256": "23DA223C7E748EB161708AD1CC9E6FD7BE229CAC753785A2782711C5FE90A688"
+  },
+  {
+    "source": "Assets\\_Project\\Features\\Bartending\\FluidGpuExperiment\\Runtime\\FluidExperimentBody.Geometry.cs",
+    "sha256": "B0AF6F103964FE18520363DFA199D92C182255F8BB7918D04B7E5210959CFF80"
+  },
+  {
+    "source": "Assets\\_Project\\Features\\Bartending\\FluidGpuExperiment\\Runtime\\FluidExperimentEffects.cs",
+    "sha256": "FC33C7E1D840B4E41E524058416884398FAEE71668FB51AA71FF5BBC5E880933"
+  }
+]

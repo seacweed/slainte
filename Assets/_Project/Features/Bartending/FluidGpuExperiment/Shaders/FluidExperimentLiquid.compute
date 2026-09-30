@@ -12,6 +12,10 @@
 #pragma kernel ApplyDeltaAndBoundaries
 #pragma kernel UpdateVelocities
 #pragma kernel MixComposition
+#pragma kernel CalculateConservativeMixWeights
+#pragma kernel MixCompositionConservative
+#pragma kernel CollectLiquidLedger
+#pragma kernel TransferVesselContents
 #pragma kernel UpdateParticleColors
 #pragma kernel ApplyTechnique
 #pragma kernel TranslateVesselContents
@@ -23,6 +27,9 @@
 #pragma kernel MergeStreamContacts
 #pragma kernel CalculateReferenceDensityPressure
 #pragma kernel CalculateReferenceDelta
+#pragma kernel CalculateImprovedDensity
+#pragma kernel CalculateImprovedDelta
+#pragma kernel CalculateImprovedViscosity
 
 #pragma target 5.0
 #pragma multi_compile_local __ PHYSICSLAB_LINEAR_BOUNDARIES
@@ -111,17 +118,24 @@ struct Agitator
 RWStructuredBuffer<LiquidParticle> _Particles;
 RWStructuredBuffer<float> _CompositionA;
 RWStructuredBuffer<float> _CompositionB;
-RWStructuredBuffer<float> _CompositionRead;
+StructuredBuffer<float> _CompositionRead;
 RWStructuredBuffer<float> _CompositionWrite;
 RWStructuredBuffer<float4> _ParticleColors;
 RWStructuredBuffer<float2> _PositionDeltas;
 RWStructuredBuffer<float2> _VelocitySnapshot;
+StructuredBuffer<float2> _VelocityRead;
 RWStructuredBuffer<float> _Lambdas;
 // Pressure, near pressure, summed radial-viscosity weight, dimensionless density.
 RWStructuredBuffer<float4> _ReferenceDensityPressure;
+// Lifetime slot sums persist through retirement and reuse. Scalar addresses separate generated,
+// retired and command-index rejection writes, keeping Spawn within D3D11's eight-UAV limit.
+RWStructuredBuffer<float> _LedgerAmounts;
+RWStructuredBuffer<float4> _LedgerSnapshot;
+RWStructuredBuffer<float> _ConservativeMixWeights;
 RWStructuredBuffer<int> _GridHeads;
 RWStructuredBuffer<int> _GridNext;
 RWStructuredBuffer<uint> _FreeIndices;
+StructuredBuffer<uint> _FreeIndicesRead;
 RWStructuredBuffer<int> _FreeCount;
 StructuredBuffer<SpawnCommand> _SpawnCommands;
 StructuredBuffer<IngredientVisual> _IngredientVisuals;
@@ -156,6 +170,8 @@ int _TransformTargetVessel;
 int _SuspensionTargetVessel;
 int _SuspensionEnabled;
 int _ReferenceSolverEnabled;
+int _ImprovedPhysics;
+int _TransferTargetVessel;
 
 float _ReferenceParticleVolume;
 float _ReferenceRestDensity;
@@ -294,8 +310,7 @@ bool IsBoundaryCompatible(uint particleVesselId, uint boundaryVesselId, uint fla
 {
     if ((flags & 16u) != 0u) return false;
     if (particleVesselId == boundaryVesselId) return true;
-    if ((flags & 4u) != 0u) return true; // Physical ice remains in contact with held vessel contents.
-    // Held objects may overlap, while their contents remain isolated. Free world fluid sees all resting solids.
+    // Held objects, including ice, ignore external contacts while retaining their own contents.
     if ((flags & 2u) != 0u || IsHeldVessel(particleVesselId)) return false;
     return true;
 }
@@ -318,6 +333,17 @@ float2 SweepAgainstBoundary(float2 start, float2 end, BoundarySegment edge)
     {
         boundsMin = min(min(edge.a, edge.b), min(edge.a - originDelta, edge.b - originDelta));
         boundsMax = max(max(edge.a, edge.b), max(edge.a - originDelta, edge.b - originDelta));
+    }
+    else if (abs(edge.angleDelta) <= 1.0)
+    {
+        // Conservative chord-error bound for a rotated endpoint: r * angle^2 / 8.
+        // Linear translation adds no curvature. Large/unwrapped turns retain the
+        // full-circle fallback below; contact refinement and physical dt are unchanged.
+        float2 startA = edge.startPosition + RotateBoundaryPoint(edge.localA, edge.startAngle);
+        float2 startB = edge.startPosition + RotateBoundaryPoint(edge.localB, edge.startAngle);
+        float arcPadding = radius * edge.angleDelta * edge.angleDelta * 0.125 + 0.0001;
+        boundsMin = min(min(edge.a, edge.b), min(startA, startB)) - arcPadding;
+        boundsMax = max(max(edge.a, edge.b), max(startA, startB)) + arcPadding;
     }
     else
     {
@@ -535,7 +561,9 @@ uint FindContainingVessel(float2 position, uint previousVesselId)
          triggerIndex++)
     {
         VesselTrigger trigger = _VesselTriggers[triggerIndex];
-        if (trigger.active == 0u || ((trigger.flags & 2u) != 0u && previousVesselId != 0u && trigger.vesselId != previousVesselId))
+        // Held vessels ghost through all external liquid, including owner-zero airborne drops.
+        // Only particles already owned by this held vessel may retain/reacquire its trigger.
+        if (trigger.active == 0u || ((trigger.flags & 2u) != 0u && trigger.vesselId != previousVesselId))
             continue;
 
         if (IsInsideVesselTrigger(trigger, position, _SmoothingRadius + _ParticleRadius)
@@ -660,6 +688,14 @@ void ResetCompositionBuffers(uint3 dispatchId : SV_DispatchThreadID)
         _CompositionA[compositionOffset + ingredient] = 0.0;
         _CompositionB[compositionOffset + ingredient] = 0.0;
     }
+    for (int ledgerIngredient = 0; ledgerIngredient <= _MaximumIngredients; ledgerIngredient++)
+    {
+        uint address = index * (uint)(_MaximumIngredients + 1) + ledgerIngredient;
+        _LedgerAmounts[address * 4u] = 0.0;
+        _LedgerAmounts[address * 4u + 1u] = 0.0;
+        _LedgerAmounts[address * 4u + 2u] = 0.0;
+        _LedgerAmounts[address * 4u + 3u] = 0.0;
+    }
 
     if (index == 0u)
     {
@@ -678,6 +714,8 @@ void SpawnParticles(uint3 dispatchId : SV_DispatchThreadID)
     if (commandIndex >= (uint)_SpawnCount)
         return;
 
+    SpawnCommand command = _SpawnCommands[commandIndex];
+
     int previousFreeCount;
     InterlockedAdd(_FreeCount[0], -1, previousFreeCount);
     if (previousFreeCount <= 0)
@@ -685,11 +723,16 @@ void SpawnParticles(uint3 dispatchId : SV_DispatchThreadID)
         int ignored;
         InterlockedAdd(_FreeCount[0], 1, ignored);
         InterlockedAdd(_Statistics[0], 1u);
+        uint rejectedOffset = commandIndex * (uint)(_MaximumIngredients + 1);
+        _LedgerAmounts[(rejectedOffset + command.sourceIngredient) * 4u + 2u] += command.volumeMl;
+        _LedgerAmounts[(rejectedOffset + _MaximumIngredients) * 4u + 2u] += command.volumeMl;
         return;
     }
 
-    uint particleIndex = _FreeIndices[previousFreeCount - 1];
-    SpawnCommand command = _SpawnCommands[commandIndex];
+    uint particleIndex = _FreeIndicesRead[previousFreeCount - 1];
+    uint generatedOffset = particleIndex * (uint)(_MaximumIngredients + 1);
+    _LedgerAmounts[(generatedOffset + command.sourceIngredient) * 4u] += command.volumeMl;
+    _LedgerAmounts[(generatedOffset + _MaximumIngredients) * 4u] += command.volumeMl;
     LiquidParticle particle = (LiquidParticle)0;
     particle.position = command.position;
     particle.previousPosition = command.position;
@@ -1180,6 +1223,12 @@ void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
         || particle.position.x > _WorldMax.x
         || particle.position.y > _WorldMax.y)
     {
+        // Capture the current mixture before the slot is freed or any future spawn overwrites it.
+        uint retiredOffset = index * (uint)(_MaximumIngredients + 1);
+        for (int ingredient = 0; ingredient < _IngredientCount; ingredient++)
+            _LedgerAmounts[(retiredOffset + ingredient) * 4u + 1u] += particle.volumeMl
+                * _CompositionRead[index * (uint)_MaximumIngredients + ingredient];
+        _LedgerAmounts[(retiredOffset + _MaximumIngredients) * 4u + 1u] += particle.volumeMl;
         _StreamParticles[index].detached = 1u;
         particle.active = 0u;
         particle.vesselId = 0u;
@@ -1227,7 +1276,7 @@ void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
                         && distanceSquared < _SmoothingRadius * _SmoothingRadius)
                     {
                         float weight = KernelPoly6(distanceSquared);
-                        float2 previousNeighborVelocity = _VelocitySnapshot[neighborIndex];
+                        float2 previousNeighborVelocity = _VelocityRead[neighborIndex];
                         neighborVelocity += previousNeighborVelocity * weight;
                         neighborWeight += weight;
 
@@ -1569,5 +1618,129 @@ void ReleaseOwner(uint3 dispatchId : SV_DispatchThreadID)
     if (p.vesselId == (uint)_TransformTargetVessel) p.vesselId = 0u;
     _Particles[i] = p;
 }
+// Symmetric mass exchange k_ij. Both endpoints use the same birth-clipped time and volume
+// product, so an unequal-volume or newly born pair exchanges equal/opposite ingredient ml.
+float ConservativeExchange(uint i, uint j, LiquidParticle a, LiquidParticle b)
+{
+    if (a.active == 0u || b.active == 0u || a.volumeMl <= 0.0 || b.volumeMl <= 0.0
+        || ((a.stateFlags | b.stateFlags) & STATE_SUSPENDED) != 0u
+        || a.vesselId != b.vesselId) return 0.0;
+    float sharedDt = min(_StreamParticles[i].stepDt, _StreamParticles[j].stepDt);
+    if (sharedDt <= 0.000001) return 0.0;
+    float distanceWeight = saturate(1.0 - length(a.position - b.position) / max(1e-5, _SmoothingRadius));
+    float agitation = saturate(length(a.velocity - b.velocity) / max(.01, _FullMixRelativeSpeed));
+    float weight = min((_PassiveMixRate + _AgitationMixRate * agitation) * distanceWeight * sharedDt,
+        _MaximumMixPerSubstep) / MIX_NEIGHBOR_NORMALIZATION;
+    return weight * (a.volumeMl * b.volumeMl / (a.volumeMl + b.volumeMl));
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void CalculateConservativeMixWeights(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint i = dispatchId.x;
+    if (i >= (uint)_ParticleCapacity) return;
+    LiquidParticle p = _Particles[i];
+    float sum = 0.0;
+    if (p.active != 0u && p.volumeMl > 0.0)
+    {
+        int2 origin = GetCell(p.position);
+        for (int y = -1; y <= 1; y++) for (int x = -1; x <= 1; x++)
+        {
+            int2 cell = origin + int2(x, y);
+            if (!IsCellValid(cell)) continue;
+            int j = _GridHeads[GetCellIndex(cell)], guard = 0;
+            while (j >= 0 && guard++ < _ParticleCapacity)
+            {
+                if (j != (int)i) sum += ConservativeExchange(i, (uint)j, p, _Particles[j]) / p.volumeMl;
+                j = _GridNext[j];
+            }
+        }
+    }
+    // Limit the sum, not each channel after mixing. The maximum of both endpoint factors is
+    // symmetric and gives a convex update even in a very dense neighborhood.
+    _ConservativeMixWeights[i] = max(1.0, sum / max(1e-5, _MaximumMixPerSubstep));
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void MixCompositionConservative(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint i = dispatchId.x;
+    if (i >= (uint)_ParticleCapacity) return;
+    LiquidParticle p = _Particles[i];
+    uint offset = i * (uint)_MaximumIngredients;
+    for (int ingredient = 0; ingredient < _MaximumIngredients; ingredient++)
+    {
+        float ratio = _CompositionRead[offset + ingredient], delta = 0.0;
+        if (ingredient < _IngredientCount && p.active != 0u && p.volumeMl > 0.0)
+        {
+            int2 origin = GetCell(p.position);
+            for (int y = -1; y <= 1; y++) for (int x = -1; x <= 1; x++)
+            {
+                int2 cell = origin + int2(x, y);
+                if (!IsCellValid(cell)) continue;
+                int j = _GridHeads[GetCellIndex(cell)], guard = 0;
+                while (j >= 0 && guard++ < _ParticleCapacity)
+                {
+                    if (j != (int)i)
+                    {
+                        float exchange = ConservativeExchange(i, (uint)j, p, _Particles[j]);
+                        exchange /= max(_ConservativeMixWeights[i], _ConservativeMixWeights[j]);
+                        delta += exchange / p.volumeMl
+                            * (_CompositionRead[j * _MaximumIngredients + ingredient] - ratio);
+                    }
+                    j = _GridNext[j];
+                }
+            }
+        }
+        // No independent clamp/renormalization: either would change the global ingredient amount.
+        _CompositionWrite[offset + ingredient] = ratio + delta;
+    }
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void CollectLiquidLedger(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint ingredient = dispatchId.x, stride = (uint)(_MaximumIngredients + 1);
+    if (ingredient >= stride) return;
+    bool total = ingredient == (uint)_MaximumIngredients;
+    float4 sums = 0.0; // generated, active, retired, GPU rejected
+    float pending = 0.0, transferred = 0.0, occupiedCount = 0.0, activeCount = 0.0, pendingCount = 0.0;
+    for (uint i = 0; i < (uint)_ParticleCapacity; i++)
+    {
+        uint address = (i * stride + ingredient) * 4u;
+        sums.x += _LedgerAmounts[address]; sums.z += _LedgerAmounts[address + 1u];
+        sums.w += _LedgerAmounts[address + 2u];
+        transferred += _LedgerAmounts[address + 3u];
+        LiquidParticle p = _Particles[i];
+        float amount = p.volumeMl;
+        if (!total) amount *= _CompositionRead[i * (uint)_MaximumIngredients + ingredient];
+        if (p.active != 0u) { sums.y += amount; occupiedCount += 1.0; activeCount += 1.0; }
+        else if (_StreamParticles[i].pending != 0u) { pending += amount; occupiedCount += 1.0; pendingCount += 1.0; }
+    }
+    _LedgerSnapshot[ingredient] = sums;
+    _LedgerSnapshot[stride + ingredient] = float4(pending, transferred, 0.0, 0.0);
+    if (total) _LedgerSnapshot[stride * 2u] = float4(occupiedCount, activeCount, pendingCount, _FreeCount[0]);
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void TransferVesselContents(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint i = dispatchId.x;
+    if (i >= (uint)_ParticleCapacity) return;
+    LiquidParticle p = _Particles[i];
+    if (p.active == 0u || p.vesselId != (uint)_TransferTargetVessel) return;
+    uint offset = i * (uint)(_MaximumIngredients + 1);
+    for (int ingredient = 0; ingredient < _IngredientCount; ingredient++)
+        _LedgerAmounts[(offset + ingredient) * 4u + 3u] += p.volumeMl
+            * _CompositionRead[i * (uint)_MaximumIngredients + ingredient];
+    _LedgerAmounts[(offset + _MaximumIngredients) * 4u + 3u] += p.volumeMl;
+    p.active = 0u; p.vesselId = 0u;
+    _Particles[i] = p;
+    _StreamParticles[i].detached = 1u;
+    int freeSlot;
+    InterlockedAdd(_FreeCount[0], 1, freeSlot);
+    if (freeSlot < _ParticleCapacity) _FreeIndices[freeSlot] = i;
+}
+
 #include "FluidExperimentStreamSurface.hlsl"
 #include "FluidExperimentReference.hlsl"

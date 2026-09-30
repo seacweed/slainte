@@ -78,9 +78,11 @@ namespace Slainte.Bartending.FluidGpuExperiment
         {
             pourStream = lastPourToken = 0;
             pourCredit = 0;
+            ResetReservoirResponse();
         }
         private void EmitBottle(float dt)
         {
+            if (World.Liquid.useImprovedPhysics) { EmitReservoirBottle(dt); return; }
             if (remainingMl <= 0 || dt <= 0 || pourMlPerSecond <= 0) { EndPourStream(); return; }
             // Refine the emitter's angular path, never the simulation schedule of other liquid.
             int pieces = Mathf.Clamp(Mathf.CeilToInt(Mathf.Abs(StepAngle) / 5), 1, 256);
@@ -138,9 +140,11 @@ namespace Slainte.Bartending.FluidGpuExperiment
         internal bool TryGetStreamHead(out GpuLiquidStreamHead head)
         {
             head = default;
-            if (pourStream == 0 || lastPourToken == 0 || PourFlowAt(Angle) <= .000001f || remainingMl <= 0) return false;
+            bool improved = World != null && World.Liquid != null && World.Liquid.useImprovedPhysics;
+            bool flowing = improved ? ReservoirCurrentFlowMlPerSecond > .000001f : PourFlowAt(Angle) > .000001f;
+            if (pourStream == 0 || lastPourToken == 0 || !flowing || remainingMl <= 0) return false;
             // Follow the displayed Rigidbody interpolation at the lip, without pulling detached particles.
-            head = new GpuLiquidStreamHead { Lip = transform.TransformPoint(LipLocal), Token = lastPourToken,
+            head = new GpuLiquidStreamHead { Lip = improved ? ReservoirDisplayedLip : (Vector2)transform.TransformPoint(LipLocal), Token = lastPourToken,
                 StreamId = pourStream, SourceId = Id, Radius = lastPourRadius };
             return true;
         }
