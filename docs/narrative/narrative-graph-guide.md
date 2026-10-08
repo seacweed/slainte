@@ -1,200 +1,134 @@
 # 내러티브 그래프 에디터 사용 가이드
 
+CSV와 그래프 중 편한 쪽에서 에피소드를 고치면 된다. 둘은 같은 데이터로 왕복된다. 구조 설명은 [narrative-graph-editor.md](narrative-graph-editor.md), CSV 문법은 [episode-csv-guide.md](episode-csv-guide.md) 참고.
+
 ## 에디터 열기
 
-Unity 메뉴 → **Narrative > Open Narrative Graph Editor**
+Unity 메뉴 → **Narrative > Open Graph**. 상단 **Graph Asset**에서 그래프를 고른다(마지막으로 연 그래프가 자동으로 열림).
 
 ---
 
 ## 기본 워크플로우
 
-```
-그래프 생성/열기 → 노드 추가 → 연결 → 시퀀스 편집 → 메타데이터 설정 → 컴파일
-```
+### CSV로 쓴 에피소드를 그래프로 보기/고치기
+1. 툴바 **Import CSV...** (또는 메뉴 **Narrative > Import CSV to Graph...**) → `Content/Source/Episodes`의 CSV 선택
+2. `Content/Graphs/{episodeId}.asset` 그래프가 만들어지고(이미 있으면 위치 유지한 채 갱신) EpisodeData 에셋도 함께 갱신된다
+3. 그래프에서 수정 → 툴바 **Compile (EpisodeData + CSV)** → EpisodeData와 **원본 CSV가 함께 갱신**된다
+
+### 스프레드시트에서 CSV를 다시 고쳤다면
+- 그래프 설정 패널의 **CSV에서 그래프 다시 만들기**를 누른다(블록 위치 유지).
+- 깜빡하고 그래프를 먼저 컴파일하면 "원본 CSV 변경 감지" 창이 뜬다 → **CSV에서 그래프 다시 만들기**를 고르면 CSV 수정이 보존된다. **그래프로 덮어쓰기**를 고르면 CSV 쪽 수정은 사라진다.
+
+> 그래프가 CSV를 쓰면 스프레드시트 내보내기 특유의 빈 칸(`,,,,`)과 옛 섹션은 정리된 형식으로 바뀐다. 내용은 같다.
 
 ---
 
-## 1. 그래프 생성 및 열기
+## 노드 종류
 
-- **Project 뷰 우클릭 → Create > Narrative > Graph** 로 `NarrativeGraphSO` 에셋 생성
-- 에셋을 더블클릭하거나 에디터 창에 드래그하면 그래프가 열림
-- 저장 위치 권장: `Assets/_Project/Features/Narrative/Content/Graphs/`
+그래프 빈 공간에서 **Space**(마우스 위치에 검색창) 또는 **우클릭 → Create Node** → 검색창에서 고른다.
 
----
-
-## 2. 노드 추가
-
-그래프 빈 공간에서 **Space** 또는 **우클릭** → 검색창에서 노드 타입 선택
-
-| 노드 타입 | 용도 |
+| 노드 | 용도 |
 |---|---|
-| **Episode Node** | 대사/선택지/영업 등 실제 이벤트 블록 |
-| **Trigger Node** | 플래그·변수 조건에 따른 자동 분기 라우터 |
+| **Episode Node (블록)** | 대사 · 선택지 · 제조 이벤트를 순서대로 담는 블록 |
+| **Trigger Node** | 플래그 · 변수 · 에피소드 완료 조건에 따라 경로를 고르는 라우터 (Case 포트들 + Else) |
+| **Empty Node** | 메모 · 자리 표시용. 컴파일에 쓰이지 않는다 |
+| **Templates** | 노드 인스펙터의 **Save Template**으로 저장한 노드를 복제해 만든다 |
 
-노드 삭제: 선택 후 **Delete**
+## 블록 안 이벤트 편집 (그래프에서 바로)
 
----
+블록 카드에 이벤트가 한 줄씩 보이고, **카드의 줄 순서가 곧 실행 순서**다.
 
-## 3. 노드 연결
-
-출력 포트(오른쪽 원)를 드래그해 다른 노드의 입력 포트(왼쪽 원)에 연결.  
-연결/삭제 시 **노드 ID가 자동 재할당**됩니다.
-
-### 포트 수 조정
-노드 우측 인스펙터 패널 → **Outcome Branches** 목록에서 포트 추가/삭제/이름 변경.
-
-> Choice 이벤트가 있는 노드는 선택지 수와 포트 수를 일치시켜야 합니다.
-
-### 분기 포트 라벨 규칙
-
-Outcome Branches의 라벨 텍스트로 분기 조건 타입이 결정됩니다 (컴파일 시 `EpisodeDataCompiler`가 라벨을 파싱).
-
-| 라벨 형식 | 예시 | 분기 타입 |
-|---|---|---|
-| `플래그명 == true` | `flag_met_customer == true` | 플래그 분기 (`NODE_BRANCHES`) |
-| `변수명 연산자 값` | `sally_affinity >= 10` | 변수 분기 (`NODE_VAR_BRANCHES`) |
-| 그 외 순수 텍스트 (연산자 없음) | `StrangeCoin_0` | **에피소드 완료 분기** (`NODE_EPISODE_BRANCHES`) — 해당 에피소드가 완료되어야 이 포트로 이동 |
-| `Next` / `Default` | `Next` | 조건 없는 기본 다음 노드 |
-
-에피소드 완료 분기는 별도 접두사 없이 **에피소드 ID를 라벨에 그대로 적으면** 됩니다. "A 에피소드 클리어 후 B 에피소드 진행 시 내용이 바뀐다" 같은 챕터 간 연동에 사용.
-
----
-
-## 4. 노드 ID (자동 할당)
-
-노드 제목은 그래프 구조에 따라 자동 부여됩니다. **직접 수정 불필요.**
-
-```
-직선:     1 → 2 → 3 → 4
-분기:     3에서 2포트 → 3_1_1, 3_2_1 → 3_1_2, 3_2_2 ...
-병합:     3_1_k 와 3_2_j 가 같은 노드에 연결 → 4
-```
-
-- Start 노드 미설정 시 도달 불가 노드는 `x1`, `x2` ... 로 표시됨
-
----
-
-## 5. 시퀀스 편집 (Sequence Editor)
-
-**Episode Node를 더블클릭** → Sequence Editor 창 오픈.
-
-### 이벤트 추가
-Sequence Editor 빈 공간 **우클릭** → 이벤트 타입 선택 후 배치 → 포트 연결.
-
-### 이벤트 타입별 편집 항목
-
-#### Dialogue (대사)
-| 필드 | 설명 |
+| 동작 | 방법 |
 |---|---|
-| Speaker | 화자 키 (CharacterData의 characterKey) |
-| Name | 표시 이름 오버라이드 (비워두면 캐릭터 기본 이름) |
-| Text | 대사 내용 |
-| Character Appearances | 화면에 등장할 캐릭터 목록: Key / 표정 / 슬롯 인덱스(-1=숨김) |
-| BGM | Command(Play/Stop/Fade) + Clip 이름 |
+| 상세 편집 | 줄 **클릭** → 왼쪽 패널에 화자·대사·표정·BGM/SFX·선택지·제조 설정이 열림 |
+| 대사 바로 고치기 | 대사 **더블클릭** → 카드 위에서 수정. 포커스를 옮기거나 **Ctrl+Enter**면 저장, **Esc**면 취소 |
+| 이벤트 추가 | 카드 아래 `+ 대사 / + 선택지 / + 제조` (선택한 줄 다음에 끼움), 또는 줄 **우클릭 → 위/아래에 추가** |
+| 순서 바꾸기 · 삭제 | 줄 오른쪽 **↑ ↓ ✕** 버튼 |
+| 블록 나누기 | 줄 **우클릭 → 이 줄부터 새 블록으로 나누기**, 또는 왼쪽 패널 **선택한 줄부터 블록 나누기**. 중간에 분기를 넣고 싶을 때 쓴다 |
+| 블록 합치기 | 왼쪽 패널 **다음 블록과 합치기** (Next 하나로만 이어지고, 다음 블록을 다른 곳에서 가리키지 않을 때) |
+| 접기 · 펼치기 | 이벤트가 5줄 이상이면 앞 4줄만 보이고 `▼ n줄 더 보기` / `▲ 접기` |
 
-#### Choice (선택지)
-| 필드 | 설명 |
+- 화자 키와 표정은 왼쪽 패널에서 직접 입력하거나 옆의 **▼** 버튼으로 CharacterDatabase 목록에서 고른다. 표정 스프라이트 미리보기가 함께 보인다.
+- **선택지 · 제조는 블록의 마지막 이벤트**여야 한다. 그 뒤에 둔 줄은 흐리게 표시되고 실행되지 않는다(⚠). 다음 연결이 없는 포트는 그 자리에서 에피소드가 끝난다.
+- 줄 오른쪽의 `#3_1_2` 같은 표시가 런타임 노드 ID(CSV의 `nodeId`)다. **직접 정하지 않는다** — 이벤트를 추가·삭제·이동하거나 연결을 바꾸면 흐름에 맞춰 자동으로 다시 매겨진다(아래 노드 ID 규칙). 그래프를 **열 때 · CSV에서 가져올 때 · 구조를 바꿀 때 · Compile할 때** 항상 이 규칙으로 맞춰진다. CSV에 다른 번호가 적혀 있어도 그래프에서는 처음부터 규칙대로 보이고, CSV 파일은 다음 **Compile** 때 정리된 번호로 저장된다.
+- 블록을 나누거나 합쳐도 컴파일 결과(대사 흐름)는 그대로다.
+
+| 이벤트 | 편집 항목 |
 |---|---|
-| Speaker / Text | 선택지 표시 전 캐릭터 대사 |
-| Choice Options | 버튼 텍스트, Set/Clear Flags, Var Changes |
+| Dialogue | 화자, 이름 표시, 대사, 캐릭터 표정·슬롯, BGM, SFX |
+| Choice | (선택지 앞) 화자·대사·캐릭터·BGM·SFX, 선택지 버튼 텍스트와 각 버튼의 Set/Clear 플래그·변수 변화 |
+| BusinessStart (제조) | 주문표, 주문 유형/대상, 결제, 결과 6종별 플래그·변수, 진입 시 캐릭터 표정·BGM·SFX |
 
-각 선택지의 다음 경로는 Sequence 내부 포트가 아닌 **메인 그래프의 출력 포트**로 연결합니다.  
-(Outcome Branches 수 = 선택지 수)
+## 노드 ID 규칙 (자동)
 
-#### Business Start (영업 시작)
-| 필드 | 설명 |
+| 흐름 | ID |
 |---|---|
-| Ticket | CraftingTicket 키 |
-| Flag (Good/Bad/Mid-Ice/Mid-Glass/Mid-Ice+Glass/Mid-WrongMenu) | 제조 결과 6종(`CraftingJobResult`)별로 설정할 플래그 |
-| Var Changes (Good/Bad/Mid-Ice/Mid-Glass/Mid-Ice+Glass/Mid-WrongMenu) | 제조 결과 6종별 변수 변화 |
+| 직선 | 시작 노드 번호부터 1씩 증가 (`0 → 1 → 2` 또는 `1 → 2 → 3`, 시작 번호는 기존 시작 노드를 따름) |
+| 분기 (포트가 2개 이상인 선택지·제조·조건 노드 `20`) | 다음 번호로 갈래마다 `21_1_1`, `21_2_1` … → `21_1_2`, `21_1_3` … (갈래 번호 = 포트 순서, 바로 끝나는 포트도 갈래로 셈) |
+| 합류 (`21_1_3`과 `21_2_2`가 같은 노드로) | 오른쪽 두 마디를 떼고 +1 → `22` |
+| 갈래 안의 분기 (`21_1_3`에서 그 갈래만 갈라짐) | `21_1_4_1_1`, `21_1_4_2_1` … → 합류 `21_1_5` |
+| 여러 갈래의 분기 노드가 같은 다음 노드들로 이어짐 (예: 선택지 `20`의 갈래마다 제조 노드가 있고 결과를 공유) | 갈래들의 합류 번호에서 갈라진 것으로 봄 → 결과 `22_1_1` … `22_6_1` → 합류 `23` |
+| 부분 합류 (`20`의 갈래 1·2가 먼저 만나고, 3·4가 따로 만난 뒤 모두 다시 만남) | 먼저 만난 곳들이 새 갈래가 됨 → `22_1_1`, `22_2_1` … → 모두 만나는 곳 `22` |
+| 시작에서 도달할 수 없음 | `x1`, `x2` … |
 
-출력 포트도 6개(Good/Bad/Mid-Ice/Mid-Glass/Mid-Ice+Glass/Mid-WrongMenu)로 고정 생성됩니다. midjob 4종은 재료·얼음·잔 비교 결과에 따른 분기이며(예: 얼음 유무만 다르면 Mid-Ice, 잔 종류만 다르면 Mid-Glass, 주문과 다른 레시피를 올바르게 만들면 Mid-WrongMenu), 판정 로직 자체는 아직 수동(`CraftingJudgeUI` 버튼)입니다.
+## 화면 이동 · 배치
 
-#### Branch Exit (분기 탈출)
-이 이벤트가 실행되면 시퀀스를 중단하고 선택된 출력 포트로 즉시 이동.  
-드롭다운에서 `Outcome Branches` 중 하나 선택.
+- 빈 공간을 **왼쪽 또는 가운데 버튼으로 드래그**하면 화면이 움직이고, **마우스 휠**로 확대·축소한다.
+- 빈 공간을 **클릭**(드래그 없이)하면 선택이 풀리고 왼쪽 패널이 그래프 설정으로 돌아간다.
+- 툴바 **자동 정렬**: 시작 블록으로부터의 깊이를 열로, 같은 열은 포트 순서대로 위에서 아래로 다시 배치한다(열 사이 간격을 넓혀 연결선이 겹치지 않게). **Ctrl+Z**로 되돌릴 수 있다. CSV에서 처음 만든 그래프도 같은 규칙으로 놓인다.
 
----
+## 블록 출력 포트 연결
 
-## 6. Trigger Node 설정
+출력 포트(오른쪽 원)를 다른 노드 입력 포트로 드래그. 포트는 블록의 마지막 이벤트가 정한다.
+- **선택지로 끝나는 블록**: 선택지 버튼마다 포트 (자동)
+- **제조로 끝나는 블록**: Good / Bad / Mid-Ice / Mid-Glass / Mid-Ice+Glass / Mid-WrongMenu (자동). 플래그·변수·연결이 하나도 없는 Mid 결과는 Bad 결과를 그대로 따른다(Mid에 플래그만 주고 연결하지 않으면 그 결과에서 에피소드가 끝난다)
+- **대사로 끝나는 블록**: 인스펙터 **Outcome Branches**에 조건 라벨을 적는다
 
-조건 분기 라우터. **컴파일 시 런타임에 인라인**되어 별도 EpisodeNode를 생성하지 않음.
+| 라벨 | 의미 |
+|---|---|
+| `Next` | 조건 없는 기본 다음 |
+| `flag == true` | 플래그가 켜져 있으면 |
+| `a&b == true` | 모두 켜져 있으면 |
+| `flag == false` / `a&b == false` | 꺼져 있으면 / 모두 꺼져 있으면 |
+| `sally_affinity >= 5` | 변수 비교 (`>=` `>` `==` `<` `<=`) |
+| `StrangeCoin_0` | 그 에피소드를 완료했으면 |
 
-우측 인스펙터에서 조건 추가:
-- **Type**: Flag / Var
-- **Key**: 플래그명 또는 변수명
-- **Operator / Value**: 비교 연산자와 기준값
+확인 순서는 **포트 위에서부터 차례로**이고, 맞는 게 없으면 Next다(CSV `#NODE_BRANCHES`의 줄 순서와 같음). "하나라도 켜져 있으면"(`a|b`)은 쓸 수 없다 — 플래그마다 포트를 따로 만든다. 대화가 앞으로 되돌아가는 연결(다시 묻기 등)도 그대로 만들 수 있다.
 
-포트 순서: 조건0, 조건1, … Else(마지막)
+## Trigger 노드
 
----
+인스펙터에서 조건 추가: **Type**(Flag / Variable / Episode), **Key**, Flag·Variable은 **연산자 / 값**까지 적는다(Flag는 `== true` 또는 `== false`, 여러 플래그는 Key에 `a&b`). 포트 순서는 조건0, 조건1, …, Else.
 
-## 7. 그래프 메타데이터
-
-아무 노드도 선택하지 않으면 우측 패널에 그래프 설정 표시.
+## 그래프 설정 (아무 노드도 선택하지 않았을 때)
 
 | 항목 | 설명 |
 |---|---|
-| Episode ID | `EpisodeData`의 `episodeId` — 컴파일 파일명에 사용 |
-| Title | 에피소드 표시 제목 |
-| Start Node | 에피소드 진입 노드 지정 (ID `1`이 자동 할당됨) |
-| Chapter Id | 소속 챕터 ID (`ChapterData.chapterId`와 매칭) |
-| Episode Type | `Default`(Rest 보드에서 직접 선택) / `Mandatory`(필수, 영업 전후 자동 삽입) |
-| Mandatory Slot | `Episode Type = Mandatory`일 때만 사용. `BeforeBusiness` / `AfterBusiness` |
-| Trigger / Opening Chars | **Ping Graph Asset** 버튼으로 Project 뷰에서 직접 Inspector 편집 |
+| Episode ID / Title / Chapter ID | CSV `#META`와 같음 |
+| Start Node | 시작 블록 |
+| Day / Slot / Priority | 영업 일정 배정. 아래에 같은 슬롯의 다른 후보와 하루 손님 수 초과 여부가 표시된다 |
+| 등장 조건 | CSV `#TRIGGER` (minDay, minMoney, 필수/차단 플래그, 선행 에피소드, 변수, 손님 등장 횟수) |
+| 정산 보상 | CSV `#SETTLEMENT_REWARDS` |
+| CSV 동기화 | 원본 CSV 경로와 동기화 상태, **컴파일**, **CSV에서 그래프 다시 만들기**, **원본 CSV 파일 지정...** |
 
-> 필수 에피소드/챕터/영업 흐름 전체 설계는 [game-flow-design.md](../core/game-flow-design.md) 참고.
+## 검증
 
----
+노드 제목의 ⚠에 마우스를 올리면 이유가 보인다. 오류(잘못된 라벨, 시작 노드 없음 등)가 있으면 컴파일이 저장하지 않고 이유를 보여 준다. 전체 데이터를 한 번에 확인하려면 **Narrative > Validate CSV ⇄ Graph Round Trip**을 실행한다.
 
-## 8. 컴파일
+## 단축키
 
-### EpisodeData로 컴파일
-- 그래프 설정 패널 하단 **Compile to EpisodeData** 버튼
-- 또는 메뉴 **Narrative > Compile Graph**
-- 출력: `Assets/Resources/Narrative/Episodes/EpisodeData_{episodeId}.asset`
-
-### CSV 내보내기
-메뉴 **Narrative > Export Graph to CSV**  
-기존 `EpisodeCsvImporter`로 다시 임포트 가능한 포맷으로 저장.
-
----
-
-## 9. EpisodeData 역임포트
-
-기존 `EpisodeData` SO를 그래프로 변환할 때 사용.
-
-1. Project 뷰에서 `EpisodeData_xxx.asset` 선택
-2. 메뉴 **Narrative > Import EpisodeData to Graph**
-3. `Assets/_Project/Features/Narrative/Content/Graphs/{episodeId}.asset` 생성
-
-> Choice 노드의 경사 대사(Text)가 빈칸인 경우 임포트 후 자동으로 채워집니다.
-
----
-
-## 10. 노드 카드 인라인 정보
-
-그래프에서 각 노드 카드에 이벤트 내용이 요약 표시됩니다.
-
-| 색상 | 의미 |
+| 키 / 마우스 | 동작 |
 |---|---|
-| 파란색 헤더 | DIALOGUE 이벤트 |
-| 노란색 헤더 | CHOICE 이벤트 |
-| 주황색 헤더 | CRAFTING (BusinessStart/End) 이벤트 |
-| 초록색 텍스트 | 캐릭터 등장 정보 (CharacterAppearances) |
-| 노란색 소형 텍스트 | 선택지별 플래그/변수 변화 요약 |
-| 분홍색 텍스트 | BGM 정보 |
+| Space | 마우스 위치에 노드 생성 검색창 |
+| 빈 공간 우클릭 | 메뉴 → **Create Node** (노드 생성 검색창) |
+| 빈 공간 왼쪽·가운데 드래그 / 휠 | 화면 이동 / 확대·축소 |
+| 빈 공간 클릭 | 선택 해제 |
+| Ctrl + 빈 공간 드래그 | 범위 선택 |
+| 노드 클릭 · 드래그 | 선택 · 이동 (Shift / Ctrl + 클릭으로 여러 개 선택) |
+| A / F / O | 전체 보기 / 선택한 노드로 이동 / 원점으로 |
+| 줄 클릭 | 그 이벤트를 왼쪽 패널에서 편집 |
+| 대사 더블클릭 | 카드 위에서 대사 수정 (Ctrl+Enter 또는 다른 곳 클릭 = 저장, Esc = 취소) |
+| 줄 우클릭 | 이벤트 추가 · 블록 나누기 · 삭제 |
+| Delete | 선택한 노드 · 연결 삭제 (줄 하나만 지우려면 줄의 ✕) |
+| Ctrl + Z / Ctrl + Y | 실행 취소 / 다시 실행 (화면도 함께 갱신) |
 
-Dialogue → Choice 순서로 이어지는 이벤트는 **하나의 카드**로 합쳐서 표시됩니다.
-
----
-
-## 자주 쓰는 단축키
-
-| 키 | 동작 |
-|---|---|
-| Space / 우클릭 | 노드 생성 |
-| 더블클릭 | Sequence Editor 열기 |
-| Ctrl + 드래그 | 범위 선택 |
-| Delete | 선택 요소 삭제 |
-| Ctrl + Z | 실행 취소 (노드 이동/생성/삭제/엣지) |
+> 복사 · 붙여넣기(Ctrl+C / V / D)는 지원하지 않는다. 같은 노드를 여러 번 쓰려면 Template으로 저장해 검색창에서 만든다.

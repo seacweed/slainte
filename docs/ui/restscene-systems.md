@@ -1,36 +1,29 @@
 # RestScene 시스템
 
-RestScene은 에피소드 선택, 상점, 현황판을 제공하는 휴식 씬입니다.
-`BusinessScene` 완료 후 자동 전환되며, 다음 에피소드를 시작하는 분기점입니다.
+RestScene은 상점, TV 등을 제공하는 휴식 씬입니다. 정산 후 자동 전환되며, **다음 날 버튼**(`NextDayButton`, 작전판 제거 후 임시)으로 다음 날 영업을 시작합니다. 그날 할 일을 고르는 작전판(에피소드 보드)은 기획 개편으로 제거되었고, 에피소드는 영업 손님 슬롯에 배정되어 자동으로 등장합니다([game-flow-design.md](../core/game-flow-design.md)).
 
 ## 씬 진입/이탈 흐름
 
 ```
-BusinessScene 종료
-  └─ EpisodeManager.ClearEpisode()
-       └─ GameManager.ChangeState(GameState.Rest)
-            └─ SceneTransitionManager → RestScene 로드
+정산(Settlement) 종료
+  └─ GameManager.ChangeState(GameState.Rest)
+       └─ SceneTransitionManager → RestScene 로드
 
 RestScene
-  └─ 플레이어가 에피소드 보드에서 에피소드 선택 → 시작 버튼
-       └─ EpisodeManager.StartEpisode(id)
-            └─ GameManager.ChangeState(GameState.Episode)
-                 └─ SceneTransitionManager → BusinessScene 로드
+  └─ 다음 날 버튼(NextDayButton) 클릭 — 확인 없이 바로
+       └─ DayFlowController.StartBusinessDay() (AdvanceDay) → GameState.Business → BusinessScene 로드
 ```
 
 ## 스크립트 구조
 
 ```
 BaseUIManager (추상)
-  ├─ EpisodeBoardManager   — 에피소드 보드
-  ├─ EpisodeUIManager      — 현황판 (돈, 영업 상태)
-  └─ ShopUIManager         — 상점
+  └─ ShopUIManager         — 상점 (TV 등 다른 팝업도 상속)
+
+NextDayButton               — 다음 날 영업 시작 버튼(임시). 팝업이 열려 있으면 숨김
 
 ObjectInteraction           — 씬 오브젝트 클릭 → BaseUIManager 토글
-ObjectInteractionBoard      — ObjectInteraction과 동일 (보드 전용)
-EpisodePhotoTrigger         — 에피소드 보드 내 개별 사진 슬롯
-EpisodeInfoUI               — 사진 호버/클릭 시 표시되는 상세 정보 팝업
-BoardBackground             — 보드 배경 클릭 → 선택 초기화
+ObjectInteractionBoard      — ObjectInteraction과 동일(외곽선 표시 버전). 현재 씬에서 쓰지 않음
 
 TooltipManager              — 전역 싱글톤 툴팁 관리
 TooltipTrigger              — 개별 UI 요소의 툴팁 트리거
@@ -65,169 +58,18 @@ IShopCurrency / MoneyShopCurrency / StrangeCoinShopCurrency — 상점 결제 �
 
 - Awake에서 `CanvasGroup.alpha = 0`, `interactable = false`, `gameObject.SetActive(false)` 초기화
 - 진행 중인 코루틴은 항상 중단 후 재시작 (`_activeCoroutine`)
-- **상호 배타**: 정적 `HashSet<BaseUIManager>`로 현재 열린 인스턴스를 추적. `OpenUI()`가 호출되면 자기 자신을 제외한 나머지를 자동으로 `CloseUI()` — 에피소드 보드/현황판/상점 등 이 클래스를 상속하는 모든 RestScene 팝업이 하나만 열려있도록 별도 조율 코드 없이 보장됨. `OnDestroy()`에서 자신을 목록에서 제거해 씬 언로드 후 낡은 참조가 남지 않게 함
+- **상호 배타**: 정적 `HashSet<BaseUIManager>`로 현재 열린 인스턴스를 추적. `OpenUI()`가 호출되면 자기 자신을 제외한 나머지를 자동으로 `CloseUI()` — 상점·TV 등 이 클래스를 상속하는 모든 RestScene 팝업이 하나만 열려있도록 별도 조율 코드 없이 보장됨. `OnDestroy()`에서 자신을 목록에서 제거해 씬 언로드 후 낡은 참조가 남지 않게 함
 
 ---
 
-## 에피소드 보드 시스템
+## 다음 날 버튼 (NextDayButton)
 
-### EpisodeBoardManager (`Assets/_Project/Features/Rest/Runtime/EpisodeBoardManager.cs`)
+`Assets/_Project/Features/Rest/Runtime/NextDayButton.cs`. 작전판(전광판)을 없앤 뒤 다음 날로 넘어가는 임시 수단이다. UI `Button`에 붙인다.
 
-`BaseUIManager` 상속. 에피소드 보드 전체를 관리합니다.
-
-**애니메이션**: 아래에서 위로 슬라이드 (`slideDistance = 150f`, `animDuration = 0.3f`)
-- `Mathf.SmoothStep` 이징 적용, `Time.unscaledDeltaTime` 사용
-
-**핵심 메서드**
-
-| 메서드 | 설명 |
-|---|---|
-| `OnOpen()` | 항상 `RefreshBoard()` + `ResetBoard()` — 필수 에피소드 게이트가 있어도 사진은 계속 노출됨(아래 참고) |
-| `RefreshBoard()` | `EpisodeManager.GetBoardEpisodes()`로 표시할 에피소드 목록 확보, 동적 프리팹 생성/제거 |
-| `PinEpisode(photo)` | `PinnedPhoto` 설정. `IsMandatoryGateActive()`이면 그 에피소드의 `IsPlayable()` 결과와 무관하게 무조건 `Inactive`, 아니면 `IsPlayable()` 결과로 `Episode`/`Inactive` 상태 결정 |
-| `ResetBoard()` | 이전 사진 `Unpin()`. `TryGetForcedDay1Episode()`가 true면 `Inactive`(빈 텍스트, 아래 "1일차 예외" 참고), 아니면 `Business`("영업") — 필수 에피소드 게이트는 이 분기에 영향을 주지 않음(아래 참고) |
-| `OnStartButtonClicked()` | `PinnedPhoto != null`이면(`IsMandatoryGateActive()`가 아닐 때만) `DayFlowController.StartDefaultEpisode(id)`, null이면(미선택 상태, `TryGetForcedDay1Episode()`가 아닐 때만) `DayFlowController.StartBusinessDay()` → 이후 `CloseUI()`. 두 체크 모두 버튼이 이미 비활성화되어 있어야 정상이지만 방어적으로 재확인함 |
-| `IsMandatoryGateActive()` | `HasPendingMandatoryEpisode()`(오늘 발동 조건 충족) 또는 `HasUpcomingMandatoryEpisode()`(내일, 즉 다음 영업 시작 시점에 발동 예정)가 true면 게이트 활성 |
-| `TryGetForcedDay1Episode(out photo)` | 아래 "1일차 예외" 참고 |
-
-**시각 상태 3종** (`ApplyBoardVisualState()`, `BoardVisualState` enum) — 시작 버튼(`startButtonImage`)과 하단 텍스트 박스(`bottomTextboxImage`)의 스프라이트·텍스트 색을 한 곳에서 일괄 적용
-
-| 상태 | 발생 조건 | 텍스트 |
-|---|---|---|
-| `Inactive` | 필수 에피소드 게이트 활성 / 1일차 영업 금지 예외 / 클릭한 기본 에피소드가 조건 미달성 | 게이트·1일차 예외는 빈 문자열, 조건 미달성은 에피소드 제목(`textColorInactive`, 회색) |
-| `Business` | 아무것도 선택 안 한 기본 상태(영업 가능) | "영업"(`textColorBusiness`, 초록) |
-| `Episode` | 플레이 가능한 기본 에피소드를 선택 | 에피소드 제목(`textColorEpisode`, 주황) |
-
-**필수 에피소드 게이트**: 과거엔 `ShowMandatoryGate()`가 보드의 사진을 전부 `Destroy`해서 아예 안 보이게 했으나, 지금은 기본 에피소드 사진이 **항상 그대로 노출**되고 클릭해도 `Inactive`로만 표시되어 진행이 막힌다(선택은 막되 존재는 보여줌). "아무것도 선택 안 함" 기본 상태(`ResetBoard()`)는 게이트와 무관하게 항상 `Business`("영업")로 남는다 — 게이트의 목적은 기본 에피소드 선택을 막아 영업(그 안에서 자동으로 먼저 실행되는 필수 에피소드)으로 유도하는 것이지 영업 자체를 막는 게 아니기 때문. `DayFlowController.StartBusinessDay()`가 `AdvanceDay()` 이후 필수 에피소드를 자동으로 큐잉하므로, 영업 시작 경로는 게이트 중에도 항상 열려 있어야 한다.
-
-**게이트 lookahead**: `HasUpcomingMandatoryEpisode()`(`EpisodeManager.GetNextMandatoryEpisode(dayOffset: 1)`)가 "내일(다음 영업 시작으로 day가 오른 직후) 발동될 필수 에피소드가 있는지"를 하루 앞당겨 체크한다. 그래서 목표일 정확히 하루 전 보드부터 게이트가 걸려 기본 에피소드로 새치기당하지 않는다. 필수 에피소드의 `MinDay`는 실제 발동을 원하는 날짜 그대로 입력하면 된다(우회책으로 하루 앞당겨 넣을 필요 없음). 자세한 것은 [game-flow-design.md](../core/game-flow-design.md) 참고.
-
-**1일차 예외** (`day1ForcedEpisodeId`, 기본값 `"FathersNote"`): 게임 최초 진입일(`GameProgress.CurrentDay == 1`)의 보드에서만 예외적으로 "아무것도 선택 안 함(영업)" 상태를 막고, 지정된 기본 에피소드를 반드시 먼저 선택하도록 강제한다. 보드에 그 에피소드 사진이 없거나 아직 `IsPlayable()`이 false면(데이터 이상 등) 자동으로 영업 허용으로 폴백해 소프트락을 방지한다. `DayFlowController.endingEpisodeId`와 같은 패턴(인스펙터 노출 문자열로 특정 episodeId 지정).
-
-**RefreshBoard() 상세 흐름**
-
-1. `GetBoardEpisodes()` + `EpisodePhotoTrigger.HasBoardPhoto()` 필터로 표시 대상 목록 확정
-2. 기존 자식 `EpisodePhotoTrigger` 순회 — 더 이상 표시 불필요한 항목은 `GameProgress.ClearBoardSlot(id)` 후 `Destroy`
-3. `GameProgress.GetBoardSlot(id) - 1`로 이미 자리가 배정된 에피소드 슬롯 예약 (저장값은 1-indexed)
-4. 자리 없는 신규 에피소드에 빈 슬롯 무작위 배정 → `GameProgress.SetBoardSlot(id, idx+1)` 저장
-5. 프리팹이 이미 존재하면 부모만 올바른 슬롯으로 이동, 없으면 `photoPrefab` 인스턴스 생성
-
-**Inspector 직렬화 필드**
-
-```csharp
-public GameObject photoPrefab;        // 에피소드 사진 프리팹
-public Transform[] boardSlots;        // 고정된 6개 슬롯 위치
-public TextMeshProUGUI bottomEpisodeNameText;
-public Button startButton;
-public Image startButtonImage;        // 버튼 스프라이트 변경용
-public Image bottomTextboxImage;      // 하단 텍스트 박스 배경 스프라이트 변경용
-public Sprite buttonSpriteInactive, buttonSpriteBusiness, buttonSpriteEpisode;
-public Sprite textboxSpriteInactive, textboxSpriteBusiness, textboxSpriteEpisode;
-public Color textColorInactive, textColorBusiness, textColorEpisode;
-public string day1ForcedEpisodeId;    // 기본값 "FathersNote"
-```
-
-### EpisodeManager — 보드/필수 에피소드 관련 메서드
-
-| 메서드 | 설명 |
-|---|---|
-| `GetBoardEpisodes()` | `episodeType == Default`이고 완료되지 않은 에피소드 중 `IsUnlocked()` 통과한 목록 반환. 필수(Mandatory) 에피소드는 포함되지 않음 — `DayFlowController`가 별도로 자동 큐잉 |
-| `GetAvailableEpisodes()` | `GetBoardEpisodes()`와 동일 조건(현재 중복, 통합 여지 있음) |
-| `IsUnlocked(ep, gp, dayOffset = 0)` | `ep.triggerCondition`(해금 조건)을 `gp.CurrentDay + dayOffset` 기준으로 평가 — `dayOffset=1`이면 "내일" 기준으로 미리 평가(게이트 lookahead용). day 비교 외 조건(플래그/변수 등)은 항상 `gp`의 실시간 상태 사용 |
-| `IsPlayable(ep, gp)` | `ep.playCondition`(플레이 조건) 평가 — 만족해야 Play 버튼 활성화. 조건 없으면 항상 true |
-| `GetNextMandatoryEpisode(dayOffset = 0)` | `episodeType == Mandatory`이고 완료되지 않았으며 같은 챕터인 것 중 `IsUnlocked(ep, gp, dayOffset)`을 만족하는 첫 번째 항목 반환 |
-| `HasPendingMandatoryEpisode()` | `GetNextMandatoryEpisode(0) != null` — 오늘(발동 체크용) |
-| `HasUpcomingMandatoryEpisode()` | `GetNextMandatoryEpisode(1) != null` — 내일(게이트 lookahead용) |
-
-해금 조건과 플레이 조건은 독립적: 해금은 됐지만 플레이 조건 미달이면 보드엔 뜨되 Play 버튼은 비활성 상태로 남음. 자세한 내용은 [game-flow-design.md](../core/game-flow-design.md) 참고.
-
----
-
-### EpisodePhotoTrigger (`Assets/_Project/Features/Rest/Runtime/EpisodePhotoTrigger.cs`)
-
-에피소드 보드의 개별 사진 슬롯. `IPointerEnterHandler`, `IPointerExitHandler`, `IPointerClickHandler` 구현.
-
-**상태**
-- 기본: `normalSprite`, 오버레이 없음
-- 호버: `hoverSprite`로 교체, `EpisodeInfoUI.Show()` (다른 사진이 이미 pin된 경우 호버 무시)
-- 핀(클릭): `selectedSprite`로 교체, `EpisodeInfoUI.Show()` 유지, `EpisodeBoardManager.PinEpisode()` 호출
-  - 다른 사진이 이미 pin된 상태에서 클릭하면 그 사진을 먼저 `Unpin()`한 뒤 새 사진을 pin (포커스 전환)
-- 언핀(pin된 사진을 재클릭): `isPinned = false` + `EpisodeBoardManager.ResetBoard()` 호출 → 보드가 "영업" 기본 상태로 복귀
-
-**`SetEpisodeData(EpisodeData data, EpisodeBoardManager board)`**
-- `data.iconNameBoard`로 `Resources.Load<Sprite>("Rest/Sprites/EpisodeBoard/{name}")` 시도
-- `Image` 컴포넌트 우선, 없으면 `SpriteRenderer` 대체
-
-**`static HasBoardPhoto(EpisodeData ep)`**
-- `ep.iconNameBoard`가 있으면 그 이름으로, 없으면 `ep.episodeId.Replace("_", "-")`를 기본 이름으로 사용
-- `Resources/Rest/Sprites/EpisodeBoard/{baseName}-idle` 스프라이트 로드 성공 여부로 표시 가능 여부 판단
-- 보드에 표시하려면 `Resources/Rest/Sprites/EpisodeBoard/`에 `{baseName}-idle/hover/selected` 3종 스프라이트 필요
-
----
-
-### EpisodeInfoUI (`Assets/_Project/Features/Rest/Runtime/EpisodeInfoUI.cs`)
-
-사진 옆에 표시되는 에피소드 상세 정보 팝업. `BaseUIManager` 미상속, 독립 활성화. 자체 `Canvas`를 `overrideSorting`으로 추가해 `sortingOrder`를 높여 항상 최상단에 렌더링 — 이 중첩(nested) Canvas는 **`GraphicRaycaster`도 같이 붙여야** 그 하위 UI(토글 등)가 포인터 클릭을 받는다(`Awake()`에서 없으면 자동으로 `AddComponent`). 안 붙이면 상위 루트 Canvas의 raycaster가 있어도 이 중첩 Canvas 하위 Graphic들은 클릭 대상에서 빠지는 Unity UI의 잘 알려진 함정이라, 다른 화면에 비슷하게 sortingOrder용 중첩 Canvas를 추가할 때도 주의할 것. `LiquorBottleInfoCard`와 동일하게 **런타임 `Instantiate`/`Destroy` 없이** 에디터에서 미리 배치한 고정 슬롯 배열을 채우는 방식으로 구성(조건 행 개수·초상화 슬롯 개수는 에디터에 배치한 배열 길이만큼). 세로 길이는 `VerticalLayoutGroup`+`ContentSizeFitter`로 조건 개수에 따라 유동적으로 늘어남.
-
-| 메서드 | 설명 |
-|---|---|
-| `Show(data, targetPhoto)` | 헤더/설명/조건 행/토글/초상화 갱신 후 위치 계산 |
-| `Hide()` | `gameObject.SetActive(false)` |
-
-**레이아웃 순서 (위 → 아래)**
-1. `boardImage`(작전판 사진과 동일한 idle 스프라이트, `EpisodePhotoTrigger.GetIdleSprite()` 재사용) + `episodeNameText`(제목) — 가로 배치
-2. `descriptionText` — `data.episodeDescription`
-3. **해금/플레이 조건** (`triggerSection` + `triggerConditionRows`) — `data.triggerConditionEntries` + `data.playConditionEntries` 기준, 조건이 하나도 없으면 섹션 자체를 숨김
-4. **선택 조건** (`selectSection` + `selectConditionGroups`) — `data.selectConditions`(리스트) 기준. 아래 참고
-5. **초상화** (`portraitSlots`) — 선택된 옵션 유무에 따라 결정. 아래 참고
-
-**해금/플레이 조건 행 로직** (`ConditionRow { container, lockIcon, label }`, `triggerConditionRows`)
-- `data.triggerConditionEntries`(TRIGGER, 해금 조건)와 `data.playConditionEntries`(PLAY_TRIGGER, 플레이 조건)를 이어붙여 `BuildTriggerConditionEntries()`로 한 목록으로 만들어 표시(TRIGGER 행들 다음 PLAY_TRIGGER 행들 순서)
-- 각 `TriggerConditionEntry { condition: SelectSingleCondition, conditionText }`는 `EpisodeManager.EvaluateSelectCondition(entry.condition, gp)`로 **개별** 평가되어 각자의 충족 여부에 따라 `lockIcon.sprite`가 `unlockedSprite`/`lockedSprite`로, `label.color`가 `conditionMetTextColor`(충족, 노랑)/`conditionUnmetTextColor`(미충족, 회색)로 결정됨(전체 해금 여부가 아니라 항목별로 자물쇠·글자색이 따로 매겨짐)
-- `label.text`는 `entry.conditionText`가 있으면 그걸, 없으면 `BuildSelectConditionText()`가 조건 타입에서 자동 생성("N일차 이상", 플래그명, "선행 에피소드 '제목'", `varName 연산자 threshold`, "소지금 N원 이상")
-- CSV의 `TRIGGER`/`PLAY_TRIGGER`는 각각 `EpisodeCsvImporter`가 평가용 `data.triggerCondition`/`data.playCondition`(AND 결합, `blockedFlags`/`requiredCustomerAppearances` 포함 — `IsUnlocked`/`IsPlayable` 평가에 계속 사용됨)과 툴팁 표시용 `triggerConditionEntries`/`playConditionEntries`(`MinDay`/`RequiredFlag`/`PrerequisiteEpisode`/`RequiredVar`/`MinMoney` 5종 조건 + 텍스트, CSV 행 순서 보존)를 동시에 채움. `blockedFlags`/`requiredCustomerAppearances`는 CSV 행으로 표현할 수 없어 툴팁에는 표시되지 않음(인스펙터 직접 입력만 가능)
-- 표시할 조건 개수보다 `triggerConditionRows` 배열이 길면 남는 행은 비활성화
-
-**선택 조건 (`data.selectConditions: List<SelectConditionEntry>`)**
-- `SelectConditionEntry { condition, flag, conditionText, revealCondition, hiddenText, characterOverrides }` — 옵션 하나 = 조건 **하나**(`SelectSingleCondition`) + 플래그 + 커스텀 힌트 한 줄 + 공개 조건 + 비공개 시 텍스트 + 초상화 override. 해금 조건과 달리 옵션 하나에 여러 조건을 AND로 걸 수 없음 — 조건을 여러 개 걸고 싶으면 옵션을 여러 개로 나눠서 표현
-- `SelectSingleCondition { type, minDay, requiredFlag, prerequisiteEpisodeId, varName, varOp, varThreshold, minMoney }` — `SelectConditionType`(`None`/`MinDay`/`RequiredFlag`/`PrerequisiteEpisode`/`RequiredVar`/`MinMoney`) 하나로 어떤 조건인지 결정, 나머지 필드 중 해당 타입에 대응하는 값만 사용. `MinMoney`는 `gp.CurrentMoney`(affinity가 아니라 `GameProgress`의 별도 소지금 필드)와 비교
-- 옵션당 UI도 행 하나(`SelectConditionGroup.conditionRow: ConditionRow`, 배열이 아님) — 자물쇠 아이콘 하나 + 설명 한 줄 + 토글 하나로 고정. 텍스트는 `entry.conditionText`가 있으면 그걸, 없으면 `BuildSelectConditionText()`가 조건 타입에서 자동 생성("N일차 이상", 플래그명, "선행 에피소드 '제목'", `varName 연산자 threshold`, "소지금 N원 이상" 등)
-- **공개 조건 (`entry.revealCondition: SelectSingleCondition`)** — "선택 조건의 내용이 플레이어에게 공개되는 조건"(선택 가능 여부 `condition`과는 별개 층). 타입과 필드 구조는 `condition`과 동일하고 `EpisodeManager.EvaluateSelectCondition()`을 그대로 재사용해 평가. 기본값(`None`)은 항상 공개(기존 데이터와 동일하게 동작). 미충족이면 `ApplySelectConditionRow()`가 조건 텍스트 대신 `entry.hiddenText`(비어있으면 `"???"`로 폴백)를 보여주고 자물쇠 아이콘도 잠김으로 고정 표시(실제 `condition` 충족 여부와 무관) — 공개 조건이 충족되는 순간 `hiddenText`에서 `conditionText`(또는 자동 생성 문구)로 전환됨
-- `해금 조건`/`playCondition`과 완전히 독립 — **Play 버튼 활성화에는 전혀 영향을 주지 않음**. 어떤 옵션도 미충족/미선택이어도 에피소드는 평소대로 플레이 가능
-- **옵션끼리 상호 배타적** — `selectToggleGroup`(유니티 내장 `ToggleGroup`)에 모든 옵션의 `Toggle`을 묶어서, 하나를 켜면 나머지는 자동으로 꺼짐. `Awake()`에서 `group.toggle.group = selectToggleGroup`로 한 번만 연결
-- `EpisodeInfoUI.selectConditionGroups[i]`가 `data.selectConditions[i]`와 인덱스로 1:1 매칭(고정 슬롯, 배열 길이보다 옵션이 적으면 남는 슬롯은 컨테이너까지 비활성화)
-- 옵션마다 `EpisodeManager.EvaluateSelectCondition(entry.condition, gp)`로 개별 충족 여부 평가. 충족 시에만 그 옵션의 토글이 인터랙션 가능(미충족이면 off 고정, 비활성화). `entry.flag`가 비어있으면 그 옵션은 토글 UI 자체를 숨김(조건 행만 정보 표시용으로 남음)
-- **아이콘 3-상태** (`ApplySelectIconAndText()`): `lockIcon`(선택 사항, 미할당이면 스킵) 스프라이트를 미해금=`toggle.spriteState.disabledSprite`, 해금+선택(on)=`toggle.spriteState.selectedSprite`, 해금+미선택(off)=`Awake()`에서 캐싱해둔 프리팹 원본 스프라이트로 갱신. `Toggle` 컴포넌트 자체의 Sprite Swap Transition으로 이미 시각적 전환이 되는 경우 `lockIcon`을 비워둬도 무방함. 텍스트 색은 해금+선택(on)일 때만 `conditionMetTextColor`(노랑), 그 외엔 `conditionUnmetTextColor`(회색). 토글을 클릭해 on/off가 바뀔 때도(`OnSelectToggleChanged`) 즉시 재적용됨
-- 토글 초기값은 옵션별로 `GameProgress.HasFlag(entry.flag)`
-- 실제 `GameProgress.SetFlag()`/`ClearFlag()` 반영은 툴팁에서 즉시 일어나지 않고, **`EpisodeBoardManager.OnStartButtonClicked()`에서 Play 버튼을 누르는 시점**에 `EpisodeInfoUI.IsSelectOptionOn(i)`를 옵션별로 순회하며 적용(`ApplySelectConditionFlag()`)
-
-**초상화** (`portraitSlots: PortraitSlot[]`, `List<CharacterDisplay>` 기준)
-- `PortraitSlot { container, characterImage }` — `container`는 배경 이미지가 이미 붙어있는 슬롯 루트, `characterImage`는 캐릭터 스프라이트를 넣을 자식 `Image`. 캐릭터가 3개 이하면 왼쪽(0번 슬롯)부터 채우고, 남는 슬롯은 **배경까지 포함해 컨테이너 전체를 비활성화**(자식 이미지만 숨기면 배경이 계속 보여서 unknown 취급되는 버그가 있었음)
-- 현재 켜져 있는 옵션(`GetSelectedIndex()`)이 있고 그 옵션의 `characterOverrides`가 채워져 있으면 그 리스트를, 아니면 옵션 미선택 시 기본값인 `data.characters`를 그대로 사용(`GetActiveCharacterList()`)
-- 즉 **옵션마다 서로 다른 등장인물 조합을 지정 가능** — 옵션 A는 캐릭터를 공개, 옵션 B는 비공개(???), 옵션 C는 다른 캐릭터로 교체 등 자유롭게 구성
-- `CharacterDisplay.isHidden`이면 `unknownPortrait`(???) 표시, 아니면 `characterPortraitSprites: CharacterPortraitSprite[]`(`{ characterKey, sprite }` 쌍, 인스펙터에 직접 등록)에서 `characterName`으로 조회. `Resources.Load` 경로 추측 방식은 폐기됨(초상화 스프라이트가 `Assets/_Project/Features/Rest/Art/Sprites/EpisodeBoard/character/`처럼 `Resources` 폴더 밖에 있어 애초에 못 찾았음) — 새 캐릭터를 추가하면 `characterPortraitSprites`에 키-스프라이트 쌍을 등록해야 함
-- 어떤 토글이든 값이 바뀔 때마다(`OnSelectToggleChanged`) 초상화만 즉시 갱신
-
-**위치 계산** (`UpdatePosition`)
-- `targetPhoto`의 월드 오른쪽 중앙 기준 오른쪽 10px에 배치
-- `LayoutRebuilder.ForceRebuildLayoutImmediate()` 후 위치 갱신, 캔버스 오른쪽 경계를 넘으면 왼쪽 배치로 자동 전환
-
-**CSV/그래프 연동**: `data.selectConditions`는 CSV `#SELECT_TRIGGER` 섹션(옵션 하나당 한 행), `NarrativeGraphSO.SelectConditions`와 컴파일러/임포터로 왕복 가능. 자세한 CSV 문법은 [episode-csv-guide.md](../narrative/episode-csv-guide.md#select_trigger) 참고. 단 `characterOverrides`(옵션별 초상화)는 `characters`(기본 초상화)와 마찬가지로 CSV/그래프를 거치지 않고 `EpisodeData` 에셋에 직접 입력 — CSV 재임포트 시에도 `flag` 이름으로 기존 값을 찾아 보존됨(`EpisodeCsvImporter.RestoreCharacterOverrides()`).
-
----
-
-## 현황판 (EpisodeUIManager)
-
-`Assets/_Project/Features/Rest/Runtime/EpisodeUIManager.cs`, `BaseUIManager` 상속.
-
-**애니메이션**: `EpisodeBoardManager`와 동일한 슬라이드 업 방식
-
-**기능**
-- 금액 표시 (`{money:N0} G`)
-- 영업 상태 토글 (영업 중 / 준비 중)
-- `OnOpen()` 시 `UpdateDashboard()` 호출
-
-> **주의**: `money`, `isBusinessOpen`이 현재 로컬 임시 변수로 하드코딩됨 — 추후 `GameProgress` 연동 필요
+- 클릭하면 확인 없이 `DayFlowController.StartBusinessDay()` 호출(날짜 +1 → 영업 씬). 첫 클릭 뒤 잠가 전환 중 연타로 하루가 두 번 넘어가지 않게 한다.
+- `ObjectInteraction.AnyUIOpen`(상점·TV 등 팝업이 열림)인 동안은 숨긴다. 숨김은 `CanvasGroup`(alpha·raycast)으로 처리 — `SetActive(false)`면 자기 `Update`가 멈춰 다시 켤 수 없기 때문. `visibilityGroup`을 비우면 자기 오브젝트의 `CanvasGroup`을 쓰고 없으면 자동 추가한다.
+- `label`(TMP)을 연결하면 `labelFormat`(`{0}` = 넘어갈 날짜, 기본 `Next Day (Day {0})`)으로 글자를 갱신한다. 문구는 인스펙터에서 바꾼다.
+- 씬 배치: RestScene Canvas의 UI Button에 붙어 있다. 예전 작전판 오브젝트(`EpisodeBoard` 패널, 전광판 `EpisodeBoardButton`)는 씬에서 제거됐고, `RestSceneFinalArtInstaller`/`Validator`는 전광판이 없으면 건너뛴다.
 
 ---
 
@@ -266,7 +108,7 @@ homePanel (재료/업그레이드/레시피북 3버튼)
 - 재생 중에는 `ShopUIManager`의 `CanvasGroup.interactable`을 끄고 `homePanel` 자체를 `SetActive(false)`로 비활성화해 뒤에서 보이거나 눌리지 않게 함(과거엔 전체화면 불투명 `Blocker` 이미지로 덮기만 했으나, 홈 패널을 실제로 꺼서 로딩 UI 뒤로 원래 배경이 그대로 비치는 방식으로 변경— 로딩 중 화면이 아예 안 보이길 원하면 `ShopLoadingScreen` 쪽에 자체 배경이 있어야 함), `moneyDisplayRoot`(소지금 아이콘+숫자를 감싸는 부모)도 함께 꺼졌다가 재생이 끝나면 `homePanel`과 함께 다시 켜짐
 - `ShopLoadingScreen.Play()`가 `fillImage.fillAmount`를 `fillDuration` 동안 0→1로 보간(`Image Type = Filled / Horizontal`)한 뒤 `root`를 다시 비활성화하는 코루틴 — `ShopUIManager.AnimateOpen()`이 이 코루틴을 직접 `yield return`으로 이어붙여 실행
 - **`ShopUIManager.Start()`는 `ShowHome()`을 호출하지 않음**: `OnOpen()`이 이미 매번 `ShowHome()`을 부르는데, `ShopUIManager` GameObject는 씬 로드 시 비활성 상태로 있다가 최초 `OpenUI()` 때 활성화되므로 `Start()`가 그 순간에 지연 실행됨 — 예전엔 `Start()`도 `ShowHome()`을 불러서, 로딩 연출이 `homePanel`을 꺼둔 직후 지연된 `Start()`가 다시 켜버려 로딩 화면과 홈 화면이 겹쳐 보이는 버그가 있었음
-- 로딩 재생 중에는 `LockTransitions()`로 다른 팝업(작전판 등)으로의 전환 자체를 막음. 재생 도중 `CloseUI()`로 강제 종료되는 경우(코루틴이 `StopCoroutine`으로 끊겨 `Play()`가 끝까지 못 돎)를 대비해 `AnimateClose()`에서 `UnlockTransitions()` + `loadingScreen.ResetVisual()`(root 비활성화 + fillAmount 초기화)을 방어적으로 호출 — 안 하면 다음에 열 때 로딩 화면이 켜진 채로 남아있음(`_hasShownLoadingOnce`가 이미 true라 로딩 분기를 다시 안 타서 아무도 안 꺼줌)
+- 로딩 재생 중에는 `LockTransitions()`로 다른 팝업(현황판 등)으로의 전환 자체를 막음. 재생 도중 `CloseUI()`로 강제 종료되는 경우(코루틴이 `StopCoroutine`으로 끊겨 `Play()`가 끝까지 못 돎)를 대비해 `AnimateClose()`에서 `UnlockTransitions()` + `loadingScreen.ResetVisual()`(root 비활성화 + fillAmount 초기화)을 방어적으로 호출 — 안 하면 다음에 열 때 로딩 화면이 켜진 채로 남아있음(`_hasShownLoadingOnce`가 이미 true라 로딩 분기를 다시 안 타서 아무도 안 꺼줌)
 
 **소지금 표시 및 화폐 단위**: `moneyText`는 `{amount:N0}` 형식의 숫자만 표시 — "G" 같은 단위 텍스트는 코드에 없고, 화폐 아이콘 이미지를 숫자 앞에 별도 `Image`로 씬에서 배치한다. `ItemSlotUI`/`UpgradeSlotUI`/`RecipeBookSlotUI`의 개별 가격 텍스트도 동일하게 숫자만 표시하며, 각각 `currencyIcon`(`GameObject`) 필드로 아이콘을 참조해 가격이 아닌 다른 문구가 표시될 때(잠김/"MAX"/"구매완료") 아이콘도 함께 숨김 처리한다.
 
@@ -390,7 +232,7 @@ public enum ItemType { Alcohol, Liqueur, NonAlcohol, Powder, Tool, Glass }
 
 구버전 단일 `highlightOverlay` 필드도 하위 호환으로 남아있다 — `hoverOverlay`를 연결하지 않은 오브젝트에서만 `useLegacyHighlight` 경로로 동작.
 
-**클릭 가용성** (`disableWhenRestShopRestricted` + `tvDatabase`): 켜져 있으면 `TVBroadcastRuntime.IsRestShopDisabled(GameProgress.Instance, database, out reason)`로 활성 TV 방송의 `DisableRestShop` 효과를 확인해, 제한 중이면 클릭을 막고(`reason`을 로그로만 출력) 배경도 `gray`로 표시한다. 다른 오브젝트(TV, 작전판 등)는 이 플래그를 꺼둔 채로 사용해 제한 대상이 아니게 한다.
+**클릭 가용성** (`disableWhenRestShopRestricted` + `tvDatabase`): 켜져 있으면 `TVBroadcastRuntime.IsRestShopDisabled(GameProgress.Instance, database, out reason)`로 활성 TV 방송의 `DisableRestShop` 효과를 확인해, 제한 중이면 클릭을 막고(`reason`을 로그로만 출력) 배경도 `gray`로 표시한다. 다른 오브젝트(TV, 현황판 등)는 이 플래그를 꺼둔 채로 사용해 제한 대상이 아니게 한다.
 
 **상호배타**: 정적 `ActiveInteractions`/`AnyUIOpen`으로 씬에 있는 모든 `ObjectInteraction` 인스턴스 중 하나라도 UI가 열려 있는지 판단 — 열려 있으면 다른 오브젝트는 클릭이 막히고 회색으로 표시된다.
 
@@ -398,11 +240,7 @@ public enum ItemType { Alcohol, Liqueur, NonAlcohol, Powder, Tool, Glass }
 
 ### RestSceneVisualStateCoordinator
 
-`ObjectInteraction.AnyUIOpen`을 매 프레임 폴링해 씬 전역 배경(`colorBackground`/`grayBackground`)을 켜고 끄는 조율자. 개별 오브젝트(TV/작전판/상점)의 하이라이트·회색 처리는 각자의 `ObjectInteraction`이 담당하고, 이 컴포넌트는 "UI가 하나라도 열려 있으면 화면 전체를 흑백으로" 하는 전역 톤 전환만 맡는다.
-
-### BoardBackground (`Assets/_Project/Features/Rest/Runtime/BoardBackground.cs`)
-
-에피소드 보드의 빈 배경 클릭 시 `EpisodeBoardManager.ResetBoard()` 호출.
+`ObjectInteraction.AnyUIOpen`을 매 프레임 폴링해 씬 전역 배경(`colorBackground`/`grayBackground`)을 켜고 끄는 조율자. 개별 오브젝트(TV/현황판/상점)의 하이라이트·회색 처리는 각자의 `ObjectInteraction`이 담당하고, 이 컴포넌트는 "UI가 하나라도 열려 있으면 화면 전체를 흑백으로" 하는 전역 톤 전환만 맡는다.
 
 ---
 
@@ -429,7 +267,6 @@ public enum ItemType { Alcohol, Liqueur, NonAlcohol, Powder, Tool, Glass }
 
 | 항목 | 위치 | 설명 |
 |---|---|---|
-| 현황판 데이터 | `EpisodeUIManager` | `money`, `isBusinessOpen` → `GameProgress` 연동 필요 |
 | `ObjectInteraction` 중복 | `ObjectInteractionBoard` | 두 클래스 코드 동일, 하나로 통합 가능 |
 | 재료 소진 로직 | `GameProgress.AddBottleAmount` | 영업 중 사용에 따른 잔량 감소는 미구현(음수 delta로 재사용 가능하도록만 설계됨) |
 | `LiquorBottleDef` 상점 데이터 | `Assets/_Project/Features/Bartending/Content/Generated/LiquorBottles/*.asset` | `price`/`category`/`unlockFlagKey`/`unlockHintType` 값이 비어있으면 상점에 노출되지 않음 — 애셋별로 직접 입력 필요 |

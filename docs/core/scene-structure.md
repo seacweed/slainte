@@ -139,16 +139,11 @@ BartendingRuntime (런타임)
 ```text
 RestScene
 ├── 배경 상호작용 오브젝트
-│   ├── ObjectInteraction
-│   └── ObjectInteractionBoard
-├── EpisodeBoardManager
-│   ├── 보드 슬롯 6개
-│   ├── EpisodePhotoTrigger 동적 생성
-│   └── EpisodeInfoUI
+│   └── ObjectInteraction (상점, TV)
 ├── ShopUIManager
 │   ├── 카테고리
 │   └── ItemSlotUI 동적 생성
-├── EpisodeUIManager
+├── NextDayButton (UI Button, 임시 — 작전판 대체)
 ├── TooltipManager
 └── ResetGameButton
 ```

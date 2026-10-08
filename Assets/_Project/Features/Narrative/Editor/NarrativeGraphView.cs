@@ -10,8 +10,8 @@ namespace NarrativeFlow.Editor
 {
     // 내러티브 그래프 에디터의 GraphView 구현체. NarrativeGraphSO(영속 데이터: Nodes/Edges)와
     // 화면에 그려진 NarrativeNodeView/Edge 사이의 동기화를 담당한다 — 노드/엣지를 그래프에서
-    // 추가·삭제할 때마다(OnGraphViewChanged) 영속 데이터에도 같은 변경을 반영하고, 순환 참조가
-    // 생기는 연결은 IsCircular()로 걸러 거부한다.
+    // 추가·삭제할 때마다(OnGraphViewChanged) 영속 데이터에도 같은 변경을 반영한다. 에피소드 대화는
+    // 되돌아가는 흐름(다시 묻기 등)이 정상이므로 순환 연결은 막지 않는다.
     public class NarrativeGraphView : GraphView
     {
         public NarrativeGraphEditor window;
@@ -43,6 +43,23 @@ namespace NarrativeFlow.Editor
             graphViewChanged += OnGraphViewChanged;
         }
 
+        // 현재 그래프 전체를 자동 배치한다. 화면에 그려진 카드의 실제 높이를 써서 같은 열의 카드가 겹치지 않게 한다.
+        public void AutoLayout()
+        {
+            if (currentGraph == null) return;
+            Dictionary<NodeDataSO, float> measured = nodes.OfType<NarrativeNodeView>()
+                .Where(v => v.nodeData != null)
+                .GroupBy(v => v.nodeData)
+                .ToDictionary(g => g.Key, g => g.First().layout.height);
+
+            Undo.RecordObjects(currentGraph.Nodes.Where(n => n != null).Cast<UnityEngine.Object>().ToArray(), "Auto Layout");
+            NarrativeGraphLayout.Arrange(currentGraph, node =>
+                measured.TryGetValue(node, out float h) && !float.IsNaN(h) && h > 0f ? h : NarrativeGraphLayout.EstimateHeight(node));
+            foreach (NodeDataSO node in currentGraph.Nodes.Where(n => n != null))
+                EditorUtility.SetDirty(node);
+            window?.ReloadGraph();
+        }
+
         private void AddSearchWindow()
         {
             _searchWindow = ScriptableObject.CreateInstance<NarrativeSearchWindow>();
@@ -57,6 +74,17 @@ namespace NarrativeFlow.Editor
 
             if (currentGraph != null)
             {
+                // 예전 그래프는 선택지/제조 블록의 포트 라벨이 내용과 어긋나 있을 수 있어 열 때 한 번 맞춘다.
+                foreach (var block in currentGraph.Nodes.OfType<EpisodeNodeSO>())
+                {
+                    // 예전 시퀀스 에디터의 연결선 순서를 리스트 순서로 한 번 옮긴다.
+                    bool migrated = NarrativeBlockModel.MigrateLegacyOrder(block);
+                    if (NarrativeBlockModel.SyncDerivedPorts(block) || migrated) EditorUtility.SetDirty(block);
+                }
+                // 번호가 규칙과 어긋난 채 저장된 그래프(예전 규칙, 손으로 고친 CSV)도 열자마자 맞춘다 —
+                // 편집할 때만 맞추면 처음 건드리는 순간 번호가 통째로 바뀌어 보인다.
+                NarrativeNodeIdAssigner.RegenerateIds(currentGraph);
+
                 var nodeDictionary = new Dictionary<string, NarrativeNodeView>();
                 foreach (var node in currentGraph.Nodes)
                 {
@@ -129,31 +157,41 @@ namespace NarrativeFlow.Editor
             ValidateAllNodes();
         }
 
+        // 그래프 전체 검증. 컴파일러와 같은 규칙(NarrativeBlockModel/BranchLabel)으로 판정해, 노드에 경고가
+        // 없으면 컴파일도 통과하도록 맞춘다.
         public void ValidateAllNodes()
         {
             var nodeViews = graphElements.OfType<NarrativeNodeView>().ToList();
             var titleCounts = nodeViews.GroupBy(v => v.title).ToDictionary(g => g.Key, g => g.Count());
+            var knownEpisodeIds = new HashSet<string>(
+                Resources.LoadAll<EpisodeData>(Slainte.Content.ProjectResourcePaths.NarrativeEpisodes)
+                    .Where(e => e != null).Select(e => e.episodeId),
+                StringComparer.OrdinalIgnoreCase);
+            var runtimeIdCounts = (currentGraph != null ? currentGraph.Nodes.OfType<EpisodeNodeSO>() : Enumerable.Empty<EpisodeNodeSO>())
+                .SelectMany(b => b.Events)
+                .Where(e => NarrativeBlockModel.IsRuntimeEvent(e) && !string.IsNullOrWhiteSpace(e.RuntimeNodeId))
+                .GroupBy(e => e.RuntimeNodeId.Trim(), StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key, g => g.Count(), StringComparer.OrdinalIgnoreCase);
+            var connectedPorts = new HashSet<(string, int)>(
+                (currentGraph != null ? currentGraph.Edges : new List<EdgeData>()).Select(e => (e.BaseNodeGuid, e.OutputPortIndex)));
 
             foreach (var v in nodeViews)
             {
                 var errors = new List<string>();
                 var fieldErrors = new Dictionary<string, string>();
 
-                // 1. Global Title check
-                if (!string.IsNullOrEmpty(v.title) && titleCounts[v.title] > 1) 
+                if (!string.IsNullOrEmpty(v.title) && titleCounts[v.title] > 1)
                 {
                     errors.Add("Duplicate Node Title");
                     fieldErrors["title"] = "Title is already used by another node.";
                 }
 
-                // 2. Local Field check
                 if (v.nodeData.CustomFields != null)
                 {
                     var names = v.nodeData.CustomFields.Select(f => f.FieldName.ToLower()).ToList();
-                    for (int i = 0; i < v.nodeData.CustomFields.Count; i++)
+                    for (int i = 0; i < names.Count; i++)
                     {
-                        var name = v.nodeData.CustomFields[i].FieldName.ToLower();
-                        if (names.Count(n => n == name) > 1)
+                        if (names.Count(n => n == names[i]) > 1)
                         {
                             fieldErrors[$"field_{i}"] = "Duplicate Field Name";
                             if (!errors.Contains("Duplicate Field Names")) errors.Add("Duplicate Field Names");
@@ -161,34 +199,152 @@ namespace NarrativeFlow.Editor
                     }
                 }
 
-                // 3. Local Branch check
-                if (v.nodeData is EpisodeNodeSO ep && ep.OutgoingBranches != null)
-                {
-                    var branches = ep.OutgoingBranches.Select(b => b.ToLower()).ToList();
-                    for (int i = 0; i < ep.OutgoingBranches.Count; i++)
-                    {
-                        var b = ep.OutgoingBranches[i].ToLower();
-                        if (branches.Count(n => n == b) > 1)
-                        {
-                            fieldErrors[$"branch_{i}"] = "Duplicate Branch Name";
-                            if (!errors.Contains("Duplicate Branch Names")) errors.Add("Duplicate Branch Names");
-                        }
-                    }
-                }
-
-                // 4. Trigger Condition check
-                if (v.nodeData is TriggerNodeSO tr && tr.Conditions != null)
-                {
-                    for (int i = 0; i < tr.Conditions.Count; i++)
-                    {
-                        var c = tr.Conditions[i];
-                        if (string.IsNullOrEmpty(c.Key)) { fieldErrors[$"cond_key_{i}"] = "Required"; errors.Add($"Condition {i} Key missing"); }
-                        if (string.IsNullOrEmpty(c.Value)) { fieldErrors[$"cond_val_{i}"] = "Required"; errors.Add($"Condition {i} Value missing"); }
-                    }
-                }
+                if (v.nodeData is EpisodeNodeSO ep)
+                    ValidateBlock(ep, errors, fieldErrors, knownEpisodeIds, runtimeIdCounts, connectedPorts);
+                else if (v.nodeData is TriggerNodeSO tr)
+                    ValidateTrigger(tr, errors, fieldErrors, knownEpisodeIds);
 
                 v.SetWarning(errors.Count > 0, string.Join("\n• ", errors), fieldErrors);
             }
+        }
+
+        private static void ValidateBlock(
+            EpisodeNodeSO ep,
+            List<string> errors,
+            Dictionary<string, string> fieldErrors,
+            HashSet<string> knownEpisodeIds,
+            Dictionary<string, int> runtimeIdCounts,
+            HashSet<(string, int)> connectedPorts)
+        {
+            var unreachable = new List<EpisodeEvent>();
+            var ordered = NarrativeBlockModel.GetExecutionOrder(ep, unreachable);
+            if (unreachable.Count > 0)
+                errors.Add($"실행되지 않는 이벤트 {unreachable.Count}개 (시퀀스 연결이 끊겼거나 선택지/제조 뒤에 있음)");
+
+            foreach (var ev in ordered.Where(NarrativeBlockModel.IsRuntimeEvent))
+            {
+                if (!string.IsNullOrWhiteSpace(ev.RuntimeNodeId)
+                    && runtimeIdCounts.TryGetValue(ev.RuntimeNodeId.Trim(), out int count) && count > 1)
+                    errors.Add($"노드 ID 중복: {ev.RuntimeNodeId}");
+            }
+
+            var kind = NarrativeBlockModel.GetTerminalKind(ep);
+            var labels = NarrativeBlockModel.GetPortLabels(ep);
+            if (kind != BlockTerminalKind.Branches)
+            {
+                for (int i = 0; i < labels.Count; i++)
+                {
+                    if (connectedPorts.Contains((ep.Guid, i))) continue;
+                    fieldErrors[$"branch_{i}"] = "연결 안 됨 — 이 결과에서 에피소드가 끝납니다";
+                    if (kind == BlockTerminalKind.Choice)
+                        errors.Add($"선택지 '{labels[i]}'가 연결되지 않았습니다");
+                }
+                return;
+            }
+
+            if (ep.Events.Any(e => !NarrativeBlockModel.IsRuntimeEvent(e)))
+                errors.Add("더 이상 쓰지 않는 이벤트(분기 탈출 등)가 있습니다 — 실행에서 무시되니 삭제하세요");
+
+            var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            for (int i = 0; i < ep.OutgoingBranches.Count; i++)
+            {
+                string label = ep.OutgoingBranches[i] ?? "";
+                if (!seen.Add(label))
+                {
+                    fieldErrors[$"branch_{i}"] = "Duplicate Branch Name";
+                    if (!errors.Contains("Duplicate Branch Names")) errors.Add("Duplicate Branch Names");
+                    continue;
+                }
+
+                var parsed = BranchLabel.Parse(label);
+                if (parsed.Kind == BranchLabelKind.Invalid)
+                {
+                    fieldErrors[$"branch_{i}"] = parsed.Error;
+                    errors.Add(parsed.Error);
+                }
+                else if (parsed.Kind == BranchLabelKind.Episode && !knownEpisodeIds.Contains(parsed.Name))
+                {
+                    fieldErrors[$"branch_{i}"] = $"'{parsed.Name}'는 알려진 에피소드 ID가 아닙니다(에피소드 완료 조건으로 해석됨)";
+                    errors.Add($"알 수 없는 에피소드 분기: {parsed.Name}");
+                }
+            }
+        }
+
+        private static void ValidateTrigger(
+            TriggerNodeSO tr,
+            List<string> errors,
+            Dictionary<string, string> fieldErrors,
+            HashSet<string> knownEpisodeIds)
+        {
+            for (int i = 0; i < tr.Conditions.Count; i++)
+            {
+                var c = tr.Conditions[i];
+                if (string.IsNullOrWhiteSpace(c.Key))
+                {
+                    fieldErrors[$"cond_key_{i}"] = "Required";
+                    errors.Add($"Condition {i} Key missing");
+                    continue;
+                }
+
+                if (c.Type == TriggerConditionType.Episode)
+                {
+                    if (!knownEpisodeIds.Contains(c.Key.Trim()))
+                    {
+                        fieldErrors[$"cond_key_{i}"] = "알려진 에피소드 ID가 아닙니다";
+                        errors.Add($"Condition {i}: 알 수 없는 에피소드 {c.Key}");
+                    }
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(c.Value))
+                {
+                    fieldErrors[$"cond_val_{i}"] = "Required";
+                    errors.Add($"Condition {i} Value missing");
+                    continue;
+                }
+
+                string op = string.IsNullOrWhiteSpace(c.Operator) ? "==" : c.Operator.Trim();
+                var parsed = BranchLabel.Parse($"{c.Key.Trim()} {op} {c.Value.Trim()}");
+                bool isFlag = parsed.IsFlag;
+                if (parsed.Kind == BranchLabelKind.Invalid || (c.Type == TriggerConditionType.Flag) != isFlag)
+                {
+                    string message = parsed.Error ?? (c.Type == TriggerConditionType.Flag
+                        ? "Flag 조건은 '== true' / '== false'만 쓸 수 있습니다"
+                        : "Variable 조건 값은 정수여야 합니다");
+                    fieldErrors[$"cond_val_{i}"] = message;
+                    errors.Add($"Condition {i}: {message}");
+                }
+            }
+        }
+
+        // 카드의 index 이벤트부터 새 블록으로 떼어 낸다. 블록 수와 연결이 바뀌므로 그래프 전체를 다시 그린다.
+        public void SplitBlock(NarrativeNodeView view, int index)
+        {
+            if (currentGraph == null || !(view?.nodeData is EpisodeNodeSO block)) return;
+            if (NarrativeBlockEditing.SplitBlock(currentGraph, block, index) == null) return;
+            NarrativeNodeIdAssigner.RegenerateIds(currentGraph);
+            window.ReloadGraph();
+        }
+
+        public void MergeWithNext(NarrativeNodeView view)
+        {
+            if (currentGraph == null || !(view?.nodeData is EpisodeNodeSO block)) return;
+            if (!NarrativeBlockEditing.MergeWithNext(currentGraph, block)) return;
+            NarrativeNodeIdAssigner.RegenerateIds(currentGraph);
+            window.ReloadGraph();
+        }
+
+        // 이벤트 구성이 바뀐 블록의 포트를 다시 맞추고(선택지/제조 블록은 포트가 내용에서 결정됨),
+        // 흐름이 바뀌었으므로 모든 런타임 노드 ID를 다시 매긴다. ValidateAllNodes가 모든 카드를 다시 그린다.
+        public void RefreshBlock(NarrativeNodeView view)
+        {
+            if (view == null) return;
+            if (view.nodeData is EpisodeNodeSO ep && NarrativeBlockModel.SyncDerivedPorts(ep))
+                EditorUtility.SetDirty(ep);
+            NotifyNodeStructureChanged(view);
+            NarrativeNodeIdAssigner.RegenerateIds(currentGraph);
+            view.RefreshVisuals();
+            ValidateAllNodes();
         }
 
         // 노드의 포트 구성이 바뀌었을 때(분기 추가/삭제 등) 호출된다. 화면상의 연결선을 일단 모두
@@ -276,8 +432,12 @@ namespace NarrativeFlow.Editor
                         if (currentGraph != null && edge.output.node is NarrativeNodeView outNode && edge.input.node is NarrativeNodeView inNode)
                         {
                             Undo.RecordObject(currentGraph, "Remove Edge");
-                            var edgeData = currentGraph.Edges.FirstOrDefault(e => e.BaseNodeGuid == outNode.nodeData.Guid && e.TargetNodeGuid == inNode.nodeData.Guid);
-                            currentGraph.Edges.Remove(edgeData);
+                            // 같은 두 노드 사이에 포트가 다른 연결이 여럿일 수 있으므로 포트 인덱스까지 맞춰 지운다.
+                            int portIndex = outNode.outputContainer.Query<Port>().ToList().IndexOf(edge.output);
+                            int index = currentGraph.Edges.FindIndex(e => e.BaseNodeGuid == outNode.nodeData.Guid
+                                && e.TargetNodeGuid == inNode.nodeData.Guid
+                                && e.OutputPortIndex == portIndex);
+                            if (index >= 0) currentGraph.Edges.RemoveAt(index);
                             EditorUtility.SetDirty(currentGraph);
                         }
                     }
@@ -289,13 +449,6 @@ namespace NarrativeFlow.Editor
                 var edgesToRemove = new List<Edge>();
                 foreach (var edge in change.edgesToCreate)
                 {
-                    if (IsCircular(edge.output.node, edge.input.node))
-                    {
-                        window.ShowNotification(new GUIContent("Circular dependency detected!"));
-                        edgesToRemove.Add(edge);
-                        continue;
-                    }
-
                     if (currentGraph != null && edge.output.node is NarrativeNodeView outNode && edge.input.node is NarrativeNodeView inNode)
                     {
                         Undo.RecordObject(currentGraph, "Add Edge");
@@ -330,32 +483,6 @@ namespace NarrativeFlow.Editor
             }
 
             return change;
-        }
-
-        // startNode → targetNode로의 새 연결이 순환을 만드는지 확인한다. 순환 여부는
-        // "targetNode에서 출발해 startNode에 도달할 수 있는가"와 동치이므로 역방향으로 탐색한다.
-        private bool IsCircular(Node startNode, Node targetNode)
-        {
-            bool IsReachable(Node from, Node to)
-            {
-                var visited = new HashSet<string>();
-                bool Search(Node cur)
-                {
-                    if (cur == to) return true;
-                    if (visited.Contains(cur.viewDataKey)) return false;
-                    visited.Add(cur.viewDataKey);
-                    
-                    var edges = cur.outputContainer.Query<Edge>().ToList();
-                    foreach (var edge in edges)
-                    {
-                        if (edge.input?.node is Node next && Search(next)) return true;
-                    }
-                    return false;
-                }
-                return Search(from);
-            }
-
-            return IsReachable(targetNode, startNode);
         }
 
         public override List<Port> GetCompatiblePorts(Port startPort, NodeAdapter nodeAdapter)

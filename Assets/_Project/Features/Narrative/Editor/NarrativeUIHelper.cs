@@ -38,20 +38,6 @@ namespace NarrativeFlow.Editor
             return icon;
         }
 
-        public static Label CreateWarningIcon(SequenceNodeView view, string key)
-        {
-            var icon = new Label("⚠️") { style = { color = Color.red, marginLeft = 2, display = DisplayStyle.None } };
-            System.Action update = () => {
-                if (view == null) return;
-                var err = view.GetFieldError(key);
-                icon.style.display = !string.IsNullOrEmpty(err) ? DisplayStyle.Flex : DisplayStyle.None;
-                icon.tooltip = err;
-            };
-            view.OnValidationChanged += update;
-            update();
-            return icon;
-        }
-
         // --- Core Helpers ---
         public static VisualElement CreateRow(string className = "", Justify justify = Justify.FlexStart) 
             => new VisualElement().AddClass("field-row").AddClass(className).SetJustify(justify);

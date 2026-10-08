@@ -26,10 +26,12 @@ namespace NarrativeFlow.Editor
             ConstructGraphView();
             GenerateToolbar();
             LoadLastOpenedGraph();
+            Undo.undoRedoPerformed += OnUndoRedo;
         }
 
         private void OnDisable()
         {
+            Undo.undoRedoPerformed -= OnUndoRedo;
             if (_graphView != null && _graphView.parent != null)
             {
                 _graphView.parent.Remove(_graphView);
@@ -107,7 +109,43 @@ namespace NarrativeFlow.Editor
             var saveButton = new Button(() => { AssetDatabase.SaveAssets(); }) { text = "Save Assets" };
             toolbar.Add(saveButton);
 
+            toolbar.Add(new Button(() => _graphView.AutoLayout()) { text = "자동 정렬", tooltip = "시작 블록부터의 깊이를 열로 다시 배치합니다 (Ctrl+Z로 되돌리기)" });
+
+            toolbar.Add(new Button(() =>
+            {
+                var graph = _graphView.currentGraph;
+                if (graph == null) return;
+                if (new EpisodeDataCompiler().Compile(graph))
+                    ShowNotification(new GUIContent("EpisodeData와 원본 CSV에 저장했습니다."));
+                ReloadGraph();
+            }) { text = "Compile (EpisodeData + CSV)" });
+
+            toolbar.Add(new Button(() =>
+            {
+                string picked = EditorUtility.OpenFilePanel("Import Episode CSV to Graph",
+                    Slainte.EditorTools.NarrativeAssetPaths.EpisodeSourceRoot, "csv");
+                if (string.IsNullOrEmpty(picked)) return;
+                var graph = NarrativeCsvSync.ImportCsvToGraph(NarrativeCsvSync.ToProjectRelative(picked));
+                if (graph != null) _graphSelector.value = graph;
+                ReloadGraph();
+            }) { text = "Import CSV..." });
+
             rootVisualElement.Add(toolbar);
+        }
+
+        // 그래프 데이터가 코드에서 바뀐 뒤(컴파일 시 ID 부여, CSV에서 다시 만들기 등) 화면을 다시 그린다.
+        public void ReloadGraph()
+        {
+            var graph = _graphView.currentGraph;
+            _graphView.PopulateView(graph);
+            OnNodeSelectionChanged(null);
+        }
+
+        // 실행 취소는 SO 데이터만 되돌리므로 화면(카드·연결·인스펙터)을 데이터에서 다시 그린다.
+        private void OnUndoRedo()
+        {
+            if (_graphView?.currentGraph != null)
+                ReloadGraph();
         }
 
         public void OnNodeSelectionChanged(NarrativeNodeView nodeView)

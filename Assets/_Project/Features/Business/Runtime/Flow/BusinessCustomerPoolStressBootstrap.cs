@@ -15,8 +15,9 @@ namespace Slainte.Business
 
         [Header("Stress Pool")]
         [SerializeField, Min(1)] private int customerCount = 32;
-        [SerializeField, Min(1f)] private float shiftDurationSeconds = 600f;
-        [SerializeField] private bool suppressRequiredActions = true;
+        [SerializeField, Min(1)] private int customersPerDay = 50;
+        [Tooltip("켜면 실제 에피소드 일정을 비워 모든 슬롯을 랜덤 손님으로만 채웁니다.")]
+        [SerializeField] private bool suppressScheduledEpisodes = true;
 
         [Header("Optional Overrides")]
         [SerializeField] private BusinessOrderFlowSettings sourceSettings;
@@ -81,6 +82,8 @@ namespace Slainte.Business
             }
 
             shift.CustomerVisitStarted += HandleCustomerVisitStarted;
+            if (suppressScheduledEpisodes)
+                shift.TrySetScheduleSource(new DayScheduleIndex());
             while (progressIsolation != null && !progressIsolation.IsReady)
                 yield return null;
             flow.StartBusinessSequence();
@@ -110,10 +113,7 @@ namespace Slainte.Business
             runtimeSettings.name = "BusinessOrderFlowSettings_StressRuntime";
             runtimeSettings.hideFlags = HideFlags.DontSave;
             runtimeSettings.autoStart = false;
-            runtimeSettings.shiftDurationSeconds = Mathf.Max(1f, shiftDurationSeconds);
-            runtimeSettings.randomEncounters = new List<BusinessRandomEncounterEntry>();
-            if (suppressRequiredActions)
-                runtimeSettings.requiredActions = new List<BusinessRequiredActionRule>();
+            runtimeSettings.customersPerDay = Mathf.Max(1, customersPerDay);
 
             runtimeDatabase = ScriptableObject.CreateInstance<CustomerVisitDatabase>();
             runtimeDatabase.name = "CustomerVisitDatabase_StressRuntime";
@@ -186,8 +186,9 @@ namespace Slainte.Business
             }
 
             panelText.Append("State: ").Append(shift.State)
-                .Append(" | Remaining: ").Append(shift.RemainingSeconds.ToString("0.0"))
-                .AppendLine("s");
+                .Append(" | Slot: ").Append(shift.CurrentSlot)
+                .Append("/").Append(shift.SlotsPerDay)
+                .AppendLine();
             panelText.Append("Started: ").Append(shift.TotalStartedCustomerCount)
                 .Append(" | Completed: ").Append(shift.CompletedOrderCount)
                 .AppendLine();
@@ -195,8 +196,6 @@ namespace Slainte.Business
                 .Append(string.IsNullOrWhiteSpace(shift.LastSelectedVisitKey)
                     ? "-"
                     : shift.LastSelectedVisitKey)
-                .Append(" | Spawning stopped: ")
-                .Append(shift.IsRandomCustomerSpawningStopped)
                 .AppendLine();
 
             panelText.AppendLine();

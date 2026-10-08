@@ -18,7 +18,7 @@
 
 **Slainte**는 Unity 6000.3.5f2(URP)로 제작 중인 내러티브 바텐딩 게임입니다. 이름은 아일랜드어로 "건배"를 뜻합니다. 에피소드 기반의 비주얼 노벨식 스토리텔링과 드래그-드롭 바텐딩 메커니즘을 결합한 게임입니다.
 
-**게임 진행 흐름**: MainMenu → (Episode 또는 Business, BusinessScene) → Settlement(정산) → Rest(RestScene) → 다음 날 → ...
+**게임 진행 흐름**: MainMenu → Business(BusinessScene, 하루 손님 슬롯 N개) → Settlement(정산) → Rest(RestScene) → 다음 날 → ... (챕터 마지막 날 정산 후 엔딩)
 
 ## 아키텍처 핵심
 
@@ -26,6 +26,8 @@
 - **런타임 상태 Source of Truth**: `GameProgress` 하나 — flags, 진행도, 재화, 재고 등 저장이 필요한 모든 상태가 여기로 모임
 - **Canvas**: ScreenSpace-Overlay, Canvas Scaler Reference Resolution **2560×1440 (QHD)**. 1 canvas unit = 1px at QHD
 - **네임스페이스**: `Features/Bartending`과 `Features/Business/Runtime/Flow`의 주 코드에는 `Slainte.Bartending`/`Slainte.Business`를 사용한다. Shared의 Input·Lifecycle·Content는 각각 독립 namespace/asmdef 경계를 가진다. 이전 Unity 직렬화 타입에는 전역 namespace가 남아 있으므로 새 파일은 소유 폴더의 기존 관례를 따르고, 기존 타입의 namespace 이동은 `.meta` GUID와 Scene·Prefab 직렬화를 함께 검증하는 별도 마이그레이션으로 처리한다.
+- **에피소드 = 일정에 배정된 인카운터**: 작전판·에피소드 타입·해금/플레이/선택 조건은 없다. 모든 에피소드는 `EpisodeData.scheduledDay/scheduledSlot/slotPriority`(CSV `#META`의 `day`/`slot`/`priority`)로 영업 슬롯에 배정되고, 슬롯 차례에 `triggerCondition`(등장 조건)을 만족하는 최우선 후보 하나만 실행되며 없으면 랜덤 손님이 채운다. 일정 조회는 `IDayScheduleSource`(실제: `EpisodeManager`의 `DayScheduleIndex`)로 추상화되어 있으니 새 일정 소스(플레이테스트 등)는 이 인터페이스를 구현할 것. 조건 판정은 `ProgressConditionEvaluator` 하나로 통일
+- **에피소드 CSV ⇄ 그래프 병행 사용**: CSV ⇄ `EpisodeData` 변환은 `EpisodeCsvCodec`(Read/Write) 한 곳에서만, 그래프 블록 해석(실행 순서·포트·분기 라벨)은 `NarrativeBlockModel` 한 곳에서만 정의한다. 그래프 컴파일은 원본 CSV를 직접 덮어쓰므로 새 필드를 추가할 땐 코덱·컴파일러·임포터를 함께 고치고 `Narrative > Validate CSV ⇄ Graph Round Trip`으로 왕복이 깨지지 않는지 확인할 것
 - **RestScene 팝업 상호배타**: `BaseUIManager`를 상속하는 RestScene 팝업은 `OpenUI()` 호출 시 자기 자신을 제외한 나머지가 자동으로 닫힘 — 새 팝업을 추가해도 상속만 하면 자동 적용됨. 로딩 연출처럼 진행 중 다른 팝업으로 전환되면 안 되는 구간은 `LockTransitions()`/`UnlockTransitions()`로 잠글 수 있음
 - **상점/술 선택 공간 데이터 공유**: 상점의 재료 마스터 데이터는 임시 `ItemData`가 아니라 영업 씬 술 선택 공간과 동일한 `LiquorBottleDef`/`LiquorCategoryDef`를 그대로 사용 — 잔량이 같은 `GameProgress` 저장소(술장+제작대에 나온 병의 총량)를 공유해 두 화면이 자동 동기화됨. 레시피북 구매처럼 새 해금 흐름을 추가할 땐 `GameProgress`에 새 저장소를 만들지 않고 기존 flag 시스템(`SetFlag`/`HasFlag`)을 재사용하는 패턴을 따를 것
 - **상점 화폐 추상화**: 상점 슬롯(`ItemSlotUI`)은 `IShopCurrency`로 결제 수단을 주입받음(`MoneyShopCurrency`/`StrangeCoinShopCurrency`) — 새 화폐나 특수 상점을 추가할 때 슬롯/카테고리 로직을 복제하지 말고 `IShopCurrency` 구현체만 추가하는 패턴을 따를 것
@@ -48,17 +50,16 @@
 | [docs/core/architecture.md](docs/core/architecture.md) | GameMode/패널 구조, 입력 처리, GameProgress, 데이터 패턴, 공용 UI 유틸리티 |
 | [docs/core/scene-structure.md](docs/core/scene-structure.md) | 씬 계층 구조 (Canvas, Panel, GameObject) |
 | [docs/core/corescene-systems.md](docs/core/corescene-systems.md) | CoreScene 매니저 구조, 게임 흐름, 정산(SettlementManager/SettlementUI) 로직, 저장/로드 |
-| [docs/core/game-flow-design.md](docs/core/game-flow-design.md) | Day 흐름 설계(영업/에피소드/정산), 필수 에피소드 큐, 챕터·해금 데이터 모델 |
+| [docs/core/game-flow-design.md](docs/core/game-flow-design.md) | Day 흐름 설계(하루 = 손님 슬롯 N개, 에피소드 일정 배정·등장 조건 판정, 챕터 lastDay·엔딩) |
 | [docs/core/cutscene-system.md](docs/core/cutscene-system.md) | 컷씬 시스템(CutsceneManager/CutsceneUI, 슬라이드 재생 흐름, 화면 전환 동기화, 3개 트리거 지점) |
 | [docs/core/unity-build.md](docs/core/unity-build.md) | Unity 버전, 빌드 방법, 개발 환경 |
 | **narrative** |||
 | [docs/narrative/episode-engine.md](docs/narrative/episode-engine.md) | 에피소드 오케스트레이션(EpisodeRunner, 분기, 제조 판정 연동, 정산 커스텀 보상), 오디오/BGM/SFX |
 | [docs/narrative/episode-csv-guide.md](docs/narrative/episode-csv-guide.md) | 에피소드 CSV 작성법 (섹션 구조, 열 설명, 예시) |
-| [docs/narrative/narrative-graph-editor.md](docs/narrative/narrative-graph-editor.md) | 그래프 에디터 아키텍처, 데이터 구조, 컴파일/임포트/ID 할당 |
-| [docs/narrative/narrative-graph-guide.md](docs/narrative/narrative-graph-guide.md) | 그래프 에디터 사용 가이드 (노드 생성·연결·시퀀스 편집·컴파일) |
-| [docs/narrative/node-based-episode-editor-spec.md](docs/narrative/node-based-episode-editor-spec.md) | 노드 기반 에피소드 에디터 설계서 |
+| [docs/narrative/narrative-graph-editor.md](docs/narrative/narrative-graph-editor.md) | 그래프 에디터 아키텍처(CSV 병행 사용·원본 CSV 동기화·왕복 검증), 블록 모델·분기 라벨 문법, 컴파일/임포트 |
+| [docs/narrative/narrative-graph-guide.md](docs/narrative/narrative-graph-guide.md) | 그래프 에디터 사용 가이드 (블록 카드에서 대사·표정 편집, 블록 나누기/합치기, 연결, 컴파일·CSV 동기화) |
 | **ui** |||
-| [docs/ui/restscene-systems.md](docs/ui/restscene-systems.md) | RestScene UI 시스템 (에피소드 보드, 상점, 현황판, 툴팁) |
+| [docs/ui/restscene-systems.md](docs/ui/restscene-systems.md) | RestScene UI 시스템 (상점, 현황판, 툴팁) |
 | [docs/ui/recipe-book-search.md](docs/ui/recipe-book-search.md) | 도감 검색·상세 UI(RecipeSearchUI, 맛/분위기 태그 팔레트, 레시피 상세, 재료 카테고리 색상), 화면 전환 흐름 |
 | [docs/ui/notification-system.md](docs/ui/notification-system.md) | 알림 시스템(NotificationManager/AffinityNotificationUI/AnimatedSpriteUI), 씬 설정 |
 | [docs/ui/ingredient-selection.md](docs/ui/ingredient-selection.md) | 영업 씬 술 선택 공간(IngredientSelectionUI, A/D 대분류 전환, 병 재고 규칙, 슬롯 위치 기준, 씬 세팅) |

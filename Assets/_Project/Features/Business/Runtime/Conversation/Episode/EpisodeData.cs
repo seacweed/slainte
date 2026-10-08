@@ -10,90 +10,30 @@ public class EpisodeSettlementReward
     public int    amount;
 }
 
-[Serializable]
-public struct CharacterDisplay
-{
-    public bool isHidden;       // true면 초상화를 비공개(???)로 표시
-    public string characterName; // isHidden이 false일 때 사용
-}
-
-public enum SelectConditionType
-{
-    None,                // 조건 없음 — 항상 충족(토글이 항상 인터랙션 가능)
-    MinDay,              // 최소 일수
-    RequiredFlag,        // 이 플래그가 켜져 있어야 함
-    PrerequisiteEpisode, // 이 에피소드가 완료되어야 함
-    RequiredVar,         // 수치 변수 조건
-    MinMoney             // 최소 소지금
-}
-
-// 선택 조건 옵션 하나가 가질 수 있는 조건은 정확히 하나(자물쇠 아이콘 하나 + 설명 한 줄에 대응).
-// 여러 조건을 동시에 걸고 싶으면 옵션을 여러 개로 나눠서 표현한다.
-[Serializable]
-public class SelectSingleCondition
-{
-    public SelectConditionType type = SelectConditionType.None;
-    public int    minDay;
-    public string requiredFlag;
-    public string prerequisiteEpisodeId;
-    public string varName;
-    public CompareOp varOp = CompareOp.GreaterOrEqual;
-    public int    varThreshold;
-    public int    minMoney;
-}
-
-// TRIGGER/PLAY_TRIGGER 조건 하나(자물쇠 아이콘 하나 + 설명 한 줄에 대응). 여러 개를 리스트로 두면 AND로 결합된다.
-[Serializable]
-public class TriggerConditionEntry
-{
-    public SelectSingleCondition condition = new();
-    public string conditionText; // 커스텀 힌트 문구. 비어있으면 condition에서 자동 생성한 문구를 사용
-}
-
-// 선택 조건 옵션 하나. 여러 개를 리스트로 두되 동시에 하나만 on 가능(툴팁에서 라디오 버튼처럼 동작).
-// flag가 비어있으면 이 옵션엔 토글 UI를 만들지 않는다.
-[Serializable]
-public class SelectConditionEntry
-{
-    public SelectSingleCondition condition = new();
-    public string flag;
-    public string conditionText; // 커스텀 힌트 문구. 비어있으면 condition에서 자동 생성한 문구를 사용
-
-    // 이 옵션의 내용(조건 문구·아이콘)이 플레이어에게 공개되는 조건.
-    // 기본값(None)이면 항상 공개 — 기존 데이터와 동일하게 동작
-    public SelectSingleCondition revealCondition = new();
-
-    // revealCondition 미충족일 때 conditionText 대신 보여줄 텍스트. 비어있으면 "???"로 표시.
-    public string hiddenText;
-
-    // 이 옵션이 선택됐을 때 보여줄 초상화. EpisodeData.characters와 같은 순서/슬롯 수로 채우면 됨.
-    // 비어있으면(입력 안 하면) 기본 characters를 그대로 사용.
-    public List<CharacterDisplay> characterOverrides = new();
-}
-
+// 에피소드 하나는 항상 영업 중 특정 (day, slot)에 배정되는 인카운터다.
+// 같은 (챕터, day, slot)에 여러 에피소드가 배정되면 slotPriority가 큰 것부터 triggerCondition(등장 조건)을
+// 확인해 처음 만족하는 하나만 실행하고, 아무것도 만족하지 않으면 그 슬롯은 랜덤 손님으로 채워진다.
 [CreateAssetMenu(menuName = "Slainte/Episode Data", fileName = "EpisodeData_")]
 public class EpisodeData : ScriptableObject
 {
+    public const int UnscheduledDay = 0;
+
     [Header("Identity")]
     public string episodeId;
     public string episodeTitle;
     public string chapterId;
 
-    [Header("Type")]
-    public EpisodeType   episodeType   = EpisodeType.Default;
-    public MandatorySlot mandatorySlot = MandatorySlot.None; // episodeType == Mandatory일 때만 사용
+    [Header("Schedule")]
+    [Tooltip("등장하는 날짜(1부터). 0이면 일정에 배정되지 않아 영업에서 자동으로 등장하지 않습니다.")]
+    [Min(0)] public int scheduledDay = UnscheduledDay;
+    [Tooltip("그 날의 손님 슬롯 번호(1부터).")]
+    [Min(0)] public int scheduledSlot;
+    [Tooltip("같은 날·슬롯에 후보가 여럿일 때 큰 값부터 등장 조건을 확인합니다.")]
+    public int slotPriority;
 
     [Header("Trigger")]
-    public EpisodeTriggerCondition triggerCondition; // 해금 조건 — 만족하면 작전판에 노출
-    public EpisodeTriggerCondition playCondition;     // 플레이 조건 — 만족해야 Play 버튼 활성화 (Default 전용)
-    public List<TriggerConditionEntry> triggerConditionEntries = new(); // 해금 조건 항목별 툴팁 표시(순서·커스텀 텍스트 보존)
-    public List<TriggerConditionEntry> playConditionEntries = new();    // 플레이 조건 항목별 툴팁 표시
+    public EpisodeTriggerCondition triggerCondition; // 등장 조건 — 슬롯 차례가 왔을 때 판정
 
-    [Header("Select")]
-    public List<SelectConditionEntry> selectConditions = new(); // 선택 조건 목록 — 동시에 하나만 on 가능. Play 버튼 활성화에는 영향 없음
-
-    [Header("Opening")]
-    public List<CharacterSlotEntry> openingCharacters = new();
     public string firstNodeId;
 
     [Header("Nodes")]
@@ -103,11 +43,7 @@ public class EpisodeData : ScriptableObject
     [Tooltip("에피소드 종료 시 requiredFlag가 서 있으면 정산 화면에 label/amount를 커스텀 보상 줄로 추가합니다.")]
     public List<EpisodeSettlementReward> settlementRewards = new();
 
-    [Header("Board Display")]
-    [TextArea(3, 5)] public string episodeDescription;
-    public string iconNameBoard;
-    public string iconNameArchive;
-    public List<CharacterDisplay> characters = new(); // 선택 조건 미선택 시(기본) 보여줄 초상화
+    public bool IsScheduled => scheduledDay > UnscheduledDay && scheduledSlot > 0;
 
     public EpisodeNode FindNode(string nodeId)
     {

@@ -46,8 +46,8 @@ public class InputRouter : MonoBehaviour
                     customerSpawner?.ShowCustomers(new[] { "yukari" });
                 if (WasPressed(keyboard?.digit2Key, KeyCode.Alpha2) && testEpisode != null)
                 {
-                    modeManager?.RequestModeChange(GameMode.EpisodeMode);
-                    episodeRunner?.Begin(testEpisode);
+                    // 개발용 단축키: 진행도 기록 없이 러너만 바로 돌려 연출을 확인한다.
+                    episodeRunner?.BeginBusinessEncounter(testEpisode, null);
                 }
                 break;
 

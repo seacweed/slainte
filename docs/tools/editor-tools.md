@@ -6,6 +6,13 @@ Unity 에디터에서 사용할 수 있는 커스텀 툴 목록입니다.
 | 툴 | 파일 | 메뉴 경로 |
 |---|---|---|
 | 에피소드 CSV 임포터 | `EpisodeCsvImporter.cs` | Tools > Slainte > Import Episode CSV |
+| 에피소드 CSV 전체 임포트 | `EpisodeCsvImporter.cs` | Tools > Slainte > Import All Episode CSVs |
+| 내러티브 그래프 에디터 | `NarrativeGraphEditor.cs` | Narrative > Open Graph |
+| CSV → 그래프 가져오기 | `NarrativeCsvSync.cs` | Narrative > Import CSV to Graph... |
+| CSV ⇄ 그래프 왕복 검증 | `NarrativeRoundTripValidator.cs` | Narrative > Validate CSV ⇄ Graph Round Trip |
+| 슬롯 기반 영업 검증 | `BusinessShiftValidator.cs` | Slainte > 품질 검증 > 슬롯 기반 영업 검증 |
+| 판매·정산 규칙 검증 | `BusinessIntegrationRulesValidator.cs` | Slainte > Business > Validate Sale And Settlement Rules |
+| 영업 통합 플레이테스트 씬 / 플레이 모드 검증 3종 | `BusinessIntegrationPlaytestTools.cs` | Slainte > Business > Create or Open Integration Playtest, Validate Scheduled Encounter / Slot Candidate Priority / Condition Fallback Full Day Play Mode |
 | 레거시 ItemData 임포터 | `ItemDataImporter.cs` | Tools > Import Item Data (CSV) |
 | 기획 CSV 에셋 임포터 | `PlanningCsvAssetImporter.cs` | Slainte > 데이터 > 기획 CSV 임포트 |
 | 기준 기획 CSV 즉시 임포트 | `PlanningCsvAssetImporter.cs` | Slainte > 데이터 > 기준 CSV 바로 임포트 |
@@ -25,25 +32,24 @@ Unity 에디터에서 사용할 수 있는 커스텀 툴 목록입니다.
 
 ### 에피소드 테스트
 
-1. `Episode` 탭에서 제목이나 ID를 검색하고 에피소드를 선택한다.
-2. 테스트에 적용할 `Progress Day`를 입력한다.
-3. 해금·플레이 조건과 무관하게 내용을 확인하려면 `Bypass trigger and play conditions`를 켠다.
+1. `Episode` 탭에서 제목이나 ID를 검색하고 에피소드를 선택한다(목록은 `Day N S슬롯` 순).
+2. 테스트에 적용할 `Progress Day`를 입력한다(기본값은 배정된 day).
+3. 등장 조건과 무관하게 내용을 확인하려면 `Bypass trigger condition`을 켠다.
 4. `Start Isolated Episode Test`를 누른다.
 
-- Default와 Mandatory는 에피소드 내용을 바로 실행한다. Mandatory의 Before/After Business 배치까지 검증하려면 Day 테스트를 사용한다.
-- Encounter는 BusinessScene 진입 후 실제 `TryStartBusinessEncounter()` 경로로 실행하며, 완료 후 영업으로 복귀한다.
-- 조건 무시를 끄면 현재 저장의 플래그, 선행 에피소드, 재화, 호감도와 지정한 Day를 기준으로 조건을 검사한다.
+- 선택한 에피소드가 영업의 **1번 손님 슬롯**으로 강제 실행되고(`EpisodeManager.QueueDebugEncounter`), 나머지 슬롯은 그날 일정·랜덤 손님으로 이어진다.
+- 조건 무시를 끄면 현재 저장의 플래그, 선행 에피소드, 재화, 호감도와 지정한 Day로 등장 조건을 먼저 검사한다.
 
 ### Day 테스트
 
 1. `Day` 탭에서 테스트할 `Target Day`를 입력한다.
-2. `Prepare previous Mandatory episodes as completed` 사용 여부를 정한다.
+2. `Prepare episodes scheduled before this day as completed` 사용 여부를 정한다.
 3. `Start Isolated Day Test`를 누른다.
 
 - Day 1은 `StartFirstDay()`로 시작한다.
 - Day 2 이상은 내부 진행도를 Day N-1로 맞춘 뒤 `StartBusinessDay()`를 호출하므로 실제 실행 Day는 정확히 N이 된다.
-- 필수 에피소드 기준 상태를 사용하면 이전 Day의 Mandatory는 완료, 해당 Day 이후의 Mandatory는 미완료로 임시 구성한다. 선택형 에피소드, 플래그, 재화, 호감도는 현재 저장 상태를 유지한다.
-- 이후 흐름은 필수 에피소드 → 영업 → 영업 후 필수 에피소드 → 정산 → 휴식의 실제 런타임 경로를 사용한다.
+- 기준 상태를 사용하면 이전 Day에 배정된 에피소드는 완료, 해당 Day 이후 배정분은 미완료로 임시 구성한다. 플래그·재화·호감도는 현재 저장 상태를 유지하므로 분기 에피소드는 실제 플레이와 다를 수 있다.
+- 이후 흐름은 영업(배정 에피소드 + 랜덤 손님) → 정산 → 휴식의 실제 런타임 경로를 사용한다.
 
 ### 저장 격리
 
@@ -86,19 +92,21 @@ CSV 작성 방법은 [../narrative/episode-csv-guide.md](../narrative/episode-cs
 - 같은 `episodeId`의 에셋이 이미 존재하면 **덮어쓰기**
 - CSV 섹션 헤더(`#META` 등)는 열 수 패딩이 있어도 정상 인식
 - UTF-8 BOM 파일 지원
+- 이 임포터는 `EpisodeData`만 만든다. 그래프로 편집하려면 **Narrative > Import CSV to Graph...**(또는 그래프 에디터 툴바 **Import CSV...**)를 쓴다 — 그래프 쪽 사용법은 [../narrative/narrative-graph-guide.md](../narrative/narrative-graph-guide.md)
+- 폐지된 섹션(`#PLAY_TRIGGER` 등)과 예전 분기 형식은 읽되 Console에 경고를 남긴다
 
 ### CSV 섹션 구조 요약
 
 | 섹션 | 역할 |
 |---|---|
-| `#META` | 에피소드 ID, 제목, 첫 노드 |
-| `#TRIGGER` | 발동 조건 (일수, 플래그, 선행 에피소드) |
-| `#OPENING_CHARS` | 오프닝 캐릭터 슬롯 |
-| `#NODES` | 대화 노드 목록 |
+| `#META` | 에피소드 ID, 제목, 첫 노드, 챕터, 영업 일정(`day` / `slot` / `priority`) |
+| `#TRIGGER` | 등장 조건 (MinDay, MinMoney, Required/BlockedFlag, PrerequisiteEpisode, RequiredVar, CustomerAppearance) |
+| `#SETTLEMENT_REWARDS` | 정산 커스텀 보상 |
+| `#NODES` | 대화 노드 목록 (기본값과 같은 칸은 비워 둠) |
+| `#NODE_CRAFTING_BRANCHES` | 제조 결과별 이동 노드·플래그·변수 |
 | `#NODE_CHARS` | 노드별 캐릭터 표정 |
 | `#CHOICES` | 플레이어 선택지 |
-| `#NODE_BRANCHES` | 플래그 조건 분기 (`requiredAllFlags` AND / `requiredAnyFlags` OR) |
-| `#NODE_VAR_BRANCHES` | 수치 변수(호감도 등) 조건 분기 |
+| `#NODE_BRANCHES` | 조건 분기 (`conditionType`: RequiredFlag / BlockedFlag / RequiredVar / PrerequisiteEpisode, 줄 순서 = 우선순위) |
 
 ---
 

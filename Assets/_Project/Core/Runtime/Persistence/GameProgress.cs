@@ -19,10 +19,6 @@ public class GameProgress : MonoSingleton<GameProgress>
     [SerializeField] private List<string> affinityKeys   = new();
     [SerializeField] private List<int>    affinityValues = new();
 
-    [Header("Board Slot Positions")]
-    [SerializeField] private List<string> boardSlotKeys   = new();
-    [SerializeField] private List<int>    boardSlotValues = new();
-
     [Header("Bottle Amounts")]
     [SerializeField] private List<string> bottleAmountKeys   = new();
     [SerializeField] private List<float>  bottleAmountValues = new();
@@ -70,7 +66,6 @@ public class GameProgress : MonoSingleton<GameProgress>
     private HashSet<string>           _flagSet;
     private HashSet<string>           _completedSet;
     private Dictionary<string, int>   _affinity;
-    private Dictionary<string, int>   _boardSlots;
     private Dictionary<string, float> _bottleAmounts;
     private Dictionary<string, int>   _customerAppearances;
     private Dictionary<string, int>   _upgradeLevels;
@@ -115,11 +110,6 @@ public class GameProgress : MonoSingleton<GameProgress>
         for (int i = 0; i < affinityCount; i++)
             _affinity[affinityKeys[i]] = affinityValues[i];
 
-        _boardSlots = new Dictionary<string, int>();
-        int slotCount = Mathf.Min(boardSlotKeys.Count, boardSlotValues.Count);
-        for (int i = 0; i < slotCount; i++)
-            _boardSlots[boardSlotKeys[i]] = boardSlotValues[i];
-
         _bottleAmounts = new Dictionary<string, float>();
         int bottleCount = Mathf.Min(bottleAmountKeys.Count, bottleAmountValues.Count);
         for (int i = 0; i < bottleCount; i++)
@@ -145,8 +135,6 @@ public class GameProgress : MonoSingleton<GameProgress>
         completedEpisodeIds = new List<string>(data.completedEpisodeIds ?? new List<string>());
         affinityKeys        = new List<string>(data.affinityKeys ?? new List<string>());
         affinityValues      = new List<int>(data.affinityValues ?? new List<int>());
-        boardSlotKeys       = new List<string>(data.boardSlotKeys ?? new List<string>());
-        boardSlotValues     = new List<int>(data.boardSlotValues ?? new List<int>());
         bottleAmountKeys    = new List<string>(data.bottleAmountKeys ?? new List<string>());
         bottleAmountValues  = new List<float>(data.bottleAmountValues ?? new List<float>());
         customerAppearanceKeys   = new List<string>(data.customerAppearanceKeys ?? new List<string>());
@@ -275,8 +263,6 @@ public class GameProgress : MonoSingleton<GameProgress>
     public List<string> GetCompletedList()    => new List<string>(completedEpisodeIds);
     public List<string> GetAffinityKeys()     => new List<string>(affinityKeys);
     public List<int>    GetAffinityValues()   => new List<int>(affinityValues);
-    public List<string> GetBoardSlotKeys()    => new List<string>(boardSlotKeys);
-    public List<int>    GetBoardSlotValues()  => new List<int>(boardSlotValues);
     public List<string> GetBottleAmountKeys()   => new List<string>(bottleAmountKeys);
     public List<float>  GetBottleAmountValues() => new List<float>(bottleAmountValues);
     public List<string> GetCustomerAppearanceKeys()   => new List<string>(customerAppearanceKeys);
@@ -425,46 +411,6 @@ public class GameProgress : MonoSingleton<GameProgress>
         {
             affinityKeys.Add(varName);
             affinityValues.Add(value);
-        }
-    }
-
-    // ── Board Slot Positions ───────────────────────────────────
-
-    public int GetBoardSlot(string episodeId)
-    {
-        if (string.IsNullOrWhiteSpace(episodeId)) return 0;
-        _boardSlots.TryGetValue(episodeId, out int value);
-        return value;
-    }
-
-    public void SetBoardSlot(string episodeId, int slotIndex)
-    {
-        if (string.IsNullOrWhiteSpace(episodeId)) return;
-        _boardSlots[episodeId] = slotIndex;
-        SyncBoardSlotToLists(episodeId, slotIndex);
-    }
-
-    public void ClearBoardSlot(string episodeId)
-    {
-        if (string.IsNullOrWhiteSpace(episodeId)) return;
-        if (!_boardSlots.Remove(episodeId)) return;
-        int idx = boardSlotKeys.IndexOf(episodeId);
-        if (idx >= 0)
-        {
-            boardSlotKeys.RemoveAt(idx);
-            boardSlotValues.RemoveAt(idx);
-        }
-    }
-
-    private void SyncBoardSlotToLists(string episodeId, int slotIndex)
-    {
-        int idx = boardSlotKeys.IndexOf(episodeId);
-        if (idx >= 0)
-            boardSlotValues[idx] = slotIndex;
-        else
-        {
-            boardSlotKeys.Add(episodeId);
-            boardSlotValues.Add(slotIndex);
         }
     }
 

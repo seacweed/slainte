@@ -8,7 +8,7 @@ namespace Slainte.Business
 {
     // BusinessScene 진입점. 씬 내 필수 컴포넌트(모드 매니저/손님 스포너/대화창/주문표/바텐딩
     // 부트스트랩 등)를 찾아 BusinessOrderSessionController·BusinessShiftController·
-    // EpisodeCraftingBridge를 초기화하고 서로 연결한다. 시간 기반 영업(StartBusinessSequence)과
+    // EpisodeCraftingBridge를 초기화하고 서로 연결한다. 슬롯 기반 영업(StartBusinessSequence)과
     // 에피소드가 요청하는 제조 주문(StartEpisodeOrder)이 같은 orderSession을 공유하므로,
     // episodeOrderActive/businessSequenceActive 플래그로 두 흐름이 겹치지 않게 조율한다.
     public sealed class BusinessFlowBootstrap : MonoBehaviour
@@ -160,7 +160,12 @@ namespace Slainte.Business
             shiftController = GetComponent<BusinessShiftController>();
             if (shiftController == null)
                 shiftController = gameObject.AddComponent<BusinessShiftController>();
-            shiftController.Initialize(orderSession, sessionUi, modeManager, settings);
+            shiftController.Initialize(
+                orderSession,
+                sessionUi,
+                modeManager,
+                settings,
+                EpisodeManager.Instance);
             shiftController.ShiftCompleted += HandleBusinessDayCompleted;
 
             episodeCraftingBridge = GetComponent<EpisodeCraftingBridge>();
@@ -191,7 +196,7 @@ namespace Slainte.Business
             {
                 businessSequenceActive = false;
                 Debug.LogError(
-                    "[BusinessFlow] 영업 컨트롤러가 없어 시간 기반 영업을 시작할 수 없습니다. "
+                    "[BusinessFlow] 영업 컨트롤러가 없어 영업을 시작할 수 없습니다. "
                     + $"RuntimeReady={runtimeInitialized}, EpisodeOrderActive={episodeOrderActive}");
                 return;
             }
@@ -209,7 +214,7 @@ namespace Slainte.Business
             if (!started)
             {
                 Debug.LogError(
-                    "[BusinessFlow] 시간 기반 영업을 시작하지 못했습니다. "
+                    "[BusinessFlow] 영업을 시작하지 못했습니다. "
                     + $"RuntimeReady={runtimeInitialized}, ShiftState={shiftController.State}, "
                     + $"ShiftActive={shiftController.IsActive}, EpisodeOrderActive={episodeOrderActive}");
                 return;
@@ -252,7 +257,7 @@ namespace Slainte.Business
             OrderSessionRequest request,
             System.Action<BusinessOrderSessionResult> onCompleted)
         {
-            // 시간 기반 영업이 진행 중이어도, 그 영업이 인카운터(대화) 상태라면 에피소드가
+            // 영업이 진행 중이어도, 그 영업이 인카운터(대화) 상태라면 에피소드가
             // 요청하는 제조 주문을 예외적으로 허용한다 — 인카운터 자체가 제조를 요구할 수 있기 때문.
             bool allowedDuringBusinessEncounter = businessSequenceActive
                 && shiftController != null

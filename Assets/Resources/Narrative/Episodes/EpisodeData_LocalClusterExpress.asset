@@ -15,17 +15,10 @@ MonoBehaviour:
   episodeId: LocalClusterExpress
   episodeTitle: "\uAD6D\uBD80 \uC740\uD558 \uBB3C\uB958 \uD2B9\uAE09"
   chapterId: Sector0
-  episodeType: 1
-  mandatorySlot: 1
+  scheduledDay: 4
+  scheduledSlot: 2
+  slotPriority: 1
   triggerCondition:
-    minDay: 3
-    minMoney: 0
-    requiredFlags: []
-    blockedFlags: []
-    prerequisiteEpisodeIds: []
-    requiredVars: []
-    requiredCustomerAppearances: []
-  playCondition:
     minDay: 0
     minMoney: 0
     requiredFlags: []
@@ -33,20 +26,6 @@ MonoBehaviour:
     prerequisiteEpisodeIds: []
     requiredVars: []
     requiredCustomerAppearances: []
-  triggerConditionEntries:
-  - condition:
-      type: 1
-      minDay: 3
-      requiredFlag: 
-      prerequisiteEpisodeId: 
-      varName: 
-      varOp: 0
-      varThreshold: 0
-      minMoney: 0
-    conditionText: 
-  playConditionEntries: []
-  selectConditions: []
-  openingCharacters: []
   firstNodeId: 0
   nodes:
   - nodeId: 0
@@ -56,19 +35,19 @@ MonoBehaviour:
       </b>\uC548\uB155\uD558\uC138\uC694\uC624-!"
     nextNodeId: 1
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: busy
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -87,19 +66,19 @@ MonoBehaviour:
       \uBD88\uB7EC\uC8FC\uC138\uC694-!"
     nextNodeId: 2
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: mid
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -117,19 +96,19 @@ MonoBehaviour:
     text: "\uC88B\uC740 \uBC24\uC785\uB2C8\uB2E4\u2026 \uC190\uB2D8?"
     nextNodeId: 3
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: mid
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -148,19 +127,19 @@ MonoBehaviour:
       \uC11C\uBA85\uC774\uB098 \uD574\uC918. <b>\uCC30\uB9AC.</b>"
     nextNodeId: 4
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: point
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -180,19 +159,19 @@ MonoBehaviour:
       \uBC88\uC9C0\uC218\uB97C \uC798\uBABB \uC9DA\uC73C\uC168\uAC70\uB098\uC694."
     nextNodeId: 5
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: point
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -212,19 +191,19 @@ MonoBehaviour:
       \uB9D0\uC774\uC57C!"
     nextNodeId: 6
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: mid
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -243,19 +222,19 @@ MonoBehaviour:
       </b>\uB77C\uACE0 \uB611\uB611\uD788 \uC801\uD600\uC788\uC796\uC544!"
     nextNodeId: 7
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: mid
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -273,19 +252,19 @@ MonoBehaviour:
     text: "53\uBC88\uC9C0\uB294 \uC774\uACF3 \uAC74\uB108\uD3B8 \uC785\uB2C8\uB2E4."
     nextNodeId: 8
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: mid
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -303,19 +282,19 @@ MonoBehaviour:
     text: "\uC624. \uC774\uB7F0."
     nextNodeId: 9
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: point
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -334,19 +313,19 @@ MonoBehaviour:
       \uADF8\uB7F0\uAC74 \uC77C\uCC0D\uC880 \uB9D0\uD558\uB77C\uACE0!"
     nextNodeId: 10
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: busy
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -365,19 +344,19 @@ MonoBehaviour:
       \uB0A8\uAC8C \uC0DD\uACBC\uC796\uC544! \uC5B4\uCA4C\uBA74 \uC88B\uC9C0?!"
     nextNodeId: 11
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: busy
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -396,19 +375,19 @@ MonoBehaviour:
       \uC788\uB294\uAC74 \uC5C6\uB294\uAC83 \uAC19\uAD70\uC694."
     nextNodeId: 12
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: busy
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -427,19 +406,19 @@ MonoBehaviour:
       \uC7A0\uAE50\uB9CC <b>\uCC30\uB9AC</b>\uB85C \uC0B4\uC544\uC8FC\uACA0\uC5B4?"
     nextNodeId: 13
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: point
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -458,19 +437,19 @@ MonoBehaviour:
       \uB3C8\uC774\uB77C\uBA74 <b>\uC9C4\uC9DC \uCC30\uB9AC</b>\uAC00 \uB0C8\uC744\uD14C\uB2C8\uAE4C!"
     nextNodeId: 14
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: point
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -490,19 +469,19 @@ MonoBehaviour:
       \uB4E4\uB9AC\uC9C0\uB294 \uC54A\uB294\uAD70\uC694."
     nextNodeId: 15
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: point
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -522,19 +501,19 @@ MonoBehaviour:
       LCE!</b>"
     nextNodeId: 16
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: mid
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -553,19 +532,19 @@ MonoBehaviour:
       \uAC19\uAE34 \uD558\uAD70\uC694."
     nextNodeId: 17
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: mid
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -584,19 +563,19 @@ MonoBehaviour:
       \uBAA8\uB4E0 \uBB3C\uB958\uB294 \uC6B0\uB9AC \uD68C\uC0AC\uAC00 \uAD00\uB9AC\uD558\uC9C0."
     nextNodeId: 18
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: point
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -615,19 +594,19 @@ MonoBehaviour:
       \uC11C\uBE44\uC2A4\uB3C4 \uC81C\uACF5\uC911\uC774\uB77C\uACE0!"
     nextNodeId: 19
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: point
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -645,19 +624,19 @@ MonoBehaviour:
     text: "\uD2B9\uAE09 \uBC30\uC1A1\uC774\uC694? \uADF8\uAC74 \uCC98\uC74C \uB4E3\uB124\uC694."
     nextNodeId: 20
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: mid
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -677,19 +656,19 @@ MonoBehaviour:
       \uB2EC\uB824\uC628\uB2E4\uB294 \uB9D0\uC500!"
     nextNodeId: 21
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: point
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -708,19 +687,19 @@ MonoBehaviour:
       \uB9D0\uC774\uC57C\u2026 <b>\uD2B9\uAE09!</b> \uBC30\uC1A1\uC774\uB2C8\uAE4C!"
     nextNodeId: 22
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: point
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -740,19 +719,19 @@ MonoBehaviour:
       \uCC98\uB7FC \uB4E4\uB9AC\uB294\uAD70\uC694."
     nextNodeId: 23
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: point
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -772,19 +751,19 @@ MonoBehaviour:
       <b>\uBE60\uB974\uAC8C! \uC548\uC804\uD558\uAC8C! \uBCC0\uD568\uC5C6\uC774!</b>"
     nextNodeId: 24
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: mid
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -803,19 +782,19 @@ MonoBehaviour:
       N8\uB2D8 \uAED8\uC11C \uBC29\uAE08 \uC2E4\uC218\uB97C \uD558\uC168\uACE0\u2026"
     nextNodeId: 25
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: mid
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -834,19 +813,19 @@ MonoBehaviour:
       \uC54A\uC544\uC11C \uADF8\uB7F0\uAC70\uC796\uC544!"
     nextNodeId: 26
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: busy
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -864,19 +843,19 @@ MonoBehaviour:
     text: "\u3131-\uADF8\uC81C \uC81C \uC798\uBABB \uC778\uAC00\uC694?"
     nextNodeId: 27
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: delivery
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -896,19 +875,19 @@ MonoBehaviour:
       \uC5B8\uC81C\uB4E0\uC9C0 \uBD88\uB7EC\uB2EC\uB77C\uACE0!"
     nextNodeId: 28
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: delivery
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -926,19 +905,19 @@ MonoBehaviour:
     text: "\uADF8\uB7FC \uC774\uB9CC!"
     nextNodeId: 29
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: n8
       expressionKey: busy
       slotIndex: 0
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -957,16 +936,16 @@ MonoBehaviour:
       \uB2E4 \uBE60\uC9C0\uB294\uAC78\u2026"
     nextNodeId: 30
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters: []
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -985,16 +964,16 @@ MonoBehaviour:
       \uC11C\uBD10\uB3C4 \uB098\uC058\uC9C4 \uC54A\uACA0\uC5B4."
     nextNodeId: 31
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters: []
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -1013,16 +992,16 @@ MonoBehaviour:
       \uBBF8\uC548\uD558\uAC8C \uB418\uC5C8\uAD70."
     nextNodeId: 
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters: []
     requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
     craftingOrderType: 6
     craftingOrderTarget: 
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
     craftingOutcomes: []
     nextNodeIdGood: 
     nextNodeIdBad: 
@@ -1035,7 +1014,3 @@ MonoBehaviour:
     sfxCommand: 0
     sfxClipName: 
   settlementRewards: []
-  episodeDescription: 
-  iconNameBoard: 
-  iconNameArchive: 
-  characters: []

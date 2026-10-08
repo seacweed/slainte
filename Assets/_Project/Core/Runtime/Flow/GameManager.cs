@@ -6,7 +6,6 @@ using UnityEngine;
 public enum GameState
 {
     None,
-    Episode,
     Business,
     Settlement,
     Rest
@@ -20,7 +19,7 @@ public class GameManager : MonoSingleton<GameManager>
     {
         if (CurrentState == newState) return;
 
-        if (CurrentState == GameState.Episode || CurrentState == GameState.Business)
+        if (CurrentState == GameState.Business)
         {
             DataManager.Instance.Save();
         }
@@ -42,22 +41,11 @@ public class GameManager : MonoSingleton<GameManager>
 
         switch (state)
         {
-            case GameState.Episode:
-                sceneName = "BusinessScene";
-                onTransitionComplete = () =>
-                {
-                    string epId = EpisodeManager.Instance?.CurrentPlayingEpisodeID;
-                    EpisodeData data = EpisodeManager.Instance?.GetEpisodeData(epId);
-                    var runner = UnityEngine.Object.FindFirstObjectByType<EpisodeRunner>();
-                    runner?.Begin(data);
-                };
-                break;
             case GameState.Business:
+                // 영업 모드 전환은 영업 흐름(BusinessShiftController.BeginShift)이 맡는다. 전환이 끝난 뒤
+                // 여기서 OrderMode를 강제하면, 페이드 인 도중 이미 시작된 1번 슬롯 에피소드의 EpisodeMode를
+                // 덮어써 클릭이 에피소드로 전달되지 않는다.
                 sceneName = "BusinessScene";
-                onTransitionComplete = () =>
-                {
-                    GameModeManager.Instance?.RequestModeChange(GameMode.OrderMode);
-                };
                 break;
             case GameState.Settlement:
                 SettlementManager.Instance?.BeginSettlement();

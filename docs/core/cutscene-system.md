@@ -42,9 +42,9 @@ TransitionCanvas (Sorting Order 999)
 
 ## 트리거 지점 3곳
 
-1. **오프닝**(`CutsceneIds.Today`): `MainMenuManager.OnStartClicked()`가 `CutsceneManager.Play(CutsceneIds.Today, () => DayFlowController.Instance?.StartFirstDay())` 호출. `StartFirstDay()`는 Day를 증가시키지 않고(이미 1) `StartBusinessDay()`와 동일한 필수 에피소드 큐 로직(`BeginMandatoryOrBusiness()`)을 태움.
+1. **오프닝**(`CutsceneIds.Today`): `MainMenuManager.OnStartClicked()`가 `CutsceneManager.Play(CutsceneIds.Today, () => DayFlowController.Instance?.StartFirstDay())` 호출. `StartFirstDay()`는 Day를 증가시키지 않고(이미 1) 바로 영업을 시작한다. Day 1 오프닝 대화(`Today` 에피소드)는 1번 손님 슬롯에 배정된 인카운터로 나온다.
 2. **Day1 종료**(`CutsceneIds.FathersNote`): `DayFlowController.StartFirstDay()`가 `_pendingSettlementCutsceneId = CutsceneIds.FathersNote`를 세팅. 이후 정산이 끝나면(`SettlementManager.OnSettlementClosed()`) 이 값을 `ConsumePendingSettlementCutscene()`로 가져가 재생 후 `GameState.Rest`로 전환.
-3. **엔딩**(`CutsceneIds.Ending`): `DayFlowController.StartDefaultEpisode(episodeId)`에서 `episodeId`가 Inspector에 설정된 `endingEpisodeId`(엔딩 에피소드의 `episodeId`, 데이터 필드가 아니라 문자열 직접 비교 — `EpisodeData` 스키마는 건드리지 않음)와 일치하면 `_pendingSettlementCutsceneId = CutsceneIds.Ending`을 세팅. 정산 종료 후 `SettlementManager.OnSettlementClosed()`가 이 값을 확인해 컷씬 재생 후 `GameState.Rest`가 아니라 `SceneTransitionManager.Instance?.TransitionToSubScene("MainMenuScene")`로 직접 전환(엔딩이라 로고 인트로가 다시 재생됨).
+3. **엔딩**(`CutsceneIds.Ending`): 두 경로 중 하나로 `_pendingSettlementCutsceneId = CutsceneIds.Ending`이 세팅된다. (a) 인카운터가 끝날 때마다 불리는 `DayFlowController.NotifyEpisodeCompleted(episodeId)`에서 `episodeId`가 Inspector의 `endingEpisodeId`(지구로, 문자열 비교)와 같을 때, (b) 영업 종료 시 `OnBusinessCompleted()`에서 오늘이 현재 챕터 `ChapterData.lastDay`일 때. 정산 종료 후 `SettlementManager.OnSettlementClosed()`가 이 값을 확인해 컷씬 재생 후 `GameState.Rest`가 아니라 `SceneTransitionManager.Instance?.TransitionToSubScene("MainMenuScene")`로 직접 전환(엔딩이라 로고 인트로가 다시 재생됨).
 
 `SettlementManager.OnSettlementClosed()`는 2번/3번 트리거가 공통으로 거치는 유일한 지점이며, `DayFlowController.ConsumePendingSettlementCutscene()`가 반환한 id로 어떤 컷씬을 재생할지(또는 아예 재생 안 할지) 결정한다.
 

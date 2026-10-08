@@ -11,8 +11,6 @@ public class SaveData
     public List<string> completedEpisodeIds = new();
     public List<string> affinityKeys   = new();
     public List<int>    affinityValues = new();
-    public List<string> boardSlotKeys   = new();
-    public List<int>    boardSlotValues = new();
     public List<string> bottleAmountKeys   = new();
     public List<float>  bottleAmountValues = new();
     public List<string> customerAppearanceKeys   = new();

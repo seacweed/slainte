@@ -1,23 +1,17 @@
-using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Text;
-using Slainte.Bartending;
-using Slainte.Economy;
 using Slainte.Content;
 using Slainte.EditorTools;
 using UnityEditor;
 using UnityEngine;
 
-// 기획자가 작성한 에피소드 CSV(#SECTION 헤더로 구분된 여러 표)를 EpisodeData 에셋으로
-// 컴파일하는 임포터 창. 이미 같은 episodeId의 에셋이 있으면 덮어쓰지 않고
-// EditorUtility.CopySerialized로 병합하되, CSV에 해당 섹션이 아예 없으면(예: BOARD_CHARS를
-// 지운 경우) 인스펙터에서 수기로 채운 기존 값을 그대로 보존한다 — CSV에 섹션이 있으면
-// 비어 있어도 그 필드의 source of truth가 CSV로 바뀐다.
+// 기획자가 작성한 에피소드 CSV를 EpisodeData 에셋으로 임포트하는 창. 포맷 해석은 EpisodeCsvCodec이 맡고,
+// 이 클래스는 파일 선택·에셋 저장만 담당한다. 이미 같은 episodeId의 에셋이 있으면 덮어쓰지 않고
+// EditorUtility.CopySerialized로 병합하되, CSV에 SETTLEMENT_REWARDS 섹션이 아예 없으면 인스펙터에서
+// 수기로 채운 기존 보상 값을 그대로 보존한다 — 섹션이 있으면 비어 있어도 CSV가 그 필드의 기준이 된다.
 public class EpisodeCsvImporter : EditorWindow
 {
-    private const string OrderTicketDatabasePath = BusinessAssetPaths.OrderTicketDatabase;
     private string _csvPath = "";
     private string _outputFolder =
         ProjectResourcePaths.AssetRoot + ProjectResourcePaths.NarrativeEpisodes;
@@ -26,6 +20,37 @@ public class EpisodeCsvImporter : EditorWindow
     public static void Open()
     {
         GetWindow<EpisodeCsvImporter>("Episode CSV Importer");
+    }
+
+    [MenuItem("Tools/Slainte/Import All Episode CSVs")]
+    public static void ImportAllSourceCsvs()
+    {
+        string folder = NarrativeAssetPaths.EpisodeSourceRoot;
+        if (!Directory.Exists(folder))
+        {
+            EditorUtility.DisplayDialog("Error", $"에피소드 CSV 폴더를 찾을 수 없습니다:\n{folder}", "OK");
+            return;
+        }
+
+        string outputFolder = ProjectResourcePaths.AssetRoot + ProjectResourcePaths.NarrativeEpisodes;
+        int imported = 0;
+        int warnings = 0;
+        List<string> failures = new();
+        foreach (string path in Directory.GetFiles(folder, "*.csv"))
+        {
+            EpisodeData asset = ImportFile(path, outputFolder, out EpisodeCsvCodec.ReadResult result);
+            warnings += result?.Warnings.Count ?? 0;
+            if (asset != null)
+                imported++;
+            else
+                failures.Add($"{Path.GetFileName(path)}: {result?.Error}");
+        }
+
+        AssetDatabase.SaveAssets();
+        string summary = $"임포트 {imported}개, 경고 {warnings}개(Console 참고)";
+        if (failures.Count > 0)
+            summary += "\n실패:\n" + string.Join("\n", failures);
+        EditorUtility.DisplayDialog("Import All Episode CSVs", summary, "OK");
     }
 
     private void OnGUI()
@@ -61,867 +86,68 @@ public class EpisodeCsvImporter : EditorWindow
             return;
         }
 
-        string[] lines = File.ReadAllLines(_csvPath, Encoding.UTF8);
-        EpisodeData data = ParseCsv(lines, out Dictionary<string, List<string[]>> sections);
-        if (data == null) return;
-
-        if (!AssetDatabase.IsValidFolder(_outputFolder))
+        EpisodeData asset = ImportFile(_csvPath, _outputFolder, out EpisodeCsvCodec.ReadResult result);
+        AssetDatabase.SaveAssets();
+        if (asset == null)
         {
-            Directory.CreateDirectory(_outputFolder);
+            EditorUtility.DisplayDialog("Error", result?.Error ?? "임포트에 실패했습니다.", "OK");
+            return;
+        }
+
+        string message = $"임포트 완료:\n{AssetDatabase.GetAssetPath(asset)}";
+        if (result.Warnings.Count > 0)
+            message += $"\n\n경고 {result.Warnings.Count}개:\n" + string.Join("\n", result.Warnings);
+        EditorUtility.DisplayDialog("Success", message, "OK");
+    }
+
+    // CSV 파일 하나를 읽어 에셋으로 저장한다. 실패하면 null을 돌려주고 result.Error에 이유를 남긴다.
+    public static EpisodeData ImportFile(
+        string csvPath,
+        string outputFolder,
+        out EpisodeCsvCodec.ReadResult result)
+    {
+        result = EpisodeCsvCodec.Read(File.ReadAllText(csvPath, Encoding.UTF8));
+        string fileName = Path.GetFileName(csvPath);
+        foreach (string warning in result.Warnings)
+            Debug.LogWarning($"[EpisodeCsvImporter] {fileName}: {warning}");
+        if (!result.Succeeded)
+        {
+            Debug.LogError($"[EpisodeCsvImporter] {fileName}: {result.Error}");
+            return null;
+        }
+
+        return SaveAsset(result, outputFolder);
+    }
+
+    // 읽은 데이터를 기존 에셋에 병합(없으면 생성)한다. 그래프 에디터의 CSV 동기화도 같은 저장 규칙을 쓴다.
+    public static EpisodeData SaveAsset(EpisodeCsvCodec.ReadResult result, string outputFolder)
+    {
+        EpisodeData data = result.Data;
+        if (!AssetDatabase.IsValidFolder(outputFolder))
+        {
+            Directory.CreateDirectory(outputFolder);
             AssetDatabase.Refresh();
         }
 
         string assetName = $"EpisodeData_{data.episodeId}";
         data.name = assetName;
-        string assetPath = $"{_outputFolder}/{assetName}.asset";
+        string assetPath = $"{outputFolder}/{assetName}.asset";
         EpisodeData existing = AssetDatabase.LoadAssetAtPath<EpisodeData>(assetPath);
-
-        if (existing != null)
-        {
-            // 이 CSV에 없는 섹션은 인스펙터에서 수동으로 입력한 기존 값을 유지합니다.
-            // 섹션이 있으면(빈 섹션 포함) CSV가 해당 필드의 source of truth가 됩니다.
-            if (!sections.ContainsKey("BOARD"))
-            {
-                data.episodeDescription    = existing.episodeDescription;
-                data.iconNameBoard         = existing.iconNameBoard;
-                data.iconNameArchive       = existing.iconNameArchive;
-            }
-
-            if (!sections.ContainsKey("BOARD_CHARS"))
-                data.characters = existing.characters;
-
-            if (!sections.ContainsKey("SETTLEMENT_REWARDS"))
-                data.settlementRewards = existing.settlementRewards;
-
-            if (!sections.ContainsKey("SELECT_CHARS"))
-                RestoreCharacterOverrides(data, existing);
-
-            EditorUtility.CopySerialized(data, existing);
-            existing.name = assetName;
-            EditorUtility.SetDirty(existing);
-        }
-        else
+        if (existing == null)
         {
             AssetDatabase.CreateAsset(data, assetPath);
+            Debug.Log($"[EpisodeCsvImporter] Created: {assetPath}");
+            return data;
         }
 
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-
-        EditorUtility.DisplayDialog("Success", $"임포트 완료:\n{assetPath}", "OK");
-        Debug.Log($"[EpisodeCsvImporter] Imported: {assetPath}");
-    }
-
-    // selectConditions는 CSV에서 매번 새로 만들어지므로, 인스펙터에서 직접 채워둔
-    // characterOverrides(초상화 변형)는 flag 이름으로 기존 자산에서 찾아 복원한다.
-    private static void RestoreCharacterOverrides(EpisodeData data, EpisodeData existing)
-    {
-        if (data.selectConditions == null || existing.selectConditions == null) return;
-
-        foreach (var entry in data.selectConditions)
-        {
-            if (string.IsNullOrEmpty(entry.flag)) continue;
-
-            var match = existing.selectConditions.Find(e => e.flag == entry.flag);
-            if (match != null) entry.characterOverrides = match.characterOverrides;
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    // Parsing
-    // -------------------------------------------------------------------------
-
-    private static EpisodeData ParseCsv(string[] lines, out Dictionary<string, List<string[]>> sections)
-    {
-        sections = SplitIntoSections(lines, out Dictionary<string, string[]> sectionHeaders);
-
-        EpisodeData data = ScriptableObject.CreateInstance<EpisodeData>();
-
-        if (!ParseMeta(sections, data)) return null;
-        ParseTrigger(sections, data);
-        ParsePlayCondition(sections, data);
-        ParseSelectCondition(sections, data);
-        ParseOpeningChars(sections, data);
-        ParseBoard(sections, data);
-        ParseBoardChars(sections, data);
-        ParseSettlementRewards(sections, data);
-
-        Dictionary<string, List<CharacterSlotEntry>>  nodeChars           = BuildNodeCharsLookup(sections);
-        Dictionary<string, List<EpisodeChoice>>       nodeChoices         = BuildNodeChoicesLookup(sections);
-        Dictionary<string, List<NodeFlagBranch>>      nodeBranches        = BuildNodeBranchesLookup(sections);
-        Dictionary<string, List<NodeVarBranch>>       nodeVarBranches     = BuildNodeVarBranchesLookup(sections);
-        Dictionary<string, List<NodeEpisodeBranch>>   nodeEpisodeBranches = BuildNodeEpisodeBranchesLookup(sections);
-        Dictionary<string, List<CraftingOutcome>>     nodeCraftingBranches = BuildNodeCraftingBranchesLookup(sections);
-        sectionHeaders.TryGetValue("NODES", out string[] nodeHeaders);
-        ParseNodes(
-            sections,
-            data,
-            nodeChars,
-            nodeChoices,
-            nodeBranches,
-            nodeVarBranches,
-            nodeEpisodeBranches,
-            nodeCraftingBranches,
-            nodeHeaders);
-
-        return data;
-    }
-
-    // "#SECTION_NAME" 줄을 만나면 새 섹션을 시작하고, 그 다음 줄을 헤더(컬럼명)로,
-    // 이후 줄들을 데이터 행으로 모은다. 섹션이 바뀌기 전까지의 모든 행이 그 섹션에 속한다.
-    private static Dictionary<string, List<string[]>> SplitIntoSections(
-        string[] lines,
-        out Dictionary<string, string[]> sectionHeaders)
-    {
-        var sections = new Dictionary<string, List<string[]>>();
-        sectionHeaders = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
-        string current = null;
-        bool headerRead = false;
-
-        foreach (string raw in lines)
-        {
-            // Strip UTF-8 BOM character that may appear at the start of the file
-            string line = raw.Trim().TrimStart('\uFEFF');
-            if (string.IsNullOrEmpty(line)) continue;
-
-            if (line.StartsWith("#"))
-            {
-                string raw2 = line.Substring(1).Trim();
-                current = raw2.Split(',')[0].Trim();
-                headerRead = false;
-                if (!sections.ContainsKey(current))
-                    sections[current] = new List<string[]>();
-                continue;
-            }
-
-            if (current == null) continue;
-
-            string[] fields = ParseLine(line);
-            if (IsBlankRow(fields)) continue; // 시각적 여백용으로 콤마만 있는 행은 데이터로 취급하지 않음
-
-            if (!headerRead)
-            {
-                sectionHeaders[current] = fields;
-                headerRead = true;
-                continue;
-            }
-
-            sections[current].Add(fields);
-        }
-
-        return sections;
-    }
-
-    private static bool IsBlankRow(string[] fields)
-    {
-        for (int i = 0; i < fields.Length; i++)
-        {
-            if (!string.IsNullOrWhiteSpace(fields[i])) return false;
-        }
-        return true;
-    }
-
-    private static bool ParseMeta(Dictionary<string, List<string[]>> sections, EpisodeData data)
-    {
-        if (!sections.TryGetValue("META", out var rows) || rows.Count == 0)
-        {
-            string found = sections.Count > 0
-                ? string.Join(", ", sections.Keys)
-                : "(없음)";
-            Debug.LogError($"[EpisodeCsvImporter] #META 섹션이 없거나 비어있습니다. 인식된 섹션: {found}");
-            return false;
-        }
-
-        string[] row = rows[0];
-        data.episodeId     = Field(row, 0);
-        data.episodeTitle  = Field(row, 1);
-        data.firstNodeId   = Field(row, 2);
-        data.episodeType   = ParseEpisodeType(Field(row, 3));
-        data.mandatorySlot = ParseMandatorySlot(Field(row, 4));
-        data.chapterId     = Field(row, 5);
-        return true;
-    }
-
-    // TRIGGER/PLAY_TRIGGER 공통: 행 하나 = 조건 하나(conditionType,conditionValue,text). 여러 행은 AND로 결합된다.
-    private static void ParseConditionEntries(
-        Dictionary<string, List<string[]>> sections,
-        string sectionName,
-        out EpisodeTriggerCondition condition,
-        out List<TriggerConditionEntry> entries)
-    {
-        condition = new EpisodeTriggerCondition();
-        entries = new List<TriggerConditionEntry>();
-
-        if (!sections.TryGetValue(sectionName, out var rows)) return;
-
-        foreach (string[] row in rows)
-        {
-            SelectSingleCondition cond = ParseSingleCondition(Field(row, 0), Field(row, 1));
-            if (cond.type == SelectConditionType.None) continue;
-
-            ApplyToCondition(condition, cond);
-            entries.Add(new TriggerConditionEntry
-            {
-                condition = cond,
-                conditionText = Field(row, 2)
-            });
-        }
-    }
-
-    // 조건 하나를 평가용 EpisodeTriggerCondition(AND 결합 리스트)에 누적한다.
-    private static void ApplyToCondition(EpisodeTriggerCondition target, SelectSingleCondition cond)
-    {
-        switch (cond.type)
-        {
-            case SelectConditionType.MinDay:
-                target.minDay = cond.minDay;
-                break;
-            case SelectConditionType.MinMoney:
-                target.minMoney = cond.minMoney;
-                break;
-            case SelectConditionType.RequiredFlag:
-                if (!string.IsNullOrEmpty(cond.requiredFlag)) target.requiredFlags.Add(cond.requiredFlag);
-                break;
-            case SelectConditionType.PrerequisiteEpisode:
-                if (!string.IsNullOrEmpty(cond.prerequisiteEpisodeId)) target.prerequisiteEpisodeIds.Add(cond.prerequisiteEpisodeId);
-                break;
-            case SelectConditionType.RequiredVar:
-                if (!string.IsNullOrEmpty(cond.varName))
-                    target.requiredVars.Add(new VarCondition { varName = cond.varName, op = cond.varOp, threshold = cond.varThreshold });
-                break;
-        }
-    }
-
-    private static void ParseTrigger(Dictionary<string, List<string[]>> sections, EpisodeData data)
-    {
-        ParseConditionEntries(sections, "TRIGGER", out data.triggerCondition, out data.triggerConditionEntries);
-    }
-
-    private static void ParsePlayCondition(Dictionary<string, List<string[]>> sections, EpisodeData data)
-    {
-        ParseConditionEntries(sections, "PLAY_TRIGGER", out data.playCondition, out data.playConditionEntries);
-    }
-
-    private static void ParseSelectCondition(Dictionary<string, List<string[]>> sections, EpisodeData data)
-    {
-        data.selectConditions = new List<SelectConditionEntry>();
-
-        if (!sections.TryGetValue("SELECT_TRIGGER", out var rows)) return;
-
-        bool hasSelectChars = sections.ContainsKey("SELECT_CHARS");
-        Dictionary<string, List<CharacterDisplay>> selectChars = hasSelectChars
-            ? BuildSelectCharsLookup(sections)
-            : null;
-
-        foreach (string[] row in rows)
-        {
-            var entry = new SelectConditionEntry
-            {
-                condition       = ParseSingleCondition(Field(row, 0), Field(row, 1)),
-                flag            = Field(row, 2),
-                conditionText   = Field(row, 3),
-                revealCondition = ParseSingleCondition(Field(row, 4), Field(row, 5)),
-                hiddenText      = Field(row, 6)
-            };
-
-            if (hasSelectChars)
-            {
-                entry.characterOverrides = selectChars.TryGetValue(entry.flag, out var overrides)
-                    ? overrides : new List<CharacterDisplay>();
-            }
-
-            data.selectConditions.Add(entry);
-        }
-    }
-
-    private static Dictionary<string, List<CharacterDisplay>> BuildSelectCharsLookup(
-        Dictionary<string, List<string[]>> sections)
-    {
-        var lookup = new Dictionary<string, List<CharacterDisplay>>();
-
-        if (!sections.TryGetValue("SELECT_CHARS", out var rows)) return lookup;
-
-        foreach (string[] row in rows)
-        {
-            string flag = Field(row, 0);
-            if (!lookup.ContainsKey(flag))
-                lookup[flag] = new List<CharacterDisplay>();
-            lookup[flag].Add(ToCharacterDisplay(row, 1));
-        }
-
-        return lookup;
-    }
-
-    private static void ParseBoard(Dictionary<string, List<string[]>> sections, EpisodeData data)
-    {
-        if (!sections.TryGetValue("BOARD", out var rows) || rows.Count == 0) return;
-
-        string[] row = rows[0];
-        data.episodeDescription    = Field(row, 0);
-        data.iconNameBoard         = Field(row, 1);
-        data.iconNameArchive       = Field(row, 2);
-    }
-
-    private static void ParseBoardChars(Dictionary<string, List<string[]>> sections, EpisodeData data)
-    {
-        if (!sections.TryGetValue("BOARD_CHARS", out var rows)) return;
-
-        data.characters = new List<CharacterDisplay>();
-        foreach (string[] row in rows)
-            data.characters.Add(ToCharacterDisplay(row, 0));
-    }
-
-    private static void ParseSettlementRewards(Dictionary<string, List<string[]>> sections, EpisodeData data)
-    {
-        if (!sections.TryGetValue("SETTLEMENT_REWARDS", out var rows)) return;
-
-        data.settlementRewards = new List<EpisodeSettlementReward>();
-        foreach (string[] row in rows)
-        {
-            data.settlementRewards.Add(new EpisodeSettlementReward
-            {
-                requiredFlag = Field(row, 0),
-                amount       = int.TryParse(Field(row, 1), out int amount) ? amount : 0,
-                label        = Field(row, 2)
-            });
-        }
-    }
-
-    private static CharacterDisplay ToCharacterDisplay(string[] row, int offset)
-    {
-        string hiddenStr = Field(row, offset);
-        return new CharacterDisplay
-        {
-            isHidden      = string.Equals(hiddenStr, "true", StringComparison.OrdinalIgnoreCase) || hiddenStr == "1",
-            characterName = Field(row, offset + 1)
-        };
-    }
-
-    // conditionType,conditionValue 두 열로 조건 하나(옵션당 하나)를 만든다.
-    private static SelectSingleCondition ParseSingleCondition(string typeStr, string value)
-    {
-        var cond = new SelectSingleCondition();
-        if (!System.Enum.TryParse(typeStr.Trim(), true, out SelectConditionType type)) return cond;
-        cond.type = type;
-
-        switch (type)
-        {
-            case SelectConditionType.MinDay:
-                cond.minDay = int.TryParse(value, out int d) ? d : 0;
-                break;
-            case SelectConditionType.RequiredFlag:
-                cond.requiredFlag = value.Trim();
-                break;
-            case SelectConditionType.PrerequisiteEpisode:
-                cond.prerequisiteEpisodeId = value.Trim();
-                break;
-            case SelectConditionType.RequiredVar:
-                VarCondition vc = TryParseVarCondition(value.Trim());
-                if (vc != null)
-                {
-                    cond.varName = vc.varName;
-                    cond.varOp = vc.op;
-                    cond.varThreshold = vc.threshold;
-                }
-                break;
-            case SelectConditionType.MinMoney:
-                cond.minMoney = int.TryParse(value, out int m) ? m : 0;
-                break;
-        }
-
-        return cond;
-    }
-
-    private static void ParseOpeningChars(Dictionary<string, List<string[]>> sections, EpisodeData data)
-    {
-        data.openingCharacters = new List<CharacterSlotEntry>();
-
-        if (!sections.TryGetValue("OPENING_CHARS", out var rows)) return;
-
-        foreach (string[] row in rows)
-            data.openingCharacters.Add(ToSlotEntry(row, 0));
-    }
-
-    private static Dictionary<string, List<CharacterSlotEntry>> BuildNodeCharsLookup(
-        Dictionary<string, List<string[]>> sections)
-    {
-        var lookup = new Dictionary<string, List<CharacterSlotEntry>>();
-
-        if (!sections.TryGetValue("NODE_CHARS", out var rows)) return lookup;
-
-        foreach (string[] row in rows)
-        {
-            string nid = Field(row, 0);
-            if (!lookup.ContainsKey(nid))
-                lookup[nid] = new List<CharacterSlotEntry>();
-            lookup[nid].Add(ToSlotEntry(row, 1));
-        }
-
-        return lookup;
-    }
-
-    private static Dictionary<string, List<EpisodeChoice>> BuildNodeChoicesLookup(
-        Dictionary<string, List<string[]>> sections)
-    {
-        var lookup = new Dictionary<string, List<EpisodeChoice>>();
-
-        if (!sections.TryGetValue("CHOICES", out var rows)) return lookup;
-
-        foreach (string[] row in rows)
-        {
-            string nid = Field(row, 0);
-            if (!lookup.ContainsKey(nid))
-                lookup[nid] = new List<EpisodeChoice>();
-
-            lookup[nid].Add(new EpisodeChoice
-            {
-                buttonText  = Field(row, 2),
-                nextNodeId  = Field(row, 3),
-                setFlags    = SplitList(Field(row, 4)),
-                clearFlags  = SplitList(Field(row, 5)),
-                varChanges  = ParseVarChangeList(Field(row, 6))
-            });
-        }
-
-        return lookup;
-    }
-
-    private static Dictionary<string, List<NodeFlagBranch>> BuildNodeBranchesLookup(
-        Dictionary<string, List<string[]>> sections)
-    {
-        var lookup = new Dictionary<string, List<NodeFlagBranch>>();
-
-        if (!sections.TryGetValue("NODE_BRANCHES", out var rows)) return lookup;
-
-        foreach (string[] row in rows)
-        {
-            string nid = Field(row, 0);
-            if (!lookup.ContainsKey(nid))
-                lookup[nid] = new List<NodeFlagBranch>();
-
-            lookup[nid].Add(new NodeFlagBranch
-            {
-                requiredAllFlags = SplitBy(Field(row, 1), ','),
-                requiredAnyFlags = SplitBy(Field(row, 2), ','),
-                nextNodeId       = Field(row, 3)
-            });
-        }
-
-        return lookup;
-    }
-
-    private static Dictionary<string, List<NodeVarBranch>> BuildNodeVarBranchesLookup(
-        Dictionary<string, List<string[]>> sections)
-    {
-        var lookup = new Dictionary<string, List<NodeVarBranch>>();
-
-        if (!sections.TryGetValue("NODE_VAR_BRANCHES", out var rows)) return lookup;
-
-        foreach (string[] row in rows)
-        {
-            string nid = Field(row, 0);
-            if (!lookup.ContainsKey(nid))
-                lookup[nid] = new List<NodeVarBranch>();
-
-            lookup[nid].Add(new NodeVarBranch
-            {
-                condition = new VarCondition
-                {
-                    varName   = Field(row, 1),
-                    op        = ParseCompareOp(Field(row, 2)),
-                    threshold = int.TryParse(Field(row, 3), out int t) ? t : 0
-                },
-                nextNodeId = Field(row, 4)
-            });
-        }
-
-        return lookup;
-    }
-
-    private static Dictionary<string, List<CraftingOutcome>> BuildNodeCraftingBranchesLookup(
-        Dictionary<string, List<string[]>> sections)
-    {
-        var lookup = new Dictionary<string, List<CraftingOutcome>>();
-
-        if (!sections.TryGetValue("NODE_CRAFTING_BRANCHES", out var rows)) return lookup;
-
-        foreach (string[] row in rows)
-        {
-            string nid = Field(row, 0);
-            if (!lookup.ContainsKey(nid))
-                lookup[nid] = new List<CraftingOutcome>();
-
-            if (!System.Enum.TryParse(Field(row, 1), true, out CraftingJobResult result)) continue;
-
-            lookup[nid].Add(new CraftingOutcome
-            {
-                result     = result,
-                nextNodeId = Field(row, 2),
-                flag       = Field(row, 3),
-                varChanges = ParseVarChangeList(Field(row, 4))
-            });
-        }
-
-        return lookup;
-    }
-
-    private static Dictionary<string, List<NodeEpisodeBranch>> BuildNodeEpisodeBranchesLookup(
-        Dictionary<string, List<string[]>> sections)
-    {
-        var lookup = new Dictionary<string, List<NodeEpisodeBranch>>();
-
-        if (!sections.TryGetValue("NODE_EPISODE_BRANCHES", out var rows)) return lookup;
-
-        foreach (string[] row in rows)
-        {
-            string nid = Field(row, 0);
-            if (!lookup.ContainsKey(nid))
-                lookup[nid] = new List<NodeEpisodeBranch>();
-
-            lookup[nid].Add(new NodeEpisodeBranch
-            {
-                requiredCompletedEpisodeId = Field(row, 1),
-                nextNodeId                 = Field(row, 2)
-            });
-        }
-
-        return lookup;
-    }
-
-    private static void ParseNodes(
-        Dictionary<string, List<string[]>> sections,
-        EpisodeData data,
-        Dictionary<string, List<CharacterSlotEntry>> nodeChars,
-        Dictionary<string, List<EpisodeChoice>> nodeChoices,
-        Dictionary<string, List<NodeFlagBranch>> nodeBranches,
-        Dictionary<string, List<NodeVarBranch>> nodeVarBranches,
-        Dictionary<string, List<NodeEpisodeBranch>> nodeEpisodeBranches,
-        Dictionary<string, List<CraftingOutcome>> nodeCraftingBranches,
-        string[] nodeHeaders)
-    {
-        data.nodes = new List<EpisodeNode>();
-
-        if (!sections.TryGetValue("NODES", out var rows)) return;
-
-        foreach (string[] row in rows)
-        {
-            string nid = NamedField(row, nodeHeaders, "nodeId", 0);
-            string craftingValue = NamedField(row, nodeHeaders, "requiresCrafting", 5);
-            bool crafting = string.Equals(craftingValue, "true", StringComparison.OrdinalIgnoreCase)
-                         || craftingValue == "1";
-            string orderTypeValue = NamedField(row, nodeHeaders, "craftingOrderType", -1);
-            CocktailOrderType craftingOrderType = ParseCraftingOrderType(orderTypeValue);
-            string craftingTicketKey =
-                NamedField(row, nodeHeaders, "craftingTicketKey", 6);
-            string craftingOrderTarget = NamedField(row, nodeHeaders, "craftingOrderTarget", -1);
-            if (string.IsNullOrWhiteSpace(craftingOrderTarget))
-            {
-                craftingOrderTarget = NamedField(
-                    row,
-                    nodeHeaders,
-                    "craftingRecipeId",
-                    -1);
-            }
-            bool defaultPaymentEnabled = crafting
-                && !string.IsNullOrWhiteSpace(craftingOrderTarget);
-            bool craftingPaymentEnabled = ParseBoolean(
-                NamedField(row, nodeHeaders, "craftingPaymentEnabled", -1),
-                defaultPaymentEnabled);
-            GameCurrency craftingPaymentCurrency = ParseGameCurrency(
-                NamedField(row, nodeHeaders, "craftingPaymentCurrency", -1));
-            float craftingPaymentMultiplier = ParsePositiveFloat(
-                NamedField(row, nodeHeaders, "craftingPaymentMultiplier", -1),
-                1f);
-
-            data.nodes.Add(new EpisodeNode
-            {
-                nodeId              = nid,
-                speakerKey          = NamedField(row, nodeHeaders, "speakerKey", 1),
-                overrideSpeakerName = NamedField(row, nodeHeaders, "overrideSpeakerName", 2),
-                text                = NamedField(row, nodeHeaders, "text", 3),
-                nextNodeId          = NamedField(row, nodeHeaders, "nextNodeId", 4),
-                requiresCrafting    = crafting,
-                craftingOrderTicket = ResolveOrderTicket(craftingTicketKey),
-                craftingTicketKey   = craftingTicketKey,
-                craftingOrderType   = craftingOrderType,
-                craftingOrderTarget = craftingOrderTarget,
-                craftingPaymentEnabled = craftingPaymentEnabled,
-                craftingPaymentCurrency = craftingPaymentCurrency,
-                craftingPaymentMultiplier = craftingPaymentMultiplier,
-                bgmCommand          = ParseBgmCommand(NamedField(row, nodeHeaders, "bgmCommand", 7)),
-                bgmClipName         = NamedField(row, nodeHeaders, "bgmClipName", 8),
-                sfxCommand          = ParseSfxCommand(NamedField(row, nodeHeaders, "sfxCommand", 9)),
-                sfxClipName         = NamedField(row, nodeHeaders, "sfxClipName", 10),
-                craftingOutcomes = nodeCraftingBranches.TryGetValue(nid, out var craftBr)
-                    ? craftBr : new List<CraftingOutcome>(),
-                characters = nodeChars.TryGetValue(nid, out var chars)
-                    ? chars : new List<CharacterSlotEntry>(),
-                choices = nodeChoices.TryGetValue(nid, out var choices)
-                    ? choices : new List<EpisodeChoice>(),
-                flagBranches = nodeBranches.TryGetValue(nid, out var branches)
-                    ? branches : new List<NodeFlagBranch>(),
-                varBranches = nodeVarBranches.TryGetValue(nid, out var varBr)
-                    ? varBr : new List<NodeVarBranch>(),
-                episodeBranches = nodeEpisodeBranches.TryGetValue(nid, out var epBr)
-                    ? epBr : new List<NodeEpisodeBranch>()
-            });
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    // Helpers
-
-    private static OrderTicketData ResolveOrderTicket(string ticketKey)
-    {
-        if (string.IsNullOrWhiteSpace(ticketKey))
-            return null;
-
-        OrderTicketDatabase database =
-            AssetDatabase.LoadAssetAtPath<OrderTicketDatabase>(OrderTicketDatabasePath);
-        return database != null ? database.FindByKey(ticketKey) : null;
-    }
-    // -------------------------------------------------------------------------
-
-    private static CharacterSlotEntry ToSlotEntry(string[] row, int offset)
-    {
-        return new CharacterSlotEntry
-        {
-            characterKey = Field(row, offset),
-            expressionKey = Field(row, offset + 1),
-            slotIndex = int.TryParse(Field(row, offset + 2), out int s) ? s : -1
-        };
-    }
-
-    private static string Field(string[] row, int index)
-    {
-        return index >= 0 && index < row.Length ? row[index].Trim() : string.Empty;
-    }
-
-    private static string NamedField(
-        string[] row,
-        string[] headers,
-        string fieldName,
-        int fallbackIndex)
-    {
-        if (headers != null)
-        {
-            for (int i = 0; i < headers.Length; i++)
-            {
-                if (string.Equals(
-                        headers[i]?.Trim(),
-                        fieldName,
-                        StringComparison.OrdinalIgnoreCase))
-                {
-                    return Field(row, i);
-                }
-            }
-        }
-
-        return Field(row, fallbackIndex);
-    }
-
-    private static List<VarChange> ParseVarChangeList(string value)
-    {
-        var result = new List<VarChange>();
-        if (string.IsNullOrWhiteSpace(value)) return result;
-
-        foreach (string item in value.Split('|'))
-        {
-            string t = item.Trim();
-            if (string.IsNullOrEmpty(t)) continue;
-
-            // Format: varName+5  or  varName-3
-            int plusIdx  = t.LastIndexOf('+');
-            int minusIdx = t.LastIndexOf('-');
-            int splitAt  = -1;
-            int sign     = 1;
-
-            if (plusIdx > 0 && plusIdx > minusIdx)  { splitAt = plusIdx;  sign =  1; }
-            else if (minusIdx > 0)                   { splitAt = minusIdx; sign = -1; }
-
-            if (splitAt < 0) continue;
-
-            string name  = t.Substring(0, splitAt).Trim();
-            string numStr = t.Substring(splitAt + 1).Trim();
-            if (!int.TryParse(numStr, out int num)) continue;
-
-            result.Add(new VarChange { varName = name, delta = sign * num });
-        }
-
-        return result;
-    }
-
-    private static VarCondition TryParseVarCondition(string token)
-    {
-        // Supported operators (longest first to avoid partial matches)
-        string[] ops = { ">=", "<=", "==", ">", "<" };
-
-        foreach (string op in ops)
-        {
-            int idx = token.IndexOf(op, System.StringComparison.Ordinal);
-            if (idx <= 0) continue;
-
-            string name   = token.Substring(0, idx).Trim();
-            string numStr = token.Substring(idx + op.Length).Trim();
-            if (!int.TryParse(numStr, out int num)) continue;
-
-            return new VarCondition
-            {
-                varName   = name,
-                op        = ParseCompareOp(op),
-                threshold = num
-            };
-        }
-
-        return null;
-    }
-
-    private static EpisodeType ParseEpisodeType(string value)
-    {
-        return System.Enum.TryParse(value.Trim(), true, out EpisodeType result) ? result : EpisodeType.Default;
-    }
-
-    private static MandatorySlot ParseMandatorySlot(string value)
-    {
-        return System.Enum.TryParse(value.Trim(), true, out MandatorySlot result) ? result : MandatorySlot.None;
-    }
-
-    private static CocktailOrderType ParseCraftingOrderType(string value)
-    {
-        return Enum.TryParse(value?.Trim(), true, out CocktailOrderType result)
-            ? result
-            : CocktailOrderType.EpisodeOrder;
-    }
-
-    private static bool ParseBoolean(string value, bool defaultValue)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-            return defaultValue;
-
-        string normalized = value.Trim();
-        if (bool.TryParse(normalized, out bool parsed))
-            return parsed;
-        if (normalized == "1")
-            return true;
-        if (normalized == "0")
-            return false;
-
-        return defaultValue;
-    }
-
-    private static GameCurrency ParseGameCurrency(string value)
-    {
-        return Enum.TryParse(value?.Trim(), true, out GameCurrency result)
-            && Enum.IsDefined(typeof(GameCurrency), result)
-                ? result
-                : GameCurrency.Money;
-    }
-
-    private static float ParsePositiveFloat(string value, float defaultValue)
-    {
-        return float.TryParse(
-                value?.Trim(),
-                NumberStyles.Float,
-                CultureInfo.InvariantCulture,
-                out float result)
-            && result > 0f
-                ? result
-                : defaultValue;
-    }
-
-    private static BgmCommand ParseBgmCommand(string value)
-    {
-        return value.Trim().ToLowerInvariant() switch
-        {
-            "play" => BgmCommand.Play,
-            "stop" => BgmCommand.Stop,
-            _      => BgmCommand.None
-        };
-    }
-
-    private static SfxCommand ParseSfxCommand(string value)
-    {
-        return value.Trim().ToLowerInvariant() switch
-        {
-            "play" => SfxCommand.Play,
-            _      => SfxCommand.None
-        };
-    }
-
-    private static CompareOp ParseCompareOp(string op)
-    {
-        return op.Trim() switch
-        {
-            ">=" => CompareOp.GreaterOrEqual,
-            ">"  => CompareOp.Greater,
-            "==" => CompareOp.Equal,
-            "<"  => CompareOp.Less,
-            "<=" => CompareOp.LessOrEqual,
-            _    => CompareOp.GreaterOrEqual
-        };
-    }
-
-    private static List<string> SplitBy(string value, char separator)
-    {
-        var result = new List<string>();
-        if (string.IsNullOrWhiteSpace(value)) return result;
-        foreach (string item in value.Split(separator))
-        {
-            string t = item.Trim();
-            if (!string.IsNullOrEmpty(t)) result.Add(t);
-        }
-        return result;
-    }
-
-    private static List<string> SplitList(string value)
-    {
-        var result = new List<string>();
-        if (string.IsNullOrWhiteSpace(value)) return result;
-
-        foreach (string item in value.Split('|'))
-        {
-            string t = item.Trim();
-            if (!string.IsNullOrEmpty(t))
-                result.Add(t);
-        }
-
-        return result;
-    }
-
-    private static string[] ParseLine(string line)
-    {
-        var fields = new List<string>();
-        var current = new StringBuilder();
-        bool inQuotes = false;
-
-        for (int i = 0; i < line.Length; i++)
-        {
-            char c = line[i];
-
-            if (c == '"')
-            {
-                if (inQuotes && i + 1 < line.Length && line[i + 1] == '"')
-                {
-                    current.Append('"');
-                    i++;
-                }
-                else
-                {
-                    inQuotes = !inQuotes;
-                }
-            }
-            else if (c == ',' && !inQuotes)
-            {
-                fields.Add(current.ToString());
-                current.Clear();
-            }
-            else
-            {
-                current.Append(c);
-            }
-        }
-
-        fields.Add(current.ToString());
-        return fields.ToArray();
+        if (!result.Sections.Contains(EpisodeCsvCodec.SettlementRewardsSection))
+            data.settlementRewards = existing.settlementRewards;
+
+        EditorUtility.CopySerialized(data, existing);
+        existing.name = assetName;
+        EditorUtility.SetDirty(existing);
+        Object.DestroyImmediate(data);
+        Debug.Log($"[EpisodeCsvImporter] Updated: {assetPath}");
+        return existing;
     }
 }

@@ -26,11 +26,11 @@ namespace Slainte.EditorTools
         private const string F72CharacterPath =
             BusinessAssetPaths.CharacterContentRoot + "data/CharacterData_f72.asset";
 
-        [MenuItem("Slainte/품질 검증/시간 기반 영업 검증")]
+        [MenuItem("Slainte/품질 검증/슬롯 기반 영업 검증")]
         public static void ValidateFromMenu()
         {
             RunValidation();
-            EditorUtility.DisplayDialog("시간 기반 영업 검증", "모든 검증을 통과했습니다.", "확인");
+            EditorUtility.DisplayDialog("슬롯 기반 영업 검증", "모든 검증을 통과했습니다.", "확인");
         }
 
         public static void RunBatchValidation()
@@ -59,7 +59,7 @@ namespace Slainte.EditorTools
             ValidatePlannerRules();
             ValidateEpisodeCraftingCompatibility();
             ValidateTechnicalFailureContract();
-            Debug.Log("[BusinessShiftValidator] 통과: 180초 설정, 손님·주문 DB 무결성, 최근 손님 2명 제한, Day 5 이후 StrangeCoin_0 3번 슬롯·TheLittles_0 6번 슬롯·다음 날 재시도·완료 제외, 필수 액션, 에피소드 실제 제조 결과·구형 분기 호환, BusinessScene 구성");
+            Debug.Log("[BusinessShiftValidator] 통과: 하루 손님 수 설정, 손님·주문 DB 무결성, 최근 손님 2명 제한, 슬롯 일정 색인·후보 우선순위·조건 미충족 폴백·완료/당일 시도 제외·챕터 필터, 에피소드 실제 제조 결과·구형 분기 호환, BusinessScene 구성");
         }
 
         private static void ValidatePublishedCustomerOrders()
@@ -275,95 +275,12 @@ namespace Slainte.EditorTools
             BusinessOrderFlowSettings settings =
                 AssetDatabase.LoadAssetAtPath<BusinessOrderFlowSettings>(SettingsPath);
             Require(settings != null, "영업 설정 에셋이 없습니다.");
-            Require(Mathf.Approximately(settings.shiftDurationSeconds, 180f),
-                $"기본 영업시간이 180초가 아닙니다: {settings.shiftDurationSeconds}");
+            Require(settings.customersPerDay >= 1,
+                $"하루 손님 수가 1 미만입니다: {settings.customersPerDay}");
             Require(settings.customerVisitDatabase != null, "영업 설정에 손님 데이터베이스가 연결되지 않았습니다.");
             Require(settings.customerVisitDatabase.visits != null
                     && settings.customerVisitDatabase.visits.Count > 0,
                 "손님 데이터베이스가 비어 있습니다.");
-            Require(settings.randomEncounters != null, "랜덤 인카운터 목록이 없습니다.");
-
-            for (int i = 0; i < settings.randomEncounters.Count; i++)
-            {
-                BusinessRandomEncounterEntry entry = settings.randomEncounters[i];
-                Require(entry?.episode != null
-                        && entry.episode.episodeType == EpisodeType.Encounter
-                        && entry.weight > 0f,
-                    $"랜덤 인카운터 {i}번이 잘못 설정되었습니다.");
-                Require(!string.Equals(
-                        entry.episode.episodeId,
-                        "StrangeCoin_0",
-                        StringComparison.OrdinalIgnoreCase)
-                        && !string.Equals(
-                            entry.episode.episodeId,
-                            "TheLittles_0",
-                            StringComparison.OrdinalIgnoreCase),
-                    "고정 슬롯 인카운터는 랜덤 인카운터 풀에서 제거되어야 합니다.");
-            }
-
-            BusinessRequiredActionRule strangeCoinRule = null;
-            BusinessRequiredActionRule theLittlesRule = null;
-            Require(settings.requiredActions != null, "필수 영업 액션 목록이 없습니다.");
-            for (int i = 0; i < settings.requiredActions.Count; i++)
-            {
-                BusinessRequiredActionRule rule = settings.requiredActions[i];
-                if (rule?.encounterEpisode != null
-                    && string.Equals(
-                        rule.encounterEpisode.episodeId,
-                        "StrangeCoin_0",
-                        StringComparison.OrdinalIgnoreCase))
-                {
-                    strangeCoinRule = rule;
-                }
-                else if (rule?.encounterEpisode != null
-                    && string.Equals(
-                        rule.encounterEpisode.episodeId,
-                        "TheLittles_0",
-                        StringComparison.OrdinalIgnoreCase))
-                {
-                    theLittlesRule = rule;
-                }
-            }
-
-            Require(strangeCoinRule != null,
-                "StrangeCoin_0의 고정 영업 슬롯 규칙이 없습니다.");
-            Require(strangeCoinRule.actionType == BusinessRequiredActionType.EncounterEpisode,
-                "StrangeCoin_0 고정 규칙이 인카운터 액션이 아닙니다.");
-            Require(strangeCoinRule.timing == BusinessRequiredActionTiming.SequenceSlot
-                    && strangeCoinRule.sequenceSlot == 3,
-                "StrangeCoin_0은 3번 영업 슬롯으로 설정되어야 합니다.");
-            Require(strangeCoinRule.condition != null
-                    && strangeCoinRule.condition.minDay == 5,
-                "StrangeCoin_0 고정 규칙은 Day 5부터 활성화되어야 합니다.");
-            Require(strangeCoinRule.encounterEpisode.episodeType == EpisodeType.Encounter,
-                "StrangeCoin_0의 EpisodeType이 Encounter가 아닙니다.");
-            Require(strangeCoinRule.encounterEpisode.triggerCondition != null
-                    && strangeCoinRule.encounterEpisode.triggerCondition.minDay == 5,
-                "StrangeCoin_0 에피소드 자체의 시작 조건도 Day 5여야 합니다.");
-            Require(!string.IsNullOrWhiteSpace(strangeCoinRule.encounterEpisode.firstNodeId)
-                    && strangeCoinRule.encounterEpisode.FindNode(
-                        strangeCoinRule.encounterEpisode.firstNodeId) != null,
-                "StrangeCoin_0의 시작 노드를 찾지 못했습니다.");
-
-            Require(theLittlesRule != null,
-                "TheLittles_0의 고정 영업 슬롯 규칙이 없습니다.");
-            Require(theLittlesRule.actionType == BusinessRequiredActionType.EncounterEpisode,
-                "TheLittles_0 고정 규칙이 인카운터 액션이 아닙니다.");
-            Require(theLittlesRule.timing == BusinessRequiredActionTiming.SequenceSlot
-                    && theLittlesRule.sequenceSlot == 6,
-                "TheLittles_0은 6번 영업 슬롯으로 설정되어야 합니다.");
-            Require(theLittlesRule.condition != null
-                    && theLittlesRule.condition.minDay == 5,
-                "TheLittles_0 고정 규칙은 Day 5부터 활성화되어야 합니다.");
-            Require(theLittlesRule.encounterEpisode.episodeType == EpisodeType.Encounter,
-                "TheLittles_0의 EpisodeType이 Encounter가 아닙니다.");
-            Require(theLittlesRule.encounterEpisode.triggerCondition != null
-                    && theLittlesRule.encounterEpisode.triggerCondition.minDay == 5,
-                "TheLittles_0 에피소드 자체의 시작 조건도 Day 5여야 합니다.");
-            Require(!string.IsNullOrWhiteSpace(theLittlesRule.encounterEpisode.firstNodeId)
-                    && theLittlesRule.encounterEpisode.FindNode(
-                        theLittlesRule.encounterEpisode.firstNodeId) != null,
-                "TheLittles_0의 시작 노드를 찾지 못했습니다.");
 
             for (int i = 0; i < settings.customerVisitDatabase.visits.Count; i++)
             {
@@ -511,262 +428,7 @@ namespace Slainte.EditorTools
                 tagOrder.tags.RemoveAt(tagOrder.tags.Count - 1);
                 tagOrder.orderType = CocktailOrderType.TasteOrder;
 
-                episode.episodeId = "validator_episode";
-                episode.episodeType = EpisodeType.Encounter;
-                episode.triggerCondition = new EpisodeTriggerCondition();
-                secondEpisode.episodeId = "validator_second_episode";
-                secondEpisode.episodeType = EpisodeType.Encounter;
-                secondEpisode.triggerCondition = new EpisodeTriggerCondition();
-                sixthEpisode.episodeId = "validator_sixth_episode";
-                sixthEpisode.episodeType = EpisodeType.Encounter;
-                sixthEpisode.triggerCondition = new EpisodeTriggerCondition();
-                BusinessRandomEncounterEntry encounterEntry = new()
-                {
-                    episode = episode,
-                    weight = 1f
-                };
-                BusinessRandomEncounterEntry secondEncounterEntry = new()
-                {
-                    episode = secondEpisode,
-                    weight = 1f
-                };
-                List<BusinessRandomEncounterEntry> encounterPool =
-                    BusinessSequencePlanner.BuildEligibleRandomEncounterPool(
-                        new List<BusinessRandomEncounterEntry>
-                        {
-                            encounterEntry,
-                            secondEncounterEntry
-                        },
-                        progress);
-                Require(encounterPool.Count == 2,
-                    "조건을 만족한 랜덤 인카운터가 풀에 들어오지 않았습니다.");
-
-                recent.Add(visit.GetReappearanceKey());
-                BusinessSequenceSelection encounterBeforeCoolingCustomer =
-                    BusinessSequencePlanner.PickWeightedSequence(
-                        pool,
-                        encounterPool,
-                        null,
-                        progress,
-                        recent,
-                        null,
-                        null,
-                        new System.Random(1));
-                Require(encounterBeforeCoolingCustomer?.IsEncounter == true,
-                    "실행 가능한 인카운터보다 최근 등장한 손님을 먼저 선택했습니다.");
-
-                HashSet<string> startedEncounterIds = new(StringComparer.OrdinalIgnoreCase)
-                {
-                    episode.episodeId
-                };
-                BusinessSequenceSelection differentEncounterSameDay =
-                    BusinessSequencePlanner.PickWeightedSequence(
-                        pool,
-                        encounterPool,
-                        startedEncounterIds,
-                        progress,
-                        recent,
-                        null,
-                        null,
-                        new System.Random(1));
-                Require(differentEncounterSameDay?.Encounter?.episode == secondEpisode,
-                    "하나의 인카운터 실행이 다른 종류의 당일 등장까지 막았습니다.");
-
-                startedEncounterIds.Add(secondEpisode.episodeId);
-                recent.Clear();
-                BusinessSequenceSelection noRepeatedEncounter =
-                    BusinessSequencePlanner.PickWeightedSequence(
-                        pool,
-                        encounterPool,
-                        startedEncounterIds,
-                        progress,
-                        recent,
-                        null,
-                        null,
-                        new System.Random(1));
-                Require(noRepeatedEncounter?.Visit == visit,
-                    "당일에 실행한 인카운터 ID가 다시 선택되었습니다.");
-
-                HashSet<string> reservedTargets = new(StringComparer.OrdinalIgnoreCase)
-                {
-                    encounterEntry.TargetKey
-                };
-                List<BusinessRandomEncounterEntry> unreservedPool =
-                    BusinessSequencePlanner.BuildEligibleRandomEncounterPool(
-                        encounterPool,
-                        progress,
-                        reservedTargets);
-                Require(unreservedPool.Count == 1
-                        && unreservedPool[0].episode == secondEpisode,
-                    "필수 인카운터를 랜덤 풀에서 예약하지 못했습니다.");
-
-                BusinessRequiredActionRule lowerPriority = new()
-                {
-                    ruleId = "validator_customer_rule",
-                    actionType = BusinessRequiredActionType.CustomerVisit,
-                    exactDay = 5,
-                    priority = 10,
-                    timing = BusinessRequiredActionTiming.BeforeFirstCustomer,
-                    customerVisit = visit
-                };
-                BusinessRequiredActionRule higherPriority = new()
-                {
-                    ruleId = "validator_episode_rule",
-                    actionType = BusinessRequiredActionType.EncounterEpisode,
-                    exactDay = 5,
-                    priority = 100,
-                    timing = BusinessRequiredActionTiming.BeforeFirstCustomer,
-                    encounterEpisode = episode
-                };
-                List<BusinessRequiredActionRule> rules = new() { lowerPriority, higherPriority };
-
-                BusinessRequiredActionRule selected = BusinessSequencePlanner.PickNextRequiredAction(
-                    rules,
-                    progress,
-                    BusinessRequiredActionTiming.BeforeFirstCustomer,
-                    false,
-                    null,
-                    null);
-                Require(selected == higherPriority, "필수 액션의 높은 priority가 먼저 선택되지 않았습니다.");
-
-                progress.MarkEpisodeCompleted(episode.episodeId);
-                List<BusinessRandomEncounterEntry> afterCompletionPool =
-                    BusinessSequencePlanner.BuildEligibleRandomEncounterPool(
-                        encounterPool,
-                        progress);
-                Require(afterCompletionPool.Count == 1
-                        && afterCompletionPool[0].episode == secondEpisode,
-                    "완료한 인카운터가 이후 영업일의 풀에 다시 들어왔습니다.");
-                selected = BusinessSequencePlanner.PickNextRequiredAction(
-                    rules,
-                    progress,
-                    BusinessRequiredActionTiming.BeforeFirstCustomer,
-                    false,
-                    null,
-                    null);
-                Require(selected == lowerPriority, "완료된 인카운터 에피소드를 다시 필수 선택했습니다.");
-
-                HashSet<string> completedTargets = new(StringComparer.OrdinalIgnoreCase)
-                {
-                    lowerPriority.TargetKey
-                };
-                selected = BusinessSequencePlanner.PickNextRequiredAction(
-                    rules,
-                    progress,
-                    BusinessRequiredActionTiming.BeforeFirstCustomer,
-                    false,
-                    null,
-                    completedTargets);
-                Require(selected == null, "완료한 필수 대상을 건너뛰지 못했습니다.");
-
-                progress.SetCurrentDay(6);
-                selected = BusinessSequencePlanner.PickNextRequiredAction(
-                    rules,
-                    progress,
-                    BusinessRequiredActionTiming.BeforeFirstCustomer,
-                    false,
-                    null,
-                    null);
-                Require(selected == null, "exactDay가 다른 필수 액션이 선택됐습니다.");
-                progress.SetCurrentDay(5);
-
-                BusinessRequiredActionRule fixedSlot = new()
-                {
-                    ruleId = "validator_fixed_slot_episode",
-                    actionType = BusinessRequiredActionType.EncounterEpisode,
-                    condition = new EpisodeTriggerCondition { minDay = 5 },
-                    priority = 100,
-                    timing = BusinessRequiredActionTiming.SequenceSlot,
-                    sequenceSlot = 3,
-                    encounterEpisode = secondEpisode
-                };
-                BusinessRequiredActionRule sixthSlot = new()
-                {
-                    ruleId = "validator_sixth_slot_episode",
-                    actionType = BusinessRequiredActionType.EncounterEpisode,
-                    condition = new EpisodeTriggerCondition { minDay = 5 },
-                    priority = 100,
-                    timing = BusinessRequiredActionTiming.SequenceSlot,
-                    sequenceSlot = 6,
-                    encounterEpisode = sixthEpisode
-                };
-                List<BusinessRequiredActionRule> fixedSlotRules = new()
-                {
-                    fixedSlot,
-                    sixthSlot
-                };
-
-                progress.SetCurrentDay(4);
-                selected = BusinessSequencePlanner.PickNextRequiredAction(
-                    fixedSlotRules,
-                    progress,
-                    BusinessRequiredActionTiming.SequenceSlot,
-                    false,
-                    null,
-                    null,
-                    3);
-                Require(selected == null, "Day 5 전인데 고정 슬롯 인카운터가 선택됐습니다.");
-
-                progress.SetCurrentDay(5);
-                selected = BusinessSequencePlanner.PickNextRequiredAction(
-                    fixedSlotRules,
-                    progress,
-                    BusinessRequiredActionTiming.SequenceSlot,
-                    false,
-                    null,
-                    null,
-                    2);
-                Require(selected == null, "3번이 아닌 영업 슬롯에서 인카운터가 선택됐습니다.");
-                selected = BusinessSequencePlanner.PickNextRequiredAction(
-                    fixedSlotRules,
-                    progress,
-                    BusinessRequiredActionTiming.SequenceSlot,
-                    false,
-                    null,
-                    null,
-                    3);
-                Require(selected == fixedSlot, "Day 5의 3번 영업 슬롯을 선택하지 못했습니다.");
-                selected = BusinessSequencePlanner.PickNextRequiredAction(
-                    fixedSlotRules,
-                    progress,
-                    BusinessRequiredActionTiming.SequenceSlot,
-                    false,
-                    null,
-                    null,
-                    6);
-                Require(selected == sixthSlot, "Day 5의 6번 영업 슬롯을 선택하지 못했습니다.");
-                selected = BusinessSequencePlanner.PickNextRequiredAction(
-                    fixedSlotRules,
-                    progress,
-                    BusinessRequiredActionTiming.AfterTimer,
-                    true,
-                    null,
-                    null,
-                    3);
-                Require(selected == null, "시간 종료 후 놓친 고정 슬롯을 강제 실행했습니다.");
-
-                progress.SetCurrentDay(6);
-                selected = BusinessSequencePlanner.PickNextRequiredAction(
-                    fixedSlotRules,
-                    progress,
-                    BusinessRequiredActionTiming.SequenceSlot,
-                    false,
-                    null,
-                    null,
-                    3);
-                Require(selected == fixedSlot,
-                    "미완료 고정 슬롯 인카운터가 다음 날 같은 슬롯에 재등장하지 않았습니다.");
-                progress.MarkEpisodeCompleted(secondEpisode.episodeId);
-                selected = BusinessSequencePlanner.PickNextRequiredAction(
-                    fixedSlotRules,
-                    progress,
-                    BusinessRequiredActionTiming.SequenceSlot,
-                    false,
-                    null,
-                    null,
-                    3);
-                Require(selected == null, "완료한 고정 슬롯 인카운터가 다시 선택됐습니다.");
-                progress.SetCurrentDay(5);
+                ValidateDaySchedule(progress, episode, secondEpisode, sixthEpisode);
 
                 EpisodeTriggerCondition appearanceCondition = new();
                 appearanceCondition.requiredCustomerAppearances.Add(
@@ -790,6 +452,83 @@ namespace Slainte.EditorTools
                 UnityEngine.Object.DestroyImmediate(database);
                 UnityEngine.Object.DestroyImmediate(progressObject);
             }
+        }
+
+        // 일정 색인(DayScheduleIndex)과 슬롯 판정(DayScheduleResolver) 규칙을 메모리 에피소드로 검증한다.
+        private static void ValidateDaySchedule(
+            GameProgress progress,
+            EpisodeData highPriority,
+            EpisodeData lowPriority,
+            EpisodeData otherChapter)
+        {
+            const string chapterId = "validator_chapter";
+            const string requiredFlag = "validator_schedule_flag";
+
+            progress.SetCurrentChapter(chapterId);
+            progress.SetCurrentDay(5);
+
+            highPriority.episodeId = "validator_high_priority";
+            highPriority.chapterId = chapterId;
+            highPriority.scheduledDay = 5;
+            highPriority.scheduledSlot = 3;
+            highPriority.slotPriority = 10;
+            highPriority.triggerCondition = new EpisodeTriggerCondition();
+            highPriority.triggerCondition.requiredFlags.Add(requiredFlag);
+
+            lowPriority.episodeId = "validator_low_priority";
+            lowPriority.chapterId = chapterId;
+            lowPriority.scheduledDay = 5;
+            lowPriority.scheduledSlot = 3;
+            lowPriority.slotPriority = 0;
+            lowPriority.triggerCondition = new EpisodeTriggerCondition();
+
+            otherChapter.episodeId = "validator_other_chapter";
+            otherChapter.chapterId = "validator_other";
+            otherChapter.scheduledDay = 5;
+            otherChapter.scheduledSlot = 1;
+            otherChapter.triggerCondition = new EpisodeTriggerCondition();
+
+            // 입력 순서와 무관하게 우선순위 내림차순으로 정렬되는지 확인하려고 낮은 후보를 먼저 넣는다.
+            DayScheduleIndex index = new(new[] { lowPriority, highPriority, otherChapter });
+            List<EpisodeData> candidates = new();
+            HashSet<string> excluded = new(StringComparer.OrdinalIgnoreCase);
+
+            index.CollectSlotCandidates(chapterId, 5, 3, candidates);
+            Require(candidates.Count == 2
+                    && candidates[0] == highPriority
+                    && candidates[1] == lowPriority,
+                "같은 슬롯 후보가 slotPriority 내림차순으로 정렬되지 않았습니다.");
+            Require(DayScheduleResolver.PickEpisode(candidates, progress, excluded) == lowPriority,
+                "우선순위 후보의 등장 조건이 미충족인데 다음 후보로 넘어가지 않았습니다.");
+
+            progress.SetFlag(requiredFlag);
+            Require(DayScheduleResolver.PickEpisode(candidates, progress, excluded) == highPriority,
+                "등장 조건을 만족한 우선순위 후보가 선택되지 않았습니다.");
+
+            excluded.Add(highPriority.episodeId);
+            Require(DayScheduleResolver.PickEpisode(candidates, progress, excluded) == lowPriority,
+                "오늘 이미 시도한 후보를 다시 선택했습니다.");
+            excluded.Clear();
+
+            progress.MarkEpisodeCompleted(highPriority.episodeId);
+            Require(DayScheduleResolver.PickEpisode(candidates, progress, excluded) == lowPriority,
+                "완료한 에피소드를 다시 선택했습니다.");
+            progress.MarkEpisodeCompleted(lowPriority.episodeId);
+            Require(DayScheduleResolver.PickEpisode(candidates, progress, excluded) == null,
+                "후보가 모두 완료됐는데 에피소드를 선택했습니다(랜덤 손님으로 폴백해야 함).");
+
+            index.CollectSlotCandidates(chapterId, 5, 2, candidates);
+            Require(candidates.Count == 0, "배정되지 않은 슬롯에서 후보가 조회됐습니다.");
+            index.CollectSlotCandidates(chapterId, 6, 3, candidates);
+            Require(candidates.Count == 0, "다른 날짜의 같은 슬롯에서 후보가 조회됐습니다(다음 날 재등장 금지).");
+
+            index.CollectSlotCandidates(chapterId, 5, 1, candidates);
+            Require(candidates.Count == 0, "다른 챕터의 에피소드가 현재 챕터 일정에 섞였습니다.");
+            index.CollectSlotCandidates(string.Empty, 5, 1, candidates);
+            Require(candidates.Count == 1 && candidates[0] == otherChapter,
+                "챕터 미지정 상태에서 일정 후보를 조회하지 못했습니다.");
+
+            progress.ClearFlag(requiredFlag);
         }
 
         private static void ValidateEpisodeCraftingCompatibility()

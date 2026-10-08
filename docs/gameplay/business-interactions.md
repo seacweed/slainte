@@ -4,11 +4,11 @@
 
 통합 주문 흐름은 `Assets/_Project/Features/Business/Runtime/Flow/`에 구현되어 있습니다.
 
-- `BusinessFlowBootstrap`는 씬 안의 의존성을 연결하고, 진행 중인 에피소드가 없으면 시간 기반 영업을 시작합니다.
-- `BusinessShiftController`는 기본 180초의 남은 영업시간, 손님별 쿨다운, 필수 손님·인카운터, 정산 진입을 관리합니다. 주문 중에는 시간이 흐르고 영업 인카운터 중에는 영업시간과 쿨다운이 함께 멈춥니다.
+- `BusinessFlowBootstrap`는 씬 안의 의존성을 연결하고, 진행 중인 에피소드가 없으면 영업을 시작합니다. 영업 컨트롤러에는 일정 소스로 `EpisodeManager`를 주입합니다.
+- `BusinessShiftController`는 하루 손님 슬롯(`customersPerDay`, 기본 5)을 순서대로 처리하고 마지막 슬롯이 끝나면 정산으로 넘어갑니다. 제한시간은 없습니다.
 - `BusinessOrderSessionController`는 주문 제시, 자동 제조 진입, 판정, 반응 대사, 보상, 정리, 완료 처리를 담당합니다.
-- `BusinessOrderSessionUI`는 조작 없는 상태·결과 문구만 표시하며 주문 행동 버튼을 만들지 않습니다. 상태 패널은 표시할 문구가 없으면, 타이머 패널은 시간 기반 영업이 돌지 않는 동안(에피소드 단독 제조, 영업 종료 후) 자동으로 숨겨집니다.
-- `BusinessOrderFlowSettings`에는 영업 제한시간, 손님 풀, 필수 영업 액션, Good·Mid·Bad 판정 기준, 보상(돈·명성), 기본 반응 대사가 있습니다.
+- `BusinessOrderSessionUI`는 조작 없는 상태·결과 문구만 표시하며 주문 행동 버튼을 만들지 않습니다. 상태 패널은 표시할 문구가 없으면 자동으로 숨겨집니다.
+- `BusinessOrderFlowSettings`에는 하루 손님 수, 손님 풀, Good·Mid·Bad 판정 기준, 보상(돈·명성), 기본 반응 대사가 있습니다.
 - `BusinessBartendingBootstrap`는 도구만 놓인 상태로 시작합니다. `LiquorBottleSlotUI`를 왼쪽 클릭하면 같은 ID의 `ItemDef`를 찾아 가장 오른쪽의 빈 테이블 슬롯부터 술병을 배치합니다.
 - 씬의 `TableSlots`는 숨겨진 배치 틀입니다. 제조 중에만 화면상 테이블 영역에 맞춘 임시 배치와 월드 충돌 슬롯을 만들고, 제조가 끝나면 함께 제거합니다.
 - `GlassController`는 플레이어가 잔을 끌어 전방 기준선을 넘겼을 때만 제출을 요청합니다. 주문 대사가 끝나면 바로 제조로 진입하며 거절, 포기, 버리기, 제출 버튼은 제공하지 않습니다.
@@ -29,11 +29,17 @@
 - 비율은 `Assets/Resources/Business/BusinessOrderFlowSettings.asset`에서 조정합니다.
 - 정산 화면에는 "총 판매량"(전체 건수+`listedPrice` 합) / "팁"(Good 건수+팁 합) / "실수"(Bad 건수+`listedPrice`+실제 차감액 합)로 요약 표시됩니다 — 자세한 화면 구성은 [corescene-systems.md](../core/corescene-systems.md#settlementmanager--settlementui-coreScenescriptssettlementmanagercs-settlementuics) 참고.
 
-### 시간 기반 손님 진행
+### 슬롯 기반 손님 진행
 
-`BusinessShiftController`는 영업 시작 시 진행 조건을 통과한 일반 손님 풀을 고정하고, 주문 사이마다 재등장 제한을 통과한 손님 중 하나를 가중치로 추첨합니다(`BusinessSequencePlanner.PickWeightedSequence`). 재등장 제한은 초 단위 쿨다운이 아니라 **최근 등장 손님 최대 2명**을 `Queue`+`HashSet`(`recentCustomerKeySet`)으로 기억해 다음 추첨 후보에서만 제외하는 방식입니다. 유효 후보가 이 제한 때문에 모두 소진되면(예: 서로 다른 손님이 2명뿐인 풀) 쿨다운을 무시하는 폴백 없이 해당 영업의 무작위 손님 생성을 멈춥니다(`StopRandomCustomerSpawning()`) — 단, 남은 영업시간과 진행 중인 주문·필수 액션은 그대로 이어집니다. 손님 수 제한은 없으며 제한시간 동안 주문이 계속 이어집니다. 필수 손님과 필수 인카운터는 `BusinessOrderFlowSettings.requiredActions`에서 일차·진행 조건과 `priority`를 지정합니다. 제한시간이 끝나면 일반 손님은 더 생성하지 않지만 진행 중인 주문과 남은 필수 액션은 모두 마친 뒤 정산합니다.
+`BusinessShiftController`는 영업 시작 시 구조적으로 쓸 수 있는 일반 손님 풀을 추려 두고, 슬롯 1..N을 순서대로 처리합니다. 다음 슬롯 진입은 주문·인카운터 완료 콜백이 아니라 다음 프레임의 `Update`에서만 일어나 동기 완료 시에도 재진입이 없습니다.
 
-영업 인카운터는 `EpisodeRunner`를 같은 `BusinessScene` 안에서 실행합니다. 시작 전에 주문 세션이 끝난 상태임을 보장하고, 완료 시 일반 `DayFlowController.OnEpisodeCompleted()` 경로를 타지 않고 남아 있는 영업시간으로 복귀합니다.
+1. `IDayScheduleSource.CollectSlotCandidates(챕터, day, slot)`로 배정 에피소드 후보를 받아 `DayScheduleResolver.PickEpisode()`로 하나를 고릅니다(미완료·오늘 미시도·등장 조건 충족 중 `slotPriority`가 가장 높은 것). 조건은 **슬롯 차례에** 판정합니다.
+2. 고른 에피소드를 `EpisodeManager.TryStartBusinessEncounter()`로 같은 `BusinessScene` 안에서 실행합니다. 시작에 실패하면 랜덤 손님으로 대체합니다.
+3. 배정 에피소드가 없으면 재등장 제한을 통과한 손님 중 하나를 가중치로 추첨합니다(`BusinessSequencePlanner.PickWeightedVisit`). 재등장 제한은 **최근 등장 손님 최대 2명**을 `Queue`+`HashSet`(`recentCustomerKeySet`)으로 기억해 후보에서 제외하는 방식이며, 이 제한 때문에 후보가 없으면 제한을 풀고 한 번 더 뽑습니다. 손님 풀 자체가 비면 그 슬롯은 오류 로그와 함께 건너뜁니다.
+
+슬롯이 시작될 때마다 `SlotStarted(slot, episodeOrNull)` 이벤트가 발생합니다. 플레이테스트는 `TrySetScheduleSource()`로 메모리 일정표(`DayScheduleIndex`)를 주입해 실제 에피소드 카탈로그 없이 슬롯 배정을 검증합니다.
+
+영업 인카운터는 `EpisodeRunner`를 같은 `BusinessScene` 안에서 실행합니다. 시작 전에 주문 세션이 끝난 상태임을 보장하고, 완료되면 `OrderMode`로 돌아와 다음 슬롯으로 진행합니다.
 
 에피소드 제조 노드에 직렬화된 `craftingOrderTarget`(레시피 ID 또는 맛/분위기 태그)이 있으면 `EpisodeCraftingBridge`가 일반 영업과 같은 실제 제조·판정 세션을 실행합니다. 실제 제조 중에는 기존 수동 `CraftingJudgeUI`를 숨기며, 레시피·제조 화면·잔 추적기 등 기술적인 초기화가 실패한 경우에만 같은 노드의 수동 판정으로 폴백합니다. `craftingOrderTarget`이 없는(또는 팔레트에 없는 오타 태그라 레시피 조회에 실패하는) 제조 노드는 이 수동 판정 경로를 탑니다. 상세 Mid 분기가 없으면 기존 Bad 분기를 사용하며, 에피소드 제조는 판매 수익이나 손님 쿨다운에 포함되지 않습니다.
 
@@ -81,7 +87,7 @@ CustomerOrderData
 
 커플과 단체는 별도 유형으로 나누지 않습니다. `members`가 한 명이면 1인 방문, 두 명이면 커플이나 2인 방문, 세 명 이상이면 단체 방문으로 자연스럽게 표현됩니다. 런타임은 인원 유형이 아니라 구성원 목록만 처리합니다.
 
-일반 손님 풀의 진행 조건(`condition`, `initiallyAvailable`+`availabilityTransitions`)은 영업 시작 시 평가합니다. 주문이 끝나면 `RecordRecentCustomer()`가 `GetReappearanceKey()` 값을 최근 등장 큐에 기록합니다(위 "시간 기반 손님 진행" 참고). 주문 후보 조건과 필수 액션 조건은 주문 사이의 안전 구간에서 다시 평가하므로 인카운터가 설정한 플래그나 완료 에피소드로 같은 날 후속 필수 액션을 열 수 있습니다.
+일반 손님 풀의 진행 조건(`condition`, `initiallyAvailable`+`availabilityTransitions`)은 영업 시작 시 평가합니다. 주문이 시작되면 `RecordRecentCustomer()`가 `GetReappearanceKey()` 값을 최근 등장 큐에 기록합니다(위 "슬롯 기반 손님 진행" 참고). 손님 등장 조건·주문 후보 조건·배정 에피소드 등장 조건은 슬롯마다 다시 평가하므로 인카운터가 설정한 플래그나 완료 에피소드가 같은 날 뒤 슬롯에 바로 반영됩니다.
 
 ### 주문 유효성 검증
 

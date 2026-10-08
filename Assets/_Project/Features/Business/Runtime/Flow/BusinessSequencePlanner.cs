@@ -20,43 +20,9 @@ namespace Slainte.Business
         public CustomerVisitOrderOption OrderOption { get; }
     }
 
-    public sealed class BusinessSequenceSelection
-    {
-        private BusinessSequenceSelection(
-            CustomerVisitData visit,
-            CustomerVisitOrderOption orderOption,
-            BusinessRandomEncounterEntry encounter)
-        {
-            Visit = visit;
-            OrderOption = orderOption;
-            Encounter = encounter;
-        }
-
-        public CustomerVisitData Visit { get; }
-        public CustomerVisitOrderOption OrderOption { get; }
-        public BusinessRandomEncounterEntry Encounter { get; }
-        public bool IsEncounter => Encounter != null;
-
-        public static BusinessSequenceSelection ForVisit(
-            CustomerVisitData visit,
-            CustomerVisitOrderOption orderOption)
-        {
-            return new BusinessSequenceSelection(
-                visit,
-                orderOption,
-                null);
-        }
-
-        public static BusinessSequenceSelection ForEncounter(
-            BusinessRandomEncounterEntry encounter)
-        {
-            return new BusinessSequenceSelection(null, null, encounter);
-        }
-    }
-
-    // Unity 비의존 순수 C# 스케줄링 로직. 오늘 등장 가능한 손님/랜덤 인카운터 풀을 구성하고,
-    // TV 방송 효과(가중치 부스트)를 반영한 가중치 룰렛으로 다음에 무엇을 내보낼지 뽑는다.
-    // BusinessShiftController가 이 클래스의 결과만으로 진행을 결정하고 상태는 갖지 않는다.
+    // Unity 비의존 순수 C# 손님 추첨 로직. 오늘 등장 가능한 랜덤 손님 풀을 구성하고,
+    // TV 방송 효과(가중치 부스트)를 반영한 가중치 룰렛으로 슬롯을 채울 손님과 주문을 뽑는다.
+    // 슬롯에 배정된 에피소드 판정은 DayScheduleResolver 담당이며, 이 클래스는 상태를 갖지 않는다.
     public static class BusinessSequencePlanner
     {
         public static List<CustomerVisitData> BuildEligibleVisitPool(
@@ -144,130 +110,6 @@ namespace Slainte.Business
                 : null;
         }
 
-        public static List<BusinessRandomEncounterEntry> BuildEligibleRandomEncounterPool(
-            IReadOnlyList<BusinessRandomEncounterEntry> configuredPool,
-            GameProgress progress,
-            ISet<string> reservedTargetKeys = null)
-        {
-            List<BusinessRandomEncounterEntry> result = new();
-            if (configuredPool == null || progress == null)
-                return result;
-
-            HashSet<string> episodeIds = new(StringComparer.OrdinalIgnoreCase);
-            for (int i = 0; i < configuredPool.Count; i++)
-            {
-                BusinessRandomEncounterEntry entry = configuredPool[i];
-                EpisodeData episode = entry?.episode;
-                if (!IsStructurallyValidEncounter(episode)
-                    || entry.weight <= 0f
-                    || progress.IsEpisodeCompleted(episode.episodeId)
-                    || !ProgressConditionEvaluator.IsMet(episode.triggerCondition, progress)
-                    || (reservedTargetKeys != null && reservedTargetKeys.Contains(entry.TargetKey))
-                    || !episodeIds.Add(episode.episodeId))
-                    continue;
-
-                result.Add(entry);
-            }
-
-            return result;
-        }
-
-        public static BusinessSequenceSelection PickWeightedSequence(
-            IReadOnlyList<CustomerVisitData> frozenVisitPool,
-            IReadOnlyList<BusinessRandomEncounterEntry> frozenEncounterPool,
-            ISet<string> startedEncounterIds,
-            GameProgress progress,
-            ISet<string> recentVisitKeys,
-            ISet<string> invalidVisitKeys,
-            ISet<string> invalidEncounterIds,
-            System.Random random)
-        {
-            if (progress == null)
-                return null;
-
-            random ??= new System.Random();
-            List<SequenceCandidate> candidates = new();
-            float totalWeight = 0f;
-
-            if (frozenVisitPool != null)
-            {
-                for (int i = 0; i < frozenVisitPool.Count; i++)
-                {
-                    CustomerVisitData visit = frozenVisitPool[i];
-                    if (!IsStructurallyValidVisit(visit)
-                        || visit.weight <= 0f
-                        || !IsVisitAvailableForSelection(
-                            visit,
-                            frozenVisitPool,
-                            progress)
-                        || IsRecentlySeen(visit, recentVisitKeys)
-                        || (invalidVisitKeys != null && invalidVisitKeys.Contains(visit.visitKey)))
-                        continue;
-
-                    List<CustomerVisitOrderOption> orders = BuildEligibleOrders(visit, progress);
-                    if (orders.Count == 0)
-                        continue;
-
-                    float visitWeight = GetVisitWeight(visit, orders, progress);
-                    SequenceCandidate candidate = new(visit, orders, visitWeight);
-                    candidates.Add(candidate);
-                    totalWeight += visitWeight;
-                }
-            }
-
-            if (frozenEncounterPool != null)
-            {
-                for (int i = 0; i < frozenEncounterPool.Count; i++)
-                {
-                    BusinessRandomEncounterEntry entry = frozenEncounterPool[i];
-                    EpisodeData episode = entry?.episode;
-                    if (!IsStructurallyValidEncounter(episode)
-                        || entry.weight <= 0f
-                        || progress.IsEpisodeCompleted(episode.episodeId)
-                        || !ProgressConditionEvaluator.IsMet(episode.triggerCondition, progress)
-                        || (startedEncounterIds != null
-                            && startedEncounterIds.Contains(episode.episodeId))
-                        || (invalidEncounterIds != null
-                            && invalidEncounterIds.Contains(episode.episodeId)))
-                        continue;
-
-                    SequenceCandidate candidate = new(entry);
-                    candidates.Add(candidate);
-                    totalWeight += entry.weight;
-                }
-            }
-
-            if (candidates.Count == 0 || totalWeight <= 0f)
-                return null;
-
-            double roll = random.NextDouble() * totalWeight;
-            float cursor = 0f;
-            SequenceCandidate selected = candidates[candidates.Count - 1];
-            for (int i = 0; i < candidates.Count; i++)
-            {
-                cursor += candidates[i].Weight;
-                if (roll <= cursor)
-                {
-                    selected = candidates[i];
-                    break;
-                }
-            }
-
-            if (selected.Encounter != null)
-                return BusinessSequenceSelection.ForEncounter(selected.Encounter);
-
-            CustomerVisitOrderOption order = PickWeightedOrder(
-                selected.Orders,
-                random,
-                progress,
-                applyTVModifiers: true);
-            return order != null
-                ? BusinessSequenceSelection.ForVisit(
-                    selected.Visit,
-                    order)
-                : null;
-        }
-
         public static CustomerVisitOrderOption PickWeightedOrder(
             CustomerVisitData visit,
             GameProgress progress,
@@ -281,78 +123,6 @@ namespace Slainte.Business
                 random ?? new System.Random(),
                 progress,
                 applyTVModifiers: false);
-        }
-
-        public static BusinessRequiredActionRule PickNextRequiredAction(
-            IReadOnlyList<BusinessRequiredActionRule> rules,
-            GameProgress progress,
-            BusinessRequiredActionTiming timing,
-            bool includeAllTimings,
-            ISet<string> executedRuleIds,
-            ISet<string> executedTargetKeys,
-            int sequenceSlot = 0)
-        {
-            if (rules == null || progress == null)
-                return null;
-
-            BusinessRequiredActionRule selected = null;
-            for (int i = 0; i < rules.Count; i++)
-            {
-                BusinessRequiredActionRule rule = rules[i];
-                if (rule == null
-                    || (executedRuleIds != null
-                        && !string.IsNullOrWhiteSpace(rule.ruleId)
-                        && executedRuleIds.Contains(rule.ruleId))
-                    || !MatchesRequiredTiming(
-                        rule,
-                        timing,
-                        includeAllTimings,
-                        sequenceSlot)
-                    || (rule.exactDay > 0 && rule.exactDay != progress.CurrentDay)
-                    || !ProgressConditionEvaluator.IsMet(rule.condition, progress)
-                    || !IsConfiguredRequiredTarget(rule))
-                    continue;
-
-                string targetKey = rule.TargetKey;
-                if (executedTargetKeys != null && executedTargetKeys.Contains(targetKey))
-                    continue;
-
-                if (rule.actionType == BusinessRequiredActionType.EncounterEpisode
-                    && (progress.IsEpisodeCompleted(rule.encounterEpisode.episodeId)
-                        || !ProgressConditionEvaluator.IsMet(
-                            rule.encounterEpisode.triggerCondition,
-                            progress)))
-                {
-                    continue;
-                }
-
-                // 같은 타이밍에 조건을 만족하는 필수 액션이 여럿이면 priority가 가장 높은
-                // 하나만 이번에 실행한다(executedRuleIds/executedTargetKeys가 중복 실행과
-                // 대상 중복을 막아줌).
-                if (selected == null || rule.priority > selected.priority)
-                    selected = rule;
-            }
-
-            return selected;
-        }
-
-        private static bool MatchesRequiredTiming(
-            BusinessRequiredActionRule rule,
-            BusinessRequiredActionTiming timing,
-            bool includeAllTimings,
-            int sequenceSlot)
-        {
-            if (rule.timing == BusinessRequiredActionTiming.SequenceSlot)
-            {
-                return timing == BusinessRequiredActionTiming.SequenceSlot
-                    && rule.sequenceSlot > 0
-                    && rule.sequenceSlot == sequenceSlot;
-            }
-
-            if (timing == BusinessRequiredActionTiming.SequenceSlot)
-                return false;
-
-            return includeAllTimings || rule.timing == timing;
         }
 
         private static bool IsStructurallyValidVisit(CustomerVisitData visit)
@@ -696,21 +466,6 @@ namespace Slainte.Business
             return !string.IsNullOrWhiteSpace(key) && recentVisitKeys.Contains(key);
         }
 
-        private static bool IsConfiguredRequiredTarget(BusinessRequiredActionRule rule)
-        {
-            if (rule.actionType == BusinessRequiredActionType.CustomerVisit)
-                return IsStructurallyValidVisit(rule.customerVisit);
-
-            return IsStructurallyValidEncounter(rule.encounterEpisode);
-        }
-
-        private static bool IsStructurallyValidEncounter(EpisodeData episode)
-        {
-            return episode != null
-                && episode.episodeType == EpisodeType.Encounter
-                && !string.IsNullOrWhiteSpace(episode.episodeId);
-        }
-
         private sealed class VisitCandidate
         {
             public VisitCandidate(
@@ -725,30 +480,6 @@ namespace Slainte.Business
 
             public CustomerVisitData Visit { get; }
             public List<CustomerVisitOrderOption> Orders { get; }
-            public float Weight { get; }
-        }
-
-        private sealed class SequenceCandidate
-        {
-            public SequenceCandidate(
-                CustomerVisitData visit,
-                List<CustomerVisitOrderOption> orders,
-                float weight)
-            {
-                Visit = visit;
-                Orders = orders;
-                Weight = weight;
-            }
-
-            public SequenceCandidate(BusinessRandomEncounterEntry encounter)
-            {
-                Encounter = encounter;
-                Weight = encounter != null ? encounter.weight : 0f;
-            }
-
-            public CustomerVisitData Visit { get; }
-            public List<CustomerVisitOrderOption> Orders { get; }
-            public BusinessRandomEncounterEntry Encounter { get; }
             public float Weight { get; }
         }
     }

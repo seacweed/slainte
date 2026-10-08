@@ -15,8 +15,9 @@ MonoBehaviour:
   episodeId: StrangeCoin_2
   episodeTitle: "\uC774\uC0C1\uD55C \uB3D9\uC804 2\uBD80"
   chapterId: Sector0
-  episodeType: 0
-  mandatorySlot: 0
+  scheduledDay: 7
+  scheduledSlot: 2
+  slotPriority: 1
   triggerCondition:
     minDay: 0
     minMoney: 0
@@ -26,28 +27,6 @@ MonoBehaviour:
     - StrangeCoin_1
     requiredVars: []
     requiredCustomerAppearances: []
-  playCondition:
-    minDay: 0
-    minMoney: 0
-    requiredFlags: []
-    blockedFlags: []
-    prerequisiteEpisodeIds: []
-    requiredVars: []
-    requiredCustomerAppearances: []
-  triggerConditionEntries:
-  - condition:
-      type: 3
-      minDay: 0
-      requiredFlag: 
-      prerequisiteEpisodeId: StrangeCoin_1
-      varName: 
-      varOp: 0
-      varThreshold: 0
-      minMoney: 0
-    conditionText: "\uC774\uC0C1\uD55C \uB3D9\uC804 1 \uD074\uB9AC\uC5B4"
-  playConditionEntries: []
-  selectConditions: []
-  openingCharacters: []
   firstNodeId: 0
   nodes:
   - nodeId: 0
@@ -56,9 +35,7 @@ MonoBehaviour:
     text: "\uC5B4\uC11C\uC624\uC138\uC694. \uC190\uB2D8."
     nextNodeId: 1
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters: []
     requiresCrafting: 0
     craftingOrderTicket: {fileID: 0}
@@ -85,17 +62,25 @@ MonoBehaviour:
     text: "\uC624\uB298 \uD558\uB8E8\uB294 \uC5B4\uB5A0\uC168-"
     nextNodeId: 
     choices: []
-    flagBranches:
-    - requiredAllFlags:
+    branches:
+    - conditionType: 0
+      flags:
       - sc1_2_true
-      requiredAnyFlags: []
+      varCondition:
+        varName: 
+        op: 0
+        threshold: 0
+      episodeId: 
       nextNodeId: 2_1_1
-    - requiredAllFlags:
+    - conditionType: 0
+      flags:
       - sc1_2_false
-      requiredAnyFlags: []
+      varCondition:
+        varName: 
+        op: 0
+        threshold: 0
+      episodeId: 
       nextNodeId: 2_2_1
-    varBranches: []
-    episodeBranches: []
     characters: []
     requiresCrafting: 0
     craftingOrderTicket: {fileID: 0}
@@ -122,9 +107,7 @@ MonoBehaviour:
     text: "\u2026\uC88B\uC740 \uC800\uB141\uC774\uC57C \uBC14\uD150\uB354"
     nextNodeId: 2_1_2
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -154,9 +137,7 @@ MonoBehaviour:
     text: "\uC557, \uC140\uB9AC\uC528. \uC815\uB9D0 \uB610 \uC624\uC168\uB124\uC694!"
     nextNodeId: 2_1_3
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -186,9 +167,7 @@ MonoBehaviour:
     text: "\uBAA9\uC18C\uB9AC \uB0AE\uCDB0."
     nextNodeId: 2_1_4
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: angry
@@ -219,9 +198,7 @@ MonoBehaviour:
       \uBFD0\uC774\uC57C."
     nextNodeId: 2_1_5
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -252,9 +229,7 @@ MonoBehaviour:
       \uBCF4\uACE0 \uC2F6\uAE30\uB3C4 \uD558\uACE0."
     nextNodeId: 2_1_6
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -285,9 +260,7 @@ MonoBehaviour:
       \uB4DC\uB9B4\uAE4C\uC694?"
     nextNodeId: 2_1_7
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -318,9 +291,7 @@ MonoBehaviour:
       <b>\uAE54\uB054\uD55C\uAC70 \uC544\uBB34\uAC70\uB098?</b>"
     nextNodeId: 2_1_8
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -351,9 +322,7 @@ MonoBehaviour:
       \uC5C6\uC5B4\uC11C."
     nextNodeId: 2_1_9
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: closed
@@ -383,9 +352,7 @@ MonoBehaviour:
     text: "\uC544\uB2C8\uC5D0\uC694! \uC624\uD788\uB824 \uAE30\uC05C \uC8FC\uBB38\uC778\uAC78\uC694!"
     nextNodeId: 2_1_10
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -415,9 +382,7 @@ MonoBehaviour:
     text: "\uC54C\uC558\uB2E4\uACE0. \uBE68\uB9AC \uD55C\uC794 \uB0B4\uC5B4\uC918."
     nextNodeId: 2_1_11
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -447,9 +412,7 @@ MonoBehaviour:
     text: 
     nextNodeId: 
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters: []
     requiresCrafting: 1
     craftingOrderTicket: {fileID: 11400000, guid: a67d41b4d2ea4dc88f4ce1e6dbfce868, type: 2}
@@ -500,9 +463,7 @@ MonoBehaviour:
     text: "\uC74C.. \uC774\uAC74.."
     nextNodeId: 2_1_12_1_2
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -533,9 +494,7 @@ MonoBehaviour:
       \uB41C \uC220\uC740 \uCC98\uC74C \uB9C8\uC154\uBD10"
     nextNodeId: 2_1_13
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: smile
@@ -565,9 +524,7 @@ MonoBehaviour:
     text: "\uC74C.. \uC774\uAC74.."
     nextNodeId: 2_1_12_2_2
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: closed
@@ -598,9 +555,7 @@ MonoBehaviour:
       \uC2DC\uAC04\uC774 \uD544\uC694\uD558\uACA0\uC5B4"
     nextNodeId: 2_1_13
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: closed
@@ -632,9 +587,7 @@ MonoBehaviour:
       \uBC00\uC8FC\uB4E4 \uBFD0\uC774\uC57C."
     nextNodeId: 2_1_14
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -664,9 +617,7 @@ MonoBehaviour:
     text: "\uB9D0\uC774 \uBC00\uC8FC\uC9C0 \uC0AC\uC2E4\uC0C1 \uB3C5\uADF9\uBB3C\uC774\uB77C\uB2C8\uAE4C."
     nextNodeId: 2_1_15
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: angry
@@ -696,9 +647,7 @@ MonoBehaviour:
     text: "\uB4E3\uAE30\uB9CC \uD574\uB3C4 \uC0B4\uBC8C\uD558\uB124\uC694."
     nextNodeId: 2_1_16
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -729,9 +678,7 @@ MonoBehaviour:
       \uC774\uB7F0 \uC77C\uC744 \uD558\uAC8C \uB41C\uAC70\uC57C?"
     nextNodeId: 2_1_17
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -762,9 +709,7 @@ MonoBehaviour:
       \uC54A\uC740\uAC78"
     nextNodeId: 2_1_18
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -795,9 +740,7 @@ MonoBehaviour:
       \uD38D\uC744 \uBB3C\uB824\uBC1B\uAC8C \uB418\uC5C8\uC5B4\uC694"
     nextNodeId: 2_1_19
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -827,9 +770,7 @@ MonoBehaviour:
     text: "\u2026\uADF8\uB807\uAD70"
     nextNodeId: 2_1_20
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: closed
@@ -861,9 +802,7 @@ MonoBehaviour:
       \uAC70\uC796\uC544"
     nextNodeId: 2_1_21
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -893,9 +832,7 @@ MonoBehaviour:
     text: "\uD639\uC2DC \uC7A5\uB840\uC2DD\uC740 \uCE58\uB8E8\uC5C8\uB098?"
     nextNodeId: 2_1_22
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -925,9 +862,7 @@ MonoBehaviour:
     text: "\uB124, \uC800\uD76C \uBC29\uC2DD\uB300\uB85C \uCD5C\uC120\uC744 \uB2E4\uD588\uC5B4\uC694."
     nextNodeId: 2_1_23
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -959,9 +894,7 @@ MonoBehaviour:
       \uC220\uC744 \uB300\uC811\uD588\uC8E0."
     nextNodeId: 2_1_24
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -992,9 +925,7 @@ MonoBehaviour:
       \uB2E4\uB97C \uAC8C \uC5C6\uAD70"
     nextNodeId: 2_1_25
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -1025,9 +956,7 @@ MonoBehaviour:
       \uB2E8\uACE8\uC190\uB2D8\uC778 \uC601\uAC10\uB2D8\uACFC F54 \uBFD0\uC774\uC5C8\uC5B4\uC694."
     nextNodeId: 2_1_26
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -1058,9 +987,7 @@ MonoBehaviour:
       \uBD84\uC740 \uC544\uB2C8\uC168\uB098\uBD10\uC694."
     nextNodeId: 2_1_27
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -1090,9 +1017,7 @@ MonoBehaviour:
     text: "\u2026\uADF8\uB7AC\uAD70."
     nextNodeId: 2_1_28
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: closed
@@ -1124,9 +1049,7 @@ MonoBehaviour:
       \uADF8\uB807\uC9C0 \uBABB\uD558\uB2C8\uAE4C."
     nextNodeId: 2_1_29
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -1172,9 +1095,7 @@ MonoBehaviour:
       setFlags: []
       clearFlags: []
       varChanges: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -1204,9 +1125,7 @@ MonoBehaviour:
     text: "\uC678\uB85C\uC6E0\uC5B4\uC694."
     nextNodeId: 2_1_30_1_2
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -1236,9 +1155,7 @@ MonoBehaviour:
     text: "\uC774\uC81C \uC815\uB9D0 \uD63C\uC790 \uB0A8\uACA8\uC9C4\uAC83 \uAC19\uC558\uAC70\uB4E0\uC694."
     nextNodeId: 2_1_30_1_3
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -1270,9 +1187,7 @@ MonoBehaviour:
       \uC7A1\uD788\uC9C0 \uC54A\uB354\uB77C\uAD6C\uC694."
     nextNodeId: 2_1_30_1_4
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -1303,9 +1218,7 @@ MonoBehaviour:
       \uC544\uBB34\uB3C4 \uC904 \uC218 \uC5C6\uC5B4."
     nextNodeId: 2_1_30_1_5
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -1336,9 +1249,7 @@ MonoBehaviour:
       \uADF8\uB807\uC9C0 \uBABB\uD558\uBA74\u2026"
     nextNodeId: 2_1_30_1_6
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: closed
@@ -1369,9 +1280,7 @@ MonoBehaviour:
       \uD560 \uB9D0\uC740 \uC544\uB2C8\uB124."
     nextNodeId: 2_1_31
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -1401,9 +1310,7 @@ MonoBehaviour:
     text: "\uC2AC\uD390\uC5B4\uC694."
     nextNodeId: 2_1_30_2_2
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -1434,9 +1341,7 @@ MonoBehaviour:
       \uC0AC\uB78C\uC774 \uBA87 \uC5C6\uB294 \uAC83\uB3C4\uC694."
     nextNodeId: 2_1_30_2_3
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -1467,9 +1372,7 @@ MonoBehaviour:
       \uAC00\uC871\uC73C\uB85C \uC0DD\uAC01\uD558\uC9C0 \uC54A\uB294\uAC74 \uC2E4\uB840\uC57C."
     nextNodeId: 2_1_30_2_4
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -1500,9 +1403,7 @@ MonoBehaviour:
       \uC544\uB2C8\uB2C8\uAE4C."
     nextNodeId: 2_1_31
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: closed
@@ -1532,9 +1433,7 @@ MonoBehaviour:
     text: "\uC544\uBB34\uB807\uC9C0 \uC54A\uC558\uC5B4\uC694."
     nextNodeId: 2_1_30_3_2
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -1564,9 +1463,7 @@ MonoBehaviour:
     text: "\uC774\uC0C1\uD558\uAC8C \uB208\uBB3C\uC774 \uB098\uC9C0 \uC54A\uB354\uB77C\uAD6C\uC694."
     nextNodeId: 2_1_30_3_3
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -1597,9 +1494,7 @@ MonoBehaviour:
       \uC54A\uC558\uB358 \uAC78\uAE4C\uC694."
     nextNodeId: 2_1_30_3_4
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -1629,9 +1524,7 @@ MonoBehaviour:
     text: "\uAF2D \uB208\uBB3C\uC774 \uB098\uC57C \uC2AC\uD508\uAC74 \uC544\uB2C8\uC57C."
     nextNodeId: 2_1_30_3_5
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -1662,9 +1555,7 @@ MonoBehaviour:
       \uC0B4\uC544\uAC00\uC9C0\uB9CC \uC544\uBB34\uB3C4 \uC6B8\uC9C0 \uC54A\uC544."
     nextNodeId: 2_1_31
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: closed
@@ -1695,9 +1586,7 @@ MonoBehaviour:
       \uC0DD\uAC01\uC740 \uADF8\uB807\uB2E4\uB294 \uAC70\uC57C."
     nextNodeId: 2_1_32
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -1728,9 +1617,7 @@ MonoBehaviour:
       \uBA3C\uC800 \uC640\uC788\uC5C8\uAD6C\uB098!"
     nextNodeId: 2_1_33
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -1764,9 +1651,7 @@ MonoBehaviour:
       \uD55C\uAC70\uC57C?"
     nextNodeId: 2_1_34
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -1799,9 +1684,7 @@ MonoBehaviour:
     text: "\uC2E0\uACBD\uC4F0\uC9C0\uB9C8. \uBCC4\uC77C\u2026\uC544\uB2C8\uB2C8\uAE4C"
     nextNodeId: 2_1_35
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: closed
@@ -1834,9 +1717,7 @@ MonoBehaviour:
     text: "\uC5B4\uC11C\uC624\uC138\uC694. \uC790\uCF54\uB2D8"
     nextNodeId: 2_1_36
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: closed
@@ -1870,9 +1751,7 @@ MonoBehaviour:
       \uC548 \uB9C8\uC2E0\uB2E4\uB354\uB2C8. \uBB50 \uC2DC\uD0A8 \uAC70\uC57C?"
     nextNodeId: 2_1_37
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: closed
@@ -1906,9 +1785,7 @@ MonoBehaviour:
       \uAC19\uC740\uAC70 \uC54C\uB9AC\uAC00 \uC5C6\uC796\uC544."
     nextNodeId: 2_1_38
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: mid
@@ -1942,9 +1819,7 @@ MonoBehaviour:
       <b>\uB108\uB791\uC740</b> \uC548\uB9C8\uC2E0\uB2E4\uACE0 \uD588\uC9C0."
     nextNodeId: 3
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: sally
       expressionKey: angry
@@ -1977,17 +1852,25 @@ MonoBehaviour:
     text: "\uC88B\uC740 \uC800\uB141\uC774\uC57C \uBC14\uD150\uB354!"
     nextNodeId: 
     choices: []
-    flagBranches:
-    - requiredAllFlags:
+    branches:
+    - conditionType: 0
+      flags:
       - sc1_1_false
-      requiredAnyFlags: []
+      varCondition:
+        varName: 
+        op: 0
+        threshold: 0
+      episodeId: 
       nextNodeId: 2_2_2_1_1
-    - requiredAllFlags:
+    - conditionType: 0
+      flags:
       - sc1_1_true
-      requiredAnyFlags: []
+      varCondition:
+        varName: 
+        op: 0
+        threshold: 0
+      episodeId: 
       nextNodeId: 2_2_2_2_1
-    varBranches: []
-    episodeBranches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -2017,9 +1900,7 @@ MonoBehaviour:
     text: "F72\uB2D8. \uB610 \uC624\uC168\uAD70\uC694. \uC88B\uC740 \uC800\uB141\uC774\uC5D0\uC694."
     nextNodeId: 2_2_2_1_2
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -2049,9 +1930,7 @@ MonoBehaviour:
     text: "\uC774\uB984\uC73C\uB85C \uBD88\uB7EC\uB2EC\uB77C\uB2C8\uAE4C, \uBC14\uD150\uB354."
     nextNodeId: 2_2_2_1_3
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: annoy
@@ -2081,9 +1960,7 @@ MonoBehaviour:
     text: "\uD558\uC9C0\uB9CC \uADDC\uCE59\uC740 \uADDC\uCE59\uC778\uAC78\uC694"
     nextNodeId: 2_2_2_1_4
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: annoy
@@ -2114,9 +1991,7 @@ MonoBehaviour:
       \uC874\uC7AC\uAC00 \uC778\uC815\uBC1B\uB294 \uB290\uB08C\uC774\uC57C"
     nextNodeId: 2_2_2_1_5
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: mid
@@ -2147,9 +2022,7 @@ MonoBehaviour:
       \uC9C0\uACB9\uAC8C \uB4E3\uB294\uB2E8 \uB9D0\uC774\uC57C"
     nextNodeId: 2_2_2_1_6
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: annoy
@@ -2180,9 +2053,7 @@ MonoBehaviour:
       \uC0C1\uC0C1\uC774 \uC548 \uAC00\uB124\uC694"
     nextNodeId: 2_2_3
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: annoy
@@ -2212,9 +2083,7 @@ MonoBehaviour:
     text: "\uC790\uCF54\uB2D8, \uB610 \uC624\uC168\uAD70\uC694. \uC88B\uC740 \uC800\uB141\uC774\uC5D0\uC694."
     nextNodeId: 2_2_2_2_2
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -2244,9 +2113,7 @@ MonoBehaviour:
     text: "\uC774\uB984\uC73C\uB85C \uBD88\uB9AC\uB2C8 \uAE30\uBD84 \uC88B\uC740\uAC78"
     nextNodeId: 2_2_2_2_3
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -2277,9 +2144,7 @@ MonoBehaviour:
       \uC0AC\uC6A9\uD558\uC2DC\uB294 \uC774\uC720\uAC00 \uC788\uC73C\uC2E0\uAC00\uC694?"
     nextNodeId: 2_2_2_2_4
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: mid
@@ -2310,9 +2175,7 @@ MonoBehaviour:
       \uC874\uC7AC\uAC00 \uC778\uC815\uBC1B\uB294 \uB290\uB08C\uC774\uC57C"
     nextNodeId: 2_2_2_2_5
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: mid
@@ -2343,9 +2206,7 @@ MonoBehaviour:
       \uC9C0\uACB9\uAC8C \uB4E3\uB294\uB2E8 \uB9D0\uC774\uC57C"
     nextNodeId: 2_2_2_2_6
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: annoy
@@ -2376,9 +2237,7 @@ MonoBehaviour:
       \uBAA8\uC2B5\uC740 \uC0C1\uC0C1\uC774 \uC548 \uAC00\uB124\uC694"
     nextNodeId: 2_2_3
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: annoy
@@ -2409,9 +2268,7 @@ MonoBehaviour:
       \uD30C\uBB3B\uD600 \uC788\uB2E4\uAC00 \uB3C4\uB9DD\uCCD0 \uB098\uC628 \uAC70\uC57C"
     nextNodeId: 2_2_4
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -2443,9 +2300,7 @@ MonoBehaviour:
       \uBE68\uB9AC \uD55C\uC794 \uBD80\uD0C1\uD574."
     nextNodeId: 2_2_5
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: mid
@@ -2476,9 +2331,7 @@ MonoBehaviour:
       \uBCC4\uC77C \uC5C6\uC5B4\uC57C \uD560\uD150\uB370\u2026"
     nextNodeId: 2_2_6
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: mid
@@ -2509,9 +2362,7 @@ MonoBehaviour:
       \uAD6C\uBA74\uC774\uC796\uC544."
     nextNodeId: 2_2_7
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -2542,9 +2393,7 @@ MonoBehaviour:
       \uC800\uBC88\uACFC \uAC19\uC740 \uAC78\uB85C \uB4DC\uB9B4\uAE4C\uC694?"
     nextNodeId: 2_2_8
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -2575,9 +2424,7 @@ MonoBehaviour:
       \uC0AC\uC6CC</b>\uB85C \uBD80\uD0C1\uD574!"
     nextNodeId: 2_2_9
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -2607,9 +2454,7 @@ MonoBehaviour:
     text: 
     nextNodeId: 
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters: []
     requiresCrafting: 1
     craftingOrderTicket: {fileID: 11400000, guid: 2f3223fa36024ea0900b7d1b84a1d46b, type: 2}
@@ -2621,27 +2466,27 @@ MonoBehaviour:
     craftingPaymentMultiplier: 1
     craftingOutcomes:
     - result: 0
-      nextNodeId: 2_2_9_1_1
+      nextNodeId: 2_2_10_1_1
       flag: 
       varChanges: []
     - result: 5
-      nextNodeId: 2_2_9_2_1
+      nextNodeId: 2_2_10_2_1
       flag: 
       varChanges: []
     - result: 1
-      nextNodeId: 2_2_9_3_1
+      nextNodeId: 2_2_10_3_1
       flag: 
       varChanges: []
     - result: 2
-      nextNodeId: 2_2_9_4_1
+      nextNodeId: 2_2_10_4_1
       flag: 
       varChanges: []
     - result: 3
-      nextNodeId: 2_2_9_5_1
+      nextNodeId: 2_2_10_5_1
       flag: 
       varChanges: []
     - result: 4
-      nextNodeId: 2_2_9_6_1
+      nextNodeId: 2_2_10_6_1
       flag: 
       varChanges: []
     nextNodeIdGood: 
@@ -2654,16 +2499,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 2_2_9_1_1
+  - nodeId: 2_2_10_1_1
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uD0A4\uC57C, \uC774\uAC70\uC9C0. \uB9C9\uD78C \uAC00\uC2B4\uC774 \uBEE5
       \uB6AB\uB9AC\uB294 \uAE30\uBD84\uC774\uC57C."
-    nextNodeId: 2_2_10
+    nextNodeId: 2_2_11
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: laugh
@@ -2687,16 +2530,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 2_2_9_2_1
+  - nodeId: 2_2_10_2_1
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uC73C\uC545\u2026 \uC77C\uBD80\uB7EC \uC774\uB7F0 \uAC70 \uC8FC\uB294
       \uAC70\uC57C?"
-    nextNodeId: 2_2_9_2_2
+    nextNodeId: 2_2_10_2_2
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: devas
@@ -2720,16 +2561,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 2_2_9_2_2
+  - nodeId: 2_2_10_2_2
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uBB50, \uC624\uB298\uC740 <b>\uBC88\uD584 \uC0AC\uC6CC</b>\uB97C \uB9C8\uC2E4
       \uC6B4\uBA85\uC774 \uC544\uB2C8\uC5C8\uB098\uBCF4\uAD70"
-    nextNodeId: 2_2_10
+    nextNodeId: 2_2_11
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -2753,15 +2592,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 2_2_9_3_1
+  - nodeId: 2_2_10_3_1
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uB0B4\uAC00 \uC5BC\uC74C\uC744 \uBE7C\uB2EC\uB77C \uD588\uB358\uAC00?"
-    nextNodeId: 2_2_9_3_2
+    nextNodeId: 2_2_10_3_2
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -2785,16 +2622,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 2_2_9_3_2
+  - nodeId: 2_2_10_3_2
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uBB50, \uADF8\uB798\uB3C4 \uB3C8 \uC544\uAE4C\uC6B4 \uB9DB\uC740 \uC544\uB2C8\uB780
       \uB9D0\uC774\uC9C0"
-    nextNodeId: 2_2_10
+    nextNodeId: 2_2_11
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: mid
@@ -2818,16 +2653,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 2_2_9_4_1
+  - nodeId: 2_2_10_4_1
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uC794\uC740 \uB0B4 \uC2A4\uD0C0\uC77C\uC740 \uC544\uB2C8\uC9C0\uB9CC,
       \uB3C8 \uC544\uAE4C\uC6B4 \uB9DB\uC740 \uC544\uB2C8\uB780 \uB9D0\uC774\uC9C0"
-    nextNodeId: 2_2_10
+    nextNodeId: 2_2_11
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: annoy
@@ -2851,15 +2684,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 2_2_9_5_1
+  - nodeId: 2_2_10_5_1
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uB0B4\uAC00 \uC5BC\uC74C\uC744 \uBE7C\uB2EC\uB77C \uD588\uB358\uAC00?"
-    nextNodeId: 2_2_9_5_2
+    nextNodeId: 2_2_10_5_2
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -2883,16 +2714,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 2_2_9_5_2
+  - nodeId: 2_2_10_5_2
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uC794\uB3C4 \uB0B4 \uC2A4\uD0C0\uC77C\uC740 \uC544\uB2C8\uC9C0\uB9CC,
       \uB3C8 \uC544\uAE4C\uC6B4 \uB9DB\uC740 \uC544\uB2C8\uB780 \uB9D0\uC774\uC9C0"
-    nextNodeId: 2_2_10
+    nextNodeId: 2_2_11
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: annoy
@@ -2916,16 +2745,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 2_2_9_6_1
+  - nodeId: 2_2_10_6_1
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uC774\uAC74 <b>\uBC88\uD584 \uC0AC\uC6CC</b>\uAC00 \uC544\uB2CC\uAC83
       \uAC19\uC740\uB370?"
-    nextNodeId: 2_2_9_6_2
+    nextNodeId: 2_2_10_6_2
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -2949,52 +2776,17 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 2_2_9_6_2
+  - nodeId: 2_2_10_6_2
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uBB50, \uC624\uB298\uC740 <b>\uBC88\uD584 \uC0AC\uC6CC</b>\uB97C \uB9C8\uC2E4
       \uC6B4\uBA85\uC774 \uC544\uB2C8\uC5C8\uB098\uBCF4\uAD70"
-    nextNodeId: 2_2_10
+    nextNodeId: 2_2_11
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
-      slotIndex: 0
-    requiresCrafting: 0
-    craftingOrderTicket: {fileID: 0}
-    craftingTicketKey: 
-    craftingOrderType: 6
-    craftingOrderTarget: 
-    craftingPaymentEnabled: 0
-    craftingPaymentCurrency: 0
-    craftingPaymentMultiplier: 1
-    craftingOutcomes: []
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
-    sfxCommand: 0
-    sfxClipName: 
-  - nodeId: 2_2_10
-    speakerKey: f72
-    overrideSpeakerName: 
-    text: "\uBCF8\uBD80 \uB188\uB4E4\uC740 \uBB34\uC2A8 \uAE30\uACC4 \uC624\uC77C
-      \uAC19\uC740 \uAC83\uB9CC \uB9C8\uC2E0\uB2E4\uB2C8\uAE4C"
-    nextNodeId: 2_2_11
-    choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
-    characters:
-    - characterKey: f72
-      expressionKey: annoy
       slotIndex: 0
     requiresCrafting: 0
     craftingOrderTicket: {fileID: 0}
@@ -3018,13 +2810,11 @@ MonoBehaviour:
   - nodeId: 2_2_11
     speakerKey: f72
     overrideSpeakerName: 
-    text: "\uC21C\uC218\uD55C \uC218\uBD84\uACFC \uC804\uD574\uC9C8 \uC774\uB77C\uB098
-      \uBB50\uB77C\uB098"
+    text: "\uBCF8\uBD80 \uB188\uB4E4\uC740 \uBB34\uC2A8 \uAE30\uACC4 \uC624\uC77C
+      \uAC19\uC740 \uAC83\uB9CC \uB9C8\uC2E0\uB2E4\uB2C8\uAE4C"
     nextNodeId: 2_2_12
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: annoy
@@ -3049,14 +2839,13 @@ MonoBehaviour:
     sfxCommand: 0
     sfxClipName: 
   - nodeId: 2_2_12
-    speakerKey: shaun
+    speakerKey: f72
     overrideSpeakerName: 
-    text: "\uD655\uC2E4\uD788 \uB9DB\uC788\uC5B4 \uBCF4\uC774\uC9C4 \uC54A\uB294\uAD70\uC694"
+    text: "\uC21C\uC218\uD55C \uC218\uBD84\uACFC \uC804\uD574\uC9C8 \uC774\uB77C\uB098
+      \uBB50\uB77C\uB098"
     nextNodeId: 2_2_13
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: annoy
@@ -3081,49 +2870,12 @@ MonoBehaviour:
     sfxCommand: 0
     sfxClipName: 
   - nodeId: 2_2_13
-    speakerKey: f72
+    speakerKey: shaun
     overrideSpeakerName: 
-    text: "\uB188\uB4E4\uC740 \uD56D\uC0C1 \uADF8\uAC8C \uC633\uB2E4\uACE0 \uBBFF\uB098
-      \uBD10. \uC21C\uC218\uD558\uACE0, \uAC74\uAC15\uD55C\uAC83\uB4E4 \uB9D0\uC774\uC57C"
+    text: "\uD655\uC2E4\uD788 \uB9DB\uC788\uC5B4 \uBCF4\uC774\uC9C4 \uC54A\uB294\uAD70\uC694"
     nextNodeId: 2_2_14
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
-    characters:
-    - characterKey: f72
-      expressionKey: mid
-      slotIndex: 0
-    requiresCrafting: 0
-    craftingOrderTicket: {fileID: 0}
-    craftingTicketKey: 
-    craftingOrderType: 6
-    craftingOrderTarget: 
-    craftingPaymentEnabled: 0
-    craftingPaymentCurrency: 0
-    craftingPaymentMultiplier: 1
-    craftingOutcomes: []
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
-    sfxCommand: 0
-    sfxClipName: 
-  - nodeId: 2_2_14
-    speakerKey: f72
-    overrideSpeakerName: 
-    text: "\uB9E4\uC77C \uC22B\uC790\uB098 \uB450\uB4DC\uB9AC\uBA74\uC11C \uC628
-      \uC6B0\uC8FC\uC5D0 \uB300\uD55C \uD574\uB2F5\uC744 \uC544\uB294 \uC591 \uAD70\uB2E4\uB2C8\uAE4C.
-      \uADF8\uB7F0 \uAC74 \uC9C8\uC0C9\uC774\uC57C."
-    nextNodeId: 2_2_15
-    choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: annoy
@@ -3147,49 +2899,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 2_2_15
+  - nodeId: 2_2_14
     speakerKey: f72
     overrideSpeakerName: 
-    text: "\uC560\uCD08\uC5D0 \uACBD\uCC30 \uAC19\uC740 \uAC70\uC5D0 \uC790\uC6D0\uD55C
-      \uB0B4 \uC798\uBABB\uC774\uC9C0"
-    nextNodeId: 2_2_16
+    text: "\uB188\uB4E4\uC740 \uD56D\uC0C1 \uADF8\uAC8C \uC633\uB2E4\uACE0 \uBBFF\uB098
+      \uBD10. \uC21C\uC218\uD558\uACE0, \uAC74\uAC15\uD55C\uAC83\uB4E4 \uB9D0\uC774\uC57C"
+    nextNodeId: 2_2_15
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
-    characters:
-    - characterKey: f72
-      expressionKey: frust
-      slotIndex: 0
-    requiresCrafting: 0
-    craftingOrderTicket: {fileID: 0}
-    craftingTicketKey: 
-    craftingOrderType: 6
-    craftingOrderTarget: 
-    craftingPaymentEnabled: 0
-    craftingPaymentCurrency: 0
-    craftingPaymentMultiplier: 1
-    craftingOutcomes: []
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
-    sfxCommand: 0
-    sfxClipName: 
-  - nodeId: 2_2_16
-    speakerKey: shaun
-    overrideSpeakerName: 
-    text: "\uD639\uC2DC \uC2E4\uB840\uAC00 \uC548 \uB41C\uB2E4\uBA74 \uC5B4\uCA4C\uB2E4
-      \uACBD\uCC30\uC774 \uB418\uC168\uB294\uC9C0 \uC5EC\uCB64\uBD10\uB3C4 \uAD1C\uCC2E\uC744\uAE4C\uC694?"
-    nextNodeId: 2_2_17
-    choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: mid
@@ -3213,15 +2930,77 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 2_2_17
+  - nodeId: 2_2_15
     speakerKey: f72
     overrideSpeakerName: 
-    text: "\uD5E4\uC5D0-"
+    text: "\uB9E4\uC77C \uC22B\uC790\uB098 \uB450\uB4DC\uB9AC\uBA74\uC11C \uC628
+      \uC6B0\uC8FC\uC5D0 \uB300\uD55C \uD574\uB2F5\uC744 \uC544\uB294 \uC591 \uAD70\uB2E4\uB2C8\uAE4C.
+      \uADF8\uB7F0 \uAC74 \uC9C8\uC0C9\uC774\uC57C."
+    nextNodeId: 2_2_16
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: annoy
+      slotIndex: 0
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 2_2_16
+    speakerKey: f72
+    overrideSpeakerName: 
+    text: "\uC560\uCD08\uC5D0 \uACBD\uCC30 \uAC19\uC740 \uAC70\uC5D0 \uC790\uC6D0\uD55C
+      \uB0B4 \uC798\uBABB\uC774\uC9C0"
+    nextNodeId: 2_2_17
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+      slotIndex: 0
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 2_2_17
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uD639\uC2DC \uC2E4\uB840\uAC00 \uC548 \uB41C\uB2E4\uBA74 \uC5B4\uCA4C\uB2E4
+      \uACBD\uCC30\uC774 \uB418\uC168\uB294\uC9C0 \uC5EC\uCB64\uBD10\uB3C4 \uAD1C\uCC2E\uC744\uAE4C\uC694?"
     nextNodeId: 2_2_18
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: mid
@@ -3248,44 +3027,10 @@ MonoBehaviour:
   - nodeId: 2_2_18
     speakerKey: f72
     overrideSpeakerName: 
-    text: "<b>\uAC00\uC871</b>\uC5D0\uAC8C\uC11C \uB6F0\uCCD0\uB098\uC624\uACE0 \uC2F6\uC5C8\uAC70\uB4E0."
+    text: "\uD5E4\uC5D0-"
     nextNodeId: 2_2_19
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
-    characters:
-    - characterKey: f72
-      expressionKey: closed
-      slotIndex: 0
-    requiresCrafting: 0
-    craftingOrderTicket: {fileID: 0}
-    craftingTicketKey: 
-    craftingOrderType: 6
-    craftingOrderTarget: 
-    craftingPaymentEnabled: 0
-    craftingPaymentCurrency: 0
-    craftingPaymentMultiplier: 1
-    craftingOutcomes: []
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
-    bgmCommand: 2
-    bgmClipName: Ep_main_0
-    sfxCommand: 0
-    sfxClipName: 
-  - nodeId: 2_2_19
-    speakerKey: shaun
-    overrideSpeakerName: 
-    text: "\uAC00\uC871\u2026 \uC774\uC694?"
-    nextNodeId: 2_2_20
-    choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: mid
@@ -3309,19 +3054,46 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 2_2_20
+  - nodeId: 2_2_19
     speakerKey: f72
     overrideSpeakerName: 
-    text: "\uC6B0\uB9AC \uAC00\uC871\uC740 \uC9C0\uB3C5\uD558\uAC8C \uC9C0\uB8E8\uD588\uC5B4.
-      \uC544\uB9C8 \uC5F0\uD569\uB9CC\uD07C\uC774\uB098"
-    nextNodeId: 2_2_21
+    text: "<b>\uAC00\uC871</b>\uC5D0\uAC8C\uC11C \uB6F0\uCCD0\uB098\uC624\uACE0 \uC2F6\uC5C8\uAC70\uB4E0."
+    nextNodeId: 2_2_20
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
-      expressionKey: annoy
+      expressionKey: closed
+      slotIndex: 0
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 2
+    bgmClipName: Ep_main_0
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 2_2_20
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uAC00\uC871\u2026 \uC774\uC694?"
+    nextNodeId: 2_2_21
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
       slotIndex: 0
     requiresCrafting: 0
     craftingOrderTicket: {fileID: 0}
@@ -3345,16 +3117,14 @@ MonoBehaviour:
   - nodeId: 2_2_21
     speakerKey: f72
     overrideSpeakerName: 
-    text: "\uADF8\uB798\uC11C \uC560\uC368 \uB3C4\uB9DD\uCCD0 \uB098\uC628 \uAC74\uB370,
-      \uBCC4\uBC18 \uB2E4\uB97C \uAC8C \uC5C6\uB124"
+    text: "\uC6B0\uB9AC \uAC00\uC871\uC740 \uC9C0\uB3C5\uD558\uAC8C \uC9C0\uB8E8\uD588\uC5B4.
+      \uC544\uB9C8 \uC5F0\uD569\uB9CC\uD07C\uC774\uB098"
     nextNodeId: 2_2_22
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
-      expressionKey: frust
+      expressionKey: annoy
       slotIndex: 0
     requiresCrafting: 0
     craftingOrderTicket: {fileID: 0}
@@ -3376,15 +3146,13 @@ MonoBehaviour:
     sfxCommand: 0
     sfxClipName: 
   - nodeId: 2_2_22
-    speakerKey: shaun
+    speakerKey: f72
     overrideSpeakerName: 
-    text: "\uB2E8\uC21C\uD788 \uC9C0\uB8E8\uD558\uB2E4\uACE0 \uAC00\uC871\uC744 \uBC84\uB9AC\uC9C4
-      \uC54A\uC544\uC694"
+    text: "\uADF8\uB798\uC11C \uC560\uC368 \uB3C4\uB9DD\uCCD0 \uB098\uC628 \uAC74\uB370,
+      \uBCC4\uBC18 \uB2E4\uB97C \uAC8C \uC5C6\uB124"
     nextNodeId: 2_2_23
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -3409,16 +3177,45 @@ MonoBehaviour:
     sfxCommand: 0
     sfxClipName: 
   - nodeId: 2_2_23
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uB2E8\uC21C\uD788 \uC9C0\uB8E8\uD558\uB2E4\uACE0 \uAC00\uC871\uC744 \uBC84\uB9AC\uC9C4
+      \uC54A\uC544\uC694"
+    nextNodeId: 2_2_24
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+      slotIndex: 0
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 2_2_24
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uD5E4- \uC801\uB2F9\uD788 \uB3CC\uB824 \uB9D0\uD55C\uAC70\uC796\uC544.
       \uAD6C\uC9C8\uAD6C\uC9C8\uD55C \uAC00\uC815\uC0AC\uB294 \uCDE8\uD558\uC9C0
       \uC54A\uACE0\uC11C \uB9D0\uD558\uAE34 \uC5B4\uB824\uC6B4 \uAC70\uB77C\uACE0."
-    nextNodeId: 2_2_24
+    nextNodeId: 2_2_25
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -3442,49 +3239,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 2_2_24
+  - nodeId: 2_2_25
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC557, \uC81C\uAC00 \uC2E4\uB840\uD588\uC2B5\uB2C8\uB2E4. \uC774 \uC774\uC57C\uAE30\uB294
       \uC5EC\uAE30\uAE4C\uC9C0 \uD574\uB3C4 \uAD1C\uCC2E\uC2B5\uB2C8\uB2E4."
-    nextNodeId: 2_2_25
-    choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
-    characters:
-    - characterKey: f72
-      expressionKey: mid
-      slotIndex: 0
-    requiresCrafting: 0
-    craftingOrderTicket: {fileID: 0}
-    craftingTicketKey: 
-    craftingOrderType: 6
-    craftingOrderTarget: 
-    craftingPaymentEnabled: 0
-    craftingPaymentCurrency: 0
-    craftingPaymentMultiplier: 1
-    craftingOutcomes: []
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
-    sfxCommand: 0
-    sfxClipName: 
-  - nodeId: 2_2_25
-    speakerKey: f72
-    overrideSpeakerName: 
-    text: "\uBB50, \uADF8\uB798\uB3C4 \uB355\uBD84\uC5D0 \uBB50\uB4E0 \uC801\uB2F9\uD788
-      \uB118\uC5B4\uAC00\uB294 \uBC95\uC744 \uBC30\uC6E0\uC5B4."
     nextNodeId: 2_2_26
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: mid
@@ -3511,17 +3273,14 @@ MonoBehaviour:
   - nodeId: 2_2_26
     speakerKey: f72
     overrideSpeakerName: 
-    text: "\uBC14\uD150\uB354\uB294 \uC880 \uC5B4\uB54C? \uC774 \uC881\uC544\uD130\uC9C4
-      \uD38D\uC5D0\uC11C \uC220\uC774\uB098 \uB530\uB974\uACE0 \uC788\uB294 \uC774\uC720\uAC00
-      \uBB50\uC57C?"
+    text: "\uBB50, \uADF8\uB798\uB3C4 \uB355\uBD84\uC5D0 \uBB50\uB4E0 \uC801\uB2F9\uD788
+      \uB118\uC5B4\uAC00\uB294 \uBC95\uC744 \uBC30\uC6E0\uC5B4."
     nextNodeId: 2_2_27
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
-      expressionKey: smile
+      expressionKey: mid
       slotIndex: 0
     requiresCrafting: 0
     craftingOrderTicket: {fileID: 0}
@@ -3545,24 +3304,54 @@ MonoBehaviour:
   - nodeId: 2_2_27
     speakerKey: f72
     overrideSpeakerName: 
+    text: "\uBC14\uD150\uB354\uB294 \uC880 \uC5B4\uB54C? \uC774 \uC881\uC544\uD130\uC9C4
+      \uD38D\uC5D0\uC11C \uC220\uC774\uB098 \uB530\uB974\uACE0 \uC788\uB294 \uC774\uC720\uAC00
+      \uBB50\uC57C?"
+    nextNodeId: 2_2_28
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: smile
+      slotIndex: 0
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 2_2_28
+    speakerKey: f72
+    overrideSpeakerName: 
     text: "\uB098\uCC98\uB7FC \uC228\uAE38 \uC218 \uC5C6\uB294 \uC57C\uB9DD\uC774\uB77C\uB3C4
       \uC788\uB294 \uAC70\uC57C?"
     nextNodeId: 
     choices:
     - buttonText: "\uC800\uB294 \uAC00\uC57C\uB9CC \uD558\uB294 \uACF3\uC774 \uC788\uC5B4\uC694."
-      nextNodeId: 2_2_28_1_1
+      nextNodeId: 2_2_29_1_1
       setFlags: []
       clearFlags: []
       varChanges: []
     - buttonText: "\uC800\uB3C4 \uB3C4\uB9DD\uAC00\uACE0 \uC2F6\uC740 \uACF3\uC774
         \uC788\uC5B4\uC694."
-      nextNodeId: 2_2_28_2_1
+      nextNodeId: 2_2_29_2_1
       setFlags: []
       clearFlags: []
       varChanges: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: laugh
@@ -3586,15 +3375,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 2_2_28_1_1
+  - nodeId: 2_2_29_1_1
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC800\uB294 \uC0AC\uC2E4 -"
-    nextNodeId: 2_2_29
+    nextNodeId: 2_2_30
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: mid
@@ -3618,54 +3405,17 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 2_2_28_2_1
+  - nodeId: 2_2_29_2_1
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC800\uB3C4 \uC0AC\uC2E4-"
-    nextNodeId: 2_2_29
-    choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
-    characters:
-    - characterKey: f72
-      expressionKey: mid
-      slotIndex: 0
-    requiresCrafting: 0
-    craftingOrderTicket: {fileID: 0}
-    craftingTicketKey: 
-    craftingOrderType: 6
-    craftingOrderTarget: 
-    craftingPaymentEnabled: 0
-    craftingPaymentCurrency: 0
-    craftingPaymentMultiplier: 1
-    craftingOutcomes: []
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
-    sfxCommand: 0
-    sfxClipName: 
-  - nodeId: 2_2_29
-    speakerKey: f72
-    overrideSpeakerName: 
-    text: "\uC140\uB9AC! \uC654\uAD6C\uB098!"
     nextNodeId: 2_2_30
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
-      expressionKey: smile
-      slotIndex: 0
-    - characterKey: sally
       expressionKey: mid
-      slotIndex: 1
+      slotIndex: 0
     requiresCrafting: 0
     craftingOrderTicket: {fileID: 0}
     craftingTicketKey: 
@@ -3686,14 +3436,12 @@ MonoBehaviour:
     sfxCommand: 0
     sfxClipName: 
   - nodeId: 2_2_30
-    speakerKey: shaun
+    speakerKey: f72
     overrideSpeakerName: 
-    text: "\uC5B4\uC11C\uC624\uC138\uC694. \uC140\uB9AC\uB2D8."
+    text: "\uC140\uB9AC! \uC654\uAD6C\uB098!"
     nextNodeId: 2_2_31
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -3721,123 +3469,12 @@ MonoBehaviour:
     sfxCommand: 0
     sfxClipName: 
   - nodeId: 2_2_31
-    speakerKey: sally
-    overrideSpeakerName: 
-    text: "\uC790\uCF54, \uBAA9\uC18C\uB9AC\uC880 \uB0AE\uCDB0. \uADF8\uB9AC\uACE0
-      \uC774\uB984 \uBD80\uB974\uC9C0 \uB9D0\uB77C\uACE0 \uBA87 \uBC88\uC744 \uB9D0\uD574?"
-    nextNodeId: 2_2_32
-    choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
-    characters:
-    - characterKey: f72
-      expressionKey: frust
-      slotIndex: 0
-    - characterKey: sally
-      expressionKey: angry
-      slotIndex: 1
-    requiresCrafting: 0
-    craftingOrderTicket: {fileID: 0}
-    craftingTicketKey: 
-    craftingOrderType: 6
-    craftingOrderTarget: 
-    craftingPaymentEnabled: 0
-    craftingPaymentCurrency: 0
-    craftingPaymentMultiplier: 1
-    craftingOutcomes: []
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
-    sfxCommand: 0
-    sfxClipName: 
-  - nodeId: 2_2_32
-    speakerKey: f72
-    overrideSpeakerName: 
-    text: "\uC5D0\uC774- \uC774\uC81C \uC11C\uB85C \uB2E4 \uC544\uB294 \uC0AC\uC774\uC778
-      \uAC78 \uC65C\uADF8\uB798?"
-    nextNodeId: 2_2_33
-    choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
-    characters:
-    - characterKey: f72
-      expressionKey: smile
-      slotIndex: 0
-    - characterKey: sally
-      expressionKey: angry
-      slotIndex: 1
-    requiresCrafting: 0
-    craftingOrderTicket: {fileID: 0}
-    craftingTicketKey: 
-    craftingOrderType: 6
-    craftingOrderTarget: 
-    craftingPaymentEnabled: 0
-    craftingPaymentCurrency: 0
-    craftingPaymentMultiplier: 1
-    craftingOutcomes: []
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
-    sfxCommand: 0
-    sfxClipName: 
-  - nodeId: 2_2_33
-    speakerKey: sally
-    overrideSpeakerName: 
-    text: "\uADF8\uB798\uC11C \uBB38\uC81C\uC778 \uAC70\uC57C. \uC544\uC8FC \uADF8\uB0E5
-      \uB4B7\uAC70\uB798\uD55C\uB2E4\uACE0 \uC18C\uBB38\uC744 \uB0B4\uC9C0 \uADF8\uB798?"
-    nextNodeId: 2_2_34
-    choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
-    characters:
-    - characterKey: f72
-      expressionKey: frust
-      slotIndex: 0
-    - characterKey: sally
-      expressionKey: angry
-      slotIndex: 1
-    requiresCrafting: 0
-    craftingOrderTicket: {fileID: 0}
-    craftingTicketKey: 
-    craftingOrderType: 6
-    craftingOrderTarget: 
-    craftingPaymentEnabled: 0
-    craftingPaymentCurrency: 0
-    craftingPaymentMultiplier: 1
-    craftingOutcomes: []
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
-    sfxCommand: 0
-    sfxClipName: 
-  - nodeId: 2_2_34
     speakerKey: shaun
     overrideSpeakerName: 
-    text: "\uAC71\uC815\uD558\uC9C0 \uB9C8\uC138\uC694. \uBC14\uD150\uB354\uB294
-      \uC785\uC774 \uBB34\uAC70\uC6B0\uB2C8\uAE4C\uC694"
-    nextNodeId: 2_2_35
+    text: "\uC5B4\uC11C\uC624\uC138\uC694. \uC140\uB9AC\uB2D8."
+    nextNodeId: 2_2_32
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -3864,15 +3501,149 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
+  - nodeId: 2_2_32
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uC790\uCF54, \uBAA9\uC18C\uB9AC\uC880 \uB0AE\uCDB0. \uADF8\uB9AC\uACE0
+      \uC774\uB984 \uBD80\uB974\uC9C0 \uB9D0\uB77C\uACE0 \uBA87 \uBC88\uC744 \uB9D0\uD574?"
+    nextNodeId: 2_2_33
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+      slotIndex: 0
+    - characterKey: sally
+      expressionKey: angry
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 2_2_33
+    speakerKey: f72
+    overrideSpeakerName: 
+    text: "\uC5D0\uC774- \uC774\uC81C \uC11C\uB85C \uB2E4 \uC544\uB294 \uC0AC\uC774\uC778
+      \uAC78 \uC65C\uADF8\uB798?"
+    nextNodeId: 2_2_34
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: smile
+      slotIndex: 0
+    - characterKey: sally
+      expressionKey: angry
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 2_2_34
+    speakerKey: sally
+    overrideSpeakerName: 
+    text: "\uADF8\uB798\uC11C \uBB38\uC81C\uC778 \uAC70\uC57C. \uC544\uC8FC \uADF8\uB0E5
+      \uB4B7\uAC70\uB798\uD55C\uB2E4\uACE0 \uC18C\uBB38\uC744 \uB0B4\uC9C0 \uADF8\uB798?"
+    nextNodeId: 2_2_35
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+      slotIndex: 0
+    - characterKey: sally
+      expressionKey: angry
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
   - nodeId: 2_2_35
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uAC71\uC815\uD558\uC9C0 \uB9C8\uC138\uC694. \uBC14\uD150\uB354\uB294
+      \uC785\uC774 \uBB34\uAC70\uC6B0\uB2C8\uAE4C\uC694"
+    nextNodeId: 2_2_36
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: smile
+      slotIndex: 0
+    - characterKey: sally
+      expressionKey: mid
+      slotIndex: 1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 2_2_36
     speakerKey: sally
     overrideSpeakerName: 
     text: "\uADF8\uAC74 \uBAA8\uB974\uB294 \uC77C\uC774\uC9C0."
     nextNodeId: 3
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -3905,9 +3676,7 @@ MonoBehaviour:
     text: "\uCC38, \uB298 \uAE4C\uCE60\uD558\uB2E4\uB2C8\uAE4C"
     nextNodeId: 4
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: annoy
@@ -3940,9 +3709,7 @@ MonoBehaviour:
     text: "\uB410\uACE0, \uC815\uBCF4\uBD80\uD130 \uC918."
     nextNodeId: 5
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: annoy
@@ -3977,9 +3744,7 @@ MonoBehaviour:
       \uC218 \uC788\uC5B4."
     nextNodeId: 6
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -4012,9 +3777,7 @@ MonoBehaviour:
     text: "\uC0C8\uBCBD \uBA87 \uC2DC\uBD80\uD130 \uBA87 \uC2DC\uAE4C\uC9C0?"
     nextNodeId: 7
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -4047,9 +3810,7 @@ MonoBehaviour:
     text: "1\uC2DC\uBD80\uD130 \uD55C\u2026 5\uC2DC\uAE4C\uC9C0?"
     nextNodeId: 8
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -4083,9 +3844,7 @@ MonoBehaviour:
       5\uC2DC\uAE4C\uC9C0 \uD655\uC2E4\uD55C \uAC70\uC57C?"
     nextNodeId: 9
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -4120,9 +3879,7 @@ MonoBehaviour:
       \uB9D0\uC774\uC57C."
     nextNodeId: 10
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -4155,9 +3912,7 @@ MonoBehaviour:
     text: "\uC544\uBB34\uD2BC! \uADF8\uB7FC 4\uC2DC\uAE4C\uC9C0\uB85C \uD574!"
     nextNodeId: 11
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -4191,9 +3946,7 @@ MonoBehaviour:
       \uC0AC\uB78C\uB4E4\uC758 \uC0DD\uC0AC\uAC00 \uB2EC\uB838\uB2E4\uACE0."
     nextNodeId: 12
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -4227,9 +3980,7 @@ MonoBehaviour:
       \uD655\uC2E4\uD788 \uD574\uC904 \uC218 \uC788\uC5B4"
     nextNodeId: 13
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -4262,9 +4013,7 @@ MonoBehaviour:
     text: "\uD558\u2026 \uC54C\uACA0\uC5B4"
     nextNodeId: 14
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -4297,9 +4046,7 @@ MonoBehaviour:
     text: "\uADF8\uB9AC\uACE0\u2026"
     nextNodeId: 15
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: mid
@@ -4332,9 +4079,7 @@ MonoBehaviour:
     text: "\uB610 \uBB50?"
     nextNodeId: 16
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: mid
@@ -4367,9 +4112,7 @@ MonoBehaviour:
     text: "<b>\uB108\uD76C \uCAD3\uB294 \uB188\uC774 \uC0DD\uACBC\uC5B4.</b>"
     nextNodeId: 17
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: serious
@@ -4402,9 +4145,7 @@ MonoBehaviour:
     text: "<b>\uBB50\uB77C\uACE0?</b>"
     nextNodeId: 18
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: serious
@@ -4438,9 +4179,7 @@ MonoBehaviour:
       \uC790\uC138\uD788\uB294 \uB098\uB3C4 \uC798 \uBAB0\uB77C"
     nextNodeId: 19
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -4473,9 +4212,7 @@ MonoBehaviour:
     text: "<b>UPD</b>\uC57C? \uB611\uBC14\uB85C \uB9D0\uD574!"
     nextNodeId: 20
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -4509,9 +4246,7 @@ MonoBehaviour:
       \uACA8\uC6B0 \uC5FF\uB4E4\uC740 \uAC83\uBFD0\uC774\uB77C\uACE0!"
     nextNodeId: 21
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -4546,9 +4281,7 @@ MonoBehaviour:
       \uC62C\uB77C\uAC14\uB098 \uBD10."
     nextNodeId: 22
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -4583,9 +4316,7 @@ MonoBehaviour:
       \uB9D0\uC774\uC57C."
     nextNodeId: 23
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -4620,9 +4351,7 @@ MonoBehaviour:
       \uC9C1\uC5C5\uC815\uC2E0\uC774 \uD22C\uCCA0\uD574\uC11C"
     nextNodeId: 24
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -4655,9 +4384,7 @@ MonoBehaviour:
     text: "\uADF8 \uB140\uC11D <b>\uCF54\uB4DC\uBA85</b>\uC774 \uBB50\uC57C."
     nextNodeId: 25
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -4692,9 +4419,7 @@ MonoBehaviour:
       \uBC8C\uB9AC\uC9C0 \uB9C8."
     nextNodeId: 26
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -4727,9 +4452,7 @@ MonoBehaviour:
     text: "\uB110 \uBBFF\uC744 \uC218\uAC00 \uC788\uC5B4\uC57C\uC9C0."
     nextNodeId: 27
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -4762,9 +4485,7 @@ MonoBehaviour:
     text: "\u2026"
     nextNodeId: 28
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -4797,9 +4518,7 @@ MonoBehaviour:
     text: "\uBC14\uD150\uB354."
     nextNodeId: 29
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -4832,9 +4551,7 @@ MonoBehaviour:
     text: "\uC124\uB9C8 \uB124\uAC00 \uC815\uBCF4\uB97C \uD758\uB9B0 \uAC70\uC57C?"
     nextNodeId: 30
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -4868,9 +4585,7 @@ MonoBehaviour:
       \uD55C\uD14C \uAE4C\uC9C0 \uC65C \uADF8\uB798?"
     nextNodeId: 31
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -4905,9 +4620,7 @@ MonoBehaviour:
       \uC148\uC774\uC57C?"
     nextNodeId: 32
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -4941,9 +4654,7 @@ MonoBehaviour:
       \uB098\uB294 \uBE68\uB9AC \uC790\uB9AC\uB97C \uB5A0\uC57C\uACA0\uC5B4."
     nextNodeId: 33
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -4976,9 +4687,7 @@ MonoBehaviour:
     text: "\uB2E4\uC74C\uBD80\uD134-"
     nextNodeId: 34
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5011,9 +4720,7 @@ MonoBehaviour:
     text: "\uC5D0\uD5F4- \uD06C\uD760"
     nextNodeId: 35
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5050,9 +4757,7 @@ MonoBehaviour:
       \uC2F6\uAD70\uC694."
     nextNodeId: 36
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5089,9 +4794,7 @@ MonoBehaviour:
       \uC5B4\uB5A4 \uCE75\uD14C\uC77C\uB85C \uD558\uC2DC\uACA0\uC2B5\uB2C8\uAE4C?"
     nextNodeId: 37
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5127,9 +4830,7 @@ MonoBehaviour:
     text: "<b>\uC0E4\uC774\uB2C8</b> \uD558\uB098\uC694."
     nextNodeId: 38
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5166,9 +4867,7 @@ MonoBehaviour:
       \uC120\uD0DD\uC774\uC2ED\uB2C8\uB2E4."
     nextNodeId: 39
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5205,9 +4904,7 @@ MonoBehaviour:
       \uB9D0\uD588\uC796\uC544\uC694!"
     nextNodeId: 40
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5243,9 +4940,7 @@ MonoBehaviour:
     text: "\uBC14\uD150\uB354, \uADF8\uB9AC\uACE0 \uB9D0\uC774\uC8E0 \uD639\uC2DC\u2026"
     nextNodeId: 41
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5281,9 +4976,7 @@ MonoBehaviour:
     text: "\uC5B4\uB514\uC11C \uB4E4\uC740 \uC774\uC57C\uAE30\uC785\uB2C8\uB2E4\uB9CC"
     nextNodeId: 42
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5330,9 +5023,7 @@ MonoBehaviour:
       setFlags: []
       clearFlags: []
       varChanges: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5369,9 +5060,7 @@ MonoBehaviour:
       \uCDE8\uAE09\uD569\uB2C8\uB2E4."
     nextNodeId: 43_1_2
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5408,9 +5097,7 @@ MonoBehaviour:
       \uC54A\uAC70\uB4E0\uC694."
     nextNodeId: 43_1_3
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5446,9 +5133,7 @@ MonoBehaviour:
     text: "\uADF8\uB807\uAD70\uC694. \uD760. \uC758\uC678\uB124\uC694."
     nextNodeId: 43_1_4
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5485,9 +5170,7 @@ MonoBehaviour:
       \uC788\uC73C\uB2C8 \uB9D0\uC785\uB2C8\uB2E4.</b>"
     nextNodeId: 43_1_5
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5523,9 +5206,7 @@ MonoBehaviour:
     text: "\uB124? \uC9C0\uD45C\uB77C\uB1E8?"
     nextNodeId: 43_1_6
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5561,9 +5242,7 @@ MonoBehaviour:
     text: <b>...</b>
     nextNodeId: 44
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5599,9 +5278,7 @@ MonoBehaviour:
     text: "\uB124, \uBC1B\uC2B5\uB2C8\uB2E4."
     nextNodeId: 43_2_2
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5637,9 +5314,7 @@ MonoBehaviour:
     text: "\uADF8\uB098\uC800\uB098 \uC18C\uBB38\uC774 \uBE68\uB9AC\uB3C4 \uD37C\uC9C0\uB294\uAD70\uC694."
     nextNodeId: 43_2_3
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5675,9 +5350,7 @@ MonoBehaviour:
     text: "\uC5ED\uC2DC\u2026"
     nextNodeId: 43_2_4
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5713,9 +5386,7 @@ MonoBehaviour:
     text: "<b>\uC18C\uBB38\uC774 \uC0AC\uC2E4\uC774\uC5C8\uAD70\uC694.</b>"
     nextNodeId: 43_2_5
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5751,9 +5422,7 @@ MonoBehaviour:
     text: "\uC190\uB2D8?"
     nextNodeId: 43_2_6
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5789,9 +5458,7 @@ MonoBehaviour:
     text: <b>...</b>
     nextNodeId: 44
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5829,9 +5496,7 @@ MonoBehaviour:
       \uCCB4\uD3EC\uD569\uB2C8\uB2E4!"
     nextNodeId: 45
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: devas
@@ -5868,9 +5533,7 @@ MonoBehaviour:
       \uB204\uAD6C\uC2E0\uB370 \uC774\uB7EC\uC2DC\uC8E0?"
     nextNodeId: 46
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: devas
@@ -5906,9 +5569,7 @@ MonoBehaviour:
     text: "<b>UPD \uC139\uD130 \uAD00\uB9AC\uAD6D</b> \uC18C\uC18D \uACBD\uC0AC <b>E12</b>\uC785\uB2C8\uB2E4."
     nextNodeId: 47
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: devas
@@ -5945,9 +5606,7 @@ MonoBehaviour:
       \uAC19\uC740\uB370?*"
     nextNodeId: 48
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -5983,17 +5642,25 @@ MonoBehaviour:
     text: "*\uADF8\uCBE4\uC740 \uC54C\uACE0 \uC788\uC5B4*"
     nextNodeId: 
     choices: []
-    flagBranches:
-    - requiredAllFlags:
+    branches:
+    - conditionType: 0
+      flags:
       - sc1_2_true
-      requiredAnyFlags: []
+      varCondition:
+        varName: 
+        op: 0
+        threshold: 0
+      episodeId: 
       nextNodeId: 49_1_1
-    - requiredAllFlags:
+    - conditionType: 0
+      flags:
       - sc1_2_false
-      requiredAnyFlags: []
+      varCondition:
+        varName: 
+        op: 0
+        threshold: 0
+      episodeId: 
       nextNodeId: 49_2_1
-    varBranches: []
-    episodeBranches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -6030,9 +5697,7 @@ MonoBehaviour:
       \uC798\uB9C8\uC168\uC5B4*"
     nextNodeId: 50
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -6068,9 +5733,7 @@ MonoBehaviour:
     text: "*\uC560\uCD08\uC5D0 \uC5EC\uAE30 \uB610 \uC624\uB294 \uAC8C \uC544\uB2C8\uC5C8\uC5B4*"
     nextNodeId: 50
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -6107,9 +5770,7 @@ MonoBehaviour:
       \uC720\uD1B5\uB41C\uB2E4\uB294 \uBCF4\uACE0\uB97C \uBC1B\uC558\uC2B5\uB2C8\uB2E4."
     nextNodeId: 51
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -6143,9 +5804,7 @@ MonoBehaviour:
       \uCCB4\uD3EC\uD569\uB2C8\uB2E4. \uD611\uC870\uB97C \uBA85\uB839\uD569\uB2C8\uB2E4!"
     nextNodeId: 52
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -6178,9 +5837,7 @@ MonoBehaviour:
     text: "\uC804 \uADF8\uB7EC\uB2C8\uAE4C-"
     nextNodeId: 53
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -6213,9 +5870,7 @@ MonoBehaviour:
     text: "\uBC1C\uBE8C\uD560 \uC0DD\uAC01\uD558\uC9C0 \uB9C8\uC2ED\uC2DC\uC624!"
     nextNodeId: 54
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -6250,9 +5905,7 @@ MonoBehaviour:
       \uC5EC\uAE30\uB85C \uBC30\uC1A1\uB418\uC5C8\uB2E8 \uB9D0\uC785\uB2C8\uB2E4!"
     nextNodeId: 55
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -6286,17 +5939,25 @@ MonoBehaviour:
       \uC544\uB2C8\uBA74\u2026 <b>\uC0AC\uB78C?</b>"
     nextNodeId: 
     choices: []
-    flagBranches:
-    - requiredAllFlags:
+    branches:
+    - conditionType: 0
+      flags:
       - sc1_1_false
-      requiredAnyFlags: []
+      varCondition:
+        varName: 
+        op: 0
+        threshold: 0
+      episodeId: 
       nextNodeId: 56_1_1
-    - requiredAllFlags:
+    - conditionType: 0
+      flags:
       - sc1_1_true
-      requiredAnyFlags: []
+      varCondition:
+        varName: 
+        op: 0
+        threshold: 0
+      episodeId: 
       nextNodeId: 56_2_1
-    varBranches: []
-    episodeBranches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -6327,11 +5988,9 @@ MonoBehaviour:
     speakerKey: shaun
     overrideSpeakerName: 
     text: "*72, \uC5B4\uB5BB\uAC8C \uC880 \uD574\uBD10\uC694!*"
-    nextNodeId: 58
+    nextNodeId: 57
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -6362,11 +6021,43 @@ MonoBehaviour:
     speakerKey: shaun
     overrideSpeakerName: 
     text: "*\uC790\uCF54\uB2D8! \uC5B4\uB5BB\uAC8C \uC880 \uD574\uBD10\uC694!*"
+    nextNodeId: 57
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+      slotIndex: 0
+    - characterKey: e12
+      expressionKey: aim
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 57
+    speakerKey: f72
+    overrideSpeakerName: 
+    text: "*\uC81C\uBC1C... \uB098 \uC544\uB294 \uCC99\uD558\uC9C0 \uB9C8\uB77C...
+      \uB09C \uC9C0\uAE08 \uD22C\uBA85 \uC778\uAC04\uC774\uB2E4\u2026*"
     nextNodeId: 58
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -6394,15 +6085,13 @@ MonoBehaviour:
     sfxCommand: 0
     sfxClipName: 
   - nodeId: 58
-    speakerKey: f72
+    speakerKey: e12
     overrideSpeakerName: 
-    text: "*\uC81C\uBC1C... \uB098 \uC544\uB294 \uCC99\uD558\uC9C0 \uB9C8\uB77C...
-      \uB09C \uC9C0\uAE08 \uD22C\uBA85 \uC778\uAC04\uC774\uB2E4\u2026*"
+    text: "\uBB50\uB77C \uC18D\uC0AD\uC774\uC2DC\uB294 \uAC70\uC8E0!? \uAD1C\uD55C
+      \uC218\uC791 \uBD80\uB9AC\uC9C0 \uB9C8\uC2DC-"
     nextNodeId: 59
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -6432,19 +6121,16 @@ MonoBehaviour:
   - nodeId: 59
     speakerKey: e12
     overrideSpeakerName: 
-    text: "\uBB50\uB77C \uC18D\uC0AD\uC774\uC2DC\uB294 \uAC70\uC8E0!? \uAD1C\uD55C
-      \uC218\uC791 \uBD80\uB9AC\uC9C0 \uB9C8\uC2DC-"
+    text: "\uC120\uBC30..\uB2D8?"
     nextNodeId: 60
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
       slotIndex: 0
     - characterKey: e12
-      expressionKey: aim
+      expressionKey: shame
       slotIndex: 2
     requiresCrafting: 0
     craftingOrderTicket: {fileID: 0}
@@ -6466,14 +6152,12 @@ MonoBehaviour:
     sfxCommand: 0
     sfxClipName: 
   - nodeId: 60
-    speakerKey: e12
+    speakerKey: shaun
     overrideSpeakerName: 
-    text: "\uC120\uBC30..\uB2D8?"
+    text: "\uC120\uBC30\uB77C\uB2C8\u2026?"
     nextNodeId: 61
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -6501,50 +6185,13 @@ MonoBehaviour:
     sfxCommand: 0
     sfxClipName: 
   - nodeId: 61
-    speakerKey: shaun
-    overrideSpeakerName: 
-    text: "\uC120\uBC30\uB77C\uB2C8\u2026?"
-    nextNodeId: 62
-    choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
-    characters:
-    - characterKey: f72
-      expressionKey: frust
-      slotIndex: 0
-    - characterKey: e12
-      expressionKey: shame
-      slotIndex: 2
-    requiresCrafting: 0
-    craftingOrderTicket: {fileID: 0}
-    craftingTicketKey: 
-    craftingOrderType: 6
-    craftingOrderTarget: 
-    craftingPaymentEnabled: 0
-    craftingPaymentCurrency: 0
-    craftingPaymentMultiplier: 1
-    craftingOutcomes: []
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
-    sfxCommand: 0
-    sfxClipName: 
-  - nodeId: 62
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uC544\uD558\uD558! <b>E12</b>!  <b>5\uBC88\uAC00 \uC0AC\uBB34\uC2E4</b>
       \uB9D0\uACE0 \uBC16\uC5D0\uC11C \uBCF4\uB2C8\uAE4C \uBC18\uAC00\uC6B4\uB370?"
-    nextNodeId: 63
+    nextNodeId: 62
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: laugh
@@ -6571,16 +6218,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 63
+  - nodeId: 62
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uC5EC\uAE30\uC11C \uBB50 \uD574? \uAD50\uB300 \uADFC\uBB34 \uC2DC\uAC04
       \uC544\uB2C8\uC5C8\uB358\uAC00?"
-    nextNodeId: 64
+    nextNodeId: 63
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -6607,17 +6252,15 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 64
+  - nodeId: 63
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uC120\uBC30\uB2D8 \uC774\uC57C\uB9D0\uB85C \uC774 \uC2DC\uAC04\uC5D0
       \uC5EC\uAE30\uC11C \uBB50 \uD558\uC2DC\uB294 \uAC81\uB2C8\uAE4C? \uADF8\uB9AC\uACE0,
       \uC774 \uBC14\uD150\uB354\uB791 \uC544\uC2DC\uB294 \uC0AC\uC774\uC774\uC2ED\uB2C8\uAE4C?"
-    nextNodeId: 65
+    nextNodeId: 64
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -6644,17 +6287,15 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 65
+  - nodeId: 64
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uADF8\uAC8C-\uADF8\uB7EC\uB2C8\uAE4C\u2026 \uC880 \uBCF5\uC7A1\uD574!
       \uBAA8\uB974\uB294 \uC0AC\uC774\uB294 \uC544\uB2C8\uB77C\uACE0 \uD560 \uC218
       \uC788\uC9C0!"
-    nextNodeId: 66
+    nextNodeId: 65
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -6681,17 +6322,50 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 66
+  - nodeId: 65
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uB9D0 \uB3CC\uB9AC\uC9C0 \uB9C8\uC2DC\uACE0 \uD655\uC2E4\uD788 \uB300\uB2F5\uD574
       \uC8FC\uC2DC\uC8E0! \uBB50\uAC00 \uC5B4\uB5BB\uAC8C \uB3CC\uC544\uAC00\uACE0
       \uC788\uB294 \uAC74\uC9C0!"
+    nextNodeId: 66
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: frust
+      slotIndex: 0
+    - characterKey: e12
+      expressionKey: angry
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 66
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uC120\uBC30\uB2D8\uC744 \uC774 \uC4F0\uB808\uAE30 \uBC94\uC8C4\uC790
+      \uB188\uB4E4\uACFC \uD55C\uD1B5\uC18D\uC774\uB77C \uC0DD\uAC01\uD558\uACE0
+      \uC2F6\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4!"
     nextNodeId: 67
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -6719,51 +6393,12 @@ MonoBehaviour:
     sfxCommand: 0
     sfxClipName: 
   - nodeId: 67
-    speakerKey: e12
-    overrideSpeakerName: 
-    text: "\uC120\uBC30\uB2D8\uC744 \uC774 \uC4F0\uB808\uAE30 \uBC94\uC8C4\uC790
-      \uB188\uB4E4\uACFC \uD55C\uD1B5\uC18D\uC774\uB77C \uC0DD\uAC01\uD558\uACE0
-      \uC2F6\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4!"
-    nextNodeId: 68
-    choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
-    characters:
-    - characterKey: f72
-      expressionKey: frust
-      slotIndex: 0
-    - characterKey: e12
-      expressionKey: angry
-      slotIndex: 2
-    requiresCrafting: 0
-    craftingOrderTicket: {fileID: 0}
-    craftingTicketKey: 
-    craftingOrderType: 6
-    craftingOrderTarget: 
-    craftingPaymentEnabled: 0
-    craftingPaymentCurrency: 0
-    craftingPaymentMultiplier: 1
-    craftingOutcomes: []
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
-    sfxCommand: 0
-    sfxClipName: 
-  - nodeId: 68
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uD5E4\uD5E4, \uC5ED\uC2DC \uBE60\uC838\uB098\uAC00\uAE30\uC5D4 \uAE00\uB800\uB098?"
-    nextNodeId: 69
+    nextNodeId: 68
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: laugh
@@ -6790,16 +6425,48 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 69
+  - nodeId: 68
     speakerKey: f72
     overrideSpeakerName: 
     text: "E12. \uC544\uC9C1 \uB124\uAC00 \uC798 \uBAB0\uB77C\uC11C \uADF8\uB798!
       \uADF8\uB807\uAC8C \uC2EC\uAC01\uD55C \uAC74 \uC544\uB2C8\uB77C\uB2C8\uAE4C"
+    nextNodeId: 69
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: smile
+      slotIndex: 0
+    - characterKey: e12
+      expressionKey: angry
+      slotIndex: 2
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 69
+    speakerKey: e12
+    overrideSpeakerName: 
+    text: "\uBAA8\uB4E0 \uBC94\uC8C4\uB294 \uC5F0\uD569\uC5D0 \uBC18\uD558\uB294
+      \uC2EC\uAC01\uD55C \uC911\uC8C4\uC785\uB2C8\uB2E4!"
     nextNodeId: 70
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -6829,19 +6496,17 @@ MonoBehaviour:
   - nodeId: 70
     speakerKey: e12
     overrideSpeakerName: 
-    text: "\uBAA8\uB4E0 \uBC94\uC8C4\uB294 \uC5F0\uD569\uC5D0 \uBC18\uD558\uB294
-      \uC2EC\uAC01\uD55C \uC911\uC8C4\uC785\uB2C8\uB2E4!"
+    text: "\uC6A9\uC758\uC790 \uC158 \uC624\uB3C4\uB12C. \uB2F9\uC2E0\uC758 \uBC94\uC8C4\uD589\uAC01\uC5D0
+      \uB300\uD574 \uC21C\uC21C\uD788 \uC2E4\uD1A0\uD560 \uAC83\uC744 \uBA85\uB839\uD569\uB2C8\uB2E4"
     nextNodeId: 71
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
-      expressionKey: smile
+      expressionKey: frust
       slotIndex: 0
     - characterKey: e12
-      expressionKey: angry
+      expressionKey: serious
       slotIndex: 2
     requiresCrafting: 0
     craftingOrderTicket: {fileID: 0}
@@ -6865,48 +6530,12 @@ MonoBehaviour:
   - nodeId: 71
     speakerKey: e12
     overrideSpeakerName: 
-    text: "\uC6A9\uC758\uC790 \uC158 \uC624\uB3C4\uB12C. \uB2F9\uC2E0\uC758 \uBC94\uC8C4\uD589\uAC01\uC5D0
-      \uB300\uD574 \uC21C\uC21C\uD788 \uC2E4\uD1A0\uD560 \uAC83\uC744 \uBA85\uB839\uD569\uB2C8\uB2E4"
-    nextNodeId: 72
-    choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
-    characters:
-    - characterKey: f72
-      expressionKey: frust
-      slotIndex: 0
-    - characterKey: e12
-      expressionKey: serious
-      slotIndex: 2
-    requiresCrafting: 0
-    craftingOrderTicket: {fileID: 0}
-    craftingTicketKey: 
-    craftingOrderType: 6
-    craftingOrderTarget: 
-    craftingPaymentEnabled: 0
-    craftingPaymentCurrency: 0
-    craftingPaymentMultiplier: 1
-    craftingOutcomes: []
-    nextNodeIdGood: 
-    nextNodeIdBad: 
-    craftingFlagGood: 
-    craftingFlagBad: 
-    craftingVarChangesGood: []
-    craftingVarChangesBad: []
-    bgmCommand: 0
-    bgmClipName: 
-    sfxCommand: 0
-    sfxClipName: 
-  - nodeId: 72
-    speakerKey: e12
-    overrideSpeakerName: 
     text: "\uBCC0\uBA85\uC774\uB77C\uB3C4 \uB4E4\uC5B4\uC57C\uACA0\uC2B5\uB2C8\uB2E4!"
     nextNodeId: 
     choices:
     - buttonText: "<b>(\uC544\uBB34\uAC1C\uB4E4 \uD3B8\uC5D0 \uC120\uB2E4)</b> \uB9D0\uD560
         \uC218 \uC5C6\uC2B5\uB2C8\uB2E4."
-      nextNodeId: 73_1_1
+      nextNodeId: 72_1_1
       setFlags:
       - sc2_1_true
       clearFlags: []
@@ -6915,14 +6544,12 @@ MonoBehaviour:
         delta: 5
     - buttonText: "<b>(F54\uC5D0\uAC8C \uC5F0\uB77D\uD55C\uB2E4)</b> *54! \uC9C0\uAE08
         \uD38D\uC5D0 \uC880 \uC640\uC918!*"
-      nextNodeId: 73_2_1
+      nextNodeId: 72_2_1
       setFlags:
       - sc2_1_false
       clearFlags: []
       varChanges: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -6949,15 +6576,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_1_1
+  - nodeId: 72_1_1
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uB9D0\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4."
-    nextNodeId: 73_1_2
+    nextNodeId: 72_1_2
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -6984,16 +6609,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_1_2
+  - nodeId: 72_1_2
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC190\uB2D8\uACFC\uC758 \uC774\uC57C\uAE30\uB97C \uB5A0\uBC8C\uB9AC\uB294\uAC74
       \uBC14\uD150\uB354\uAC00 \uD560 \uC9D3\uC774 \uBABB\uB429\uB2C8\uB2E4"
-    nextNodeId: 73_1_3
+    nextNodeId: 72_1_3
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -7020,15 +6643,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_1_3
+  - nodeId: 72_1_3
     speakerKey: e12
     overrideSpeakerName: 
     text: ...
-    nextNodeId: 73_1_4
+    nextNodeId: 72_1_4
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -7055,16 +6676,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_1_4
+  - nodeId: 72_1_4
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uCC28\uB77C\uB9AC \uC798\uB410\uC2B5\uB2C8\uB2E4. \uC120\uBC30\uB2D8,
       \uB2F9\uC7A5 \uBCF8\uBD80\uC5D0 \uC9C0\uC6D0\uC744-"
-    nextNodeId: 73_1_5
+    nextNodeId: 72_1_5
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -7091,15 +6710,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_1_5
+  - nodeId: 72_1_5
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uADF8\uB9CC\uD574 E12. \uC77C \uBC8C\uB9AC\uC9C0 \uB9D0\uB77C\uACE0"
-    nextNodeId: 73_1_6
+    nextNodeId: 72_1_6
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: mid
@@ -7126,15 +6743,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_1_6
+  - nodeId: 72_1_6
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uC120\uBC30\uB2D8\u2026?"
-    nextNodeId: 73_1_7
+    nextNodeId: 72_1_7
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: mid
@@ -7161,15 +6776,13 @@ MonoBehaviour:
     bgmClipName: Ep_tension
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_1_7
+  - nodeId: 72_1_7
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uC5EC-\uC5EC\uAE30 \uC220\uB9DB\uC774 \uAF64 \uAD1C\uCC2E\uB2E8 \uB9D0\uC774\uC57C"
-    nextNodeId: 73_1_8
+    nextNodeId: 72_1_8
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -7196,16 +6809,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_1_8
+  - nodeId: 72_1_8
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uBB38 \uB2EB\uAE30\uC5D0\uB294 \uB108\uBB34 \uC544\uAE5D\uB2E8 \uB9D0\uC774\uC9C0.
       \uC548\uADF8\uB798?"
-    nextNodeId: 73_1_9
+    nextNodeId: 72_1_9
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -7232,16 +6843,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_1_9
+  - nodeId: 72_1_9
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uADF8\uB807\uB2E4\uACE0 \uBC94\uC8C4 \uD589\uAC01\uC744 \uB208\uAC10\uC544
       \uC904 \uC218\uB294 \uC5C6\uC2B5\uB2C8\uB2E4!"
-    nextNodeId: 73_1_10
+    nextNodeId: 72_1_10
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -7268,16 +6877,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_1_10
+  - nodeId: 72_1_10
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uBAA8\uCABC\uB85D \uB0B4 \uD734\uC2DD \uACF5\uAC04\uC744 \uBC29\uD574\uD558\uC9C0
       \uB9D0\uC544\uB2EC\uB77C\uB294 <b>\uBD80\uD0C1</b>\uC774\uC57C"
-    nextNodeId: 73_1_11
+    nextNodeId: 72_1_11
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -7304,16 +6911,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_1_11
+  - nodeId: 72_1_11
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uC120\uBC30\uC758 <b>\uBD80\uD0C1</b>\uC740 \uC808\uB300\uC801 \uC774\uC796\uC544
       \uC548\uADF8\uB798?"
-    nextNodeId: 73_1_12
+    nextNodeId: 72_1_12
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: laugh
@@ -7340,16 +6945,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_1_12
+  - nodeId: 72_1_12
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uC120\uBC30\uC774\uC2DC\uAE34 \uD558\uC9C0\uB9CC \uC800\uBCF4\uB2E4 \uD55C
       \uACC4\uAE09 \uC544\uB798\uC2DC\uC796\uC2B5\uB2C8\uAE4C\u2026"
-    nextNodeId: 73_1_13
+    nextNodeId: 72_1_13
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: laugh
@@ -7376,16 +6979,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_1_13
+  - nodeId: 72_1_13
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uC774\uBC88 \uD55C\uBC88\uB9CC \uC880 \uBD10\uC918\uB77C, \uB0B4\uAC00
       \uC8FC\uC758\uC880 \uC904\uAC8C. \uC751?"
-    nextNodeId: 73_1_14
+    nextNodeId: 72_1_14
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -7412,16 +7013,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_1_14
+  - nodeId: 72_1_14
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uC120\uBC30\uB2D8 \uC800\uBC88\uC5D0\uB3C4 \uC774\uB7F0\uC2DD\uC73C\uB85C
       \uBA87\uBC88\uC774\uACE0 \uB118\uC5B4\uAC00\uC168\uC796\uC2B5\uB2C8\uAE4C!"
-    nextNodeId: 73_1_15
+    nextNodeId: 72_1_15
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -7448,15 +7047,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_1_15
+  - nodeId: 72_1_15
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uD55C\uBC88\uB9CC \uB354 \uB118\uC5B4\uAC04\uB2E4\uACE0 \uB367\uB098\uB0D0?"
-    nextNodeId: 73_1_16
+    nextNodeId: 72_1_16
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: annoy
@@ -7483,16 +7080,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_1_16
+  - nodeId: 72_1_16
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uC790, \uC774\uB7EC\uACE0 \uC788\uC9C0 \uB9D0\uACE0, \uC774\uB9CC \uB4E4\uC5B4\uAC00\uC790.
       \uC6B0\uB9AC \uAD00\uD560\uB3C4 \uC544\uB2C8\uC796\uC544?"
-    nextNodeId: 73_1_17
+    nextNodeId: 72_1_17
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -7519,15 +7114,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_1_17
+  - nodeId: 72_1_17
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uADF8\uAC74\u2026"
-    nextNodeId: 73_1_18
+    nextNodeId: 72_1_18
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -7554,15 +7147,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_1_18
+  - nodeId: 72_1_18
     speakerKey: e12
     overrideSpeakerName: 
     text: "\u2026"
-    nextNodeId: 73_1_19
+    nextNodeId: 72_1_19
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -7589,15 +7180,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_1_19
+  - nodeId: 72_1_19
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uC6B4 \uC88B\uC740\uC904 \uC544\uC2ED\uC2DC\uC624 \uBC14\uD150\uB354"
-    nextNodeId: 73_1_20
+    nextNodeId: 72_1_20
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -7624,15 +7213,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_1_20
+  - nodeId: 72_1_20
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uADF8\uB798! \uC798 \uC0DD\uAC01\uD588\uC5B4! \uBA3C\uC800 \uB098\uAC00\uC788\uC5B4\uBD10"
-    nextNodeId: 73_1_21
+    nextNodeId: 72_1_21
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: laugh
@@ -7659,15 +7246,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_1_21
+  - nodeId: 72_1_21
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uB098\uD55C\uD14C \uD55C\uC794 \uBE5A\uC9C4\uAC70\uB2E4 \uBC14\uD150\uB354"
     nextNodeId: 
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -7691,15 +7276,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_1
+  - nodeId: 72_2_1
     speakerKey: shaun
     overrideSpeakerName: 
     text: "*54! \uC9C0\uAE08 \uD38D\uC5D0 \uC880 \uC640\uC918!*"
-    nextNodeId: 73_2_2
+    nextNodeId: 72_2_2
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -7726,15 +7309,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 1
     sfxClipName: sfx_trrr
-  - nodeId: 73_2_2
+  - nodeId: 72_2_2
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uB2E8\uB9D0\uAE30 \uB0B4\uB824\uB193\uC73C\uC2ED\uC2DC\uC624!"
-    nextNodeId: 73_2_3
+    nextNodeId: 72_2_3
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -7761,16 +7342,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_3
+  - nodeId: 72_2_3
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uACA8-\uACBD\uCC30\uC5D0 \uC5F0\uB77D\uD55C \uAC70\uC608\uC694! \uC5EC\uAE30
       \uB2F4\uB2F9\uC740 \uB530\uB85C \uC788\uB2E4\uACE0\uC694!"
-    nextNodeId: 73_2_4
+    nextNodeId: 72_2_4
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -7797,15 +7376,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_4
+  - nodeId: 72_2_4
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uADF8-\uADF8\uB798! \uC5EC\uAE30 \uC6B0\uB9AC \uAD6C\uC5ED\uB3C4 \uC544\uB2C8\uC796\uC544?"
-    nextNodeId: 73_2_5
+    nextNodeId: 72_2_5
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -7832,16 +7409,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_5
+  - nodeId: 72_2_5
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uADF8\uB807\uB2E4 \uD55C\uB4E4 \uB2EC\uB77C\uC9C0\uB294 \uAC74 \uC5C6\uC744
       \uAC81\uB2C8\uB2E4!"
-    nextNodeId: 73_2_6
+    nextNodeId: 72_2_6
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -7868,15 +7443,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_6
+  - nodeId: 72_2_6
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uC158! \uBB34\uC2A8\uC77C\uC774\uC57C!"
-    nextNodeId: 73_2_7
+    nextNodeId: 72_2_7
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -7906,15 +7479,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_7
+  - nodeId: 72_2_7
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uC11C-\uC120\uBC30..? \uC120\uBC30\uB294 \uC65C \uC5EC\uAE30\uC5D0\u2026"
-    nextNodeId: 73_2_8
+    nextNodeId: 72_2_8
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -7944,16 +7515,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_8
+  - nodeId: 72_2_8
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uB108\uC57C \uB9D0\uB85C \uC5EC\uAE30\uC11C \uBB50\uD574? \uC5EC\uAE34
       \uB124 \uAD6C\uC5ED\uB3C4 \uC544\uB2C8\uC796\uC544"
-    nextNodeId: 73_2_9
+    nextNodeId: 72_2_9
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -7983,15 +7552,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_9
+  - nodeId: 72_2_9
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uD5E4- \uB610 \uBCF4\uB124"
-    nextNodeId: 73_2_10
+    nextNodeId: 72_2_10
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -8021,15 +7588,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_10
+  - nodeId: 72_2_10
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uB108\uB294 \uB610 \uC65C \uC5EC\uAE30\uC11C\u2026"
-    nextNodeId: 73_2_11
+    nextNodeId: 72_2_11
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -8059,15 +7624,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_11
+  - nodeId: 72_2_11
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uD558\u2026 \uC774\uB7F0 \uB0A0\uC774 \uC62C\uC904 \uC54C\uC558\uB2E4\uB2C8\uAE4C\u2026"
-    nextNodeId: 73_2_12
+    nextNodeId: 72_2_12
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -8097,16 +7660,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_12
+  - nodeId: 72_2_12
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uC5ED\uC2DC \uC120\uBC30\uB3C4 \uC774\uB188\uB4E4\uC744 \uB208\uC5EC\uACA8\uBCF4\uACE0
       \uACC4\uC168\uAD70\uC694."
-    nextNodeId: 73_2_13
+    nextNodeId: 72_2_13
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -8136,16 +7697,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_13
+  - nodeId: 72_2_13
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uC77C\uB2E8 \uC9C4\uC815\uD574. \uC5EC\uAE34 \uB0B4 \uB2F4\uB2F9\uC774\uC57C.
       \uB0B4\uAC00 \uCC98\uB9AC\uD574"
-    nextNodeId: 73_2_14
+    nextNodeId: 72_2_14
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -8175,16 +7734,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_14
+  - nodeId: 72_2_14
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uC54C\uACA0\uC2B5\uB2C8\uB2E4! \uADF8\uB7FC, \uC9C0\uAE08 \uB2F9\uC7A5
       \uC9C0\uC6D0\uC744-"
-    nextNodeId: 73_2_15
+    nextNodeId: 72_2_15
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -8214,15 +7771,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_15
+  - nodeId: 72_2_15
     speakerKey: f54
     overrideSpeakerName: 
     text: "E12. \uB0B4\uAC00 \uCC98\uB9AC\uD55C\uB2E4\uACE0. \uB098\uAC00\uC788\uC5B4."
-    nextNodeId: 73_2_16
+    nextNodeId: 72_2_16
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -8252,15 +7807,13 @@ MonoBehaviour:
     bgmClipName: Ep_tension
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_16
+  - nodeId: 72_2_16
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uC120\uBC30\uB2D8? \uADF8\uAC8C \uBB34\uC2A8\u2026"
-    nextNodeId: 73_2_17
+    nextNodeId: 72_2_17
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -8290,16 +7843,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_17
+  - nodeId: 72_2_17
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uC120\uBC30\uAC00 \uB450 \uBC88 \uB9D0\uD558\uAC8C \uD560\uB798? \uB098\uAC00
       \uC788\uC73C\uB77C\uB2C8\uAE4C?"
-    nextNodeId: 73_2_18
+    nextNodeId: 72_2_18
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -8329,15 +7880,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_18
+  - nodeId: 72_2_18
     speakerKey: e12
     overrideSpeakerName: 
     text: "\uC544-\uC54C\uACA0\uC2B5\uB2C8\uB2E4. \uAE30\uB2E4\uB9AC\uACE0 \uC788\uACA0\uC2B5\uB2C8\uB2E4..!"
-    nextNodeId: 73_2_19
+    nextNodeId: 72_2_19
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -8367,15 +7916,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_19
+  - nodeId: 72_2_19
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uD734, \uC774\uD574\uD574 \uC918. \uC544\uC9C1 \uC5B4\uB824\uC11C \uADF8\uB798."
-    nextNodeId: 73_2_20
+    nextNodeId: 72_2_20
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: mid
@@ -8402,16 +7949,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_20
+  - nodeId: 72_2_20
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uBBF8\uC548\uD558\uC9C0\uB9CC \uC158. \uC774\uC81C \uB3D9\uC804 \uC4F0\uB294\uAC74
       \uADF8\uB9CC\uB46C\uC918"
-    nextNodeId: 73_2_21
+    nextNodeId: 72_2_21
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: mid
@@ -8438,16 +7983,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_21
+  - nodeId: 72_2_21
     speakerKey: f54
     overrideSpeakerName: 
     text: "E12\uB140\uC11D. \uB610 \uC5B8\uC81C \uCCD0\uB4E4\uC5B4\uC62C\uC9C0 \uBAA8\uB974\uB2C8\uAE4C
       \uB9D0\uC774\uC57C"
-    nextNodeId: 73_2_22
+    nextNodeId: 72_2_22
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: mid
@@ -8474,15 +8017,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_22
+  - nodeId: 72_2_22
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uBA85\uC2EC\uD560\uAC8C. \uADF8\uB9AC\uACE0.. \uACE0\uB9C8\uC6CC"
-    nextNodeId: 73_2_23
+    nextNodeId: 72_2_23
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: mid
@@ -8509,16 +8050,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_23
+  - nodeId: 72_2_23
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uACE0\uB9D9\uAE34. \uC624\uAE00\uAC70\uB9AC\uAC8C. \uCE5C\uAD6C \uC88B\uB2E4\uB294\uAC8C
       \uC774\uB7F0\uAC70 \uC544\uB2C8\uACA0\uC5B4?"
-    nextNodeId: 73_2_24
+    nextNodeId: 72_2_24
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -8545,15 +8084,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_24
+  - nodeId: 72_2_24
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uADF8\uB9AC\uACE0, \uB4B7\uCC98\uB9AC\uB294 \uB124\uAC00 \uD574! F72!"
-    nextNodeId: 73_2_25
+    nextNodeId: 72_2_25
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -8580,16 +8117,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_25
+  - nodeId: 72_2_25
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uC65C \uC774\uB798? \uB09C \uBB34\uC870\uAC74 \uC6B0\uB9AC \uBC14\uD150\uB354
       \uD3B8\uC744 \uB4E4\uC5B4\uC92C\uC744 \uAC70\uB77C\uACE0"
-    nextNodeId: 73_2_26
+    nextNodeId: 72_2_26
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -8616,16 +8151,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_26
+  - nodeId: 72_2_26
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uC774 \uC18C\uB3D9\uC758 \uC2DC\uC791\uC740 \uB108\uC778\uAC78 \uC78A\uC740\uAC74
       \uC544\uB2C8\uC9C0?"
-    nextNodeId: 73_2_27
+    nextNodeId: 72_2_27
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -8652,15 +8185,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_27
+  - nodeId: 72_2_27
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uB3D9\uC804\uC744 \uBC1B\uC544\uC900\uAC74 \uBC14\uD150\uB354\uC778\uAC78!"
-    nextNodeId: 73_2_28
+    nextNodeId: 72_2_28
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: laugh
@@ -8687,16 +8218,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_28
+  - nodeId: 72_2_28
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uADF8\uAC78 \uB0B4\uBBF8\uB294 \uAC83 \uC790\uCCB4\uAC00 \uBD88\uBC95\uC774\uB77C\uACE0!
       \uD558, \uB410\uC5B4."
-    nextNodeId: 73_2_29
+    nextNodeId: 72_2_29
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -8723,16 +8252,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_29
+  - nodeId: 72_2_29
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uC544-\uC544\uBB34\uD2BC \uC2DC\uAC04\uC774 \uB2A6\uC5C8\uB124. \uB2E4\uC74C\uC5D0
       \uB610 \uC62C\uAC8C, \uBC14\uD150\uB354!"
-    nextNodeId: 73_2_30
+    nextNodeId: 72_2_30
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: smile
@@ -8759,16 +8286,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_30
+  - nodeId: 72_2_30
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uB10C \uC55E\uC73C\uB85C \uC5EC\uAE30 \uCD9C\uC785 \uAE08\uC9C0\uC778
       \uC904 \uC54C\uC544!"
-    nextNodeId: 73_2_31
+    nextNodeId: 72_2_31
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -8795,15 +8320,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_31
+  - nodeId: 72_2_31
     speakerKey: f72
     overrideSpeakerName: 
     text: "\uBB50?! \uBB34\uC2A8 \uAD8C\uD55C\uC73C\uB85C?!"
-    nextNodeId: 73_2_32
+    nextNodeId: 72_2_32
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -8830,16 +8353,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 73_2_32
+  - nodeId: 72_2_32
     speakerKey: f54
     overrideSpeakerName: 
     text: "\uBC14\uD150\uB354\uC758 \uC808\uCE5C\uD55C \uCE5C\uAD6C\uC758 \uAD8C\uD55C\uC774\uB2E4
       \uC790\uC2DD\uC544"
     nextNodeId: 
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: f72
       expressionKey: frust
@@ -8873,16 +8394,3 @@ MonoBehaviour:
   - requiredFlag: sc2_1_false
     label: "\uC798 \uC120\uD0DD\uD588\uC5B4. - F54"
     amount: 0
-  episodeDescription: "\uC774 \uB9E4\uD639\uC801\uC778 \uB3D9\uC804\uC744 \uC4F0\uBA74
-    5\uBC88\uAC00 \uC0AC\uB78C\uB4E4\uACFC \uC5EE\uC774\uAC8C \uB41C\uB2E4. \uC800\uBC88\uACFC
-    \uAC19\uC740 \uC18C\uB780\uC774 \uC77C\uC5B4\uB098\uC9C0 \uC54A\uAE38 \uBC14\uB77C\uBA70
-    \uB458\uC744 \uD38D\uC5D0 \uB4E4\uC778\uB2E4."
-  iconNameBoard: StrangeCoin
-  iconNameArchive: 
-  characters:
-  - isHidden: 0
-    characterName: f72
-  - isHidden: 0
-    characterName: sally
-  - isHidden: 1
-    characterName: 

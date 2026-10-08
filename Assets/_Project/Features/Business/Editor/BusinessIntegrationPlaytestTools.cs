@@ -7,27 +7,28 @@ using UnityEngine.SceneManagement;
 
 namespace Slainte.EditorTools
 {
+    // 통합 플레이테스트 씬을 만들고, 슬롯 기반 영업 시나리오를 Play 모드에서 자동으로 진행·검증한다.
+    // 도메인 리로드를 넘어 진행 상황을 유지해야 하므로 실행 중인 검증 종류는 SessionState에, 단계는
+    // 정적 필드에 둔다(리로드되면 단계 0부터 다시 시작해도 시나리오 시작 단계라 안전하다).
     public static class BusinessIntegrationPlaytestTools
     {
+        private enum ValidationKind
+        {
+            None,
+            ScheduledEncounter,
+            CandidatePriority,
+            ConditionFallbackFullDay
+        }
+
         private const string SourceScenePath = ProjectScenePaths.Business;
         private const string PlaytestScenePath =
             ProjectScenePaths.BusinessFlowIntegrationPlaytest;
-        private const string RunningKey =
-            "Slainte.BusinessIntegrationPlaytest.Validator.Running";
-        private const string ThirdSlotRunningKey =
-            "Slainte.BusinessIntegrationPlaytest.ThirdSlotValidator.Running";
-        private const string ProductionDay5RunningKey =
-            "Slainte.BusinessIntegrationPlaytest.ProductionDay5Validator.Running";
+        private const string ActiveKindKey = "Slainte.BusinessIntegrationPlaytest.Validator.Kind";
+        private const string CommandLineKey = "Slainte.BusinessIntegrationPlaytest.Validator.CommandLine";
+        private const double TimeoutSeconds = 60d;
 
-        private static int validationPhase;
-        private static double phaseStartedAt;
-        private static float encounterRemaining;
-        private static int thirdSlotValidationPhase;
-        private static double thirdSlotPhaseStartedAt;
-        private static float thirdSlotEncounterRemaining;
-        private static int productionDay5ValidationPhase;
-        private static double productionDay5PhaseStartedAt;
-        private static float productionDay5EncounterRemaining;
+        private static int phase;
+        private static double startedAt;
 
         [MenuItem("Slainte/Business/Create or Open Integration Playtest")]
         public static void CreateOrOpenPlaytestScene()
@@ -91,76 +92,38 @@ namespace Slainte.EditorTools
             CreateOrOpenPlaytestScene();
         }
 
-        [MenuItem("Slainte/Business/Validate Integration Playtest Play Mode")]
-        public static void ValidatePlayModeFromMenu()
-        {
-            BeginPlayModeValidation(false);
-        }
+        [MenuItem("Slainte/Business/Validate Scheduled Encounter Play Mode")]
+        public static void ValidateScheduledEncounterFromMenu() =>
+            Begin(ValidationKind.ScheduledEncounter, false);
 
-        public static void ValidatePlayModeFromCommandLine()
-        {
-            BeginPlayModeValidation(true);
-        }
+        public static void ValidateScheduledEncounterFromCommandLine() =>
+            Begin(ValidationKind.ScheduledEncounter, true);
 
-        [MenuItem("Slainte/Business/Validate Encounter At Third Slot Play Mode")]
-        public static void ValidateEncounterAtThirdSlotFromMenu()
-        {
-            BeginEncounterAtThirdSlotValidation(false);
-        }
+        [MenuItem("Slainte/Business/Validate Slot Candidate Priority Play Mode")]
+        public static void ValidateCandidatePriorityFromMenu() =>
+            Begin(ValidationKind.CandidatePriority, false);
 
-        public static void ValidateEncounterAtThirdSlotFromCommandLine()
-        {
-            BeginEncounterAtThirdSlotValidation(true);
-        }
+        public static void ValidateCandidatePriorityFromCommandLine() =>
+            Begin(ValidationKind.CandidatePriority, true);
 
-        public static void ValidateEncounterAfterFirstOrderFromCommandLine()
-        {
-            ValidateEncounterAtThirdSlotFromCommandLine();
-        }
+        [MenuItem("Slainte/Business/Validate Condition Fallback Full Day Play Mode")]
+        public static void ValidateConditionFallbackFromMenu() =>
+            Begin(ValidationKind.ConditionFallbackFullDay, false);
 
-        [MenuItem("Slainte/Business/Validate Production Day 5 Play Mode")]
-        public static void ValidateProductionDay5FromMenu()
-        {
-            BeginProductionDay5Validation(false);
-        }
+        public static void ValidateConditionFallbackFromCommandLine() =>
+            Begin(ValidationKind.ConditionFallbackFullDay, true);
 
-        public static void ValidateProductionDay5FromCommandLine()
-        {
-            BeginProductionDay5Validation(true);
-        }
-
-        private static void BeginPlayModeValidation(bool commandLine)
+        private static void Begin(ValidationKind kind, bool commandLine)
         {
             if (AssetDatabase.LoadAssetAtPath<SceneAsset>(PlaytestScenePath) == null)
                 CreateOrOpenPlaytestScene();
 
-            SessionState.SetBool(RunningKey, true);
-            SessionState.SetBool(RunningKey + ".CommandLine", commandLine);
-            validationPhase = 0;
-            EditorSceneManager.OpenScene(PlaytestScenePath, OpenSceneMode.Single);
-            EditorApplication.isPlaying = true;
-        }
-
-        private static void BeginEncounterAtThirdSlotValidation(bool commandLine)
-        {
-            if (AssetDatabase.LoadAssetAtPath<SceneAsset>(PlaytestScenePath) == null)
-                CreateOrOpenPlaytestScene();
-
-            SessionState.SetBool(ThirdSlotRunningKey, true);
-            SessionState.SetBool(ThirdSlotRunningKey + ".CommandLine", commandLine);
-            thirdSlotValidationPhase = 0;
-            EditorSceneManager.OpenScene(PlaytestScenePath, OpenSceneMode.Single);
-            EditorApplication.isPlaying = true;
-        }
-
-        private static void BeginProductionDay5Validation(bool commandLine)
-        {
-            if (AssetDatabase.LoadAssetAtPath<SceneAsset>(PlaytestScenePath) == null)
-                CreateOrOpenPlaytestScene();
-
-            SessionState.SetBool(ProductionDay5RunningKey, true);
-            SessionState.SetBool(ProductionDay5RunningKey + ".CommandLine", commandLine);
-            productionDay5ValidationPhase = 0;
+            SessionState.SetInt(ActiveKindKey, (int)kind);
+            SessionState.SetBool(CommandLineKey, commandLine);
+            phase = 0;
+            startedAt = EditorApplication.timeSinceStartup;
+            EditorApplication.update -= ValidateOnUpdate;
+            EditorApplication.update += ValidateOnUpdate;
             EditorSceneManager.OpenScene(PlaytestScenePath, OpenSceneMode.Single);
             EditorApplication.isPlaying = true;
         }
@@ -168,116 +131,51 @@ namespace Slainte.EditorTools
         [InitializeOnLoadMethod]
         private static void ResumeAfterReload()
         {
-            if (SessionState.GetBool(RunningKey, false))
-            {
-                EditorApplication.update -= ValidateOnUpdate;
-                EditorApplication.update += ValidateOnUpdate;
-                phaseStartedAt = EditorApplication.timeSinceStartup;
-            }
+            if (ActiveKind == ValidationKind.None)
+                return;
 
-            if (SessionState.GetBool(ThirdSlotRunningKey, false))
-            {
-                EditorApplication.update -= ValidateEncounterAtThirdSlotOnUpdate;
-                EditorApplication.update += ValidateEncounterAtThirdSlotOnUpdate;
-                thirdSlotPhaseStartedAt = EditorApplication.timeSinceStartup;
-            }
-
-            if (SessionState.GetBool(ProductionDay5RunningKey, false))
-            {
-                EditorApplication.update -= ValidateProductionDay5OnUpdate;
-                EditorApplication.update += ValidateProductionDay5OnUpdate;
-                productionDay5PhaseStartedAt = EditorApplication.timeSinceStartup;
-            }
+            EditorApplication.update -= ValidateOnUpdate;
+            EditorApplication.update += ValidateOnUpdate;
+            startedAt = EditorApplication.timeSinceStartup;
         }
+
+        private static ValidationKind ActiveKind =>
+            (ValidationKind)SessionState.GetInt(ActiveKindKey, (int)ValidationKind.None);
 
         private static void ValidateOnUpdate()
         {
+            ValidationKind kind = ActiveKind;
+            if (kind == ValidationKind.None)
+            {
+                EditorApplication.update -= ValidateOnUpdate;
+                return;
+            }
+
             if (!EditorApplication.isPlaying)
                 return;
 
-            if (EditorApplication.timeSinceStartup - phaseStartedAt > 40d)
+            if (EditorApplication.timeSinceStartup - startedAt > TimeoutSeconds)
             {
-                Finish(false, "통합 Play Mode 검증 시간이 초과되었습니다.");
+                Finish(false, $"{kind} 검증 시간이 초과되었습니다. phase={phase}");
                 return;
             }
 
             try
             {
-                BusinessIntegrationPlaytestBootstrap bootstrap =
-                    UnityEngine.Object.FindFirstObjectByType<
-                        BusinessIntegrationPlaytestBootstrap>();
-                BusinessFlowBootstrap flow =
-                    UnityEngine.Object.FindFirstObjectByType<BusinessFlowBootstrap>();
-                BusinessShiftController shift = flow != null ? flow.ShiftController : null;
-                GameModeManager modeManager =
-                    UnityEngine.Object.FindFirstObjectByType<GameModeManager>();
-                EpisodeRunner episodeRunner =
-                    UnityEngine.Object.FindFirstObjectByType<EpisodeRunner>();
-
-                if (bootstrap == null || flow == null || !flow.IsRuntimeReady
-                    || !bootstrap.IsReady || shift == null || modeManager == null
-                    || episodeRunner == null)
-                {
+                Context context = Context.Find();
+                if (context == null)
                     return;
-                }
 
-                switch (validationPhase)
+                switch (kind)
                 {
-                    case 0:
-                        Require(DataManager.AreDiskWritesSuppressed,
-                            "통합 테스트 씬에서 디스크 저장이 차단되지 않았습니다.");
-                        Require(bootstrap.TryStartScenario(
-                                BusinessPlaytestScenario.EncounterTimerRuns),
-                            "인카운터 타이머 시나리오를 시작하지 못했습니다.");
-                        validationPhase = 1;
-                        phaseStartedAt = EditorApplication.timeSinceStartup;
+                    case ValidationKind.ScheduledEncounter:
+                        StepScheduledEncounter(context);
                         break;
-                    case 1:
-                        if (shift.State != BusinessShiftState.EncounterActive)
-                            return;
-                        Require(modeManager.CurrentMode == GameMode.EpisodeMode,
-                            $"영업 시작 직후 인카운터 모드가 덮어쓰여졌습니다: "
-                            + modeManager.CurrentMode);
-                        Require(episodeRunner.IsRunning,
-                            "EncounterActive 상태인데 EpisodeRunner가 실행 중이 아닙니다.");
-                        encounterRemaining = shift.RemainingSeconds;
-                        validationPhase = 2;
-                        phaseStartedAt = EditorApplication.timeSinceStartup;
+                    case ValidationKind.CandidatePriority:
+                        StepCandidatePriority(context);
                         break;
-                    case 2:
-                        if (EditorApplication.timeSinceStartup - phaseStartedAt < 1.2d)
-                            return;
-                        Require(shift.State == BusinessShiftState.EncounterActive,
-                            "타이머 검증 도중 인카운터가 예기치 않게 종료됐습니다.");
-                        Require(modeManager.CurrentMode == GameMode.EpisodeMode,
-                            $"진행 중인 인카운터가 EpisodeMode를 유지하지 못했습니다: "
-                            + modeManager.CurrentMode);
-                        Require(episodeRunner.IsRunning,
-                            "타이머 검증 도중 EpisodeRunner가 중단됐습니다.");
-                        Require(encounterRemaining - shift.RemainingSeconds >= 0.25f,
-                            $"인카운터 중 영업 타이머가 감소하지 않았습니다: "
-                            + $"{encounterRemaining:0.000} -> {shift.RemainingSeconds:0.000}");
-                        Require(shift.FrozenCustomerPoolCount == 12,
-                            $"통합 테스트 손님 풀이 12명이 아닙니다: "
-                            + shift.FrozenCustomerPoolCount);
-                        validationPhase = 3;
-                        phaseStartedAt = EditorApplication.timeSinceStartup;
-                        break;
-                    case 3:
-                        if (!shift.IsTimerExpired)
-                            return;
-                        Require(shift.RemainingSeconds <= 0.001f,
-                            $"만료된 타이머가 0초로 고정되지 않았습니다: {shift.RemainingSeconds:0.000}");
-                        Require(shift.State == BusinessShiftState.EncounterActive,
-                            $"타이머 만료가 진행 중인 인카운터 상태를 덮어썼습니다: {shift.State}");
-                        Require(EpisodeManager.Instance != null
-                                && EpisodeManager.Instance.IsBusinessEncounterActive,
-                            "타이머 만료로 진행 중인 영업 인카운터가 취소됐습니다.");
-                        Finish(true,
-                            $"pool={shift.FrozenCustomerPoolCount}, "
-                            + $"encounterTimerDecrease="
-                            + (encounterRemaining - shift.RemainingSeconds).ToString("0.000")
-                            + ", statePreservedAtExpiry=true");
+                    case ValidationKind.ConditionFallbackFullDay:
+                        StepConditionFallbackFullDay(context);
                         break;
                 }
             }
@@ -287,328 +185,132 @@ namespace Slainte.EditorTools
             }
         }
 
+        // 1·2번 슬롯은 랜덤 손님, 3번 슬롯에서 배정된 에피소드가 EpisodeMode로 시작해야 한다.
+        private static void StepScheduledEncounter(Context c)
+        {
+            int slot = BusinessIntegrationPlaytestBootstrap.ScheduledEncounterSlot;
+            if (phase == 0)
+            {
+                StartScenario(c, BusinessPlaytestScenario.ScheduledEncounter);
+                return;
+            }
+
+            if (phase < slot)
+            {
+                if (!CompleteRandomCustomerAtSlot(c, phase))
+                    return;
+                phase++;
+                return;
+            }
+
+            if (c.Shift.State != BusinessShiftState.EncounterActive)
+                return;
+            RequireEncounterAtSlot(c, slot, BusinessIntegrationPlaytestBootstrap.ScheduledEncounterId);
+            Require(c.Shift.CompletedOrderCount == slot - 1,
+                $"인카운터 전 완료 주문 수가 {slot - 1}이 아닙니다: {c.Shift.CompletedOrderCount}");
+            Finish(true, $"slots=[{string.Join(" / ", c.Bootstrap.SlotLog)}]");
+        }
+
+        // 같은 슬롯의 높은 우선순위 후보가 조건 미충족이면 낮은 우선순위 후보가 실행되어야 한다.
+        private static void StepCandidatePriority(Context c)
+        {
+            int slot = BusinessIntegrationPlaytestBootstrap.PriorityTestSlot;
+            if (phase == 0)
+            {
+                StartScenario(c, BusinessPlaytestScenario.CandidatePriority);
+                return;
+            }
+
+            if (phase < slot)
+            {
+                if (!CompleteRandomCustomerAtSlot(c, phase))
+                    return;
+                phase++;
+                return;
+            }
+
+            if (c.Shift.State != BusinessShiftState.EncounterActive)
+                return;
+            RequireEncounterAtSlot(c, slot, BusinessIntegrationPlaytestBootstrap.ScheduledEncounterId);
+            Finish(true, $"slots=[{string.Join(" / ", c.Bootstrap.SlotLog)}]");
+        }
+
+        // 1번 슬롯 후보가 조건 미충족이면 랜덤 손님으로 대체되고, 하루 슬롯 수만큼 손님을 받은 뒤 끝나야 한다.
+        private static void StepConditionFallbackFullDay(Context c)
+        {
+            if (phase == 0)
+            {
+                StartScenario(c, BusinessPlaytestScenario.ConditionFallback);
+                return;
+            }
+
+            if (c.Shift.State == BusinessShiftState.Completed)
+            {
+                Require(c.Shift.TotalStartedEncounterCount == 0,
+                    "조건을 만족하지 않는 에피소드가 실행됐습니다.");
+                Require(c.Shift.TotalStartedCustomerCount == c.Shift.SlotsPerDay,
+                    $"하루 손님 수가 {c.Shift.SlotsPerDay}명이 아닙니다: "
+                    + c.Shift.TotalStartedCustomerCount);
+                Finish(true, $"slots=[{string.Join(" / ", c.Bootstrap.SlotLog)}]");
+                return;
+            }
+
+            if (CompleteRandomCustomerAtSlot(c, phase))
+                phase++;
+        }
+
+        private static void StartScenario(Context c, BusinessPlaytestScenario scenario)
+        {
+            Require(DataManager.AreDiskWritesSuppressed,
+                "통합 테스트 씬에서 디스크 저장이 차단되지 않았습니다.");
+            Require(c.Bootstrap.TryStartScenario(scenario),
+                $"{scenario} 시나리오를 시작하지 못했습니다.");
+            phase = 1;
+        }
+
+        // 지정 슬롯이 랜덤 손님 주문으로 시작됐는지 확인하고 테스트용으로 즉시 완료시킨다.
+        // 아직 그 슬롯의 주문이 시작되지 않았으면 false를 돌려 다음 프레임에 다시 확인한다.
+        private static bool CompleteRandomCustomerAtSlot(Context c, int slot)
+        {
+            if (c.Shift.State != BusinessShiftState.OrderActive || c.Shift.CurrentSlot != slot)
+                return false;
+
+            Require(c.Shift.TotalStartedEncounterCount == 0,
+                $"{slot}번 슬롯 전에 인카운터가 시작됐습니다.");
+            Require(c.Shift.TotalStartedCustomerCount == slot,
+                $"{slot}번 슬롯까지 손님 수가 맞지 않습니다: {c.Shift.TotalStartedCustomerCount}");
+            Require(c.OrderSession.TryCompleteCurrentOrderForPlaytest(),
+                $"{slot}번 슬롯 주문을 테스트용 완료 처리하지 못했습니다.");
+            return true;
+        }
+
+        private static void RequireEncounterAtSlot(Context c, int slot, string episodeId)
+        {
+            Require(c.Shift.CurrentSlot == slot,
+                $"인카운터가 {slot}번 슬롯이 아닙니다: {c.Shift.CurrentSlot}");
+            Require(c.Shift.TotalStartedEncounterCount == 1,
+                $"인카운터가 정확히 한 번 시작되지 않았습니다: {c.Shift.TotalStartedEncounterCount}");
+            Require(EpisodeManager.Instance != null
+                    && EpisodeManager.Instance.CurrentPlayingEpisodeID == episodeId,
+                $"{slot}번 슬롯 에피소드가 {episodeId}가 아닙니다: "
+                + EpisodeManager.Instance?.CurrentPlayingEpisodeID);
+            Require(c.ModeManager.CurrentMode == GameMode.EpisodeMode,
+                $"인카운터가 EpisodeMode가 아닙니다: {c.ModeManager.CurrentMode}");
+            Require(c.EpisodeRunner.IsRunning, "인카운터의 EpisodeRunner가 실행 중이 아닙니다.");
+        }
+
         private static void Finish(bool success, string message)
         {
+            ValidationKind kind = ActiveKind;
             EditorApplication.update -= ValidateOnUpdate;
-            SessionState.EraseBool(RunningKey);
-            bool commandLine = SessionState.GetBool(RunningKey + ".CommandLine", false);
-            SessionState.EraseBool(RunningKey + ".CommandLine");
+            bool commandLine = SessionState.GetBool(CommandLineKey, false);
+            SessionState.EraseInt(ActiveKindKey);
+            SessionState.EraseBool(CommandLineKey);
 
             if (success)
-                Debug.Log("[BusinessIntegrationPlayValidator] PASS: " + message);
+                Debug.Log($"[BusinessIntegrationPlayValidator] PASS {kind}: {message}");
             else
-                Debug.LogError("[BusinessIntegrationPlayValidator] FAIL: " + message);
-
-            if (commandLine)
-                EditorApplication.Exit(success ? 0 : 1);
-            else
-                EditorApplication.isPlaying = false;
-        }
-
-        private static void ValidateEncounterAtThirdSlotOnUpdate()
-        {
-            if (!EditorApplication.isPlaying)
-                return;
-
-            if (EditorApplication.timeSinceStartup - thirdSlotPhaseStartedAt > 40d)
-            {
-                FinishEncounterAtThirdSlot(
-                    false,
-                    "3번 영업 슬롯 인카운터 검증 시간이 초과되었습니다.");
-                return;
-            }
-
-            try
-            {
-                BusinessIntegrationPlaytestBootstrap bootstrap =
-                    UnityEngine.Object.FindFirstObjectByType<
-                        BusinessIntegrationPlaytestBootstrap>();
-                BusinessFlowBootstrap flow =
-                    UnityEngine.Object.FindFirstObjectByType<BusinessFlowBootstrap>();
-                BusinessShiftController shift = flow != null ? flow.ShiftController : null;
-                BusinessOrderSessionController orderSession =
-                    flow != null ? flow.OrderSessionController : null;
-                GameModeManager modeManager =
-                    UnityEngine.Object.FindFirstObjectByType<GameModeManager>();
-                EpisodeRunner episodeRunner =
-                    UnityEngine.Object.FindFirstObjectByType<EpisodeRunner>();
-
-                if (bootstrap == null || flow == null || !flow.IsRuntimeReady
-                    || !bootstrap.IsReady || shift == null || orderSession == null
-                    || modeManager == null || episodeRunner == null)
-                {
-                    return;
-                }
-
-                switch (thirdSlotValidationPhase)
-                {
-                    case 0:
-                        Require(DataManager.AreDiskWritesSuppressed,
-                            "통합 테스트 씬에서 디스크 저장이 차단되지 않았습니다.");
-                        Require(bootstrap.TryStartScenario(
-                                BusinessPlaytestScenario.EncounterAtThirdSlot),
-                            "3번 영업 슬롯 인카운터 시나리오를 시작하지 못했습니다.");
-                        thirdSlotValidationPhase = 1;
-                        thirdSlotPhaseStartedAt = EditorApplication.timeSinceStartup;
-                        break;
-                    case 1:
-                        if (shift.State != BusinessShiftState.OrderActive)
-                            return;
-                        Require(shift.TotalStartedCustomerCount == 1,
-                            $"첫 선택이 손님 1명이 아닙니다: {shift.TotalStartedCustomerCount}");
-                        Require(shift.StartedSequenceCount == 1,
-                            $"첫 주문의 영업 슬롯 수가 1이 아닙니다: {shift.StartedSequenceCount}");
-                        Require(shift.TotalStartedEncounterCount == 0,
-                            "첫 주문을 완료하기 전에 인카운터가 시작됐습니다.");
-                        Require(orderSession.TryCompleteCurrentOrderForPlaytest(),
-                            "첫 주문을 테스트용 완료 처리하지 못했습니다.");
-                        thirdSlotValidationPhase = 2;
-                        thirdSlotPhaseStartedAt = EditorApplication.timeSinceStartup;
-                        break;
-                    case 2:
-                        if (shift.State != BusinessShiftState.OrderActive)
-                            return;
-                        Require(shift.TotalStartedCustomerCount == 2,
-                            $"두 번째 선택까지 손님 2명이 아닙니다: {shift.TotalStartedCustomerCount}");
-                        Require(shift.StartedSequenceCount == 2,
-                            $"두 번째 주문의 영업 슬롯 수가 2가 아닙니다: {shift.StartedSequenceCount}");
-                        Require(shift.TotalStartedEncounterCount == 0,
-                            "두 번째 주문을 완료하기 전에 인카운터가 시작됐습니다.");
-                        Require(orderSession.TryCompleteCurrentOrderForPlaytest(),
-                            "두 번째 주문을 테스트용 완료 처리하지 못했습니다.");
-                        thirdSlotValidationPhase = 3;
-                        thirdSlotPhaseStartedAt = EditorApplication.timeSinceStartup;
-                        break;
-                    case 3:
-                        if (shift.State != BusinessShiftState.EncounterActive)
-                            return;
-                        Require(shift.CompletedOrderCount == 2,
-                            $"인카운터 시작 전 완료 주문 수가 2가 아닙니다: "
-                            + shift.CompletedOrderCount);
-                        Require(shift.StartedSequenceCount == 3,
-                            $"인카운터가 3번 영업 슬롯을 소비하지 않았습니다: "
-                            + shift.StartedSequenceCount);
-                        Require(shift.TotalStartedEncounterCount == 1,
-                            $"세 번째 선택에서 인카운터가 정확히 한 번 시작되지 않았습니다: "
-                            + shift.TotalStartedEncounterCount);
-                        Require(EpisodeManager.Instance != null
-                                && EpisodeManager.Instance.CurrentPlayingEpisodeID
-                                == "StrangeCoin_0",
-                            "세 번째 선택이 StrangeCoin_0이 아닙니다.");
-                        Require(modeManager.CurrentMode == GameMode.EpisodeMode,
-                            $"세 번째 선택 인카운터가 EpisodeMode가 아닙니다: "
-                            + modeManager.CurrentMode);
-                        Require(episodeRunner.IsRunning,
-                            "세 번째 선택 인카운터의 EpisodeRunner가 실행 중이 아닙니다.");
-                        thirdSlotEncounterRemaining = shift.RemainingSeconds;
-                        thirdSlotValidationPhase = 4;
-                        thirdSlotPhaseStartedAt = EditorApplication.timeSinceStartup;
-                        break;
-                    case 4:
-                        if (EditorApplication.timeSinceStartup
-                            - thirdSlotPhaseStartedAt < 1.2d)
-                        {
-                            return;
-                        }
-
-                        Require(shift.State == BusinessShiftState.EncounterActive,
-                            "세 번째 선택 인카운터가 검증 도중 종료됐습니다.");
-                        Require(modeManager.CurrentMode == GameMode.EpisodeMode,
-                            "세 번째 선택 인카운터가 EpisodeMode를 유지하지 못했습니다.");
-                        Require(episodeRunner.IsRunning,
-                            "세 번째 선택 인카운터의 EpisodeRunner가 중단됐습니다.");
-                        Require(thirdSlotEncounterRemaining - shift.RemainingSeconds >= 0.25f,
-                            $"세 번째 선택 인카운터 중 타이머가 감소하지 않았습니다: "
-                            + $"{thirdSlotEncounterRemaining:0.000} -> "
-                            + $"{shift.RemainingSeconds:0.000}");
-                        FinishEncounterAtThirdSlot(
-                            true,
-                            $"completedOrders={shift.CompletedOrderCount}, "
-                            + $"sequenceSlot={shift.StartedSequenceCount}, "
-                            + $"thirdEncounter={EpisodeManager.Instance.CurrentPlayingEpisodeID}, "
-                            + "mode=EpisodeMode");
-                        break;
-                }
-            }
-            catch (Exception exception)
-            {
-                FinishEncounterAtThirdSlot(false, exception.ToString());
-            }
-        }
-
-        private static void FinishEncounterAtThirdSlot(bool success, string message)
-        {
-            EditorApplication.update -= ValidateEncounterAtThirdSlotOnUpdate;
-            SessionState.EraseBool(ThirdSlotRunningKey);
-            bool commandLine = SessionState.GetBool(
-                ThirdSlotRunningKey + ".CommandLine",
-                false);
-            SessionState.EraseBool(ThirdSlotRunningKey + ".CommandLine");
-
-            if (success)
-                Debug.Log("[BusinessEncounterThirdSlotValidator] PASS: " + message);
-            else
-                Debug.LogError("[BusinessEncounterThirdSlotValidator] FAIL: " + message);
-
-            if (commandLine)
-                EditorApplication.Exit(success ? 0 : 1);
-            else
-                EditorApplication.isPlaying = false;
-        }
-
-        private static void ValidateProductionDay5OnUpdate()
-        {
-            if (!EditorApplication.isPlaying)
-                return;
-
-            if (EditorApplication.timeSinceStartup - productionDay5PhaseStartedAt > 40d)
-            {
-                FinishProductionDay5(false, "생산 Day 5 검증 시간이 초과되었습니다.");
-                return;
-            }
-
-            try
-            {
-                BusinessIntegrationPlaytestBootstrap bootstrap =
-                    UnityEngine.Object.FindFirstObjectByType<
-                        BusinessIntegrationPlaytestBootstrap>();
-                BusinessFlowBootstrap flow =
-                    UnityEngine.Object.FindFirstObjectByType<BusinessFlowBootstrap>();
-                BusinessShiftController shift = flow != null ? flow.ShiftController : null;
-                BusinessOrderSessionController orderSession =
-                    flow != null ? flow.OrderSessionController : null;
-                GameModeManager modeManager =
-                    UnityEngine.Object.FindFirstObjectByType<GameModeManager>();
-                EpisodeRunner episodeRunner =
-                    UnityEngine.Object.FindFirstObjectByType<EpisodeRunner>();
-                GameProgress progress = GameProgress.Instance;
-
-                if (bootstrap == null || flow == null || !flow.IsRuntimeReady
-                    || !bootstrap.IsReady || shift == null || orderSession == null
-                    || modeManager == null || episodeRunner == null || progress == null)
-                {
-                    return;
-                }
-
-                switch (productionDay5ValidationPhase)
-                {
-                    case 0:
-                        Require(DataManager.AreDiskWritesSuppressed,
-                            "생산 Day 5 테스트에서 디스크 저장이 차단되지 않았습니다.");
-                        Require(bootstrap.TryStartScenario(
-                                BusinessPlaytestScenario.ProductionDay5),
-                            "생산 Day 5 시나리오를 시작하지 못했습니다.");
-                        Require(bootstrap.IsUsingProductionDay5Configuration,
-                            "생산 손님 데이터베이스가 적용되지 않았습니다.");
-                        Require(progress.CurrentDay == 5,
-                            $"테스트 일차가 Day 5가 아닙니다: {progress.CurrentDay}");
-                        Require(!progress.IsEpisodeCompleted("StrangeCoin_0"),
-                            "StrangeCoin_0 완료 상태가 테스트에서 해제되지 않았습니다.");
-                        Require(shift.FrozenCustomerPoolCount > 0,
-                            "Day 5에 실행 가능한 생산 손님이 없습니다.");
-                        productionDay5ValidationPhase = 1;
-                        productionDay5PhaseStartedAt = EditorApplication.timeSinceStartup;
-                        break;
-                    case 1:
-                        if (shift.State != BusinessShiftState.OrderActive)
-                            return;
-                        Require(shift.TotalStartedCustomerCount == 1
-                                && shift.StartedSequenceCount == 1,
-                            "첫 생산 손님이 1번 슬롯으로 시작되지 않았습니다.");
-                        Require(shift.TotalStartedEncounterCount == 0,
-                            "첫 생산 주문 전에 인카운터가 시작됐습니다.");
-                        Require(IsProductionVisitKey(shift.LastSelectedVisitKey),
-                            $"첫 손님이 테스트용 방문입니다: {shift.LastSelectedVisitKey}");
-                        Require(orderSession.TryCompleteCurrentOrderForPlaytest(),
-                            "첫 생산 주문을 테스트용 완료 처리하지 못했습니다.");
-                        productionDay5ValidationPhase = 2;
-                        productionDay5PhaseStartedAt = EditorApplication.timeSinceStartup;
-                        break;
-                    case 2:
-                        if (shift.State != BusinessShiftState.OrderActive)
-                            return;
-                        Require(shift.TotalStartedCustomerCount == 2
-                                && shift.StartedSequenceCount == 2,
-                            "두 번째 생산 손님이 2번 슬롯으로 시작되지 않았습니다.");
-                        Require(shift.TotalStartedEncounterCount == 0,
-                            "두 번째 생산 주문 전에 인카운터가 시작됐습니다.");
-                        Require(IsProductionVisitKey(shift.LastSelectedVisitKey),
-                            $"두 번째 손님이 테스트용 방문입니다: {shift.LastSelectedVisitKey}");
-                        Require(orderSession.TryCompleteCurrentOrderForPlaytest(),
-                            "두 번째 생산 주문을 테스트용 완료 처리하지 못했습니다.");
-                        productionDay5ValidationPhase = 3;
-                        productionDay5PhaseStartedAt = EditorApplication.timeSinceStartup;
-                        break;
-                    case 3:
-                        if (shift.State != BusinessShiftState.EncounterActive)
-                            return;
-                        Require(shift.CompletedOrderCount == 2,
-                            $"생산 인카운터 전 완료 주문 수가 2가 아닙니다: "
-                            + shift.CompletedOrderCount);
-                        Require(shift.StartedSequenceCount == 3,
-                            $"생산 인카운터가 3번 슬롯이 아닙니다: "
-                            + shift.StartedSequenceCount);
-                        Require(shift.TotalStartedEncounterCount == 1,
-                            "생산 인카운터가 정확히 한 번 시작되지 않았습니다.");
-                        Require(EpisodeManager.Instance != null
-                                && EpisodeManager.Instance.CurrentPlayingEpisodeID
-                                == "StrangeCoin_0",
-                            "생산 3번 슬롯이 StrangeCoin_0이 아닙니다.");
-                        Require(modeManager.CurrentMode == GameMode.EpisodeMode,
-                            "생산 인카운터가 EpisodeMode로 진입하지 않았습니다.");
-                        Require(episodeRunner.IsRunning,
-                            "생산 StrangeCoin_0 EpisodeRunner가 실행 중이 아닙니다.");
-                        productionDay5EncounterRemaining = shift.RemainingSeconds;
-                        productionDay5ValidationPhase = 4;
-                        productionDay5PhaseStartedAt = EditorApplication.timeSinceStartup;
-                        break;
-                    case 4:
-                        if (EditorApplication.timeSinceStartup
-                            - productionDay5PhaseStartedAt < 1.2d)
-                        {
-                            return;
-                        }
-
-                        Require(shift.State == BusinessShiftState.EncounterActive,
-                            "생산 StrangeCoin_0이 검증 도중 종료됐습니다.");
-                        Require(productionDay5EncounterRemaining - shift.RemainingSeconds >= 0.25f,
-                            "생산 StrangeCoin_0 진행 중 영업 타이머가 감소하지 않았습니다.");
-                        FinishProductionDay5(
-                            true,
-                            $"day={progress.CurrentDay}, realVisit={shift.LastSelectedVisitKey}, "
-                            + $"completedOrders={shift.CompletedOrderCount}, "
-                            + $"sequenceSlot={shift.StartedSequenceCount}, "
-                            + $"encounter={EpisodeManager.Instance.CurrentPlayingEpisodeID}");
-                        break;
-                }
-            }
-            catch (Exception exception)
-            {
-                FinishProductionDay5(false, exception.ToString());
-            }
-        }
-
-        private static bool IsProductionVisitKey(string visitKey)
-        {
-            return !string.IsNullOrWhiteSpace(visitKey)
-                && !visitKey.StartsWith(
-                    "integration_visit_",
-                    StringComparison.OrdinalIgnoreCase);
-        }
-
-        private static void FinishProductionDay5(bool success, string message)
-        {
-            EditorApplication.update -= ValidateProductionDay5OnUpdate;
-            SessionState.EraseBool(ProductionDay5RunningKey);
-            bool commandLine = SessionState.GetBool(
-                ProductionDay5RunningKey + ".CommandLine",
-                false);
-            SessionState.EraseBool(ProductionDay5RunningKey + ".CommandLine");
-
-            if (success)
-                Debug.Log("[BusinessProductionDay5Validator] PASS: " + message);
-            else
-                Debug.LogError("[BusinessProductionDay5Validator] FAIL: " + message);
+                Debug.LogError($"[BusinessIntegrationPlayValidator] FAIL {kind}: {message}");
 
             if (commandLine)
                 EditorApplication.Exit(success ? 0 : 1);
@@ -655,6 +357,39 @@ namespace Slainte.EditorTools
         {
             if (!condition)
                 throw new InvalidOperationException(message);
+        }
+
+        // 매 프레임 찾는 런타임 참조 묶음. 하나라도 준비되지 않았으면 Find()가 null을 돌려준다.
+        private sealed class Context
+        {
+            public BusinessIntegrationPlaytestBootstrap Bootstrap;
+            public BusinessShiftController Shift;
+            public BusinessOrderSessionController OrderSession;
+            public GameModeManager ModeManager;
+            public EpisodeRunner EpisodeRunner;
+
+            public static Context Find()
+            {
+                var bootstrap = UnityEngine.Object.FindFirstObjectByType<BusinessIntegrationPlaytestBootstrap>();
+                var flow = UnityEngine.Object.FindFirstObjectByType<BusinessFlowBootstrap>();
+                var modeManager = UnityEngine.Object.FindFirstObjectByType<GameModeManager>();
+                var runner = UnityEngine.Object.FindFirstObjectByType<EpisodeRunner>();
+                if (bootstrap == null || !bootstrap.IsReady || flow == null || !flow.IsRuntimeReady
+                    || flow.ShiftController == null || flow.OrderSessionController == null
+                    || modeManager == null || runner == null)
+                {
+                    return null;
+                }
+
+                return new Context
+                {
+                    Bootstrap = bootstrap,
+                    Shift = flow.ShiftController,
+                    OrderSession = flow.OrderSessionController,
+                    ModeManager = modeManager,
+                    EpisodeRunner = runner
+                };
+            }
         }
     }
 }

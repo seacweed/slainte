@@ -6,9 +6,8 @@ using Slainte.Shared.Input;
 using UnityEngine;
 
 // 에피소드 그래프(EpisodeData의 노드 그래프)를 한 스텝씩 해석해 대사·선택지·제조 노드를
-// 순서대로 실행하는 인터프리터. 일반 에피소드(BeginBusinessEncounter가 아닌 Begin으로 시작)와
-// 영업 중 끼어드는 "비즈니스 인카운터"(_isBusinessEncounter) 두 모드를 겸하며, 종료 시 어느
-// 쪽이었는지에 따라 FinishEncounter가 되돌아갈 곳(DayFlowController vs 영업 콜백)을 다르게 정한다.
+// 순서대로 실행하는 인터프리터. 모든 에피소드는 영업 슬롯에 끼어드는 인카운터로만 실행되며,
+// 종료 시 영업 모드로 되돌린 뒤 시작할 때 받은 완료 콜백(EpisodeManager)에 제어를 넘긴다.
 public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 {
     [Header("References")]
@@ -33,6 +32,7 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
     private const float ChoiceButtonHeight  = 80f;
     private const float ChoiceButtonSpacing = 20f;
     private const float ChoiceFadeDuration  = 0.5f;
+    private const int   MaxConsecutiveRouterHops = 64;
 
     private EpisodeData _episode;
     private EpisodeNode _currentNode;
@@ -43,8 +43,8 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
     private bool _waitingForCrafting;
     private bool _waitingForCharacterAnim;
     private bool _isTransitioning;
-    private bool _isBusinessEncounter;
     private bool _isUsingManualCrafting;
+    private int  _consecutiveRouterHops;
     private Action _businessEncounterCompleted;
     private EpisodeCraftingBridge _craftingBridge;
 
@@ -65,14 +65,9 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 
     void Awake() { }
 
-    public void Begin(EpisodeData episode)
-    {
-        BeginInternal(episode, isBusinessEncounter: false, onBusinessCompleted: null);
-    }
-
     public bool BeginBusinessEncounter(EpisodeData episode, Action onCompleted)
     {
-        return BeginInternal(episode, isBusinessEncounter: true, onCompleted);
+        return BeginInternal(episode, onCompleted);
     }
 
     public void SetCraftingBridge(EpisodeCraftingBridge bridge)
@@ -109,7 +104,6 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 
     private bool BeginInternal(
         EpisodeData episode,
-        bool isBusinessEncounter,
         Action onBusinessCompleted)
     {
         if (episode == null)
@@ -126,7 +120,6 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 
         _episode = episode;
         _currentNode = null;
-        _isBusinessEncounter = isBusinessEncounter;
         _businessEncounterCompleted = onBusinessCompleted;
         _isRunning          = true;
         _waitingForChoice   = false;
@@ -134,6 +127,7 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         _waitingForCharacterAnim = false;
         _isTransitioning = false;
         _isUsingManualCrafting = false;
+        _consecutiveRouterHops = 0;
 
         modeManager?.RequestModeChange(GameMode.EpisodeMode);
         ClearChoices();
@@ -149,7 +143,8 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 
         _waitingForCharacterAnim = true;
         bool done = false;
-        characterStage?.ShowCharacters(_episode.openingCharacters, () => done = true);
+        // 시작 전 무대를 비운다 — 등장 캐릭터는 첫 노드의 NODE_CHARS가 정한다.
+        characterStage?.ShowCharacters(null, () => done = true);
         if (characterStage == null) done = true;
         StartPanCoroutine();
 
@@ -214,10 +209,29 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
 
         if (_currentNode.requiresCrafting)
         {
+            _consecutiveRouterHops = 0;
             yield return StartCoroutine(HandleCraftingNode(_currentNode));
             yield break;
         }
 
+        // 화자·대사·선택지가 모두 없는 노드는 조건 분기만 하는 라우터다(그래프 에디터의 Trigger 노드 등).
+        // 빈 대화창을 띄우지 않고 곧장 다음 노드로 넘긴다. 한 프레임 쉬는 이유는 라우터가 연달아 이어질 때
+        // 동기 재귀로 깊어지지 않게 하기 위해서고, 홉 수 제한은 라우터끼리 순환하는 데이터 오류 방어용이다.
+        if (IsRouterNode(_currentNode))
+        {
+            if (++_consecutiveRouterHops > MaxConsecutiveRouterHops)
+            {
+                Debug.LogError($"[EpisodeRunner] 대사 없는 라우터 노드가 순환합니다: {_currentNode.nodeId}");
+                EndEncounter();
+                yield break;
+            }
+
+            yield return null;
+            GoToNext();
+            yield break;
+        }
+
+        _consecutiveRouterHops = 0;
         string speakerName = ResolveSpeakerName(_currentNode);
         Color speakerColor = ResolveSpeakerColor(_currentNode);
         dialogue?.ShowSingleLine(speakerName, _currentNode.text, speakerColor);
@@ -327,6 +341,14 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         EnterNode(nextId);
     }
 
+    private static bool IsRouterNode(EpisodeNode node)
+    {
+        return string.IsNullOrWhiteSpace(node.speakerKey)
+            && string.IsNullOrWhiteSpace(node.overrideSpeakerName)
+            && string.IsNullOrWhiteSpace(node.text)
+            && (node.choices == null || node.choices.Count == 0);
+    }
+
     private void GoToNext()
     {
         if (_currentNode == null)
@@ -341,56 +363,22 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         EnterNode(nextId);
     }
 
-    // 분기 우선순위: 플래그 조건(flagBranches) → 특정 에피소드 완료 여부(episodeBranches) →
-    // 변수 조건(varBranches) → 그 어느 것도 안 맞으면 노드의 기본 nextNodeId. 각 목록 안에서는
-    // 먼저 조건을 만족하는 첫 항목이 선택된다(순서가 우선순위).
+    // 조건 분기는 목록 순서가 우선순위다(CSV 줄 순서 = 그래프 포트 순서). 처음 만족하는 분기로 가고,
+    // 하나도 맞지 않으면 노드의 기본 nextNodeId.
     private string ResolveNextNodeId(EpisodeNode node)
     {
-        if (Progress != null)
+        GameProgress progress = Progress;
+        if (progress != null)
         {
-            for (int i = 0; i < node.flagBranches.Count; i++)
+            for (int i = 0; i < node.branches.Count; i++)
             {
-                NodeFlagBranch branch = node.flagBranches[i];
-                if (!string.IsNullOrWhiteSpace(branch.nextNodeId) && EvaluateFlagBranch(branch))
-                    return branch.nextNodeId;
-            }
-
-            for (int i = 0; i < node.episodeBranches.Count; i++)
-            {
-                NodeEpisodeBranch branch = node.episodeBranches[i];
-                if (!string.IsNullOrWhiteSpace(branch.nextNodeId)
-                    && Progress.IsEpisodeCompleted(branch.requiredCompletedEpisodeId))
-                    return branch.nextNodeId;
-            }
-
-            for (int i = 0; i < node.varBranches.Count; i++)
-            {
-                NodeVarBranch branch = node.varBranches[i];
-                if (branch.condition != null
-                    && branch.condition.Evaluate(Progress.GetAffinity(branch.condition.varName))
-                    && !string.IsNullOrWhiteSpace(branch.nextNodeId))
+                NodeBranch branch = node.branches[i];
+                if (!string.IsNullOrWhiteSpace(branch.nextNodeId) && branch.IsSatisfied(progress))
                     return branch.nextNodeId;
             }
         }
 
         return node.nextNodeId;
-    }
-
-    private bool EvaluateFlagBranch(NodeFlagBranch branch)
-    {
-        if (branch.requiredAllFlags.Count > 0)
-        {
-            for (int i = 0; i < branch.requiredAllFlags.Count; i++)
-                if (!Progress.HasFlag(branch.requiredAllFlags[i])) return false;
-            return true;
-        }
-        if (branch.requiredAnyFlags.Count > 0)
-        {
-            for (int i = 0; i < branch.requiredAnyFlags.Count; i++)
-                if (Progress.HasFlag(branch.requiredAnyFlags[i])) return true;
-            return false;
-        }
-        return false;
     }
 
     private void ShowChoices(List<EpisodeChoice> choices)
@@ -568,29 +556,18 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         ticketManager?.ClearTicket();
         AudioManager.Instance?.StopBgm();
 
-        string episodeId = _episode?.episodeId;
         if (applySettlementRewards)
             ApplySettlementRewards(_episode);
-        bool wasBusinessEncounter = _isBusinessEncounter;
         Action businessCompleted = _businessEncounterCompleted;
         _episode = null;
         _currentNode = null;
-        _isBusinessEncounter = false;
         _isUsingManualCrafting = false;
         _businessEncounterCompleted = null;
         OnEncounterCompleted?.Invoke();
 
-        // 비즈니스 인카운터였다면 원래 진행 중이던 영업으로 모드만 되돌리고 그 호출자(콜백)에게
-        // 제어를 넘긴다 — 하루 진행(EpisodeManager/DayFlowController)에는 개입하지 않는다.
-        // 반대로 일반 에피소드는 하루 흐름의 일부이므로 완료 처리를 DayFlowController에 알린다.
-        if (wasBusinessEncounter)
-        {
-            modeManager?.RequestModeChange(GameMode.OrderMode);
-            businessCompleted?.Invoke();
-            return;
-        }
-
-        EpisodeManager.Instance?.ClearEpisode(episodeId);
-        DayFlowController.Instance?.OnEpisodeCompleted();
+        // 하루 진행(완료 기록·다음 슬롯)은 EpisodeManager/영업 컨트롤러 소관이므로, 러너는 모드만
+        // 영업으로 되돌리고 시작할 때 받은 콜백에 제어를 넘긴다.
+        modeManager?.RequestModeChange(GameMode.OrderMode);
+        businessCompleted?.Invoke();
     }
 }

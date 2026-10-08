@@ -21,7 +21,7 @@ internal sealed class PlaytestLaunchRequest
     public string episodeId;
     public int targetDay = 1;
     public bool bypassEpisodeConditions = true;
-    public bool prepareMandatoryBaseline = true;
+    public bool prepareScheduledBaseline = true;
 }
 
 public sealed class PlaytestLauncherWindow : EditorWindow
@@ -32,24 +32,15 @@ public sealed class PlaytestLauncherWindow : EditorWindow
         Day
     }
 
-    private enum EpisodeTypeFilter
-    {
-        All,
-        Default,
-        Mandatory,
-        Encounter
-    }
-
     private readonly List<EpisodeData> episodes = new List<EpisodeData>();
     private LauncherTab selectedTab;
-    private EpisodeTypeFilter typeFilter;
     private Vector2 episodeScroll;
     private string episodeSearch = string.Empty;
     private string selectedEpisodeId = string.Empty;
     private int episodeDay = 1;
     private int targetDay = 1;
     private bool bypassEpisodeConditions = true;
-    private bool prepareMandatoryBaseline = true;
+    private bool prepareScheduledBaseline = true;
 
     [MenuItem("Slainte/Playtest Launcher")]
     public static void Open()
@@ -128,7 +119,6 @@ public sealed class PlaytestLauncherWindow : EditorWindow
     {
         EditorGUILayout.LabelField("Episode Test", EditorStyles.boldLabel);
         episodeSearch = EditorGUILayout.TextField("Search", episodeSearch);
-        typeFilter = (EpisodeTypeFilter)EditorGUILayout.EnumPopup("Type", typeFilter);
 
         List<EpisodeData> visibleEpisodes = episodes
             .Where(IsVisibleEpisode)
@@ -174,22 +164,13 @@ public sealed class PlaytestLauncherWindow : EditorWindow
         DrawEpisodeDetails(selectedEpisode);
         episodeDay = Mathf.Max(1, EditorGUILayout.IntField("Progress Day", episodeDay));
         bypassEpisodeConditions = EditorGUILayout.ToggleLeft(
-            "Bypass trigger and play conditions",
+            "Bypass trigger condition",
             bypassEpisodeConditions);
 
-        if (selectedEpisode.episodeType == EpisodeType.Mandatory)
-        {
-            EditorGUILayout.HelpBox(
-                "A direct Mandatory episode test validates its content and then goes to Settlement. "
-                + "Use the Day tab to validate Before/After Business placement.",
-                MessageType.Info);
-        }
-        else if (selectedEpisode.episodeType == EpisodeType.Encounter)
-        {
-            EditorGUILayout.HelpBox(
-                "Encounter tests enter Business first and use the business encounter completion path.",
-                MessageType.Info);
-        }
+        EditorGUILayout.HelpBox(
+            "The episode runs as the first customer slot of a Business day "
+            + "and then the day continues with the remaining slots.",
+            MessageType.Info);
 
         EditorGUILayout.Space(8f);
         if (GUILayout.Button("Start Isolated Episode Test", GUILayout.Height(38f)))
@@ -208,22 +189,22 @@ public sealed class PlaytestLauncherWindow : EditorWindow
     {
         EditorGUILayout.LabelField("Day Flow Test", EditorStyles.boldLabel);
         targetDay = Mathf.Max(1, EditorGUILayout.IntField("Target Day", targetDay));
-        prepareMandatoryBaseline = EditorGUILayout.ToggleLeft(
-            "Prepare previous Mandatory episodes as completed",
-            prepareMandatoryBaseline);
+        prepareScheduledBaseline = EditorGUILayout.ToggleLeft(
+            "Prepare episodes scheduled before this day as completed",
+            prepareScheduledBaseline);
 
         EditorGUILayout.HelpBox(
             "Day 1 starts through StartFirstDay. Later days stage Day N-1, then use "
             + "StartBusinessDay so the runtime advances to the requested day. The test continues "
-            + "through Mandatory episodes, Business, Settlement, and Rest.",
+            + "through Business (scheduled episodes and random customers), Settlement, and Rest.",
             MessageType.Info);
 
-        if (prepareMandatoryBaseline)
+        if (prepareScheduledBaseline)
         {
             EditorGUILayout.HelpBox(
-                "The baseline completes earlier Mandatory episodes and reopens Mandatory episodes "
-                + "scheduled for this or later days. Optional episodes, flags, money, and affinity "
-                + "remain based on the current save.",
+                "The baseline completes episodes scheduled before this day and reopens episodes "
+                + "scheduled for this or later days. Flags, money, and affinity remain based on "
+                + "the current save, so branch episodes may still differ from a real playthrough.",
                 MessageType.None);
         }
 
@@ -234,7 +215,7 @@ public sealed class PlaytestLauncherWindow : EditorWindow
             {
                 kind = PlaytestLaunchKind.Day,
                 targetDay = targetDay,
-                prepareMandatoryBaseline = prepareMandatoryBaseline
+                prepareScheduledBaseline = prepareScheduledBaseline
             });
         }
     }
@@ -245,10 +226,7 @@ public sealed class PlaytestLauncherWindow : EditorWindow
         {
             EditorGUILayout.LabelField("Title", episode.episodeTitle ?? string.Empty);
             EditorGUILayout.LabelField("ID", episode.episodeId ?? string.Empty);
-            EditorGUILayout.LabelField("Type", episode.episodeType.ToString());
-            EditorGUILayout.LabelField("Minimum Day", GetMinimumDay(episode).ToString());
-            if (episode.episodeType == EpisodeType.Mandatory)
-                EditorGUILayout.LabelField("Slot", episode.mandatorySlot.ToString());
+            EditorGUILayout.LabelField("Schedule", DescribeSchedule(episode));
 
             string prerequisites = DescribePrerequisites(episode);
             if (!string.IsNullOrWhiteSpace(prerequisites))
@@ -264,7 +242,8 @@ public sealed class PlaytestLauncherWindow : EditorWindow
             ProjectResourcePaths.NarrativeEpisodes)
             .Where(episode => episode != null && !string.IsNullOrWhiteSpace(episode.episodeId))
             .OrderBy(GetMinimumDay)
-            .ThenBy(episode => episode.episodeType)
+            .ThenBy(episode => episode.scheduledSlot)
+            .ThenByDescending(episode => episode.slotPriority)
             .ThenBy(episode => episode.episodeTitle)
             .ThenBy(episode => episode.episodeId));
 
@@ -283,13 +262,6 @@ public sealed class PlaytestLauncherWindow : EditorWindow
         if (episode == null)
             return false;
 
-        if (typeFilter != EpisodeTypeFilter.All
-            && !string.Equals(typeFilter.ToString(), episode.episodeType.ToString(),
-                StringComparison.OrdinalIgnoreCase))
-        {
-            return false;
-        }
-
         if (string.IsNullOrWhiteSpace(episodeSearch))
             return true;
 
@@ -307,9 +279,19 @@ public sealed class PlaytestLauncherWindow : EditorWindow
             StringComparison.OrdinalIgnoreCase));
     }
 
+    // 일정이 있으면 배정된 날짜, 없으면 등장 조건의 최소 날짜를 기본 테스트 날짜로 쓴다.
     private static int GetMinimumDay(EpisodeData episode)
     {
+        if (episode != null && episode.IsScheduled)
+            return episode.scheduledDay;
         return Mathf.Max(1, episode?.triggerCondition?.minDay ?? 1);
+    }
+
+    private static string DescribeSchedule(EpisodeData episode)
+    {
+        return episode.IsScheduled
+            ? $"Day {episode.scheduledDay} / Slot {episode.scheduledSlot} / Priority {episode.slotPriority}"
+            : "Unscheduled";
     }
 
     private static string BuildEpisodeLabel(EpisodeData episode)
@@ -317,7 +299,8 @@ public sealed class PlaytestLauncherWindow : EditorWindow
         string title = string.IsNullOrWhiteSpace(episode.episodeTitle)
             ? episode.episodeId
             : episode.episodeTitle;
-        return $"Day {GetMinimumDay(episode),2}  |  {episode.episodeType,-9}  |  {title}  [{episode.episodeId}]";
+        string slot = episode.IsScheduled ? $"S{episode.scheduledSlot}" : "--";
+        return $"Day {GetMinimumDay(episode),2} {slot}  |  {title}  [{episode.episodeId}]";
     }
 
     private static string DescribePrerequisites(EpisodeData episode)
@@ -423,11 +406,8 @@ internal static class PlaytestLaunchCoordinator
             if (request == null)
                 throw new InvalidOperationException("The queued playtest request is missing.");
 
-            int stage = SessionState.GetInt(StageKey, 0);
-            if (stage == 0)
+            if (SessionState.GetInt(StageKey, 0) == 0)
                 DispatchInitialRequest(request);
-            else if (stage == 1)
-                DispatchEncounter(request);
         }
         catch (Exception exception)
         {
@@ -475,48 +455,17 @@ internal static class PlaytestLaunchCoordinator
 
         progress.SetCurrentDay(request.targetDay);
         progress.ResetDaySettlement();
-        if (!request.bypassEpisodeConditions)
-            ValidateEpisodeConditions(episode, progress, episodeManager);
-
-        if (episode.episodeType == EpisodeType.Encounter)
+        if (!request.bypassEpisodeConditions
+            && !ProgressConditionEvaluator.IsMet(episode.triggerCondition, progress))
         {
-            SessionState.SetInt(StageKey, 1);
-            SetStatus("Entering Business before starting the selected Encounter...");
-            gameManager.ChangeState(GameState.Business);
-            FocusGameView();
-            return;
+            throw new InvalidOperationException("The selected episode trigger condition is not met.");
         }
 
+        // 영업 씬이 로드되면서 영업이 자동으로 시작되므로, 상태 전환 전에 1번 슬롯을 예약해 둔다.
+        episodeManager.QueueDebugEncounter(episode.episodeId);
         SessionState.SetInt(StageKey, 2);
-        episodeManager.StartEpisode(episode.episodeId);
+        gameManager.ChangeState(GameState.Business);
         SetStatus($"Running isolated episode test: {episode.episodeTitle} [{episode.episodeId}]");
-        FocusGameView();
-    }
-
-    private static void DispatchEncounter(PlaytestLaunchRequest request)
-    {
-        GameManager gameManager = GameManager.Instance;
-        EpisodeManager episodeManager = EpisodeManager.Instance;
-        EpisodeRunner runner = UnityEngine.Object.FindFirstObjectByType<EpisodeRunner>();
-        if (gameManager == null
-            || episodeManager == null
-            || runner == null
-            || gameManager.CurrentState != GameState.Business)
-        {
-            return;
-        }
-
-        if (!episodeManager.TryStartBusinessEncounter(
-                request.episodeId,
-                () => Debug.Log("[PlaytestLauncher] Encounter test completed and returned to Business.")))
-        {
-            throw new InvalidOperationException(
-                "The selected Encounter could not start in the Business runtime.");
-        }
-
-        EpisodeData episode = episodeManager.GetEpisodeData(request.episodeId);
-        SessionState.SetInt(StageKey, 2);
-        SetStatus($"Running isolated Encounter test: {episode?.episodeTitle} [{request.episodeId}]");
         FocusGameView();
     }
 
@@ -526,8 +475,8 @@ internal static class PlaytestLaunchCoordinator
         DayFlowController dayFlow,
         PlaytestProgressIsolation isolation)
     {
-        if (request.prepareMandatoryBaseline)
-            PrepareMandatoryBaseline(request.targetDay, progress, isolation);
+        if (request.prepareScheduledBaseline)
+            PrepareScheduledBaseline(request.targetDay, progress, isolation);
 
         progress.ResetDaySettlement();
         if (request.targetDay <= 1)
@@ -541,7 +490,7 @@ internal static class PlaytestLaunchCoordinator
         dayFlow.StartBusinessDay();
     }
 
-    private static void PrepareMandatoryBaseline(
+    private static void PrepareScheduledBaseline(
         int targetDay,
         GameProgress progress,
         PlaytestProgressIsolation isolation)
@@ -552,7 +501,7 @@ internal static class PlaytestLaunchCoordinator
             ProjectResourcePaths.NarrativeEpisodes);
         foreach (EpisodeData episode in allEpisodes)
         {
-            if (episode == null || episode.episodeType != EpisodeType.Mandatory)
+            if (episode == null || !episode.IsScheduled)
                 continue;
             if (!string.IsNullOrWhiteSpace(progress.CurrentChapterId)
                 && !string.Equals(episode.chapterId, progress.CurrentChapterId,
@@ -561,29 +510,14 @@ internal static class PlaytestLaunchCoordinator
                 continue;
             }
 
-            int minimumDay = Mathf.Max(1, episode.triggerCondition?.minDay ?? 1);
-            if (minimumDay < targetDay)
+            if (episode.scheduledDay < targetDay)
                 completedBeforeDay.Add(episode.episodeId);
             else
                 incompleteFromDay.Add(episode.episodeId);
         }
 
         if (!isolation.PrepareEpisodeCompletionState(completedBeforeDay, incompleteFromDay))
-            throw new InvalidOperationException("Failed to prepare the Mandatory episode baseline.");
-    }
-
-    private static void ValidateEpisodeConditions(
-        EpisodeData episode,
-        GameProgress progress,
-        EpisodeManager episodeManager)
-    {
-        if (!episodeManager.IsUnlocked(episode, progress))
-            throw new InvalidOperationException("The selected episode trigger conditions are not met.");
-        if (episode.episodeType == EpisodeType.Default
-            && !episodeManager.IsPlayable(episode, progress))
-        {
-            throw new InvalidOperationException("The selected episode play conditions are not met.");
-        }
+            throw new InvalidOperationException("Failed to prepare the scheduled episode baseline.");
     }
 
     private static PlaytestLaunchRequest ReadRequest()

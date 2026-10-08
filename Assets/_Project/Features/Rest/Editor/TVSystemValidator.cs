@@ -345,8 +345,6 @@ namespace Slainte.EditorTools
                 completedEpisodeIds = progress.GetCompletedList(),
                 affinityKeys = progress.GetAffinityKeys(),
                 affinityValues = progress.GetAffinityValues(),
-                boardSlotKeys = progress.GetBoardSlotKeys(),
-                boardSlotValues = progress.GetBoardSlotValues(),
                 bottleAmountKeys = progress.GetBottleAmountKeys(),
                 bottleAmountValues = progress.GetBottleAmountValues(),
                 customerAppearanceKeys = progress.GetCustomerAppearanceKeys(),

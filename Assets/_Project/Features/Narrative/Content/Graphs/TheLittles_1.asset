@@ -1,0 +1,2992 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8447362882046264916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 797e3277-1615-4a2b-9f06-a36014a20e06
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 797e3277-1615-4a2b-9f06-a36014a20e06
+  Position:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 340
+    height: 514
+  CustomFields:
+  - FieldName: Title
+    FieldValue: 1
+  StartEventGuid: 
+  Events:
+  - Guid: 5e54990d-7553-4401-a266-4689246c9fb9
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 1
+    SpeakerKey: eliud
+    OverrideSpeakerName: "\uC5D8\uB9AC\uC5C7?"
+    Text: "\uD760\uD760-"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: hide
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 1
+    BgmClipName: Ep_main_0
+    SfxCommand: 1
+    SfxClipName: sfx_come_in
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: f9d81844-6ec2-41de-9cf5-9913adff1872
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 2
+    SpeakerKey: eliud
+    OverrideSpeakerName: "\uC5D8\uB9AC\uC5C7?"
+    Text: "\uC800\uAE30, \uB298 \uB9C8\uC2DC\uB358 \uAC78\uB85C\u2026"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: hide
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: f7c22fd9-e366-4e77-890c-e28dcbfb3d71
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 3
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\u2026"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: hide
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: baf00c7e-d649-406d-badb-09f173e4a62d
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 4
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "<b>\uC5D8\uB9AC\uC5C7</b>. \uB2E4 \uBCF4\uC774\uAC70\uB4E0?"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: hide
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: fa974f06-ed6d-49f0-bd52-1d9417a13135
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 5
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uC544, \uC9C4\uC9DC! \uC158 \uC624\uBE60\uB294 \uD55C \uBC88\uC744 \uC548
+      \uC18D\uB124!"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: disappoint
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 822874e6-3711-4643-a9bf-f0cf27f7aab5
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 6
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uADF8 \uCF54\uD2B8\uB294 \uC774\uC81C \uC138\uD0C1\uC18C\uC5D0 \uB9E1\uAE30\uC9C0
+      \uADF8\uB798? \uAE30\uB984 \uB0C4\uC0C8\uAC00 \uC5EC\uAE30\uAE4C\uC9C0 \uB098\uB294\uB370"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: disappoint
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: e3c22aad-22e9-40d0-b94a-f933ae5e1cda
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 7
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uC73C\uC544-! <b>\uC815\uBE44\uC18C</b> \uC774\uC57C\uAE30\uB294 \uD558\uC9C0
+      \uB9D0\uC544 \uC918! \uC548 \uADF8\uB798\uB3C4 \uC544\uBE60 \uB3C4\uC640\uB4DC\uB9AC\uB290\uB77C
+      \uC4F0\uB7EC\uC9C8 \uAC83 \uAC19\uC73C\uB2C8\uAE4C!"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: disappoint
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: a4b69dc3-d635-49ff-be46-7b19dcf61d9f
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 8
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uC544\uBB34\uD2BC, \uB0B4 \uB300\uB2F5\uC740 \uB298 \uAC19\uC544. <b>\uD55C\uC5EC\uB984\uC758
+      \uC8FC\uC2A4</b>\uB85C \uAE30\uBD84\uC804\uD658\uC774\uB77C\uB3C4 \uD574\uBD10."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: disappoint
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 3ee1200d-5067-49f1-8a32-378746add709
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 2
+    RuntimeNodeId: 9
+    SpeakerKey: 
+    OverrideSpeakerName: 
+    Text: 
+    CharacterAppearances: []
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 11400000, guid: ea64fae61c614528ba9f82a7a51cec69, type: 2}
+    CraftingTicketKey: tl1_eliud
+    CraftingOrderType: 6
+    CraftingOrderTarget: rec_1007
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Good
+  - Bad
+  - Mid-Ice
+  - Mid-Glass
+  - Mid-Ice+Glass
+  - Mid-WrongMenu
+  RouterNodeId: 
+  ShowAllEvents: 0
+--- !u!114 &-5508131419835338045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 6743b31e-447e-47af-92e6-e77d7e310f7d
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 6743b31e-447e-47af-92e6-e77d7e310f7d
+  Position:
+    serializedVersion: 2
+    x: 580
+    y: 314
+    width: 340
+    height: 394
+  CustomFields:
+  - FieldName: Title
+    FieldValue: 10_2_1
+  StartEventGuid: 
+  Events:
+  - Guid: 23c3e7f2-0f90-42c8-8cea-4d7ac2ae5027
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 10_2_1
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uC74C\u2026\uC774\uAC74 \uBB50\uC57C?"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: curious
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 07c17b9f-0a0d-4784-acd7-b1f8bb35c730
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 10_2_2
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uB9C8\uC154\uBCF4\uACE0 \uB180\uB77C\uC9C0\uB098 \uB9D0\uB77C\uACE0."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: curious
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: cd6f5645-bc80-4412-a064-4ea4ee6bd3b7
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 10_2_3
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uC73C\uC5D1! \uC774\uAC8C \uBB34\uC2A8 \uB9DB\uC57C!"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: disappoint
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 87bd7930-964d-46a0-8262-ef9a39d92868
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 10_2_4
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uD5E4- \uC220\uB9DB\uB3C4 \uBAA8\uB974\uBA74\uC11C \uB098\uC11C\uAE30\uB294"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: disappoint
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: d4e69c9c-2944-4954-b03d-c52b11bf6cf9
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 10_2_5
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uC77C\uBD80\uB7EC \uC774\uB7F0 \uAC70 \uC900 \uAC70\uC9C0!"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: disappoint
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 300b3372-433f-40af-aba6-01dd9084d444
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 10_2_6
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uADF8\uB9CC \uB3CC\uC544\uAC00 \uBD10. \uC544\uBE60\uAC00 \uCC3E\uC73C\uC2DC\uACA0\uB2E4."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: pout
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+  RouterNodeId: 
+  ShowAllEvents: 0
+--- !u!114 &-4978784040173657288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: da8d06d9-3638-4662-8daf-ad485def0e90
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: da8d06d9-3638-4662-8daf-ad485def0e90
+  Position:
+    serializedVersion: 2
+    x: 2320
+    y: 0
+    width: 340
+    height: 372
+  CustomFields:
+  - FieldName: Title
+    FieldValue: 32
+  StartEventGuid: 
+  Events:
+  - Guid: 38f30e5d-16f8-4fb0-ac1b-8e57a9ecf227
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 32
+    SpeakerKey: cartha
+    OverrideSpeakerName: ???
+    Text: "<b>\uB09C 5\uBC88\uAC00\uC5D0\uC11C \uC654\uC5B4.</b>"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: frust
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: sad
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 4faa0102-07ad-4aac-ae0f-ebb10c24f65b
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 33
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uC557..."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: frust
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: sad
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 3a852b53-fcfc-40db-b4a7-0f158304b5c6
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 34
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uB18D\uB2F4..\uC774\uC9C0?"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: frust
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: sad
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - tl1_1_false == true
+  - tl1_1_true == true
+  - Next
+  RouterNodeId: 
+  ShowAllEvents: 0
+--- !u!114 &-4337488567686001406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 9e9f7480-08ce-4192-98a0-5a504fdceeb0
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 9e9f7480-08ce-4192-98a0-5a504fdceeb0
+  Position:
+    serializedVersion: 2
+    x: 2900
+    y: 0
+    width: 340
+    height: 324
+  CustomFields:
+  - FieldName: Title
+    FieldValue: 35_1_1
+  StartEventGuid: 
+  Events:
+  - Guid: af9232b3-9fa8-4175-b0d0-6052949dc01f
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 35_1_1
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uC5D8\uB9AC\uC5C7, \uC0AC\uACFC\uD574."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: frust
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: sad
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: b9535fd1-5680-44d6-ba67-c29778500a9d
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 35_1_2
+    SpeakerKey: cartha
+    OverrideSpeakerName: ???
+    Text: "\uAD1C\uCC2E\uC544. \uCC98\uC74C\uBD80\uD130 \uC798\uB420 \uAC70\uB77C\uACE0
+      \uC0DD\uAC01 \uC548 \uD588\uC5B4."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: frust
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: dd81f2e0-8667-4f2a-b4da-cf7db2d7c1d8
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 35_1_3
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uBBF8-\uBBF8\uC548\u2026"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: frust
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+  RouterNodeId: 
+  ShowAllEvents: 0
+--- !u!114 &-4194293891712356338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: fdccd995-1a63-470d-a611-840eb9ca51c3
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: fdccd995-1a63-470d-a611-840eb9ca51c3
+  Position:
+    serializedVersion: 2
+    x: 580
+    y: 0
+    width: 340
+    height: 254
+  CustomFields:
+  - FieldName: Title
+    FieldValue: 10_1_1
+  StartEventGuid: 
+  Events:
+  - Guid: c74aaf50-1810-4f36-8720-0454d94b8429
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 10_1_1
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uC624! \uADF8\uB798\uB3C4 \uC800\uBC88\uBCF4\uB2E4 \uB9DB\uC788\uC73C\uB2C8\uAE4C
+      \uBD10\uC900\uB2E4."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: expect
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: f1b48d5c-c004-437d-afe7-a21ff7ce4a17
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 10_1_2
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uB9DB\uC788\uB2E4\uB2C8 \uB2E4\uD589\uC774\uB124. \uADF8\uB9CC \uB3CC\uC544\uAC00
+      \uBD10. \uC544\uBE60\uAC00 \uCC3E\uC73C\uC2DC\uACA0\uB2E4."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: expect
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+  RouterNodeId: 
+  ShowAllEvents: 0
+--- !u!114 &-4128371302052505396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 5ce8de27-34e4-4b90-8dcc-17f9f43f7ecd
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 5ce8de27-34e4-4b90-8dcc-17f9f43f7ecd
+  Position:
+    serializedVersion: 2
+    x: 1740
+    y: 0
+    width: 340
+    height: 184
+  CustomFields:
+  - FieldName: Title
+    FieldValue: 31_1_1
+  StartEventGuid: 
+  Events:
+  - Guid: 78a1cbdb-f17b-4b7b-a947-cbc0acff6392
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 31_1_1
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uC5D8\uB9AC\uC5C7, \uAC70\uAE30\uAE4C\uC9C0 \uD574."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: frust
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: sad
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+  RouterNodeId: 
+  ShowAllEvents: 0
+--- !u!114 &-2208039233770216862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 9e28aa9c-f2ec-4ebd-8789-a29902d39472
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 9e28aa9c-f2ec-4ebd-8789-a29902d39472
+  Position:
+    serializedVersion: 2
+    x: 3480
+    y: 0
+    width: 340
+    height: 394
+  CustomFields:
+  - FieldName: Title
+    FieldValue: 36
+  StartEventGuid: 
+  Events:
+  - Guid: 590c25f3-3d03-4377-95f4-d74b63b16d08
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 36
+    SpeakerKey: cartha
+    OverrideSpeakerName: ???
+    Text: "\uAD1C\uCC2E\uB2E4\uB2C8\uAE4C."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: frust
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 08d7aace-8c75-4aa7-a1d9-9ce74b3a7786
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 37
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uB108 \uC774\uB984\uC740 \uBB50\uC57C?"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: frust
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 215c41a0-a80c-4aaf-b331-9473df6ee6f3
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 38
+    SpeakerKey: cartha
+    OverrideSpeakerName: 
+    Text: "\u2026<b>\uCE74\uC0AC</b>"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 94855a8c-7e77-49ca-83a1-1086adb23c9b
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 39
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uB09C \uC5D8\uB9AC\uC5C7\uC774\uC57C. \uC800\uAE30 \uBAA8\uD241\uC774
+      \uC815\uBE44\uC18C\uC5D0 \uC0B4\uC544."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: c7ed7b88-8b82-4835-ad4d-b0a102caa272
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 40
+    SpeakerKey: cartha
+    OverrideSpeakerName: 
+    Text: "\u2026\uC54C\uC544. <b>\uC8FC\uD669\uC0C9 \uAC04\uD310.</b>"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: curious
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 23a939d4-e596-48fd-9528-63e9fc70650a
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 41
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uC624!? \uC5B4\uB5BB\uAC8C \uC54C\uC558\uC5B4? \uB108 \uC9C4\uC9DC \uC2E0\uC774\uB791
+      \uC598\uAE30\uD574?"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: expect
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 3cce2ae3-46a1-4a92-bae6-52d11ee17ca1
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 42
+    SpeakerKey: cartha
+    OverrideSpeakerName: 
+    Text: "\uB108\uD55C\uD14C\uC11C \uAE30\uB984 \uB0C4\uC0C8\uB098\uC796\uC544."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: expect
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 75f2fa6c-a1af-4794-bd04-b76c3bd07193
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 43
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uC73D\u2026 \uB098 \uC9C4\uC9DC \uB0C4\uC0C8 \uB9CE\uC774 \uB098?"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: pout
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: bd5410d7-8e10-4336-a483-6134ae1b5a68
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 44
+    SpeakerKey: cartha
+    OverrideSpeakerName: 
+    Text: "\uB204\uAD6C\uB098 \uB0C4\uC0C8\uB294 \uB098."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: pout
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: f556671c-68e6-4d96-93e9-613afee3ffb2
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 45
+    SpeakerKey: cartha
+    OverrideSpeakerName: 
+    Text: "\uB0C4\uC0C8\uB294 \uADF8 \uC0AC\uB78C\uC774 \uC5B4\uB5A4 \uC0AC\uB78C\uC778\uC9C0
+      \uB9D0\uD574\uC918."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: curious
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: d9c568ca-8dc5-43f3-800b-e849abc92161
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 46
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\u2026"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: curious
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: fee795f1-a8d1-4127-816d-d3fd5f8b5e46
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 47
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uB108\uD55C\uD14C\uC11C\uB294\u2026\uC57D\uAC04... \uBB50 \uD0C4 \uC7AC
+      \uB0C4\uC0C8 \uAC19\uC740 \uAC8C \uB098."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: curious
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 6e9d2db1-cb03-4f1a-b956-083ff883b2f0
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 48
+    SpeakerKey: cartha
+    OverrideSpeakerName: 
+    Text: "\uADF8\uAC74 \uC6B0\uB9AC \uC5C4\uB9C8 \uB0C4\uC0C8\uC57C."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: curious
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: fe65f8b0-53c6-4acd-83b2-871eec29dc50
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 49
+    SpeakerKey: cartha
+    OverrideSpeakerName: 
+    Text: "\uC544\uBB34\uB9AC \uC53B\uC5B4\uB3C4 \uC548 \uC9C0\uC6CC\uC838."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 2fd9c414-d9eb-4010-a8dd-0bd6f84bdaab
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 50
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uB098\uB3C4 \uC544\uBB34\uB9AC \uC53B\uC5B4\uB3C4 \uAE30\uB984\uB0C4\uC0C8\uAC00
+      \uC548 \uC9C0\uC6CC\uC838!"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 240cacf1-ba96-43f6-a214-fbfdd26e1d65
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 51
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uC774\uAC83\uB3C4 \uC6B0\uB9AC \uC544\uBE60 \uB0C4\uC0C8\uC778\uAC00?"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: cc171292-62a6-44b2-aeca-235615387727
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 52
+    SpeakerKey: cartha
+    OverrideSpeakerName: 
+    Text: "\uADF8\uAC74 \uC53B\uC73C\uBA74 \uC9C0\uC6CC\uC9C8\uAC78"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: pout
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: dcc01bcd-cad5-49c2-9d3a-e41e8a41235c
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 53
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uC57C! \uB098\uB3C4 \uC790\uC8FC \uC53B\uAC70\uB4E0! \uC77C\uC8FC\uC77C\uC5D0
+      \uD55C\uBC88\uC529!"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: pout
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 1c6b76ad-8612-4c78-9d98-0e38b4262862
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 54
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uADF8\uAC74 <b>\uC790\uC8FC</b>\uAC00 \uC544\uB2C8\uC57C \uC5D8\uB9AC\uC5C7."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: pout
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 37a91301-bc8a-4de8-a0b7-093cd3efe0ea
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 55
+    SpeakerKey: cartha
+    OverrideSpeakerName: 
+    Text: "\u2026\uB5A8\uC5B4\uC838 \uC8FC\uBA74 \uC88B\uACA0\uC5B4"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: pout
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 8cdc066c-c92a-4a34-8202-856f8c5bdab2
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 56
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uD79D\u2026 \uC544\uBE60 \uB9D0 \uC798 \uB4E4\uC744\uAC78\u2026"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: disappoint
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 7be1129f-c7da-41f6-864e-82b0760e8102
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 57
+    SpeakerKey: cartha
+    OverrideSpeakerName: 
+    Text: "\uADF8\uB7F0\uB370\u2026"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: disappoint
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: e366cc62-9ee2-489d-b49b-40462557f8b0
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 58
+    SpeakerKey: cartha
+    OverrideSpeakerName: 
+    Text: "\uC774 \uACF5\uAC04\uC5D0\uC11C\uB294 \uC774\uC0C1\uD558\uAC8C <b>\uB530\uB73B\uD55C
+      \uB0C4\uC0C8</b>\uAC00 \uB098"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: curious
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: a43d3773-7b30-44ef-a471-3317643def6b
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 59
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "<b>\uB530\uB73B\uD55C \uB0C4\uC0C8</b>\uC694?"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: curious
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 27ec0e6c-016d-4eb6-b10d-42ce3a3e9c88
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 60
+    SpeakerKey: cartha
+    OverrideSpeakerName: 
+    Text: "\uC544- \uBC8C\uC368 \uC2DC\uAC04\uC774 \uC774\uB807\uAC8C \uB410\uB124"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: curious
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: af62e9bc-3b60-417e-86bd-93be544da4be
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 61
+    SpeakerKey: cartha
+    OverrideSpeakerName: 
+    Text: "\uB354 \uB2A6\uC5C8\uB2E4\uAC04 \uC5C4\uB9C8\uAC00 \uCC3E\uC744 \uAC70\uC57C.
+      \uC798 \uC788\uC5B4"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: curious
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: sad
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: bc702b61-0df1-43e9-a0a5-1e931317bb2e
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 62
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uC557, \uBC8C\uC368 \uAC00?"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: curious
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: sad
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 16dc6ae7-e03c-4e77-a90e-8886352739c0
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 63
+    SpeakerKey: cartha
+    OverrideSpeakerName: 
+    Text: "\uAC71\uC815\uD558\uC9C0 \uB9C8. \uB2E4\uC74C\uC5D0 \uB610 \uBCFC \uAC70\uC57C."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: curious
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 7ef086c8-7445-44eb-a4a8-6cf56e569656
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 64
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uADF8\uAC78 \uC5B4\uB5BB\uAC8C \uC7A5\uB2F4\uD574?"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: curious
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: cde310c6-9492-43ae-8a38-14e83182ec46
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 65
+    SpeakerKey: cartha
+    OverrideSpeakerName: 
+    Text: "\uADF8\uB0E5. \uC54C\uC544."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: curious
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: expect
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 43da4ed6-8887-4429-bf72-b9e6b4bc270e
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 66
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\u2026\uC158 \uC624\uBE60."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 49d8ae35-bbbc-414f-a525-fbcabf5c1741
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 67
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uC751."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: c3baa0c6-db67-41bd-be93-e765a0331ecd
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 68
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uB098 5\uBC88\uAC00 \uC560 \uCC98\uC74C \uBD10."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: bad8fcf4-9b28-4f8c-a90c-cc6f9f6990ad
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 69
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uB098\uB294 \uCC98\uC74C\uC740 \uC544\uB2C8\uAE34 \uD55C\uB370\u2026"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 7ea82b88-e1ab-476e-9317-27fe0630a369
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 70
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uB4E3\uB358 \uAC83\uCC98\uB7FC \uB9C9 \uBB34\uC12D\uC9C0\uB294 \uC54A\uB124."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: cbe60c7e-f1bc-4c66-8375-47d4b1aa5c75
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 71
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\u2026\uB098 \uC774\uB9CC \uAC00 \uBCFC\uAC8C."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: bc7fa0bf-92cc-462e-93bc-02a8af018427
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 72
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uC870\uC2EC\uD788 \uB4E4\uC5B4\uAC00."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 110a36a7-e560-4824-b562-be467f85712b
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 73
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uADF8\uB9AC\uACE0\u2026 \uB2E4\uC74C\uC5D0 \uCE74\uC0AC\uAC00 \uB610
+      \uC624\uBA74, \uB0B4\uAC00 \uB9C8\uC168\uB358 \uAC70\uB77C\uB3C4 \uD574\uC8FC\uB77C."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: d0da3613-135c-429a-b94f-997b11cfaa30
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 74
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\u2026\uC54C\uACA0\uC5B4."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+  RouterNodeId: 
+  ShowAllEvents: 0
+--- !u!114 &-1460512814468430319
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 3e4eb7f3-bb92-45d6-9428-80ae5ceda4e1
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 3e4eb7f3-bb92-45d6-9428-80ae5ceda4e1
+  Position:
+    serializedVersion: 2
+    x: 2900
+    y: 384
+    width: 340
+    height: 324
+  CustomFields:
+  - FieldName: Title
+    FieldValue: 35_2_1
+  StartEventGuid: 
+  Events:
+  - Guid: 5772ecca-3e00-4150-800e-fa9d3721106b
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 35_2_1
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uC6D0\uCE58 \uC54A\uB294 \uC774\uC57C\uAE30\uC168\uC744 \uD150\uB370,
+      \uAEBC\uB0B4\uAC8C \uD574\uB4DC\uB824 \uC8C4\uC1A1\uD569\uB2C8\uB2E4."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: frust
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: sad
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 2d5f0833-4401-40ae-be2f-f77ef04a39fd
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 35_2_2
+    SpeakerKey: cartha
+    OverrideSpeakerName: ???
+    Text: "\uAD1C\uCC2E\uC544. \uCC98\uC74C\uBD80\uD130 \uC798\uB420 \uAC70\uB77C\uACE0
+      \uC0DD\uAC01 \uC548 \uD588\uC5B4."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: frust
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: c30b15d4-259f-42ea-9fbf-43fa30bf1ddb
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 35_2_3
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\u3134-\uB098\uB3C4 \uBBF8\uC548\u2026"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: frust
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+  RouterNodeId: 
+  ShowAllEvents: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d79caea9d5f0474f8e1b7b289e47fad, type: 3}
+  m_Name: TheLittles_1
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.NarrativeGraphSO
+  EpisodeId: TheLittles_1
+  EpisodeTitle: "\uC544\uC774\uB4E4 1\uBD80"
+  StartNodeGuid: 797e3277-1615-4a2b-9f06-a36014a20e06
+  ChapterId: Sector0
+  ScheduledDay: 4
+  ScheduledSlot: 5
+  SlotPriority: 1
+  TriggerCondition:
+    minDay: 0
+    minMoney: 0
+    requiredFlags: []
+    blockedFlags: []
+    prerequisiteEpisodeIds:
+    - TheLittles_0
+    requiredVars: []
+    requiredCustomerAppearances: []
+  SettlementRewards:
+  - requiredFlag: tl0_true
+    label: "\uCE74\uC0AC\uAC00 \uB610 \uC624\uBA74, \uB0B4\uAC00 \uB9C8\uC168\uB358
+      \uAC70\uB77C\uB3C4 \uD574\uC8FC\uB77C -\uC5D8\uB9AC\uC5C7"
+    amount: 2200
+  SourceCsvPath: "Assets/_Project/Features/Narrative/Content/Source/Episodes/\uC5D0\uD53C\uC18C\uB4DC
+    - EpisodeData_TheLittles_1.csv.csv"
+  LastSyncedCsvHash: 06ED934DDBFD18D5140B1AE9D34462D2
+  Nodes:
+  - {fileID: -8447362882046264916}
+  - {fileID: -4194293891712356338}
+  - {fileID: -5508131419835338045}
+  - {fileID: 8917814071228908961}
+  - {fileID: 1788648440499263813}
+  - {fileID: -4128371302052505396}
+  - {fileID: 7553713914338942313}
+  - {fileID: -4978784040173657288}
+  - {fileID: -4337488567686001406}
+  - {fileID: -1460512814468430319}
+  - {fileID: -2208039233770216862}
+  Edges:
+  - BaseNodeGuid: 797e3277-1615-4a2b-9f06-a36014a20e06
+    TargetNodeGuid: fdccd995-1a63-470d-a611-840eb9ca51c3
+    OutputPortIndex: 0
+  - BaseNodeGuid: 797e3277-1615-4a2b-9f06-a36014a20e06
+    TargetNodeGuid: 6743b31e-447e-47af-92e6-e77d7e310f7d
+    OutputPortIndex: 1
+  - BaseNodeGuid: 797e3277-1615-4a2b-9f06-a36014a20e06
+    TargetNodeGuid: 48964a08-939c-47db-9fd6-e9f84007611c
+    OutputPortIndex: 2
+  - BaseNodeGuid: 797e3277-1615-4a2b-9f06-a36014a20e06
+    TargetNodeGuid: 48964a08-939c-47db-9fd6-e9f84007611c
+    OutputPortIndex: 3
+  - BaseNodeGuid: 797e3277-1615-4a2b-9f06-a36014a20e06
+    TargetNodeGuid: 48964a08-939c-47db-9fd6-e9f84007611c
+    OutputPortIndex: 4
+  - BaseNodeGuid: 797e3277-1615-4a2b-9f06-a36014a20e06
+    TargetNodeGuid: 6743b31e-447e-47af-92e6-e77d7e310f7d
+    OutputPortIndex: 5
+  - BaseNodeGuid: fdccd995-1a63-470d-a611-840eb9ca51c3
+    TargetNodeGuid: a1919a94-e63f-4143-8009-586617cbe4a4
+    OutputPortIndex: 0
+  - BaseNodeGuid: 6743b31e-447e-47af-92e6-e77d7e310f7d
+    TargetNodeGuid: a1919a94-e63f-4143-8009-586617cbe4a4
+    OutputPortIndex: 0
+  - BaseNodeGuid: 48964a08-939c-47db-9fd6-e9f84007611c
+    TargetNodeGuid: a1919a94-e63f-4143-8009-586617cbe4a4
+    OutputPortIndex: 0
+  - BaseNodeGuid: a1919a94-e63f-4143-8009-586617cbe4a4
+    TargetNodeGuid: 5ce8de27-34e4-4b90-8dcc-17f9f43f7ecd
+    OutputPortIndex: 0
+  - BaseNodeGuid: a1919a94-e63f-4143-8009-586617cbe4a4
+    TargetNodeGuid: 626a46ea-375a-4aae-8c65-724b439eeb73
+    OutputPortIndex: 1
+  - BaseNodeGuid: 5ce8de27-34e4-4b90-8dcc-17f9f43f7ecd
+    TargetNodeGuid: da8d06d9-3638-4662-8daf-ad485def0e90
+    OutputPortIndex: 0
+  - BaseNodeGuid: 626a46ea-375a-4aae-8c65-724b439eeb73
+    TargetNodeGuid: da8d06d9-3638-4662-8daf-ad485def0e90
+    OutputPortIndex: 0
+  - BaseNodeGuid: da8d06d9-3638-4662-8daf-ad485def0e90
+    TargetNodeGuid: 9e9f7480-08ce-4192-98a0-5a504fdceeb0
+    OutputPortIndex: 0
+  - BaseNodeGuid: da8d06d9-3638-4662-8daf-ad485def0e90
+    TargetNodeGuid: 3e4eb7f3-bb92-45d6-9428-80ae5ceda4e1
+    OutputPortIndex: 1
+  - BaseNodeGuid: da8d06d9-3638-4662-8daf-ad485def0e90
+    TargetNodeGuid: 9e9f7480-08ce-4192-98a0-5a504fdceeb0
+    OutputPortIndex: 2
+  - BaseNodeGuid: 9e9f7480-08ce-4192-98a0-5a504fdceeb0
+    TargetNodeGuid: 9e28aa9c-f2ec-4ebd-8789-a29902d39472
+    OutputPortIndex: 0
+  - BaseNodeGuid: 3e4eb7f3-bb92-45d6-9428-80ae5ceda4e1
+    TargetNodeGuid: 9e28aa9c-f2ec-4ebd-8789-a29902d39472
+    OutputPortIndex: 0
+--- !u!114 &1788648440499263813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: a1919a94-e63f-4143-8009-586617cbe4a4
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: a1919a94-e63f-4143-8009-586617cbe4a4
+  Position:
+    serializedVersion: 2
+    x: 1160
+    y: 0
+    width: 340
+    height: 418
+  CustomFields:
+  - FieldName: Title
+    FieldValue: 11
+  StartEventGuid: 
+  Events:
+  - Guid: d22ee445-fdb7-44e9-84ae-71db7bb9ff24
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 11
+    SpeakerKey: cartha
+    OverrideSpeakerName: ???
+    Text: "\u2026\uC5EC\uAE30, \uAC00\uC7A5 \uC4F0\uACE0 \uB3C5\uD55C \uC220 \uD55C
+      \uC794 \uC918."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: pout
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 1
+    SfxClipName: sfx_come_in
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 5aae9caf-5b67-4478-b3df-cde488198830
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 12
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "*\uC774\uB7F0 \uB610 \uC5B4\uB824 \uBCF4\uC774\uB294 \uC190\uB2D8\uC774\uC796\uC544*"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: a758a55f-ec13-4f18-ab38-0357e0947cb2
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 13
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\u2026\uC5B4\uC11C \uC624\uC138\uC694. \uC190\uB2D8, \uBBF8\uC548\uD558\uC9C0\uB9CC
+      \uC6B0\uB9AC \uD38D\uC740 \uBBF8\uC131\uB144\uC790\uC5D0\uAC8C \uC220\uC744
+      \uD314\uC9C0 \uC54A\uC544\uC694."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: a9e2e2a7-a04a-4600-845b-c4562d0e1beb
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 14
+    SpeakerKey: cartha
+    OverrideSpeakerName: ???
+    Text: "\uC5C4\uB9C8\uAC00 \uC77C\uD560 \uB54C \uB9C8\uC2DC\uB294 \uAC70\uB791
+      \uB611\uAC19\uC740 \uAC78\uB85C \uC918. \uADF8\uB798\uC57C \uB098\uB3C4 \uC628\uC804\uD788
+      \uC601\uC744 \uBC1B\uC744 \uC218 \uC788\uC73C\uB2C8\uAE4C."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 2b6165ee-3fad-42d4-9e44-0faf4891b938
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 15
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uBD80\uBAA8\uB2D8\uC774 \uB9C8\uC2E0\uB2E4\uACE0 \uD574\uC11C \uC544\uC774\uD55C\uD14C
+      \uC904 \uC218\uB294-"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 3afab916-3c6a-45ad-9314-ac2fc8cc1c1d
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 16
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uC158 \uC624\uBE60! \uC7E4 \uB531 \uBD10\uB3C4 \uB098\uBCF4\uB2E4 \uC5B4\uB824
+      \uBCF4\uC774\uB294\uB370 \uADF8\uB0E5 \uCAD3\uC544\uB0B4\uBA74 \uC548 \uB3FC?
+      \uB098\uB9CC \uC548 \uC8FC\uB294 \uAC74 \uBD88\uACF5\uD3C9\uD558\uC796\uC544!"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: pout
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: c8a1c298-d039-424d-9769-021e831e79b2
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 17
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\u2026\uC6B0\uB9AC \uB3D9\uB124\uC5D0\uC11C \uBABB \uBCF4\uB358 \uC560\uB124?
+      \uB108 \uADF8\uAC70 \uC788\uC5B4? \uC5F0\uD569 \uACF5\uC2DD \uADFC\uB85C\uC99D!"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 8d7c0460-909e-4934-acb6-07e38b58bf8e
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 18
+    SpeakerKey: cartha
+    OverrideSpeakerName: ???
+    Text: "\uADFC\uB85C\uC99D\u2026?"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: bfba48b0-c9de-4857-a68a-a7e8a044eaf9
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 19
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uC6B0\uB9AC \uC544\uBE60\uAC00 \uADF8\uB7AC\uC5B4. \uC5F0\uD569\uC5D0\uC11C\uB294
+      \uC81C \uBAAB\uC758 \uC77C\uC744 \uD560 \uC218 \uC788\uC744 \uB9CC\uD07C \uC131\uC7A5\uD55C
+      \uAC1C\uCCB4\uD55C\uD14C\uB294 \uADFC\uB85C\uC99D\uC744 \uC900\uB300!"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: ff178baa-78ed-4c9e-8a3c-3ded782e4aba
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 20
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uADF8\uAC70 \uC788\uC73C\uBA74 \uC220 \uB9C8\uC154\uB3C4 \uBD88\uBC95
+      \uC544\uB2C8\uC57C! \uB09C \uC815\uBE44\uC18C \uC77C\uD574\uC11C \uC788\uB2E8
+      \uB9D0\uC774\uC9C0."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 59f2ee85-9024-45b3-b417-d50723d7d971
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 21
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uADFC\uB370 \uC158 \uC624\uBE60\uB294 \uC65C \uC220 \uC548 \uC8FC\uB294
+      \uAC70\uC57C."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: pout
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 0a488b8e-40a7-4c3f-b9ca-f1ecbb217a6c
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 22
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uC544\uBB34\uD2BC, \uB108\uB3C4 \uC77C\uD55C\uB2E4\uBA70? \uC788\uC73C\uBA74
+      \uBCF4\uC5EC\uC918 \uBD10!"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 8fe59f18-b330-4e9d-aca7-c279718e2b39
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 23
+    SpeakerKey: cartha
+    OverrideSpeakerName: ???
+    Text: "\u2026\uADF8\uB7F0 \uAC70 \uC5C6\uC5B4."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 32d81232-9dd0-465c-aa81-27435cea8357
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 24
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uC5ED\uC2DC! \uB108\uB3C4 \uBAB0\uB798 \uC220 \uBA39\uC73C\uB824\uACE0
+      \uC654\uAD6C\uB098!"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: c034a2b4-3d84-4ef1-a00a-246c3921e424
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 25
+    SpeakerKey: cartha
+    OverrideSpeakerName: ???
+    Text: "\u2026\uC2E0\uACFC \uB300\uD654\uD558\uB294 \uC77C\uC774 \uD569\uBC95\uC77C
+      \uB9AC\uAC00 \uC5C6\uC796\uC544."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: ee8fa12b-0370-4a62-a4f4-0e584dca0d37
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 26
+    SpeakerKey: cartha
+    OverrideSpeakerName: ???
+    Text: "\uBB34\uC18D\uC740 \uBD88\uBC95\uC774\uC57C. \uADFC\uB85C\uC99D \uAC19\uC740
+      \uAC74 \uB098\uB3C4 \uC5C6\uACE0, \uC5C4\uB9C8\uB3C4 \uC5C6\uC5B4."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 3559fbbb-9987-4520-a7b1-4e0fe4bc3bb5
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 27
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uC5B4\u2026? \uBD88\uBC95?"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: frust
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 28e4921e-e0f4-463c-82d4-5a5d5b61182e
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 28
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uADF8\uB7FC \uB108.. \uC5B4\uB514\uC11C \uC628 \uAC70\uC57C?"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: frust
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: mid
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 75514ad2-d397-41ff-9c84-9497fc00d515
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 29
+    SpeakerKey: cartha
+    OverrideSpeakerName: ???
+    Text: "\u2026\uC5C4\uB9C8\uAC00 \uB9D0\uD558\uC9C0 \uB9D0\uB7AC\uC5B4."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: frust
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: sad
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 7b69522c-aa5b-497d-af81-eee9a9c7f5a3
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 1
+    RuntimeNodeId: 30
+    SpeakerKey: cartha
+    OverrideSpeakerName: ???
+    Text: "\uC65C? \uB0B4\uAC00 \uC774\uB97C\uAE4C \uBD10 \uADF8\uB798?"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: sad
+      SlotIndex: 1
+    Choices:
+    - ButtonText: "\uC5D8\uB9AC\uC5C7, \uAC70\uAE30\uAE4C\uC9C0 \uD574"
+      TargetNodeId: 
+      SetFlags:
+      - tl1_1_false
+      ClearFlags: []
+      VarChanges: []
+    - ButtonText: "\uC2E4\uB840\uAC00 \uC548 \uB41C\uB2E4\uBA74, \uC800\uB3C4 \uAD81\uAE08\uD558\uB124\uC694."
+      TargetNodeId: 
+      SetFlags:
+      - tl1_1_true
+      ClearFlags: []
+      VarChanges: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - "\uC5D8\uB9AC\uC5C7, \uAC70\uAE30\uAE4C\uC9C0 \uD574"
+  - "\uC2E4\uB840\uAC00 \uC548 \uB41C\uB2E4\uBA74, \uC800\uB3C4 \uAD81\uAE08\uD558\uB124\uC694."
+  RouterNodeId: 
+  ShowAllEvents: 0
+--- !u!114 &7553713914338942313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 626a46ea-375a-4aae-8c65-724b439eeb73
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 626a46ea-375a-4aae-8c65-724b439eeb73
+  Position:
+    serializedVersion: 2
+    x: 1740
+    y: 244
+    width: 340
+    height: 184
+  CustomFields:
+  - FieldName: Title
+    FieldValue: 31_2_1
+  StartEventGuid: 
+  Events:
+  - Guid: 29ac3a90-1679-43c4-b42a-c10d78933118
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 31_2_1
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uC2E4\uB840\uAC00 \uC548 \uB41C\uB2E4\uBA74, \uC800\uB3C4 \uAD81\uAE08\uD558\uB124\uC694."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: cartha
+      ExpressionKey: sad
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+  RouterNodeId: 
+  ShowAllEvents: 0
+--- !u!114 &8917814071228908961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 48964a08-939c-47db-9fd6-e9f84007611c
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 48964a08-939c-47db-9fd6-e9f84007611c
+  Position:
+    serializedVersion: 2
+    x: 580
+    y: 768
+    width: 340
+    height: 324
+  CustomFields:
+  - FieldName: Title
+    FieldValue: 10_3_1
+  StartEventGuid: 
+  Events:
+  - Guid: 6acbaaf6-28b8-47f4-b76c-4a35d4602634
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 10_3_1
+    SpeakerKey: eliud
+    OverrideSpeakerName: 
+    Text: "\uCCC7, \uC624\uB298\uC740 \uBE44\uC728\uC774 \uBCC4\uB85C\uC778\uB370?
+      \uC5BC\uC74C\uC774\uB098 \uB354 \uC918."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: pout
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: ab8aac82-bbcd-4468-837d-38cfcab42ee7
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 10_3_2
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uD5E4- \uC220\uB9DB\uB3C4 \uBAA8\uB974\uBA74\uC11C \uBE44\uC728\uC744
+      \uB17C\uD558\uB294\uAC70\uC57C?"
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: pout
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: edcb57b4-f0c5-4bff-9eab-25d8fe1776ea
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 10_3_3
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uADF8\uB9CC \uB3CC\uC544\uAC00 \uBD10. \uC544\uBE60\uAC00 \uCC3E\uC73C\uC2DC\uACA0\uB2E4."
+    CharacterAppearances:
+    - CharacterKey: eliud
+      ExpressionKey: pout
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+  RouterNodeId: 
+  ShowAllEvents: 0

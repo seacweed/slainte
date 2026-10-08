@@ -5,42 +5,19 @@ using UnityEngine;
 
 namespace Slainte.Business
 {
-    public static class BusinessShiftClock
-    {
-        public static void Advance(
-            ref float remainingSeconds,
-            ref float activeBusinessSeconds,
-            float deltaSeconds,
-            bool paused)
-        {
-            if (paused || remainingSeconds <= 0f)
-                return;
-
-            float delta = Mathf.Max(0f, deltaSeconds);
-            if (delta <= 0f)
-                return;
-
-            float consumed = Mathf.Min(remainingSeconds, delta);
-            remainingSeconds = Mathf.Max(0f, remainingSeconds - consumed);
-            activeBusinessSeconds += consumed;
-        }
-    }
-
     public enum BusinessShiftState
     {
         Idle,
         Running,
-        WaitingForCustomer,
         OrderActive,
         EncounterActive,
-        CompletingRequiredActions,
         Completed
     }
 
-    // 하루 영업(Shift) 한 번의 상태 머신. BeginShift()에서 손님/인카운터 풀을 그날의 GameProgress
-    // 조건으로 한 번 얼려두고(frozenCustomerPool/frozenEncounterPool — 영업 도중 진행도가 바뀌어도
-    // 대상 목록이 흔들리지 않게), 주문/인카운터/필수 액션이 끝날 때마다 AdvanceAtSafePoint()가
-    // 다음에 무엇을 할지 결정한다. 그 우선순위는 AdvanceAtSafePoint 주석 참고.
+    // 하루 영업(Shift) 한 번의 상태 머신. 손님 슬롯 1..N(설정의 customersPerDay)을 순서대로 하나씩
+    // 처리한다. 각 슬롯은 일정(IDayScheduleSource)에 배정된 에피소드 중 등장 조건을 만족하는 하나로,
+    // 없으면 가중치 랜덤 손님으로 채운다. 주문·인카운터가 끝나면 다음 프레임의 Update가 다음 슬롯으로
+    // 넘어가고, 마지막 슬롯이 끝나면 ShiftCompleted로 정산을 요청한다.
     public sealed class BusinessShiftController : MonoBehaviour
     {
         // 같은 손님이 연달아 다시 나오지 않도록 최근 등장한 손님 N명을 기억해 다음 가중치 선택에서 제외한다.
@@ -51,62 +28,54 @@ namespace Slainte.Business
             new(StringComparer.OrdinalIgnoreCase);
         private readonly HashSet<string> invalidVisitKeys =
             new(StringComparer.OrdinalIgnoreCase);
-        private readonly HashSet<string> invalidEncounterIds =
-            new(StringComparer.OrdinalIgnoreCase);
-        private readonly HashSet<string> startedEncounterIds =
-            new(StringComparer.OrdinalIgnoreCase);
-        private readonly HashSet<string> executedTargetKeys =
-            new(StringComparer.OrdinalIgnoreCase);
-        private readonly HashSet<string> executedRuleIds =
+        private readonly HashSet<string> attemptedEpisodeIds =
             new(StringComparer.OrdinalIgnoreCase);
         private readonly List<CustomerVisitData> frozenCustomerPool = new();
-        private readonly List<BusinessRandomEncounterEntry> frozenEncounterPool = new();
+        private readonly List<EpisodeData> slotCandidates = new();
 
         private BusinessOrderSessionController orderSession;
         private BusinessOrderSessionUI sessionUi;
         private GameModeManager modeManager;
         private BusinessOrderFlowSettings settings;
         private IBusinessSalePayoutPolicy salePayoutPolicy;
+        private IDayScheduleSource scheduleSource;
+        private EpisodeData forcedFirstSlotEpisode;
         private System.Random random;
         private bool initialized;
         private bool shiftActive;
         private bool orderActive;
         private bool encounterActive;
         private bool explicitlyPaused;
-        private bool initialRequiredPhaseComplete;
-        private bool beginOrderCallInProgress;
-        private bool randomCustomerSpawningStopped;
         private bool forceCompletionRequested;
         private int orderSequence;
         private int completedOrderCount;
-        private int startedSequenceCount;
-        private float remainingSeconds;
-        private float activeBusinessSeconds;
+        private int currentSlot;
+        private int slotsPerDay;
 
         public BusinessShiftState State { get; private set; } = BusinessShiftState.Idle;
         public bool IsActive => shiftActive;
-        public bool IsTimerExpired => shiftActive && remainingSeconds <= 0f;
-        public float RemainingSeconds => remainingSeconds;
-        public float ActiveBusinessSeconds => activeBusinessSeconds;
+        public int CurrentSlot => currentSlot;
+        public int SlotsPerDay => slotsPerDay;
         public int FrozenCustomerPoolCount => frozenCustomerPool.Count;
-        public int FrozenEncounterPoolCount => frozenEncounterPool.Count;
         public int CompletedOrderCount => completedOrderCount;
-        public int StartedSequenceCount => startedSequenceCount;
         public int TotalStartedCustomerCount { get; private set; }
         public int TotalStartedEncounterCount { get; private set; }
-        public bool IsRandomCustomerSpawningStopped => randomCustomerSpawningStopped;
         public bool IsForceCompletionPending => forceCompletionRequested;
         public string LastSelectedVisitKey { get; private set; } = string.Empty;
+        public string LastStartedEpisodeId { get; private set; } = string.Empty;
 
         public event Action<BusinessShiftState, BusinessShiftState> StateChanged;
         public event Action ShiftCompleted;
         public event Action<CustomerVisitData> CustomerVisitStarted;
+        // 슬롯이 시작될 때 호출. episode가 null이면 그 슬롯은 랜덤 손님으로 채워진 것이다.
+        public event Action<int, EpisodeData> SlotStarted;
 
         public void Initialize(
             BusinessOrderSessionController sessionController,
             BusinessOrderSessionUI businessSessionUi,
             GameModeManager gameModeManager,
-            BusinessOrderFlowSettings flowSettings)
+            BusinessOrderFlowSettings flowSettings,
+            IDayScheduleSource schedule)
         {
             if (initialized)
                 return;
@@ -115,11 +84,31 @@ namespace Slainte.Business
             sessionUi = businessSessionUi;
             modeManager = gameModeManager;
             settings = flowSettings;
+            scheduleSource ??= schedule;
             salePayoutPolicy = new ImmediateSalePayoutPolicy();
             initialized = orderSession != null && settings != null;
 
             if (!initialized)
                 Debug.LogError("[BusinessShift] 영업 컨트롤러 초기화에 필요한 참조가 없습니다.");
+        }
+
+        // 플레이테스트가 실제 에피소드 카탈로그 대신 메모리 일정표를 주입할 때 사용한다.
+        public bool TrySetScheduleSource(IDayScheduleSource schedule)
+        {
+            if (shiftActive || schedule == null)
+                return false;
+
+            scheduleSource = schedule;
+            return true;
+        }
+
+        public bool TrySetSalePayoutPolicy(IBusinessSalePayoutPolicy policy)
+        {
+            if (shiftActive || policy == null)
+                return false;
+
+            salePayoutPolicy = policy;
+            return true;
         }
 
         public bool BeginShift()
@@ -132,9 +121,8 @@ namespace Slainte.Business
             CustomerVisitDatabase database = settings.customerVisitDatabase
                 ?? CustomerVisitDatabase.LoadDefault();
 
-            // 영업 시작 시점의 GameProgress 조건으로 대상 풀을 한 번만 계산해 얼려둔다 —
-            // 영업 도중 플래그/호감도가 바뀌어도(예: 인카운터 보상) 오늘 등장 대상 목록 자체는
-            // 흔들리지 않아야 하기 때문이다.
+            // 구조적으로 쓸 수 있는 손님만 영업 시작 시 한 번 추려 둔다. 실제 등장 가능 여부(조건·TV)는
+            // 슬롯마다 다시 평가하므로 앞 슬롯 에피소드가 바꾼 진행도가 뒤 슬롯 손님에게도 반영된다.
             frozenCustomerPool.AddRange(
                 BusinessSequencePlanner.BuildEligibleVisitPool(database, progress));
             ExcludeVisitsWithInvalidOrderData();
@@ -148,31 +136,21 @@ namespace Slainte.Business
                 Debug.LogWarning(
                     $"[TV] 오늘 조건을 만족하는 방송 대상이 없어 효과만 생략합니다: {active?.id}");
             }
-            frozenEncounterPool.AddRange(
-                BusinessSequencePlanner.BuildEligibleRandomEncounterPool(
-                    settings.randomEncounters,
-                    progress,
-                    BuildReservedEncounterTargetKeys(progress)));
+
+            if (frozenCustomerPool.Count == 0)
+            {
+                Debug.LogError(
+                    "[BusinessShift] 영업 시작 시 사용할 수 있는 랜덤 손님이 없습니다. "
+                    + "에피소드가 배정되지 않은 슬롯은 건너뜁니다.");
+            }
 
             int day = progress != null ? progress.CurrentDay : 0;
             random = new System.Random(unchecked(Environment.TickCount ^ day * 397 ^ GetInstanceID()));
-            remainingSeconds = Mathf.Max(1f, settings.shiftDurationSeconds);
+            slotsPerDay = Mathf.Max(1, settings.customersPerDay);
+            forcedFirstSlotEpisode = EpisodeManager.Instance?.ConsumeQueuedDebugEncounter();
             shiftActive = true;
             SetState(BusinessShiftState.Running);
             modeManager?.RequestModeChange(GameMode.OrderMode);
-            sessionUi?.SetShiftTime(remainingSeconds, false);
-
-            ValidateRequiredRules();
-
-            if (frozenCustomerPool.Count == 0 && frozenEncounterPool.Count == 0)
-            {
-                Debug.LogError(
-                    "[BusinessShift] 영업 시작 시 조건을 만족하는 일반 손님과 랜덤 인카운터가 없습니다. "
-                    + "필수 액션만 처리한 뒤 정산으로 이동합니다.");
-                remainingSeconds = 0f;
-            }
-
-            AdvanceAtSafePoint();
             return true;
         }
 
@@ -188,9 +166,6 @@ namespace Slainte.Business
 
             forceCompletionRequested = true;
             explicitlyPaused = false;
-            randomCustomerSpawningStopped = true;
-            remainingSeconds = 0f;
-            sessionUi?.SetShiftTime(0f, false);
 
             if (orderActive || encounterActive)
             {
@@ -203,51 +178,17 @@ namespace Slainte.Business
             return true;
         }
 
-        public bool TrySetSalePayoutPolicy(IBusinessSalePayoutPolicy policy)
-        {
-            if (shiftActive || policy == null)
-                return false;
-
-            salePayoutPolicy = policy;
-            return true;
-        }
-
+        // 다음 슬롯 진입을 완료 콜백이 아니라 Update에서만 하는 이유: 주문 세션이 BeginOrder 호출
+        // 안에서 동기적으로 끝나는 경우에도 재진입 없이 항상 같은 경로로 다음 슬롯을 시작하기 위해서다.
         private void Update()
         {
-            if (!shiftActive)
+            if (!shiftActive || orderActive || encounterActive || IsPaused())
                 return;
 
-            TickBusinessClock();
-            bool paused = IsBusinessClockPaused();
-            sessionUi?.SetShiftTime(remainingSeconds, paused);
-
-            if (!orderActive
-                && !encounterActive
-                && !paused
-                && (!randomCustomerSpawningStopped || remainingSeconds <= 0f))
-                AdvanceAtSafePoint();
+            AdvanceToNextSlot();
         }
 
-        private void TickBusinessClock()
-        {
-            BusinessShiftClock.Advance(
-                ref remainingSeconds,
-                ref activeBusinessSeconds,
-                Time.deltaTime,
-                IsBusinessClockPaused());
-
-            // Expiring the clock stops new random visits, but it must not replace
-            // the state of an order or encounter that is still in progress.
-            if (remainingSeconds <= 0f && !orderActive && !encounterActive)
-                SetState(BusinessShiftState.CompletingRequiredActions);
-        }
-
-        // 주문/인카운터가 하나 끝날 때마다(또는 영업 시작 시) 호출되어 "다음엔 뭘 할지"를 우선순위
-        // 순서로 결정한다: ① 강제 종료 예약 → 즉시 정산, ② 타이머 만료 → AfterTimer 필수 액션을
-        // 모두 처리한 뒤 정산, ③ 고정 슬롯(SequenceSlot) 필수 액션, ④ 첫 손님 전(BeforeFirstCustomer)
-        // 필수 액션(최초 1회), ⑤ 주문 완료 후(BetweenOrders) 필수 액션, ⑥ 위에 해당 없으면 가중치
-        // 기반 랜덤 손님/인카운터 선택. 더 뽑을 대상이 없으면 랜덤 손님 생성만 중단한다.
-        private void AdvanceAtSafePoint()
+        private void AdvanceToNextSlot()
         {
             if (forceCompletionRequested)
             {
@@ -263,139 +204,104 @@ namespace Slainte.Business
                 return;
             }
 
-            bool timerExpired = remainingSeconds <= 0f;
-            if (timerExpired)
+            // 슬롯을 시작하지 못하면(손님 풀 고갈 등) 그 슬롯을 비우고 같은 프레임에 다음 슬롯을 시도한다.
+            while (currentSlot < slotsPerDay)
             {
-                SetState(BusinessShiftState.CompletingRequiredActions);
-                BusinessRequiredActionRule remainingRequired = PickRequiredAction(
-                    progress,
-                    BusinessRequiredActionTiming.AfterTimer,
-                    includeAllTimings: true);
-                if (remainingRequired != null)
-                {
-                    ExecuteRequiredAction(remainingRequired);
+                currentSlot++;
+                if (TryStartSlot(currentSlot, progress))
                     return;
-                }
 
-                CompleteShift();
-                return;
+                Debug.LogError(
+                    $"[BusinessShift] {progress.CurrentDay}일차 {currentSlot}번 슬롯을 채울 대상이 없어 건너뜁니다.");
             }
 
-            BusinessRequiredActionRule sequenceRequired = PickRequiredAction(
-                progress,
-                BusinessRequiredActionTiming.SequenceSlot,
-                includeAllTimings: false,
-                sequenceSlot: startedSequenceCount + 1);
-            if (sequenceRequired != null)
+            CompleteShift();
+        }
+
+        private bool TryStartSlot(int slot, GameProgress progress)
+        {
+            EpisodeData episode = ResolveSlotEpisode(slot, progress);
+            if (episode != null && StartBusinessEncounter(episode))
             {
-                ExecuteRequiredAction(sequenceRequired);
-                return;
+                SlotStarted?.Invoke(slot, episode);
+                return true;
             }
 
-            if (!initialRequiredPhaseComplete)
+            // 배정된 에피소드가 없거나 등장 조건을 만족하지 못하면 그 자리는 랜덤 손님이 채운다.
+            if (!TryStartRandomCustomer(progress))
+                return false;
+
+            SlotStarted?.Invoke(slot, null);
+            return true;
+        }
+
+        private EpisodeData ResolveSlotEpisode(int slot, GameProgress progress)
+        {
+            if (slot == 1 && forcedFirstSlotEpisode != null)
             {
-                BusinessRequiredActionRule initialRequired = PickRequiredAction(
-                    progress,
-                    BusinessRequiredActionTiming.BeforeFirstCustomer,
-                    includeAllTimings: false);
-                if (initialRequired != null)
-                {
-                    ExecuteRequiredAction(initialRequired);
-                    return;
-                }
-
-                initialRequiredPhaseComplete = true;
+                EpisodeData forced = forcedFirstSlotEpisode;
+                forcedFirstSlotEpisode = null;
+                return forced;
             }
 
-            if (completedOrderCount > 0)
+            if (scheduleSource == null)
+                return null;
+
+            scheduleSource.CollectSlotCandidates(
+                progress.CurrentChapterId,
+                progress.CurrentDay,
+                slot,
+                slotCandidates);
+            return DayScheduleResolver.PickEpisode(slotCandidates, progress, attemptedEpisodeIds);
+        }
+
+        private bool TryStartRandomCustomer(GameProgress progress)
+        {
+            // 시작에 실패한 방문은 invalidVisitKeys에 들어가므로 풀 크기만큼만 재시도하면 반드시 끝난다.
+            for (int attempt = 0; attempt <= frozenCustomerPool.Count; attempt++)
             {
-                BusinessRequiredActionRule betweenOrdersRequired = PickRequiredAction(
-                    progress,
-                    BusinessRequiredActionTiming.BetweenOrders,
-                    includeAllTimings: false);
-                if (betweenOrdersRequired != null)
-                {
-                    ExecuteRequiredAction(betweenOrdersRequired);
-                    return;
-                }
+                BusinessVisitSelection selection = PickRandomVisit(progress);
+                if (selection == null)
+                    return false;
+
+                if (StartCustomerOrder(selection.Visit, selection.OrderOption))
+                    return true;
             }
 
-            BusinessSequenceSelection selection = BusinessSequencePlanner.PickWeightedSequence(
+            return false;
+        }
+
+        // 하루 손님 수가 고정이라 슬롯을 비울 수 없으므로, 최근 2명 제한 때문에 후보가 없으면
+        // 제한을 풀고 한 번 더 뽑는다(연속 등장이 슬롯 공백보다 낫다는 기획 결정).
+        private BusinessVisitSelection PickRandomVisit(GameProgress progress)
+        {
+            BusinessVisitSelection selection = BusinessSequencePlanner.PickWeightedVisit(
                 frozenCustomerPool,
-                frozenEncounterPool,
-                startedEncounterIds,
                 progress,
                 recentCustomerKeySet,
                 invalidVisitKeys,
-                invalidEncounterIds,
                 random);
-            if (selection != null)
-            {
-                if (selection.IsEncounter)
-                {
-                    StartBusinessEncounter(selection.Encounter, isRandomSelection: true);
-                    return;
-                }
+            if (selection != null || recentCustomerKeySet.Count == 0)
+                return selection;
 
-                StartCustomerOrder(
-                    selection.Visit,
-                    selection.OrderOption);
-                return;
-            }
-
-            StopRandomCustomerSpawning();
-        }
-
-        private BusinessRequiredActionRule PickRequiredAction(
-            GameProgress progress,
-            BusinessRequiredActionTiming timing,
-            bool includeAllTimings,
-            int sequenceSlot = 0)
-        {
-            return BusinessSequencePlanner.PickNextRequiredAction(
-                settings.requiredActions,
+            Debug.LogWarning(
+                "[BusinessShift] 최근 손님 2명 제한 때문에 후보가 없어 제한을 풀고 다시 뽑습니다. "
+                + $"recent=[{string.Join(", ", recentCustomerKeys)}]");
+            return BusinessSequencePlanner.PickWeightedVisit(
+                frozenCustomerPool,
                 progress,
-                timing,
-                includeAllTimings,
-                executedRuleIds,
-                executedTargetKeys,
-                sequenceSlot);
+                null,
+                invalidVisitKeys,
+                random);
         }
 
-        private void ExecuteRequiredAction(BusinessRequiredActionRule rule)
-        {
-            if (!string.IsNullOrWhiteSpace(rule.ruleId))
-                executedRuleIds.Add(rule.ruleId);
-            if (!string.IsNullOrWhiteSpace(rule.TargetKey))
-                executedTargetKeys.Add(rule.TargetKey);
-
-            if (rule.actionType == BusinessRequiredActionType.CustomerVisit)
-            {
-                CustomerVisitOrderOption order = BusinessSequencePlanner.PickWeightedOrder(
-                    rule.customerVisit,
-                    GameProgress.Instance,
-                    random);
-                if (order == null)
-                {
-                    Debug.LogError(
-                        $"[BusinessShift] 필수 손님 규칙 '{rule.ruleId}'에 실행 가능한 주문이 없습니다.");
-                    return;
-                }
-
-                StartCustomerOrder(rule.customerVisit, order);
-                return;
-            }
-
-            StartBusinessEncounter(rule.encounterEpisode, rule.ruleId, isRandomSelection: false);
-        }
-
-        private void StartCustomerOrder(
+        private bool StartCustomerOrder(
             CustomerVisitData visit,
             CustomerVisitOrderOption orderOption)
         {
             CustomerOrderData order = orderOption?.order;
             if (visit == null || order == null)
-                return;
+                return false;
 
             if (!orderSession.ValidateCustomerOrderData(order, out string validationError))
             {
@@ -404,7 +310,7 @@ namespace Slainte.Business
                     $"[BusinessShift] 유효하지 않은 손님 주문을 시작하지 않습니다: "
                     + $"visit={visit.visitKey}, order={order.key}, "
                     + $"recipe={order.requestedRecipeId}, reason={validationError}");
-                return;
+                return false;
             }
 
             OrderSessionRequest request = new()
@@ -437,11 +343,9 @@ namespace Slainte.Business
 
             orderActive = true;
             SetState(BusinessShiftState.OrderActive);
-            beginOrderCallInProgress = true;
             bool started = orderSession.BeginOrder(
                 request,
                 result => HandleCustomerOrderCompleted(visit, result));
-            beginOrderCallInProgress = false;
             if (!started)
             {
                 orderActive = false;
@@ -449,19 +353,15 @@ namespace Slainte.Business
                 Debug.LogError(
                     $"[BusinessShift] 손님 주문을 시작하지 못했습니다: {visit.visitKey}/{order.key}");
                 SetState(BusinessShiftState.Running);
-                return;
+                return false;
             }
 
-            startedSequenceCount++;
-
-            if (orderActive)
-            {
-                TotalStartedCustomerCount++;
-                LastSelectedVisitKey = visit.visitKey;
-                RecordRecentCustomer(visit);
-                CustomerVisitStarted?.Invoke(visit);
-                RecordCustomerAppearance(visit);
-            }
+            TotalStartedCustomerCount++;
+            LastSelectedVisitKey = visit.visitKey;
+            RecordRecentCustomer(visit);
+            CustomerVisitStarted?.Invoke(visit);
+            RecordCustomerAppearance(visit);
+            return true;
         }
 
         private void HandleCustomerOrderCompleted(
@@ -477,7 +377,7 @@ namespace Slainte.Business
             if (completedSuccessfully)
             {
                 completedOrderCount++;
-                RecordSale(result);
+                salePayoutPolicy?.Apply(result, GameProgress.Instance);
             }
             else
             {
@@ -510,20 +410,7 @@ namespace Slainte.Business
                 return;
             }
 
-            SetState(remainingSeconds <= 0f
-                ? BusinessShiftState.CompletingRequiredActions
-                : BusinessShiftState.Running);
-            if (!beginOrderCallInProgress && !IsBusinessClockPaused())
-                AdvanceAtSafePoint();
-        }
-
-        private void RecordSale(BusinessOrderSessionResult result)
-        {
-            GameProgress progress = GameProgress.Instance;
-            if (progress == null)
-                return;
-
-            salePayoutPolicy?.Apply(result, progress);
+            SetState(BusinessShiftState.Running);
         }
 
         private void ExcludeVisitsWithInvalidOrderData()
@@ -562,60 +449,30 @@ namespace Slainte.Business
             }
         }
 
-        private void StartBusinessEncounter(
-            BusinessRandomEncounterEntry entry,
-            bool isRandomSelection)
+        private bool StartBusinessEncounter(EpisodeData episode)
         {
-            StartBusinessEncounter(
-                entry?.episode,
-                entry?.TargetKey,
-                isRandomSelection);
-        }
-
-        private void StartBusinessEncounter(
-            EpisodeData episode,
-            string sourceKey,
-            bool isRandomSelection)
-        {
-            string episodeId = episode?.episodeId;
-            GameProgress progress = GameProgress.Instance;
-            if (episode == null
-                || string.IsNullOrWhiteSpace(episodeId)
-                || episode.episodeType != EpisodeType.Encounter
-                || (progress != null && progress.IsEpisodeCompleted(episodeId))
-                || startedEncounterIds.Contains(episodeId))
-            {
-                if (isRandomSelection && !string.IsNullOrWhiteSpace(episodeId))
-                    invalidEncounterIds.Add(episodeId);
-                Debug.LogError(
-                    $"[BusinessShift] 인카운터를 시작할 수 없는 상태입니다: {sourceKey}/{episodeId}");
-                return;
-            }
+            // 시작 성공 여부와 무관하게 기록해, 실패한 에피소드를 같은 날 다른 슬롯에서 다시 고르지 않게 한다.
+            attemptedEpisodeIds.Add(episode.episodeId);
 
             encounterActive = true;
             SetState(BusinessShiftState.EncounterActive);
 
             bool started = EpisodeManager.Instance != null
                 && EpisodeManager.Instance.TryStartBusinessEncounter(
-                    episodeId,
+                    episode,
                     HandleBusinessEncounterCompleted);
             if (started)
             {
-                startedSequenceCount++;
-                startedEncounterIds.Add(episodeId);
-                executedTargetKeys.Add("episode:" + episodeId);
                 TotalStartedEncounterCount++;
-                return;
+                LastStartedEpisodeId = episode.episodeId;
+                return true;
             }
 
             encounterActive = false;
-            if (isRandomSelection)
-                invalidEncounterIds.Add(episodeId);
             Debug.LogError(
-                $"[BusinessShift] 인카운터를 시작하지 못했습니다: {sourceKey}/{episodeId}");
-            SetState(remainingSeconds <= 0f
-                ? BusinessShiftState.CompletingRequiredActions
-                : BusinessShiftState.Running);
+                $"[BusinessShift] 인카운터를 시작하지 못해 랜덤 손님으로 대체합니다: {episode.episodeId}");
+            SetState(BusinessShiftState.Running);
+            return false;
         }
 
         private void HandleBusinessEncounterCompleted()
@@ -628,11 +485,7 @@ namespace Slainte.Business
                 return;
             }
 
-            SetState(remainingSeconds <= 0f
-                ? BusinessShiftState.CompletingRequiredActions
-                : BusinessShiftState.Running);
-            if (!IsBusinessClockPaused())
-                AdvanceAtSafePoint();
+            SetState(BusinessShiftState.Running);
         }
 
         private void RecordRecentCustomer(CustomerVisitData visit)
@@ -649,20 +502,6 @@ namespace Slainte.Business
                 if (!recentCustomerKeys.Contains(removed))
                     recentCustomerKeySet.Remove(removed);
             }
-        }
-
-        private void StopRandomCustomerSpawning()
-        {
-            if (randomCustomerSpawningStopped)
-                return;
-
-            randomCustomerSpawningStopped = true;
-            SetState(BusinessShiftState.WaitingForCustomer);
-            sessionUi?.ShowWaitingForCustomer();
-            Debug.LogWarning(
-                "[BusinessShift] 최근 손님 2명 제한과 현재 등장 조건을 만족하는 다음 대상이 없습니다. "
-                + "이번 영업의 랜덤 손님 생성을 중단하고 남은 시간은 계속 진행합니다. "
-                + $"recent=[{string.Join(", ", recentCustomerKeys)}]");
         }
 
         private void RecordCustomerAppearance(CustomerVisitData visit)
@@ -684,13 +523,9 @@ namespace Slainte.Business
             if (!shiftActive)
                 return;
 
-            remainingSeconds = 0f;
             shiftActive = false;
             forceCompletionRequested = false;
             SetState(BusinessShiftState.Completed);
-            // 영업이 끝나면 타이머는 갱신되지 않으므로, 뒤이어 진행되는 에피소드·정산 화면에
-            // 멈춘 시계가 남지 않도록 패널 자체를 내린다.
-            sessionUi?.HideShiftTime();
             sessionUi?.ShowDayComplete();
             ShiftCompleted?.Invoke();
         }
@@ -700,96 +535,26 @@ namespace Slainte.Business
             recentCustomerKeys.Clear();
             recentCustomerKeySet.Clear();
             invalidVisitKeys.Clear();
-            invalidEncounterIds.Clear();
-            startedEncounterIds.Clear();
-            executedTargetKeys.Clear();
-            executedRuleIds.Clear();
+            attemptedEpisodeIds.Clear();
             frozenCustomerPool.Clear();
-            frozenEncounterPool.Clear();
+            slotCandidates.Clear();
+            forcedFirstSlotEpisode = null;
             orderActive = false;
             encounterActive = false;
             explicitlyPaused = false;
-            initialRequiredPhaseComplete = false;
-            beginOrderCallInProgress = false;
-            randomCustomerSpawningStopped = false;
             forceCompletionRequested = false;
             orderSequence = 0;
             completedOrderCount = 0;
-            startedSequenceCount = 0;
+            currentSlot = 0;
             TotalStartedCustomerCount = 0;
             TotalStartedEncounterCount = 0;
             LastSelectedVisitKey = string.Empty;
-            remainingSeconds = 0f;
-            activeBusinessSeconds = 0f;
+            LastStartedEpisodeId = string.Empty;
             SetState(BusinessShiftState.Idle);
         }
 
-        private void ValidateRequiredRules()
+        private bool IsPaused()
         {
-            if (settings.requiredActions == null)
-                return;
-
-            HashSet<string> ruleIds = new(StringComparer.OrdinalIgnoreCase);
-            for (int i = 0; i < settings.requiredActions.Count; i++)
-            {
-                BusinessRequiredActionRule rule = settings.requiredActions[i];
-                if (rule == null)
-                {
-                    Debug.LogError($"[BusinessShift] 필수 액션 {i}번이 비어 있습니다.");
-                    continue;
-                }
-
-                if (string.IsNullOrWhiteSpace(rule.ruleId))
-                    Debug.LogError($"[BusinessShift] 필수 액션 {i}번의 ruleId가 비어 있습니다.");
-                else if (!ruleIds.Add(rule.ruleId))
-                    Debug.LogError($"[BusinessShift] 필수 액션 ruleId가 중복됩니다: {rule.ruleId}");
-
-                if (string.IsNullOrWhiteSpace(rule.TargetKey))
-                    Debug.LogError($"[BusinessShift] 필수 액션 '{rule.ruleId}'의 대상이 비어 있습니다.");
-
-                if (rule.timing == BusinessRequiredActionTiming.SequenceSlot
-                    && rule.sequenceSlot <= 0)
-                {
-                    Debug.LogError(
-                        $"[BusinessShift] 고정 슬롯 필수 액션 '{rule.ruleId}'의 슬롯이 올바르지 않습니다: "
-                        + rule.sequenceSlot);
-                }
-            }
-        }
-
-        // 오늘 발동 조건을 만족하는 필수(예약된) 인카운터의 대상 키를 모아, 랜덤 인카운터 풀
-        // 구성 시 같은 대상이 이중으로 뽑히지 않게 제외시키는 데 쓴다.
-        private HashSet<string> BuildReservedEncounterTargetKeys(GameProgress progress)
-        {
-            HashSet<string> result = new(StringComparer.OrdinalIgnoreCase);
-            if (settings.requiredActions == null || progress == null)
-                return result;
-
-            for (int i = 0; i < settings.requiredActions.Count; i++)
-            {
-                BusinessRequiredActionRule rule = settings.requiredActions[i];
-                if (rule == null
-                    || rule.actionType != BusinessRequiredActionType.EncounterEpisode
-                    || (rule.exactDay > 0 && rule.exactDay != progress.CurrentDay)
-                    || !ProgressConditionEvaluator.IsMet(rule.condition, progress)
-                    || rule.encounterEpisode == null
-                    || !ProgressConditionEvaluator.IsMet(
-                        rule.encounterEpisode.triggerCondition,
-                        progress)
-                    || progress.IsEpisodeCompleted(rule.encounterEpisode.episodeId)
-                    || string.IsNullOrWhiteSpace(rule.TargetKey))
-                    continue;
-
-                result.Add(rule.TargetKey);
-            }
-
-            return result;
-        }
-
-        private bool IsBusinessClockPaused()
-        {
-            // Orders, crafting and business encounters all consume shift time.
-            // Only an explicit/global pause is allowed to stop the business clock.
             return explicitlyPaused || Time.timeScale <= 0f;
         }
 

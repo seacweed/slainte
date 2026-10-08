@@ -1,76 +1,8 @@
-using System;
-using System.Collections.Generic;
 using Slainte.Content;
 using UnityEngine;
 
 namespace Slainte.Business
 {
-    public enum BusinessRequiredActionType
-    {
-        [InspectorName("필수 손님")]
-        CustomerVisit,
-        [InspectorName("필수 인카운터")]
-        EncounterEpisode
-    }
-
-    public enum BusinessRequiredActionTiming
-    {
-        [InspectorName("첫 손님 이전")]
-        BeforeFirstCustomer,
-        [InspectorName("주문 사이")]
-        BetweenOrders,
-        [InspectorName("영업시간 종료 후")]
-        AfterTimer,
-        [InspectorName("고정 영업 슬롯")]
-        SequenceSlot
-    }
-
-    [Serializable]
-    public sealed class BusinessRequiredActionRule
-    {
-        [Tooltip("같은 영업 중 중복 실행을 막는 고유 키입니다.")]
-        public string ruleId;
-        public BusinessRequiredActionType actionType;
-        [Tooltip("0이면 특정 일차를 요구하지 않습니다.")]
-        [Min(0)] public int exactDay;
-        public EpisodeTriggerCondition condition = new();
-        [Tooltip("여러 필수 규칙이 동시에 활성화되면 큰 값부터 실행합니다.")]
-        public int priority;
-        public BusinessRequiredActionTiming timing = BusinessRequiredActionTiming.BeforeFirstCustomer;
-        [Tooltip("timing이 SequenceSlot일 때 실행할 1부터 시작하는 영업 슬롯입니다.")]
-        [Min(0)] public int sequenceSlot;
-        public CustomerVisitData customerVisit;
-        public EpisodeData encounterEpisode;
-
-        public string TargetKey
-        {
-            get
-            {
-                if (actionType == BusinessRequiredActionType.CustomerVisit)
-                    return customerVisit != null && !string.IsNullOrWhiteSpace(customerVisit.visitKey)
-                        ? "customer:" + customerVisit.visitKey
-                        : string.Empty;
-
-                return encounterEpisode != null && !string.IsNullOrWhiteSpace(encounterEpisode.episodeId)
-                    ? "episode:" + encounterEpisode.episodeId
-                    : string.Empty;
-            }
-        }
-    }
-
-    [Serializable]
-    public sealed class BusinessRandomEncounterEntry
-    {
-        [Tooltip("EpisodeType이 Encounter인 에피소드만 등록할 수 있습니다.")]
-        public EpisodeData episode;
-        [Tooltip("일반 손님과 함께 추첨할 때 사용하는 상대 가중치입니다.")]
-        [Min(0f)] public float weight = 1f;
-
-        public string TargetKey => episode != null && !string.IsNullOrWhiteSpace(episode.episodeId)
-            ? "episode:" + episode.episodeId
-            : string.Empty;
-    }
-
     [CreateAssetMenu(menuName = "Slainte/Business/Order Flow Settings", fileName = "BusinessOrderFlowSettings")]
     public sealed class BusinessOrderFlowSettings : ScriptableObject
     {
@@ -78,19 +10,13 @@ namespace Slainte.Business
 
         [Header("영업 진행")]
         public bool autoStart = true;
-        [InspectorName("영업 제한시간(초)")]
-        [Min(1f)] public float shiftDurationSeconds = 180f;
+        [InspectorName("하루 손님 수")]
+        [Tooltip("하루 영업의 손님 슬롯 수입니다. 각 슬롯은 배정된 에피소드 또는 랜덤 손님으로 채워집니다.")]
+        [Min(1)] public int customersPerDay = 5;
 
         [Header("손님 풀")]
         [InspectorName("손님 방문 데이터베이스")]
         public CustomerVisitDatabase customerVisitDatabase;
-
-        [Header("랜덤 인카운터 풀")]
-        [Tooltip("조건을 만족한 미완료 Encounter 에피소드만 손님과 함께 가중치 추첨합니다. 각 에피소드 ID는 영업일당 최대 1회입니다.")]
-        public List<BusinessRandomEncounterEntry> randomEncounters = new();
-
-        [Header("필수 영업 액션")]
-        public List<BusinessRequiredActionRule> requiredActions = new();
 
         [Header("기능 해금")]
         [Tooltip("이 에피소드를 완료하면 배송 버튼이 생성됩니다. 비어 있거나 아직 존재하지 않는 ID는 잠금 상태로 처리합니다.")]

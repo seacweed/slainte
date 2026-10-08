@@ -341,16 +341,18 @@ namespace Slainte.EditorTools
                 restrictAsRestShop: true,
                 database);
 
+            // 작전판(전광판)은 기획 개편으로 임시 제거됐다(다음 날 이동은 NextDayButton). 씬에 남아 있을 때만 설정한다.
             GameObject board = FindInScene(scene, "EpisodeBoardButton");
-            ConfigureInteractionObject(
-                board,
-                "전광판",
-                BoardCrop,
-                LoadSprite(BoardNormalPath),
-                LoadSprite(BoardOutlinePath),
-                LoadSprite(BoardGrayPath),
-                restrictAsRestShop: false,
-                database);
+            if (board != null)
+                ConfigureInteractionObject(
+                    board,
+                    "전광판",
+                    BoardCrop,
+                    LoadSprite(BoardNormalPath),
+                    LoadSprite(BoardOutlinePath),
+                    LoadSprite(BoardGrayPath),
+                    restrictAsRestShop: false,
+                    database);
 
             GameObject existingTV = FindInScene(scene, "TVSystemRoot");
             if (existingTV != null)

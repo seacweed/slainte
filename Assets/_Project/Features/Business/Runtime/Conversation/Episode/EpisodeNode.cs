@@ -23,14 +23,8 @@ public class EpisodeNode
     [Header("Choices")]
     public List<EpisodeChoice> choices = new();
 
-    [Header("Flag Branches")]
-    public List<NodeFlagBranch> flagBranches = new();
-
-    [Header("Var Branches")]
-    public List<NodeVarBranch> varBranches = new();
-
-    [Header("Episode Branches")]
-    public List<NodeEpisodeBranch> episodeBranches = new();
+    [Header("Branches")]
+    public List<NodeBranch> branches = new(); // 위에서부터 판정, 처음 맞는 분기로 이동(없으면 nextNodeId)
 
     [Header("Presentation (optional)")]
     public List<CharacterSlotEntry> characters = new();

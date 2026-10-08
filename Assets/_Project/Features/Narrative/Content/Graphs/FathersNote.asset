@@ -1,0 +1,2414 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7116953099705449339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: b05bc443-0923-49e6-be24-88fb189995a8
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: b05bc443-0923-49e6-be24-88fb189995a8
+  Position:
+    serializedVersion: 2
+    x: 580
+    y: 0
+    width: 340
+    height: 324
+  CustomFields:
+  - FieldName: Title
+    FieldValue: 22_1_1
+  StartEventGuid: 
+  Events:
+  - Guid: 01160aed-65d0-44a7-8714-47d5ac7d3929
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 22_1_1
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uC74C\u2026\uD5A5\uC774 \uAE4A\uAD6C\uB098."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: e31b6305-9a67-4e76-84e5-6a9fac2240e8
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 22_1_2
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uC544\uC9C1 \uB124 \uC544\uBC84\uC9C0\uC758 \uADF8 \uBB35\uC9C1\uD55C
+      \uB05D\uB9DB\uC5D0\uB294 \uC870\uAE08 \uBABB \uBBF8\uCE58\uC9C0\uB9CC,"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 3b974a04-371d-4015-9f33-34d5226c47cf
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 22_1_3
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uB124\uAC00 \uB2F4\uC740 \uC9C4\uC2EC\uC774 \uB290\uAEF4\uC9C0\uB294\uAD6C\uB098.
+      \uACE0\uC0DD \uB9CE\uC558\uB2E4, \uC158."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: good
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+  RouterNodeId: 
+  ShowAllEvents: 0
+--- !u!114 &-881632749246636676
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 16f52650-ca99-446f-8bb3-946d41c6bad8
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 16f52650-ca99-446f-8bb3-946d41c6bad8
+  Position:
+    serializedVersion: 2
+    x: 580
+    y: 698
+    width: 340
+    height: 394
+  CustomFields:
+  - FieldName: Title
+    FieldValue: 22_3_1
+  StartEventGuid: 
+  Events:
+  - Guid: 2669c63d-dce8-484c-bc38-0d3210e58272
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 22_3_1
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uC74C\u2026\uB098\uC058\uC9C4 \uC54A\uAD6C\uB098."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 89ad7821-1ae2-43d2-bc4d-74b25fc3f2fa
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 22_3_2
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uD558\uC9C0\uB9CC \uC5BC\uC74C \uC870\uAC01\uC774 \uC539\uD788\uB294\uAD6C\uB098.
+      \uC774 \uCE75\uD14C\uC77C\uC5D0\uB294 \uC5BC\uC74C\uC774 \uB4E4\uC5B4\uAC00\uC9C0
+      \uC54A\uB294\uB370 \uB9D0\uC774\uC57C."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: bad
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 9626aaf8-f874-4ed2-8e26-fa0e2bf400c9
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 22_3_3
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uC774\uB7F0.. \uC81C \uC2E4\uC218\uB124\uC694. \uB2E4\uC74C\uC5D4 \uB354
+      \uB178\uB825\uD574\uBCFC\uAC8C\uC694."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: bad
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 1ec887b2-7f09-460b-a014-4866c223d599
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 22_3_4
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uADF8\uB798, \uC774\uC81C \uC2DC\uC791\uC774 \uB108\uBB34 \uBD80\uB2F4
+      \uAC16\uC9C0\uB294 \uB9D0\uB824\uBB34\uB098."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+  RouterNodeId: 
+  ShowAllEvents: 0
+--- !u!114 &-799476602834610509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 6b56c59b-8cbb-410c-9cc2-7f29381556be
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 6b56c59b-8cbb-410c-9cc2-7f29381556be
+  Position:
+    serializedVersion: 2
+    x: 580
+    y: 1152
+    width: 340
+    height: 394
+  CustomFields:
+  - FieldName: Title
+    FieldValue: 22_4_1
+  StartEventGuid: 
+  Events:
+  - Guid: a6a983cf-511e-4efa-b80f-cec36c5947f4
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 22_4_1
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uC74C\u2026\uB098\uC058\uC9C4 \uC54A\uAD6C\uB098."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 35e4b854-f4d3-4aa9-bb98-b750dc7020e7
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 22_4_2
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uD558\uC9C0\uB9CC \uC794\uC774 \uC544\uC27D\uAD6C\uB098. \uAC01 \uCE75\uD14C\uC77C\uC5D0\uB294
+      \uC5B4\uC6B8\uB9AC\uB294 \uC794\uC774 \uC788\uB294 \uBC95\uC774\uB780\uB2E4."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: bad
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 74f79b17-de72-44fc-a921-d57827f34b84
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 22_4_3
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uC774\uB7F0.. \uC81C \uC2E4\uC218\uB124\uC694. \uB2E4\uC74C\uC5D4 \uB354
+      \uB178\uB825\uD574\uBCFC\uAC8C\uC694."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: bad
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 927d20b6-080f-4089-9560-10632763573b
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 22_4_4
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uADF8\uB798, \uC774\uC81C \uC2DC\uC791\uC774 \uB108\uBB34 \uBD80\uB2F4
+      \uAC16\uC9C0\uB294 \uB9D0\uB824\uBB34\uB098."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+  RouterNodeId: 
+  ShowAllEvents: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d79caea9d5f0474f8e1b7b289e47fad, type: 3}
+  m_Name: FathersNote
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.NarrativeGraphSO
+  EpisodeId: FathersNote
+  EpisodeTitle: "\uC544\uBC84\uC9C0\uC758 \uB178\uD2B8"
+  StartNodeGuid: af07483e-0f7c-4f0e-893d-9c50f5dc6e03
+  ChapterId: Sector0
+  ScheduledDay: 2
+  ScheduledSlot: 1
+  SlotPriority: 1
+  TriggerCondition:
+    minDay: 0
+    minMoney: 0
+    requiredFlags: []
+    blockedFlags: []
+    prerequisiteEpisodeIds: []
+    requiredVars: []
+    requiredCustomerAppearances: []
+  SettlementRewards: []
+  SourceCsvPath: "Assets/_Project/Features/Narrative/Content/Source/Episodes/\uC5D0\uD53C\uC18C\uB4DC
+    - EpisodeData_FathersNote.csv.csv"
+  LastSyncedCsvHash: D926FA961AACD465738859041253BE19
+  Nodes:
+  - {fileID: 6424046770683898959}
+  - {fileID: -7116953099705449339}
+  - {fileID: 7602426903976885971}
+  - {fileID: -881632749246636676}
+  - {fileID: -799476602834610509}
+  - {fileID: 460741356306873786}
+  - {fileID: 1483076139926362364}
+  - {fileID: 68579993556788412}
+  Edges:
+  - BaseNodeGuid: af07483e-0f7c-4f0e-893d-9c50f5dc6e03
+    TargetNodeGuid: b05bc443-0923-49e6-be24-88fb189995a8
+    OutputPortIndex: 0
+  - BaseNodeGuid: af07483e-0f7c-4f0e-893d-9c50f5dc6e03
+    TargetNodeGuid: 509e7ed9-df5f-4da2-ae6c-aaf5af253ed5
+    OutputPortIndex: 1
+  - BaseNodeGuid: af07483e-0f7c-4f0e-893d-9c50f5dc6e03
+    TargetNodeGuid: 16f52650-ca99-446f-8bb3-946d41c6bad8
+    OutputPortIndex: 2
+  - BaseNodeGuid: af07483e-0f7c-4f0e-893d-9c50f5dc6e03
+    TargetNodeGuid: 6b56c59b-8cbb-410c-9cc2-7f29381556be
+    OutputPortIndex: 3
+  - BaseNodeGuid: af07483e-0f7c-4f0e-893d-9c50f5dc6e03
+    TargetNodeGuid: 18b22afc-4586-4410-a5ef-a17d6a841d82
+    OutputPortIndex: 4
+  - BaseNodeGuid: af07483e-0f7c-4f0e-893d-9c50f5dc6e03
+    TargetNodeGuid: 509e7ed9-df5f-4da2-ae6c-aaf5af253ed5
+    OutputPortIndex: 5
+  - BaseNodeGuid: b05bc443-0923-49e6-be24-88fb189995a8
+    TargetNodeGuid: 70f27837-c4b7-41e6-9ba7-f3f2ae516eff
+    OutputPortIndex: 0
+  - BaseNodeGuid: 509e7ed9-df5f-4da2-ae6c-aaf5af253ed5
+    TargetNodeGuid: 70f27837-c4b7-41e6-9ba7-f3f2ae516eff
+    OutputPortIndex: 0
+  - BaseNodeGuid: 16f52650-ca99-446f-8bb3-946d41c6bad8
+    TargetNodeGuid: 70f27837-c4b7-41e6-9ba7-f3f2ae516eff
+    OutputPortIndex: 0
+  - BaseNodeGuid: 6b56c59b-8cbb-410c-9cc2-7f29381556be
+    TargetNodeGuid: 70f27837-c4b7-41e6-9ba7-f3f2ae516eff
+    OutputPortIndex: 0
+  - BaseNodeGuid: 18b22afc-4586-4410-a5ef-a17d6a841d82
+    TargetNodeGuid: 70f27837-c4b7-41e6-9ba7-f3f2ae516eff
+    OutputPortIndex: 0
+  - BaseNodeGuid: 70f27837-c4b7-41e6-9ba7-f3f2ae516eff
+    TargetNodeGuid: b96dcd21-cef7-43d2-ae06-5a4e83ee6dc5
+    OutputPortIndex: 0
+--- !u!114 &68579993556788412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: b96dcd21-cef7-43d2-ae06-5a4e83ee6dc5
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: b96dcd21-cef7-43d2-ae06-5a4e83ee6dc5
+  Position:
+    serializedVersion: 2
+    x: 1740
+    y: 0
+    width: 340
+    height: 394
+  CustomFields:
+  - FieldName: Title
+    FieldValue: 38
+  StartEventGuid: 
+  Events:
+  - Guid: a1839c83-fecb-4c7b-9681-72d72e25c072
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 38
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uC544\uBC84\uC9C0\uAC00 \uBBF8\uCC98 \uB05D\uB0B4\uC9C0 \uBABB\uD55C
+      \uD56D\uD574\uB97C \uC81C\uAC00 \uC774\uC5B4\uAC08 \uAC70\uC608\uC694."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: good
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: frust
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 099168ed-d31c-476b-8b35-153c26ae1427
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 39
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "<b>\uC9C0\uAD6C\uB85C \uAC08 \uAC70\uC608\uC694.</b>"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: good
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: frust
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 6aefef10-9887-45e2-a771-eea9206ab15a
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 40
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uD558\uD558! \uADF8\uB798, \uC5ED\uC2DC \uC624\uB3C4\uB12C \uAC00\uBB38\uC758
+      \uD53C\uB294 \uC5B4\uB514 \uAC00\uC9C0 \uC54A\uB294\uAD70!"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: good
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: frust
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: ef92a7d5-a506-4ee9-80be-d4feeeca5d91
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 41
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uB208\uBE5B\uC774 \uD328\uD2B8\uB9AD\uACFC \uAF2D \uB2EE\uC558\uAD70!"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: good
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: frust
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 5651db6b-dce1-41c7-bd73-181ebfbd9206
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 42
+    SpeakerKey: f54
+    OverrideSpeakerName: 
+    Text: "\uD5E4- \uD5C8\uAC00\uC99D \uAC19\uC740\uAC8C \uB9C9\uC744 \uB208\uBE5B\uC774
+      \uC544\uB2C8\uB124."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: good
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 9fecea13-3a66-4016-8f63-020072261085
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 43
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uC704\uD5D8\uD558\uB2E4\uB294 \uAC74 \uC54C\uC544. \uD558\uC9C0\uB9CC\u2026"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 6d2b4ad0-ac68-42c5-aa49-13888d313ef3
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 44
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uD3C9\uC0DD \uC5F0\uD569\uC758 \uADDC\uCE59\uC5D0 \uC228\uC8FD\uC774\uBA70
+      \uC0B4\uACE0 \uC2F6\uC9C4 \uC54A\uC544. \uC544\uBC84\uC9C0\uC758 \uAFC8 \uC55E\uC5D0\uC11C\uB294
+      \uB354\uB354\uC6B1."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 6ed6f02b-bcea-42bd-9958-ea2d3c9a11bc
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 45
+    SpeakerKey: f54
+    OverrideSpeakerName: 
+    Text: "\uB2F9\uC7A5 \uB5A0\uB0A0 \uC218\uB294 \uC5C6\uACA0\uC9C0\uB9CC, \uD56D\uB85C\uB97C
+      \uB6AB\uC73C\uB824\uBA74 \uC5EC\uB7EC \uC0AC\uB78C\uB4E4\uC758 \uD611\uC870\uAC00
+      \uC808\uB300\uC801\uC73C\uB85C \uD544\uC694\uD560 \uAC70\uC57C."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: serious
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: d2db8a4c-5677-4f0c-85c2-5dd6491c8584
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 46
+    SpeakerKey: f54
+    OverrideSpeakerName: 
+    Text: "\uB098\uB3C4 \uC5B4\uB5BB\uAC8C\uB4E0 \uB3C4\uC640\uC904\uAC8C. \uB0B4
+      \uC808\uCE5C\uC774 \uC5F0\uD569 \uC18C\uAC01\uC7A5\uC5D0 \uCC98\uBC15\uD788\uB294
+      \uAF34\uC744 \uBCF4\uACE0 \uC2F6\uC9C0\uB294 \uC54A\uC73C\uB2C8\uAE4C."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 0dfdb1c1-49a0-40bc-bac3-f8878775b099
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 47
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uACE0\uB9C8\uC6CC 54."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 29451de6-b5a5-4365-b5af-146338edf9bf
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 48
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uCD94\uC9C4\uAE30 \uC815\uBE44\uB098 \uBD80\uD488 \uAC1C\uC870\uB294
+      \uC6B0\uB9AC \uC815\uBE44\uC18C\uC5D0 \uB3C4\uC640\uC8FC\uB9C8."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: good
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 708f04dc-39a9-4e83-b532-6c0476dbede8
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 49
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uADF8\uB7F0 \uAC83\uB4E4\uC744 \uC5F0\uD569\uC758 \uB208\uC744 \uD53C\uD574
+      \uBAA8\uC73C\uB824\uBA74 \uB3C8\uC774 \uAF64\uB098 \uB4E4\uACA0\uC9C0\uB9CC
+      \uB9D0\uC774\uB2E4."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: b86cc514-3598-411b-bacb-fcac73facd6a
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 50
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uC74C\u2026 \uBB3C\uB860 54. \uC774\uAC74 \uBE44\uBC00\uB85C \uD574\uC8FC\uAC8C."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 9b6217c8-ee57-4df5-bb76-4cc6eb7b52ea
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 51
+    SpeakerKey: f54
+    OverrideSpeakerName: 
+    Text: "\uBD80\uBD84\uB300\uB85C \uD569\uC8E0."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: c219fbe5-f954-44af-ae70-22e2b5108acb
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 52
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uC158, \uB124 \uC544\uBC84\uC9C0\uAC00 \uB0A8\uAE34 \uAC83\uC740 \uB2E8\uC21C\uD55C
+      \uD38D \uAC74\uBB3C\uC774 \uC544\uB2C8\uB2E4. \uC800 \uBA38\uB098\uBA3C \uACE0\uD5A5\uC73C\uB85C
+      \uD5A5\uD558\uB294 \uC758\uC9C0 \uADF8 \uC790\uCCB4\uC9C0."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: good
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 24950f96-2f6e-496a-a3e3-8e291dda8fbe
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 53
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\u2026\uAC10\uC0AC\uD569\uB2C8\uB2E4, \uC5D0\uB9AD \uC544\uC800\uC528.
+      54 \uB108\uB3C4."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: good
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 48267d2f-871e-4a0e-9fbf-ed356024be66
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 54
+    SpeakerKey: f54
+    OverrideSpeakerName: 
+    Text: "\uACE0\uB9D9\uAE34. \uB300\uC2E0 \uC548\uBD80 \uC5F0\uB77D\uC880 \uC790\uC8FC
+      \uD574\uB77C. \uD560 \uC218 \uC788\uB2E4\uBA74\u2026"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: good
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: be3c2011-9b6d-4040-b838-3bed89affa9f
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 55
+    SpeakerKey: f54
+    OverrideSpeakerName: 
+    Text: "\uADF8\uB9AC\uACE0\u2026 \uC5B8\uC81C\uB4E0\uC9C0 \uB3CC\uC544\uC640\uB3C4
+      \uAD1C\uCC2E\uC544. \uC5EC\uAE30\uB3C4 \uB124 \uC9D1\uC774\uC796\uC544."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: good
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: d31162d9-931a-4e43-8255-bb9cd847f45d
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 56
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uC751, \uAF2D \uC5F0\uB77D\uD560\uAC8C. \uB108\uBB34 \uAC71\uC815\uD558\uC9C0\uB9C8."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: good
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 31dfbf43-6695-4f2e-9940-fae4758655dc
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 57
+    SpeakerKey: f54
+    OverrideSpeakerName: 
+    Text: "\uAC71\uC815\uC774 \uC5B4\uB5BB\uAC8C \uC548 \uB418\uACA0\uB0D0, \uBA4D\uCCAD\uC544."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: good
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+  RouterNodeId: 
+  ShowAllEvents: 0
+--- !u!114 &460741356306873786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 18b22afc-4586-4410-a5ef-a17d6a841d82
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 18b22afc-4586-4410-a5ef-a17d6a841d82
+  Position:
+    serializedVersion: 2
+    x: 580
+    y: 1606
+    width: 340
+    height: 394
+  CustomFields:
+  - FieldName: Title
+    FieldValue: 22_5_1
+  StartEventGuid: 
+  Events:
+  - Guid: aaa01b6e-a349-4645-aaff-cbe8b4a21bcb
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 22_5_1
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uC74C\u2026\uB098\uC058\uC9C4 \uC54A\uAD6C\uB098."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 23a78038-a0a7-448f-8b0c-066aa808e60b
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 22_5_2
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uD558\uC9C0\uB9CC \uC794\uACFC \uC5BC\uC74C\uC774 \uC544\uC27D\uAD6C\uB098.
+      \uAC01 \uC704\uC2A4\uD0A4\uC5D0\uB294 \uC5B4\uC6B8\uB9AC\uB294 \uC794\uACFC
+      \uC628\uB3C4\uAC00 \uC788\uB294 \uBC95\uC774\uB780\uB2E4."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: bad
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: cc7806bf-1260-46de-bc06-3f9e20f6e9db
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 22_5_3
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uC774\uB7F0.. \uC81C \uC2E4\uC218\uB124\uC694. \uB2E4\uC74C\uC5D4 \uB354
+      \uB178\uB825\uD574\uBCFC\uAC8C\uC694."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: bad
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 17bfcf26-2d4e-43bc-8869-2e2f2f8c8fa0
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 22_5_4
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uADF8\uB798, \uC774\uC81C \uC2DC\uC791\uC774 \uB108\uBB34 \uBD80\uB2F4
+      \uAC16\uC9C0\uB294 \uB9D0\uB824\uBB34\uB098."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+  RouterNodeId: 
+  ShowAllEvents: 0
+--- !u!114 &1483076139926362364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 70f27837-c4b7-41e6-9ba7-f3f2ae516eff
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 70f27837-c4b7-41e6-9ba7-f3f2ae516eff
+  Position:
+    serializedVersion: 2
+    x: 1160
+    y: 0
+    width: 340
+    height: 394
+  CustomFields:
+  - FieldName: Title
+    FieldValue: 23
+  StartEventGuid: 
+  Events:
+  - Guid: e9b86205-c65f-4e2d-9ffb-889e5e8f85b1
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 23
+    SpeakerKey: f54
+    OverrideSpeakerName: 
+    Text: "\uC57C, \uC158! \uC7A5\uC0AC \uC798 \uB3FC\uAC00?"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 2
+    BgmClipName: Ep_loss
+    SfxCommand: 1
+    SfxClipName: sfx_come_in
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: ff70c274-f6d8-4d00-a996-7e8eb89e927f
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 24
+    SpeakerKey: f54
+    OverrideSpeakerName: 
+    Text: "\uC624! \uC5D0\uB9AD \uC5B4\uB974\uC2E0\uB3C4 \uACC4\uC168\uB124\uC694?"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: good
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: smile
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: bf0db676-45f6-4dc8-b21e-fc09c1777e85
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 25
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uB298 \uD65C\uAE30\uCC28\uAD6C\uB098 f54."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: serious
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 4cd694b2-176c-4214-8cf1-ea292b0a428a
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 26
+    SpeakerKey: f54
+    OverrideSpeakerName: 
+    Text: "\u2026\uC5B4\uB77C? \uB458\uC774 \uC65C \uADF8\uB807\uAC8C \uC2EC\uAC01\uD574?"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: serious
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 3bb2ee0f-7024-47d0-a23b-dcafb181f7a3
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 27
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uB9C8\uCE68 \uC798 \uC654\uB2E4. \uC158\uC774 \uD38D\uC744 \uC815\uB9AC\uD558\uB2E4
+      \uBB34\uC5B8\uAC00 \uCC3E\uC740 \uBAA8\uC591\uC774\uC57C."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: frust
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 99589ea5-b035-4904-86ef-ad7ee868edfc
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 28
+    SpeakerKey: f54
+    OverrideSpeakerName: 
+    Text: "\u2026\uC7A0\uAE50, \uC774 \uC88C\uD45C\uB791 \uB3C4\uBA74\uC740 \uBB50\uC57C?"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: frust
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: b8278fd8-20b0-4dc3-a2cd-2924c00a9cc6
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 29
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uC2E4\uC740 \uC544\uBC84\uC9C0\uC758 \uB178\uD2B8\uB97C \uCC3E\uC558\uC5B4.
+      \uC544\uBC84\uC9C0\uB294 \uC904\uACE7 \uC9C0\uAD6C\uB85C \uB3CC\uC544\uAC08
+      \uACC4\uD68D\uC744 \uC138\uC6B0\uACE0 \uACC4\uC168\uB098\uBD10."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: frust
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 6ed5160d-632e-4da1-ada7-cf350d44be64
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 30
+    SpeakerKey: f54
+    OverrideSpeakerName: 
+    Text: "\uC9C0\uAD6C?! \uADF8 \uBC29\uC0AC\uB2A5\uACFC \uD3D0\uD5C8\uBC16\uC5D0
+      \uC548 \uB0A8\uC558\uB2E4\uB294 \uBC84\uB824\uC9C4 \uC778\uB958\uC758 \uACE0\uD5A5?"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: angry
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 5b8f95c6-3884-4d2d-ac7f-132c5e0b2039
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 31
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uBB50, \uADF8\uAC74 \uBAA8\uB974\uB294 \uC77C\uC774\uC9C0. \uAC00\uBCF8
+      \uC0AC\uB78C\uC774 \uC5C6\uC73C\uB2C8."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: angry
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 9fbf554c-1b70-4430-b890-64c9fc908963
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 32
+    SpeakerKey: f54
+    OverrideSpeakerName: 
+    Text: "\uC5B4\uB974\uC2E0! \uB9D0\uB3C4 \uC548 \uB418\uB294 \uC774\uC57C\uAE30\uC5D0\uC694!
+      \uC544\uB2C8, \uADF8\uBCF4\uB2E4!"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: frust
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: ebfe76e7-dbc1-48b4-9c94-cc08dc38494d
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 33
+    SpeakerKey: f54
+    OverrideSpeakerName: 
+    Text: "\uC124\uB9C8, \uBC14\uBCF4 \uAC19\uC740 \uC9D3 \uD558\uB824\uB294 \uAC74
+      \uC544\uB2C8\uC9C0 \uC158?"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: frust
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: e2ff1b95-0a93-4947-aac5-4efd7a1c6b1e
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 34
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uBAA8\uB974\uACA0\uC5B4. \uC544\uBB34\uB9AC \uADF8\uB798\uB3C4, \uC544\uBC84\uC9C0\uC758
+      \uBABB\uB2E4 \uC774\uB8EC \uAFC8\uC744 \uC774\uB300\uB85C \uC0AC\uB77C\uC9C0\uAC8C
+      \uB450\uB294\uAC74\u2026"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: frust
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: dd524f50-289d-4290-a4d7-9100dec21c6c
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 35
+    SpeakerKey: f54
+    OverrideSpeakerName: 
+    Text: "\uD558\u2026 \uC601\uAC10\uB2D8\uC774 \uAD34\uC9DC\uC778 \uAC74 \uC54C\uC558\uC9C0\uB9CC,
+      \uADF8\uB7F0 \uBABD\uC0C1\uAE4C\uC9C0 \uAFB8\uACE0 \uACC4\uC168\uC744 \uC904\uC774\uC57C."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: angry
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: f41c2eec-6200-4e3c-aae9-34ee77397cd7
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 36
+    SpeakerKey: f54
+    OverrideSpeakerName: 
+    Text: "\uBB34\uC5C7\uBCF4\uB2E4, \uD5C8\uAC00\uC99D\uB3C4 \uC5C6\uC774 \uC139\uD130\uB97C
+      \uB728\uB294 \uAC74, \uAC78\uB9AC\uBA74 \uBC14\uB85C \uC989\uACB0 \uCC98\uBD84\uAC10\uC774\uB77C\uACE0!"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: angry
+      SlotIndex: 1
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 7b105e4e-f6ef-4af4-b1d7-10350e1a3ba5
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 1
+    RuntimeNodeId: 37
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uC790, \uC774\uC81C \uBB3B\uACA0\uB2E4, \uC158. \uC774 \uB178\uD2B8\uB97C
+      \uC77D\uACE0 \uB09C \uC9C0\uAE08\u2026 \uB108\uB294 \uC5B4\uB5BB\uAC8C \uD560
+      \uC148\uC774\uB0D0?"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: good
+      SlotIndex: 0
+    - CharacterKey: f54
+      ExpressionKey: frust
+      SlotIndex: 1
+    Choices:
+    - ButtonText: "\uC544\uBC84\uC9C0\uAC00 \uBBF8\uCC98 \uB05D\uB0B4\uC9C0 \uBABB\uD55C
+        \uD56D\uD574\uB97C \uC81C\uAC00 \uC774\uC5B4\uAC08 \uAC70\uC608\uC694."
+      TargetNodeId: 
+      SetFlags: []
+      ClearFlags: []
+      VarChanges: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - "\uC544\uBC84\uC9C0\uAC00 \uBBF8\uCC98 \uB05D\uB0B4\uC9C0 \uBABB\uD55C \uD56D\uD574\uB97C
+    \uC81C\uAC00 \uC774\uC5B4\uAC08 \uAC70\uC608\uC694."
+  RouterNodeId: 
+  ShowAllEvents: 0
+--- !u!114 &6424046770683898959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: af07483e-0f7c-4f0e-893d-9c50f5dc6e03
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: af07483e-0f7c-4f0e-893d-9c50f5dc6e03
+  Position:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 340
+    height: 514
+  CustomFields:
+  - FieldName: Title
+    FieldValue: 0
+  StartEventGuid: 
+  Events:
+  - Guid: 431fe3b3-416e-44d7-bb2e-d64acd7544c6
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 0
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uC774\uB7F0 \uC2DC\uAC04\uC5D0 \uBD80\uB974\uB2E4\uB2C8 \uBCC4\uC77C\uC774\uAD6C\uB098,
+      \uC158. \uAC00\uAC8C \uC815\uB9AC\uB294 \uB2E4 \uB05D\uB09C \uAC8C\uB0D0?"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 1
+    SfxClipName: sfx_come_in
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 4ecaae84-ee33-4bb7-85a6-2b3e0e85109f
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 1
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uB2A6\uC740 \uC2DC\uAC04\uC5D0 \uC624\uC2DC\uAC8C \uD574\uC11C \uC8C4\uC1A1\uD574\uC694,
+      \uC5D0\uB9AD \uC544\uC800\uC528."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 048f7544-1c90-46a6-80e0-97afbcc52c70
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 2
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uC8C4\uC1A1\uD560 \uAC83\uAE4C\uC9C0\uC57C. \uB299\uC740\uC774 \uBC24\uC7A0
+      \uC5C6\uB294 \uAC70\uC57C \uD754\uD55C \uC77C\uC774\uC9C0. \uADF8\uB7F0\uB370
+      \uC5BC\uAD74\uBE5B\uC774 \uC2EC\uC0C1\uCE58 \uC54A\uAD6C\uB098. \uBB34\uC2A8
+      \uC77C\uC774\uB77C\uB3C4 \uC788\uB2C8?"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: fb9bf4d0-44ba-4740-8565-25ca514f819f
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 3
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "<b>\uC544\uBC84\uC9C0</b> \uBB3C\uAC74\uC744 \uC815\uB9AC\uD558\uB2E4\uAC00\u2026
+      \uC774 \uB178\uD2B8\uB97C \uBC1C\uACAC\uD588\uC5B4\uC694."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: ac8ae3ac-53ed-4bb6-b212-2655b7f70969
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 4
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uD558, <b>\uD328\uD2B8\uB9AD</b> \uB140\uC11D \uC774\uC57C\uAE30\uAD70."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 9446bb9c-00f0-42fb-ac00-b26d80f055cf
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 5
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uADF8 \uBABD\uC0C1\uAC00 \uC591\uBC18. \uC790\uC2DD\uD55C\uD14C\uB294
+      \uBE44\uBC00\uB85C \uD574\uB2EC\uB77C\uB354\uB2C8, \uAE30\uC5B4\uCF54 \uC774\uAC78
+      \uB124\uAC8C \uB0A8\uACA8\uB450\uACE0 \uAC00\uB2E4\uB2C8."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 1
+    BgmClipName: Ep_loss
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 906df376-8c0f-46f8-938a-de33f8a02c6e
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 6
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uADF8\uAC8C \uBB34\uC2A8 \uB9D0\uC500\uC774\uC2DC\uC8E0?"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 63de13ce-984a-4619-b5cb-533f1b81d41f
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 7
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\u201C<b>\uD478\uB978 \uD558\uB298, \uD759\uB0C4\uC0C8\uAC00 \uC11E\uC778
+      \uBC14\uB78C, \uADF8\uB9AC\uACE0 900\uB144 \uB3D9\uC548 \uC7A0\uB4E4\uC5B4
+      \uC788\uB294 \uC9C4\uC9DC \uBCF4\uB9AC \uD5A5\uAE30\u2026</b>\u201D"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 70715521-5155-49fe-95bb-bbb00a34f2ee
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 8
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uB124 \uC544\uBC84\uC9C0\uAC00 \uC220\uB9CC \uB9C8\uC2DC\uBA74 \uB298
+      \uC785\uBC84\uB987\uCC98\uB7FC \uC911\uC5BC\uAC70\uB9AC\uB358 \uC9C0\uAD6C\uC758
+      '\uC624\uB3C4\uB12C \uC591\uC870\uC7A5' \uD48D\uACBD\uC774\uC9C0."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: f1bcd9da-d65b-424c-a0ae-b3153ee561ab
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 9
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uC804 \uADF8\uC800\u2026 \uC544\uBC84\uC9C0\uAC00 \uCDE8\uD574\uC11C
+      \uD558\uC2DC\uB294 \uC61B\uB0A0\uC774\uC57C\uAE30\uC778 \uC904\uB85C\uB9CC
+      \uC54C\uC558\uC5B4\uC694."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 944b2bf6-14fa-44ed-b538-8b7808b1fbfd
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 10
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uC544\uBC84\uC9C0\uB294\u2026 \uC9C0\uAD6C\uC5D0 \uAC00\uBCF4\uC2E0 \uC801\uC774
+      \uC788\uC73C\uC2E0 \uAC74\uAC00\uC694?"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 80294f7e-2527-413e-9538-16edda745c4e
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 11
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uD558\uD558! \uADF8\uB7F4\uB9AC\uAC00. \uD328\uD2B8\uB9AD\uC744 \uBB34\uC2DC\uD558\uB294\uAC74
+      \uC544\uB2C8\uC9C0\uB9CC\u2026"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: good
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 2fdb12e6-7e01-44e3-bb61-f119b913aa2c
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 12
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uC139\uD130\uB97C \uBC97\uC5B4\uB098 \uB2E4\uB978 \uC740\uD558\uC5D0
+      \uC788\uB294 \uD3D0\uD589\uC131\uC5D0 \uAC00\uB2E4\uB2C8, \uC9C0\uAE08 \uC6B0\uB9AC\uB4E4\uC5D0\uAC90
+      <b>\uB9D0 \uADF8\uB300\uB85C \uD558\uB298\uC758 \uBCC4 \uB530\uAE30\uC9C0.</b>"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: a7730a1c-9f17-411b-a6a3-95173e55cf19
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 13
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uD558\uC9C0\uB9CC \uC774 \uB178\uD2B8\uC5D0\uB294\u2026 \uC139\uD130
+      0\uC744 \uD0C8\uCD9C\uD560 \uAD6C\uCCB4\uC801\uC778 \uD56D\uB85C\uC640 \uBE44\uD589\uC120
+      \uB3C4\uBA74\uAE4C\uC9C0 \uC801\uD600 \uC788\uC5C8\uC5B4\uC694."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: a905ea68-bf01-4169-b62c-e954bf0ef80a
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 14
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uB2E8\uC21C\uD55C \uD5DB\uC18C\uB9AC\uB294 \uC544\uB2C8\uC5C8\uB2E8\uB2E4.
+      \uB124 \uC544\uBC84\uC9C0\uB294 \uC5F0\uD569\uC758 \uAC10\uC2DC\uB9DD\uC744
+      \uD53C\uD574 \uD3C9\uC0DD\uC744 \uC900\uBE44\uD574 \uC654\uC9C0."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: dc65323d-f961-40a5-acee-04ee4e36efaf
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 15
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uADF8\uB188\uC758 \uC9C0\uAD6C\uC778\uC9C0 \uBB54\uC9C0\uB85C \uB3CC\uC544\uAC00\uAE30
+      \uC704\uD574\uC11C."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: c54b4cfd-8258-43fa-9584-da5292d22f8d
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 16
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uADF8\uB7F0 \uBB34\uBAA8\uD55C \uAFC8\uC744\u2026 \uC65C \uC800\uD55C\uD150
+      \uD55C\uBC88\uB3C4 \uB9D0\uC500\uD574\uC8FC\uC2DC\uC9C0 \uC54A\uC73C\uC168\uB358
+      \uAC78\uAE4C\uC694?"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: ca5ca0fe-68e0-4455-b820-954944d6b092
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 17
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uAFC8\uC774\uB77C\uB294\uAC74 \uC0AC\uB78C\uC744 \uAC09\uC544\uBA39\uB294
+      \uBC95\uC774\uC9C0."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: bd87ac6b-74bc-4c13-8176-a5c239e3becc
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 18
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uBD84\uBA85 \uD328\uD2B8\uB9AD\uC740 \uB108\uD55C\uD14C\uAE4C\uC9C0 \uC774
+      \uAFC8\uC744 \uB0A8\uAE30\uACE0 \uC2F6\uC9C4 \uC54A\uC558\uC744\uAC70\uB2E4."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: 53f08bd2-a272-41e3-aec8-687f337ce343
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 19
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\u2026\uBAA9\uC774 \uD0C0\uB294\uAD6C\uB098. \uC158, <b>\uBC14\uD558 \uB2C8\uD2B8
+      </b>\uD55C \uC794 \uB0B4\uC5B4\uC8FC\uACA0\uB2C8?"
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: eccad1d6-f31b-4ea9-ae1e-f7443da05baa
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 20
+    SpeakerKey: shaun
+    OverrideSpeakerName: 
+    Text: "\uBB3C\uB860\uC774\uC8E0 \uC5B4\uB974\uC2E0."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: mid
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: d15ca857-4065-4429-8419-b0edb92112df
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 2
+    RuntimeNodeId: 21
+    SpeakerKey: 
+    OverrideSpeakerName: 
+    Text: 
+    CharacterAppearances: []
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 11400000, guid: ca38bf071b744e79bd29ae3d0bc43b88, type: 2}
+    CraftingTicketKey: fn0_eric
+    CraftingOrderType: 6
+    CraftingOrderTarget: rec_1018
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Good
+  - Bad
+  - Mid-Ice
+  - Mid-Glass
+  - Mid-Ice+Glass
+  - Mid-WrongMenu
+  RouterNodeId: 
+  ShowAllEvents: 0
+--- !u!114 &7602426903976885971
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c4c69d97146a2a43ac9e4cc8846b42c, type: 3}
+  m_Name: 509e7ed9-df5f-4da2-ae6c-aaf5af253ed5
+  m_EditorClassIdentifier: Assembly-CSharp::NarrativeFlow.EpisodeNodeSO
+  Guid: 509e7ed9-df5f-4da2-ae6c-aaf5af253ed5
+  Position:
+    serializedVersion: 2
+    x: 580
+    y: 384
+    width: 340
+    height: 254
+  CustomFields:
+  - FieldName: Title
+    FieldValue: 22_2_1
+  StartEventGuid: 
+  Events:
+  - Guid: 9de2802c-e27e-47bc-ba79-685f236005e7
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 22_2_1
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uD5C8\uD5C8... \uC544\uC9C1\uC740 \uC190\uB05D\uC5D0 \uB9DD\uC124\uC784\uC774
+      \uC788\uAD6C\uB098."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: bad
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  - Guid: edd8281a-874f-4935-8246-aec7b6423a4b
+    Position: {x: 0, y: 0}
+    NextEventGuids: []
+    Type: 0
+    RuntimeNodeId: 22_2_2
+    SpeakerKey: eric
+    OverrideSpeakerName: 
+    Text: "\uC704\uC2A4\uD0A4\uB294 \uAE30\uB2E4\uB9BC\uC758 \uBBF8\uD559\uC774\uB780\uB2E4.
+      \uB108\uBB34 \uC11C\uB450\uB974\uC9C0 \uB9C8\uB834."
+    CharacterAppearances:
+    - CharacterKey: eric
+      ExpressionKey: bad
+      SlotIndex: 0
+    Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
+    CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
+    ExitBranchName: 
+  OutgoingBranches:
+  - Next
+  RouterNodeId: 
+  ShowAllEvents: 0

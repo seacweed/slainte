@@ -168,11 +168,14 @@ namespace Slainte.EditorTools
                 RestSceneFinalArtInstaller.ShopCrop,
                 expectShopRestriction: true,
                 "일반 상점");
-            ValidateInteraction(
-                FindInScene(scene, "EpisodeBoardButton"),
-                RestSceneFinalArtInstaller.BoardCrop,
-                expectShopRestriction: false,
-                "전광판");
+            // 작전판(전광판)은 임시 제거 상태라 씬에 남아 있을 때만 검사한다.
+            GameObject board = FindInScene(scene, "EpisodeBoardButton");
+            if (board != null)
+                ValidateInteraction(
+                    board,
+                    RestSceneFinalArtInstaller.BoardCrop,
+                    expectShopRestriction: false,
+                    "전광판");
             ValidateInteraction(
                 FindInScene(scene, "TVSystemRoot"),
                 RestSceneFinalArtInstaller.TVCrop,
