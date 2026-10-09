@@ -1,0 +1,194 @@
+PASS Hidden batch starts in F
+PASS synthLemonPeel_Source picks fresh garnish
+PASS Held garnish disables physical contact immediately
+PASS Held garnish freely crosses the entire glass
+PASS Held garnish can be positioned directly inside a glass
+PASS Contained held garnish is drawn behind glass front
+PASS Held garnish can overlap a real glass wall without position correction
+PASS Held rotation is not clipped by overlapping walls
+PASS Held reverse rotation follows the full requested angle
+PASS Held upright return does not resolve overlapping walls
+PASS Click-drop resolves a wall overlap and releases the garnish
+PASS Drop restores solid native contacts and leaves the glass wall safely
+PASS Click-dropped garnish still cannot be picked again
+MEASURE synthLemonPeel_Source tilt=0 released separation=-0.005168523 restSpan=0
+PASS Native released contact stays within one pixel of wall and does not escape
+PASS Wall contact settles without sustained jitter
+PASS Placed garnish cannot be picked again
+PASS Supply still dispenses a fresh piece
+PASS Fresh garnish stays visible over supply jar
+PASS synthLemonPeel_Source picks fresh garnish
+PASS Held garnish disables physical contact immediately
+PASS Held garnish freely crosses the entire glass
+PASS Held garnish can be positioned directly inside a glass
+PASS Contained held garnish is drawn behind glass front
+PASS Held garnish can overlap a real glass wall without position correction
+PASS Held rotation is not clipped by overlapping walls
+PASS Held reverse rotation follows the full requested angle
+PASS Held upright return does not resolve overlapping walls
+PASS Click-drop resolves a wall overlap and releases the garnish
+PASS Drop restores solid native contacts and leaves the glass wall safely
+PASS Click-dropped garnish still cannot be picked again
+MEASURE synthLemonPeel_Source tilt=35 released separation=-0.00511288224 restSpan=0
+PASS Native released contact stays within one pixel of wall and does not escape
+PASS Wall contact settles without sustained jitter
+PASS Placed garnish cannot be picked again
+PASS Supply still dispenses a fresh piece
+PASS Fresh garnish stays visible over supply jar
+PASS Held ice-contact fixture actually overlaps the ice
+PASS Moving/rotating held garnish does not push or spin overlapping dynamic ice
+PASS Release restores garnish/ice solid contact
+MEASURE synthLemonPeel_Source liquid feedback delta=0
+PASS Garnish does not displace/accelerate liquid or change its ledger
+PASS Completed local liquid snapshot supplies flow and immersion
+PASS Released garnish follows liquid flow
+PASS Stale snapshot cannot keep driving garnish
+PASS Reset invalidates old liquid support
+MEASURE synthLemonPeel_Source float position=(0.001163, 0.657981) velocity=(-0.000392, -0.000618) clearance=0.252121031 angle=-25.5943718 angularSpan=0 peakSpin=0 positionSpan=0.000604148256
+PASS Flow-following garnish remains finite and outside glass walls
+PASS Real GPU surface support settles without sustained angular or positional jitter at 5 Hz readback
+MEASURE synthLemonPeel_Source wet moving glass relativeTurn=59.5667419 relativeTravel=0.607863665 minGap=-0.000222886825
+PASS Real liquid garnish changes position and angle relative to a moving/tilting glass
+PASS Moving wet glass retains garnish through actual contacts within one-pixel wall tolerance
+PASS Released garnish acquires glass ownership
+PASS Carrier independence fixture keeps garnish clear of all glass walls
+PASS Moving/rotating a held glass never directly rewrites free garnish pose
+MEASURE synthLemonPeel_Source free carrier worldDrift=0 angleDrift=0 localDrift=0.121913224 gap=0.140527308
+PASS Contact-free garnish keeps world pose while glass moves and tilts
+PASS Garnish is free to move relative to its held glass
+PASS Native garnish contacts remain enabled against its held glass
+PASS Releasing the glass does not inject an unearned velocity or spin into garnish
+MEASURE synthLemonPeel_Source fast wall local=(-0.287294, -0.569672) drift=0.2844527 gap=-0.00478225946
+PASS Fast held wall crossing recovers only contact, without rigidly carrying contents
+PASS Inverted open glass releases garnish through mouth
+PASS Held garnish is not clamped by ceiling or side walls
+PASS Held garnish can overlap a world boundary without being pushed out
+PASS Held garnish can overlap a world boundary without being pushed out
+PASS Held garnish can overlap a world boundary without being pushed out
+PASS Released garnish respects ceiling and side walls
+PASS synthLemonPeel_Source enters Glass_hurricane without wall penetration
+MEASURE receiver=Glass_hurricane garnish=synthLemonPeel_Source clearance=-0.00481913
+PASS Native curved/sloped receiver contact stays within one pixel of wall
+PASS Existing unheld kinematic piece migrates to native dynamics
+PASS Released garnish is a native dynamic body with free rotation
+MEASURE synthLemonPeel_Source air angle=35.0294838 spin=171.242615
+PASS Released rotation retains inertia instead of rapidly stopping in air
+PASS Angular fixture has fresh, owned liquid support
+PASS Uniform fully submerged translation creates no artificial rotation
+PASS Angular fixture has fresh, owned liquid support
+PASS Counterclockwise flow generates actual garnish rotation
+PASS Angular fixture has fresh, owned liquid support
+PASS Reversed flow reverses actual garnish rotation
+PASS Angular fixture has fresh, owned liquid support
+PASS Angular fixture has fresh, owned liquid support
+MEASURE synthLemonPeel_Source angular flow=114.055344/-114.055344 unequal lift=-183.634415/-183.634445
+PASS Unequal immersion levels the long axis consistently after a half-turn
+MEASURE synthLemonPeel_Source resting roll=48.5531921 angularSpan=0 positionSpan=0 separation=-0.00460913125
+PASS Off-center wall contact tips/rolls a released garnish without initial spin
+PASS Native rolling settles within one pixel of wall without sustained jitter
+PASS Garnish/ice native contacts are enabled in a held glass
+MEASURE synthLemonPeel_Source mixed wet=False span=0 angularSpan=0 iceContactSamples=100 gap=0.168190524
+PASS Mixed native garnish/ice settle without visible sustained jitter or wall escape
+PASS Dry mixed fixture rests on actual ice contacts
+PASS Garnish/ice native contacts are enabled in a held glass
+MEASURE synthLemonPeel_Source mixed wet=True span=0.000135418828 angularSpan=0 iceContactSamples=0 gap=0.1585052
+PASS Mixed native garnish/ice settle without visible sustained jitter or wall escape
+PASS Wet mixed fixture conserves all 40 ml
+PASS nanangaPeel_Source picks fresh garnish
+PASS Held garnish disables physical contact immediately
+PASS Held garnish freely crosses the entire glass
+PASS Held garnish can be positioned directly inside a glass
+PASS Contained held garnish is drawn behind glass front
+PASS Held garnish can overlap a real glass wall without position correction
+PASS Held rotation is not clipped by overlapping walls
+PASS Held reverse rotation follows the full requested angle
+PASS Held upright return does not resolve overlapping walls
+PASS Click-drop resolves a wall overlap and releases the garnish
+PASS Drop restores solid native contacts and leaves the glass wall safely
+PASS Click-dropped garnish still cannot be picked again
+MEASURE nanangaPeel_Source tilt=0 released separation=-0.00477646245 restSpan=0
+PASS Native released contact stays within one pixel of wall and does not escape
+PASS Wall contact settles without sustained jitter
+PASS Placed garnish cannot be picked again
+PASS Supply still dispenses a fresh piece
+PASS Fresh garnish stays visible over supply jar
+PASS nanangaPeel_Source picks fresh garnish
+PASS Held garnish disables physical contact immediately
+PASS Held garnish freely crosses the entire glass
+PASS Held garnish can be positioned directly inside a glass
+PASS Contained held garnish is drawn behind glass front
+PASS Held garnish can overlap a real glass wall without position correction
+PASS Held rotation is not clipped by overlapping walls
+PASS Held reverse rotation follows the full requested angle
+PASS Held upright return does not resolve overlapping walls
+PASS Click-drop resolves a wall overlap and releases the garnish
+PASS Drop restores solid native contacts and leaves the glass wall safely
+PASS Click-dropped garnish still cannot be picked again
+MEASURE nanangaPeel_Source tilt=35 released separation=-0.00520778168 restSpan=0
+PASS Native released contact stays within one pixel of wall and does not escape
+PASS Wall contact settles without sustained jitter
+PASS Placed garnish cannot be picked again
+PASS Supply still dispenses a fresh piece
+PASS Fresh garnish stays visible over supply jar
+PASS Held ice-contact fixture actually overlaps the ice
+PASS Moving/rotating held garnish does not push or spin overlapping dynamic ice
+PASS Release restores garnish/ice solid contact
+MEASURE nanangaPeel_Source liquid feedback delta=0
+PASS Garnish does not displace/accelerate liquid or change its ledger
+PASS Completed local liquid snapshot supplies flow and immersion
+PASS Released garnish follows liquid flow
+PASS Stale snapshot cannot keep driving garnish
+PASS Reset invalidates old liquid support
+MEASURE nanangaPeel_Source float position=(-0.010036, 0.614597) velocity=(-0.000213, 0.006407) clearance=0.244799688 angle=-44.4096832 angularSpan=0 peakSpin=0 positionSpan=0.00135393871
+PASS Flow-following garnish remains finite and outside glass walls
+PASS Real GPU surface support settles without sustained angular or positional jitter at 5 Hz readback
+MEASURE nanangaPeel_Source wet moving glass relativeTurn=57.09503 relativeTravel=0.610502541 minGap=0.00286112167
+PASS Real liquid garnish changes position and angle relative to a moving/tilting glass
+PASS Moving wet glass retains garnish through actual contacts within one-pixel wall tolerance
+PASS Released garnish acquires glass ownership
+PASS Carrier independence fixture keeps garnish clear of all glass walls
+PASS Moving/rotating a held glass never directly rewrites free garnish pose
+MEASURE nanangaPeel_Source free carrier worldDrift=0 angleDrift=0 localDrift=0.121913224 gap=0.154690489
+PASS Contact-free garnish keeps world pose while glass moves and tilts
+PASS Garnish is free to move relative to its held glass
+PASS Native garnish contacts remain enabled against its held glass
+PASS Releasing the glass does not inject an unearned velocity or spin into garnish
+MEASURE nanangaPeel_Source fast wall local=(-0.305138, -0.569284) drift=0.30229643 gap=-0.00335968821
+PASS Fast held wall crossing recovers only contact, without rigidly carrying contents
+PASS Inverted open glass releases garnish through mouth
+PASS Held garnish is not clamped by ceiling or side walls
+PASS Held garnish can overlap a world boundary without being pushed out
+PASS Held garnish can overlap a world boundary without being pushed out
+PASS Held garnish can overlap a world boundary without being pushed out
+PASS Released garnish respects ceiling and side walls
+PASS nanangaPeel_Source enters Glass_hurricane without wall penetration
+MEASURE receiver=Glass_hurricane garnish=nanangaPeel_Source clearance=-0.0053193355
+PASS Native curved/sloped receiver contact stays within one pixel of wall
+PASS Existing unheld kinematic piece migrates to native dynamics
+PASS Released garnish is a native dynamic body with free rotation
+MEASURE nanangaPeel_Source air angle=35.0294838 spin=171.242615
+PASS Released rotation retains inertia instead of rapidly stopping in air
+PASS Angular fixture has fresh, owned liquid support
+PASS Uniform fully submerged translation creates no artificial rotation
+PASS Angular fixture has fresh, owned liquid support
+PASS Counterclockwise flow generates actual garnish rotation
+PASS Angular fixture has fresh, owned liquid support
+PASS Reversed flow reverses actual garnish rotation
+PASS Angular fixture has fresh, owned liquid support
+PASS Angular fixture has fresh, owned liquid support
+MEASURE nanangaPeel_Source angular flow=114.577728/-114.577728 unequal lift=-74.49382/-74.4938354
+PASS Unequal immersion levels the long axis consistently after a half-turn
+MEASURE nanangaPeel_Source resting roll=68.37384 angularSpan=0 positionSpan=0 separation=-0.005415555
+PASS Off-center wall contact tips/rolls a released garnish without initial spin
+PASS Native rolling settles within one pixel of wall without sustained jitter
+PASS Garnish/ice native contacts are enabled in a held glass
+MEASURE nanangaPeel_Source mixed wet=False span=0 angularSpan=0 iceContactSamples=100 gap=0.2397681
+PASS Mixed native garnish/ice settle without visible sustained jitter or wall escape
+PASS Dry mixed fixture rests on actual ice contacts
+PASS Garnish/ice native contacts are enabled in a held glass
+MEASURE nanangaPeel_Source mixed wet=True span=0.000188020873 angularSpan=0 iceContactSamples=0 gap=0.171824113
+PASS Mixed native garnish/ice settle without visible sustained jitter or wall escape
+PASS Wet mixed fixture conserves all 40 ml
+PASS D keeps legacy dynamic garnish physics
+PASS Mode switch/reset removes placed garnish and preserves supplies
+PASS No Unity errors or assertions

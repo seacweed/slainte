@@ -1,0 +1,16 @@
+{
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/Library/FluidModelDHarness",
+    "-executeMethod",
+    "ExperimentGarnishMotionValidation.Begin",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\136-garnish-all-receivers\\Editor.log"
+  ],
+  "timeoutSeconds": 300,
+  "workingDirectory": "A:\\UnityHub\\proj\\slainte",
+  "started": "2026-10-09T20:13:35.8954183+09:00"
+}

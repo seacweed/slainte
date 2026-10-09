@@ -29,17 +29,22 @@ namespace Slainte.Bartending.FluidGpuExperiment
             referenceDensityKernel = RequireKernel("CalculateReferenceDensityPressure");
             referenceDeltaKernel = RequireKernel("CalculateReferenceDelta");
             CacheImprovedKernels();
+            CacheCohesiveKernels();
         }
 
         private void AllocateReferenceBuffers()
         {
             referenceDensityPressureBuffer = CreateStructured<Vector4>(particleCapacity);
             AllocateImprovedBuffers();
+            AllocateCohesiveBuffers();
         }
 
         private void BindReferenceParameters()
         {
             simulationShader.SetInt("_ReferenceSolverEnabled", activeSolver == FluidExperimentSolver.ReferenceSph ? 1 : 0);
+            // Explicitly clear the F contact branch when returning to any A-E mode.
+            simulationShader.SetInt("_CohesiveIceContacts", useCohesivePhysics && !useImprovedPhysics
+                && activeSolver == FluidExperimentSolver.ReferenceSph ? 1 : 0);
             simulationShader.SetFloat("_ReferenceParticleVolume", ReferenceFinite(settings.gpuLiquidParticleVolumeMl, .5f, .001f, 100f));
             simulationShader.SetFloat("_ReferenceRestDensity", ReferenceFinite(settings.referenceRestDensity, 2.8f, .1f, 32f));
             simulationShader.SetFloat("_ReferencePressureStiffness", ReferenceFinite(settings.referencePressureStiffness, 40f, 0f, 1000f));
@@ -51,11 +56,13 @@ namespace Slainte.Bartending.FluidGpuExperiment
             BindCommonBuffers(referenceDensityKernel);
             BindCommonBuffers(referenceDeltaKernel);
             BindImprovedParameters();
+            BindCohesiveParameters();
         }
 
         private void StepReferenceFluid()
         {
             if (useImprovedPhysics) { StepImprovedFluid(); return; }
+            if (useCohesivePhysics) { StepCohesiveFluid(); return; }
             // Integration and continuous boundary sweeps already ran. Gather from a stable
             // state, write only per-particle outputs, then apply the shared wall/owner rules.
             // One explicit pressure update per fixed substep; no PBF or movement-driven steps.
@@ -71,6 +78,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             referenceDensityPressureBuffer?.Dispose();
             referenceDensityPressureBuffer = null;
             DisposeImprovedBuffers();
+            DisposeCohesiveBuffers();
         }
     }
 }

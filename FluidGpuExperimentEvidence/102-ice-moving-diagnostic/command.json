@@ -1,0 +1,16 @@
+{
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/Library/FluidModelDHarness",
+    "-executeMethod",
+    "ExperimentIceContactValidation.BeginMovingOnly",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\102-ice-moving-diagnostic\\Editor.log"
+  ],
+  "started": "2026-10-04T20:33:09.4072697+09:00",
+  "workingDirectory": "A:\\UnityHub\\proj\\slainte",
+  "timeoutSeconds": 300
+}

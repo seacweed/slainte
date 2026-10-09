@@ -1,0 +1,11 @@
+PASS Hidden batch GPU harness; no desktop input
+PASS Authored comparison scene initializes
+PASS Actual F GPU solver is operational
+PASS Fixture cubes acquire the actual glass before pickup
+INFO Moving probe seed=(-2.625279,-0.522486746), radius=0.065, dt=0.02
+PASS Moving ice probe queues one stationary particle at its leading face
+FAIL Moving ice keeps its particle finite and outside the solid (step 6)
+System.Exception: Moving ice keeps its particle finite and outside the solid (step 6)
+  at ExperimentIceContactValidationRunner.Require (System.Boolean success, System.String label, System.Boolean logPass) [0x00030] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\IceContactValidation.cs:444 
+  at ExperimentIceContactValidationRunner.ValidateMovingIce () [0x002e0] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\IceContactValidation.cs:320 
+  at ExperimentIceContactValidationRunner+<Start>d__27.MoveNext () [0x00258] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\IceContactValidation.cs:99 

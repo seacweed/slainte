@@ -1,0 +1,4 @@
+{
+  "exitCode": 0,
+  "command": "dotnet build Assembly-CSharp-Editor.csproj --no-restore -p:CustomAfterMicrosoftCommonTargets=A:/UnityHub/proj/slainte/FluidGpuExperimentEvidence/Compile/IncludeExperiment.targets -v:minimal"
+}

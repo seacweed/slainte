@@ -32,7 +32,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private float[] snapshotComposition;
         private int resetKernel, resetCompositionKernel, spawnKernel, integrateKernel, clearGridKernel, buildGridKernel,
             lambdaKernel, deltaKernel, applyKernel, velocityKernel, mixKernel, colorKernel, techniqueKernel,
-            translateVesselKernel, suspendVesselKernel, swapKernel, releaseOwnerKernel, sweepKernel, snapshotVelocityKernel;
+            translateVesselKernel, pickupContentsKernel, suspendVesselKernel, swapKernel, releaseOwnerKernel, sweepKernel, snapshotVelocityKernel;
         private int particleCapacity, maximumIngredients, gridWidth, gridHeight, gridCellCount, pendingSpawnCount, activeParticleCount;
         private bool compositionAIsCurrent = true;
         private readonly Dictionary<ItemDef, int> ingredientIndices = new Dictionary<ItemDef, int>();
@@ -207,10 +207,12 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         private void UploadGeometry(float from, float to, float dt)
         {
-            int boundaryCount = 0, triggerCount = 0, groupCount = 0;
+            int boundaryCount = 0, triggerCount = 0, groupCount = 0, iceBoundaryCount = 0;
             foreach (FluidExperimentBody item in world.Items)
             {
                 if (item == null) continue;
+                // F peels receive liquid motion but never displace or accelerate it.
+                if (useCohesivePhysics && item.kind == LabItemKind.Garnish) continue;
                 Vector2 previousPosition = Vector2.Lerp(item.PreviousPosition, item.Position, from);
                 Vector2 position = Vector2.Lerp(item.PreviousPosition, item.Position, to);
                 float previousAngle = item.PreviousAngle + item.StepAngle * from;
@@ -218,11 +220,17 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 Vector3 bodyScale = item.transform.lossyScale;
                 float radians = angle * Mathf.Deg2Rad, sine = Mathf.Sin(radians), cosine = Mathf.Cos(radians);
                 float angleDelta = (angle - previousAngle) * Mathf.Deg2Rad;
-                Vector2 linearVelocity = (position - previousPosition) / dt;
+                // Keep the complete pose trajectory for collision sweeps. A backup ice
+                // penetration repair is not physical wall motion and must not inject
+                // an impulse into F liquid through the boundary response velocity.
+                Vector2 responseTravel = position - previousPosition;
+                if (useCohesivePhysics && item.IsLooseSolid)
+                    responseTravel -= item.IceRecoveryTranslation * (to - from);
+                Vector2 linearVelocity = responseTravel / dt;
                 float angularVelocity = angleDelta / dt;
-                uint flags = (item.IsHeld ? 2u : 0u) | (item.kind == LabItemKind.Ice ? 4u : 0u)
+                uint flags = (item.IsHeld ? 2u : 0u) | (item.IsLooseSolid ? 4u : 0u)
                     | (item.IsVessel ? 64u : 0u);
-                uint contactOwner = item.kind == LabItemKind.Ice && item.ContainingVesselId != 0
+                uint contactOwner = item.IsLooseSolid && item.ContainingVesselId != 0
                     ? item.ContainingVesselId : item.Id;
                 int first = boundaryCount, contourFirst, contourEnd;
                 void UploadPath(Vector2[] path, bool closed, bool vesselContour = false, bool ownershipOnly = false)
@@ -251,6 +259,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
                             StartPosition = previousPosition, EndPosition = position,
                             StartAngle = previousAngle * Mathf.Deg2Rad, AngleDelta = angleDelta
                         };
+                        if (useCohesivePhysics && item.IsLooseSolid && !ownershipOnly)
+                            iceBoundaryCount++;
                     }
                 }
                 // A virtual rim completes the ownership polygon but never collides with open-vessel fluid.
@@ -307,9 +317,30 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (groupCount > 0) boundaryGroupBuffer.SetData(boundaryGroups, 0, 0, groupCount);
             if (triggerCount > 0) triggerBuffer.SetData(triggerUpload, 0, 0, triggerCount);
             simulationShader.SetInt("_BoundaryCount", boundaryCount);
+            simulationShader.SetInt("_CohesiveIceBoundaryCount", iceBoundaryCount);
             simulationShader.SetInt("_BoundaryGroupCount", groupCount);
             simulationShader.SetInt("_VesselTriggerCount", triggerCount);
         }
+        internal void CarryPickupContents(uint owner, Vector2 from, Vector2 to, float turn)
+        {
+            if (!CohesivePhysicsActive || owner == 0) return;
+            liquidStateVersion++;
+            float radians = turn * Mathf.Deg2Rad;
+            simulationShader.SetInt("_TransformTargetVessel", unchecked((int)owner));
+            simulationShader.SetVector("_PickupFrom", from);
+            simulationShader.SetVector("_PickupTo", to);
+            simulationShader.SetVector("_PickupRotation", new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)));
+            DispatchForCount(pickupContentsKernel, particleCapacity);
+            // Commands not yet uploaded must move once with already active/pending GPU particles.
+            for (int i = 0; i < pendingSpawnCount; i++)
+            {
+                if (spawnCommands[i].VesselId != owner) continue;
+                spawnCommands[i].Position = to + FluidExperimentBody.Rotate(spawnCommands[i].Position - from, turn);
+                spawnCommands[i].Velocity = FluidExperimentBody.Rotate(spawnCommands[i].Velocity, turn);
+            }
+            InvalidateImprovedSurfaceHistory(owner, turn);
+        }
+
         public void SwapContents(uint a, Vector2 deltaA, uint b, Vector2 deltaB)
         {
             if (!IsOperational) return;
@@ -419,6 +450,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             availableSlots = Mathf.Max(0, freeAtCapture - (int)(reservations - capture.reservations));
             SnapshotRevision++;
             PublishLedger(capture);
+            garnishFlowFrames = capture.garnishFrames;
         }
         public float VolumeIn(uint id)
         {

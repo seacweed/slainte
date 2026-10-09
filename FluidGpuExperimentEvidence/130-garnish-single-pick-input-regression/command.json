@@ -1,0 +1,16 @@
+{
+  "timeoutSeconds": 300,
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/Library/FluidModelDHarness",
+    "-executeMethod",
+    "ExperimentInputShakerValidation.Begin",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\130-garnish-single-pick-input-regression\\Editor.log"
+  ],
+  "started": "2026-10-09T19:50:13.8029571+09:00",
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe",
+  "workingDirectory": "A:\\UnityHub\\proj\\slainte"
+}

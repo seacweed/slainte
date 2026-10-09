@@ -88,7 +88,9 @@ public sealed class ExperimentInputShakerValidationRunner : MonoBehaviour
                 item.Body.bodyType = RigidbodyType2D.Kinematic;
                 item.pourMlPerSecond = 0;
             }
-            ValidateReturn(world.Items.First(x => x.kind == LabItemKind.Bottle));
+            ExperimentRelativePointerChecks.Run(world, Require);
+            ValidateReturn(world.Items.First(x => x.kind == LabItemKind.Bottle && x.name == "Bottle_item_1002"));
+            ExperimentReturnPourChecks.Run(world, Require);
             ValidateShaker(world.Items.First(x => x.kind == LabItemKind.Shaker));
             Require(errors.Count == 0, "No runtime error, exception or assertion was logged");
             Finish(true, "Input continuity and detachable shaker checks passed in Model D.\n");

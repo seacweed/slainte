@@ -116,8 +116,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                     Vector2 nozzle = NozzleAt(fraction);
                     Vector2 origin = Vector2.Lerp(PreviousPosition, Position, fraction);
                     Vector2 arm = nozzle - origin;
-                    Vector2 mouthVelocity = (Position - PreviousPosition) / dt
-                        + new Vector2(-arm.y, arm.x) * (StepAngle * Mathf.Deg2Rad / dt);
+                    Vector2 mouthVelocity = EmissionPointVelocity(arm, dt);
                     // Match the existing Fill packing distance (1.75 radii): avoid a compressed stack at the nozzle.
                     // Only this emitter's initial speed changes; no global particle size or solver schedule changes.
                     float packingSpeed = pourMlPerSecond * flow / Mathf.Max(.0001f, World.Liquid.ParticleVolumeMl)

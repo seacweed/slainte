@@ -1,0 +1,16 @@
+{
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe",
+  "started": "2026-10-09T19:31:49.5951859+09:00",
+  "workingDirectory": "A:\\UnityHub\\proj\\slainte",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/Library/FluidModelDHarness",
+    "-executeMethod",
+    "ExperimentIceContactValidation.BeginValidate",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\126-garnish-response-ice-regression\\Editor.log"
+  ],
+  "timeoutSeconds": 300
+}

@@ -117,7 +117,7 @@ public sealed class ExperimentFrameValidationRunner : MonoBehaviour
             yield return next;
         }
         if (!finished) Finish(errors.Count == 0, errors.Count == 0
-            ? "Normal PlayerLoop A/B/C/D/E pouring, stirring, camera output and Manual restoration passed."
+            ? "Normal PlayerLoop A/B/C/D/E/F pouring, stirring, camera output and Manual restoration passed."
             : string.Join("\n", errors));
     }
 
@@ -134,6 +134,10 @@ public sealed class ExperimentFrameValidationRunner : MonoBehaviour
         }
         world = comparison.World;
         gpu = comparison.Gpu;
+        Require(comparison.initialMode == FluidExperimentMode.FCoherentLiquid
+            && comparison.ActiveMode == FluidExperimentMode.FCoherentLiquid
+            && gpu.CohesivePhysicsActive && !gpu.useImprovedPhysics,
+            "Authored scene starts directly in Model F with its cohesive physics active");
         comparison.StartScenario(FluidExperimentScenario.Manual);
         initialCameraPosition = world.interactor.inputCamera.transform.position;
         initialCameraSize = world.interactor.inputCamera.orthographicSize;

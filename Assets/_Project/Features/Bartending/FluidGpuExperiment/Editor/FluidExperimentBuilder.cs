@@ -24,7 +24,7 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
             if (world == null) throw new InvalidOperationException("Copied experiment world is missing.");
             var comparison = world.GetComponent<FluidExperimentComparison>();
             if (comparison == null) comparison = world.gameObject.AddComponent<FluidExperimentComparison>();
-            comparison.world = world; comparison.initialMode = FluidExperimentMode.DImprovedSurface;
+            comparison.world = world; comparison.initialMode = FluidExperimentMode.FCoherentLiquid;
             comparison.effectsShader = AssetDatabase.LoadAssetAtPath<Shader>(Root + "/Shaders/FluidExperimentEffects.shader");
             if (comparison.effectsShader == null) throw new InvalidOperationException("Liquid effects shader is missing.");
             world.showControls = false;
@@ -40,7 +40,7 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
                 throw new InvalidOperationException("Improved surface shaders are missing.");
             EditorSceneManager.MarkSceneDirty(scene);
             if (!EditorSceneManager.SaveScene(scene, ScenePath)) throw new InvalidOperationException("Comparison scene save failed.");
-            Debug.Log("[FluidGpuExperiment] Authored isolated A/B/C/D/E comparison: " + ScenePath);
+            Debug.Log("[FluidGpuExperiment] Authored isolated A/B/C/D/E/F comparison (default F): " + ScenePath);
         }
     }
 }

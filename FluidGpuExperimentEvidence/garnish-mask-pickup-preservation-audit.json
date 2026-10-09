@@ -1,0 +1,19 @@
+{
+  "snapshot_count": 246,
+  "snapshot_errors": [],
+  "changed_files": [
+    "DEVELOPMENT_PLAN.md",
+    "README.md",
+    "Runtime/FluidExperimentBody.cs",
+    "Runtime/FluidExperimentComparison.cs",
+    "Runtime/FluidExperimentGpuLiquid.ImprovedSurface.cs",
+    "Runtime/FluidExperimentInteractor.cs",
+    "Runtime/FluidExperimentWorld.cs"
+  ],
+  "unexpected_changes": [],
+  "protected_count": 160,
+  "protected_unchanged": true,
+  "physical_gpu_sources_unchanged": true,
+  "f_garnish_mask_only": true,
+  "passed": true
+}

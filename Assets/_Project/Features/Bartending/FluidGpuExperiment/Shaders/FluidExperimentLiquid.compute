@@ -4,6 +4,7 @@
 #pragma kernel SpawnParticles
 #pragma kernel IntegrateParticles
 #pragma kernel SweepBoundaries
+#pragma kernel SweepCohesiveIceBoundaries COHESIVE_ICE_CONTACTS
 #pragma kernel SnapshotVelocities
 #pragma kernel ClearGrid
 #pragma kernel BuildGrid
@@ -11,6 +12,8 @@
 #pragma kernel CalculatePositionDelta
 #pragma kernel ApplyDeltaAndBoundaries
 #pragma kernel UpdateVelocities
+#pragma kernel ApplyCohesiveIceContacts COHESIVE_ICE_CONTACTS
+#pragma kernel UpdateCohesiveContactVelocities COHESIVE_ICE_CONTACTS
 #pragma kernel MixComposition
 #pragma kernel CalculateConservativeMixWeights
 #pragma kernel MixCompositionConservative
@@ -19,6 +22,7 @@
 #pragma kernel UpdateParticleColors
 #pragma kernel ApplyTechnique
 #pragma kernel TranslateVesselContents
+#pragma kernel CarryPickupContents
 #pragma kernel SetVesselSuspended
 #pragma kernel SwapContents
 #pragma kernel ReleaseOwner
@@ -30,6 +34,9 @@
 #pragma kernel CalculateImprovedDensity
 #pragma kernel CalculateImprovedDelta
 #pragma kernel CalculateImprovedViscosity
+#pragma kernel CalculateCohesiveDensity
+#pragma kernel CalculateCohesiveDelta
+#pragma kernel CalculateCohesiveMaterialForces
 
 #pragma target 5.0
 #pragma multi_compile_local __ PHYSICSLAB_LINEAR_BOUNDARIES
@@ -41,6 +48,14 @@
 #define STATE_SHAKEN_WITH_ICE 2u
 #define STATE_SUSPENDED 4u
 #define MIX_NEIGHBOR_NORMALIZATION 32.0
+
+// F compiles separate contact entry points. A-E do not contain the manifold arrays
+// or their register cost, even though the mathematical non-contact path is shared.
+#if defined(COHESIVE_ICE_CONTACTS)
+#define SweepBoundaries SweepCohesiveIceBoundaries
+#define ApplyDeltaAndBoundaries ApplyCohesiveIceContacts
+#define UpdateVelocities UpdateCohesiveContactVelocities
+#endif
 
 struct LiquidParticle
 {
@@ -171,6 +186,8 @@ int _SuspensionTargetVessel;
 int _SuspensionEnabled;
 int _ReferenceSolverEnabled;
 int _ImprovedPhysics;
+int _CohesiveIceContacts;
+int _CohesiveIceBoundaryCount;
 int _TransferTargetVessel;
 
 float _ReferenceParticleVolume;
@@ -211,6 +228,7 @@ float2 _GridOrigin;
 float2 _WorldMin;
 float2 _WorldMax;
 float2 _TransformDelta;
+float2 _PickupFrom, _PickupTo, _PickupRotation;
 int _SwapA;
 int _SwapB;
 float2 _SwapDeltaA;
@@ -423,6 +441,9 @@ void SweepBoundaries(uint3 dispatchId : SV_DispatchThreadID)
     LiquidParticle particle = _Particles[index];
     if (_StreamParticles[index].stepDt <= 0.000001 || particle.active == 0u || (particle.stateFlags & STATE_SUSPENDED) != 0u) return;
     float2 position = particle.position;
+#if defined(COHESIVE_ICE_CONTACTS)
+    float2 cohesiveIceRecovery = 0.0;
+#endif
     for (int group = 0; group < BoundarySearchGroupCount(); group++)
     {
         uint first, end;
@@ -438,11 +459,21 @@ void SweepBoundaries(uint3 dispatchId : SV_DispatchThreadID)
             edge.angleDelta *= 1.0 - fraction;
             float2 swept = SweepAgainstBoundary(particle.previousPosition, position, edge);
             if (dot(swept - position, swept - position) > 1e-10) _StreamParticles[index].detached = 1u;
+#if defined(COHESIVE_ICE_CONTACTS)
+            if (_CohesiveIceContacts != 0 && _CohesiveIceBoundaryCount > 0 && (edge.flags & 4u) != 0u)
+                cohesiveIceRecovery += swept - position;
+#endif
             position = swept;
         }
     }
     particle.vesselId = ResolveParticleOwner(particle.previousPosition, position, particle.vesselId,
         _StreamParticles[index].startFraction);
+    // Resolve ownership and CCD using the true original start. Afterwards only the
+    // geometric ice correction is removed from velocity reconstruction; moving ice
+    // still transfers its physical velocity through the simultaneous contact solve.
+#if defined(COHESIVE_ICE_CONTACTS)
+    if (_CohesiveIceContacts != 0 && _CohesiveIceBoundaryCount > 0) particle.previousPosition += cohesiveIceRecovery;
+#endif
     particle.position = position;
     _Particles[index] = particle;
 }
@@ -521,6 +552,10 @@ bool TryFindNearestCompatibleBoundary(
 
     return found;
 }
+
+#if defined(COHESIVE_ICE_CONTACTS)
+#include "FluidExperimentCohesiveContacts.hlsl"
+#endif
 
 bool IsInsideVesselTrigger(
     VesselTrigger trigger,
@@ -812,6 +847,23 @@ void SpawnParticles(uint3 dispatchId : SV_DispatchThreadID)
         _CompositionA[compositionOffset + ingredient] = value;
         _CompositionB[compositionOffset + ingredient] = value;
     }
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void CarryPickupContents(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint index = dispatchId.x;
+    if (index >= (uint)_ParticleCapacity) return;
+    LiquidParticle p = _Particles[index];
+    if (p.vesselId != (uint)_TransformTargetVessel
+        || (p.active == 0u && _StreamParticles[index].pending == 0u)) return;
+    float2x2 rotation = float2x2(_PickupRotation.x, -_PickupRotation.y,
+        _PickupRotation.y, _PickupRotation.x);
+    // This is a reference-frame change, never an angular impulse or a velocity reset.
+    p.position = _PickupTo + mul(rotation, p.position - _PickupFrom);
+    p.previousPosition = _PickupTo + mul(rotation, p.previousPosition - _PickupFrom);
+    p.velocity = mul(rotation, p.velocity);
+    _Particles[index] = p;
 }
 
 [numthreads(THREAD_GROUP_SIZE, 1, 1)]
@@ -1183,12 +1235,33 @@ void ApplyDeltaAndBoundaries(uint3 dispatchId : SV_DispatchThreadID)
     float2 position = particle.position + _PositionDeltas[index];
     float bestCorrectionScore = -1.0;
     float2 bestCorrectedPosition = position;
+#if defined(COHESIVE_ICE_CONTACTS)
+    bool cohesiveIceContact = false;
+    if (_CohesiveIceContacts != 0 && _CohesiveIceBoundaryCount > 0)
+    {
+        float2 simultaneousPosition;
+        cohesiveIceContact = TryProjectCohesiveIceContacts(particle.position, position, particle.vesselId,
+            simultaneousPosition);
+        if (cohesiveIceContact)
+        {
+            float2 correction = simultaneousPosition - position;
+            // This is contact depenetration only. The pressure/material PositionDelta
+            // remains in the reconstructed velocity and is handled by contact impulses.
+            particle.previousPosition += correction;
+            bestCorrectedPosition = simultaneousPosition;
+            if (dot(correction, correction) > 1e-12) bestCorrectionScore = length(correction);
+        }
+    }
+#endif
     // A pressure projection can cross an edge and end beyond the collision radius.
     // Include its full travel length, also preserving the existing side-change rule
     // where projection onto the edge (rather than path intersection) chooses contact.
     float searchRadius = _ParticleRadius + length(_PositionDeltas[index]);
     for (int group = 0; group < BoundarySearchGroupCount(); group++)
     {
+#if defined(COHESIVE_ICE_CONTACTS)
+        if (cohesiveIceContact) break;
+#endif
         uint first, end;
         if (!BoundarySearchRange(group, position - searchRadius, position + searchRadius, false, first, end)) continue;
         for (uint boundaryIndex = first; boundaryIndex < end; boundaryIndex++)
@@ -1392,6 +1465,14 @@ void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
     float boundaryT;
     float2 boundaryVelocity;
     float contactDistance = _ParticleRadius * 1.1;
+#if defined(COHESIVE_ICE_CONTACTS)
+    CohesiveContact cohesiveContacts[COHESIVE_CONTACT_CAPACITY];
+    bool hasCohesiveIceContact = false;
+    int cohesiveContactCount = 0;
+    if (_CohesiveIceContacts != 0 && _CohesiveIceBoundaryCount > 0)
+        cohesiveContactCount = GatherCohesiveContacts(particle.position, particle.position,
+            particle.vesselId, false, cohesiveContacts, hasCohesiveIceContact);
+#endif
     float boundarySearchDistance = closedVessel
         ? length(_WorldMax - _WorldMin) + _SmoothingRadius
         : contactDistance;
@@ -1404,7 +1485,11 @@ void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
         boundaryDistance,
         boundaryT,
         boundaryVelocity);
+#if defined(COHESIVE_ICE_CONTACTS)
+    if (!hasCohesiveIceContact && hasCompatibleBoundary && boundaryDistance <= contactDistance)
+#else
     if (hasCompatibleBoundary && boundaryDistance <= contactDistance)
+#endif
     {
         float2 relativeVelocity = velocity - boundaryVelocity;
         float normalSpeed = dot(relativeVelocity, boundaryNormal);
@@ -1443,6 +1528,12 @@ void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
             + tangentVelocity * (1.0 - TimeScaledBlend(_WallFriction, _StreamParticles[index].stepDt));
         velocity = boundaryVelocity + relativeVelocity;
     }
+
+#if defined(COHESIVE_ICE_CONTACTS)
+    if (hasCohesiveIceContact)
+        velocity = ResolveCohesiveContactVelocity(velocity, _StreamParticles[index].stepDt,
+            cohesiveContacts, cohesiveContactCount);
+#endif
 
     if (closedVessel && hasCompatibleBoundary)
     {
@@ -1791,3 +1882,4 @@ void TransferVesselContents(uint3 dispatchId : SV_DispatchThreadID)
 
 #include "FluidExperimentStreamSurface.hlsl"
 #include "FluidExperimentReference.hlsl"
+#include "FluidExperimentCohesive.hlsl"

@@ -78,6 +78,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         {
             RefreshIceContainment();
             foreach (FluidExperimentBody item in items) if (item != null) item.ApplyHeldPose();
+            foreach (FluidExperimentBody item in items) if (item != null) item.StepGarnishMotion(Time.fixedDeltaTime);
         }
         private IEnumerator SimulateAfterPhysics()
         {
@@ -90,6 +91,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         public void TickLiquid(float dt)
         {
+            foreach (FluidExperimentBody item in items) if (item != null) item.ResolveCompletedGarnishContacts();
             RefreshIceContainment();
             for (int i = 0; i < items.Count; i++)
             {
@@ -117,7 +119,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                     if (c == null || !c.enabled) continue;
                     foreach (Collider2D floor in floorColliders)
                         if (floor != null && floor.enabled)
-                            Physics2D.IgnoreCollision(c, floor, a.IsHeld || a.kind == LabItemKind.Ice);
+                            Physics2D.IgnoreCollision(c, floor, a.IsHeld || a.IsLooseSolid);
                     for (int j = i + 1; j < items.Count; j++)
                     {
                         FluidExperimentBody b = items[j];
@@ -139,7 +141,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             float distance = float.MaxValue;
             foreach (FluidExperimentBody item in items)
             {
-                if (item == null || item == held || item.IsHeld || item.kind == LabItemKind.Ice) continue;
+                if (item == null || item == held || item.IsHeld || item.IsLooseSolid) continue;
                 if (!item.Contains(pointer) || !item.SolidBounds.Intersects(held.SolidBounds)) continue;
                 float d = (item.Position - pointer).sqrMagnitude;
                 if (d < distance) { best = item; distance = d; }
@@ -149,6 +151,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public bool TryResolveRelease(FluidExperimentBody item, FluidExperimentBody nextHeld = null)
         {
             Physics2D.SyncTransforms();
+            if (item.UsesLiquidGarnishMotion) return item.TryResolveGarnishRelease();
             Vector2 original = item.Position;
             LiftAboveFloor(item);
             Physics2D.SyncTransforms();
@@ -159,7 +162,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 foreach (FluidExperimentBody other in items)
                 {
                     if (other == null || other == item || other == nextHeld || other.IsHeld
-                        || other.kind == LabItemKind.Ice) continue;
+                        || other.IsLooseSolid) continue;
                     foreach (Collider2D c in item.solidColliders)
                     foreach (Collider2D d in other.solidColliders)
                     {
@@ -185,7 +188,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         private void LiftAboveFloor(FluidExperimentBody item)
         {
-            if (item.kind == LabItemKind.Ice) return;
+            if (item.IsLooseSolid) return;
             Bounds bounds = item.SolidBounds;
             foreach (Collider2D floor in floorColliders)
             {
@@ -213,6 +216,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             {
                 if(state.body==null)continue;
                 state.body.SetHeld(false);
+                state.body.ResetPickupState();
                 state.body.Teleport(state.position,state.angle);
                 state.body.SetSealed(state.closed);
                 state.body.ResetSupply(state.volume,state.ice);

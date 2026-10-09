@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 namespace Slainte.Bartending.FluidGpuExperiment
 {
-    public sealed class FluidExperimentInteractor : MonoBehaviour
+    public sealed partial class FluidExperimentInteractor : MonoBehaviour
     {
         public FluidExperimentWorld world;
         public Camera inputCamera;
@@ -28,23 +27,54 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private float returnStartAngle;
         private float returnElapsed;
         private float sampledUserAngle;
+        public Vector2 RotationPointerWorld => Held != null
+            ? Held.PointAt(Held.rotationPivotLocal, Held.TargetPosition, Held.TargetAngle) : rotationAnchor;
         private readonly List<MotionSample> samples = new List<MotionSample>(32);
         private struct MotionSample { public float time; public Vector2 position; public float angle; }
 
         private void Update()
         {
             if (world == null || inputCamera == null) return;
-            Vector2 screen = Mouse.current != null ? Mouse.current.position.ReadValue() : (Vector2)Input.mousePosition;
+            if (!Application.isBatchMode && !Application.isFocused) { CancelPointerCapture(); return; }
+            Mouse mouse = Mouse.current;
+            if (mouse == null) { CancelPointerCapture(); return; }
+            bool freshInput = ReadPointerInput(mouse, out Vector2 screen, out Vector2 delta);
+            if (freshInput && !mouse.rightButton.isPressed) requirePointerRelease = false;
             Vector2 pointer = inputCamera.ScreenToWorldPoint(screen);
             lastPointer = pointer;
+            bool cancelled = PointerCaptureLost(mouse);
+            if (cancelled)
+            {
+                CancelPointerCapture();
+                screen = LogicalPointerScreen;
+                pointer = inputCamera.ScreenToWorldPoint(screen);
+            }
             if (Held != null)
             {
-                if (Input.GetMouseButtonDown(1) && !pointerBlockRect.Contains(new Vector2(screen.x, Screen.height - screen.y))) BeginRotation();
-                if (Rotating && Input.GetMouseButton(1)) RotateBy(Input.GetAxisRaw("Mouse Y") * rotationSensitivity);
-                if (Rotating && Input.GetMouseButtonUp(1)) EndRotation(pointer);
+                bool began = false;
+                if (!cancelled && freshInput && mouse.rightButton.wasPressedThisFrame
+                    && !IsPointerBlocked(screen) && CanCapturePointer())
+                {
+                    BeginRotation();
+                    CapturePointer(mouse);
+                    began = true;
+                }
+                if (Rotating)
+                {
+                    // Ignore only the entry snapshot: it can contain movement from before RMB.
+                    // Relative motion is consumed once; neither cursor position nor a warp is rotation input.
+                    if (freshInput && !began && !cancelled && PointerCaptured)
+                        RotateBy(delta.y * .1f * rotationSensitivity);
+                    pointer = RotationPointerWorld;
+                    screen = inputCamera.WorldToScreenPoint(pointer);
+                    LogicalPointerScreen = screen;
+                    if (freshInput && !mouse.rightButton.isPressed)
+                        EndRotation(pointer);
+                }
                 if (Returning) AdvanceUprightReturn(Time.unscaledDeltaTime, pointer);
                 else if (!Rotating) MoveHeld(pointer);
-                if (Input.GetKeyDown(KeyCode.C) && Held.kind == LabItemKind.Shaker)
+                if (freshInput && Keyboard.current != null && Keyboard.current.cKey.wasPressedThisFrame
+                    && Held.kind == LabItemKind.Shaker)
                     Held.CycleShakerClosure();
                 Sample(Time.unscaledTime);
             }
@@ -53,10 +83,10 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 MoveHeld(pointer);
                 Sample(Time.unscaledTime);
             }
-            if (Input.GetMouseButtonDown(0)
-                && !pointerBlockRect.Contains(new Vector2(screen.x, Screen.height - screen.y))
-                && (EventSystem.current == null || !EventSystem.current.IsPointerOverGameObject()))
+            Vector2 clickScreen = PointerCaptured ? DisplayedPointerScreen : screen;
+            if (!cancelled && freshInput && mouse.leftButton.wasPressedThisFrame && !IsPointerBlocked(clickScreen))
             {
+                pointer = inputCamera.ScreenToWorldPoint(clickScreen);
                 if (Held == null && HeldPart == null) PickAt(pointer);
                 else Drop(pointer);
             }
@@ -73,12 +103,21 @@ namespace Slainte.Bartending.FluidGpuExperiment
             float distance = float.MaxValue;
             foreach (FluidExperimentBody item in world.Items)
             {
-                if (item == null || !item.Contains(point)) continue;
+                if (item == null || !item.CanBePicked || !item.Contains(point)) continue;
                 float d = (item.Position - point).sqrMagnitude;
-                if (d < distance) { candidate = item; distance = d; }
+                bool garnish = item.kind == LabItemKind.Garnish;
+                bool selectedGarnish = candidate != null && candidate.kind == LabItemKind.Garnish;
+                if ((garnish && !selectedGarnish) || (garnish == selectedGarnish && d < distance))
+                { candidate = item; distance = d; }
             }
+            // Only fresh loose pieces are eligible. A used piece over a supply must
+            // not block dispensing a new one; sources never become movable bodies.
+            if (candidate != null && candidate.kind == LabItemKind.Garnish) return Pick(candidate, point);
+            foreach (var source in world.GetComponentsInChildren<FluidExperimentGarnishSource>())
+                if (source.Contains(point)) return source.TryDispense(this, point);
             return Pick(candidate, point);
         }
+
         private bool PickShakerPartAt(Vector2 point, FluidExperimentShakerPartRole role)
         {
             foreach (FluidExperimentBody item in world.Items)
@@ -103,13 +142,13 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         public bool Pick(FluidExperimentBody item, Vector2 point)
         {
-            if (Held != null || HeldPart != null || item == null || item.World != world) return false;
+            if (Held != null || HeldPart != null || item == null || item.World != world || !item.CanBePicked) return false;
             Held = item;
             PickupOrigin = item.Position;
             item.SetHeld(true);
             angle = 0;
             sampledUserAngle = 0;
-            item.RestoreHeldPose(PickupOrigin, angle);
+            item.RestorePickupPose(PickupOrigin, angle);
             grabLocal = item.WorldToLocal(point);
             lastPointer = point;
             samples.Clear();
@@ -147,15 +186,16 @@ namespace Slainte.Bartending.FluidGpuExperiment
         {
             if (Held == null || !Rotating) return;
             angle += deltaDegrees; // Deliberately unbounded, including multiple complete turns.
-            sampledUserAngle += deltaDegrees;
             Vector2 offset = Held.PointAt(Held.rotationPivotLocal, Vector2.zero, angle);
             Held.SetHeldPose(rotationAnchor - offset, angle);
+            sampledUserAngle += deltaDegrees;
         }
         public void EndRotation(Vector2 pointer)
         {
             if (Held == null || !Rotating) return;
             Held.ApplyHeldPose();
             Rotating = false;
+            BeginPointerHandoff(pointer);
             returnPosition = Held.Position;
             returnStartPointer = pointer;
             returnStartAngle = Mathf.DeltaAngle(0, Held.HeldAngle);
@@ -224,7 +264,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             Held.ApplyHeldPose();
             Physics2D.SyncTransforms();
             EstimateRelease(out Vector2 velocity, out float spin);
-            FluidExperimentBody target = world.FindSwapTarget(Held, pointer);
+            FluidExperimentBody target = Held.kind == LabItemKind.Garnish ? null : world.FindSwapTarget(Held, pointer);
             // Every drop retains the sampled motion. A target only adds the next pickup.
             if (!world.TryResolveRelease(Held, target)) return false;
             FinishDrop(velocity, spin);
@@ -232,6 +272,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         public void ReleaseWithVelocity(Vector2 velocity, float angularVelocity = 0)
         {
+            ReleasePointer();
             if (Held != null) FinishDrop(velocity, angularVelocity);
             if (HeldPart != null)
             {
@@ -244,6 +285,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private void FinishDrop(Vector2 velocity, float spin)
         {
             FluidExperimentBody item = Held;
+            if (PointerCaptured) BeginPointerHandoff(RotationPointerWorld);
             Held = null;
             Rotating = false;
             Returning = false;
@@ -254,6 +296,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         {
             if (HeldPart != null && HeldPart.Owner == item) ForgetShakerPart(HeldPart);
             if (Held != item) return;
+            ReleasePointer();
             Held = null; Rotating = Returning = false; samples.Clear();
         }
         internal void ForgetShakerPart(FluidExperimentShakerPart part)
@@ -264,11 +307,12 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         private void OnDisable()
         {
+            ReleasePointer();
             ReleaseWithVelocity(Vector2.zero);
         }
         private void OnApplicationFocus(bool focused)
         {
-            if (!focused && Rotating) EndRotation(lastPointer);
+            if (!focused) CancelPointerCapture();
         }
     }
 }

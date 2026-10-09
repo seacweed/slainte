@@ -1,0 +1,1 @@
+case,tick,time,ice_index,x,y,angle,vx,vy,angular_velocity,measured_speed,sleeping,contacts,near_liquid_count,near_liquid_mean_speed,near_liquid_p95_speed,deep_liquid_inside_ice,active_ml,retired_ml

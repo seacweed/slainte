@@ -1,0 +1,711 @@
+PASS Validation runs without desktop input in the hidden GPU harness
+PASS Authored comparison scene initializes
+PASS The authored default remains Model D
+PASS Legacy baseline uses two actual authored ingredients
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy ACurrent GPU is operational
+PASS Legacy ACurrent particles stay finite
+PASS Legacy ACurrent total liquid ledger is conserved
+PASS Legacy baseline retains all eight unique-volume particles
+PASS Legacy baseline uses two actual authored ingredients
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy BReferencePhysics GPU is operational
+PASS Legacy BReferencePhysics particles stay finite
+PASS Legacy BReferencePhysics total liquid ledger is conserved
+PASS Legacy baseline retains all eight unique-volume particles
+PASS Legacy baseline uses two actual authored ingredients
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy CReferenceSurface GPU is operational
+PASS Legacy CReferenceSurface particles stay finite
+PASS Legacy CReferenceSurface total liquid ledger is conserved
+PASS Legacy baseline retains all eight unique-volume particles
+PASS Legacy baseline uses two actual authored ingredients
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy DImprovedSurface GPU is operational
+PASS Legacy DImprovedSurface particles stay finite
+PASS Legacy DImprovedSurface total liquid ledger is conserved
+PASS Legacy baseline retains all eight unique-volume particles
+PASS Legacy baseline uses two actual authored ingredients
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy ECalibratedLiquid GPU is operational
+PASS Legacy ECalibratedLiquid particles stay finite
+PASS Legacy ECalibratedLiquid total liquid ledger is conserved
+PASS Legacy baseline retains all eight unique-volume particles
+PASS Authored vessel admits an explicit fractional ml fill
+PASS FCoherentLiquid activates exactly its requested physics family
+PASS FCoherentLiquid retains the improved surface and reference-neighborhood solver family
+PASS FCoherentLiquid cohesive solver operational flag follows mode switches
+PASS FCoherentLiquid retains exact D particle, ml and smoothing scales
+PASS Authored vessel admits an explicit fractional ml fill
+PASS FCoherentLiquid retains D partial-quantity filling
+PASS DImprovedSurface activates exactly its requested physics family
+PASS DImprovedSurface retains the improved surface and reference-neighborhood solver family
+PASS DImprovedSurface cohesive solver operational flag follows mode switches
+PASS DImprovedSurface retains exact D particle, ml and smoothing scales
+PASS Authored vessel admits an explicit fractional ml fill
+PASS DImprovedSurface retains D partial-quantity filling
+PASS ECalibratedLiquid activates exactly its requested physics family
+PASS ECalibratedLiquid retains the improved surface and reference-neighborhood solver family
+PASS ECalibratedLiquid cohesive solver operational flag follows mode switches
+PASS FCoherentLiquid activates exactly its requested physics family
+PASS FCoherentLiquid retains the improved surface and reference-neighborhood solver family
+PASS FCoherentLiquid cohesive solver operational flag follows mode switches
+PASS FCoherentLiquid retains exact D particle, ml and smoothing scales
+PASS Authored vessel admits an explicit fractional ml fill
+PASS FCoherentLiquid retains D partial-quantity filling
+PASS DImprovedSurface activates exactly its requested physics family
+PASS DImprovedSurface retains the improved surface and reference-neighborhood solver family
+PASS DImprovedSurface cohesive solver operational flag follows mode switches
+PASS DImprovedSurface retains exact D particle, ml and smoothing scales
+PASS Authored vessel admits an explicit fractional ml fill
+PASS DImprovedSurface retains D partial-quantity filling
+PASS FCoherentLiquid activates exactly its requested physics family
+PASS FCoherentLiquid retains the improved surface and reference-neighborhood solver family
+PASS FCoherentLiquid cohesive solver operational flag follows mode switches
+PASS FCoherentLiquid retains exact D particle, ml and smoothing scales
+PASS Authored vessel admits an explicit fractional ml fill
+PASS FCoherentLiquid retains D partial-quantity filling
+PASS Mode switching never changes the authored D default
+PASS Existing isolated effects component is available for exclusion check
+PASS F does not enable E ice response or secondary cosmetic effects
+PASS Controlled F GPU probe initializes
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression 0 GPU is operational
+PASS Compression 0 particles stay finite
+PASS Compression 0 total liquid ledger is conserved
+PASS Compression projection retains every lattice particle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS Controlled F GPU probe initializes
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression 1 GPU is operational
+PASS Compression 1 particles stay finite
+PASS Compression 1 total liquid ledger is conserved
+PASS Compression projection retains every lattice particle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS Controlled F GPU probe initializes
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression probe queues its controlled dense lattice
+PASS Compression 6 GPU is operational
+PASS Compression 6 particles stay finite
+PASS Compression 6 total liquid ledger is conserved
+PASS Compression projection retains every lattice particle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS GPU final density agrees with independent D-scale q-squared CPU oracle
+PASS Density fixture begins measurably compressed
+PASS More compression iterations reduce the same-state density residual (0=2.10018754, 1=1.44501853, 6=0.12216451)
+PASS Controlled F GPU probe initializes
+PASS Pair admits first particle
+PASS Pair admits second particle with its explicit amount
+PASS Pair 0/0/Water GPU is operational
+PASS Pair 0/0/Water particles stay finite
+PASS Pair 0/0/Water total liquid ledger is conserved
+PASS Controlled pair retains exactly two particles
+PASS Controlled F GPU probe initializes
+PASS Pair admits first particle
+PASS Pair admits second particle with its explicit amount
+PASS Pair 18/0/Water GPU is operational
+PASS Pair 18/0/Water particles stay finite
+PASS Pair 18/0/Water total liquid ledger is conserved
+PASS Controlled pair retains exactly two particles
+PASS Independent cohesion attracts a stationary underdense pair (off=0.18, on=0.1692678)
+PASS Symmetric stationary pair conserves net momentum with and without cohesion
+PASS Controlled F GPU probe initializes
+PASS Pair admits first particle
+PASS Pair admits second particle with its explicit amount
+PASS Pair 0/0/Water GPU is operational
+PASS Pair 0/0/Water particles stay finite
+PASS Pair 0/0/Water total liquid ledger is conserved
+PASS Controlled pair retains exactly two particles
+PASS Controlled F GPU probe initializes
+PASS Pair admits first particle
+PASS Pair admits second particle with its explicit amount
+PASS Pair 0/1/Water GPU is operational
+PASS Pair 0/1/Water particles stay finite
+PASS Pair 0/1/Water total liquid ledger is conserved
+PASS Controlled pair retains exactly two particles
+PASS Controlled F GPU probe initializes
+PASS Pair admits first particle
+PASS Pair admits second particle with its explicit amount
+PASS Pair 0/1/Syrup GPU is operational
+PASS Pair 0/1/Syrup particles stay finite
+PASS Pair 0/1/Syrup total liquid ledger is conserved
+PASS Controlled pair retains exactly two particles
+PASS Full-vector material viscosity damps tangential shear (off=3.50003242, water=3.383851, syrup=3.05371284)
+PASS Unequal-volume tangential pairs conserve mass-weighted linear momentum
+PASS Controlled F GPU probe initializes
+PASS Mixing fixture queues a labeled partial-volume particle
+PASS Mixing fixture queues a labeled partial-volume particle
+PASS Mixing fixture queues a labeled partial-volume particle
+PASS Mixing fixture queues a labeled partial-volume particle
+PASS Mixing fixture queues a labeled partial-volume particle
+PASS Mixing fixture queues a labeled partial-volume particle
+PASS Mixing fixture queues a labeled partial-volume particle
+PASS Mixing fixture queues a labeled partial-volume particle
+PASS Mixing fixture queues a labeled partial-volume particle
+PASS Mixing fixture queues a labeled partial-volume particle
+PASS Mixing fixture queues a labeled partial-volume particle
+PASS Mixing fixture queues a labeled partial-volume particle
+PASS Conservative partial mixing tick 19 GPU is operational
+PASS Conservative partial mixing tick 19 particles stay finite
+PASS Conservative partial mixing tick 19 total liquid ledger is conserved
+PASS Conservative mixing preserves each ingredient's explicit ml independently
+PASS Conservative mixing preserves each ingredient's explicit ml independently
+PASS Conservative partial mixing tick 39 GPU is operational
+PASS Conservative partial mixing tick 39 particles stay finite
+PASS Conservative partial mixing tick 39 total liquid ledger is conserved
+PASS Conservative mixing preserves each ingredient's explicit ml independently
+PASS Conservative mixing preserves each ingredient's explicit ml independently
+PASS Conservative partial mixing tick 59 GPU is operational
+PASS Conservative partial mixing tick 59 particles stay finite
+PASS Conservative partial mixing tick 59 total liquid ledger is conserved
+PASS Conservative mixing preserves each ingredient's explicit ml independently
+PASS Conservative mixing preserves each ingredient's explicit ml independently
+PASS Conservative partial mixing tick 79 GPU is operational
+PASS Conservative partial mixing tick 79 particles stay finite
+PASS Conservative partial mixing tick 79 total liquid ledger is conserved
+PASS Conservative mixing preserves each ingredient's explicit ml independently
+PASS Conservative mixing preserves each ingredient's explicit ml independently
+PASS Conservative partial mixing tick 99 GPU is operational
+PASS Conservative partial mixing tick 99 particles stay finite
+PASS Conservative partial mixing tick 99 total liquid ledger is conserved
+PASS Conservative mixing preserves each ingredient's explicit ml independently
+PASS Conservative mixing preserves each ingredient's explicit ml independently
+PASS Every mixed particle has normalized nonnegative composition
+PASS Every mixed particle has normalized nonnegative composition
+PASS Every mixed particle has normalized nonnegative composition
+PASS Every mixed particle has normalized nonnegative composition
+PASS Every mixed particle has normalized nonnegative composition
+PASS Every mixed particle has normalized nonnegative composition
+PASS Every mixed particle has normalized nonnegative composition
+PASS Every mixed particle has normalized nonnegative composition
+PASS Every mixed particle has normalized nonnegative composition
+PASS Every mixed particle has normalized nonnegative composition
+PASS Every mixed particle has normalized nonnegative composition
+PASS Every mixed particle has normalized nonnegative composition
+PASS The conservation fixture actually exchanges ingredients instead of merely leaving them unmixed
+PASS F Rest tick 29 GPU is operational
+PASS F Rest tick 29 particles stay finite
+PASS F Rest tick 29 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Rest tick 59 GPU is operational
+PASS F Rest tick 59 particles stay finite
+PASS F Rest tick 59 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Rest tick 89 GPU is operational
+PASS F Rest tick 89 particles stay finite
+PASS F Rest tick 89 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Rest tick 119 GPU is operational
+PASS F Rest tick 119 particles stay finite
+PASS F Rest tick 119 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Rest tick 149 GPU is operational
+PASS F Rest tick 149 particles stay finite
+PASS F Rest tick 149 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Rest tick 179 GPU is operational
+PASS F Rest tick 179 particles stay finite
+PASS F Rest tick 179 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Rest tick 209 GPU is operational
+PASS F Rest tick 209 particles stay finite
+PASS F Rest tick 209 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Rest tick 239 GPU is operational
+PASS F Rest tick 239 particles stay finite
+PASS F Rest tick 239 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Rest tick 269 GPU is operational
+PASS F Rest tick 269 particles stay finite
+PASS F Rest tick 269 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Rest tick 299 GPU is operational
+PASS F Rest tick 299 particles stay finite
+PASS F Rest tick 299 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Rest exercised actual GPU liquid
+PASS F Pour tick 29 GPU is operational
+PASS F Pour tick 29 particles stay finite
+PASS F Pour tick 29 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Pour tick 59 GPU is operational
+PASS F Pour tick 59 particles stay finite
+PASS F Pour tick 59 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Pour tick 89 GPU is operational
+PASS F Pour tick 89 particles stay finite
+PASS F Pour tick 89 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Pour tick 119 GPU is operational
+PASS F Pour tick 119 particles stay finite
+PASS F Pour tick 119 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Pour tick 149 GPU is operational
+PASS F Pour tick 149 particles stay finite
+PASS F Pour tick 149 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Pour tick 179 GPU is operational
+PASS F Pour tick 179 particles stay finite
+PASS F Pour tick 179 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Pour tick 209 GPU is operational
+PASS F Pour tick 209 particles stay finite
+PASS F Pour tick 209 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Pour tick 239 GPU is operational
+PASS F Pour tick 239 particles stay finite
+PASS F Pour tick 239 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Pour tick 269 GPU is operational
+PASS F Pour tick 269 particles stay finite
+PASS F Pour tick 269 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Pour tick 299 GPU is operational
+PASS F Pour tick 299 particles stay finite
+PASS F Pour tick 299 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Pour exercised actual GPU liquid
+PASS F Stir tick 29 GPU is operational
+PASS F Stir tick 29 particles stay finite
+PASS F Stir tick 29 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Stir tick 59 GPU is operational
+PASS F Stir tick 59 particles stay finite
+PASS F Stir tick 59 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Stir tick 89 GPU is operational
+PASS F Stir tick 89 particles stay finite
+PASS F Stir tick 89 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Stir tick 119 GPU is operational
+PASS F Stir tick 119 particles stay finite
+PASS F Stir tick 119 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Stir tick 149 GPU is operational
+PASS F Stir tick 149 particles stay finite
+PASS F Stir tick 149 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Stir tick 179 GPU is operational
+PASS F Stir tick 179 particles stay finite
+PASS F Stir tick 179 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Stir tick 209 GPU is operational
+PASS F Stir tick 209 particles stay finite
+PASS F Stir tick 209 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Stir tick 239 GPU is operational
+PASS F Stir tick 239 particles stay finite
+PASS F Stir tick 239 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Stir tick 269 GPU is operational
+PASS F Stir tick 269 particles stay finite
+PASS F Stir tick 269 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Stir tick 299 GPU is operational
+PASS F Stir tick 299 particles stay finite
+PASS F Stir tick 299 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F Stir exercised actual GPU liquid
+PASS F SealedShake tick 29 GPU is operational
+PASS F SealedShake tick 29 particles stay finite
+PASS F SealedShake tick 29 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F SealedShake tick 59 GPU is operational
+PASS F SealedShake tick 59 particles stay finite
+PASS F SealedShake tick 59 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F SealedShake tick 89 GPU is operational
+PASS F SealedShake tick 89 particles stay finite
+PASS F SealedShake tick 89 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F SealedShake tick 119 GPU is operational
+PASS F SealedShake tick 119 particles stay finite
+PASS F SealedShake tick 119 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F SealedShake tick 149 GPU is operational
+PASS F SealedShake tick 149 particles stay finite
+PASS F SealedShake tick 149 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F SealedShake tick 179 GPU is operational
+PASS F SealedShake tick 179 particles stay finite
+PASS F SealedShake tick 179 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F SealedShake tick 209 GPU is operational
+PASS F SealedShake tick 209 particles stay finite
+PASS F SealedShake tick 209 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F SealedShake tick 239 GPU is operational
+PASS F SealedShake tick 239 particles stay finite
+PASS F SealedShake tick 239 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F SealedShake tick 269 GPU is operational
+PASS F SealedShake tick 269 particles stay finite
+PASS F SealedShake tick 269 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F SealedShake tick 299 GPU is operational
+PASS F SealedShake tick 299 particles stay finite
+PASS F SealedShake tick 299 total liquid ledger is conserved
+PASS F scenario retains per-ingredient liquid including retired spill
+PASS F scenario keeps particle speed inside its configured bound
+PASS F SealedShake exercised actual GPU liquid
+PASS No Unity runtime error, exception or assertion was emitted

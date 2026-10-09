@@ -1,0 +1,68 @@
+PASS Hidden batch starts in F
+PASS synthLemonPeel_Source picks fresh garnish
+MEASURE synthLemonPeel_Source tilt=0 drag local=(-0.852845, -0.608281) separation=0.00555561669
+PASS Fast held drag cannot cross the entire side wall
+PASS Held garnish enters through open mouth
+PASS Inside drag stops on the inner side of wall
+PASS Held rotation keeps full outline outside wall
+PASS Upright return remains outside wall
+MEASURE synthLemonPeel_Source tilt=0 released separation=0.005555587 restSpan=0.00552595267
+PASS Released garnish slides/rests without wall penetration or escape
+PASS Wall contact settles without sustained jitter
+PASS Placed garnish cannot be picked again
+PASS Supply still dispenses a fresh piece
+PASS synthLemonPeel_Source picks fresh garnish
+MEASURE synthLemonPeel_Source tilt=35 drag local=(-0.873668, -0.608535) separation=0.00555550866
+PASS Fast held drag cannot cross the entire side wall
+PASS Held garnish enters through open mouth
+PASS Inside drag stops on the inner side of wall
+PASS Held rotation keeps full outline outside wall
+PASS Upright return remains outside wall
+MEASURE synthLemonPeel_Source tilt=35 released separation=0.00555545464 restSpan=6.58281039E-08
+PASS Released garnish slides/rests without wall penetration or escape
+PASS Wall contact settles without sustained jitter
+PASS Placed garnish cannot be picked again
+PASS Supply still dispenses a fresh piece
+MEASURE synthLemonPeel_Source liquid feedback delta=0
+PASS Garnish does not displace/accelerate liquid or change its ledger
+PASS Completed local liquid snapshot supplies flow and immersion
+PASS Released garnish follows liquid flow
+PASS Stale snapshot cannot keep driving garnish
+PASS Reset invalidates old liquid support
+MEASURE synthLemonPeel_Source float position=(0.005826, 0.621937) velocity=(-0.000138, -0.001580) clearance=0.270095378
+PASS Flow-following garnish remains finite and outside glass walls
+PASS nanangaPeel_Source picks fresh garnish
+MEASURE nanangaPeel_Source tilt=0 drag local=(-0.840216, -0.608126) separation=0.00555561669
+PASS Fast held drag cannot cross the entire side wall
+PASS Held garnish enters through open mouth
+PASS Inside drag stops on the inner side of wall
+PASS Held rotation keeps full outline outside wall
+PASS Upright return remains outside wall
+MEASURE nanangaPeel_Source tilt=0 released separation=0.005555587 restSpan=0.00552595127
+PASS Released garnish slides/rests without wall penetration or escape
+PASS Wall contact settles without sustained jitter
+PASS Placed garnish cannot be picked again
+PASS Supply still dispenses a fresh piece
+PASS nanangaPeel_Source picks fresh garnish
+MEASURE nanangaPeel_Source tilt=35 drag local=(-0.882894, -0.608648) separation=0.005555531
+PASS Fast held drag cannot cross the entire side wall
+PASS Held garnish enters through open mouth
+PASS Inside drag stops on the inner side of wall
+PASS Held rotation keeps full outline outside wall
+PASS Upright return remains outside wall
+MEASURE nanangaPeel_Source tilt=35 released separation=0.00547494553 restSpan=0
+PASS Released garnish slides/rests without wall penetration or escape
+PASS Wall contact settles without sustained jitter
+PASS Placed garnish cannot be picked again
+PASS Supply still dispenses a fresh piece
+MEASURE nanangaPeel_Source liquid feedback delta=0
+PASS Garnish does not displace/accelerate liquid or change its ledger
+PASS Completed local liquid snapshot supplies flow and immersion
+PASS Released garnish follows liquid flow
+PASS Stale snapshot cannot keep driving garnish
+PASS Reset invalidates old liquid support
+MEASURE nanangaPeel_Source float position=(-0.009168, 0.571114) velocity=(-0.001564, -0.002179) clearance=0.281825066
+PASS Flow-following garnish remains finite and outside glass walls
+PASS D keeps legacy dynamic garnish physics
+PASS Mode switch/reset removes placed garnish and preserves supplies
+PASS No Unity errors or assertions

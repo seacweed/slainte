@@ -195,8 +195,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             Vector2 nozzle = ReservoirNozzleAt(fraction, sideLocal * lateral);
             Vector2 origin = Vector2.Lerp(PreviousPosition, Position, fraction);
             Vector2 arm = nozzle - origin;
-            Vector2 inherited = (Position - PreviousPosition) / dt
-                + new Vector2(-arm.y, arm.x) * (StepAngle * Mathf.Deg2Rad / dt);
+            Vector2 inherited = EmissionPointVelocity(arm, dt);
             Vector2 direction = PointAt(ExitDirectionLocal, Vector2.zero, angle).normalized;
             if (pourStream == 0) pourStream = World.Liquid.NewPourStream();
             float radius = Mathf.Clamp(Mathf.Min(streamWidth * .5f, Mathf.Sqrt(volume * areaPerMl / Mathf.PI)), .008f, World.Liquid.Radius * 1.5f);

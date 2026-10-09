@@ -1,0 +1,35 @@
+PASS Hidden batch GPU harness; no desktop input
+PASS Authored comparison scene initializes
+PASS Actual F GPU solver is operational
+INFO dt=0.02, settle=6s, sample=2s; limits sleep>=0.8, rms<=0.002, span<=0.01, speed-p95<=0.02; fixed-ice near-liquid mean<=0.1, p95<=0.5
+PASS Fixture cubes acquire the actual glass before pickup
+MEASURE {"name":"Kinematic-Cluster4-Empty","held":false,"liquid":false,"fixedIce":false,"iceCount":4,"ownedIceCount":4,"nearLiquidSamples":0,"deepPenetrationSamples":0,"sleepFraction":0.0,"contactFraction":1.0,"positionRms":0.00989616010338068,"positionSpan":0.047475360333919528,"speedP95":0.38925936818122866,"maximumStep":0.033933501690626147,"maximumAngularSpeed":99.62376403808594,"nearLiquidMeanSpeed":0.0,"nearLiquidSpeedP95":0.0,"maximumLiquidSpeed":0.0,"maximumLedgerError":0.0,"generatedMl":0.0,"retainedMl":0.0,"retiredMl":0.0}
+PASS Kinematic-Cluster4-Empty stationary glass retains all ice
+PASS Fixture cubes acquire the actual glass before pickup
+PASS Liquid fixture contains a nontrivial actual GPU fill
+PASS Explicit labeled boundary particles exercise liquid contact at an ice face
+MEASURE {"name":"Kinematic-Cluster4-F","held":false,"liquid":true,"fixedIce":false,"iceCount":4,"ownedIceCount":4,"nearLiquidSamples":8475,"deepPenetrationSamples":4100,"sleepFraction":0.0,"contactFraction":1.0,"positionRms":0.006560107227414846,"positionSpan":0.020925065502524377,"speedP95":0.5631409287452698,"maximumStep":0.013393864035606385,"maximumAngularSpeed":45.76041793823242,"nearLiquidMeanSpeed":0.27261102199554446,"nearLiquidSpeedP95":0.7519736886024475,"maximumLiquidSpeed":2.44698429107666,"maximumLedgerError":0.0,"generatedMl":61.0,"retainedMl":60.5,"retiredMl":0.5}
+PASS Kinematic-Cluster4-F stationary glass retains all ice
+PASS Kinematic-Cluster4-F actual GPU particles remain adjacent to ice during the measured interval
+PASS Fixture cubes acquire the actual glass before pickup
+PASS Liquid fixture contains a nontrivial actual GPU fill
+PASS Explicit labeled boundary particles exercise liquid contact at an ice face
+MEASURE {"name":"Kinematic-FixedSingle-F","held":false,"liquid":true,"fixedIce":true,"iceCount":1,"ownedIceCount":1,"nearLiquidSamples":4000,"deepPenetrationSamples":900,"sleepFraction":1.0,"contactFraction":0.0,"positionRms":7.251218221426825e-7,"positionSpan":0.0,"speedP95":0.0,"maximumStep":0.0,"maximumAngularSpeed":0.0,"nearLiquidMeanSpeed":0.03244991600513458,"nearLiquidSpeedP95":0.07752519100904465,"maximumLiquidSpeed":0.27334272861480715,"maximumLedgerError":0.0,"generatedMl":60.5,"retainedMl":60.5,"retiredMl":0.0}
+PASS Kinematic-FixedSingle-F stationary glass retains all ice
+PASS Kinematic-FixedSingle-F actual GPU particles remain adjacent to ice during the measured interval
+PASS Fixture cubes acquire the actual glass before pickup
+MEASURE {"name":"Held-Cluster4-Empty","held":true,"liquid":false,"fixedIce":false,"iceCount":4,"ownedIceCount":4,"nearLiquidSamples":0,"deepPenetrationSamples":0,"sleepFraction":0.0,"contactFraction":1.0,"positionRms":0.011081758886575699,"positionSpan":0.03737468644976616,"speedP95":0.5032311081886292,"maximumStep":0.02522025629878044,"maximumAngularSpeed":50.547969818115237,"nearLiquidMeanSpeed":0.0,"nearLiquidSpeedP95":0.0,"maximumLiquidSpeed":0.0,"maximumLedgerError":0.0,"generatedMl":0.0,"retainedMl":0.0,"retiredMl":0.0}
+PASS Held-Cluster4-Empty stationary glass retains all ice
+PASS Fixture cubes acquire the actual glass before pickup
+PASS Liquid fixture contains a nontrivial actual GPU fill
+PASS Explicit labeled boundary particles exercise liquid contact at an ice face
+MEASURE {"name":"Held-Cluster4-F","held":true,"liquid":true,"fixedIce":false,"iceCount":4,"ownedIceCount":4,"nearLiquidSamples":8624,"deepPenetrationSamples":4100,"sleepFraction":0.0,"contactFraction":1.0,"positionRms":0.007260865997523069,"positionSpan":0.0330410972237587,"speedP95":0.5197385549545288,"maximumStep":0.02562335506081581,"maximumAngularSpeed":114.05396270751953,"nearLiquidMeanSpeed":0.29727935791015627,"nearLiquidSpeedP95":0.8651643991470337,"maximumLiquidSpeed":3.151986837387085,"maximumLedgerError":0.0,"generatedMl":61.0,"retainedMl":61.0,"retiredMl":0.0}
+PASS Held-Cluster4-F stationary glass retains all ice
+PASS Held-Cluster4-F actual GPU particles remain adjacent to ice during the measured interval
+PASS Fixture cubes acquire the actual glass before pickup
+PASS Liquid fixture contains a nontrivial actual GPU fill
+PASS Explicit labeled boundary particles exercise liquid contact at an ice face
+MEASURE {"name":"Held-FixedSingle-F","held":true,"liquid":true,"fixedIce":true,"iceCount":1,"ownedIceCount":1,"nearLiquidSamples":4058,"deepPenetrationSamples":900,"sleepFraction":1.0,"contactFraction":0.0,"positionRms":7.251218221426825e-7,"positionSpan":0.0,"speedP95":0.0,"maximumStep":0.0,"maximumAngularSpeed":0.0,"nearLiquidMeanSpeed":0.03398197889328003,"nearLiquidSpeedP95":0.07910291850566864,"maximumLiquidSpeed":0.27178218960762026,"maximumLedgerError":0.0,"generatedMl":60.5,"retainedMl":60.5,"retiredMl":0.0}
+PASS Held-FixedSingle-F stationary glass retains all ice
+PASS Held-FixedSingle-F actual GPU particles remain adjacent to ice during the measured interval
+PASS No Unity exception, error or assertion

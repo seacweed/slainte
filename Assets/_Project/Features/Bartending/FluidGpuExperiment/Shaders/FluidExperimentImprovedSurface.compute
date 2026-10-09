@@ -43,6 +43,7 @@ StructuredBuffer<float4> _SurfaceVessels;
 StructuredBuffer<float4> _SurfaceMaterials;
 StructuredBuffer<float> _CompositionRead;
 int _ParticleCapacity, _GridWidth, _GridHeight, _SurfaceVesselCount, _UseAreaCalibration, _RebaseVessel;
+float2 _RebaseRotation;
 int _IngredientCount, _MaximumIngredients;
 float _TickStartTime, _TickDuration, _ParticleRadius, _NominalVolume, _SupportMultiplier, _MaximumAspect, _CellSize;
 float2 _GridOrigin;
@@ -90,6 +91,8 @@ void RebaseSurfaceOwner(uint3 id : SV_DispatchThreadID)
     h.active = p.active; h.pending = s.pending; _History[id.x] = h;
     Ellipse e = _Ellipses[id.x];
     e.startPosition = e.endPosition = p.position;
+    e.direction = float2(e.direction.x * _RebaseRotation.x - e.direction.y * _RebaseRotation.y,
+        e.direction.x * _RebaseRotation.y + e.direction.y * _RebaseRotation.x);
     e.birthFraction = 0; e.vesselId = p.vesselId;
     e.birthTime = s.birthTime; e.token = s.token;
     e.active = Visible(p, s) ? 1u : 0u;

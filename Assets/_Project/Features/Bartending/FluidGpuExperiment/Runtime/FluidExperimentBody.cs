@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Slainte.Bartending.FluidGpuExperiment
 {
-    public enum LabItemKind { Bottle, Glass, Jigger, Shaker, Spoon, IceBucket, Ice }
+    public enum LabItemKind { Bottle, Glass, Jigger, Shaker, Spoon, IceBucket, Ice, Garnish }
     [Serializable]
     public sealed class FluidExperimentHull { public Vector2[] points = Array.Empty<Vector2>(); }
 
@@ -34,11 +34,16 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public FluidExperimentBody icePrefab;
         public int iceStock = 20;
         public float icePourInterval = .18f;
+        [Tooltip("Retained for older comparison assets. F flow-following garnishes do not push liquid.")]
+        [Range(0, 1)] public float garnishLiquidMotionTransfer = .2f;
 
         public FluidExperimentWorld World { get; private set; }
         public Rigidbody2D Body { get; private set; }
         public uint Id { get; internal set; }
         public bool IsHeld { get; private set; }
+        // Physical contents share containment/contact policy, not ingredient or ice-effect identity.
+        public bool IsLooseSolid => kind == LabItemKind.Ice || kind == LabItemKind.Garnish;
+        public bool CanBePicked => !IsLooseSolid || !hasBeenPlaced;
         public bool IsVessel => contentRegions.Length > 0;
         public Vector2 Position => Body != null ? Body.position : (Vector2)transform.position;
         public float Angle => Body != null ? Body.rotation : transform.eulerAngles.z;
@@ -52,8 +57,13 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public event Action<FluidExperimentBody, bool> HeldChanged;
         private float pourCredit;
         private float iceTimer;
+        private bool hasBeenPlaced;
         private Vector2 targetPosition;
         private float targetAngle;
+        // Accumulate until the physics tick consumes it, including a return that
+        // starts or finishes between ticks. Collision sweeps still use StepAngle.
+        private float automaticPoseAngle;
+        private Vector2 automaticPoseTranslation;
 
         private void Awake()
         {
@@ -67,6 +77,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             SynchronizeHistory();
             ApplyCollisionProfile();
             InitializeShakerParts();
+            RefreshIceStockVisual();
             SetSealed(sealedVessel);
         }
 
@@ -101,8 +112,9 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (Body == null) Body = GetComponent<Rigidbody2D>();
             // Capture contents before enabling the held/external collision policy.
             if (value && !IsHeld) World?.RefreshIceContainment();
-            if (value && kind == LabItemKind.Ice) ClearIceContainer();
+            if (value && IsLooseSolid) ClearIceContainer();
             IsHeld = value;
+            UpdateGarnishHoldCollision();
             Body.bodyType = value ? RigidbodyType2D.Kinematic : RigidbodyType2D.Dynamic;
             Body.linearVelocity = Vector2.zero;
             Body.angularVelocity = 0;
@@ -119,8 +131,48 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public void SetHeldPose(Vector2 position, float unwrappedAngle)
         {
             if (!IsHeld) return;
-            targetPosition = World != null ? World.ConstrainHeldPosition(this, position, unwrappedAngle) : position;
+            targetPosition = UsesLiquidGarnishMotion ? position
+                : World != null ? World.ConstrainHeldPosition(this, position, unwrappedAngle) : position;
             targetAngle = unwrappedAngle;
+        }
+
+        internal void RestorePickupPose(Vector2 position, float angle)
+        {
+            // Only picking up a tilted F glass changes the liquid's reference frame.
+            // Manual rotation and the right-button upright return keep normal fluid physics.
+            if (!IsHeld || kind != LabItemKind.Glass || World?.Liquid == null
+                || !World.Liquid.CohesivePhysicsActive
+                || Mathf.Abs(Mathf.DeltaAngle(HeldAngle, angle)) < .00001f)
+            { RestoreHeldPose(position, angle); return; }
+
+            ApplyHeldPose();
+            Vector2 from = Position;
+            float turn = Mathf.DeltaAngle(HeldAngle, angle);
+            float previousAutomaticAngle = automaticPoseAngle;
+            Vector2 previousAutomaticTranslation = automaticPoseTranslation;
+            RestoreHeldPose(position, angle);
+            World.Liquid.CarryPickupContents(Id, from, Position, turn);
+            // RestoreHeldPose already rebased whole turns. Remove just this automatic
+            // rotation from swept-wall history, preserving any genuine pending motion.
+            RebasePickupHistory(from, Position, turn);
+            automaticPoseAngle = previousAutomaticAngle;
+            automaticPoseTranslation = Rotate(previousAutomaticTranslation, turn);
+            foreach (FluidExperimentBody ice in World.Items)
+            {
+                if (ice == null || ice.iceContainer != this || ice.IsHeld || !ice.Body.simulated
+                    || ice.UsesLiquidGarnishMotion) continue;
+                // ApplyHeldPose also carried contained ice. Its swept GPU boundary must
+                // not inject the same artificial pickup rotation back into the liquid.
+                ice.RebasePickupHistory(from, Position, turn);
+                ice.previousIcePosition = Position + Rotate(ice.previousIcePosition - from, turn);
+                ice.Body.linearVelocity = Rotate(ice.Body.linearVelocity, turn);
+            }
+        }
+
+        private void RebasePickupHistory(Vector2 from, Vector2 to, float turn)
+        {
+            PreviousPosition = to + Rotate(PreviousPosition - from, turn);
+            PreviousAngle += turn;
         }
 
         internal void RestoreHeldPose(Vector2 position, float angle)
@@ -130,13 +182,25 @@ namespace Slainte.Bartending.FluidGpuExperiment
             // Automatic restoration takes the shortest arc, without unwinding completed turns.
             // Rebase only whole turns so the GPU still sees any motion pending this physics tick.
             PreviousAngle += angle - (HeldAngle + Mathf.DeltaAngle(HeldAngle, angle));
+            automaticPoseAngle += Mathf.DeltaAngle(HeldAngle, angle);
+            // Compare the same pointer target at the two orientations. Any extra
+            // wall/ceiling correction is caused by restoration, not by the mouse.
+            Vector2 previousOrientationPosition = UsesLiquidGarnishMotion ? position : World != null
+                ? World.ConstrainHeldPosition(this, position, HeldAngle) : position;
             SetHeldPose(position, angle);
+            automaticPoseTranslation += targetPosition - previousOrientationPosition;
             ApplyHeldPose();
         }
 
         internal void ApplyHeldPose()
         {
             if (!IsHeld) return;
+            if ((Position - targetPosition).sqrMagnitude < 1e-12f
+                && Mathf.Abs(Mathf.DeltaAngle(Angle, targetAngle)) < .00001f)
+            {
+                HeldAngle = targetAngle; // Keep unwrapped input history without rewriting an unchanged native pose.
+                return;
+            }
             TransportContainedIce(Position, HeldAngle, targetPosition, targetAngle);
             Body.position = targetPosition;
             Body.rotation = targetAngle;
@@ -148,14 +212,21 @@ namespace Slainte.Bartending.FluidGpuExperiment
             ApplyHeldPose();
             ReleaseContainedIceVelocity(velocity, angularVelocity);
             SetHeld(false);
+            MarkPlaced();
             Body.linearVelocity = velocity;
             Body.angularVelocity = angularVelocity;
         }
 
+        internal void MarkPlaced()
+        {
+            if (IsLooseSolid) hasBeenPlaced = true;
+        }
+        internal void ResetPickupState() => hasBeenPlaced = false;
+
         public void Teleport(Vector2 position, float angle)
         {
             EndPourStream();
-            if (kind == LabItemKind.Ice) ClearIceContainer();
+            if (IsLooseSolid) ClearIceContainer();
             Body.position = position;
             Body.rotation = angle;
             Body.linearVelocity = Vector2.zero;
@@ -169,6 +240,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         {
             EndPourStream();
             remainingMl = volume; iceStock = ice; pourCredit = 0; iceTimer = 0;
+            RefreshIceStockVisual();
         }
 
         public void SetSealed(bool value)
@@ -204,6 +276,12 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public bool Contains(Vector2 point)
         {
             Vector2 local = WorldToLocal(point);
+            if (kind == LabItemKind.Garnish && collisionProfile != null)
+            {
+                foreach (var hull in collisionProfile.solids)
+                    if (FluidExperimentCollisionProfile.Contains(hull.points, local)) return true;
+                return false;
+            }
             if (pickCollider is BoxCollider2D box)
                 return new Rect(box.offset - box.size * .5f, box.size).Contains(local);
             return pickCollider != null && pickCollider.OverlapPoint(point);
@@ -235,6 +313,9 @@ namespace Slainte.Bartending.FluidGpuExperiment
             PreviousPosition = Position;
             PreviousAngle = IsHeld ? HeldAngle : Angle;
             StepAngle = 0;
+            automaticPoseAngle = 0;
+            automaticPoseTranslation = Vector2.zero;
+            IceRecoveryTranslation = Vector2.zero;
         }
         internal void CaptureMotion()
         {
@@ -258,11 +339,26 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 Vector2 direction = Rotate(Vector2.up, Angle);
                 FluidExperimentBody ice = Instantiate(icePrefab, mouth + direction * .3f, Quaternion.Euler(0, 0, Angle), World.transform);
                 ice.Body.linearVelocity = MouthVelocity(dt) + direction * exitSpeed;
+                ice.MarkPlaced(); // Poured stock is already placed, not a fresh hand pickup.
                 iceStock--;
+                RefreshIceStockVisual();
             }
         }
-        private Vector2 MouthVelocity(float dt) => IsHeld
-            ? (LocalToWorld(mouthLocal) - PointAt(mouthLocal, PreviousPosition, PreviousAngle)) / Mathf.Max(dt, .0001f)
-            : Body.GetPointVelocity(LocalToWorld(mouthLocal));
+        internal Vector2 EmissionPointVelocity(Vector2 arm, float dt)
+        {
+            float inverseDt = 1 / Mathf.Max(dt, .0001f);
+            return (Position - PreviousPosition - automaticPoseTranslation) * inverseDt
+                + new Vector2(-arm.y, arm.x) * ((StepAngle - automaticPoseAngle) * Mathf.Deg2Rad * inverseDt);
+        }
+
+        private void Update()
+        {
+            // Infinite supplies must not keep sending already discarded pieces to the GPU.
+            if (kind != LabItemKind.Garnish || IsHeld || World == null || World.Liquid == null
+                || World.Liquid.settings == null || Position.y >= World.Liquid.settings.gpuLiquidWorldMin.y - 1) return;
+            gameObject.SetActive(false);
+            Destroy(gameObject);
+        }
+        private Vector2 MouthVelocity(float dt) => EmissionPointVelocity(LocalToWorld(mouthLocal) - Position, dt);
     }
 }

@@ -1,0 +1,20 @@
+{
+  "snapshot_count": 246,
+  "snapshot_errors": [],
+  "changed_files": [
+    "DEVELOPMENT_PLAN.md",
+    "Editor/FluidExperimentGarnishBuilder.cs",
+    "Prefabs/nanangaPeel_Garnish.prefab",
+    "Prefabs/synthLemonPeel_Garnish.prefab",
+    "README.md",
+    "Runtime/FluidExperimentBody.Contents.cs",
+    "Runtime/FluidExperimentBody.cs",
+    "Runtime/FluidExperimentGpuLiquid.cs"
+  ],
+  "unexpected_changes": [],
+  "protected_count": 104,
+  "protected_unchanged": true,
+  "garnish_prefab_non_response_changes": [],
+  "f_garnish_only_gate": true,
+  "passed": true
+}

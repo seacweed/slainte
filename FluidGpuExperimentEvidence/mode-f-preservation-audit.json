@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "audited_at_utc": "2026-10-04T09:31:43.350538+00:00",
+  "basis": "Exact pre-F working-tree snapshot, including the uncommitted D interaction fixes; not HEAD.",
+  "original_file_count": 214,
+  "unchanged_original_file_count": 207,
+  "changed_original_files": [
+    "DEVELOPMENT_PLAN.md",
+    "README.md",
+    "Runtime/FluidExperimentComparison.cs",
+    "Runtime/FluidExperimentGpuLiquid.Buffers.cs",
+    "Runtime/FluidExperimentGpuLiquid.Reference.cs",
+    "Runtime/FluidExperimentLiquidSettings.cs",
+    "Shaders/FluidExperimentLiquid.compute"
+  ],
+  "unexpected_changes": [],
+  "snapshot_errors": [],
+  "original_compute_kernel_bodies_unchanged": true,
+  "default_mode_d_preserved": true,
+  "original_serialized_mode_indices_preserved": true,
+  "snapshot_directory": "A:\\UnityHub\\proj\\slainte\\Library\\FluidModeFOriginal\\FluidGpuExperiment",
+  "limits": "Static scope/source preservation only. Actual A-E GPU probes are compared in the mode-F runtime evidence."
+}

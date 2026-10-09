@@ -1,0 +1,16 @@
+{
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/Library/FluidModelDHarness",
+    "-executeMethod",
+    "ExperimentInputShakerValidation.Begin",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\75-return-wall-clamp-reproduction\\Editor.log"
+  ],
+  "started": "2026-10-03T04:02:04.5863404+09:00",
+  "workingDirectory": "A:\\UnityHub\\proj\\slainte",
+  "timeoutSeconds": 300,
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe"
+}

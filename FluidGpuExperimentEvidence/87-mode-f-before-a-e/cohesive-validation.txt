@@ -1,0 +1,69 @@
+PASS Validation runs without desktop input in the hidden GPU harness
+PASS Authored comparison scene initializes
+PASS The authored default remains Model D
+PASS Legacy baseline uses two actual authored ingredients
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy ACurrent GPU is operational
+PASS Legacy ACurrent particles stay finite
+PASS Legacy ACurrent total liquid ledger is conserved
+PASS Legacy baseline retains all eight unique-volume particles
+PASS Legacy baseline uses two actual authored ingredients
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy BReferencePhysics GPU is operational
+PASS Legacy BReferencePhysics particles stay finite
+PASS Legacy BReferencePhysics total liquid ledger is conserved
+PASS Legacy baseline retains all eight unique-volume particles
+PASS Legacy baseline uses two actual authored ingredients
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy CReferenceSurface GPU is operational
+PASS Legacy CReferenceSurface particles stay finite
+PASS Legacy CReferenceSurface total liquid ledger is conserved
+PASS Legacy baseline retains all eight unique-volume particles
+PASS Legacy baseline uses two actual authored ingredients
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy DImprovedSurface GPU is operational
+PASS Legacy DImprovedSurface particles stay finite
+PASS Legacy DImprovedSurface total liquid ledger is conserved
+PASS Legacy baseline retains all eight unique-volume particles
+PASS Legacy baseline uses two actual authored ingredients
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy ECalibratedLiquid GPU is operational
+PASS Legacy ECalibratedLiquid particles stay finite
+PASS Legacy ECalibratedLiquid total liquid ledger is conserved
+PASS Legacy baseline retains all eight unique-volume particles
+PASS No Unity runtime error, exception or assertion was emitted

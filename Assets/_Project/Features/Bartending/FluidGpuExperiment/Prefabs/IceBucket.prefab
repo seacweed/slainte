@@ -144,6 +144,16 @@ MonoBehaviour:
   icePrefab: {fileID: 6643248247316266234, guid: aeb2d0491bf1482caac691606c1252c9, type: 3}
   iceStock: 20
   icePourInterval: 0.18
+  iceCapacity: 20
+  iceStockRenderer: {fileID: 166389351945140193}
+  iceStockSprites:
+  - {fileID: 21300000, guid: b3ae6c347ddb6a7459a5915c1a47e429, type: 3}
+  - {fileID: 21300000, guid: 18c87ac74febec54188620484cc50b29, type: 3}
+  - {fileID: 21300000, guid: 7e23cf98cfbaa284680dd1c3a407b88c, type: 3}
+  - {fileID: 21300000, guid: 8672bb420d4e216459ab6feacd313d20, type: 3}
+  - {fileID: 21300000, guid: dc0bc60764d747f47bdc595a5f246c02, type: 3}
+  - {fileID: 21300000, guid: 5188c4c1f69abe54fa6919691d3d58e2, type: 3}
+  - {fileID: 21300000, guid: b3eaf694b0b32974594e76d88fff2905, type: 3}
   collisionProfile: {fileID: 11400000, guid: 0a0569a3f11e406e8530575bab3dfac6, type: 2}
   mouthDirectionLocal: {x: 0, y: 0}
   mouthWidth: 0.14

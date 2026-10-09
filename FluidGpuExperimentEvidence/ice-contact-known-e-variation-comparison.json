@@ -1,0 +1,90 @@
+{
+  "before": "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\90-mode-f-physics\\legacy-a-e-snapshot.json",
+  "after": "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\105-ice-contact-fluid-regression\\legacy-a-e-snapshot.json",
+  "tolerances": {
+    "position": 0.0001,
+    "velocity": 0.001,
+    "composition": 0.0001
+  },
+  "identity": "exact unique per-particle volume_ml; never GPU buffer slot",
+  "modes": [
+    {
+      "mode": "ACurrent",
+      "settings_and_flags_match": true,
+      "particle_count_match": true,
+      "unique_particle_volumes_match": true,
+      "before_active_count": 8,
+      "after_active_count": 8,
+      "maximum_absolute_difference": {
+        "position": 0.0,
+        "velocity": 0.0,
+        "composition": 0.0
+      },
+      "exact_probe_match": true,
+      "passed": true
+    },
+    {
+      "mode": "BReferencePhysics",
+      "settings_and_flags_match": true,
+      "particle_count_match": true,
+      "unique_particle_volumes_match": true,
+      "before_active_count": 8,
+      "after_active_count": 8,
+      "maximum_absolute_difference": {
+        "position": 0.0,
+        "velocity": 0.0,
+        "composition": 0.0
+      },
+      "exact_probe_match": true,
+      "passed": true
+    },
+    {
+      "mode": "CReferenceSurface",
+      "settings_and_flags_match": true,
+      "particle_count_match": true,
+      "unique_particle_volumes_match": true,
+      "before_active_count": 8,
+      "after_active_count": 8,
+      "maximum_absolute_difference": {
+        "position": 0.0,
+        "velocity": 0.0,
+        "composition": 0.0
+      },
+      "exact_probe_match": true,
+      "passed": true
+    },
+    {
+      "mode": "DImprovedSurface",
+      "settings_and_flags_match": true,
+      "particle_count_match": true,
+      "unique_particle_volumes_match": true,
+      "before_active_count": 8,
+      "after_active_count": 8,
+      "maximum_absolute_difference": {
+        "position": 0.0,
+        "velocity": 0.0,
+        "composition": 0.0
+      },
+      "exact_probe_match": true,
+      "passed": true
+    },
+    {
+      "mode": "ECalibratedLiquid",
+      "settings_and_flags_match": true,
+      "particle_count_match": true,
+      "unique_particle_volumes_match": true,
+      "before_active_count": 8,
+      "after_active_count": 8,
+      "maximum_absolute_difference": {
+        "position": 0.0,
+        "velocity": 0.0,
+        "composition": 0.0
+      },
+      "exact_probe_match": true,
+      "passed": true
+    }
+  ],
+  "interpretation": "A comparison of these two saved probes only; this does not establish determinism across all runs.",
+  "passed": true,
+  "exact_probe_match": true
+}

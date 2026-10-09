@@ -1,0 +1,32 @@
+PASS Hidden batch starts in F
+PASS synthLemonPeel_Source picks fresh garnish
+MEASURE synthLemonPeel_Source tilt=0 drag local=(-0.852845, -0.608281) separation=0.00555561669
+PASS Fast held drag cannot cross the entire side wall
+PASS Held garnish enters through open mouth
+PASS Contained held garnish is drawn behind glass front
+PASS Inside drag stops on the inner side of wall
+PASS Held rotation keeps full outline outside wall
+PASS Reverse rotation responds immediately after a wall blocks a multi-turn request
+PASS Upright return remains outside wall
+MEASURE synthLemonPeel_Source tilt=0 released separation=-0.00514728855 restSpan=0
+PASS Native released contact stays within one pixel of wall and does not escape
+PASS Wall contact settles without sustained jitter
+PASS Placed garnish cannot be picked again
+PASS Supply still dispenses a fresh piece
+PASS Fresh garnish stays visible over supply jar
+PASS synthLemonPeel_Source picks fresh garnish
+MEASURE synthLemonPeel_Source tilt=35 drag local=(-0.873668, -0.608535) separation=0.00555550866
+PASS Fast held drag cannot cross the entire side wall
+PASS Held garnish enters through open mouth
+PASS Contained held garnish is drawn behind glass front
+PASS Inside drag stops on the inner side of wall
+PASS Held rotation keeps full outline outside wall
+PASS Reverse rotation responds immediately after a wall blocks a multi-turn request
+PASS Upright return remains outside wall
+CONTACT tick=19 before=0.035465423 synced=0.035465423 simulated=-0.00918256 after=-0.00918256 pose=(0.524770, 0.289347)/22.5110188
+MEASURE synthLemonPeel_Source tilt=35 released separation=-0.00918256 restSpan=0
+FAIL Native released contact stays within one pixel of wall and does not escape
+System.Exception: Native released contact stays within one pixel of wall and does not escape
+  at GarnishMotionValidationRunner.Check (System.Boolean ok, System.String text) [0x0002a] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\GarnishMotionValidation.cs:38 
+  at GarnishMotionValidationRunner.WallMotion (Slainte.Bartending.FluidGpuExperiment.FluidExperimentGarnishSource s, System.Single tilt) [0x005be] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\GarnishMotionValidation.cs:146 
+  at GarnishMotionValidationRunner+<Start>d__13.MoveNext () [0x001c7] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\GarnishMotionValidation.cs:59 

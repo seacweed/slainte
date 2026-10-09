@@ -1,0 +1,36 @@
+System.Exception: Unity logged an error:
+Shader error in 'FluidExperimentLiquid(Clone)': syntax error: unexpected token 'point' at kernel ResetParticles at Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentCohesive.hlsl(38) (on d3d11)
+
+Shader error in 'FluidExperimentLiquid(Clone)': 'TryFindNearestCompatibleBoundary': no matching 0 parameter function at kernel ResetParticles at Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentCohesive.hlsl(39) (on d3d11)
+
+Shader error in 'FluidExperimentLiquid(Clone)': syntax error: unexpected token 'point' at kernel ResetParticles at Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentCohesive.hlsl(40) (on d3d11)
+
+InvalidOperationException: FluidExperiment compute kernel failed compilation or is unsupported: ResetParticles
+Slainte.Bartending.FluidGpuExperiment.FluidExperimentGpuLiquid.RequireKernel (System.String name) (at Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.Buffers.cs:17)
+Slainte.Bartending.FluidGpuExperiment.FluidExperimentGpuLiquid.CacheKernels () (at Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.Buffers.cs:22)
+Slainte.Bartending.FluidGpuExperiment.FluidExperimentGpuLiquid.Initialize (Slainte.Bartending.FluidGpuExperiment.FluidExperimentWorld owner) (at Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.cs:75)
+UnityEngine.Debug:LogException(Exception, Object)
+Slainte.Bartending.FluidGpuExperiment.FluidExperimentGpuLiquid:Initialize(FluidExperimentWorld) (at Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.cs:92)
+Slainte.Bartending.FluidGpuExperiment.FluidExperimentComparison:SwitchMode(FluidExperimentMode) (at Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentComparison.cs:113)
+Slainte.Bartending.FluidGpuExperiment.<Start>d__67:MoveNext() (at Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentComparison.cs:86)
+UnityEngine.SetupCoroutine:InvokeMoveNext(IEnumerator, IntPtr)
+
+Shader error in 'FluidExperimentLiquid(Clone)': syntax error: unexpected token 'point' at kernel ResetParticles at Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentCohesive.hlsl(38) (on d3d11)
+
+Shader error in 'FluidExperimentLiquid(Clone)': 'TryFindNearestCompatibleBoundary': no matching 0 parameter function at kernel ResetParticles at Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentCohesive.hlsl(39) (on d3d11)
+
+Shader error in 'FluidExperimentLiquid(Clone)': syntax error: unexpected token 'point' at kernel ResetParticles at Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentCohesive.hlsl(40) (on d3d11)
+
+InvalidOperationException: FluidExperiment compute kernel failed compilation or is unsupported: ResetParticles
+Slainte.Bartending.FluidGpuExperiment.FluidExperimentGpuLiquid.RequireKernel (System.String name) (at Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.Buffers.cs:17)
+Slainte.Bartending.FluidGpuExperiment.FluidExperimentGpuLiquid.CacheKernels () (at Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.Buffers.cs:22)
+Slainte.Bartending.FluidGpuExperiment.FluidExperimentGpuLiquid.Initialize (Slainte.Bartending.FluidGpuExperiment.FluidExperimentWorld owner) (at Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.cs:75)
+UnityEngine.Debug:LogException(Exception, Object)
+Slainte.Bartending.FluidGpuExperiment.FluidExperimentGpuLiquid:Initialize(FluidExperimentWorld) (at Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.cs:92)
+Slainte.Bartending.FluidGpuExperiment.FluidExperimentWorld:OnEnable() (at Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentWorld.cs:63)
+UnityEngine.Behaviour:set_enabled(Boolean)
+Slainte.Bartending.FluidGpuExperiment.FluidExperimentComparison:SwitchMode(FluidExperimentMode) (at Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentComparison.cs:118)
+Slainte.Bartending.FluidGpuExperiment.<Start>d__67:MoveNext() (at Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentComparison.cs:86)
+UnityEngine.SetupCoroutine:InvokeMoveNext(IEnumerator, IntPtr)
+
+  at ExperimentFrameValidationRunner+<Guard>d__15.MoveNext () [0x00053] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\FrameValidation.cs:105 

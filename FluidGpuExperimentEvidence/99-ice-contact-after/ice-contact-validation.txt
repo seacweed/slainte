@@ -1,0 +1,78 @@
+PASS Hidden batch GPU harness; no desktop input
+PASS Authored comparison scene initializes
+PASS Actual F GPU solver is operational
+INFO dt=0.02, settle=6s, sample=2s; limits sleep>=0.8, rms<=0.002, span<=0.01, speed-p95<=0.02; fixed-ice near-liquid mean<=0.1, p95<=0.5
+PASS Fixture cubes acquire the actual glass before pickup
+MEASURE {"name":"Kinematic-Cluster4-Empty","held":false,"liquid":false,"fixedIce":false,"iceCount":4,"ownedIceCount":4,"nearLiquidSamples":0,"deepPenetrationSamples":0,"sleepFraction":1.0,"contactFraction":1.0,"positionRms":0.000004068862835993059,"positionSpan":0.0,"speedP95":0.0,"maximumStep":0.0,"maximumAngularSpeed":0.0,"nearLiquidMeanSpeed":0.0,"nearLiquidSpeedP95":0.0,"maximumLiquidSpeed":0.0,"maximumLedgerError":0.0,"generatedMl":0.0,"retainedMl":0.0,"retiredMl":0.0}
+PASS Kinematic-Cluster4-Empty stationary glass retains all ice
+PASS Fixture cubes acquire the actual glass before pickup
+PASS Liquid fixture admits exactly 40 ml outside every ice solid and its particle-radius clearance
+PASS Explicit labeled boundary particles exercise liquid contact at an ice face
+MEASURE {"name":"Kinematic-Cluster4-F","held":false,"liquid":true,"fixedIce":false,"iceCount":4,"ownedIceCount":4,"nearLiquidSamples":3600,"deepPenetrationSamples":0,"sleepFraction":1.0,"contactFraction":1.0,"positionRms":0.0000030157830224197825,"positionSpan":0.0,"speedP95":0.0,"maximumStep":0.0,"maximumAngularSpeed":0.0,"nearLiquidMeanSpeed":0.001036316156387329,"nearLiquidSpeedP95":0.00480755465105176,"maximumLiquidSpeed":0.03397202119231224,"maximumLedgerError":0.0,"generatedMl":41.0,"retainedMl":41.0,"retiredMl":0.0}
+PASS Kinematic-Cluster4-F stationary glass retains all ice
+PASS Kinematic-Cluster4-F actual GPU particles remain adjacent to ice during the measured interval
+PASS Fixture cubes acquire the actual glass before pickup
+PASS Liquid fixture admits exactly 40 ml outside every ice solid and its particle-radius clearance
+PASS Explicit labeled boundary particles exercise liquid contact at an ice face
+MEASURE {"name":"Kinematic-FixedSingle-F","held":false,"liquid":true,"fixedIce":true,"iceCount":1,"ownedIceCount":1,"nearLiquidSamples":2900,"deepPenetrationSamples":0,"sleepFraction":1.0,"contactFraction":0.0,"positionRms":9.5367431640625e-7,"positionSpan":0.0,"speedP95":0.0,"maximumStep":0.0,"maximumAngularSpeed":0.0,"nearLiquidMeanSpeed":0.00029737476143054664,"nearLiquidSpeedP95":0.001321767340414226,"maximumLiquidSpeed":0.006819337606430054,"maximumLedgerError":0.0,"generatedMl":40.5,"retainedMl":40.5,"retiredMl":0.0}
+PASS Kinematic-FixedSingle-F stationary glass retains all ice
+PASS Kinematic-FixedSingle-F actual GPU particles remain adjacent to ice during the measured interval
+PASS Fixture cubes acquire the actual glass before pickup
+MEASURE {"name":"Held-Cluster4-Empty","held":true,"liquid":false,"fixedIce":false,"iceCount":4,"ownedIceCount":4,"nearLiquidSamples":0,"deepPenetrationSamples":0,"sleepFraction":1.0,"contactFraction":1.0,"positionRms":0.0000027906178274861305,"positionSpan":0.0,"speedP95":0.0,"maximumStep":0.0,"maximumAngularSpeed":0.0,"nearLiquidMeanSpeed":0.0,"nearLiquidSpeedP95":0.0,"maximumLiquidSpeed":0.0,"maximumLedgerError":0.0,"generatedMl":0.0,"retainedMl":0.0,"retiredMl":0.0}
+PASS Held-Cluster4-Empty stationary glass retains all ice
+PASS Fixture cubes acquire the actual glass before pickup
+PASS Liquid fixture admits exactly 40 ml outside every ice solid and its particle-radius clearance
+PASS Explicit labeled boundary particles exercise liquid contact at an ice face
+MEASURE {"name":"Held-Cluster4-F","held":true,"liquid":true,"fixedIce":false,"iceCount":4,"ownedIceCount":4,"nearLiquidSamples":3600,"deepPenetrationSamples":0,"sleepFraction":1.0,"contactFraction":1.0,"positionRms":0.0000028832880616391777,"positionSpan":0.0,"speedP95":0.0,"maximumStep":0.0,"maximumAngularSpeed":0.0,"nearLiquidMeanSpeed":0.0006061192252673209,"nearLiquidSpeedP95":0.0025886837393045427,"maximumLiquidSpeed":0.026526128873229028,"maximumLedgerError":0.0,"generatedMl":41.0,"retainedMl":41.0,"retiredMl":0.0}
+PASS Held-Cluster4-F stationary glass retains all ice
+PASS Held-Cluster4-F actual GPU particles remain adjacent to ice during the measured interval
+PASS Fixture cubes acquire the actual glass before pickup
+PASS Liquid fixture admits exactly 40 ml outside every ice solid and its particle-radius clearance
+PASS Explicit labeled boundary particles exercise liquid contact at an ice face
+MEASURE {"name":"Held-FixedSingle-F","held":true,"liquid":true,"fixedIce":true,"iceCount":1,"ownedIceCount":1,"nearLiquidSamples":2900,"deepPenetrationSamples":0,"sleepFraction":1.0,"contactFraction":0.0,"positionRms":9.5367431640625e-7,"positionSpan":0.0,"speedP95":0.0,"maximumStep":0.0,"maximumAngularSpeed":0.0,"nearLiquidMeanSpeed":0.0003074302221648395,"nearLiquidSpeedP95":0.0014223911566659809,"maximumLiquidSpeed":0.007121006492525339,"maximumLedgerError":0.0,"generatedMl":40.5,"retainedMl":40.5,"retiredMl":0.0}
+PASS Held-FixedSingle-F stationary glass retains all ice
+PASS Held-FixedSingle-F actual GPU particles remain adjacent to ice during the measured interval
+PASS Kinematic-Cluster4-Empty real solid contacts persist rather than hovering above the floor
+PASS Kinematic-Cluster4-Empty dynamic ice sleeps for at least 80% of settled samples
+PASS Kinematic-Cluster4-Empty settled ice stays inside predeclared physical jitter and speed limits
+PASS Kinematic-Cluster4-F real solid contacts persist rather than hovering above the floor
+PASS Kinematic-Cluster4-F dynamic ice sleeps for at least 80% of settled samples
+PASS Kinematic-Cluster4-F settled ice stays inside predeclared physical jitter and speed limits
+PASS Kinematic-Cluster4-F liquid remains bounded and outside ice solids
+PASS Kinematic-Cluster4-F stationary fixture retains at least 99% of generated liquid
+PASS Kinematic-FixedSingle-F liquid remains bounded and outside ice solids
+PASS Kinematic-FixedSingle-F stationary fixture retains at least 99% of generated liquid
+PASS Kinematic-FixedSingle-F stationary ice contact stays inside predeclared liquid-speed limits
+PASS Held-Cluster4-Empty real solid contacts persist rather than hovering above the floor
+PASS Held-Cluster4-Empty dynamic ice sleeps for at least 80% of settled samples
+PASS Held-Cluster4-Empty settled ice stays inside predeclared physical jitter and speed limits
+PASS Held-Cluster4-F real solid contacts persist rather than hovering above the floor
+PASS Held-Cluster4-F dynamic ice sleeps for at least 80% of settled samples
+PASS Held-Cluster4-F settled ice stays inside predeclared physical jitter and speed limits
+PASS Held-Cluster4-F liquid remains bounded and outside ice solids
+PASS Held-Cluster4-F stationary fixture retains at least 99% of generated liquid
+PASS Held-FixedSingle-F liquid remains bounded and outside ice solids
+PASS Held-FixedSingle-F stationary fixture retains at least 99% of generated liquid
+PASS Held-FixedSingle-F stationary ice contact stays inside predeclared liquid-speed limits
+PASS Baseline uses the identical timestep, window and fixture count
+PASS Kinematic-Cluster4-Empty compares equal physical inputs
+PASS Kinematic-Cluster4-Empty reduces previously visible ice jitter by at least 50%
+PASS Kinematic-Cluster4-Empty improves previously deficient sleep by at least 20 percentage points
+PASS Kinematic-Cluster4-F compares equal physical inputs
+PASS Kinematic-Cluster4-F reduces previously visible ice jitter by at least 50%
+PASS Kinematic-Cluster4-F improves previously deficient sleep by at least 20 percentage points
+PASS Kinematic-FixedSingle-F compares equal physical inputs
+PASS Held-Cluster4-Empty compares equal physical inputs
+PASS Held-Cluster4-Empty reduces previously visible ice jitter by at least 50%
+PASS Held-Cluster4-Empty improves previously deficient sleep by at least 20 percentage points
+PASS Held-Cluster4-F compares equal physical inputs
+PASS Held-Cluster4-F reduces previously visible ice jitter by at least 50%
+PASS Held-Cluster4-F improves previously deficient sleep by at least 20 percentage points
+PASS Held-FixedSingle-F compares equal physical inputs
+PASS Fixture cubes acquire the actual glass before pickup
+PASS Moving ice probe queues one stationary particle at its leading face
+FAIL Moving ice keeps its particle finite and outside the solid
+System.Exception: Moving ice keeps its particle finite and outside the solid
+  at ExperimentIceContactValidationRunner.Require (System.Boolean success, System.String label, System.Boolean logPass) [0x00030] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\IceContactValidation.cs:380 
+  at ExperimentIceContactValidationRunner.ValidateMovingIce () [0x00234] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\IceContactValidation.cs:299 
+  at ExperimentIceContactValidationRunner+<Start>d__24.MoveNext () [0x00331] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\IceContactValidation.cs:96 

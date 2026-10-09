@@ -69,6 +69,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             public Dictionary<ItemDef, EmissionTotals> requests;
             public Dictionary<ItemDef, int> indices;
             public Dictionary<ItemDef, double> pendingIngredients;
+            public Dictionary<uint, GarnishFlowFrame> garnishFrames;
         }
 
         private readonly Dictionary<ItemDef, EmissionTotals> emissionTotals = new Dictionary<ItemDef, EmissionTotals>();
@@ -180,6 +181,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private LedgerCapture CaptureLedger()
         {
             var capture = new LedgerCapture { generation = generation, time = simulationTime,
+                garnishFrames = CaptureGarnishFlowFrames(),
                 stateVersion = liquidStateVersion,
                 reservations = reservations - pendingSpawnCount, total = totalEmissions,
                 requests = new Dictionary<ItemDef, EmissionTotals>(emissionTotals),

@@ -99,12 +99,14 @@ namespace Slainte.Bartending.FluidGpuExperiment
             improvedSurfaceProgram.Dispatch(improvedResetKernel, SurfaceDispatchGroups, 1, 1);
         }
 
-        // Rebase both display endpoints after an explicit owner translation. A reset clears
+        // Rebase both display endpoints after an explicit owner pose change. A reset clears
         // every endpoint; this targeted path leaves unrelated fluid interpolation untouched.
-        internal void InvalidateImprovedSurfaceHistory(uint vesselId)
+        internal void InvalidateImprovedSurfaceHistory(uint vesselId, float turn = 0)
         {
             if (improvedSurfaceProgram == null || vesselId == 0) return;
             improvedSurfaceProgram.SetInt("_RebaseVessel", unchecked((int)vesselId));
+            float radians = turn * Mathf.Deg2Rad;
+            improvedSurfaceProgram.SetVector("_RebaseRotation", new Vector2(Mathf.Cos(radians), Mathf.Sin(radians)));
             improvedSurfaceProgram.Dispatch(improvedRebaseKernel, SurfaceDispatchGroups, 1, 1);
         }
 
@@ -239,6 +241,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         // The same authored solid hulls used by CPU/GPU contact provide the visual mask.
         // A virtual open-rim ownership edge and the bottom drain never mask liquid.
+        // F garnishes use sprite overlap only; their physical liquid boundaries remain intact.
         // TransformPoint follows Rigidbody's displayed interpolation rather than its future pose.
         private void UploadImprovedSurfaceHulls()
         {
@@ -247,6 +250,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             {
                 FluidExperimentBody body = world.Items[bodyIndex];
                 if (body == null) continue;
+                if (useCohesivePhysics && body.kind == LabItemKind.Garnish) continue;
                 if (body.collisionProfile != null)
                 {
                     foreach (FluidExperimentHull hull in body.collisionProfile.solids)
@@ -311,7 +315,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             }
             improvedSurfaceHulls.Add(new GpuImprovedSurfaceHull { Bounds = new Vector4(min.x, min.y, max.x, max.y),
                 First = (uint)first, Count = (uint)points.Count,
-                VesselId = body == null ? 0u : body.kind == LabItemKind.Ice && body.ContainingVesselId != 0
+                VesselId = body == null ? 0u : body.IsLooseSolid && body.ContainingVesselId != 0
                     ? body.ContainingVesselId : body.Id,
                 Held = body == null ? 4u : (body.IsHeld ? 1u : 0u) | (body.IsVessel ? 2u : 0u) });
         }

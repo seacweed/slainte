@@ -23,18 +23,21 @@ namespace Slainte.Bartending.FluidGpuExperiment
             resetCompositionKernel = RequireKernel("ResetCompositionBuffers");
             spawnKernel = RequireKernel("SpawnParticles");
             integrateKernel = RequireKernel("IntegrateParticles");
-            sweepKernel = RequireKernel("SweepBoundaries");
+            bool cohesiveIceContacts = useCohesivePhysics && !useImprovedPhysics
+                && activeSolver == FluidExperimentSolver.ReferenceSph;
+            sweepKernel = RequireKernel(cohesiveIceContacts ? "SweepCohesiveIceBoundaries" : "SweepBoundaries");
             snapshotVelocityKernel = RequireKernel("SnapshotVelocities");
             clearGridKernel = RequireKernel("ClearGrid");
             buildGridKernel = RequireKernel("BuildGrid");
             lambdaKernel = RequireKernel("CalculateDensityLambda");
             deltaKernel = RequireKernel("CalculatePositionDelta");
-            applyKernel = RequireKernel("ApplyDeltaAndBoundaries");
-            velocityKernel = RequireKernel("UpdateVelocities");
+            applyKernel = RequireKernel(cohesiveIceContacts ? "ApplyCohesiveIceContacts" : "ApplyDeltaAndBoundaries");
+            velocityKernel = RequireKernel(cohesiveIceContacts ? "UpdateCohesiveContactVelocities" : "UpdateVelocities");
             mixKernel = RequireKernel("MixComposition");
             colorKernel = RequireKernel("UpdateParticleColors");
             techniqueKernel = RequireKernel("ApplyTechnique");
             translateVesselKernel = RequireKernel("TranslateVesselContents");
+            if (useCohesivePhysics) pickupContentsKernel = RequireKernel("CarryPickupContents");
             suspendVesselKernel = RequireKernel("SetVesselSuspended");
             CacheReferenceKernels();
             CacheLedgerKernels();
@@ -196,6 +199,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             BindCommonBuffers(colorKernel);
             BindCommonBuffers(techniqueKernel);
             BindCommonBuffers(translateVesselKernel);
+            if (useCohesivePhysics) BindCommonBuffers(pickupContentsKernel);
             BindCommonBuffers(suspendVesselKernel);
             BindCommonBuffers(streamSurfaceKernel);
             BindCommonBuffers(mergeStreamContactsKernel);
@@ -255,8 +259,9 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         private void DispatchMix()
         {
-            int selectedMixKernel = useImprovedPhysics ? conservativeMixKernel : mixKernel;
-            if (useImprovedPhysics) DispatchForCount(conservativeMixWeightsKernel, particleCapacity);
+            bool conservativeMix = useImprovedPhysics || useCohesivePhysics;
+            int selectedMixKernel = conservativeMix ? conservativeMixKernel : mixKernel;
+            if (conservativeMix) DispatchForCount(conservativeMixWeightsKernel, particleCapacity);
             GraphicsBuffer read = compositionAIsCurrent ? compositionA : compositionB;
             GraphicsBuffer write = compositionAIsCurrent ? compositionB : compositionA;
             simulationShader.SetBuffer(selectedMixKernel, "_CompositionRead", read);

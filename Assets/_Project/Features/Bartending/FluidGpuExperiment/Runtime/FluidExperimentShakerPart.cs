@@ -101,6 +101,11 @@ namespace Slainte.Bartending.FluidGpuExperiment
             SetWorldPose(pointer + pointerOffset, body.rotation);
         }
 
+        internal void RebasePointer(Vector2 pointer)
+        {
+            if (IsHeld) pointerOffset = Position - pointer;
+        }
+
         private void SetWorldPose(Vector2 position, float rotation)
         {
             // A carried cap has its own disabled Rigidbody. Synchronize the carrier's

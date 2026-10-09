@@ -1,0 +1,139 @@
+PASS Hidden GPU batch initializes without desktop input
+PASS Authored default remains F
+PASS Scene has two distinct authored supplies and piece prefabs
+PASS synthLemonPeel_Source has imported non-null source and piece sprites
+PASS synthLemonPeel_Source is a fixed click supply without solid interior
+PASS synthLemonPeel_Source transparent margins do not dispense
+PASS synthLemonPeel_Source actual left-click creates and holds exactly one piece
+PASS synthLemonPeel_Source dispenses its matching sprite
+PASS Repeated Update and held mouse button cannot duplicate spawn
+PASS Held garnish follows the cursor at its centered pivot
+PASS Second click over a jar drops only; no automatic refill or jar pickup
+PASS Released garnish becomes dynamic
+PASS Placed garnish in front of a supply is picked again without duplication
+PASS Clicking inside a glass places garnish without automatically picking up the glass
+PASS Garnish remains pickable over the receiving glass
+PASS Explicit release preserves translation and spin
+PASS Supply stays at its authored position
+PASS nanangaPeel_Source has imported non-null source and piece sprites
+PASS nanangaPeel_Source is a fixed click supply without solid interior
+PASS nanangaPeel_Source transparent margins do not dispense
+PASS nanangaPeel_Source actual left-click creates and holds exactly one piece
+PASS nanangaPeel_Source dispenses its matching sprite
+PASS Repeated Update and held mouse button cannot duplicate spawn
+PASS Held garnish follows the cursor at its centered pivot
+PASS Second click over a jar drops only; no automatic refill or jar pickup
+PASS Released garnish becomes dynamic
+PASS Placed garnish in front of a supply is picked again without duplication
+PASS Clicking inside a glass places garnish without automatically picking up the glass
+PASS Garnish remains pickable over the receiving glass
+PASS Explicit release preserves translation and spin
+PASS Supply stays at its authored position
+PASS UI-covered supply clicks do not create garnish
+PASS Mixed ice/garnish fixture acquires vessel before pickup
+PASS Mixed fixture admits 40 ml outside all solids
+MEASURE held=False, span=0, sleep=200/200, contacts=200/200, near=4100, speed=0.00251132017, penetration=0, activeMl=40
+PASS Mixed contents remain in the stationary vessel
+PASS Garnishes settle with native contacts and sleep; no visible sustained jitter
+PASS Actual liquid contacts stay bounded and outside garnish/ice
+PASS Mixed fixture retains all 40 ml without ledger error
+PASS Mixed ice/garnish fixture acquires vessel before pickup
+PASS Mixed fixture admits 40 ml outside all solids
+MEASURE held=True, span=0, sleep=200/200, contacts=200/200, near=4200, speed=0.00167361728, penetration=0, activeMl=40
+PASS Mixed contents remain in the stationary vessel
+PASS Garnishes settle with native contacts and sleep; no visible sustained jitter
+PASS Actual liquid contacts stay bounded and outside garnish/ice
+PASS Mixed fixture retains all 40 ml without ledger error
+MEASURE transport Ice(Clone), before=(0.013906, -1.617313), after=(0.013906, -1.617313), delta=1.79745257E-07, owner=4, vessel=4
+PASS Fast multi-turn vessel motion transports its solid contents
+MEASURE transport synthLemonPeel_Garnish(Clone), before=(0.050889, -1.311243), after=(0.050890, -1.311244), delta=2.83342558E-07, owner=4, vessel=4
+PASS Fast multi-turn vessel motion transports its solid contents
+MEASURE transport nanangaPeel_Garnish(Clone), before=(0.105793, -1.183601), after=(0.105793, -1.183601), delta=1.1920929E-07, owner=4, vessel=4
+PASS Fast multi-turn vessel motion transports its solid contents
+PASS Moved held vessel retains ice and both garnishes
+PASS Both garnishes can spill through the open mouth
+PASS synthLemonPeel_Source authors gentle F liquid response
+PASS synthLemonPeel_Source authors peel damping without changing mass
+PASS synthLemonPeel_Source moving piece shares held-vessel contact owner
+PASS Moving probe has initial solid and endpoint wall clearance
+PASS Moving probe emits one independent half-ml particle
+MEASURE synthLemonPeel_Source transfer=1 moving liquid travel=0.110260889, vx=0.689833343
+PASS Moving garnish pushes liquid and preserves quantity
+PASS synthLemonPeel_Source moving piece shares held-vessel contact owner
+PASS Moving probe has initial solid and endpoint wall clearance
+PASS Moving probe emits one independent half-ml particle
+MEASURE synthLemonPeel_Source transfer=0.2 moving liquid travel=0.108318523, vx=0.137965858
+PASS Moving garnish pushes liquid and preserves quantity
+PASS synthLemonPeel_Source moving contact reduces peak liquid speed by at least half
+MEASURE carrier owner=4/4, fullA=(7.740552, -0.453239679), gentleA=(7.740552, -0.453237057), fullB=(7.315821, 0.7055056), gentleB=(7.315821, 0.705508232), glassFrom=(0, 1.5), glassTo=(0.02, 1.53), glassTurn=12, pieceFrom=(-0.00313574076, 0.921288252), pieceTo=(0.137253731, 0.963282466), pieceTurn=12
+PASS synthLemonPeel_Source preserves liquid response to pure carrier translation and rotation
+PASS Carrier response remains unchanged with split GPU substeps
+PASS Response tuning preserves actual garnish geometry and sweep trajectory
+PASS synthLemonPeel_Source scales its own translation and angular liquid response
+PASS Non-F boundary response ignores the garnish coefficient
+MEASURE carrier owner=4/4, fullA=(7.740552, -0.453239679), gentleA=(7.740552, -0.453237057), fullB=(7.315821, 0.7055056), gentleB=(7.315821, 0.705508232), glassFrom=(0, 1.5), glassTo=(0.02, 1.53), glassTurn=372, pieceFrom=(-0.00313574076, 0.921288252), pieceTo=(0.137253731, 0.963282466), pieceTurn=12
+PASS synthLemonPeel_Source preserves liquid response to pure carrier translation and rotation
+PASS Carrier response remains unchanged with split GPU substeps
+PASS Response tuning preserves actual garnish geometry and sweep trajectory
+PASS synthLemonPeel_Source scales its own translation and angular liquid response
+PASS Non-F boundary response ignores the garnish coefficient
+PASS Free-drop receiver starts upright at the intended position
+PASS Drop fixture seeds identical 40 ml before garnish spawn
+MEASURE pre-drop glass=(0, 1.5), angle=0, start=(0, 1.5), activeMl=40
+PASS Drop fixture retains a stationary glass and settled 40 ml before impact
+MEASURE synthLemonPeel_Source transfer=1 drop peakVolumeWeightedSpeedSquared=1407.27881, peakUpSpeed=11.8771591, contacts=1199, activeMl=38, ledgerError=0
+PASS Free-drop fixture makes real liquid contacts with conserved total accounting
+PASS Free-drop receiver starts upright at the intended position
+PASS Drop fixture seeds identical 40 ml before garnish spawn
+MEASURE pre-drop glass=(0, 1.5), angle=0, start=(0, 1.5), activeMl=40
+PASS Drop fixture retains a stationary glass and settled 40 ml before impact
+MEASURE synthLemonPeel_Source transfer=0.2 drop peakVolumeWeightedSpeedSquared=619.8588, peakUpSpeed=9.264848, contacts=1281, activeMl=40, ledgerError=0
+PASS Free-drop fixture makes real liquid contacts with conserved total accounting
+PASS synthLemonPeel_Source actual free drop reduces peak liquid energy by at least 20 percent
+PASS synthLemonPeel_Source gentle drop does not increase discarded liquid
+PASS nanangaPeel_Source authors gentle F liquid response
+PASS nanangaPeel_Source authors peel damping without changing mass
+PASS nanangaPeel_Source moving piece shares held-vessel contact owner
+PASS Moving probe has initial solid and endpoint wall clearance
+PASS Moving probe emits one independent half-ml particle
+MEASURE nanangaPeel_Source transfer=1 moving liquid travel=0.107245162, vx=0.6883022
+PASS Moving garnish pushes liquid and preserves quantity
+PASS nanangaPeel_Source moving piece shares held-vessel contact owner
+PASS Moving probe has initial solid and endpoint wall clearance
+PASS Moving probe emits one independent half-ml particle
+MEASURE nanangaPeel_Source transfer=0.2 moving liquid travel=0.09716402, vx=0.140614748
+PASS Moving garnish pushes liquid and preserves quantity
+PASS nanangaPeel_Source moving contact reduces peak liquid speed by at least half
+MEASURE carrier owner=4/4, fullA=(9.463001, 0.5373906), gentleA=(9.463001, 0.5373931), fullB=(8.706173, -0.0992972851), gentleB=(8.706173, -0.09929466), glassFrom=(0, 1.5), glassTo=(0.02, 1.53), glassTurn=12, pieceFrom=(-0.00313574076, 0.921288252), pieceTo=(0.137253731, 0.963282466), pieceTurn=12
+PASS nanangaPeel_Source preserves liquid response to pure carrier translation and rotation
+PASS Carrier response remains unchanged with split GPU substeps
+PASS Response tuning preserves actual garnish geometry and sweep trajectory
+PASS nanangaPeel_Source scales its own translation and angular liquid response
+PASS Non-F boundary response ignores the garnish coefficient
+MEASURE carrier owner=4/4, fullA=(9.463001, 0.5373906), gentleA=(9.463001, 0.5373931), fullB=(8.706173, -0.0992972851), gentleB=(8.706173, -0.09929466), glassFrom=(0, 1.5), glassTo=(0.02, 1.53), glassTurn=372, pieceFrom=(-0.00313574076, 0.921288252), pieceTo=(0.137253731, 0.963282466), pieceTurn=12
+PASS nanangaPeel_Source preserves liquid response to pure carrier translation and rotation
+PASS Carrier response remains unchanged with split GPU substeps
+PASS Response tuning preserves actual garnish geometry and sweep trajectory
+PASS nanangaPeel_Source scales its own translation and angular liquid response
+PASS Non-F boundary response ignores the garnish coefficient
+PASS Free-drop receiver starts upright at the intended position
+PASS Drop fixture seeds identical 40 ml before garnish spawn
+MEASURE pre-drop glass=(0, 1.5), angle=0, start=(0, 1.5), activeMl=40
+PASS Drop fixture retains a stationary glass and settled 40 ml before impact
+MEASURE nanangaPeel_Source transfer=1 drop peakVolumeWeightedSpeedSquared=1923.256, peakUpSpeed=12.8242579, contacts=1373, activeMl=38.5, ledgerError=0
+PASS Free-drop fixture makes real liquid contacts with conserved total accounting
+PASS Free-drop receiver starts upright at the intended position
+PASS Drop fixture seeds identical 40 ml before garnish spawn
+MEASURE pre-drop glass=(0, 1.5), angle=0, start=(0, 1.5), activeMl=40
+PASS Drop fixture retains a stationary glass and settled 40 ml before impact
+MEASURE nanangaPeel_Source transfer=0.2 drop peakVolumeWeightedSpeedSquared=270.396729, peakUpSpeed=6.17404175, contacts=1378, activeMl=40, ledgerError=0
+PASS Free-drop fixture makes real liquid contacts with conserved total accounting
+PASS nanangaPeel_Source actual free drop reduces peak liquid energy by at least 20 percent
+PASS nanangaPeel_Source gentle drop does not increase discarded liquid
+PASS Reset preserves both fixed supplies
+PASS Reset removes generated pieces and clears hand
+PASS DImprovedSurface retains functional click supply
+PASS DImprovedSurface resets held generated garnish
+PASS FCoherentLiquid retains functional click supply
+PASS FCoherentLiquid resets held generated garnish
+PASS No Unity errors, assertions or exceptions

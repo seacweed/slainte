@@ -64,6 +64,20 @@ namespace Slainte.Bartending.FluidGpuExperiment
         [Min(0)] public float improvedSurfaceTension = 1f;
         [Min(0)] public float improvedWetting = 1f;
 
+        [Header("Coherent liquid (F only; keeps the D particle and volume scale)")]
+        [Tooltip("Compression-only projection iterations. Zero disables pressure for controlled comparisons.")]
+        [Range(0, 12)] public int cohesiveDensityIterations = 4;
+        [Min(0)] public float cohesiveDensityCompliance = .000001f;
+        [Range(.05f, .75f)] public float cohesiveMaximumCorrectionRatio = .35f;
+        [Tooltip("Independent finite-range attraction acceleration. Zero disables cohesion; pressure never attracts.")]
+        [Min(0)] public float cohesiveSurfaceTension = 18f;
+        [Tooltip("Multiplier for material full-vector shear damping. Zero disables shear viscosity.")]
+        [Min(0)] public float cohesiveShearViscosity = 1f;
+        [Tooltip("Cohesion starts beyond this fraction of the D smoothing radius and vanishes at the kernel edge.")]
+        [Range(.35f, .9f)] public float cohesiveRestDistanceRatio = .6f;
+        [Tooltip("Optional nearest-flat-wall density surrogate; 0 disables it. Does not calibrate vessel capacity or model corner overlap.")]
+        [Range(0, 1)] public float cohesiveWallDensity;
+
         [Header("Surface rendering (does not affect physics or ml)")]
         public Shader surfaceAccumulationShader;
         public Shader surfaceCompositeShader;
