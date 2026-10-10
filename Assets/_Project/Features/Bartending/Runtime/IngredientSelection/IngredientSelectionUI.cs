@@ -6,11 +6,11 @@ using UnityEngine.UI;
 
 namespace Slainte.Bartending
 {
-    // 바 테이블과 제작 공간 사이에 놓이는 술 선택 공간. 대분류별 재료 줄을 A/D로 슬라이드 전환하고,
-    // 제조가 가능할 때만 제작 공간 뒤에서 올라와 조작을 받는다(사용자가 직접 여닫을 수 없음).
-    // 재고 판단은 BusinessBartendingBootstrap의 병 재고 모델에 위임하고, 여기서는 표시와 입력 가드만 맡는다.
-    // 들고 있는 병을 이 영역에 놓으면 술장 반환으로 처리되도록 반환 영역도 제공한다.
-    public sealed class IngredientSelectionUI : MonoBehaviour, IBottleReturnZone
+    // 바 테이블과 도구 공간 사이에 놓이는 술 선택 공간. 대분류별 재료 줄을 A/D로 슬라이드 전환한다.
+    // 항상 보이지만 제조 중에만 조작을 받고, 제조를 빠져나가도 현재 대분류를 유지해 다음 제조를
+    // 같은 줄에서 시작한다. 재고 판단은 BusinessBartendingBootstrap의 재고 모델에 위임하고,
+    // 여기서는 표시와 입력 가드만 맡는다. 들고 있는 병·가니쉬를 이 영역에 놓으면 반환으로 처리된다.
+    public sealed class IngredientSelectionUI : MonoBehaviour, IBottleReturnZone, ISelectionSlotOwner
     {
         private sealed class CategoryRow
         {
@@ -26,8 +26,6 @@ namespace Slainte.Bartending
 
         [Header("Layout")]
         [SerializeField] private IngredientSlotUI slotPrefab;
-        [Tooltip("Slides down behind the crafting space while crafting is unavailable.")]
-        [SerializeField] private RectTransform contentRoot;
         [Tooltip("Clipping area (RectMask2D) that holds one row per category.")]
         [SerializeField] private RectTransform rowViewport;
         [SerializeField] private float slotSpacing = 40f;
@@ -35,9 +33,6 @@ namespace Slainte.Bartending
 
         [Header("Motion")]
         [SerializeField, Min(0.01f)] private float categorySlideDuration = 0.18f;
-        [Tooltip("Downward distance that fully hides the ingredients behind the crafting space.")]
-        [SerializeField, Min(0f)] private float hiddenOffsetY = 600f;
-        [SerializeField, Min(0.01f)] private float visibilitySlideDuration = 0.3f;
 
         private readonly List<CategoryRow> rows = new List<CategoryRow>();
         private readonly Dictionary<string, List<IngredientSlotUI>> slotsByInventoryId =
@@ -46,17 +41,14 @@ namespace Slainte.Bartending
         private readonly List<LiquorBottleDef> unlockedBuffer = new List<LiquorBottleDef>();
 
         private BusinessBartendingBootstrap bartending;
-        private Vector2 shownPosition;
         private int currentRowIndex = -1;
         private bool initialized;
         private bool craftingAvailable;
-        private bool fullyShown;
-        private Coroutine visibilityRoutine;
         private Coroutine categoryRoutine;
         private CategoryRow slidingOutRow;
         private CategoryRow slidingInRow;
 
-        public bool IsInteractable => craftingAvailable && fullyShown;
+        public bool IsInteractable => craftingAvailable;
 
         private void Awake()
         {
@@ -86,26 +78,15 @@ namespace Slainte.Bartending
                 return;
 
             initialized = true;
-            if (contentRoot == null)
-                contentRoot = transform as RectTransform;
-            shownPosition = contentRoot != null ? contentRoot.anchoredPosition : Vector2.zero;
-
-            // 첫 모드가 적용되기 전에는 제조 불가로 간주해 제작 공간 뒤에 숨긴 채 시작한다.
-            if (contentRoot != null)
-                contentRoot.anchoredPosition = HiddenPosition;
             RebuildRowsIfUnlockChanged();
         }
 
-        private Vector2 HiddenPosition => shownPosition + Vector2.down * hiddenOffsetY;
-
+        // 표시는 항상 유지하고 조작 가능 여부만 바꾼다. 현재 대분류(currentRowIndex)는 건드리지 않아
+        // 제조를 빠져나갔다 다시 들어와도 마지막으로 보던 줄에서 시작한다.
         public void SetCraftingAvailable(bool available)
         {
             EnsureInitialized();
-            // 같은 상태가 반복 통지되면(모드 재적용 등) 진행 중인 슬라이드를 처음부터 다시 틀지 않는다.
-            bool alreadyApplied = available
-                ? craftingAvailable && (fullyShown || visibilityRoutine != null)
-                : !craftingAvailable;
-            if (alreadyApplied)
+            if (craftingAvailable == available)
                 return;
 
             craftingAvailable = available;
@@ -114,14 +95,12 @@ namespace Slainte.Bartending
                 ResolveBartending();
                 RebuildRowsIfUnlockChanged();
                 RefreshAllAvailability();
-                StartVisibilitySlide(shownPosition, () => fullyShown = true);
                 return;
             }
 
-            // 숨기기 시작하는 순간 바로 조작을 막는다 — 내려가는 도중 클릭으로 병이 나오면 안 된다.
-            fullyShown = false;
+            // 제조가 끝나는 즉시 조작을 막고, 올라와 있던 호버도 내린다.
+            FinishCategorySlide();
             ClearHovers();
-            StartVisibilitySlide(HiddenPosition, null);
         }
 
         public void ShowNext()
@@ -153,12 +132,22 @@ namespace Slainte.Bartending
             return session != null && session.HasHeldBartendingItem();
         }
 
-        public void TrySpawn(IngredientSlotUI slot, Vector2 screenPosition)
+        public bool WasPressConsumedByReturn(int pressFrame)
         {
-            if (slot == null || slot.Definition == null || !CanHover(screenPosition))
-                return;
+            return BottleReturnZones.LastReturnFrame >= pressFrame;
+        }
 
-            if (!bartending.TryPlaceBottleFromShelf(slot.Definition, out string failure)
+        // 재료를 클릭하면 병(가니쉬 정의면 가니쉬)을 하나 꺼내 바로 손에 쥐여 준다.
+        public void OnSlotClicked(SelectionSlotUI slot, Vector2 screenPosition)
+        {
+            if (slot is not IngredientSlotUI ingredient
+                || ingredient.Definition == null
+                || !CanHover(screenPosition))
+            {
+                return;
+            }
+
+            if (!bartending.TryTakeFromShelf(ingredient.Definition, screenPosition, out string failure)
                 && !string.IsNullOrWhiteSpace(failure))
             {
                 Debug.LogWarning("[IngredientSelection] " + failure);
@@ -423,47 +412,6 @@ namespace Slainte.Bartending
             Vector2 position = row.Rect.anchoredPosition;
             position.x = x;
             row.Rect.anchoredPosition = position;
-        }
-
-        private void StartVisibilitySlide(Vector2 target, Action onComplete)
-        {
-            if (visibilityRoutine != null)
-            {
-                StopCoroutine(visibilityRoutine);
-                visibilityRoutine = null;
-            }
-
-            if (contentRoot == null)
-            {
-                onComplete?.Invoke();
-                return;
-            }
-
-            if (!isActiveAndEnabled)
-            {
-                contentRoot.anchoredPosition = target;
-                onComplete?.Invoke();
-                return;
-            }
-
-            visibilityRoutine = StartCoroutine(SlideContent(target, onComplete));
-        }
-
-        private IEnumerator SlideContent(Vector2 target, Action onComplete)
-        {
-            Vector2 start = contentRoot.anchoredPosition;
-            float elapsed = 0f;
-            while (elapsed < visibilitySlideDuration)
-            {
-                elapsed += Time.unscaledDeltaTime;
-                float eased = EaseOutCubic(elapsed / visibilitySlideDuration);
-                contentRoot.anchoredPosition = Vector2.LerpUnclamped(start, target, eased);
-                yield return null;
-            }
-
-            contentRoot.anchoredPosition = target;
-            visibilityRoutine = null;
-            onComplete?.Invoke();
         }
 
         private void HandleStockChanged(string inventoryId)

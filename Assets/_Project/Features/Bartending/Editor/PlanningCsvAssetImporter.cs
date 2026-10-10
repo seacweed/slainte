@@ -220,10 +220,15 @@ namespace Slainte.EditorTools
                 || !CatalogMatches(shopCatalog != null ? shopCatalog.bottles : null, expectedBottles);
         }
 
+        // 가니쉬(GarnishDef)는 CSV가 관리하지 않고 카탈로그에 직접 넣는 항목이므로 비교에서 뺀다.
+        // 빼지 않으면 가니쉬가 있다는 이유만으로 매번 재임포트가 필요하다고 판정된다.
         private static bool CatalogMatches(
-            IReadOnlyList<LiquorBottleDef> actual,
+            IReadOnlyList<LiquorBottleDef> catalogBottles,
             IReadOnlyList<LiquorBottleDef> expected)
         {
+            List<LiquorBottleDef> actual = catalogBottles != null
+                ? catalogBottles.Where(bottle => bottle is not GarnishDef).ToList()
+                : null;
             if (actual == null || expected == null || actual.Count != expected.Count)
                 return false;
 
@@ -327,10 +332,13 @@ namespace Slainte.EditorTools
             }
 
             LiquorShopCatalog shopCatalog = LiquorShopCatalog.LoadDefault();
-            Require(shopCatalog != null && shopCatalog.bottles != null
-                && shopCatalog.bottles.Count == 15,
-                $"술장/상점 카탈로그가 CSV 재료 15종과 연결되지 않았습니다: {shopCatalog?.bottles?.Count ?? 0}개");
-            foreach (LiquorBottleDef bottle in shopCatalog.bottles)
+            // CSV가 관리하지 않는 가니쉬는 검증 대상에서 제외한다.
+            List<LiquorBottleDef> csvBottles = shopCatalog != null && shopCatalog.bottles != null
+                ? shopCatalog.bottles.Where(bottle => bottle is not GarnishDef).ToList()
+                : null;
+            Require(csvBottles != null && csvBottles.Count == 15,
+                $"술장/상점 카탈로그가 CSV 재료 15종과 연결되지 않았습니다: {csvBottles?.Count ?? 0}개");
+            foreach (LiquorBottleDef bottle in csvBottles)
             {
                 Require(bottle != null && bottle.item != null,
                     $"술장 재료 {bottle?.id ?? "<null>"}에 제작용 ItemDef가 직접 연결되지 않았습니다.");
@@ -371,7 +379,7 @@ namespace Slainte.EditorTools
                         legacy.item.id,
                         StringComparison.OrdinalIgnoreCase),
                     $"구형 술장 에셋 {path}의 재고 ID 연결이 잘못되었습니다.");
-                LiquorBottleDef canonical = shopCatalog.bottles.FirstOrDefault(
+                LiquorBottleDef canonical = csvBottles.FirstOrDefault(
                     bottle => bottle != null && string.Equals(
                         bottle.id,
                         legacy.InventoryId,
@@ -385,11 +393,11 @@ namespace Slainte.EditorTools
                     $"구형 술장 에셋 {path}의 재고/가격이 기준 CSV와 다릅니다.");
                 linkedLegacyBottleCount++;
             }
-            int expectedLegacyBottleCount = shopCatalog.bottles.Count;
+            int expectedLegacyBottleCount = csvBottles.Count;
             Require(linkedLegacyBottleCount == expectedLegacyBottleCount,
                 $"새 재료에 연결된 구형 술장 에셋 수가 기준 카탈로그와 다릅니다: "
                 + $"{linkedLegacyBottleCount}/{expectedLegacyBottleCount}개");
-            LiquorBottleDef tropical = shopCatalog.bottles.FirstOrDefault(
+            LiquorBottleDef tropical = csvBottles.FirstOrDefault(
                 bottle => bottle != null
                     && string.Equals(bottle.id, "item_1001", StringComparison.OrdinalIgnoreCase));
             Require(tropical != null
@@ -694,7 +702,7 @@ namespace Slainte.EditorTools
                 AssetDatabase.LoadAssetAtPath<LiquorBottleCatalog>(LiquorBottleCatalogPath);
             if (shelfCatalog != null)
             {
-                shelfCatalog.bottles = new List<LiquorBottleDef>(ordered);
+                shelfCatalog.bottles = WithPreservedGarnishes(ordered, shelfCatalog.bottles);
                 EditorUtility.SetDirty(shelfCatalog);
             }
 
@@ -702,9 +710,26 @@ namespace Slainte.EditorTools
                 AssetDatabase.LoadAssetAtPath<LiquorShopCatalog>(LiquorShopCatalogPath);
             if (shopCatalog != null)
             {
-                shopCatalog.bottles = new List<LiquorBottleDef>(ordered);
+                shopCatalog.bottles = WithPreservedGarnishes(ordered, shopCatalog.bottles);
                 EditorUtility.SetDirty(shopCatalog);
             }
+        }
+
+        // 가니쉬(GarnishDef)는 CSV 밖에서 직접 만든 정의라 재구성 때 지우지 않고 CSV 재료 뒤에 그대로 붙인다.
+        private static List<LiquorBottleDef> WithPreservedGarnishes(
+            IEnumerable<LiquorBottleDef> csvBottles,
+            IEnumerable<LiquorBottleDef> previous)
+        {
+            List<LiquorBottleDef> result = new(csvBottles);
+            if (previous == null)
+                return result;
+
+            foreach (LiquorBottleDef bottle in previous)
+            {
+                if (bottle is GarnishDef && !result.Contains(bottle))
+                    result.Add(bottle);
+            }
+            return result;
         }
 
         private static ItemDef UpsertItem(

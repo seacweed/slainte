@@ -49,16 +49,15 @@ BusinessScene
     │   │   ├── CustomerStage  (CharacterStage — 영업/에피소드 공용)
     │   │   ├── (바테이블 배경)
     │   │   ├── BarCounter     (손님 바 테이블, 비물리 — TableSlots: 런타임 슬롯 간격·배율 가이드, 지우지 말 것)
-    │   │   ├── IngredientSelection  (IngredientSelectionUI — 제조 모드에서만 올라옴, A/D 대분류 전환)
-    │   │   ├── DrawerArea     (DrawerUI, 아래쪽 오프스크린 — S키로 이동해서 노출)
+    │   │   ├── IngredientSelection  (IngredientSelectionUI — 항상 표시, 제조 중에만 조작, A/D 대분류 전환)
+    │   │   ├── ToolSelection  (ToolSelectionUI — table_serve_2 배경, 왼쪽 잔·오른쪽 도구 진열)
     │   │   └── CraftingSpace  (제작 공간 — 가림 배경 + CraftingSlotRow + 런타임 BartendingViewport)
     │   └── EpisodeRunner      (FrontCameraRig 밖 — 카메라 이동 영향 없음)
     ├── DialoguePanel          (모든 모드에서 표시)
     │   ├── DialogueController (공용 대화 렌더러)
     │   └── ChoiceContainer    (선택지 버튼 동적 생성)
-    ├── VerticalCameraFollowGroup   (런타임 생성, FrontCameraRig.Awake — 씬 파일에는 없음)
-    │   ├── OrderTicketPanel   (OrderTicketUI, OrderMode/CraftingMode 진입 시 자동 open, EpisodeMode에서 잠금·슬라이드 닫힘)
-    │   └── RecipeBookPanel    (RecipeBookUI, OrderTicketPanel과 동일한 open/lock 패턴)
+    ├── OrderTicketPanel       (OrderTicketUI, OrderMode/CraftingMode 진입 시 자동 open, EpisodeMode에서 잠금·슬라이드 닫힘)
+    ├── RecipeBookPanel        (RecipeBookUI, OrderTicketPanel과 동일한 open/lock 패턴)
     ├── CraftingJudgePanel     (CraftingJudgeUI, CraftingMode에서만 표시 — 임시 판정 버튼 6개, goodjob/badjob/midjob 4종)
     │   ├── GoodJobButton
     │   ├── MidIceButton
@@ -97,7 +96,8 @@ BartendingRuntime (런타임)
 ├── RenderTexture / BartendingViewport
 ├── LiquidPool
 ├── 물리 슬롯들              (줄 중심 = CraftingSlotRow, 없으면 BarCounter)
-├── 술 선택 공간에서 꺼낸 BottleController들
+├── 술 선택 공간에서 꺼낸 BottleController·GarnishController들
+├── 도구 공간용 캐비닛 슬롯(__ToolCabinetSlots)과 대기 중인 잔·도구 인스턴스
 ├── BeakerController
 ├── CobblerShaker
 │   └── CobblerShakerTechniqueController
@@ -111,16 +111,11 @@ BartendingRuntime (런타임)
 
 ## 5. 카메라 추종 UI
 
-`FrontCameraRig.Awake()`는 다음 패널을 런타임 `VerticalCameraFollowGroup` 아래로 옮긴다.
-
-- `OrderTicketPanel`
-- `RecipeBookPanel`
-
-이 그룹은 `frontWorld`의 세로 이동만 따라간다. 서랍을 열 때 배경과 함께 이동하지만 캐릭터 포커스용 가로 이동에는 영향을 받지 않는다. 술 선택 공간과 제작 공간은 이 그룹이 아니라 `FrontCameraRig` 안에 있어 기본적으로 가로·세로 이동을 모두 따라간다.
+도구장 서랍(W/S 세로 이동)은 제거됐다. `FrontCameraRig`는 에피소드 캐릭터 포커스용 가로 팬만 한다. `OrderTicketPanel`/`RecipeBookPanel`은 Canvas 직계 자식이라 팬의 영향을 받지 않고, 술 선택 공간·도구 공간·제작 공간은 `FrontCameraRig` 안에 있어 팬을 따라간다.
 
 다만 제조 모드에서는 `FrontCameraRig.horizontalFixedPanels`에 등록된 패널(`CraftingSlotRow`, `IngredientSelection`)이 가로 팬만 역보정되어 화면 중앙에 고정된다. 제작 공간 배경(`CraftingSpace`)은 보정 대상이 아니므로 그대로 팬을 따라간다. 자세한 내용은 [ingredient-selection.md](../ui/ingredient-selection.md#카메라-가로-팬-보정)를 참고한다.
 
-단축키: 도감 Q, 주문서 E, 대분류 전환 A/D(제조 모드), 도구장 서랍 S/W.
+단축키: 도감 Q, 주문서 E, 대분류 전환 A/D(제조 모드).
 
 ## 6. 모드별 표시
 

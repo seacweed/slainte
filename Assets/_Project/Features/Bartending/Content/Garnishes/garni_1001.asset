@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8086f484534930a49930813cde0f019c, type: 3}
+  m_Name: garni_1001
+  m_EditorClassIdentifier: Assembly-CSharp::GarnishDef
+  id: garni_1001
+  displayName: "\uB098\uB0AD\uB098 \uD544"
+  item: {fileID: 0}
+  sprite: {fileID: 21300000, guid: b8e3f929a44c8f746a09aeddea39d793, type: 3}
+  useContextImages: 1
+  shopBlankSprite: {fileID: 21300000, guid: b8e3f929a44c8f746a09aeddea39d793, type: 3}
+  shelfLidSprite: {fileID: 21300000, guid: b8e3f929a44c8f746a09aeddea39d793, type: 3}
+  barSprite: {fileID: 21300000, guid: d0cb99d20480e4b40aea41604f609183, type: 3}
+  unlockFlagKey: 
+  subCategory: "\uAC00\uB2C8\uC26C"
+  bottleCount: 20
+  defaultBottleCount: 20
+  unitVolume: 1
+  category: {fileID: 11400000, guid: 746ccfe43f7ce564b9e27b7386f618e0, type: 2}
+  price: 10
+  strangeCoinPrice: 1
+  unlockHintType: 0
+  recipeBookIcon: {fileID: 0}
+  recipeBookName: 
+  garnishSprite: {fileID: 21300000, guid: d0cb99d20480e4b40aea41604f609183, type: 3}
+  worldScale: 0.7

@@ -19,6 +19,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d52c13a36954c044687e7d1ce8bcdc8a, type: 2}
   - {fileID: 11400000, guid: d78ee9a45bc7a464bb944ffb8d2a6d9d, type: 2}
   - {fileID: 11400000, guid: 39f8dd8cc50d0824680d06e6f65743dd, type: 2}
+  - {fileID: 11400000, guid: 746ccfe43f7ce564b9e27b7386f618e0, type: 2}
   bottles:
   - {fileID: 11400000, guid: 7c67ad7a0b2a7a347b0c3cf1940e0619, type: 2}
   - {fileID: 11400000, guid: a940fcc38958bb543bfaf331c12bf9b8, type: 2}
@@ -35,6 +36,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: fe5fc9d6c089e8f4dbc569a8b1b124cc, type: 2}
   - {fileID: 11400000, guid: 1711e3f151167f3408743e64116ab6c1, type: 2}
   - {fileID: 11400000, guid: bd45194e8a218374eab37f2afe8ae8f3, type: 2}
+  - {fileID: 11400000, guid: 60c8c406ce0f2cc458d790830309bad2, type: 2}
+  - {fileID: 11400000, guid: 0db547d7811cdcc4681f47cd7eb4e5f3, type: 2}
   deliveryPanelPrefab: {fileID: 7086043699049062762, guid: 971ce6f0900076845a1f8840053f916a, type: 3}
   deliveryItemSlotPrefab: {fileID: 6962774003918184594, guid: 7c6e31e5a21f8224fa7d067f41721ea1, type: 3}
   deliveryCategoryButtonPrefab: {fileID: 3891292751173392382, guid: fd7ca1647d5cb5446a2f9e7d0aaefaf9, type: 3}

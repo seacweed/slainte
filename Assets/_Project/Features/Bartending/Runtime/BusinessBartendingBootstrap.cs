@@ -56,7 +56,7 @@ namespace Slainte.Bartending
         private Camera sourceCamera;
         private int sourceCameraMask;
         private bool slotLayoutTemplateWasActive;
-        private ToolCabinetController toolCabinet;
+        private ToolSelectionUI toolSelection;
         private IceBinController cabinetIceBucket;
         private Transform cabinetSlotRoot;
         private Transform cabinetPickupAnchor;
@@ -156,10 +156,9 @@ namespace Slainte.Bartending
 
             CaptureSlotLayoutTemplate(scene);
             HideCanvasBartendingItems(scene);
-            toolCabinet = GetComponent<ToolCabinetController>();
-            if (toolCabinet == null)
-                toolCabinet = gameObject.AddComponent<ToolCabinetController>();
-            toolCabinet.Initialize(scene, this);
+            // 도구 공간은 씬에 배치된 UI다. 없으면 기존처럼 고정 도구를 테이블에 바로 놓는 방식으로 폴백한다.
+            toolSelection = FindInScene<ToolSelectionUI>(scene);
+            toolSelection?.Initialize(this);
             modeManager.OnModeChanged += HandleModeChanged;
             StartCoroutine(SyncInitialMode());
         }
@@ -214,8 +213,8 @@ namespace Slainte.Bartending
                 slotLayoutTemplate,
                 settings,
                 BartendingSessionBuildMode.Runtime,
-                settings.useToolCabinet && toolCabinet != null && toolCabinet.IsConfigured,
-                toolCabinet != null ? toolCabinet.WorldRenderExtensionRect : null,
+                settings.useToolCabinet && toolSelection != null && toolSelection.IsConfigured,
+                null,
                 anchors);
             if (builtSession == null)
             {
@@ -245,7 +244,7 @@ namespace Slainte.Bartending
             snapRoutine = StartCoroutine(SnapStartingItems(builtSession.StartingTools));
 
             readyRoutine = StartCoroutine(CaptureTargetTracker(builtSession.ServingGlass));
-            toolCabinet?.NotifySessionReady();
+            toolSelection?.NotifySessionReady();
 
             // 메인 카메라가 바텐딩 전용 월드 카메라와 별개라면, 바텐딩 렌더 레이어를 메인 카메라의
             // 컬링에서 빼 같은 오브젝트가 두 카메라에 겹쳐 그려지지 않게 한다.
@@ -306,7 +305,7 @@ namespace Slainte.Bartending
             sessionLiquidPool = null;
 
             RestoreSessionOverrides();
-            toolCabinet?.NotifySessionDestroyed();
+            toolSelection?.NotifySessionDestroyed();
             SessionDestroyed?.Invoke();
         }
 
@@ -541,7 +540,7 @@ namespace Slainte.Bartending
                 // Bind before Store: Occupy is raised while the real world renderers
                 // are still enabled, allowing the cabinet view to cache their exact
                 // projected size instead of inventing a separate icon scale.
-                toolCabinet?.BindCabinetSlot(definition.StableId, cabinetSlot);
+                toolSelection?.BindCabinetSlot(definition.StableId, cabinetSlot);
                 if (!tag.Store(item))
                     Debug.LogWarning("The cabinet tool slot could not store " + definition.StableId);
             }
@@ -582,7 +581,7 @@ namespace Slainte.Bartending
                     cabinetSlot);
                 cabinetInstances[definition.StableId] = instance;
                 BartendingSessionBuilder.ConfigureRotatingMovement(glass, settings);
-                toolCabinet?.BindCabinetSlot(definition.StableId, cabinetSlot);
+                toolSelection?.BindCabinetSlot(definition.StableId, cabinetSlot);
                 if (!tag.Store(glass))
                     Debug.LogWarning("The cabinet glass slot could not store " + definition.StableId);
             }
@@ -706,7 +705,7 @@ namespace Slainte.Bartending
 
             if (item is GlassController glass)
                 RegisterServingGlass(glass);
-            toolCabinet?.NotifyAvailability(id, false);
+            toolSelection?.NotifyAvailability(id, false);
             return true;
         }
 
@@ -813,7 +812,10 @@ namespace Slainte.Bartending
 
             if (item is GlassController glass)
                 UnregisterServingGlass(glass);
-            toolCabinet?.NotifyAvailability(tag.DefinitionId, true);
+            // 제빙기가 없어졌으므로 버킷은 도구 공간에 반납하는 순간 가득 채운다(이미 가득이면 그대로).
+            if (item is IceBinController bucket)
+                bucket.Refill();
+            toolSelection?.NotifyAvailability(tag.DefinitionId, true);
             return true;
         }
 
@@ -845,7 +847,7 @@ namespace Slainte.Bartending
             ToolCabinetRuntimeTag bucketTag =
                 cabinetIceBucket.GetComponent<ToolCabinetRuntimeTag>();
             if (bucketTag != null)
-                toolCabinet?.NotifyAvailability(bucketTag.DefinitionId, true);
+                toolSelection?.NotifyAvailability(bucketTag.DefinitionId, true);
             return true;
         }
 
@@ -952,16 +954,170 @@ namespace Slainte.Bartending
             return true;
         }
 
+        // 술 선택 공간에서 재료를 클릭했을 때 하나를 꺼내 곧바로 손에 쥐여 준다. 가니쉬 정의면 가니쉬를,
+        // 아니면 병을 만든다. 재고 계산은 둘 다 BartendingBottleStock 규칙(총량 - 제작대에 나온 양)을 따른다.
+        public bool TryTakeFromShelf(
+            LiquorBottleDef shelfDefinition,
+            Vector2 screenPosition,
+            out string failure)
+        {
+            failure = string.Empty;
+            if (modeManager == null || modeManager.CurrentMode != GameMode.CraftingMode
+                || sessionRoot == null || sessionWorld == null)
+            {
+                failure = "Ingredients can be taken out only while crafting.";
+                return false;
+            }
+
+            if (shelfDefinition == null || string.IsNullOrWhiteSpace(shelfDefinition.id))
+            {
+                failure = "The shelf definition is empty.";
+                return false;
+            }
+
+            if (HasHeldBartendingItem())
+            {
+                failure = "Put down the item already being held before taking another one.";
+                return false;
+            }
+
+            if (!BartendingViewport.TryGetPointerWorldPosition(
+                    Camera.main,
+                    screenPosition,
+                    out Vector3 pointerWorld))
+            {
+                failure = "The bartending counter is not ready to receive this item.";
+                return false;
+            }
+
+            return shelfDefinition is GarnishDef garnish
+                ? TryTakeGarnish(garnish, pointerWorld, out failure)
+                : TryTakeBottle(shelfDefinition, pointerWorld, out failure);
+        }
+
+        private bool TryTakeBottle(
+            LiquorBottleDef shelfDefinition,
+            Vector3 pointerWorld,
+            out string failure)
+        {
+            failure = string.Empty;
+            ItemDef item = ResolveShelfItem(shelfDefinition);
+            if (item == null || item.type != ItemType.Bottle)
+            {
+                failure = $"No crafting item is linked to {shelfDefinition.id} (inventory ID: {shelfDefinition.InventoryId}).";
+                return false;
+            }
+
+            float spawnAmount = BartendingBottleStock.CalculateNextBottleAmount(
+                bottleStock.GetShelfAmount(shelfDefinition),
+                item.capacityMl);
+            if (spawnAmount <= Mathf.Epsilon)
+            {
+                failure = $"{shelfDefinition.id} is out of stock.";
+                return false;
+            }
+
+            BottleController bottle = CreateBottle(item, shelfDefinition, spawnAmount);
+            if (bottle == null)
+            {
+                failure = "The bottle object could not be created.";
+                return false;
+            }
+
+            // 첫 렌더 프레임부터 포인터 위에 보이도록 시각 중심을 포인터에 맞춰 둔다. 실제 집기는
+            // 병이 Start에서 카메라·렌더러를 캐싱한 뒤 회전축을 포인터에 다시 맞추며 처리한다.
+            MoveVisualCenterTo(bottle.gameObject, pointerWorld);
+            bottle.RequestPickupOnStart();
+            return true;
+        }
+
+        private bool TryTakeGarnish(GarnishDef definition, Vector3 pointerWorld, out string failure)
+        {
+            failure = string.Empty;
+            if (definition.garnishSprite == null)
+            {
+                failure = $"{definition.id} has no garnish sprite.";
+                return false;
+            }
+
+            if (bottleStock.GetShelfAmount(definition) < 1f - 0.01f)
+            {
+                failure = $"{definition.id} is out of stock.";
+                return false;
+            }
+
+            GarnishController garnish = CreateGarnish(definition);
+            if (garnish == null)
+            {
+                failure = "The garnish object could not be created.";
+                return false;
+            }
+
+            MoveVisualCenterTo(garnish.gameObject, pointerWorld);
+            garnish.OnPickedUpAt(pointerWorld);
+            return true;
+        }
+
+        private GarnishController CreateGarnish(GarnishDef definition)
+        {
+            if (definition == null || sessionWorld == null)
+                return null;
+
+            GameObject instance = new GameObject("Garnish_" + definition.id);
+            instance.layer = sessionRenderLayer;
+            instance.transform.SetParent(sessionWorld, false);
+            instance.transform.localPosition = settings.bottlePosition;
+            instance.transform.localScale = Vector3.one * sessionItemScale;
+
+            // 병 프리팹과 같은 정렬 레이어를 써야 병·잔과 같은 층에서 앞뒤가 정해진다.
+            SpriteRenderer reference = settings.bottlePrefab != null
+                ? settings.bottlePrefab.GetComponentInChildren<SpriteRenderer>(true)
+                : null;
+            GarnishController garnish = instance.AddComponent<GarnishController>();
+            garnish.Initialize(
+                definition,
+                reference != null ? reference.sortingLayerID : 0,
+                reference != null ? reference.sortingOrder : 0);
+
+            BartendingNativeSpriteSizer.TryMatchRootToSprite(
+                instance.transform,
+                instance.GetComponent<SpriteRenderer>());
+            instance.transform.localScale *= definition.worldScale;
+            Physics2D.SyncTransforms();
+            bottleStock.Register(garnish, definition);
+            return garnish;
+        }
+
+        private static void MoveVisualCenterTo(GameObject itemObject, Vector3 worldPoint)
+        {
+            if (itemObject == null)
+                return;
+
+            Vector3 target = worldPoint - GetVisualCenterOffset(itemObject);
+            target.z = itemObject.transform.position.z;
+            itemObject.transform.position = target;
+            Physics2D.SyncTransforms();
+        }
+
         public float GetShelfAmount(LiquorBottleDef shelfDefinition)
         {
             return bottleStock.GetShelfAmount(shelfDefinition);
         }
 
-        // 들고 있는 병을 술장에 반환한다. 총량은 따른 양만큼만 이미 줄어 있으므로 병 등록만 해제하면
-        // 남은 잔량이 술장 재고에 그대로 합쳐진다.
+        // 들고 있는 병·가니쉬를 술장에 반환한다. 총량은 실제로 쓴 양만큼만 이미 줄어 있으므로 등록만
+        // 해제하면 남은 양이 술장 재고에 그대로 합쳐진다.
         public bool TryReturnHeldBottleToShelf(out string failure)
         {
             failure = string.Empty;
+            GarnishController heldGarnish = bottleStock.FindPickedUpGarnish();
+            if (heldGarnish != null)
+            {
+                bottleStock.Release(heldGarnish);
+                heldGarnish.PrepareForShelfReturn();
+                Destroy(heldGarnish.gameObject);
+                return true;
+            }
+
             BottleController heldBottle = bottleStock.FindPickedUpBottle();
             if (heldBottle == null)
                 return false;

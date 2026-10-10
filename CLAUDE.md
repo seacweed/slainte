@@ -35,7 +35,7 @@
 - **화면 전용 UI는 공유 컴포넌트에 옵션을 얹지 말고 포크**: 기존 슬롯(`ItemSlotUI`)을 다른 화면(배송)에서 쓰되 그 화면만의 필드로 프리팹 크기/레이아웃 자체가 바뀌어야 하면, 공유 프리팹에 조건부 필드를 추가하지 말고 스크립트+프리팹을 통째로 복제한 전용 클래스를 만들 것(예: `ItemSlotUI` → `DeliveryItemSlotUI`). 그런 화면 전용 프리팹 참조들은 개별 UI 컴포넌트가 아니라 공용 카탈로그 SO(`LiquorShopCatalog`)에 모아두고 `Initialize()` 시점에 주입하는 패턴을 따를 것. 단, 프리팹 구조는 그대로고 크기·글씨 등 값 몇 개만 위치별로 달라야 하는 경우엔 포크 대신 `Setup()`에 선택적 오버라이드 인자를 추가하는 쪽을 우선할 것(예: `RecipeSearchOptionButton`)
 - **컷씬**: `CutsceneManager`/`CutsceneUI`(CoreScene 상주)가 이미지+텍스트 슬라이드를 재생. 트리거 판단(어떤 컷씬을 언제 재생할지)은 `DayFlowController`/`SettlementManager`가 담당하며, 컷씬 종료 후 패널을 곧바로 감추지 않고 `SceneTransitionManager.onFadeOutComplete`(다음 화면이 완전히 덮인 시점)에 감춰 화면 전환 사이 빈 틈이 생기지 않게 함
 - **씬 로컬 MonoBehaviour의 Awake 타이밍 함정**: 비활성 부모(예: 아직 안 열린 패널) 밑에서 `Instantiate`된 오브젝트는 활성화 전까지 Unity가 `Awake()` 호출을 미룸 — 그 전에 외부에서 `Setup()`류를 호출하면 `Awake()`에서만 캐싱한 참조가 아직 없을 수 있음. `Awake()`와 공개 메서드 양쪽에서 호출 가능한 `EnsureInitialized()` 패턴으로 방어할 것
-- **이름 기반 씬 참조 함정**: 런타임 조립 코드(`BusinessBartendingBootstrap`, `ToolCabinetController` 등)는 씬 오브젝트를 이름으로 찾는다(예: `BarCounter`, `TableSlots`, `CraftingSpace`, `CraftingSlotRow`, `DrawerArea`). 못 찾으면 경고만 남기거나 조용히 기존 동작으로 폴백하므로, 이 오브젝트들의 이름을 바꾸거나 삭제하지 말 것
+- **이름 기반 씬 참조 함정**: 런타임 조립 코드(`BusinessBartendingBootstrap` 등)는 씬 오브젝트를 이름으로 찾는다(예: `BarCounter`, `TableSlots`, `CraftingSpace`, `CraftingSlotRow`). 못 찾으면 경고만 남기거나 조용히 기존 동작으로 폴백하므로, 이 오브젝트들의 이름을 바꾸거나 삭제하지 말 것
 - **빌드 포함 함정**: `Shader.Find`처럼 이름·경로 문자열로만 로드하는 에셋은 어떤 에셋도 참조하지 않으면 플레이어 빌드에서 빠진다(에디터에서는 정상 동작해 발견이 늦음). 설정 SO 필드로 직접 참조해 빌드 포함을 보장할 것
 - **핵심 로직 주석 진행 상황**: 주석 규칙은 위 "반드시 지켜야 할 점" 참고. Bartending·Business·Core·Rest·Narrative·MainMenu 핵심 로직 41개 파일에 적용 완료(전체 약 279개 `.cs` 파일 중 나머지는 후속 세션에서 이어감)
 
@@ -62,7 +62,7 @@
 | [docs/ui/restscene-systems.md](docs/ui/restscene-systems.md) | RestScene UI 시스템 (상점, 현황판, 툴팁) |
 | [docs/ui/recipe-book-search.md](docs/ui/recipe-book-search.md) | 도감 검색·상세 UI(RecipeSearchUI, 맛/분위기 태그 팔레트, 레시피 상세, 재료 카테고리 색상), 화면 전환 흐름 |
 | [docs/ui/notification-system.md](docs/ui/notification-system.md) | 알림 시스템(NotificationManager/AffinityNotificationUI/AnimatedSpriteUI), 씬 설정 |
-| [docs/ui/ingredient-selection.md](docs/ui/ingredient-selection.md) | 영업 씬 술 선택 공간(IngredientSelectionUI, A/D 대분류 전환, 병 재고 규칙, 슬롯 위치 기준, 씬 세팅) |
+| [docs/ui/ingredient-selection.md](docs/ui/ingredient-selection.md) | 영업 씬 술 선택 공간(IngredientSelectionUI, A/D 대분류 전환, 병·가니쉬 재고 규칙)과 양옆 도구 공간(ToolSelectionUI), 슬롯 위치 기준, 씬 세팅 |
 | [docs/ui/liquor-shelf.md](docs/ui/liquor-shelf.md) | 기존 술장 시스템(LiquorShelfUI, 배송) — 영업 씬에서 임시 제외, 복원 참고용 |
 | [docs/ui/tv-broadcast-system.md](docs/ui/tv-broadcast-system.md) | TV 방송 시스템 (예보→활성 하루 지연 구조, 5종 효과, 휴식 화면 표시) |
 | [docs/ui/mainmenu-intro.md](docs/ui/mainmenu-intro.md) | 메인메뉴 인트로 연출(팀 로고/타이틀 깜박임·발광/배경 레이어/캐릭터 스포너), 씬 세팅 |

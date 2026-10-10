@@ -123,6 +123,7 @@ namespace Slainte.Bartending
         private Vector3 pointerSyncPivotWorld;
         private Vector3 pointerPivotOffset;
         private bool viewTransitionSuspended;
+        private bool pickupOnStartPending;
 
         private SlotController currentSlot; // 현재 안착되어 있는 슬롯 레퍼런스
         private Vector3 dragVelocity = Vector3.zero;
@@ -162,6 +163,38 @@ namespace Slainte.Bartending
             if (IsGpuLiquidActive())
                 ResetLiquidMouthKinematics();
             interactionOrder = BartendingItemOrder.Attach(gameObject, col);
+
+            if (pickupOnStartPending)
+            {
+                pickupOnStartPending = false;
+                AlignRotationPivotToPointer();
+                PickupBottle();
+            }
+        }
+
+        // 술 선택 공간에서 막 생성한 병을 곧바로 손에 쥐게 한다. 집기는 Start에서 캐싱하는 카메라·
+        // 렌더러·상호작용 순서가 필요하므로 생성 직후가 아니라 Start 끝에서 처리하도록 예약만 한다.
+        public void RequestPickupOnStart()
+        {
+            pickupOnStartPending = true;
+        }
+
+        // 집을 때 커서를 회전축으로 옮기는 동기화가 시작되므로, 미리 회전축을 포인터 위치에 맞춰 두어
+        // 커서가 튀거나 병이 순간이동하지 않게 한다.
+        private void AlignRotationPivotToPointer()
+        {
+            if (!BartendingViewport.TryGetPointerWorldPosition(
+                    mainCamera,
+                    Input.mousePosition,
+                    out Vector3 pointerWorld))
+            {
+                return;
+            }
+
+            Vector3 delta = pointerWorld - GetConfiguredRotationPivotWorldPosition();
+            delta.z = 0f;
+            transform.position += delta;
+            Physics2D.SyncTransforms();
         }
 
         public void Init(ItemDef data)
@@ -1008,7 +1041,11 @@ namespace Slainte.Bartending
 
         // IBartendingItem 인터페이스 완벽 구현부
         public GameObject GameObject => gameObject;
-        public bool IsPickedUp => currentState == BottleState.PickedUp || currentState == BottleState.Tilting || currentState == BottleState.Returning;
+        // 집기 예약 상태도 "들고 있음"으로 보아, Start 전 한 프레임 사이에 다른 물체를 꺼내지 못하게 한다.
+        public bool IsPickedUp => pickupOnStartPending
+            || currentState == BottleState.PickedUp
+            || currentState == BottleState.Tilting
+            || currentState == BottleState.Returning;
 
         public void SnapToSlot(Transform slotTransform, SlotController slot)
         {

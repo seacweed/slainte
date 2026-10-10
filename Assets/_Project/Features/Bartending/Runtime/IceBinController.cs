@@ -49,9 +49,6 @@ namespace Slainte.Bartending
         private LayerMask slotLayer;
         private BucketState currentState;
         private Vector3 pointerOffset;
-        private Vector3 bucketVisualHome;
-        private float refillAccumulator;
-        private bool isCharging;
         private float currentAngle;
         private float pourAccumulator;
         private float mouthLocalY;
@@ -161,7 +158,6 @@ namespace Slainte.Bartending
             remainingIce = MaximumIce;
             shiftState?.SetCount(definition.StableId, remainingIce, MaximumIce);
             RefreshBucketVisual();
-            StopCharging();
             return true;
         }
 
@@ -273,7 +269,6 @@ namespace Slainte.Bartending
             }
 
             HandlePouring();
-            UpdateCharging();
         }
 
         public void SnapToSlot(Transform slotTransform, SlotController slot)
@@ -349,10 +344,7 @@ namespace Slainte.Bartending
             if (currentState != BucketState.PickedUp)
                 return;
 
-            if (ToolCabinetController.TryReturnHeldItem(
-                    this,
-                    inputCamera,
-                    Input.mousePosition))
+            if (ToolReturnZones.TryReturnHeldItem(this, Input.mousePosition))
             {
                 return;
             }
@@ -387,7 +379,6 @@ namespace Slainte.Bartending
             SetRotationImmediately(0f);
             BartendingPointerAnchor.Release(this);
             BartendingSelection.Release(this);
-            StopCharging();
         }
 
         private void SetPosition(Vector3 worldPosition)
@@ -426,7 +417,6 @@ namespace Slainte.Bartending
                 return;
             }
 
-            StopCharging();
             pourAccumulator = 0f;
             currentState = BucketState.Tilting;
         }
@@ -634,54 +624,6 @@ namespace Slainte.Bartending
             RefreshBucketVisual();
         }
 
-        // 손에 든 버킷을 제빙기 위에 올려두면 시간에 비례해 얼음을 채우고(refillAccumulator),
-        // 매 프레임 살짝 흔들리는 연출(bucketVisualRoot 오프셋)로 충전 중임을 표시한다.
-        private void UpdateCharging()
-        {
-            bool shouldCharge = currentState == BucketState.PickedUp
-                && definition != null
-                && remainingIce < MaximumIce
-                && ToolCabinetController.IsHeldItemOverIceMaker(this, inputCamera);
-            if (!shouldCharge)
-            {
-                StopCharging();
-                return;
-            }
-
-            isCharging = true;
-            refillAccumulator += Time.unscaledDeltaTime
-                * Mathf.Max(0.05f, definition.iceRefillPerSecond);
-            int gained = Mathf.FloorToInt(refillAccumulator);
-            if (gained > 0)
-            {
-                refillAccumulator -= gained;
-                remainingIce = Mathf.Min(MaximumIce, remainingIce + gained);
-                shiftState?.SetCount(definition.StableId, remainingIce, MaximumIce);
-                RefreshBucketVisual();
-            }
-
-            if (bucketVisualRoot != null)
-            {
-                float phase = Time.unscaledTime
-                    * Mathf.Max(0f, definition.chargingShakeFrequency);
-                float amplitude = Mathf.Max(0f, definition.chargingShakeAmplitude);
-                bucketVisualRoot.localPosition = bucketVisualHome + new Vector3(
-                    Mathf.Sin(phase) * amplitude,
-                    Mathf.Sin(phase * 0.73f) * amplitude * 0.35f,
-                    0f);
-            }
-        }
-
-        private void StopCharging()
-        {
-            if (!isCharging && refillAccumulator <= 0f)
-                return;
-            isCharging = false;
-            refillAccumulator = 0f;
-            if (bucketVisualRoot != null)
-                bucketVisualRoot.localPosition = bucketVisualHome;
-        }
-
         private bool TryGetPointerWorld(out Vector2 pointer)
         {
             if (BartendingViewport.TryGetPointerWorldPosition(
@@ -794,7 +736,6 @@ namespace Slainte.Bartending
             visualRoot.transform.SetParent(transform, false);
             visualRoot.transform.localPosition = definition.worldVisualOffset;
             bucketVisualRoot = visualRoot.transform;
-            bucketVisualHome = definition.worldVisualOffset;
 
             CreateBucketLayer("BucketBack", definition.worldLayers[0], 10);
             GameObject front = CreateBucketLayer("BucketFront", null, 14);
@@ -887,7 +828,6 @@ namespace Slainte.Bartending
             CancelPointerSynchronization();
             BartendingPointerAnchor.Release(this);
             BartendingSelection.Release(this);
-            StopCharging();
             if (Active == this)
                 Active = null;
         }

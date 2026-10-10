@@ -8,6 +8,7 @@ namespace Slainte.Bartending
     // GameProgress의 병 잔량은 "술장 + 제작대에 나와 있는 병"의 총량을 뜻한다 — 병을 꺼내거나
     // 반환할 때는 총량을 건드리지 않고, 실제로 따라서 줄어든 양만 총량에서 뺀다. 그래서 반환·제조
     // 종료 시 병 오브젝트만 없애면 남은 양이 자동으로 술장에 합쳐지고, 세션 도중 저장돼도 재고가 맞다.
+    // 가니쉬도 같은 규칙을 따른다 — 꺼낸 가니쉬 1개가 "제작대에 나와 있는 양" 1로 계산된다.
     public sealed class BartendingBottleStock
     {
         private sealed class DeployedBottle
@@ -20,10 +21,13 @@ namespace Slainte.Bartending
         private readonly Dictionary<BottleController, DeployedBottle> deployed =
             new Dictionary<BottleController, DeployedBottle>();
         private readonly List<BottleController> releaseBuffer = new List<BottleController>();
+        private readonly Dictionary<GarnishController, string> deployedGarnishes =
+            new Dictionary<GarnishController, string>();
+        private readonly List<GarnishController> garnishReleaseBuffer = new List<GarnishController>();
 
         public event Action<string> StockChanged;
 
-        public int DeployedCount => deployed.Count;
+        public int DeployedCount => deployed.Count + deployedGarnishes.Count;
 
         public float GetTotalAmount(LiquorBottleDef definition)
         {
@@ -86,6 +90,36 @@ namespace Slainte.Bartending
             return null;
         }
 
+        public GarnishController FindPickedUpGarnish()
+        {
+            foreach (GarnishController garnish in deployedGarnishes.Keys)
+            {
+                if (garnish != null && garnish.IsPickedUp)
+                    return garnish;
+            }
+
+            return null;
+        }
+
+        public void Register(GarnishController garnish, GarnishDef definition)
+        {
+            if (garnish == null || definition == null || deployedGarnishes.ContainsKey(garnish))
+                return;
+
+            string inventoryId = definition.InventoryId;
+            deployedGarnishes.Add(garnish, inventoryId);
+            StockChanged?.Invoke(inventoryId);
+        }
+
+        public void Release(GarnishController garnish)
+        {
+            if (garnish == null || !deployedGarnishes.TryGetValue(garnish, out string inventoryId))
+                return;
+
+            deployedGarnishes.Remove(garnish);
+            StockChanged?.Invoke(inventoryId);
+        }
+
         public void Register(BottleController bottle, LiquorBottleDef definition)
         {
             if (bottle == null || definition == null || deployed.ContainsKey(bottle))
@@ -134,6 +168,18 @@ namespace Slainte.Bartending
             }
 
             releaseBuffer.Clear();
+
+            // 가니쉬는 구독한 이벤트가 없으므로 파괴 여부와 관계없이 목록에서 빼고 알리기만 한다.
+            garnishReleaseBuffer.Clear();
+            garnishReleaseBuffer.AddRange(deployedGarnishes.Keys);
+            for (int i = 0; i < garnishReleaseBuffer.Count; i++)
+            {
+                GarnishController garnish = garnishReleaseBuffer[i];
+                string inventoryId = deployedGarnishes[garnish];
+                deployedGarnishes.Remove(garnish);
+                StockChanged?.Invoke(inventoryId);
+            }
+            garnishReleaseBuffer.Clear();
         }
 
         private float GetDeployedAmount(string inventoryId)
@@ -145,6 +191,15 @@ namespace Slainte.Bartending
                     && string.Equals(pair.Value.InventoryId, inventoryId, StringComparison.OrdinalIgnoreCase))
                 {
                     amount += Mathf.Max(0f, pair.Key.CurrentCapacity);
+                }
+            }
+
+            foreach (KeyValuePair<GarnishController, string> pair in deployedGarnishes)
+            {
+                if (pair.Key != null
+                    && string.Equals(pair.Value, inventoryId, StringComparison.OrdinalIgnoreCase))
+                {
+                    amount += 1f;
                 }
             }
 

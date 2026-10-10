@@ -1,5 +1,4 @@
 using Slainte.Bartending;
-using Slainte.Shared.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
@@ -8,7 +7,6 @@ public class InputRouter : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private GameModeManager    modeManager;
-    [SerializeField] private FrontCameraRig     cameraRig;
     [SerializeField] private RecipeBookUI       recipeBook;
     [SerializeField] private OrderTicketManager orderTicketManager;
     [SerializeField] private IngredientSelectionUI ingredientSelection;
@@ -38,7 +36,6 @@ public class InputRouter : MonoBehaviour
         switch (mode)
         {
             case GameMode.OrderMode:
-                HandleCameraInput(keyboard, searchFocused);
                 if (advancePressed) dialogue?.Advance();
                 if (bookPressed)    recipeBook?.Toggle();
                 if (ticketPressed)  orderTicketManager?.ToggleTicket();
@@ -56,7 +53,6 @@ public class InputRouter : MonoBehaviour
                 break;
 
             case GameMode.CraftingMode:
-                HandleCameraInput(keyboard, searchFocused);
                 if (advancePressed) RouteAdvanceToEncounter();
                 if (bookPressed)    recipeBook?.Toggle();
                 if (ticketPressed)  orderTicketManager?.ToggleTicket();
@@ -65,14 +61,6 @@ public class InputRouter : MonoBehaviour
                 if (nextPressed)     ingredientSelection?.ShowNext();
                 break;
         }
-    }
-
-    private void HandleCameraInput(Keyboard keyboard, bool searchFocused)
-    {
-        if (cameraRig == null || cameraRig.IsAnimating || searchFocused) return;
-
-        if (WasPressed(keyboard?.sKey, KeyCode.S)) cameraRig.OnCameraInput(CameraDirection.DrawerOpen);
-        if (WasPressed(keyboard?.wKey, KeyCode.W)) cameraRig.OnCameraInput(CameraDirection.DrawerClose);
     }
 
     private static bool WasPressed(KeyControl inputSystemKey, KeyCode legacyKey)

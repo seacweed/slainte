@@ -73,7 +73,7 @@ public class GameModeManager : SceneSingleton<GameModeManager>
         recipeBook?.SetInteractable(!isEpisode);
         orderTicketUI?.SetInteractable(!isEpisode);
         liquorShelf?.SetInteractable(!isEpisode);
-        // 술 선택 공간은 사용자가 여닫지 못하고, 제조 가능 여부에 따라서만 올라오거나 내려간다.
+        // 술 선택 공간은 항상 보이고 제조 중에만 조작을 받는다(도구 공간은 바텐딩 세션 유무로 스스로 판단).
         ingredientSelection?.SetCraftingAvailable(mode == GameMode.CraftingMode);
 
         // 에피소드 대화 중에는 카메라가 캐릭터를 따라 가로로 팬한 상태일 수 있다. 제조 구간에서는
