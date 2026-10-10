@@ -208,7 +208,13 @@ public class CustomerSpawner : MonoBehaviour
                 characterKey,
                 out speakerName,
                 out nameColor);
-            dialogue?.ShowSingleLine(speakerName, fallbackOrderLine, nameColor);
+            dialogue?.ShowSingleLine(new DialogueLine
+            {
+                speakerKey = characterKey,
+                speakerName = speakerName,
+                text = fallbackOrderLine,
+                nameColor = nameColor
+            });
             return dialogue != null;
         }
         else

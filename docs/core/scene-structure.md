@@ -111,9 +111,7 @@ BartendingRuntime (런타임)
 
 ## 5. 카메라 추종 UI
 
-도구장 서랍(W/S 세로 이동)은 제거됐다. `FrontCameraRig`는 에피소드 캐릭터 포커스용 가로 팬만 한다. `OrderTicketPanel`/`RecipeBookPanel`은 Canvas 직계 자식이라 팬의 영향을 받지 않고, 술 선택 공간·도구 공간·제작 공간은 `FrontCameraRig` 안에 있어 팬을 따라간다.
-
-다만 제조 모드에서는 `FrontCameraRig.horizontalFixedPanels`에 등록된 패널(`CraftingSlotRow`, `IngredientSelection`)이 가로 팬만 역보정되어 화면 중앙에 고정된다. 제작 공간 배경(`CraftingSpace`)은 보정 대상이 아니므로 그대로 팬을 따라간다. 자세한 내용은 [ingredient-selection.md](../ui/ingredient-selection.md#카메라-가로-팬-보정)를 참고한다.
+`FrontCameraRig`(2560×1440)는 대화 중 화자 슬롯으로 확대·이동하고, 제조에 들어가기 전에만 QHD 전체로 돌아온다([character-presentation.md](../gameplay/character-presentation.md#카메라-확대-포커스-frontcamerarig)). `OrderTicketPanel`/`RecipeBookPanel`·`DialoguePanel`은 리그 밖이라 확대되지 않고, 술 선택 공간·도구 공간·제작 공간은 리그 안에 있어 함께 확대된다(제조 중에는 항상 전체 화면).
 
 단축키: 도감 Q, 주문서 E, 대분류 전환 A/D(제조 모드).
 

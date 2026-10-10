@@ -104,7 +104,5 @@ CustomerOrderData
 - `UIItemDraggable`: **Move** 모드(술병 — 원본 이동) / **Copy** 모드(잔/도구 — 원본 유지, 복사본 배치)
 - `UIDropSlot`: 유효 드롭 타겟. Tool은 `toolPlaceableOnTable=true`인 경우만 허용
 - `ShelfUI` / `DrawerUI`: `ItemDef` 배열에서 아이템 UI 생성
-- `FrontCameraRig`: `frontWorld` RectTransform을 가로로 이동시켜 화면 전체를 pan. 도구장 서랍(W/S)은 제거됐다.
-  - **에피소드 캐릭터 포커스**: `_focusX` 필드로 현재 X 오프셋(canvas units)을 추적. `PanToWorldCenterX(worldX)` — world X 좌표가 화면 중앙에 오도록 `_focusX`를 계산 후 이동. `ResetPan()` — `_focusX = 0`, 원점 복귀.
-  - **제조 중 가로 고정**: `SetHorizontalFixed(bool)` — `horizontalFixedPanels`(`CraftingSlotRow`, `IngredientSelection`)의 `x`를 `기준값 - _focusX`로 한 번에 옮겨 화면 가로 위치에 고정한다. `GameModeManager`가 `CraftingMode` 진입·이탈 시 켜고 끈다([ingredient-selection.md](../ui/ingredient-selection.md#카메라-가로-팬-보정)).
-  - **주의**: `VisualOverlay`가 `frontContainer`(FrontCameraRig 자식)에 reparent된 이후에는 CharacterStage나 슬롯을 이동하면 Visual/Overlay가 desynced됨. 수평 pan은 반드시 `FrontCameraRig` 이동으로만 처리할 것. 배경/바 테이블 에셋은 화면보다 넓어야 함(와이드 에셋 필요, 현재 미완).
+- `FrontCameraRig`: 대화 중 화자 슬롯으로 `frontWorld`를 확대·이동한다(QHD 밖으로 나가지 않음). 자세한 규칙은 [character-presentation.md](character-presentation.md#카메라-확대-포커스-frontcamerarig).
+  - **주의**: `VisualOverlay`가 `frontContainer`(FrontCameraRig 자식)에 reparent된 이후에는 CharacterStage나 슬롯을 이동하면 Visual/Overlay가 desynced됨. 화면 이동·확대는 반드시 `FrontCameraRig`로만 처리할 것.

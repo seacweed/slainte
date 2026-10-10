@@ -1,135 +1,187 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-// 앞 화면(FrontWorld)을 가로로 팬해 에피소드 대화 중 캐릭터를 화면 중앙에 두는 카메라 리그.
-// 도구장 서랍(W/S 세로 이동)은 술 선택 공간 양옆의 도구 공간으로 대체되어 제거됐다.
+// 앞 화면(FrontWorld)을 확대·이동해 대화 중인 캐릭터에 시선을 모으는 카메라 리그.
+// 상태는 "확대 여부 + 카메라 중심 X" 두 값뿐이다. 확대는 QHD 윗변을 고정한 채 아래쪽
+// croppedBottom 만큼이 잘리는 배율로 하고, 중심 X는 보이는 영역이 FrontWorld(QHD) 밖으로
+// 나가지 않는 범위로 제한한다. 목표가 바뀔 때마다 ease를 처음부터 다시 틀면 이동 중 속도가
+// 0으로 끊기므로, 속도를 이어받는 SmoothDamp로 목표를 따라가게 한다.
 public class FrontCameraRig : MonoBehaviour
 {
+    private const float FocusSettleEpsilon = 0.05f;
+    private const float ZoomSettleEpsilon = 0.0005f;
+
     [Header("Move this (FrontWorld RectTransform)")]
     [SerializeField] RectTransform frontWorld;
 
-    [Header("Motion")]
-    [SerializeField] float moveTime = 0.35f;
-    [SerializeField] AnimationCurve ease = AnimationCurve.EaseInOut(0, 0, 1, 1);
-
     [Header("Focus")]
     [SerializeField] Canvas rootCanvas;
+    [Tooltip("Canvas pixels cut off at the bottom while zoomed in. The top edge stays fixed.")]
+    [SerializeField, Min(0f)] float croppedBottom = 140f;
+    [Tooltip("SmoothDamp time for both zoom and horizontal focus.")]
+    [SerializeField, Min(0.01f)] float smoothTime = 0.25f;
 
-    [Header("Horizontal-Fixed Panels")]
-    [Tooltip("Front-world children that must stay horizontally centered on screen while SetHorizontalFixed(true) is active (e.g. crafting slot row, ingredient selection).")]
-    [SerializeField] RectTransform[] horizontalFixedPanels;
-
+    public RectTransform FrontWorld => frontWorld != null ? frontWorld : (RectTransform)transform;
     public bool IsAnimating => _animating;
-    public event System.Action MoveStarted;
-    public event System.Action MoveUpdated;
-    public event System.Action MoveCompleted;
+    public bool IsAtFullView => !_animating && !_zoomTarget && _zoom <= ZoomSettleEpsilon;
+    public event Action MoveStarted;
+    public event Action MoveUpdated;
+    public event Action MoveCompleted;
 
-    float _focusX = 0f;
+    // _zoom: 0 = QHD 전체, 1 = 확대. 실제 배율은 이 값으로 1과 ZoomedScale 사이를 보간한다.
+    float _zoom;
+    float _zoomVelocity;
+    bool  _zoomTarget;
+    float _focusX;
+    float _focusVelocity;
+    float _focusTargetX;
+    bool  _animating;
+    Vector2 _basePosition;
+    readonly List<Action> _fullViewCallbacks = new List<Action>();
 
-    Vector2        _fromPos, _toPos;
-    float          _t;
-    bool           _animating;
-    System.Action  _onMoveComplete;
-
-    bool    _horizontalFixed;
-    float[] _fixedBaseX;
+    float ZoomedScale
+    {
+        get
+        {
+            float height = frontWorld != null ? frontWorld.rect.height : 0f;
+            return height > croppedBottom + 1f ? height / (height - croppedBottom) : 1f;
+        }
+    }
 
     void Awake()
     {
-        if (frontWorld == null)  frontWorld  = (RectTransform)transform;
-        if (rootCanvas == null)  rootCanvas  = GetComponentInParent<Canvas>();
-        frontWorld.anchoredPosition = Vector2.zero;
-
-        CacheHorizontalFixedBase();
+        if (frontWorld == null) frontWorld = (RectTransform)transform;
+        if (rootCanvas == null) rootCanvas = GetComponentInParent<Canvas>();
+        _basePosition = frontWorld.anchoredPosition;
+        Apply();
     }
 
     void Update()
     {
         if (!_animating) return;
 
-        _t += Time.unscaledDeltaTime / Mathf.Max(0.0001f, moveTime);
-        float k = ease.Evaluate(Mathf.Clamp01(_t));
-        frontWorld.anchoredPosition = Vector2.LerpUnclamped(_fromPos, _toPos, k);
+        float zoomTarget = _zoomTarget ? 1f : 0f;
+        float dt = Time.unscaledDeltaTime;
+        _zoom   = Mathf.SmoothDamp(_zoom, zoomTarget, ref _zoomVelocity, smoothTime, Mathf.Infinity, dt);
+        _focusX = Mathf.SmoothDamp(_focusX, _focusTargetX, ref _focusVelocity, smoothTime, Mathf.Infinity, dt);
+
+        // SmoothDamp는 목표에 점근만 하므로 충분히 가까워지면 정확히 맞추고 이동을 끝낸다.
+        bool settled = IsNear(zoomTarget, _focusTargetX);
+        if (settled)
+        {
+            _zoom = zoomTarget;
+            _focusX = _focusTargetX;
+            _zoomVelocity = 0f;
+            _focusVelocity = 0f;
+        }
+
+        Apply();
         MoveUpdated?.Invoke();
 
-        if (_t >= 1f)
+        if (settled)
         {
-            frontWorld.anchoredPosition = _toPos;
             _animating = false;
-            _onMoveComplete?.Invoke();
-            _onMoveComplete = null;
             MoveCompleted?.Invoke();
+            FlushFullViewCallbacks();
         }
     }
 
-    private void CacheHorizontalFixedBase()
+    // FrontWorld 로컬 X(확대 전 좌표)가 화면 가운데에 오도록 확대한다. 범위 밖이면 가능한 만큼만 이동한다.
+    public void FocusOn(float localX)
     {
-        if (horizontalFixedPanels == null || horizontalFixedPanels.Length == 0) return;
-
-        _fixedBaseX = new float[horizontalFixedPanels.Length];
-        for (int i = 0; i < horizontalFixedPanels.Length; i++)
-        {
-            RectTransform panel = horizontalFixedPanels[i];
-            _fixedBaseX[i] = panel != null ? panel.anchoredPosition.x : 0f;
-        }
+        SetTarget(true, ClampFocusX(localX));
     }
 
-    // 지정된 패널을 팬 반대 방향으로 한 번에 옮겨 화면 가로
-    // 위치를 고정한다. 보간하지 않는 이유: 패널이 가려져 있는 동안 자리만 바꿔 놓아야
-    // 제작 공간이 열릴 때 재료가 좌우로 미끄러지며 등장하지 않기 때문이다.
-    private void SyncHorizontalFixed()
+    // 현재 포커스를 유지한다. 아직 확대 전이면 지금 중심 그대로 확대만 한다.
+    public void KeepFocus()
     {
-        if (_fixedBaseX == null) return;
-
-        float compensation = _horizontalFixed ? -_focusX : 0f;
-        for (int i = 0; i < horizontalFixedPanels.Length; i++)
-        {
-            RectTransform panel = horizontalFixedPanels[i];
-            if (panel == null) continue;
-
-            Vector2 p = panel.anchoredPosition;
-            p.x = _fixedBaseX[i] + compensation;
-            panel.anchoredPosition = p;
-        }
+        SetTarget(true, _zoomTarget ? _focusTargetX : ClampFocusX(_focusX));
     }
 
-    // 제조처럼 조작 영역이 화면 중앙에 있어야 하는 구간에서 켠다. 모드 전환(GameModeManager)
-    // 시점에 호출되므로, 바텐딩 세션이 만들어지기 전(진입)·해체되기 전(이탈) 같은 프레임에
-    // 자리가 잡혀 슬롯 위의 잔·병이 튀지 않는다.
-    public void SetHorizontalFixed(bool fixedOnScreen)
+    // QHD 전체 화면으로 되돌린다. 이미 전체 화면이면 콜백을 즉시 호출한다.
+    public void ResetView(Action onComplete = null)
     {
-        if (_horizontalFixed == fixedOnScreen) return;
+        SetTarget(false, 0f);
+        if (onComplete == null)
+            return;
 
-        _horizontalFixed = fixedOnScreen;
-        SyncHorizontalFixed();
+        if (IsAtFullView)
+            onComplete();
+        else
+            _fullViewCallbacks.Add(onComplete);
     }
 
-    public void PanToWorldCenterX(float worldX)
+    // 목표 상태(이동이 끝난 뒤) 기준으로, 확대 전 로컬 X가 화면 가운데에서 몇 캔버스 픽셀 떨어져
+    // 보일지 계산한다. 이동 도중에도 최종 위치를 알 수 있어 말풍선을 처음부터 제자리에 둘 수 있다.
+    public float ProjectToScreenAtTarget(float localX)
     {
-        if (rootCanvas == null) return;
-        float delta = (Screen.width * 0.5f - worldX) / rootCanvas.scaleFactor;
-        _focusX = frontWorld.anchoredPosition.x + delta;
-        // 새 포커스 기준으로 자리를 다시 잡아, 고정 패널이 팬을 따라가지 않게 한다.
-        SyncHorizontalFixed();
-        BeginMove(new Vector2(_focusX, frontWorld.anchoredPosition.y));
+        float scale = _zoomTarget ? ZoomedScale : 1f;
+        float focus = _zoomTarget ? _focusTargetX : 0f;
+        return (localX - focus) * scale;
     }
 
-    public void ResetPan()
+    // 확대 배율에서 보이는 반폭(로컬 단위)만큼 FrontWorld 양끝에서 안쪽으로 들인 범위로 중심을 제한한다.
+    public float ClampFocusX(float localX)
     {
-        _focusX = 0f;
-        SyncHorizontalFixed();
-        BeginMove(Vector2.zero);
+        if (frontWorld == null)
+            return localX;
+
+        float viewHalfWidth = ResolveCanvasHalfWidth() / ZoomedScale;
+        float left  = -frontWorld.rect.width * frontWorld.pivot.x + viewHalfWidth;
+        float right =  frontWorld.rect.width * (1f - frontWorld.pivot.x) - viewHalfWidth;
+        return left > right ? (left + right) * 0.5f : Mathf.Clamp(localX, left, right);
     }
 
-    private void BeginMove(Vector2 target, System.Action onComplete = null)
+    private void SetTarget(bool zoomed, float focusX)
     {
-        bool wasAnimating = _animating;
-        _fromPos        = frontWorld.anchoredPosition;
-        _toPos          = target;
-        _t              = 0f;
-        _animating      = true;
-        _onMoveComplete = onComplete;
-        if (!wasAnimating)
-            MoveStarted?.Invoke();
+        _zoomTarget = zoomed;
+        _focusTargetX = zoomed ? focusX : 0f;
+
+        if (_animating || IsNear(zoomed ? 1f : 0f, _focusTargetX))
+            return;
+
+        _animating = true;
+        MoveStarted?.Invoke();
+    }
+
+    private bool IsNear(float zoomTarget, float focusTarget)
+    {
+        return Mathf.Abs(_zoom - zoomTarget) <= ZoomSettleEpsilon
+            && Mathf.Abs(_focusX - focusTarget) <= FocusSettleEpsilon;
+    }
+
+    // 배율 s, 중심 X f일 때 로컬 (f, top)이 화면 (가운데, top)에 오도록 위치를 잡는다.
+    // 피벗 기준 로컬 좌표가 s배 되므로 x = -s·f, y = top·(1 - s)이면 윗변이 제자리에 남는다.
+    private void Apply()
+    {
+        if (frontWorld == null)
+            return;
+
+        float scale = Mathf.Lerp(1f, ZoomedScale, _zoom);
+        float top = frontWorld.rect.height * (1f - frontWorld.pivot.y);
+        frontWorld.localScale = new Vector3(scale, scale, 1f);
+        frontWorld.anchoredPosition = _basePosition + new Vector2(-scale * _focusX, top * (1f - scale));
+    }
+
+    private float ResolveCanvasHalfWidth()
+    {
+        RectTransform canvasRect = rootCanvas != null ? rootCanvas.transform as RectTransform : null;
+        if (canvasRect != null)
+            return canvasRect.rect.width * 0.5f;
+        return frontWorld != null ? frontWorld.rect.width * 0.5f : 0f;
+    }
+
+    private void FlushFullViewCallbacks()
+    {
+        if (!IsAtFullView || _fullViewCallbacks.Count == 0)
+            return;
+
+        // 콜백 안에서 다시 ResetView를 부를 수 있으므로 복사본으로 호출한다.
+        Action[] callbacks = _fullViewCallbacks.ToArray();
+        _fullViewCallbacks.Clear();
+        for (int i = 0; i < callbacks.Length; i++)
+            callbacks[i]?.Invoke();
     }
 
     private void OnDisable()
@@ -137,8 +189,14 @@ public class FrontCameraRig : MonoBehaviour
         if (!_animating)
             return;
 
+        // 비활성화되면 Update가 돌지 않으므로 목표 상태로 즉시 맞추고 대기 중인 콜백을 처리한다.
+        _zoom = _zoomTarget ? 1f : 0f;
+        _focusX = _focusTargetX;
+        _zoomVelocity = 0f;
+        _focusVelocity = 0f;
         _animating = false;
-        _onMoveComplete = null;
+        Apply();
         MoveCompleted?.Invoke();
+        FlushFullViewCallbacks();
     }
 }

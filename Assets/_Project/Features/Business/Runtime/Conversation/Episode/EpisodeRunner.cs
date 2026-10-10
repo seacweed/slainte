@@ -13,7 +13,6 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
     [Header("References")]
     [SerializeField] private GameModeManager   modeManager;
     [SerializeField] private CharacterStage    characterStage;
-    [SerializeField] private FrontCameraRig    cameraRig;
     [SerializeField] private DialogueController dialogue;
     [SerializeField] private CharacterDatabase  characterDB;
 
@@ -49,7 +48,6 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
     private EpisodeCraftingBridge _craftingBridge;
 
     private readonly List<EpisodeChoiceButtonUI> _choiceButtons = new();
-    private Coroutine _panCoroutine;
 
     public bool IsRunning => _isRunning;
     public bool IsUsingManualCrafting => _isUsingManualCrafting;
@@ -86,12 +84,6 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         {
             StopCoroutine(_runRoutine);
             _runRoutine = null;
-        }
-
-        if (_panCoroutine != null)
-        {
-            StopCoroutine(_panCoroutine);
-            _panCoroutine = null;
         }
 
         _waitingForChoice = false;
@@ -146,7 +138,6 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         // 시작 전 무대를 비운다 — 등장 캐릭터는 첫 노드의 NODE_CHARS가 정한다.
         characterStage?.ShowCharacters(null, () => done = true);
         if (characterStage == null) done = true;
-        StartPanCoroutine();
 
         while (!done)
             yield return null;
@@ -199,7 +190,6 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
             bool shown = false;
             characterStage?.ShowCharacters(_currentNode.characters, () => shown = true);
             if (characterStage == null) shown = true;
-            StartPanCoroutine();
 
             while (!shown)
                 yield return null;
@@ -234,7 +224,14 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         _consecutiveRouterHops = 0;
         string speakerName = ResolveSpeakerName(_currentNode);
         Color speakerColor = ResolveSpeakerColor(_currentNode);
-        dialogue?.ShowSingleLine(speakerName, _currentNode.text, speakerColor);
+        // 화자 키를 함께 넘겨야 카메라 포커스·말풍선 배치(DialogueFocusPresenter)가 화자의 슬롯을 찾는다.
+        dialogue?.ShowSingleLine(new DialogueLine
+        {
+            speakerKey = _currentNode.speakerKey,
+            speakerName = speakerName,
+            text = _currentNode.text,
+            nameColor = speakerColor
+        });
 
         while (dialogue != null && dialogue.IsTyping)
             yield return null;
@@ -511,19 +508,6 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
             Destroy(choiceRoot.GetChild(i).gameObject);
     }
 
-    private void StartPanCoroutine()
-    {
-        if (cameraRig == null || characterStage == null) return;
-        if (_panCoroutine != null) StopCoroutine(_panCoroutine);
-        _panCoroutine = StartCoroutine(PanToCenterNextFrame());
-    }
-
-    private IEnumerator PanToCenterNextFrame()
-    {
-        yield return null;
-        cameraRig.PanToWorldCenterX(characterStage.GetActiveGroupCenterWorldX());
-    }
-
     private void ApplySettlementRewards(EpisodeData episode)
     {
         if (episode?.settlementRewards == null)
@@ -551,8 +535,8 @@ public class EpisodeRunner : MonoBehaviour, IDialogueAdvanceHandler
         _runRoutine = null;
         ClearChoices();
         dialogue?.HideImmediate();
+        // 확대는 유지한다 — 다음 손님 대사나 하루 끝 정산으로 넘어갈 때 축소하지 않는다(제조 진입 때만 축소).
         characterStage?.Clear();
-        cameraRig?.ResetPan();
         ticketManager?.ClearTicket();
         AudioManager.Instance?.StopBgm();
 

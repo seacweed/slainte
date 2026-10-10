@@ -95,19 +95,6 @@
 - **호버 라벨 위치**: 프리팹에 배치한 위치가 아니라 런타임에 아이콘 프레임 윗변 + `labelGap`(기본 12)으로 덮어쓴다. 아트가 모두 같은 310×590 프레임이라 모든 잔·도구의 라벨이 같은 높이에 뜬다(그려진 부분의 실제 윗변은 쓰지 않음 — 의도된 동작).
 - 씬에 `ToolSelectionUI`가 없거나 `useToolCabinet`이 꺼져 있으면 고정 도구를 테이블에 바로 놓는 기존 방식으로 폴백한다.
 
-## 카메라 가로 팬 보정
-
-에피소드 대화 중에는 `EpisodeRunner`가 캐릭터를 화면 중앙에 두려고 `FrontCameraRig`를 가로로 팬한다(`PanToWorldCenterX`). 팬은 `frontWorld` RectTransform 자체를 옮기므로, 그 자식인 제작 공간과 술 선택 공간도 함께 밀려 제조에 들어가면 재료 줄이 한쪽으로 치우친다.
-
-`FrontCameraRig.SetHorizontalFixed(bool)`이 `horizontalFixedPanels`(`CraftingSlotRow`, `IngredientSelection`)의 `anchoredPosition.x`를 `기준값 - _focusX`로 밀어 화면 가로 위치를 고정하며, `GameModeManager.RefreshPanels()`가 `CraftingMode` 여부로 켜고 끈다. 에피소드 중 가로 팬은 후속 작업에서 제거할 예정이라 도구 공간은 이 보정에 넣지 않았다.
-
-- **보간하지 않고 한 번에 옮긴다.** 보간하면 제작 시퀀스 진입 때 재료들이 좌우로 미끄러지며 등장해 부자연스럽다.
-- **제조 중에만 켠다.** 대화 중에도 고정하면 슬롯 줄만 바 카운터·배경에서 떨어져 미끄러진다.
-- **`CraftingSpace`가 아니라 `CraftingSlotRow`를 넣는다.** 제작 공간 전체를 옮기면 배경까지 함께 튀므로, 슬롯 기준 사각형만 옮겨 배경은 그대로 두고 병이 놓이는 줄만 화면 중앙에 맞춘다. 렌더 출력(`BartendingViewport` RawImage)은 `CraftingSpace` 전체를 덮고 있어 그대로 두어도 슬롯의 화면 위치는 따라 움직이고, 포인터 매핑도 뷰포트 rect 기준이라 어긋나지 않는다.
-- **기준값은 `Awake` 시점의 X**를 쓰므로, 런타임에 이 패널들의 X를 따로 옮기는 코드를 추가하면 안 된다.
-- **모드 전환 시점에 호출되는 것이 중요하다.** 슬롯 줄 정렬(`AlignSlotLayoutToVisibleTable`)은 세션 생성 때 한 번만 계산되는데, `RefreshPanels()`가 `OnModeChanged`(= 세션 생성)보다 먼저 실행되므로 보정된 위치가 반영된다.
-- `_focusX`가 바뀌는 `PanToWorldCenterX`/`ResetPan`에서도 다시 적용해, 고정이 켜진 동안 팬이 일어나도 기준이 어긋나지 않게 한다.
-
 ## 슬롯 위치 기준
 
 물리 슬롯(`BartendingSlot_0~7`)은 캔버스 밖 바텐딩 월드에 런타임으로 생성된다.
@@ -150,9 +137,7 @@
    - `hoverLabelRoot` 위치는 런타임에 레이어 기준으로 덮어쓰므로 프리팹에서 맞출 필요가 없다.
 7. `LiquorShelfPanel`을 끄거나 제거한다.
 8. `InputRouter.ingredientSelection`, `GameModeManager.ingredientSelection`을 연결한다.
-9. `FrontCameraRig.horizontalFixedPanels`에 `CraftingSlotRow`와 `IngredientSelection` **루트**를 넣는다.
-   - 제작 공간은 `CraftingSpace`가 아니라 `CraftingSlotRow`를 넣는다([위 설명](#카메라-가로-팬-보정)).
-   - `GameModeManager.cameraRig`도 연결한다(비워 두면 런타임에 씬에서 찾는다).
+9. `GameModeManager.cameraRig`를 연결한다(비워 두면 런타임에 씬에서 찾는다). 제조 진입은 카메라가 QHD 전체로 축소된 뒤에 일어나므로 제조 중 가로 보정은 필요 없다([character-presentation.md](../gameplay/character-presentation.md#카메라-확대-포커스-frontcamerarig)).
 
 ## 검증
 

@@ -23,6 +23,12 @@ public class GameModeManager : SceneSingleton<GameModeManager>
     [SerializeField] private GameMode initialMode = GameMode.OrderMode;
 
     public GameMode CurrentMode { get; private set; }
+    // 제조 모드 요청이 카메라 축소를 기다리는 중인지. 그동안 대화 포커스가 다시 확대하면 안 된다.
+    public bool IsCraftingRequestPending => _craftingRequestPending;
+
+    private bool _craftingRequestPending;
+    private int _craftingRequestToken;
+    private ICraftingEntryTransition _craftingEntryTransition;
 
     public event Action<GameMode, GameMode> OnModeChanged;
 
@@ -36,10 +42,48 @@ public class GameModeManager : SceneSingleton<GameModeManager>
         ApplyMode(initialMode, force: true);
     }
 
+    // 제조 진입 전 연출(말풍선 페이드 아웃 → 카메라 축소)을 맡을 대상. 없으면 카메라 축소만 기다린다.
+    public void SetCraftingEntryTransition(ICraftingEntryTransition transition)
+    {
+        _craftingEntryTransition = transition;
+    }
+
+    // 제조 모드는 카메라가 QHD 전체로 축소된 뒤에 들어간다. 바텐딩 세션이 생성 시점의 화면 배치로
+    // 슬롯 줄을 한 번만 정렬하므로, 확대된 상태에서 세션을 만들면 슬롯 위치가 어긋나기 때문이다.
+    // 기다리는 동안 다른 모드 요청이 오면 대기 중인 제조 진입은 취소한다(토큰으로 늦게 온 콜백 무시).
+    // 연출이 즉시 끝나면(이미 전체 화면·말풍선 없음) 콜백이 동기로 불려 기존처럼 바로 전환된다.
     public void RequestModeChange(GameMode newMode)
     {
+        int token = ++_craftingRequestToken;
+        _craftingRequestPending = false;
         if (CurrentMode == newMode) return;
-        ApplyMode(newMode, force: false);
+
+        if (newMode != GameMode.CraftingMode)
+        {
+            ApplyMode(newMode, force: false);
+            return;
+        }
+
+        _craftingRequestPending = true;
+        Action enterCrafting = () =>
+        {
+            if (token != _craftingRequestToken || CurrentMode == newMode)
+                return;
+            _craftingRequestPending = false;
+            ApplyMode(newMode, force: false);
+        };
+
+        if (_craftingEntryTransition != null)
+        {
+            _craftingEntryTransition.PlayBeforeCrafting(enterCrafting);
+            return;
+        }
+
+        FrontCameraRig rig = ResolveCameraRig();
+        if (rig != null)
+            rig.ResetView(enterCrafting);
+        else
+            enterCrafting();
     }
 
     private void ApplyMode(GameMode newMode, bool force)
@@ -75,11 +119,6 @@ public class GameModeManager : SceneSingleton<GameModeManager>
         liquorShelf?.SetInteractable(!isEpisode);
         // 술 선택 공간은 항상 보이고 제조 중에만 조작을 받는다(도구 공간은 바텐딩 세션 유무로 스스로 판단).
         ingredientSelection?.SetCraftingAvailable(mode == GameMode.CraftingMode);
-
-        // 에피소드 대화 중에는 카메라가 캐릭터를 따라 가로로 팬한 상태일 수 있다. 제조 구간에서는
-        // 조작 영역(제작 공간·술 선택 공간)만 화면 가로 중앙에 고정해 한쪽으로 치우치지 않게 한다.
-        // 대화 구간에는 꺼야 한다 — 계속 고정하면 제작대만 바 카운터에서 떨어져 미끄러진다.
-        ResolveCameraRig()?.SetHorizontalFixed(mode == GameMode.CraftingMode);
 
         if (!isEpisode)
         {

@@ -67,7 +67,7 @@
 | [docs/ui/tv-broadcast-system.md](docs/ui/tv-broadcast-system.md) | TV 방송 시스템 (예보→활성 하루 지연 구조, 5종 효과, 휴식 화면 표시) |
 | [docs/ui/mainmenu-intro.md](docs/ui/mainmenu-intro.md) | 메인메뉴 인트로 연출(팀 로고/타이틀 깜박임·발광/배경 레이어/캐릭터 스포너), 씬 세팅 |
 | **gameplay** |||
-| [docs/gameplay/character-presentation.md](docs/gameplay/character-presentation.md) | 캐릭터 표시(CharacterView/CharacterStage/CharacterData), 대화 렌더링 |
+| [docs/gameplay/character-presentation.md](docs/gameplay/character-presentation.md) | 캐릭터 표시(CharacterView/CharacterStage/CharacterData, 510 슬롯), 대화 렌더링·말풍선 배치, 카메라 확대 포커스(FrontCameraRig) |
 | [docs/gameplay/bartending-systems.md](docs/gameplay/bartending-systems.md) | 바텐딩 도구(GlassController 등), 액체 의미 데이터 계층(LiquidPayload/VesselLiquidTracker)과 레시피 판정(CocktailEvaluator), 레거시/GPU 액체 백엔드와 렌더링, 슬롯 위치 기준 |
 | [docs/gameplay/business-interactions.md](docs/gameplay/business-interactions.md) | 영업 씬 손님&주문, 손님 재등장 규칙, 주문표 대사 흐름, 판매 보상 공식(팁/실수 페널티), 드래그-드롭 바텐딩 |
 | [docs/gameplay/item-data-table-guide.md](docs/gameplay/item-data-table-guide.md) | 바텐딩 아이템·레시피·배합 기준 CSV와 임포트 규칙 |

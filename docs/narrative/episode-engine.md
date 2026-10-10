@@ -16,7 +16,7 @@
 - `_isTransitioning` — 선택지 슬라이드 업/다운 및 버튼 페이드 아웃 중
 - `IsWaitingForChoice` (public) — `_waitingForChoice || _isTransitioning`. `InputRouter`가 이 값으로 `dialogue.Advance()` 폴스루를 차단함
 
-캐릭터 포커스 pan: `ShowCharacters` 호출 직후 `StartPanCoroutine()`으로 1프레임 지연 코루틴을 시작해 `FrontCameraRig.PanToWorldCenterX(CharacterStage.GetActiveGroupCenterWorldX())`를 호출. 1프레임 지연은 ARF가 너비를 확정한 후 world bounds를 읽기 위함. 에피소드 종료 시 `cameraRig.ResetPan()` 호출.
+카메라 포커스: 러너는 카메라를 직접 다루지 않는다. 대사를 `ShowSingleLine(DialogueLine)`으로 `speakerKey`와 함께 넘기면 `DialogueFocusPresenter`가 화자 슬롯으로 확대·이동한다. 에피소드가 끝나도 확대는 유지된다. 제조 노드는 `RequestModeChange(CraftingMode)`가 말풍선 페이드 아웃과 카메라 축소를 기다린 뒤 제조를 시작한다([character-presentation.md](../gameplay/character-presentation.md#카메라-확대-포커스-frontcamerarig)).
 
 선택지 표시 흐름: 말풍선 슬라이드 업 완료 후 버튼 생성. 버튼 크기 1500×80, 간격 20px. 선택 시 나머지 버튼은 즉시 투명 처리 후, 선택 버튼만 페이드 아웃(0.35s) → 슬라이드 백 → 다음 노드 진행.
 

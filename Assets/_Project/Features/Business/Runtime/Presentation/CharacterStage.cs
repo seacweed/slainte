@@ -171,22 +171,47 @@ public class CharacterStage : MonoBehaviour
             data.GetBlinkOverlaySprite(expressionKey));
     }
 
-    public float GetActiveGroupCenterWorldX()
+    public int SlotCount => slots.Count;
+
+    public bool TryGetSlotIndex(string characterKey, out int slotIndex)
     {
-        if (_activeViews.Count == 0) return Screen.width * 0.5f;
+        slotIndex = -1;
+        return !string.IsNullOrWhiteSpace(characterKey)
+            && _activeViews.ContainsKey(characterKey)
+            && _activeSlotIndices.TryGetValue(characterKey, out slotIndex);
+    }
 
-        float minX = float.MaxValue;
-        float maxX = float.MinValue;
+    // 키 없이 이름만 있는 대사(기존 손님 대사 에셋)용. 무대에 있는 캐릭터 중 표시 이름이 같은 쪽을 찾는다.
+    public bool TryGetSlotIndexByDisplayName(string displayName, out int slotIndex)
+    {
+        slotIndex = -1;
+        if (string.IsNullOrWhiteSpace(displayName) || characterDB == null)
+            return false;
 
-        foreach (var kvp in _activeViews)
+        foreach (var pair in _activeSlotIndices)
         {
-            if (kvp.Value == null) continue;
-            kvp.Value.GetVisualWorldBoundsX(out float left, out float right);
-            if (left  < minX) minX = left;
-            if (right > maxX) maxX = right;
+            CharacterData data = characterDB.FindByKey(pair.Key);
+            if (data != null && string.Equals(data.displayName, displayName, StringComparison.Ordinal))
+            {
+                slotIndex = pair.Value;
+                return true;
+            }
         }
+        return false;
+    }
 
-        return minX == float.MaxValue ? Screen.width * 0.5f : (minX + maxX) * 0.5f;
+    // 슬롯 사각형 중심의 X를 지정한 공간(카메라 리그의 FrontWorld 등)의 로컬 좌표로 돌려준다.
+    // 같은 리그 아래에 있으면 리그의 확대·이동과 무관한 값이라 한 번 계산해 캐시해 둘 수 있다.
+    public bool TryGetSlotCenterX(int slotIndex, Transform space, out float localX)
+    {
+        localX = 0f;
+        if (space == null || slotIndex < 0 || slotIndex >= slots.Count || slots[slotIndex] == null)
+            return false;
+
+        RectTransform slot = slots[slotIndex];
+        Vector3 world = slot.TransformPoint(slot.rect.center);
+        localX = space.InverseTransformPoint(world).x;
+        return true;
     }
 
     public bool TryGetActiveGroupScreenRect(out Rect screenRect)
