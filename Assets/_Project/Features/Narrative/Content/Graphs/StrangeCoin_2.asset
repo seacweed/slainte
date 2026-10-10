@@ -1551,7 +1551,7 @@ MonoBehaviour:
   Position:
     serializedVersion: 2
     x: 580
-    y: 1041
+    y: 1039
     width: 340
     height: 242
   CustomFields:
@@ -4068,8 +4068,8 @@ MonoBehaviour:
   Guid: c76cde29-a466-4e9c-83c9-6046e1bd6533
   Position:
     serializedVersion: 2
-    x: 3480
-    y: 760
+    x: 3480.0005
+    y: 758.0001
     width: 340
     height: 190
   CustomFields:
@@ -7290,7 +7290,25 @@ MonoBehaviour:
     CraftingPaymentEnabled: 1
     CraftingPaymentCurrency: 1
     CraftingPaymentMultiplier: 1
-    CraftingOutcomes: []
+    CraftingOutcomes:
+    - Result: 0
+      Flag: 
+      VarChanges: []
+    - Result: 5
+      Flag: 
+      VarChanges: []
+    - Result: 1
+      Flag: 
+      VarChanges: []
+    - Result: 2
+      Flag: 
+      VarChanges: []
+    - Result: 3
+      Flag: 
+      VarChanges: []
+    - Result: 4
+      Flag: 
+      VarChanges: []
     ExitBranchName: 
   OutgoingBranches:
   - Good

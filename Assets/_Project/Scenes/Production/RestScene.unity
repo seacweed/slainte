@@ -252,6 +252,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d52c13a36954c044687e7d1ce8bcdc8a, type: 2}
   - {fileID: 11400000, guid: d78ee9a45bc7a464bb944ffb8d2a6d9d, type: 2}
   - {fileID: 11400000, guid: 39f8dd8cc50d0824680d06e6f65743dd, type: 2}
+  - {fileID: 11400000, guid: 746ccfe43f7ce564b9e27b7386f618e0, type: 2}
   categoryNameText: {fileID: 803783820}
   categoryNameColorImage: {fileID: 1930441720}
   itemScrollView: {fileID: 1057469623}
