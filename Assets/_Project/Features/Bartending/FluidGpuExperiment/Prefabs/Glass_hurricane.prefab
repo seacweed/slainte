@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1356331013600029128}
   - component: {fileID: 5488466113702563477}
   - component: {fileID: 3857244483152808105}
+  - component: {fileID: 2351671212039727122}
   m_Layer: 29
   m_Name: Glass_hurricane
   m_TagString: Untagged
@@ -128,11 +129,19 @@ MonoBehaviour:
   icePrefab: {fileID: 0}
   iceStock: 20
   icePourInterval: 0.18
+  garnishLiquidMotionTransfer: 0.2
   collisionProfile: {fileID: 11400000, guid: a018e6366b8c4e9a8001141aa5fa27a8, type: 2}
+  iceCapacity: 20
+  iceStockRenderer: {fileID: 0}
+  iceStockSprites: []
   mouthDirectionLocal: {x: 0, y: 0}
   mouthWidth: 0.14
   overrideMouthLip: 0
   mouthLipLocal: {x: 0, y: 0}
+  reservoirResponseSeconds: 0.12
+  reservoirStopSeconds: 0.09
+  reservoirDripMl: 0.35
+  reservoirMinimumTilt: 35
 --- !u!61 &5488466113702563477
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -303,6 +312,19 @@ PolygonCollider2D:
       - {x: -0.61793107, y: 0.68848133}
       - {x: -0.68471926, y: 0.8434745}
   m_UseDelaunayMesh: 1
+--- !u!114 &2351671212039727122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1567955184128977622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40dcecb564024a6abcc01f59a7ec7711, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentBreakableGlass
+  profile: {fileID: 11400000, guid: 8af244ac0e0b4f84dbaf3e0be140228b, type: 2}
 --- !u!1 &2358524105990295578
 GameObject:
   m_ObjectHideFlags: 0

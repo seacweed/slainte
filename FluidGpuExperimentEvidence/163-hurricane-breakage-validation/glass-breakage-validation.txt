@@ -1,0 +1,32 @@
+PASS Hidden batch uses actual F GPU with no desktop input
+PASS Authored hurricane has a configured breakage component
+PASS Authored profile has 16 shards and default impact thresholds
+PASS Only hurricane is breakable in this first version
+PASS Reset restores the original hurricane and clears all shards/queued break state
+INFO gentle impactSpeed=0 impulse=0.0343178362 mass=0.35
+PASS Gentle short drop and repeated resting contacts do not break the glass
+PASS Gentle fixture actually reaches the physical floor
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Tilted hurricane can be picked
+PASS Held movement, pickup upright correction and automatic rotation return do not break the glass
+PASS Forced native held contact still cannot auto-break
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Actual high free fall queues an automatic break at default thresholds
+PASS Collision callback queues once while the original remains intact until liquid tick
+INFO drop impactSpeed=7.50268364 impulse=2.76980472 mass=0.35
+PASS Native drop crosses both speed and normalized impulse thresholds
+PASS Next liquid tick atomically replaces original geometry with 16 shards
+PASS Repeated completion/contact processing cannot duplicate shards
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Wall impact uses the authored world boundary
+PASS Actual fast side impact also queues breakage at default thresholds
+PASS Wall collision completes the same single break transaction
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Controlled transaction fixture uses a valid queued impact
+PASS All 16 supplied fragment definitions produce exactly one shard each
+PASS Shard 01 starts at its rotated source centroid
+FAIL Shard 01 inherits point velocity and free spin without a burst
+System.Exception: Shard 01 inherits point velocity and free spin without a burst
+  at GlassBreakageValidationRunner.Check (System.Boolean ok, System.String text) [0x0002a] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\GlassBreakageValidation.cs:48 
+  at GlassBreakageValidationRunner.ShardPlacementAndInheritance () [0x0023a] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\GlassBreakageValidation.cs:221 
+  at GlassBreakageValidationRunner+<Start>d__25.MoveNext () [0x00378] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\GlassBreakageValidation.cs:84 

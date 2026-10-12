@@ -1,0 +1,938 @@
+[
+  {
+    "name": "hurricane_shard_01.png",
+    "source_alpha_pixels": 7461,
+    "holes_pixels": 0,
+    "disconnected_pixels": 0,
+    "contour_points": 518,
+    "simplified_points": 20,
+    "reflex_vertices": 9,
+    "tolerance_pixels": 1.25,
+    "area_error_ratio": 0.0014073180538801769,
+    "centroid_pixels": [
+      90.38026530657898,
+      379.0294611099926
+    ],
+    "source_polygon": [
+      [
+        100,
+        301
+      ],
+      [
+        105,
+        301
+      ],
+      [
+        101,
+        340
+      ],
+      [
+        103,
+        342
+      ],
+      [
+        112,
+        342
+      ],
+      [
+        144,
+        338
+      ],
+      [
+        142,
+        344
+      ],
+      [
+        102,
+        435
+      ],
+      [
+        100,
+        443
+      ],
+      [
+        73,
+        442
+      ],
+      [
+        44,
+        437
+      ],
+      [
+        40,
+        432
+      ],
+      [
+        43,
+        430
+      ],
+      [
+        45,
+        421
+      ],
+      [
+        50,
+        414
+      ],
+      [
+        50,
+        410
+      ],
+      [
+        65,
+        383
+      ],
+      [
+        73,
+        355
+      ],
+      [
+        72,
+        324
+      ],
+      [
+        68,
+        307
+      ]
+    ]
+  },
+  {
+    "name": "hurricane_shard_02.png",
+    "source_alpha_pixels": 5236,
+    "holes_pixels": 0,
+    "disconnected_pixels": 0,
+    "contour_points": 378,
+    "simplified_points": 5,
+    "reflex_vertices": 1,
+    "tolerance_pixels": 1.25,
+    "area_error_ratio": 0.004583651642475172,
+    "centroid_pixels": [
+      150.84407776925045,
+      404.1878997185981
+    ],
+    "source_polygon": [
+      [
+        149,
+        338
+      ],
+      [
+        171,
+        360
+      ],
+      [
+        174,
+        361
+      ],
+      [
+        187,
+        444
+      ],
+      [
+        105,
+        444
+      ]
+    ]
+  },
+  {
+    "name": "hurricane_shard_03.png",
+    "source_alpha_pixels": 7530,
+    "holes_pixels": 0,
+    "disconnected_pixels": 0,
+    "contour_points": 458,
+    "simplified_points": 17,
+    "reflex_vertices": 6,
+    "tolerance_pixels": 1.25,
+    "area_error_ratio": 0.0045152722443559095,
+    "centroid_pixels": [
+      217.42023620659262,
+      387.0451480698043
+    ],
+    "source_polygon": [
+      [
+        209,
+        312
+      ],
+      [
+        238,
+        321
+      ],
+      [
+        236,
+        327
+      ],
+      [
+        236,
+        358
+      ],
+      [
+        239,
+        365
+      ],
+      [
+        238,
+        367
+      ],
+      [
+        247,
+        391
+      ],
+      [
+        258,
+        408
+      ],
+      [
+        260,
+        417
+      ],
+      [
+        262,
+        418
+      ],
+      [
+        266,
+        429
+      ],
+      [
+        271,
+        432
+      ],
+      [
+        267,
+        437
+      ],
+      [
+        238,
+        442
+      ],
+      [
+        207,
+        444
+      ],
+      [
+        191,
+        443
+      ],
+      [
+        178,
+        359
+      ]
+    ]
+  },
+  {
+    "name": "hurricane_shard_04.png",
+    "source_alpha_pixels": 5371,
+    "holes_pixels": 0,
+    "disconnected_pixels": 0,
+    "contour_points": 352,
+    "simplified_points": 13,
+    "reflex_vertices": 2,
+    "tolerance_pixels": 1.25,
+    "area_error_ratio": 0.005026996834853845,
+    "centroid_pixels": [
+      230.52161294306532,
+      251.33095590959616
+    ],
+    "source_polygon": [
+      [
+        250,
+        200
+      ],
+      [
+        258,
+        200
+      ],
+      [
+        259,
+        204
+      ],
+      [
+        261,
+        227
+      ],
+      [
+        260,
+        248
+      ],
+      [
+        253,
+        275
+      ],
+      [
+        248,
+        283
+      ],
+      [
+        247,
+        290
+      ],
+      [
+        242,
+        300
+      ],
+      [
+        240,
+        314
+      ],
+      [
+        237,
+        316
+      ],
+      [
+        209,
+        307
+      ],
+      [
+        201,
+        205
+      ]
+    ]
+  },
+  {
+    "name": "hurricane_shard_05.png",
+    "source_alpha_pixels": 5996,
+    "holes_pixels": 0,
+    "disconnected_pixels": 0,
+    "contour_points": 394,
+    "simplified_points": 6,
+    "reflex_vertices": 0,
+    "tolerance_pixels": 1.25,
+    "area_error_ratio": 0.00041694462975316876,
+    "centroid_pixels": [
+      168.3300520007786,
+      242.49108756708657
+    ],
+    "source_polygon": [
+      [
+        160,
+        185
+      ],
+      [
+        195,
+        203
+      ],
+      [
+        204,
+        304
+      ],
+      [
+        150,
+        280
+      ],
+      [
+        126,
+        245
+      ],
+      [
+        139,
+        204
+      ]
+    ]
+  },
+  {
+    "name": "hurricane_shard_06.png",
+    "source_alpha_pixels": 2188,
+    "holes_pixels": 0,
+    "disconnected_pixels": 0,
+    "contour_points": 252,
+    "simplified_points": 4,
+    "reflex_vertices": 0,
+    "tolerance_pixels": 1.25,
+    "area_error_ratio": 0.002513711151736746,
+    "centroid_pixels": [
+      171.54608312438265,
+      318.68353468581415
+    ],
+    "source_polygon": [
+      [
+        149,
+        285
+      ],
+      [
+        204,
+        309
+      ],
+      [
+        175,
+        356
+      ],
+      [
+        151,
+        333
+      ]
+    ]
+  },
+  {
+    "name": "hurricane_shard_07.png",
+    "source_alpha_pixels": 2385,
+    "holes_pixels": 0,
+    "disconnected_pixels": 0,
+    "contour_points": 254,
+    "simplified_points": 6,
+    "reflex_vertices": 1,
+    "tolerance_pixels": 1.25,
+    "area_error_ratio": 0.0008385744234800838,
+    "centroid_pixels": [
+      127.00209819555182,
+      301.29976220450413
+    ],
+    "source_polygon": [
+      [
+        124,
+        251
+      ],
+      [
+        144,
+        279
+      ],
+      [
+        146,
+        332
+      ],
+      [
+        106,
+        337
+      ],
+      [
+        110,
+        305
+      ],
+      [
+        109,
+        296
+      ]
+    ]
+  },
+  {
+    "name": "hurricane_shard_08.png",
+    "source_alpha_pixels": 8026,
+    "holes_pixels": 0,
+    "disconnected_pixels": 0,
+    "contour_points": 452,
+    "simplified_points": 11,
+    "reflex_vertices": 1,
+    "tolerance_pixels": 1.25,
+    "area_error_ratio": 0.009095439820583105,
+    "centroid_pixels": [
+      84.84909659628761,
+      233.02199860065028
+    ],
+    "source_polygon": [
+      [
+        63,
+        161
+      ],
+      [
+        67,
+        162
+      ],
+      [
+        80,
+        172
+      ],
+      [
+        84,
+        173
+      ],
+      [
+        133,
+        205
+      ],
+      [
+        105,
+        296
+      ],
+      [
+        67,
+        302
+      ],
+      [
+        52,
+        263
+      ],
+      [
+        48,
+        235
+      ],
+      [
+        49,
+        210
+      ],
+      [
+        55,
+        178
+      ]
+    ]
+  },
+  {
+    "name": "hurricane_shard_09.png",
+    "source_alpha_pixels": 4671,
+    "holes_pixels": 2.0,
+    "disconnected_pixels": 0,
+    "contour_points": 382,
+    "simplified_points": 18,
+    "reflex_vertices": 6,
+    "tolerance_pixels": 1.25,
+    "area_error_ratio": 0.007810828161780441,
+    "centroid_pixels": [
+      116.91464062002336,
+      153.75627278196552
+    ],
+    "source_polygon": [
+      [
+        126,
+        101
+      ],
+      [
+        129,
+        103
+      ],
+      [
+        157,
+        178
+      ],
+      [
+        157,
+        182
+      ],
+      [
+        136,
+        201
+      ],
+      [
+        87,
+        169
+      ],
+      [
+        83,
+        168
+      ],
+      [
+        70,
+        158
+      ],
+      [
+        66,
+        157
+      ],
+      [
+        67,
+        153
+      ],
+      [
+        73,
+        145
+      ],
+      [
+        75,
+        145
+      ],
+      [
+        76,
+        141
+      ],
+      [
+        78,
+        141
+      ],
+      [
+        98,
+        122
+      ],
+      [
+        110,
+        116
+      ],
+      [
+        112,
+        112
+      ],
+      [
+        118,
+        110
+      ]
+    ]
+  },
+  {
+    "name": "hurricane_shard_10.png",
+    "source_alpha_pixels": 3529,
+    "holes_pixels": 1.0,
+    "disconnected_pixels": 0,
+    "contour_points": 324,
+    "simplified_points": 14,
+    "reflex_vertices": 5,
+    "tolerance_pixels": 1.25,
+    "area_error_ratio": 0.00538243626062323,
+    "centroid_pixels": [
+      171.71347194531472,
+      129.9976739770246
+    ],
+    "source_polygon": [
+      [
+        176,
+        97
+      ],
+      [
+        182,
+        100
+      ],
+      [
+        182,
+        102
+      ],
+      [
+        184,
+        102
+      ],
+      [
+        184,
+        104
+      ],
+      [
+        186,
+        104
+      ],
+      [
+        186,
+        106
+      ],
+      [
+        191,
+        110
+      ],
+      [
+        198,
+        113
+      ],
+      [
+        199,
+        116
+      ],
+      [
+        210,
+        121
+      ],
+      [
+        216,
+        129
+      ],
+      [
+        161,
+        177
+      ],
+      [
+        134,
+        102
+      ]
+    ]
+  },
+  {
+    "name": "hurricane_shard_11.png",
+    "source_alpha_pixels": 3683,
+    "holes_pixels": 0,
+    "disconnected_pixels": 0,
+    "contour_points": 322,
+    "simplified_points": 9,
+    "reflex_vertices": 1,
+    "tolerance_pixels": 1.25,
+    "area_error_ratio": 0.0047515612272603855,
+    "centroid_pixels": [
+      215.4967346754943,
+      172.34954735846506
+    ],
+    "source_polygon": [
+      [
+        220,
+        131
+      ],
+      [
+        233,
+        142
+      ],
+      [
+        246,
+        160
+      ],
+      [
+        255,
+        182
+      ],
+      [
+        257,
+        195
+      ],
+      [
+        198,
+        200
+      ],
+      [
+        165,
+        182
+      ],
+      [
+        165,
+        180
+      ],
+      [
+        167,
+        180
+      ]
+    ]
+  },
+  {
+    "name": "hurricane_shard_12.png",
+    "source_alpha_pixels": 1135,
+    "holes_pixels": 0,
+    "disconnected_pixels": 0,
+    "contour_points": 190,
+    "simplified_points": 9,
+    "reflex_vertices": 4,
+    "tolerance_pixels": 1.25,
+    "area_error_ratio": 0.007048458149779736,
+    "centroid_pixels": [
+      152.53572470107903,
+      76.95261009040537
+    ],
+    "source_polygon": [
+      [
+        137,
+        50
+      ],
+      [
+        169,
+        66
+      ],
+      [
+        168,
+        81
+      ],
+      [
+        174,
+        93
+      ],
+      [
+        131,
+        97
+      ],
+      [
+        137,
+        90
+      ],
+      [
+        141,
+        78
+      ],
+      [
+        140,
+        66
+      ],
+      [
+        137,
+        59
+      ]
+    ]
+  },
+  {
+    "name": "hurricane_shard_13.png",
+    "source_alpha_pixels": 1206,
+    "holes_pixels": 0,
+    "disconnected_pixels": 0,
+    "contour_points": 240,
+    "simplified_points": 14,
+    "reflex_vertices": 5,
+    "tolerance_pixels": 1.25,
+    "area_error_ratio": 0.022388059701492536,
+    "centroid_pixels": [
+      158.8353609083536,
+      34.038659097053255
+    ],
+    "source_polygon": [
+      [
+        169,
+        15
+      ],
+      [
+        177,
+        16
+      ],
+      [
+        192,
+        23
+      ],
+      [
+        166,
+        31
+      ],
+      [
+        166,
+        37
+      ],
+      [
+        171,
+        45
+      ],
+      [
+        171,
+        61
+      ],
+      [
+        139,
+        46
+      ],
+      [
+        139,
+        42
+      ],
+      [
+        143,
+        37
+      ],
+      [
+        143,
+        31
+      ],
+      [
+        137,
+        28
+      ],
+      [
+        128,
+        27
+      ],
+      [
+        129,
+        25
+      ]
+    ]
+  },
+  {
+    "name": "hurricane_shard_14.png",
+    "source_alpha_pixels": 871,
+    "holes_pixels": 0,
+    "disconnected_pixels": 0,
+    "contour_points": 168,
+    "simplified_points": 7,
+    "reflex_vertices": 0,
+    "tolerance_pixels": 1.25,
+    "area_error_ratio": 0.01951779563719862,
+    "centroid_pixels": [
+      206.76697892271662,
+      10.837236533957846
+    ],
+    "source_polygon": [
+      [
+        176,
+        3
+      ],
+      [
+        227,
+        4
+      ],
+      [
+        239,
+        7
+      ],
+      [
+        241,
+        9
+      ],
+      [
+        241,
+        13
+      ],
+      [
+        199,
+        22
+      ],
+      [
+        176,
+        11
+      ]
+    ]
+  },
+  {
+    "name": "hurricane_shard_15.png",
+    "source_alpha_pixels": 410,
+    "holes_pixels": 0,
+    "disconnected_pixels": 1.0,
+    "contour_points": 122,
+    "simplified_points": 5,
+    "reflex_vertices": 0,
+    "tolerance_pixels": 1.25,
+    "area_error_ratio": 0.009779951100244499,
+    "centroid_pixels": [
+      151.6255144032922,
+      9.14650205761317
+    ],
+    "source_polygon": [
+      [
+        145,
+        2
+      ],
+      [
+        169,
+        2
+      ],
+      [
+        171,
+        3
+      ],
+      [
+        171,
+        10
+      ],
+      [
+        128,
+        20
+      ]
+    ]
+  },
+  {
+    "name": "hurricane_shard_16.png",
+    "source_alpha_pixels": 924,
+    "holes_pixels": 0,
+    "disconnected_pixels": 0,
+    "contour_points": 180,
+    "simplified_points": 8,
+    "reflex_vertices": 1,
+    "tolerance_pixels": 1.25,
+    "area_error_ratio": 0.0,
+    "centroid_pixels": [
+      102.00829725829726,
+      11.506673881673882
+    ],
+    "source_polygon": [
+      [
+        96,
+        3
+      ],
+      [
+        137,
+        4
+      ],
+      [
+        118,
+        22
+      ],
+      [
+        118,
+        24
+      ],
+      [
+        71,
+        15
+      ],
+      [
+        68,
+        13
+      ],
+      [
+        68,
+        9
+      ],
+      [
+        72,
+        6
+      ]
+    ]
+  }
+]

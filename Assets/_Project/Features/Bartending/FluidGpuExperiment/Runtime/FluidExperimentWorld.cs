@@ -79,6 +79,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             RefreshIceContainment();
             foreach (FluidExperimentBody item in items) if (item != null) item.ApplyHeldPose();
             foreach (FluidExperimentBody item in items) if (item != null) item.StepGarnishMotion(Time.fixedDeltaTime);
+            CaptureGlassBreakageMotion();
         }
         private IEnumerator SimulateAfterPhysics()
         {
@@ -91,6 +92,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         public void TickLiquid(float dt)
         {
+            ProcessGlassBreakage();
             foreach (FluidExperimentBody item in items) if (item != null) item.ResolveCompletedGarnishContacts();
             RefreshIceContainment();
             for (int i = 0; i < items.Count; i++)
@@ -110,6 +112,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         public void RefreshCollisionPairs()
         {
+            RefreshGlassShardContacts();
             for (int i = 0; i < items.Count; i++)
             {
                 FluidExperimentBody a = items[i];
@@ -205,6 +208,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public void ResetSession()
         {
             if (interactor != null) interactor.ReleaseWithVelocity(Vector2.zero);
+            ResetGlassBreakage();
             for(int i=items.Count-1;i>=0;i--)
             {
                 FluidExperimentBody item=items[i];

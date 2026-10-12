@@ -360,6 +360,11 @@ namespace Slainte.Bartending.FluidGpuExperiment
         {
             if (!IsOperational || id == 0) return;
             liquidStateVersion++;
+            // F destruction releases commands that have not reached the GPU yet as
+            // well as active/reserved GPU particles. Keep their contents and timing.
+            if (useCohesivePhysics)
+                for (int i = 0; i < pendingSpawnCount; i++)
+                    if (spawnCommands[i].VesselId == id) spawnCommands[i].VesselId = 0;
             simulationShader.SetInt("_TransformTargetVessel", (int)id);
             DispatchForCount(releaseOwnerKernel, particleCapacity);
             ResetImprovedSurfaceHistory();

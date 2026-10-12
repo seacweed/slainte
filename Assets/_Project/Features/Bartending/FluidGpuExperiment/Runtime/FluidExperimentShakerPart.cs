@@ -241,6 +241,10 @@ namespace Slainte.Bartending.FluidGpuExperiment
             }
             foreach (Collider2D floor in world.floorColliders)
                 if (floor != null && floor.enabled) Ignore(floor, IsHeld);
+            // Re-enabled detached parts lose native IgnoreCollision pairs. Reapply
+            // the debris policy here as well as when the world first spawns shards.
+            foreach (var shard in world.GlassShards)
+                if (shard != null && shard.isActiveAndEnabled) Ignore(shard.SolidCollider, true);
         }
 
         private void PairWithPart(FluidExperimentShakerPart other)

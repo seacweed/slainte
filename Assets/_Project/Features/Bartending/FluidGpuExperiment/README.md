@@ -4,6 +4,8 @@
 
 ## 실행
 
+F의 허리케인 잔은 놓거나 던진 상태에서 강하게 충돌하면 제공된 16개 파편으로 깨진다. 액체·얼음·가니쉬는 현재 위치와 속도를 유지한 채 잔 소속을 벗어난다. 파편은 테이블·벽에 부딪혀 남으며 다시 집을 수 없다. R 또는 모드 재시작은 파편을 정리하고 원래 잔을 복원한다. 다른 잔과 A–E는 기존 동작을 유지한다.
+
 F에서는 쓰러진 잔을 집어 수직으로 세우는 순간에만 잔 안 액체를 함께 옮긴다. 자동 회전으로 입자가 가속되지 않으며 기존 속도 크기와 액체량은 유지한다. 집은 뒤 직접 움직이거나 기울일 때, 우클릭을 놓아 회전이 복귀할 때는 기존 액체 물리가 동작한다.
 
 Unity 메뉴 **Slainte > Fluid GPU Experiment > Open Comparison** 또는
@@ -85,6 +87,7 @@ C의 밀도 표면은 입자를 합산해서 표시한다. 공중·용기 내부
 
 ## 조정 위치
 
+- `Data/HurricaneBreakage.asset`: 허리케인 파괴의 최소 접촉 속도(3.5), 잔 질량으로 나눈 최소 충격량(2), 파편 분산 속도와 감쇠. 두 충격 조건을 모두 넘어야 깨진다. 손에 들린 상태·자동 자세 보정은 파괴 대상에서 제외한다. 파편의 이미지·윤곽·중심·면적은 `Slainte > Fluid GPU Experiment > Build Hurricane Breakage`에서 원본 PNG로 다시 작성할 수 있다.
 - `Data/FluidExperimentLiquidSettings.asset`: 기준 방식의 반경·압력·점성과 E의 커널·밀도 반복·벽 보정·안정성 한도.
 - 씬의 `FluidExperimentGpuLiquid`: C의 support radius, 속도 타원 비율, 임계값, 가장자리 폭, 입구 보정.
 - `Runtime/FluidExperimentComparison.cs`: 같은 입력을 재생하는 비교 제어기.
