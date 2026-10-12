@@ -16,7 +16,6 @@ public class InputRouter : MonoBehaviour
     [SerializeField] private EpisodeRunner episodeRunner;
 
     [Header("Test")]
-    [SerializeField] private CustomerSpawner customerSpawner;
     [SerializeField] private EpisodeData     testEpisode;
 
     void Update()
@@ -39,8 +38,6 @@ public class InputRouter : MonoBehaviour
                 if (advancePressed) dialogue?.Advance();
                 if (bookPressed)    recipeBook?.Toggle();
                 if (ticketPressed)  orderTicketManager?.ToggleTicket();
-                if (WasPressed(keyboard?.digit1Key, KeyCode.Alpha1))
-                    customerSpawner?.ShowCustomers(new[] { "yukari" });
                 if (WasPressed(keyboard?.digit2Key, KeyCode.Alpha2) && testEpisode != null)
                 {
                     // 개발용 단축키: 진행도 기록 없이 러너만 바로 돌려 연출을 확인한다.

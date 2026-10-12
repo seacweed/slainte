@@ -215,7 +215,7 @@ namespace Slainte.Business
 
             panelText.AppendLine();
             panelText.AppendLine("Fast cycle: advance dialogue, enter crafting, then submit even an empty glass.");
-            panelText.AppendLine("The repeated Yukari visual is expected; visit keys above are all distinct.");
+            panelText.AppendLine("Repeated customer visuals are expected; visit keys above are all distinct.");
         }
 
         private void EnsurePanelStyle()
