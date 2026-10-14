@@ -2,6 +2,14 @@
 
 Unity 6000.3.5f2, Direct3D11. Earlier baseline runs used NVIDIA GeForce RTX 3070; the D/E development and performance runs below used AMD Radeon(TM) Graphics. Model D interaction and return-motion runs (51 onward) use NVIDIA GeForce RTX 3070. The experiment was exercised in disposable Unity projects under `HarnessProject`, `Library/FluidSwapHarness` or `Library/FluidModelDHarness`, with source assets and read-only dependencies copied from the working tree. The game project was not opened or saved by Unity for this work.
 
+## Hurricane breakage tuning (2026-10-14)
+
+The current authored and new-profile thresholds are **6 units/s normal contact speed** and **4 units/s normal impulse divided by glass mass**, raised from 3.5/2 to resist lighter impacts. Both gates still apply. Inspector thresholds now precede shard geometry and have tuning tooltips; `Slainte > Fluid GPU Experiment > Select Hurricane Breakage Settings` selects the shared asset without rebuilding it.
+
+`170-breakage-tuning` passes **157 checks**, exit 0, on Unity 6000.3.5f2 / Direct3D11 in the isolated `Library/FluidModelDHarness`. The existing native-drop, wall-impact, held/gentle-contact, contents-conservation, shard and reset/mode checks pass at 6/4, with no Unity errors or assertions. The three-unit drop still measures 7.50268 units/s and 2.76980 impulse at mass 0.35. Runtime and Editor C# compilation also pass. These checks establish regression behavior; the preferred gameplay sensitivity still depends on playtesting.
+
+Startup-only attempts are retained: `168-breakage-tuning` was stopped after sandbox restrictions blocked licensing system-information access; `169-breakage-tuning` compiled successfully but timed out during the new project's initial asset import. The successful run reused that import cache. The original project was not opened or saved by Unity.
+
 ## Hurricane impact breakage in F (2026-10-11)
 
 The hurricane prefab now opts into automatic native-impact breakage in F. A dynamic, unheld glass must exceed both **3.5 units/s normal contact speed** and **2 units/s normal impulse divided by glass mass**. Native callbacks queue one transition; the world commits it after Physics2D and before liquid geometry upload. Held movement, automatic restoration, gentle placement and A–E do not enable breakage. Other glass prefabs remain unchanged.

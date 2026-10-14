@@ -73,8 +73,8 @@ public sealed class GlassBreakageValidationRunner : MonoBehaviour
             Check(breakable != null && breakable.profile != null, "Authored hurricane has a configured breakage component");
             sourceProfile = breakable.profile;
             testProfile = Instantiate(sourceProfile); breakable.profile = testProfile;
-            Check(testProfile.shards.Length == 16 && Mathf.Abs(testProfile.minimumImpactSpeed - 3.5f) < .0001f
-                && Mathf.Abs(testProfile.minimumImpulsePerMass - 2f) < .0001f, "Authored profile has 16 shards and default impact thresholds");
+            Check(testProfile.shards.Length == 16 && Mathf.Abs(testProfile.minimumImpactSpeed - 6f) < .0001f
+                && Mathf.Abs(testProfile.minimumImpulsePerMass - 4f) < .0001f, "Authored profile has 16 shards and tougher default impact thresholds (6/4)");
             Check(world.Items.Where(b => b != glass).All(b => b.GetComponent<FluidExperimentBreakableGlass>() == null),
                 "Only hurricane is breakable in this first version");
             GentleContact();

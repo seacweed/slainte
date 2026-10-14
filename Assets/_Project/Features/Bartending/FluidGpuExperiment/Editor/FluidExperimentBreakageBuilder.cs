@@ -17,6 +17,19 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
         private const byte AlphaThreshold = 8;
         private const float SimplificationPixels = 1.25f;
 
+        [MenuItem("Slainte/Fluid GPU Experiment/Select Hurricane Breakage Settings")]
+        public static void SelectSettings()
+        {
+            var profile = AssetDatabase.LoadAssetAtPath<FluidExperimentBreakageProfile>(ProfilePath);
+            if (profile == null)
+            {
+                Debug.LogWarning("Hurricane breakage settings are missing. Run Build Hurricane Breakage first.");
+                return;
+            }
+            Selection.activeObject = profile;
+            EditorGUIUtility.PingObject(profile);
+        }
+
         [MenuItem("Slainte/Fluid GPU Experiment/Build Hurricane Breakage")]
         public static void Build()
         {

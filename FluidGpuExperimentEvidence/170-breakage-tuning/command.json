@@ -1,0 +1,16 @@
+{
+  "executable": "C:\\Program Files\\Unity\\Hub\\Editor\\6000.3.5f2\\Editor\\Unity.exe",
+  "timeoutSeconds": 600,
+  "workingDirectory": "C:\\unity_proj\\slainte\\slainte",
+  "started": "2026-10-14T16:49:20.8535497+09:00",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "C:/unity_proj/slainte/slainte/Library/FluidModelDHarness",
+    "-executeMethod",
+    "ExperimentGlassBreakageValidation.Begin",
+    "-logFile",
+    "C:\\unity_proj\\slainte\\slainte\\FluidGpuExperimentEvidence\\170-breakage-tuning\\Editor.log"
+  ]
+}

@@ -259,8 +259,8 @@ MonoBehaviour:
     - {x: -0.18818766, y: -0.034533378}
     area: 0.036338866
     spriteScale: {x: 0.62711865, y: 0.62711865}
-  minimumImpactSpeed: 3.5
-  minimumImpulsePerMass: 2
+  minimumImpactSpeed: 6
+  minimumImpulsePerMass: 4
   separationSpeed: 0.12
   linearDamping: 0.2
   angularDamping: 0.3

@@ -87,7 +87,7 @@ C의 밀도 표면은 입자를 합산해서 표시한다. 공중·용기 내부
 
 ## 조정 위치
 
-- `Data/HurricaneBreakage.asset`: 허리케인 파괴의 최소 접촉 속도(3.5), 잔 질량으로 나눈 최소 충격량(2), 파편 분산 속도와 감쇠. 두 충격 조건을 모두 넘어야 깨진다. 손에 들린 상태·자동 자세 보정은 파괴 대상에서 제외한다. 파편의 이미지·윤곽·중심·면적은 `Slainte > Fluid GPU Experiment > Build Hurricane Breakage`에서 원본 PNG로 다시 작성할 수 있다.
+- `Data/HurricaneBreakage.asset`: `Slainte > Fluid GPU Experiment > Select Hurricane Breakage Settings` 메뉴로 선택한다. Inspector 맨 위의 `Minimum Impact Speed`(기본 6, 월드 단위/초)와 `Minimum Impulse Per Mass`(기본 4, 충격량/잔 질량)를 올릴수록 덜 깨진다. 두 조건을 모두 충족해야 깨지므로 먼저 속도 기준을 올리고, 빠르지만 약한 충돌도 버티게 하려면 충격량 기준을 올린다. 기존 기본값은 3.5/2였다. F 모드의 허리케인 잔에 적용되며 손에 들린 상태·자동 자세 보정은 제외한다. `Shard Motion`의 분산 속도·감쇠·재질은 파손 후 파편 움직임만 바꾼다. 파편의 이미지·윤곽·중심·면적은 `Build Hurricane Breakage` 메뉴로 다시 작성할 수 있으며 조절한 임계값은 유지된다.
 - `Data/FluidExperimentLiquidSettings.asset`: 기준 방식의 반경·압력·점성과 E의 커널·밀도 반복·벽 보정·안정성 한도.
 - 씬의 `FluidExperimentGpuLiquid`: C의 support radius, 속도 타원 비율, 임계값, 가장자리 폭, 입구 보정.
 - `Runtime/FluidExperimentComparison.cs`: 같은 입력을 재생하는 비교 제어기.
@@ -96,7 +96,7 @@ C의 밀도 표면은 입자를 합산해서 표시한다. 공중·용기 내부
 - `Shaders/FluidExperimentImproved.hlsl`: E의 보정된 GPU 물리.
 - `Shaders/FluidExperimentImprovedSurface.compute`, `FluidExperimentImprovedAccumulation.shader`, `FluidExperimentImprovedComposite.shader`: D/E의 보간·타원·벽 가림·합성.
 
-Play 중에는 설정 에셋의 런타임 복사본을 사용한다. GPU 초기화 때 읽는 물리 계수를 바꾼 경우 모드를 다시 선택하여 재초기화한다.
+Play 중에는 액체 설정 에셋의 런타임 복사본을 사용한다. GPU 초기화 때 읽는 물리 계수를 바꾼 경우 모드를 다시 선택하여 재초기화한다. 파손 프로파일은 공유 에셋을 직접 참조하므로 Inspector 변경이 다음 충돌부터 적용되고 Play 종료 후에도 유지된다. 이미 깨진 잔은 `R`로 복구한 뒤 다시 시험한다.
 물리 계수와 표시 계수는 실제 비교를 통해 조정할 초기값이다. 이 실험을 기존 게임의 기본 액체로 자동 적용하지 않는다.
 쏟아진 액체가 설정의 시뮬레이션 영역을 벗어나면 기존 방식과 동일하게 입자 슬롯을 회수한다.
 화면의 ml는 현재 활성 입자의 양이며, 재생 중 처음 넣은 총량과 다를 수 있다.
