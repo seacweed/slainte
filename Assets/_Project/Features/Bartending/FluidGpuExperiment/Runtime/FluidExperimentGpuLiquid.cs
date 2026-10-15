@@ -313,6 +313,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 }
                 UploadBoundaryGroup(groupCount++, 0, first, boundaryCount, first, first);
             }
+            UploadShardGeometry(from, to, dt, ref boundaryCount, ref groupCount, ref iceBoundaryCount);
             if (boundaryCount > 0) boundaryBuffer.SetData(boundaryUpload, 0, 0, boundaryCount);
             if (groupCount > 0) boundaryGroupBuffer.SetData(boundaryGroups, 0, 0, groupCount);
             if (triggerCount > 0) triggerBuffer.SetData(triggerUpload, 0, 0, triggerCount);

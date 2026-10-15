@@ -694,11 +694,23 @@ MonoBehaviour:
   icePrefab: {fileID: 0}
   iceStock: 20
   icePourInterval: 0.18
+  garnishLiquidMotionTransfer: 0.2
   collisionProfile: {fileID: 11400000, guid: 0d53420e3c874c5ab8ae67c4f88be9f1, type: 2}
+  iceCapacity: 20
+  iceStockRenderer: {fileID: 0}
+  iceStockSprites: []
   mouthDirectionLocal: {x: 0, y: 0}
   mouthWidth: 0.14
   overrideMouthLip: 0
   mouthLipLocal: {x: 0, y: 0}
+  reservoirResponseSeconds: 0.12
+  reservoirStopSeconds: 0.09
+  reservoirDripMl: 0.35
+  reservoirMinimumTilt: 35
+  shakerPartTemplate: {fileID: 4485653377490646442, guid: 7ad3ce2db007b8945974e54bb0eaf11c, type: 3}
+  shakerProfile: {fileID: 11400000, guid: df3e94a461dae0949ac09a4995c7e3a1, type: 2}
+  shakerStrainerArt: {fileID: 201548820531818334}
+  shakerCapArt: {fileID: 5128017700592938519}
 --- !u!61 &3951968601724504915
 BoxCollider2D:
   m_ObjectHideFlags: 0

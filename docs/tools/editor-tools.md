@@ -16,6 +16,22 @@ Unity 에디터에서 사용할 수 있는 커스텀 툴 목록입니다.
 | 캐릭터 표정 스프라이트 임포터 | `CharacterExpressionSpriteImporter.cs` | Slainte > 데이터 > 캐릭터 표정 스프라이트 폴더 임포트 |
 | 캐릭터 스프라이트 접두어 제거 | `CharacterSpritePrefixStripper.cs` | Slainte > 데이터 > 캐릭터 스프라이트 접두어 제거 |
 | 에피소드·일자 플레이테스트 런처 | `PlaytestLauncherWindow.cs` | Slainte > Playtest Launcher |
+| 액체·파손 기획 도구 | `FluidExperimentDesignerWindow.cs` | Slainte > Fluid GPU Experiment > Designer |
+| 액체 런타임 씬 조립 | `FluidExperimentAssemblyBuilder.cs` | Slainte > Fluid GPU Experiment > Assemble New Runtime Scene |
+
+---
+
+## 액체·파손 기획 도구
+
+`Slainte > Fluid GPU Experiment > Designer`에서 병·잔·도구·얼음·가니쉬 프리팹을 검색하고 복제본을 편집한다. 기본 수치, 붓기, 강체, 파손, 스플래시, 쉐이커 부품과 충돌 형상을 조절한 뒤 **Save**로 원본에 반영한다. **Undo/Redo**는 현재 작업본 편집에 적용하고, **Revert**는 마지막 저장 상태를 다시 읽는다. 공유 설정을 해당 객체에만 적용하려면 **Clone for this prefab on Save**를 켠다.
+
+**Scene handles**는 별도 미리보기에서 고체·액체 내부·입구·집기 영역·회전 중심을 편집한다. **Create variant**는 연결된 프리팹 변형을 만들고 개별 설정 복제를 기본으로 선택한다. **Play isolated draft**는 현재 작업본으로 낙하 높이·속도·액체량·폭발 여부를 시험하며, 종료 후 기존 씬과 작업본을 복원한다. 저장하지 않은 씬도 유지한다. 시험 결과에서 충격·파편·액체량 보존 오차를 확인할 수 있다.
+
+변형은 저장된 원본을 기준으로 만든다. 다른 `Assets` 하위 폴더에 저장해도 카탈로그에 등록되어 검색할 수 있다. 일반 Play 또는 스크립트 리로드 후에도 미저장 작업본과 개별 설정 복제 선택을 복원한다.
+
+Undo/Redo는 장면 편집과 같은 Unity 실행 이력을 따른다. Save 후에는 해당 작업본의 저장된 편집 이력을 정리하며, 저장 자체를 Undo로 되돌리지는 않는다. 값이 같은 공유 프로파일은 다시 저장하지 않는다.
+
+**Assemble New Runtime Scene**으로 런타임·환경·카메라가 연결된 별도 씬을 만든다. 기존 비교 A–G는 `FluidGpuComparison`, 새 파손·스플래시 동작은 **Open Runtime Sample**에서 확인한다. 구성 파일과 한계는 [액체 실험 README](../../Assets/_Project/Features/Bartending/FluidGpuExperiment/README.md#재사용-런타임과-기획자-도구)에 정리했다.
 
 ---
 

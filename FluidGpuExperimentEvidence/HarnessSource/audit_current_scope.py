@@ -12,6 +12,8 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[2]
 FEATURE = "Assets/_Project/Features/Bartending/FluidGpuExperiment"
 EVIDENCE = "FluidGpuExperimentEvidence"
+DOCUMENTATION = {"docs/tools/editor-tools.md"}
+SUPPORT_FILES = {".gitignore"}
 SERIALIZED = {".unity", ".prefab", ".asset", ".mat"}
 VALIDATED = SERIALIZED | {".cs", ".shader", ".compute", ".hlsl"}
 GUID = re.compile(r"^guid: ([a-f0-9]{32})$", re.M)
@@ -31,7 +33,7 @@ def names(raw):
 
 
 def scoped(name):
-    return name == FEATURE + ".meta" or name.startswith(FEATURE + "/") or name.startswith(EVIDENCE + "/")
+    return name == FEATURE + ".meta" or name.startswith(FEATURE + "/") or name.startswith(EVIDENCE + "/") or name in DOCUMENTATION or name in SUPPORT_FILES
 
 
 def read_guid(path):
@@ -56,6 +58,8 @@ def main():
     untracked = names(git("ls-files", "--others", "--exclude-standard", "-z"))
     outside = sorted(name for name in set(tracked + untracked) if not scoped(name))
     counts = Counter("feature" if name.startswith(FEATURE) else "evidence" if name.startswith(EVIDENCE + "/")
+                     else "documentation" if name in DOCUMENTATION
+                     else "support" if name in SUPPORT_FILES
                      else "outside" for name in tracked + untracked)
 
     feature = ROOT / FEATURE
@@ -174,7 +178,8 @@ def main():
               "head": git("rev-parse", "HEAD").decode().strip(),
               "validation_project": str(harness),
               "scope": {"tracked_changed_files": len(tracked), "non_ignored_untracked_files": len(untracked),
-                        "counts_by_allowed_root": dict(counts), "allowed_roots": [FEATURE, EVIDENCE]},
+                        "counts_by_allowed_root": dict(counts), "allowed_roots": [FEATURE, EVIDENCE],
+                        "allowed_documentation_files": sorted(DOCUMENTATION), "allowed_support_files": sorted(SUPPORT_FILES)},
               "fresh_asset_checks": {"feature_guid_count": len(feature_guids), "validated_asset_counts": dict(parity_counts),
                                      "harness_test_source_count": len(harness_tests), "shared_reference_metadata_count": len(shared_references),
                                      "copied_shared_dependency_count": dependency_count},

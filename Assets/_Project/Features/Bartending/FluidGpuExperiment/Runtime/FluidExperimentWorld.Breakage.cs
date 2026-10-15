@@ -9,6 +9,12 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private readonly List<FluidExperimentBreakableGlass> pendingGlassBreakage = new List<FluidExperimentBreakableGlass>();
         private readonly List<FluidExperimentGlassShard> glassShards = new List<FluidExperimentGlassShard>();
         public IReadOnlyList<FluidExperimentGlassShard> GlassShards => glassShards;
+        public bool ExplosiveGlassBreakage { get; internal set; }
+        [Tooltip("Upload only the original thin glass walls intersecting each fragment to the liquid solver.")]
+        public bool shardLiquidCollision;
+        [Range(0, 1024)] public int maximumShardLiquidSegments = 512;
+        private readonly List<FluidExperimentShardLiquidProxy> shardLiquidProxies = new List<FluidExperimentShardLiquidProxy>();
+        internal IReadOnlyList<FluidExperimentShardLiquidProxy> ShardLiquidProxies => shardLiquidProxies;
 
         internal void RegisterBreakable(FluidExperimentBreakableGlass glass)
         { if (!breakableGlasses.Contains(glass)) breakableGlasses.Add(glass); }
@@ -16,7 +22,24 @@ namespace Slainte.Bartending.FluidGpuExperiment
         { breakableGlasses.Remove(glass); pendingGlassBreakage.Remove(glass); }
         internal void QueueGlassBreakage(FluidExperimentBreakableGlass glass)
         { if (!pendingGlassBreakage.Contains(glass)) pendingGlassBreakage.Add(glass); }
-        internal void RegisterGlassShard(FluidExperimentGlassShard shard) => glassShards.Add(shard);
+        internal void RegisterGlassShard(FluidExperimentGlassShard shard)
+        {
+            glassShards.Add(shard);
+            if (!shardLiquidCollision) return;
+            var proxy = shard.gameObject.AddComponent<FluidExperimentShardLiquidProxy>();
+            proxy.Initialize(shard);
+            shardLiquidProxies.Add(proxy);
+        }
+
+        private void SynchronizeShardHistory()
+        {
+            for (int i = shardLiquidProxies.Count - 1; i >= 0; i--)
+            {
+                var proxy = shardLiquidProxies[i];
+                if (proxy == null) { shardLiquidProxies.RemoveAt(i); continue; }
+                proxy.SynchronizeHistory();
+            }
+        }
 
         private void CaptureGlassBreakageMotion()
         {
@@ -45,6 +68,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             foreach (var shard in glassShards)
                 if (shard != null) { shard.gameObject.SetActive(false); Destroy(shard.gameObject); }
             glassShards.Clear();
+            shardLiquidProxies.Clear();
             // Original components survive fracture, keeping comparison references valid.
             foreach (var glass in breakableGlasses) if (glass != null) glass.RestoreIntact();
         }

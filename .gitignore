@@ -17,6 +17,10 @@
 /[Aa]ssets/_Recovery/
 /[Aa]ssets/_Recovery.meta
 
+# Fluid Designer owns these disposable Play Mode and draft-recovery snapshots.
+/Assets/_Project/Features/Bartending/FluidGpuExperiment/DesignerTemp/
+/Assets/_Project/Features/Bartending/FluidGpuExperiment/DesignerTemp.meta
+
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
 /[Mm]emoryCaptures/

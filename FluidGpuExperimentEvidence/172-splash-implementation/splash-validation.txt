@@ -1,0 +1,41 @@
+PASS Splash harness uses actual F GPU in hidden batch mode
+PASS Floor impact produces a two-sided upward fan
+PASS Symmetric particles receive balanced tangential motion
+PASS Wall impact turns the fan with the collision normal
+PASS Extreme explosive impact respects the delta-speed cap and never points into the floor
+PASS Distant owned liquid receives no splash outside the impact radius
+PASS Zero measured contact impulse cannot inject splash energy
+PASS Non-finite impact input cannot produce invalid velocity
+PASS G increases liquid splash within the same hard speed limit
+PASS F GPU fixtures reserve
+PASS F fixtures contain separate active and reserved GPU slots
+PASS F CPU queued fixtures reserve
+PASS F GPU active/pending velocities match CPU formula; position, history, flags, volume and unrelated particles are exact
+PASS F GPU birth delay, stream links, timing and all ingredient composition are unchanged
+PASS F CPU queued births receive identical impulse without changing content, chronology or unrelated commands
+PASS F identical GPU-pending and CPU-queued particle positions/velocities produce the same result
+PASS F repeated break/release cannot add a second impulse
+PASS F released CPU birth uploads later with its original delay and exactly one impulse
+PASS G GPU fixtures reserve
+PASS G fixtures contain separate active and reserved GPU slots
+PASS G CPU queued fixtures reserve
+PASS G GPU active/pending velocities match CPU formula; position, history, flags, volume and unrelated particles are exact
+PASS G GPU birth delay, stream links, timing and all ingredient composition are unchanged
+PASS G CPU queued births receive identical impulse without changing content, chronology or unrelated commands
+PASS G identical GPU-pending and CPU-queued particle positions/velocities produce the same result
+PASS G repeated break/release cannot add a second impulse
+PASS G released CPU birth uploads later with its original delay and exactly one impulse
+PASS F GPU fixtures reserve
+PASS F fixtures contain separate active and reserved GPU slots
+PASS F CPU queued fixtures reserve
+PASS F GPU active/pending velocities match CPU formula; position, history, flags, volume and unrelated particles are exact
+PASS F GPU birth delay, stream links, timing and all ingredient composition are unchanged
+PASS F CPU queued births receive identical impulse without changing content, chronology or unrelated commands
+PASS F identical GPU-pending and CPU-queued particle positions/velocities produce the same result
+PASS F repeated break/release cannot add a second impulse
+PASS F released CPU birth uploads later with its original delay and exactly one impulse
+PASS Release-only fixture reserves
+PASS Null splash profile preserves legacy release-only motion
+PASS Release-only fixture reserves
+PASS Zero splash strength disables extra velocity while releasing contents
+PASS No shader, buffer or Unity errors during splash transactions

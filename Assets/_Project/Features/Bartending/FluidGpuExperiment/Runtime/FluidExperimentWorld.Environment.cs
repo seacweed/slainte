@@ -26,10 +26,21 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
     public sealed partial class FluidExperimentWorld
     {
-        [Header("Liquid environment (the bottom remains a drain)")]
+        [Header("Liquid environment")]
         public BoxCollider2D leftBoundary, rightBoundary, topBoundary;
+        [Tooltip("Optional table surfaces. Liquid outside these surfaces drains at the simulation bounds.")]
+        public BoxCollider2D[] liquidSurfaces = new BoxCollider2D[0];
         private readonly List<FluidExperimentEnvironmentHull> environmentHulls = new List<FluidExperimentEnvironmentHull>(3);
         private bool environmentResolved;
+
+        // Explicit assembly references can change when a rig is moved to another scene.
+        // Rebuild on rebinding; hull transforms themselves are refreshed without allocation.
+        public void RebuildEnvironment()
+        {
+            environmentHulls.Clear();
+            environmentResolved = false;
+            ResolveEnvironment();
+        }
 
         public IReadOnlyList<FluidExperimentEnvironmentHull> EnvironmentHulls
         {
@@ -51,6 +62,13 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (topBoundary == null) topBoundary = transform.Find("TopBoundary")?.GetComponent<BoxCollider2D>();
             foreach (var collider in new[] { leftBoundary, rightBoundary, topBoundary })
                 if (collider != null) environmentHulls.Add(new FluidExperimentEnvironmentHull { Collider = collider });
+            foreach (var collider in liquidSurfaces)
+            {
+                if (collider == null || collider == leftBoundary || collider == rightBoundary || collider == topBoundary) continue;
+                bool duplicate = false;
+                foreach (var hull in environmentHulls) if (hull.Collider == collider) { duplicate = true; break; }
+                if (!duplicate) environmentHulls.Add(new FluidExperimentEnvironmentHull { Collider = collider });
+            }
         }
 
         public Vector2 ConstrainHeldPosition(FluidExperimentBody body, Vector2 position, float angle)

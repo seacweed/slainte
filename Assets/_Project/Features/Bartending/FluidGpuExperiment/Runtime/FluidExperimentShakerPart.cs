@@ -35,22 +35,31 @@ namespace Slainte.Bartending.FluidGpuExperiment
         internal static FluidExperimentShakerPart Create(FluidExperimentBody owner,
             FluidExperimentShakerPartRole role, SpriteRenderer art, Rect ownerLocalRect)
         {
-            var root = new GameObject("Shaker" + role);
+            var root = FluidExperimentObjectFactory.CreateInactive(owner.shakerPartTemplate,
+                owner.transform, "Shaker" + role);
             root.layer = owner.gameObject.layer;
             root.transform.SetParent(owner.transform, false);
             root.transform.localPosition = ownerLocalRect.center;
             if (art != null) art.transform.SetParent(root.transform, true);
-            var part = root.AddComponent<FluidExperimentShakerPart>();
+            var part = root.GetComponent<FluidExperimentShakerPart>();
+            if (part == null) part = root.AddComponent<FluidExperimentShakerPart>();
             part.Owner = owner;
             part.Role = role;
             part.HomeLocalPosition = ownerLocalRect.center;
             part.hitRect = new Rect(-ownerLocalRect.size * .5f, ownerLocalRect.size);
-            part.body = root.AddComponent<Rigidbody2D>();
-            part.body.mass = role == FluidExperimentShakerPartRole.Cap ? .03f : .08f;
+            part.body = root.GetComponent<Rigidbody2D>();
+            if (part.body == null) part.body = root.AddComponent<Rigidbody2D>();
+            part.body.bodyType = RigidbodyType2D.Dynamic;
+            part.body.constraints = RigidbodyConstraints2D.None;
+            part.body.mass = owner.shakerProfile != null
+                ? Mathf.Max(.001f, role == FluidExperimentShakerPartRole.Cap ? owner.shakerProfile.capMass : owner.shakerProfile.strainerMass)
+                : role == FluidExperimentShakerPartRole.Cap ? .03f : .08f;
             part.body.interpolation = RigidbodyInterpolation2D.Interpolate;
             part.body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
             part.body.simulated = false;
-            part.solid = root.AddComponent<BoxCollider2D>();
+            part.solid = root.GetComponent<BoxCollider2D>();
+            if (part.solid == null) part.solid = root.AddComponent<BoxCollider2D>();
+            part.solid.isTrigger = false;
             part.solid.size = ownerLocalRect.size;
             part.solid.enabled = false;
             if (owner.solidColliders.Length > 0 && owner.solidColliders[0] != null)
@@ -61,6 +70,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 part.carriedCapSolid.sharedMaterial = part.solid.sharedMaterial;
                 part.carriedCapSolid.enabled = false;
             }
+            root.SetActive(true);
             return part;
         }
 
@@ -151,7 +161,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
             Vector2 target = Role == FluidExperimentShakerPartRole.Strainer
                 ? Owner.LocalToWorld(localPosition) : Owner.ShakerStrainer.PartPoint(localPosition);
             float scale = Mathf.Max(Mathf.Abs(carrier.lossyScale.x), Mathf.Abs(carrier.lossyScale.y));
-            if (Vector2.Distance(Position, target) > .28f * scale) return false;
+            float attachmentDistance = Owner.shakerProfile != null ? Mathf.Max(.001f, Owner.shakerProfile.attachmentDistance) : .28f;
+            if (Vector2.Distance(Position, target) > attachmentDistance * scale) return false;
             if (Role == FluidExperimentShakerPartRole.Strainer) AttachToBody();
             else AttachToStrainer();
             Owner.RefreshShakerClosure();

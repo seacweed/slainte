@@ -104,6 +104,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             }
             if (liquid != null && liquid.IsOperational) liquid.Step(dt);
             foreach (FluidExperimentBody item in items) if (item != null) item.SynchronizeHistory();
+            SynchronizeShardHistory();
         }
         private void OnDisable()
         {

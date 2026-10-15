@@ -1,0 +1,42 @@
+PASS Fixture copies the authored hurricane without changing it
+PASS Two fixture prefabs start with shared settings
+PASS Designer edits a loaded isolated prefab scene
+PASS Every mutable existing profile is an unsaved clone
+PASS Missing splash settings exist only on the preview until explicit Save
+PASS Shared settings show both dependent fixture prefabs
+PASS Working profile changes cannot leak into authored settings
+PASS Undo restores a working profile edit
+PASS Redo restores the staged profile change
+PASS Changing body and collision preview leaves authored prefab and profile bytes unchanged
+PASS Play-test snapshot captures current body values with its own persisted profile assets
+PASS Creating a play-test snapshot never saves the authored draft
+PASS Snapshot export leaves unrelated dirty assets unsaved
+PASS Reopening the source discards unsaved body and collision changes
+PASS Explicit shared Save persists the modified shared profile
+PASS Explicit designer Save only persists its own profiles, preserving unrelated unsaved assets
+PASS Shared Save preserves the dependent prefab reference
+PASS After saving, further preview edits still target a clone
+PASS Saved body and geometry settings survive prefab reload
+PASS Explicit Save creates and references the previously missing splash asset
+PASS Clone-for-prefab saves a private asset and leaves the other prefab's shared geometry unchanged
+PASS Private breakage tuning cannot alter the shared source profile
+PASS Saved private settings have normal persistent asset flags and names
+PASS Non-finite pivot edits fail validation before touching the saved prefab
+PASS Source fixture copies the fixed garnish dispenser
+PASS Catalog source objects can open without a physics body
+PASS Garnish source settings save and reload through the same designer workflow
+PASS Unbreakable-glass fixture is available for component Undo
+PASS Enable breakage stages a component and private tuning without modifying the source prefab
+PASS Undoing component creation removes its profile editors without stale owners
+PASS Saving after component Undo remains valid and keeps the prefab unbreakable
+PASS Collinear zero-area solid hulls are rejected
+PASS Crossing solid hull edges are rejected
+PASS Shaker fixture uses the generated reusable settings
+PASS Shaker geometry and part physics are isolated in a cloned profile
+PASS Private shaker profile values persist through explicit Save
+PASS Scene assembly wires a standalone runtime, GPU liquid, input and camera
+PASS Production assembly defaults to natural breakage and shard-liquid contact without comparison UI
+PASS Scene assembly uses the edited prefab's saved body settings
+PASS Runtime and environment remain reusable prefab instances
+PASS Runtime composition supplies default splash tuning and the complete object catalog
+PASS Additive sandbox cleanup preserves existing scene setup and unsaved-state flags

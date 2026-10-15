@@ -2,6 +2,40 @@
 
 Unity 6000.3.5f2, Direct3D11. Earlier baseline runs used NVIDIA GeForce RTX 3070; the D/E development and performance runs below used AMD Radeon(TM) Graphics. Model D interaction and return-motion runs (51 onward) use NVIDIA GeForce RTX 3070. The experiment was exercised in disposable Unity projects under `HarnessProject`, `Library/FluidSwapHarness` or `Library/FluidModelDHarness`, with source assets and read-only dependencies copied from the working tree. The game project was not opened or saved by Unity for this work.
 
+## Reusable runtime, breakage splash and designer (2026-10-15)
+
+The delivered runtime and environment prefabs assemble independently of the comparison controller. The sample scene has explicit camera/environment references and supports Natural and Explosive breakage. Shared fragment/shaker-part templates, authored shaker geometry, separated generated shard geometry, existing ItemDef references and a prefab catalog form the reusable module. Builders preserve existing assets and tuning; they do not replace the legacy business scene's controllers.
+
+Breaking transfers a bounded, contact-directed velocity increment to active, GPU-pending and CPU-pending liquid once, then releases ownership. Particle amounts, composition, existing velocity history and scheduled birth times are retained. The new rig enables moving fragment/liquid contact using the intersection of each fragment silhouette with the original thin glass wall. The original empty bowl is not filled by front-facing artwork. This is one-way 2D fragment-to-liquid contact, not a two-way rigid-body fluid solver. The default fragment segment budget is 512; skipped geometry is reported. Optional finite-table contact is configured by the environment binding.
+
+The UI Toolkit designer edits isolated prefab/profile drafts, validates geometry, supports Undo/Redo, saves shared or private profiles, creates connected prefab variants, and places prefab instances. Isolated drop tests use a saved temporary scene plus snapshot assets and real Play Mode. Both the test path and ordinary Play restore unsaved drafts and an unnamed dirty scene. No human desktop clicking was used; the native EditorWindow, serialization, GPU readback and actual PlayerLoop paths are exercised by the harness.
+
+| Completed attempt | Checks | Coverage |
+| --- | ---: | --- |
+| `172-splash-implementation` | 41 | Native GPU/CPU birth queues; bounded/contact-directed splash; one-time application; null/zero settings; natural/explosive scaling; exact volume, composition and history preservation. |
+| `173-shard-liquid` | 219 | Concave wall intersections and empty bowl; 204 hurricane segments; budget diagnostics; fast particle contact; rotation/nonuniform scale; moving-wall response; table contact and volume conservation. |
+| `180-runtime-assembly` | 48 | Idempotent generated assets; catalog/template references; independent rigs/settings; all object categories; shaker migration and detach/reattach; scaled fragment roots; actual filled-glass drops; reset. |
+| `181-designer-authoring` | 42 | Draft isolation, shared/private save and reload, Undo/Redo, unrelated dirty asset preservation, source prefabs, invalid geometry, shaker settings and independent scene assembly. |
+| `182-designer-play` | 10 | Two actual GPU/native drop tests; draft/profile-option recovery; previous Play start scene and unnamed dirty scene preservation; ordinary Play recovery and subsequent private save. |
+| `183-breakage-regression` | 207 | Existing F/G native impact, motion, content conservation, mode/reset and interaction contracts with the delivered templates and migration. |
+| `184-designer-variants` | 49 | Authoring regression plus connected variants, external-folder catalog persistence, base profile/prefab preservation, and skipping unchanged or already-dirty shared profiles on Save. |
+
+All listed completed attempts exited 0. In attempt 182, both drops retained **20.00 ml** with **0.0000 ml** conservation error, generated 16 fragments, uploaded 204 fragment boundary segments and reported zero skipped segments or application errors. Contact speed was 7.50 units/s and peak fragment speeds were 9.26/9.96 units/s. Shutdown logs contain Unity allocator diagnostics; these are not a claim of a globally warning-free editor.
+
+Native offscreen previews were inspected: [Explosive splash](Previews/runtime-explosive-splash.png), [Natural splash](Previews/runtime-natural-splash.png). The captures show early post-impact motion, not long-term equilibrium or measured gameplay frame rate.
+
+Retained development failures explain the final scene workflow. Attempt 174 exposed Unity's refusal to create an additive scene beside an unnamed unsaved scene. Attempt 175 confirmed preview scenes cannot be saved. Probe 176 established that copying and opening a saved scene additively preserves the unnamed dirty scene, and 177 generated the empty template used by the final implementation. Attempt 178 corrected a test-only protected EditorWindow setter; 179 corrected a test fixture path whose parent folder did not exist. The corrected runtime assembly passes in 180. The preliminary scope audit in 183 found two collision-profile copies reserialized from CRLF to LF, with identical content; the designer save path was tightened to skip unchanged shared profiles.
+
+The final [runtime-authoring-scope-audit.json](runtime-authoring-scope-audit.json) passes: no out-of-scope changes, missing/orphan metadata, duplicate GUIDs, wrong original-fork references, missing or differing validated asset copies, test-source mismatches or dependency-manifest mismatches. Attempt 184 also confirms exact unchanged shared-profile bytes after body-only Save. The only later UI change clarifies that toolbar Undo/Redo use standard Unity history, including scene edits; it does not change behavior. Save clears the saved preview's edit records and remains an explicit persistence boundary.
+
+Reproduce with `HarnessSource/prepare_experiment.py --target Library/FluidModelDHarness`, then the existing `Run-Unity.ps1` wrapper with a fresh attempt name and the absolute harness project path. Entrypoints are `ExperimentSplashValidation.Begin`, `ExperimentShardLiquidValidation.Begin`, `ExperimentRuntimeAssemblyValidation.Begin`, `ExperimentDesignerValidation.Run`, `ExperimentDesignerValidation.RunPlayTest` and `ExperimentGlassBreakageValidation.Begin`. Authoring checks intentionally create and remove fixture assets only inside the disposable project. Do not run them against the game project.
+
+## G explosive glass breakage (2026-10-14)
+
+Mode `7: G Explosive Breakage` reuses F physics, rendering and 6/4 impact thresholds. Only fragment creation adds outward speed (5 units/s), world-up speed (2.5 units/s) and alternating spin (240 degrees/s) on top of inherited motion. These settings live in `HurricaneBreakage.asset`; all three set to zero reproduce the existing F motion. F remains the authored default, and switching modes restores the intact glass and clears fragments.
+
+`171-explosive-breakage` passes **207 checks**, exit 0, with no Unity errors or assertions, in the isolated Unity 6000.3.5f2 / Direct3D11 harness. This includes the previous F regression, native G floor impact, finite fragment motion, configurable/default/zero burst strengths, widening after 0.2 seconds, exact liquid/ice/garnish preservation and G-to-F restoration. `explosive-native-impact.png` and `explosive-shards-in-flight.png` are offscreen diagnostic renders inspected for separated, rotating fragments; they are not desktop input or UI screenshots. The expanded mode panel is checked geometrically, and the keyboard/button paths are reviewed in source.
+
 ## Hurricane breakage tuning (2026-10-14)
 
 The current authored and new-profile thresholds are **6 units/s normal contact speed** and **4 units/s normal impulse divided by glass mass**, raised from 3.5/2 to resist lighter impacts. Both gates still apply. Inspector thresholds now precede shard geometry and have tuning tooltips; `Slainte > Fluid GPU Experiment > Select Hurricane Breakage Settings` selects the shared asset without rebuilding it.

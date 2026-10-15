@@ -4,7 +4,9 @@
 
 ## 실행
 
-F의 허리케인 잔은 놓거나 던진 상태에서 강하게 충돌하면 제공된 16개 파편으로 깨진다. 액체·얼음·가니쉬는 현재 위치와 속도를 유지한 채 잔 소속을 벗어난다. 파편은 테이블·벽에 부딪혀 남으며 다시 집을 수 없다. R 또는 모드 재시작은 파편을 정리하고 원래 잔을 복원한다. 다른 잔과 A–E는 기존 동작을 유지한다.
+F/G의 허리케인 잔은 놓거나 던진 상태에서 강하게 충돌하면 제공된 16개 파편으로 깨진다. 액체·얼음·가니쉬는 현재 위치와 속도를 유지한 채 잔 소속을 벗어난다. 파편은 테이블·벽에 부딪혀 남으며 다시 집을 수 없다. R 또는 모드 재시작은 파편을 정리하고 원래 잔을 복원한다. 다른 잔과 A–E는 기존 동작을 유지한다.
+
+**7번 키 또는 `7: G Explosive Breakage` 버튼**으로 폭발 비산 모드를 선택한다. G는 F의 액체 물리·표시·조작·파손 기준을 그대로 사용하며, 파손 순간에만 파편에 바깥쪽 속도·월드 위쪽 속도·교대 방향 회전을 추가한다. 액체·얼음·가니쉬에는 폭발력을 주지 않는다. Manual에서 허리케인 잔을 높이 놓거나 강하게 던져 파손을 확인하고, `R`로 다시 시험한다. `6`으로 F에 돌아가면 기존의 작은 분리 움직임으로 비교할 수 있다. 아래에서 F라고 설명한 액체·입력 동작은 G에도 적용된다.
 
 F에서는 쓰러진 잔을 집어 수직으로 세우는 순간에만 잔 안 액체를 함께 옮긴다. 자동 회전으로 입자가 가속되지 않으며 기존 속도 크기와 액체량은 유지한다. 집은 뒤 직접 움직이거나 기울일 때, 우클릭을 놓아 회전이 복귀할 때는 기존 액체 물리가 동작한다.
 
@@ -20,13 +22,14 @@ Unity 메뉴 **Slainte > Fluid GPU Experiment > Open Comparison** 또는
 | 4 / D Surface | C와 동일 | 틱 보간·이웃 분포 타원·실제 벽 마스크 |
 | 5 / E Liquid | 용량 보정·벽 밀도·반복 밀도 제약·전단 점성·젖음 | D 표면 + 재료별 광학 표현 |
 | 6 / F Cohesive Liquid (기본·개발 기준) | D 입자 크기를 유지한 반복 압축 보정·독립 응집·재료별 전단 점성·보존형 혼합 | D와 동일 |
+| 7 / G Explosive Breakage | F와 동일 | F와 동일 + 파손 시 파편 폭발 비산 |
 
 모드를 바꾸면 현재 재생 동작을 처음부터 시작한다. 두 시뮬레이터를 동시에 실행하지 않는다.
-A/B/C/D/F는 같은 입자 반경을 유지한다. E는 ml·간격·반경·커널을 함께 보정하며, 같은 용기와 재생 경로로 비교한다. 시작 모드와 개발·검증 기준은 F다. 4번 키로 D를 비교하고 6번 키로 F로 돌아간다.
+A/B/C/D/F/G는 같은 입자 반경을 유지한다. E는 ml·간격·반경·커널을 함께 보정하며, 같은 용기와 재생 경로로 비교한다. 시작 모드와 개발·검증 기준은 F다. 4번 키로 D를 비교하고 6번 키로 F로 돌아간다.
 
 F는 현재 기본 물리 모드이며 D는 비교용으로 유지한다. 입자당 ml·반경·초기 채움·병 배출·표면 표시를 D와 동일하게 두고, 압축된 입자만 밀어내는 반복 밀도 보정과 독립적인 근거리 응집을 적용한다. F의 Water/Spirit/Syrup/Milk 버튼은 액체 입자의 점성과 응집 계수만 바꾸며, E의 병 유량·젖음·광학·거품·부력 기능을 켜지 않는다. 우선 Rest/Pour/Stir/SealedShake를 같은 조건으로 비교한 후 Manual에서 조작한다.
 
-F 전용 설정은 `Liquid Settings`의 `Coherent liquid (F only; keeps the D particle and volume scale)` 그룹에 있다. 기본 압축 보정은 4회이며 `cohesiveDensityIterations=0`으로 끌 수 있다. `cohesiveSurfaceTension=0`과 `cohesiveShearViscosity=0`은 각각 응집·전단 점성을 끈다. 밀도 보정은 중력이나 물체 이동을 다시 적분하지 않는다. 응집은 물방울 표현을 위한 유한 거리 근사이며 정확한 접촉각 모델은 아니다. 선택적 벽 밀도 근사는 기본 0이고 E의 용량 보정을 이식하지 않는다. 총 ml와 성분별 ml를 보존하는 혼합을 사용한다.
+F/G 공통 액체 설정은 `Liquid Settings`의 `Coherent liquid (F/G; keeps the D particle and volume scale)` 그룹에 있다. 기본 압축 보정은 4회이며 `cohesiveDensityIterations=0`으로 끌 수 있다. `cohesiveSurfaceTension=0`과 `cohesiveShearViscosity=0`은 각각 응집·전단 점성을 끈다. 밀도 보정은 중력이나 물체 이동을 다시 적분하지 않는다. 응집은 물방울 표현을 위한 유한 거리 근사이며 정확한 접촉각 모델은 아니다. 선택적 벽 밀도 근사는 기본 0이고 E의 용량 보정을 이식하지 않는다. 총 ml와 성분별 ml를 보존하는 혼합을 사용한다.
 
 - **Manual:** 좌클릭 집기/놓기, 우클릭 회전. 우클릭 회전 중 시스템 커서는 잠그고 숨기며, 물체의 회전 중심에 화면 커서를 표시한다. 회전량은 마우스의 상대 이동량으로 계산하므로 작은 움직임도 연속적으로 반영한다. 우클릭을 놓으면 즉시 잠금이 풀리고, 각도가 복귀하는 동안에도 물체는 마우스 이동을 계속 따른다. 시스템 커서 위치가 반영되는 동안에도 화면 커서와 물체는 이동하며, 좌표 전환 자체는 물체를 움직이거나 투척 속도를 만들지 않는다. Esc·포커스 이탈·초기화·비활성화는 잠금을 해제한다. 자동 복귀 회전은 투척 회전력에 포함하지 않으며 복귀 중 사용자의 이동 속도는 유지한다.
 - **놓기·스왑:** 좌클릭하면 잡은 물체를 현재 이동·회전 속도로 놓는다. 클릭한 위치에 겹치는 대상이 있으면 속도에 관계없이 그 물체를 이어서 잡으므로, 움직이며 스왑하면 기존 물체는 던져진다. 새로 잡은 물체에는 이전 물체의 투척 속도를 넘기지 않는다. 어느 물체도 이전 집기 위치로 되돌리지 않으며, 바닥이나 다른 놓인 물체와의 겹침은 놓을 때 보정한다. 자동으로 똑바로 돌아오는 움직임은 투척 속도에 포함하지 않는다.
@@ -87,7 +90,7 @@ C의 밀도 표면은 입자를 합산해서 표시한다. 공중·용기 내부
 
 ## 조정 위치
 
-- `Data/HurricaneBreakage.asset`: `Slainte > Fluid GPU Experiment > Select Hurricane Breakage Settings` 메뉴로 선택한다. Inspector 맨 위의 `Minimum Impact Speed`(기본 6, 월드 단위/초)와 `Minimum Impulse Per Mass`(기본 4, 충격량/잔 질량)를 올릴수록 덜 깨진다. 두 조건을 모두 충족해야 깨지므로 먼저 속도 기준을 올리고, 빠르지만 약한 충돌도 버티게 하려면 충격량 기준을 올린다. 기존 기본값은 3.5/2였다. F 모드의 허리케인 잔에 적용되며 손에 들린 상태·자동 자세 보정은 제외한다. `Shard Motion`의 분산 속도·감쇠·재질은 파손 후 파편 움직임만 바꾼다. 파편의 이미지·윤곽·중심·면적은 `Build Hurricane Breakage` 메뉴로 다시 작성할 수 있으며 조절한 임계값은 유지된다.
+- `Data/HurricaneBreakage.asset`: `Slainte > Fluid GPU Experiment > Select Hurricane Breakage Settings` 메뉴로 선택한다. Inspector 맨 위의 `Minimum Impact Speed`(기본 6, 월드 단위/초)와 `Minimum Impulse Per Mass`(기본 4, 충격량/잔 질량)를 올릴수록 덜 깨진다. 두 조건을 모두 충족해야 깨지므로 먼저 속도 기준을 올리고, 빠르지만 약한 충돌도 버티게 하려면 충격량 기준을 올린다. 기존 기본값은 3.5/2였다. F/G 모드의 허리케인 잔에 적용되며 손에 들린 상태·자동 자세 보정은 제외한다. `Shard Motion`의 분산 속도·감쇠·재질은 파손 후 파편 움직임만 바꾼다. `Explosive Breakage (G mode only)`의 `Explosion Speed`(5)는 바깥쪽 비산 속도, `Explosion Upward Speed`(2.5)는 위로 튀는 속도, `Explosion Angular Speed`(240도/초)는 추가 회전 속도다. 세 값을 모두 0으로 두면 G에서도 F와 같은 파편 움직임을 사용한다. 파편의 이미지·윤곽·중심·면적은 `Build Hurricane Breakage` 메뉴로 다시 작성할 수 있으며 조절한 임계값은 유지된다.
 - `Data/FluidExperimentLiquidSettings.asset`: 기준 방식의 반경·압력·점성과 E의 커널·밀도 반복·벽 보정·안정성 한도.
 - 씬의 `FluidExperimentGpuLiquid`: C의 support radius, 속도 타원 비율, 임계값, 가장자리 폭, 입구 보정.
 - `Runtime/FluidExperimentComparison.cs`: 같은 입력을 재생하는 비교 제어기.
@@ -101,11 +104,36 @@ Play 중에는 액체 설정 에셋의 런타임 복사본을 사용한다. GPU 
 쏟아진 액체가 설정의 시뮬레이션 영역을 벗어나면 기존 방식과 동일하게 입자 슬롯을 회수한다.
 화면의 ml는 현재 활성 입자의 양이며, 재생 중 처음 넣은 총량과 다를 수 있다.
 
+## 재사용 런타임과 기획자 도구
+
+`Slainte > Fluid GPU Experiment > Designer`에서 프리팹을 검색하고 작업본의 수치·충돌 형상을 편집한다. 작업본은 원본 프리팹 및 충돌·파손·스플래시 프로파일과 분리되어 있다. **Save**로 반영하고 **Revert**로 저장 상태를 다시 연다. 공유 프로파일은 사용 중인 프리팹 수를 확인하고, 해당 객체만 다르게 만들려면 **Clone for this prefab**을 선택한다. 편집 중 Undo/Redo를 사용할 수 있다. 생성된 파편 형상은 `HurricaneShardGeometry.asset`, 기획자가 조절하는 강도·비산·감쇠는 `HurricaneBreakage.asset`에 따로 저장한다.
+
+**Create variant**는 현재 저장된 프리팹을 부모로 하는 실제 Prefab Variant를 만든다. 변형을 저장해도 부모 연결은 유지되며, 개별 프로파일 복제를 기본 선택한다. `Assets` 아래 다른 기능 폴더에 저장한 변형도 카탈로그에 등록되어 다음 실행의 검색 목록에 나타난다. 먼저 작업본을 Save하면 그 변경을 바탕으로 변형을 만들 수 있다. Undo/Redo는 장면 편집과 같은 Unity 실행 이력을 사용한다. Save는 저장 경계이며, 저장된 작업본의 편집 이력은 정리한다.
+
+도구의 낙하 시험은 높이·초기 속도·액체량·Natural/Explosive·반복 횟수를 지정하여 실제 Play Mode에서 실행한다. 시험에는 작업본의 스냅샷과 별도 씬을 사용하며, 종료하면 이전 에디터 씬으로 돌아간다. 시험 결과에는 파손 여부, 충격 속도/충격량, 파편 수·속도, 액체량과 보존 오차가 표시된다. 시험 중 Inspector에서 원본 에셋을 직접 수정하는 대신 작업본을 수정한 뒤 새 시험을 시작한다.
+
+일반 Play 및 스크립트 리로드에서도 미저장 작업본과 프로파일 복제 선택을 복원한다. 임시 시험·복구 스냅샷은 `DesignerTemp`에 만들고 정상 복구 후 제거하며 Git에서 제외한다. 저장하지 않은 기존 씬은 시험을 위해 저장하거나 덮어쓰지 않는다.
+
+- `Open Runtime Sample`: 비교 UI 없는 조립 예제 `Scenes/FluidRuntimeSample.unity`를 연다. 채워진 잔과 병·쉐이커·숟가락을 배치했다.
+- `Assemble New Runtime Scene`: 새 씬에 런타임·환경·카메라·허리케인 잔을 연결한다. 이후 Designer에서 다른 프리팹을 배치할 수 있다.
+- `Build Reusable Runtime Assets`: 누락된 공통 프리팹과 카탈로그를 생성한다. 이미 존재하는 설정·템플릿·샘플 씬은 덮어쓰지 않는다.
+- `Prefabs/Runtime/FluidExperimentRuntime.prefab`: World, GPU 액체, 입력, 효과, RuntimeRig를 가진 실행 모듈이다. 카메라·환경은 `RuntimeRig`의 명시적 참조로 연결한다. `FluidExperimentComparison`은 포함하지 않는다.
+- `Prefabs/Runtime/FluidExperimentEnvironment.prefab`: 테이블·좌우 벽·천장과 환경 바인딩이다. `Table Holds Liquid`를 끄면 테이블에서 액체만 배수한다. 켜면 유한 폭의 테이블 위 액체가 충돌하며 가장자리 밖으로 흐른 액체는 하단 월드 경계에서 회수된다.
+- `Prefabs/Runtime/GlassShard.prefab`, `ShakerPart.prefab`: 파편·분리형 쉐이커 부품의 공통 템플릿이다. 생성 시 비활성 상태에서 소유자·형상·물리 값을 설정한 뒤 활성화한다.
+- `Data/ShakerParts.asset`: 쉐이커 뚜껑·스트레이너 영역, 액체 통로, 두께·질량·부착 거리를 편집한다. 쉐이커 프리팹은 각 그림을 직접 참조하며, 기존 이름·픽셀 좌표 탐색은 이전 에셋의 호환 경로로만 남긴다.
+- `Data/FluidExperimentCatalog.asset`: 기존 객체 프리팹과 기존 `ItemDef`를 참조한다. 별도의 재료 데이터베이스를 만들지 않는다. 런타임 객체 추가는 `RuntimeRig.Spawn`/`SpawnObject`, 액체량 연동은 기존 `Liquid.Ledger`, `IngredientsIn`, `TryTransferContents`를 사용한다.
+
+새 런타임의 **Natural**은 충격 기반 액체 스플래시·유리 조각 충돌을 사용하고, **Explosive**는 여기에 기존 G 파편 비산을 더한다. 원래 비교 씬의 F/G는 이전 검증 조건을 유지한다. 개별 잔의 `splashProfile`이 비어 있으면 런타임의 `defaultSplashProfile`을 사용한다. 효과를 끄려면 해당 잔의 스플래시 프로파일에서 `Strength`를 0으로 설정한다.
+
+`DefaultBreakageSplash.asset`의 Strength, Maximum Delta Speed, Radial/Tangent/Lift Weight, Impact Radius/Falloff, Explosive Multiplier로 액체의 튀는 정도를 조정한다. 기존 낙하 속도를 유지하고 충격 속도와 질량당 충격량에 따른 제한된 추가 속도만 한 번 전달한다. 바닥 충격은 위·양옆, 벽 충격은 벽에서 멀어지는 방향으로 튄다. 활성 입자와 아직 태어나지 않은 GPU/CPU 예약 입자 모두 같은 계산을 사용하며 ml·성분·생성 시점을 유지한다.
+
+조각의 GPU 충돌은 **원래 얇은 유리 벽과 해당 조각 실루엣의 교집합**이다. 정면 그림 전체를 고체로 채우지 않으므로 액체가 있던 빈 공간이 갑자기 막히지 않는다. 조각 이동·회전은 연속 충돌과 움직이는 고체 접촉에 반영한다. 조각이 액체를 미는 단방향 결합이며, 액체가 파편을 다시 밀어내는 양방향 강체 결합이나 3D 유체 모델은 아니다. `maximumShardLiquidSegments` 기본 512를 초과하면 해당 조각의 액체 충돌을 생략하고 `SkippedShardBoundaryCount`로 보고한다. 일반 잔·도구의 경계 예산을 먼저 확보한다.
+
 ## 분리 및 검증
 
 스크립트 이름·네임스페이스, Compute Shader, 프리팹, 설정, 충돌 프로파일, 씬 GUID를 분리했다.
 그림과 ItemDef, 기존 누적/합성 셰이더는 읽기 전용 참조로 재사용한다. 성능 측정 컴포넌트는 별도 Player에 `-fluid-benchmark`를 명시한 경우에만 생성한다. 일반 실행과 Editor에서는 활성화하지 않는다.
-원본과 이 실험을 한 씬에 합치는 사용법은 검증 대상이 아니다.
+새 런타임은 다른 씬에서 명시적 참조로 조립할 수 있다. 기존 영업 씬의 레거시 액체·슬롯 컨트롤러를 자동 교체하지는 않는다.
 
 검증 소스, 실행별 명령·종료 코드, 실패 기록과 측정치는 프로젝트 루트의 `FluidGpuExperimentEvidence`에 있다.
 검증용 프로젝트는 별도 폴더에서 생성하며 원본 프로젝트를 Unity로 열어 저장하지 않는다.

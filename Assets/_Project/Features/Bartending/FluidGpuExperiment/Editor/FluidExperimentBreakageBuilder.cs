@@ -14,6 +14,7 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
         private const string Root = FluidExperimentBuilder.Root;
         private const string PrefabPath = Root + "/Prefabs/Glass_hurricane.prefab";
         private const string ProfilePath = Root + "/Data/HurricaneBreakage.asset";
+        private const string GeometryPath = Root + "/Data/HurricaneShardGeometry.asset";
         private const byte AlphaThreshold = 8;
         private const float SimplificationPixels = 1.25f;
 
@@ -73,7 +74,16 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
                     Debug.Log("[HurricaneBreakageBuilder] Shard " + number.ToString("00")
                         + ": " + pixels.Length + " silhouette points; area=" + definitions.Last().area);
                 }
-                profile.shards = definitions.ToArray();
+                var geometry = AssetDatabase.LoadAssetAtPath<FluidExperimentShardGeometry>(GeometryPath);
+                if (geometry == null)
+                {
+                    geometry = ScriptableObject.CreateInstance<FluidExperimentShardGeometry>();
+                    AssetDatabase.CreateAsset(geometry, GeometryPath);
+                }
+                geometry.definitions = definitions.ToArray();
+                geometry.sourceDescription = "Hurricane PNG alpha silhouettes; authored by FluidExperimentBreakageBuilder.";
+                EditorUtility.SetDirty(geometry);
+                profile.SetGeneratedGeometry(geometry);
                 if (profile.shardMaterial == null) profile.shardMaterial = BuildMaterial();
                 EditorUtility.SetDirty(profile);
                 var breakable = prefab.GetComponent<FluidExperimentBreakableGlass>();

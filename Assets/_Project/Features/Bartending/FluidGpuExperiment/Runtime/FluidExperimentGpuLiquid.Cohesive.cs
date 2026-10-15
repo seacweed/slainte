@@ -4,7 +4,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
 {
     public sealed partial class FluidExperimentGpuLiquid
     {
-        [Tooltip("F-only compression, cohesion and shear. Select before Initialize; does not enable E calibration or effects.")]
+        [Tooltip("F/G compression, cohesion and shear. Select before Initialize; does not enable E calibration or effects.")]
         public bool useCohesivePhysics;
         public FluidExperimentMaterial cohesiveMaterial = FluidExperimentMaterial.Auto;
         public bool CohesivePhysicsActive => IsOperational && useCohesivePhysics && !useImprovedPhysics

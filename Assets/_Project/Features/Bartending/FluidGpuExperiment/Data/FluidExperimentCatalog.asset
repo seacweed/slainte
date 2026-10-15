@@ -1,0 +1,155 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: affd393d279b45e1a886a54149aefd70, type: 3}
+  m_Name: FluidExperimentCatalog
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentAuthoringCatalog
+  entries:
+  - id: ee4369df1df0483fa6ffa93af11ccabc
+    displayName: "\uC5F4\uB300 \uC8FC\uC2A4"
+    category: Bottle
+    prefab: {fileID: 1241430249480759458, guid: ee4369df1df0483fa6ffa93af11ccabc, type: 3}
+    ingredient: {fileID: 11400000, guid: 0e03be4d0c88b3d42889b3a48a9fdd1d, type: 2}
+  - id: 4c1a4a39e6644696b907b9d828123535
+    displayName: "\uC2E4\uCCAD"
+    category: Bottle
+    prefab: {fileID: 3659684557028844266, guid: 4c1a4a39e6644696b907b9d828123535, type: 3}
+    ingredient: {fileID: 11400000, guid: a6e64603bd7e3984885f58e21eff6617, type: 2}
+  - id: ab133b0cfa2b4e81b399f227e7532073
+    displayName: "\uD569\uC131 \uB808\uBAAC"
+    category: Bottle
+    prefab: {fileID: 777262680673658179, guid: ab133b0cfa2b4e81b399f227e7532073, type: 3}
+    ingredient: {fileID: 11400000, guid: 1cd9aa7cb58c4934281fc536031b9827, type: 2}
+  - id: 7dbe85ce4edb4c91931c1b647b46cf66
+    displayName: "\uC2AC\uB86D"
+    category: Bottle
+    prefab: {fileID: 5060119843658358760, guid: 7dbe85ce4edb4c91931c1b647b46cf66, type: 3}
+    ingredient: {fileID: 11400000, guid: 96f16f49af531e045a4f4c3ed83203ef, type: 2}
+  - id: f285c82e560043e2b9224f18432ded73
+    displayName: "\uB098\uB0AD\uB098"
+    category: Bottle
+    prefab: {fileID: 4911997867084214545, guid: f285c82e560043e2b9224f18432ded73, type: 3}
+    ingredient: {fileID: 11400000, guid: c9ed2798a7aa0cd40957d0c753f5b5fd, type: 2}
+  - id: 70dd6f46d3d342dcb32966a3081eec8a
+    displayName: "\uCF54\uD2BC"
+    category: Bottle
+    prefab: {fileID: 6173327927662007055, guid: 70dd6f46d3d342dcb32966a3081eec8a, type: 3}
+    ingredient: {fileID: 11400000, guid: 9134848438195ff4d81c91a61a002001, type: 2}
+  - id: 422d4ac4f09d437e97bbea91f8b0924b
+    displayName: "\uD5E5\uD0C0\uB974"
+    category: Bottle
+    prefab: {fileID: 4702681950634784197, guid: 422d4ac4f09d437e97bbea91f8b0924b, type: 3}
+    ingredient: {fileID: 11400000, guid: dcc77b167c4866d4a9c1606d4e82fc3f, type: 2}
+  - id: 62bfa1614d934f1799afc3c4a4c1a6c1
+    displayName: "\uBE14\uB808\uC2A4"
+    category: Bottle
+    prefab: {fileID: 5133631349078002977, guid: 62bfa1614d934f1799afc3c4a4c1a6c1, type: 3}
+    ingredient: {fileID: 11400000, guid: ac232de6f8ffa4d419c8d2c1ae05d1c3, type: 2}
+  - id: 10da689025464e2dac81cd603aae6a07
+    displayName: "\uBE0C\uB9AC\uC988 \uBCF4\uB4DC\uCE74"
+    category: Bottle
+    prefab: {fileID: 9017856343656879248, guid: 10da689025464e2dac81cd603aae6a07, type: 3}
+    ingredient: {fileID: 11400000, guid: d8fc4c49e26edd243a89ce72b978db82, type: 2}
+  - id: a9c9cd1d3ae540a992291ae5c52d4d8a
+    displayName: "\uC870\uB2C8 \uB3C5\uC2A4"
+    category: Bottle
+    prefab: {fileID: 3804621742749988090, guid: a9c9cd1d3ae540a992291ae5c52d4d8a, type: 3}
+    ingredient: {fileID: 11400000, guid: 3dbd738241b14624c97cf8c3fd6f03ee, type: 2}
+  - id: e7b00c943fcb4aef8e545fbe8eeddfac
+    displayName: "\uBC88\uD584 \uBC84\uBC88"
+    category: Bottle
+    prefab: {fileID: 5685256150221072265, guid: e7b00c943fcb4aef8e545fbe8eeddfac, type: 3}
+    ingredient: {fileID: 11400000, guid: 16a1a195e8542434aaec6209f214b5ed, type: 2}
+  - id: 6d69423336c643339f5f0a17b54b4519
+    displayName: "\uBC14\uD558"
+    category: Bottle
+    prefab: {fileID: 9025496582530897574, guid: 6d69423336c643339f5f0a17b54b4519, type: 3}
+    ingredient: {fileID: 11400000, guid: 5f3bb193bdab9c948879e8abcc9543ac, type: 2}
+  - id: f0696d7fe47d40ddbc9717a7e047385e
+    displayName: "\uD0C4\uC0B0 \uBBF8\uB2DB"
+    category: Bottle
+    prefab: {fileID: 9075289662841374473, guid: f0696d7fe47d40ddbc9717a7e047385e, type: 3}
+    ingredient: {fileID: 11400000, guid: 353d021dd2b96544890bc20fec7e65a6, type: 2}
+  - id: 0f193e59a91a4fe4b1ca445705822b1c
+    displayName: "\uB728\uAC70\uC6B4 \uBB3C"
+    category: Bottle
+    prefab: {fileID: 7362873855022841920, guid: 0f193e59a91a4fe4b1ca445705822b1c, type: 3}
+    ingredient: {fileID: 11400000, guid: ab899d4420175d24982b2a2d35aa9f0b, type: 2}
+  - id: 47f70b2d4f3b43cfa6ff00d6f3e18ed1
+    displayName: "\uCEE4\uD53C \uBD84\uB9D0"
+    category: Bottle
+    prefab: {fileID: 7061412139762553365, guid: 47f70b2d4f3b43cfa6ff00d6f3e18ed1, type: 3}
+    ingredient: {fileID: 11400000, guid: 11f995151024c3f4fad33ff1a95a87ca, type: 2}
+  - id: 2d2f3f8c91f740e58be98f2f20429acd
+    displayName: Highball
+    category: Glass
+    prefab: {fileID: 9046728341189981464, guid: 2d2f3f8c91f740e58be98f2f20429acd, type: 3}
+    ingredient: {fileID: 0}
+  - id: cdd4cf3ddb1645cbba5bf15a3c86a667
+    displayName: Hurricane
+    category: Glass
+    prefab: {fileID: 1567955184128977622, guid: cdd4cf3ddb1645cbba5bf15a3c86a667, type: 3}
+    ingredient: {fileID: 0}
+  - id: 7699c3850c7e4797a9c1f34f29e6cb62
+    displayName: Martini
+    category: Glass
+    prefab: {fileID: 7959043526796961051, guid: 7699c3850c7e4797a9c1f34f29e6cb62, type: 3}
+    ingredient: {fileID: 0}
+  - id: 75db303eb79445e6b3b3835139f05698
+    displayName: Rock
+    category: Glass
+    prefab: {fileID: 1424221887031597965, guid: 75db303eb79445e6b3b3835139f05698, type: 3}
+    ingredient: {fileID: 0}
+  - id: aeb2d0491bf1482caac691606c1252c9
+    displayName: Ice
+    category: Ice
+    prefab: {fileID: 1754040415381663564, guid: aeb2d0491bf1482caac691606c1252c9, type: 3}
+    ingredient: {fileID: 0}
+  - id: 07bb037e86bf4852b85ef34b311b36fd
+    displayName: Ice Bucket
+    category: IceBucket
+    prefab: {fileID: 3795047056570562355, guid: 07bb037e86bf4852b85ef34b311b36fd, type: 3}
+    ingredient: {fileID: 0}
+  - id: 3de8e16baa9b47e4a347497c4c5a7c04
+    displayName: Jigger
+    category: Jigger
+    prefab: {fileID: 2760984825050641587, guid: 3de8e16baa9b47e4a347497c4c5a7c04, type: 3}
+    ingredient: {fileID: 0}
+  - id: 2be5a6a1dc5c4938b59ee352c9405231
+    displayName: Cobbler Shaker
+    category: Shaker
+    prefab: {fileID: 8354829667090909651, guid: 2be5a6a1dc5c4938b59ee352c9405231, type: 3}
+    ingredient: {fileID: 0}
+  - id: 5e6024607d924facabe44ce22a682240
+    displayName: Bar Spoon
+    category: Spoon
+    prefab: {fileID: 6889554852635809505, guid: 5e6024607d924facabe44ce22a682240, type: 3}
+    ingredient: {fileID: 0}
+  - id: 3504ee367207c674ba2014180fe8a5e8
+    displayName: Nananga Peel
+    category: Garnish
+    prefab: {fileID: 8971974899601060605, guid: 3504ee367207c674ba2014180fe8a5e8, type: 3}
+    ingredient: {fileID: 0}
+  - id: f7b5732a74207054489c7e7498d455a2
+    displayName: Nananga Peel
+    category: Garnish Source
+    prefab: {fileID: 1921643264892204995, guid: f7b5732a74207054489c7e7498d455a2, type: 3}
+    ingredient: {fileID: 0}
+  - id: fc26370a925680544a2463220c590028
+    displayName: Synth Lemon Peel
+    category: Garnish
+    prefab: {fileID: 2877257764390305244, guid: fc26370a925680544a2463220c590028, type: 3}
+    ingredient: {fileID: 0}
+  - id: 0bd66623d521df0428e7f21ef38a43fa
+    displayName: Synth Lemon Peel
+    category: Garnish Source
+    prefab: {fileID: 1846245734062554774, guid: 0bd66623d521df0428e7f21ef38a43fa, type: 3}
+    ingredient: {fileID: 0}

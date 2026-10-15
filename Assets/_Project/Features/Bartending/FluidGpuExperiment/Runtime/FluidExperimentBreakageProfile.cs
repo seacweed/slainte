@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Slainte.Bartending.FluidGpuExperiment
 {
@@ -31,7 +32,31 @@ namespace Slainte.Bartending.FluidGpuExperiment
         [Tooltip("Friction and bounce of the broken shards.")]
         public PhysicsMaterial2D shardMaterial;
 
-        [Header("Authored Shard Geometry")]
-        public Shard[] shards = Array.Empty<Shard>();
+        [Header("Explosive Breakage (G mode only)")]
+        [Tooltip("Extra outward shard speed in world units/second. Zero disables the radial burst; F mode ignores this setting.")]
+        [Min(0)] public float explosionSpeed = 5f;
+        [Tooltip("Extra upward shard speed in world units/second, independent of the glass angle.")]
+        [Min(0)] public float explosionUpwardSpeed = 2.5f;
+        [Tooltip("Extra shard rotation speed in degrees/second. Neighboring shards spin in alternating directions.")]
+        [Min(0)] public float explosionAngularSpeed = 240f;
+
+        [Header("Generated Geometry and Reusable Template")]
+        public FluidExperimentShardGeometry generatedGeometry;
+        public GameObject shardTemplate;
+        [SerializeField, HideInInspector, FormerlySerializedAs("shards")]
+        private Shard[] legacyShards = Array.Empty<Shard>();
+
+        // Preserve the runtime and older test API while migrating serialized assets safely.
+        public Shard[] shards
+        {
+            get => generatedGeometry != null ? generatedGeometry.definitions : legacyShards;
+            set { generatedGeometry = null; legacyShards = value ?? Array.Empty<Shard>(); }
+        }
+
+        public void SetGeneratedGeometry(FluidExperimentShardGeometry geometry)
+        {
+            generatedGeometry = geometry;
+            if (geometry != null) legacyShards = Array.Empty<Shard>();
+        }
     }
 }

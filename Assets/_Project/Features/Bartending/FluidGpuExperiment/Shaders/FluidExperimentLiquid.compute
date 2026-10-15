@@ -26,6 +26,7 @@
 #pragma kernel SetVesselSuspended
 #pragma kernel SwapContents
 #pragma kernel ReleaseOwner
+#pragma kernel ApplyBreakSplash
 #pragma kernel ResetStreamLookup
 #pragma kernel BuildStreamSurface
 #pragma kernel MergeStreamContacts
@@ -233,6 +234,9 @@ int _SwapA;
 int _SwapB;
 float2 _SwapDeltaA;
 float2 _SwapDeltaB;
+float2 _BreakSplashCenter, _BreakSplashPoint, _BreakSplashNormal;
+float4 _BreakSplashDirection; // radial, tangent, outward lift, distance exponent
+float4 _BreakSplashImpact; // radius, available delta speed, maximum delta speed, unused
 
 #include "FluidExperimentBoundaryRanges.hlsl"
 
@@ -1747,6 +1751,41 @@ void SwapContents(uint3 dispatchId : SV_DispatchThreadID)
     p.velocity = 0.0;
     _Particles[i] = p;
 }
+// Match FluidExperimentSplashProfile.Parameters.Evaluate for CPU-queued births.
+// No slot-based noise: the same position receives the same impulse regardless of birth state.
+float2 EvaluateBreakSplashDelta(float2 position)
+{
+    if (!all(isfinite(position))) return 0.0;
+    float distance = length(position - _BreakSplashPoint);
+    if (distance >= _BreakSplashImpact.x || _BreakSplashImpact.y <= 0.0 || _BreakSplashImpact.z <= 0.0) return 0.0;
+    float2 offset = position - _BreakSplashCenter;
+    float radialLength = length(offset);
+    float2 radial = radialLength > 0.00001 ? offset / radialLength : float2(0.0, 0.0);
+    float2 tangent = float2(_BreakSplashNormal.y, -_BreakSplashNormal.x);
+    float side = dot(offset, tangent);
+    float sideSign = side < -0.00001 ? -1.0 : side > 0.00001 ? 1.0 : 0.0;
+    float2 direction = radial * _BreakSplashDirection.x
+        + tangent * (sideSign * _BreakSplashDirection.y) + _BreakSplashNormal * _BreakSplashDirection.z;
+    direction -= _BreakSplashNormal * min(0.0, dot(direction, _BreakSplashNormal));
+    float directionLength = length(direction);
+    if (directionLength <= 0.00001) return 0.0;
+    float falloff = pow(max(0.0, 1.0 - distance / _BreakSplashImpact.x), _BreakSplashDirection.w);
+    return direction / directionLength * min(_BreakSplashImpact.z, _BreakSplashImpact.y * falloff);
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void ApplyBreakSplash(uint3 dispatchId : SV_DispatchThreadID)
+{
+    uint i = dispatchId.x;
+    if (i >= (uint)_ParticleCapacity) return;
+    LiquidParticle p = _Particles[i];
+    if (p.vesselId != (uint)_TransformTargetVessel
+        || (p.active == 0u && _StreamParticles[i].pending == 0u)) return;
+    p.velocity += EvaluateBreakSplashDelta(p.position);
+    // Position, previous position, stream chronology, composition and volume stay intact.
+    _Particles[i] = p;
+}
+
 [numthreads(THREAD_GROUP_SIZE, 1, 1)]
 void ReleaseOwner(uint3 dispatchId : SV_DispatchThreadID)
 {

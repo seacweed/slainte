@@ -1,0 +1,165 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5255227303521395299
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5670048948298781937}
+  - component: {fileID: 1455292794985760073}
+  - component: {fileID: 7442995279470960193}
+  - component: {fileID: 2637383021475082677}
+  - component: {fileID: 4825096798732785008}
+  - component: {fileID: 4452693018939984928}
+  m_Layer: 0
+  m_Name: FluidExperimentRuntime
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5670048948298781937
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5255227303521395299}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1455292794985760073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5255227303521395299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb1755b6f8984d2e881788ee4134bbf8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentWorld
+  shardLiquidCollision: 1
+  maximumShardLiquidSegments: 512
+  liquid: {fileID: 7442995279470960193}
+  interactor: {fileID: 2637383021475082677}
+  floorColliders: []
+  itemLayer: 29
+  showControls: 0
+  seedLiquids: 0
+  leftBoundary: {fileID: 0}
+  rightBoundary: {fileID: 0}
+  topBoundary: {fileID: 0}
+  liquidSurfaces: []
+--- !u!114 &7442995279470960193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5255227303521395299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c72a0c2daae34eb0a7877bf107044d6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentGpuLiquid
+  useCohesivePhysics: 1
+  cohesiveMaterial: 0
+  settings: {fileID: 11400000, guid: 2a09e817058445d0b9363bbe03e792ce, type: 2}
+  drawShader: {fileID: 4800000, guid: 1a765b72efd4441490172c795eee5940, type: 3}
+  outputCamera: {fileID: 0}
+  automaticReadback: 1
+  renderParticles: 1
+  useSurfaceRendering: 1
+  improvedMaterial: 0
+  useImprovedSurface: 1
+  improvedSurfaceCompute: {fileID: 7200000, guid: 370cbf91fbab42449764f71a37fddc8f, type: 3}
+  improvedAccumulationShader: {fileID: 4800000, guid: afc7584e75394ea58d77fe99c70ff01c, type: 3}
+  improvedCompositeShader: {fileID: 4800000, guid: 4dd823d0fe7243bcb5cee2c3d6192efa, type: 3}
+  improvedMaximumAspect: 3
+  improvedOpticalAbsorption: 0.18
+  solver: 1
+  useImprovedPhysics: 0
+  useReferenceSurface: 1
+  referenceAccumulationShader: {fileID: 4800000, guid: e005f3520b8e4c51b8880437561bb97f, type: 3}
+  referenceCompositeShader: {fileID: 4800000, guid: 589fb51fc5ba458a802369d1b8ef6b2b, type: 3}
+  referenceSupportRadius: 1.9
+  referenceMaximumAspect: 6
+  referenceFullStretchSpeed: 10
+  referenceDensityThreshold: 0.42
+  referenceEdgeSoftness: 0.025
+  referenceNozzleSupport: 1
+  referenceNozzleReach: 4
+  referenceNozzleMaximumAge: 0.06
+  useStreamRendering: 1
+--- !u!114 &2637383021475082677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5255227303521395299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8375aff9f6f448eeba58ed3a8bc97ccd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentInteractor
+  world: {fileID: 1455292794985760073}
+  inputCamera: {fileID: 0}
+  rotationSensitivity: 5
+  velocityWindow: 0.1
+  uprightReturnDuration: 0.15
+--- !u!114 &4825096798732785008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5255227303521395299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9637a1e5d24f4ba1b784f48e5005c902, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentEffects
+  world: {fileID: 1455292794985760073}
+  cosmeticShader: {fileID: 4800000, guid: 7a6c5bbed65742ce821d1edc646bd796, type: 3}
+  enableIceResponse: 1
+  enableCosmetics: 1
+  enableAudio: 0
+  audioVolume: 0.18
+  maximumSnapshotAge: 0.5
+--- !u!114 &4452693018939984928
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5255227303521395299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4336f232f534a77aecc37e11654cc65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentRuntimeRig
+  world: {fileID: 1455292794985760073}
+  liquid: {fileID: 7442995279470960193}
+  interactor: {fileID: 2637383021475082677}
+  effects: {fileID: 4825096798732785008}
+  inputCamera: {fileID: 0}
+  environment: {fileID: 0}
+  catalog: {fileID: 11400000, guid: ddc7d8122ec45b042bb398f605e104ca, type: 2}
+  liquidSettings: {fileID: 11400000, guid: 2a09e817058445d0b9363bbe03e792ce, type: 2}
+  defaultIngredient: {fileID: 11400000, guid: 0e03be4d0c88b3d42889b3a48a9fdd1d, type: 2}
+  defaultSplashProfile: {fileID: 11400000, guid: 78f5fb376650a3e49b17e562f38800bb, type: 2}
+  breakageStyle: 0
+  shardLiquidCollision: 1
+  seedLiquids: 0
+  enablePointerInput: 1

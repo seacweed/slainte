@@ -8,6 +8,10 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
     public sealed partial class FluidExperimentBody
     {
+        [Tooltip("Optional reusable physical part template. Existing assets retain the generated fallback.")]
+        public GameObject shakerPartTemplate;
+        public FluidExperimentShakerProfile shakerProfile;
+        public SpriteRenderer shakerStrainerArt, shakerCapArt;
         public FluidExperimentShakerPart ShakerStrainer { get; private set; }
         public FluidExperimentShakerPart ShakerCap { get; private set; }
         public bool HasStrainer => kind == LabItemKind.Shaker && ShakerStrainer != null && ShakerStrainer.IsAttached;
@@ -32,16 +36,18 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (kind != LabItemKind.Shaker || shakerPartsInitialized) return;
             shakerPartsInitialized = true;
             if (capVisual != null) capVisual.SetActive(true);
-            SpriteRenderer strainerArt = null, capArt = null;
+            SpriteRenderer strainerArt = shakerStrainerArt, capArt = shakerCapArt;
+            // Legacy prefabs remain usable; newly authored assets bind these renderers directly.
+            if (strainerArt == null || capArt == null)
             foreach (SpriteRenderer renderer in GetComponentsInChildren<SpriteRenderer>(true))
             {
                 string spriteName = renderer.sprite != null ? renderer.sprite.name : string.Empty;
-                if (spriteName == "cobbler_strainer" || renderer.name == "ToolArt_4") strainerArt = renderer;
-                if (spriteName == "cobbler_lid" || renderer.name == "ToolArt_5") capArt = renderer;
+                if (strainerArt == null && (spriteName == "cobbler_strainer" || renderer.name == "ToolArt_4")) strainerArt = renderer;
+                if (capArt == null && (spriteName == "cobbler_lid" || renderer.name == "ToolArt_5")) capArt = renderer;
             }
-            Rect strainerRect = SpritePartRect(strainerArt, new Rect(53, 271, 203, 162),
+            Rect strainerRect = shakerProfile != null ? shakerProfile.strainerRect : SpritePartRect(strainerArt, new Rect(53, 271, 203, 162),
                 new Rect(-.61f, -.14f, 1.22f, .96f));
-            Rect capRect = SpritePartRect(capArt, new Rect(105, 370, 99, 78),
+            Rect capRect = shakerProfile != null ? shakerProfile.capRect : SpritePartRect(capArt, new Rect(105, 370, 99, 78),
                 new Rect(-.30f, .44f, .60f, .47f));
             // Compute guides before reparenting the original sprite transforms.
             BuildStrainerGeometry(strainerArt, strainerRect);
@@ -74,15 +80,25 @@ namespace Slainte.Bartending.FluidGpuExperiment
         {
             Vector2[] bowl = collisionProfile != null ? collisionProfile.interior : liquidWall;
             if (bowl == null || bowl.Length < 3) return;
+            if (shakerProfile != null && shakerProfile.leftGuide.Length >= 2 && shakerProfile.rightGuide.Length >= 2)
+            {
+                BuildStrainerGeometry(shakerProfile.leftGuide, shakerProfile.rightGuide, bowl, Mathf.Max(.001f, shakerProfile.halfThickness));
+                return;
+            }
             Vector2 Point(float x, float y) => art != null && art.sprite != null
                 ? SpritePoint(art, new Vector2(x, y))
                 : new Vector2(Mathf.Lerp(fallback.xMin, fallback.xMax, (x - 53f) / 203f),
                     Mathf.Lerp(fallback.yMin, fallback.yMax, (y - 271f) / 162f));
             Vector2[] left = { bowl[0], Point(67, 344), Point(91, 369), Point(121, 383), Point(121, 433) };
             Vector2[] right = { bowl[bowl.Length - 1], Point(243, 344), Point(219, 369), Point(189, 383), Point(189, 433) };
+            BuildStrainerGeometry(left, right, bowl, .018f);
+        }
+
+        private void BuildStrainerGeometry(Vector2[] left, Vector2[] right, Vector2[] bowl, float halfThickness)
+        {
             var hulls = new List<FluidExperimentHull>();
-            AddGuideHulls(left, hulls);
-            AddGuideHulls(right, hulls);
+            AddGuideHulls(left, hulls, halfThickness);
+            AddGuideHulls(right, hulls, halfThickness);
             ShakerStrainerLiquidHulls = hulls.ToArray();
             ShakerOutletLocal = (left[left.Length - 1] + right[right.Length - 1]) * .5f;
             ShakerOutletWidth = Vector2.Distance(left[left.Length - 1], right[right.Length - 1]);
@@ -94,9 +110,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
             strainingInterior = interior.ToArray();
         }
 
-        private static void AddGuideHulls(Vector2[] guide, List<FluidExperimentHull> destination)
+        private static void AddGuideHulls(Vector2[] guide, List<FluidExperimentHull> destination, float halfThickness)
         {
-            const float halfThickness = .018f;
             for (int i = 1; i < guide.Length; i++)
             {
                 Vector2 a = guide[i - 1], b = guide[i];

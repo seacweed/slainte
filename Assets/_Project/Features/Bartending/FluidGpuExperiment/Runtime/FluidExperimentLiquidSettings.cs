@@ -64,7 +64,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         [Min(0)] public float improvedSurfaceTension = 1f;
         [Min(0)] public float improvedWetting = 1f;
 
-        [Header("Coherent liquid (F only; keeps the D particle and volume scale)")]
+        [Header("Coherent liquid (F/G; keeps the D particle and volume scale)")]
         [Tooltip("Compression-only projection iterations. Zero disables pressure for controlled comparisons.")]
         [Range(0, 12)] public int cohesiveDensityIterations = 4;
         [Min(0)] public float cohesiveDensityCompliance = .000001f;

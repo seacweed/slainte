@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Slainte.Bartending.FluidGpuExperiment
 {
-    public enum FluidExperimentMode { ACurrent, BReferencePhysics, CReferenceSurface, DImprovedSurface, ECalibratedLiquid, FCoherentLiquid }
+    public enum FluidExperimentMode { ACurrent, BReferencePhysics, CReferenceSurface, DImprovedSurface, ECalibratedLiquid, FCoherentLiquid, GExplosiveBreakage }
     public enum FluidExperimentScenario { Manual, Rest, Pour, Tilt, Stir, SealedShake, VolumeCheck }
 
     /// <summary>One world at a time, reset to the same authored state for every comparison.</summary>
@@ -30,10 +30,12 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public FluidExperimentVolumeMetrics VolumeMetrics { get; } = new FluidExperimentVolumeMetrics();
         public bool VolumeSampleAvailable => ActiveScenario == FluidExperimentScenario.VolumeCheck
             && Gpu != null && Gpu.SnapshotRevision != volumeSnapshotAtStart;
-        public static Rect ControlsRect => new Rect(12, 12, 545, 225);
-        private Rect LogicalControlsRect => new Rect(12, 12, 545, 256
+        public static Rect ControlsRect => new Rect(12, 12, 545, 335);
+        private bool UsesCohesiveLiquid => ActiveMode == FluidExperimentMode.FCoherentLiquid
+            || ActiveMode == FluidExperimentMode.GExplosiveBreakage;
+        private Rect LogicalControlsRect => new Rect(12, 12, 545, 287
             + (ActiveScenario == FluidExperimentScenario.VolumeCheck ? 145 : 0)
-            + (ActiveMode == FluidExperimentMode.ECalibratedLiquid || ActiveMode == FluidExperimentMode.FCoherentLiquid ? 48 : 0));
+            + (ActiveMode == FluidExperimentMode.ECalibratedLiquid || UsesCohesiveLiquid ? 48 : 0));
         private float ControlsScale => Mathf.Min(1, Screen.width / 960f, Screen.height / 640f);
         private Rect ActiveControlsRect
         {
@@ -72,7 +74,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 Gpu.settings = runtimeSettings;
             }
             ApplyMode(initialMode);
-            world.interactor.pointerBlockRect = ControlsRect;
+            world.interactor.pointerBlockRect = ActiveControlsRect;
         }
         private IEnumerator Start()
         {
@@ -88,8 +90,9 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private void ApplyMode(FluidExperimentMode mode)
         {
             ActiveMode = mode;
+            world.ExplosiveGlassBreakage = mode == FluidExperimentMode.GExplosiveBreakage;
             Gpu.useImprovedPhysics = mode == FluidExperimentMode.ECalibratedLiquid;
-            Gpu.useCohesivePhysics = mode == FluidExperimentMode.FCoherentLiquid;
+            Gpu.useCohesivePhysics = UsesCohesiveLiquid;
             Gpu.useImprovedSurface = mode == FluidExperimentMode.DImprovedSurface || Gpu.useImprovedPhysics || Gpu.useCohesivePhysics;
             if (runtimeSettings != null && sourceSettings != null)
                 runtimeSettings.gpuLiquidParticleRadius = Gpu.useImprovedPhysics
@@ -246,6 +249,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (Input.GetKeyDown(KeyCode.Alpha4)) SwitchMode(FluidExperimentMode.DImprovedSurface);
             if (Input.GetKeyDown(KeyCode.Alpha5)) SwitchMode(FluidExperimentMode.ECalibratedLiquid);
             if (Input.GetKeyDown(KeyCode.Alpha6)) SwitchMode(FluidExperimentMode.FCoherentLiquid);
+            if (Input.GetKeyDown(KeyCode.Alpha7)) SwitchMode(FluidExperimentMode.GExplosiveBreakage);
             if (Input.GetKeyDown(KeyCode.R)) StartScenario(ActiveScenario);
         }
         private void FrameVolumeVessel()
@@ -275,23 +279,24 @@ namespace Slainte.Bartending.FluidGpuExperiment
             GUILayout.BeginHorizontal();
             foreach (FluidExperimentMode mode in Enum.GetValues(typeof(FluidExperimentMode)))
             {
-                if (mode == FluidExperimentMode.DImprovedSurface) { GUILayout.EndHorizontal(); GUILayout.BeginHorizontal(); }
+                if (mode == FluidExperimentMode.DImprovedSurface || mode == FluidExperimentMode.GExplosiveBreakage)
+                { GUILayout.EndHorizontal(); GUILayout.BeginHorizontal(); }
                 if (GUILayout.Button(ModeName(mode), GUILayout.Height(27)) && Ready) SwitchMode(mode);
             }
             GUILayout.EndHorizontal();
-            GUILayout.Label("D: comparison  |  E: calibrated liquid  |  F: current baseline");
-            if (ActiveMode == FluidExperimentMode.ECalibratedLiquid || ActiveMode == FluidExperimentMode.FCoherentLiquid)
+            GUILayout.Label("D/E: comparison  |  F: baseline  |  G: explosive glass shards");
+            if (ActiveMode == FluidExperimentMode.ECalibratedLiquid || UsesCohesiveLiquid)
             {
                 GUILayout.BeginHorizontal();
                 foreach (FluidExperimentMaterial material in Enum.GetValues(typeof(FluidExperimentMaterial)))
                     if (GUILayout.Button(material.ToString(), GUILayout.Height(23)))
                     {
-                        if (ActiveMode == FluidExperimentMode.FCoherentLiquid) Gpu.cohesiveMaterial = material;
+                        if (UsesCohesiveLiquid) Gpu.cohesiveMaterial = material;
                         else Gpu.improvedMaterial = material;
                         StartScenario(ActiveScenario);
                     }
                 GUILayout.EndHorizontal();
-                GUILayout.Label(ActiveMode == FluidExperimentMode.FCoherentLiquid
+                GUILayout.Label(UsesCohesiveLiquid
                     ? "Material: " + Gpu.cohesiveMaterial + " | D particle size, new cohesion and viscosity"
                     : "Material: " + Gpu.improvedMaterial + " | volume from each vessel's capacity and interior area");
             }
@@ -301,10 +306,12 @@ namespace Slainte.Bartending.FluidGpuExperiment
             GUILayout.EndHorizontal();
             if (ActiveScenario == FluidExperimentScenario.VolumeCheck) DrawVolumeControls();
             GUILayout.Label("Replay: " + ActiveScenario + "  " + ScenarioTime.ToString("F1") + "s");
-            GUILayout.Label("1 - 6: compare    R: restart    LMB: pick/place/parts    RMB: rotate    C: shaker state");
+            GUILayout.Label("1 - 7: compare    R: restart    LMB: pick/place/parts    RMB: rotate    C: shaker state");
             GUILayout.Label(Ready ? "GPU: " + SystemInfo.graphicsDeviceName + "  |  particles: " + Gpu.ActiveCount
                 + "  |  " + Gpu.SnapshotTotalMl.ToString("F1") + " ml" : "GPU unavailable: " + (Error ?? Gpu?.Error));
-            GUILayout.Label(ActiveScenario == FluidExperimentScenario.Manual
+            GUILayout.Label(ActiveMode == FluidExperimentMode.GExplosiveBreakage
+                ? "G: break the hurricane glass on impact to launch explosive shards."
+                : ActiveScenario == FluidExperimentScenario.Manual
                 ? "Garnish: click a jar, then place. Placed garnish/ice cannot be picked again."
                 : "F: density stabilization, cohesion, material viscosity, conservative mixing");
             GUILayout.EndArea();
@@ -342,6 +349,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             FluidExperimentMode.DImprovedSurface => "4: D New Surface",
             FluidExperimentMode.ECalibratedLiquid => "5: E Calibrated Liquid",
             FluidExperimentMode.FCoherentLiquid => "6: F Cohesive Liquid",
+            FluidExperimentMode.GExplosiveBreakage => "7: G Explosive Breakage",
             _ => "Unknown mode"
         };
         private void OnDestroy()

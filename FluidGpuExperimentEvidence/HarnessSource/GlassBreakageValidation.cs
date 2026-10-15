@@ -87,6 +87,7 @@ public sealed class GlassBreakageValidationRunner : MonoBehaviour
             LiquidAndSolidConservation();
             NativeShardRestAndCleanup();
             ResetAndModeScope();
+            ExplosiveModeScope();
             Check(errors.Count == 0, "No Unity errors or assertions"); success = true;
         }
         catch (Exception ex) { report.Add(ex.ToString()); }
@@ -459,6 +460,99 @@ public sealed class GlassBreakageValidationRunner : MonoBehaviour
         Reset(0, 3);
         Check(UntilQueued(160), "Switching back to F restores automatic breakage");
         world.TickLiquid(.01f); Reset();
+    }
+    void ExplosiveModeScope()
+    {
+        Check(!world.ExplosiveGlassBreakage && comparison.initialMode == FluidExperimentMode.FCoherentLiquid,
+            "F remains the authored default and does not enable explosive shard motion");
+        Check(Mathf.Abs(testProfile.explosionSpeed - 5) < .0001f
+            && Mathf.Abs(testProfile.explosionUpwardSpeed - 2.5f) < .0001f
+            && Mathf.Abs(testProfile.explosionAngularSpeed - 240) < .0001f,
+            "Authored G burst defaults are 5 outward, 2.5 upward and 240 degrees/second spin");
+        comparison.SwitchMode(FluidExperimentMode.GExplosiveBreakage); DisableAutomaticSimulation();
+        Check(comparison.Ready && world.ExplosiveGlassBreakage && gpu.CohesivePhysicsActive
+            && !gpu.useImprovedPhysics && gpu.useImprovedSurface && gpu.useReferenceSurface
+            && gpu.solver == FluidExperimentSolver.ReferenceSph,
+            "G enables the burst while retaining F cohesive physics and surface rendering");
+        var controls = (Rect)typeof(FluidExperimentComparison).GetProperty("LogicalControlsRect", Members).GetValue(comparison);
+        Check(controls.height == FluidExperimentComparison.ControlsRect.height,
+            "G material controls fit the expanded seven-mode control panel");
+        GentleContact();
+        Reset(0, 3);
+        Check(UntilQueued(160), "A real high drop queues G breakage at the existing 6/4 impact thresholds");
+        Check(!breakable.IsBroken && world.GlassShards.Count == 0,
+            "G collision callback preserves the deferred single break transaction");
+        Invoke(world, "ProcessGlassBreakage");
+        Check(breakable.IsBroken && !glass.gameObject.activeInHierarchy && world.GlassShards.Count == 16,
+            "A real G floor collision creates exactly 16 physical fragments");
+        for (int i = 0; i < 20; i++) PhysicsStep();
+        Check(world.GlassShards.All(s => float.IsFinite(s.Body.position.x) && float.IsFinite(s.Body.position.y)
+            && float.IsFinite(s.Body.linearVelocity.x) && float.IsFinite(s.Body.linearVelocity.y)
+            && float.IsFinite(s.Body.angularVelocity)),
+            "Explosive fragments remain finite through actual floor contacts");
+        Capture("explosive-native-impact.png", new Vector2(0, floorY + 1.5f), 3.5f);
+
+        float separation = testProfile.separationSpeed;
+        float speed = testProfile.explosionSpeed, upward = testProfile.explosionUpwardSpeed, spin = testProfile.explosionAngularSpeed;
+        try
+        {
+            testProfile.separationSpeed = 0;
+            CheckExplosiveMotion(5, 2.5f, 240, "Default G", true);
+            testProfile.explosionSpeed = 2; testProfile.explosionUpwardSpeed = 1; testProfile.explosionAngularSpeed = 90;
+            CheckExplosiveMotion(2, 1, 90, "Tuned G");
+            testProfile.explosionSpeed = testProfile.explosionUpwardSpeed = testProfile.explosionAngularSpeed = 0;
+            CheckExplosiveMotion(0, 0, 0, "Zero-strength G");
+        }
+        finally
+        {
+            testProfile.separationSpeed = separation;
+            testProfile.explosionSpeed = speed; testProfile.explosionUpwardSpeed = upward; testProfile.explosionAngularSpeed = spin;
+        }
+        // The G burst changes only glass fragment motion, even for a filled vessel.
+        LiquidAndSolidConservation();
+        var previousShards = world.GlassShards.ToArray();
+        comparison.SwitchMode(FluidExperimentMode.FCoherentLiquid); DisableAutomaticSimulation();
+        Check(!world.ExplosiveGlassBreakage && gpu.CohesivePhysicsActive && !breakable.IsBroken
+            && glass.gameObject.activeInHierarchy && world.GlassShards.Count == 0
+            && previousShards.All(s => s == null || !s.gameObject.activeInHierarchy),
+            "G to F restores the intact glass, removes burst fragments and disables the burst flag");
+        testProfile.separationSpeed = 0;
+        try { CheckExplosiveMotion(0, 0, 0, "F after G with nonzero explosion settings"); }
+        finally { testProfile.separationSpeed = separation; }
+        Reset();
+    }
+    void CheckExplosiveMotion(float outward, float upward, float spin, string label, bool capture = false)
+    {
+        Reset(37, 2);
+        glass.Body.linearVelocity = new Vector2(1.1f, .3f); glass.Body.angularVelocity = 72;
+        var centers = testProfile.shards.Select(s => glass.LocalToWorld(s.localCenter)).ToArray();
+        var inherited = centers.Select(p => glass.Body.GetPointVelocity(p)).ToArray();
+        Vector2 center = Vector2.zero;
+        float area = testProfile.shards.Sum(s => s.area);
+        for (int i = 0; i < centers.Length; i++) center += centers[i] * (testProfile.shards[i].area / area);
+        CompleteControlledBreak();
+        var shards = world.GlassShards.OrderBy(s => s.DefinitionIndex).ToArray();
+        Check(shards.Length == 16 && shards.All(s => float.IsFinite(s.Body.linearVelocity.x)
+            && float.IsFinite(s.Body.linearVelocity.y) && float.IsFinite(s.Body.angularVelocity)),
+            label + " produces one complete set with finite initial velocity and spin");
+        Check(shards.All(s =>
+        {
+            int index = s.DefinitionIndex;
+            Vector2 burst = s.Body.linearVelocity - inherited[index] - Vector2.up * upward;
+            Vector2 radial = centers[index] - center;
+            return Near(s.Body.position, centers[index]) && Mathf.Abs(burst.magnitude - outward) < .0003f
+                && (outward == 0 || Vector2.Dot(burst.normalized, radial.normalized) > .9999f);
+        }), label + " adds the configured outward speed and world-up lift to inherited point velocity without moving spawn positions");
+        Check(shards.All(s => Mathf.Abs(Mathf.Abs(s.Body.angularVelocity - 72) - spin) < .001f)
+            && (spin == 0 || Enumerable.Range(1, shards.Length - 1)
+                .All(i => (shards[i].Body.angularVelocity - 72) * (shards[i - 1].Body.angularVelocity - 72) < 0)),
+            label + " retains source spin and adds the configured alternating rotation");
+        if (!capture) return;
+        float initialWidth = centers.Max(p => p.x) - centers.Min(p => p.x);
+        for (int i = 0; i < 20; i++) PhysicsStep();
+        float burstWidth = shards.Max(s => s.Body.position.x) - shards.Min(s => s.Body.position.x);
+        Check(burstWidth > initialWidth + .5f, "Default G visibly widens the fragment cloud after 0.2 seconds of native physics");
+        Capture("explosive-shards-in-flight.png", center, 3.5f);
     }
     void Capture(string file, Vector2 center, float halfHeight)
     {

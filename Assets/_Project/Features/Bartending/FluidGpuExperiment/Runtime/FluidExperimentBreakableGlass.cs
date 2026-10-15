@@ -8,12 +8,15 @@ namespace Slainte.Bartending.FluidGpuExperiment
     public sealed class FluidExperimentBreakableGlass : MonoBehaviour
     {
         public FluidExperimentBreakageProfile profile;
+        [Tooltip("Liquid impulse at breakage. Leave empty to retain release-only behavior; the liquid's existing motion and volume are always preserved.")]
+        public FluidExperimentSplashProfile splashProfile;
         public FluidExperimentBody Body { get; private set; }
         public bool IsBroken { get; private set; }
         public bool BreakQueued => breakQueued;
         public float LastImpactSpeed { get; private set; }
         public float LastImpactImpulse { get; private set; }
         public Vector2 LastImpactPoint { get; private set; }
+        public Vector2 LastImpactNormal { get; private set; } = Vector2.up;
         private FluidExperimentWorld world;
         private bool breakQueued, motionCaptured;
         private Vector2 beforeVelocity, beforeCenter;
@@ -50,6 +53,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (!CanBreak || breakQueued) return;
             float impulse = 0, speed = 0;
             Vector2 point = Body.Position;
+            Vector2 normal = Vector2.up;
             for (int i = 0; i < collision.contactCount; i++)
             {
                 ContactPoint2D contact = collision.GetContact(i);
@@ -64,8 +68,9 @@ namespace Slainte.Bartending.FluidGpuExperiment
                     Vector2 other = collision.rigidbody != null ? collision.rigidbody.GetPointVelocity(contact.point) : Vector2.zero;
                     contactSpeed = Mathf.Max(contactSpeed, Mathf.Abs(Vector2.Dot(incoming - other, contact.normal)));
                 }
-                if (contactSpeed >= speed) { speed = contactSpeed; point = contact.point; }
+                if (contactSpeed >= speed) { speed = contactSpeed; point = contact.point; normal = contact.normal; }
             }
+            LastImpactNormal = normal;
             QueueImpact(speed, impulse, point);
         }
         private void QueueImpact(float speed, float impulse, Vector2 point)
@@ -97,6 +102,11 @@ namespace Slainte.Bartending.FluidGpuExperiment
             var fragments = new FluidExperimentGlassShard[profile.shards.Length];
             for (int i = 0; i < fragments.Length; i++)
                 fragments[i] = FluidExperimentGlassShard.Create(this, world, i, totalArea, center);
+            // Ownership must still identify the old vessel while its impact is applied.
+            // Current particle velocity already includes falling/rotation; never add body velocity again.
+            world.Liquid.ReleaseWithSplash(Body.Id, Body.LocalToWorld(FluidExperimentCollisionProfile.BoundsOf(Body.LiquidInteriorPath).center),
+                LastImpactPoint, LastImpactNormal, LastImpactSpeed,
+                LastImpactImpulse / Mathf.Max(.0001f, Body.Body.mass), splashProfile, world.ExplosiveGlassBreakage);
             IsBroken = true; breakQueued = false;
             gameObject.SetActive(false); // Body.OnDisable unregisters input, contents and liquid ownership.
             foreach (var shard in fragments) shard.Activate();
@@ -107,6 +117,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         {
             breakQueued = motionCaptured = false;
             LastImpactSpeed = LastImpactImpulse = 0;
+            LastImpactPoint = Vector2.zero; LastImpactNormal = Vector2.up;
             if (!IsBroken) return;
             IsBroken = false;
             gameObject.SetActive(true);
