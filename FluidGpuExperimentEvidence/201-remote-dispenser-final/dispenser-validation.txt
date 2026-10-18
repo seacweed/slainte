@@ -1,0 +1,1756 @@
+PASS Hidden Unity GPU harness initializes without desktop input
+PASS Authored default remains F coherent liquid
+PASS F Manual instantiates the authored dispenser prefab
+PASS F Manual starts available, docked and off
+PASS The authored shared capacity is 5000 ml
+PASS The authored rates are 40 ml per second and one ice per 0.3 seconds
+PASS Dispenser has authored hot water and existing native ice references
+PASS Hot water carries an explicit hot serving temperature
+PASS Three distinct imported sprites represent off, Ice and Hot
+PASS Docked off mode displays the configured off sprite
+PASS Dispenser body is pickable and has solid collision geometry
+PASS Hose is a multipoint curve with no native collider
+PASS Runtime-created hose is on a layer visible to the authored gameplay camera
+PASS Dispenser has no internal liquid vessel or loose-solid behavior
+PASS Dispenser integration preserves the remote hurricane impact thresholds of 6 and 4
+PASS Docked/off tool cannot dispense even when asked
+PASS Actual Ice button click selects mode without picking the overlapping body
+PASS Repeated Update or holding LMB does not toggle twice
+PASS Clicking the active Ice button toggles off
+PASS Actual Hot button click selects the hot sprite
+PASS Actual body click acquires the dedicated dispenser hand state
+PASS Held dispenser ignores mode changes while consuming button hits
+PASS Actual RMB hold dispenses while translating to the cursor
+PASS RMB movement continues emission without rotation, upright return or cursor capture
+PASS Moving hose retains its fixed overhead anchor and follows the actual tool attachment
+PASS RMB over a blocked control area suppresses emission while the tool remains held
+PASS RMB release stops immediately without trailing inventory drain
+PASS Actual Escape cancels emission and releases the dispenser for safe retraction
+PASS Cancelled input returns the tool to its dock
+PASS Shared focus-loss cancellation stops stock consumption and clears the held tool
+PASS Virtual input never modifies the native cursor lock or visibility
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS One second of Hot follows 40 ml/s and subtracts exactly the accepted GPU volume
+PASS Released dispenser completes collision-aware retraction to its dock
+PASS Mode fixture starts docked
+PASS Select Ice at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Switching from Hot to Ice spends the same shared inventory
+PASS Released dispenser completes collision-aware retraction to its dock
+PASS Retraction preserves mode and remaining inventory
+PASS Active mode can be toggled off after docking
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Held None mode never consumes inventory
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Hot emission queues actual GPU spawn commands
+PASS Hot particle 0 begins straight down without inherited dispenser movement or vessel ownership
+PASS Hot particle 0 carries the configured water temperature
+PASS Hot particle 1 begins straight down without inherited dispenser movement or vessel ownership
+PASS Hot particle 1 carries the configured water temperature
+PASS Hot particle 2 begins straight down without inherited dispenser movement or vessel ownership
+PASS Hot particle 2 carries the configured water temperature
+PASS Hot particle 3 begins straight down without inherited dispenser movement or vessel ownership
+PASS Hot particle 3 carries the configured water temperature
+PASS Hot particle 4 begins straight down without inherited dispenser movement or vessel ownership
+PASS Hot particle 4 carries the configured water temperature
+PASS Hot particle 5 begins straight down without inherited dispenser movement or vessel ownership
+PASS Hot particle 5 carries the configured water temperature
+PASS Hot particle 6 begins straight down without inherited dispenser movement or vessel ownership
+PASS Hot particle 6 carries the configured water temperature
+PASS Hot particle 7 begins straight down without inherited dispenser movement or vessel ownership
+PASS Hot particle 7 carries the configured water temperature
+PASS Queued hot water becomes finite actual GPU particles
+PASS Hot water uses the existing connected stream representation
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Exhausted GPU allocation rejects hot emission without inventory loss
+PASS Restoring GPU slots emits only current flow, with no accumulated rejected burst
+PASS Recovery from allocation failure preserves exact stock accounting
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Hot drains exactly 0 ml with no negative inventory
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Hot drains exactly 1 ml with no negative inventory
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Hot drains exactly 9 ml with no negative inventory
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Hot drains exactly 10 ml with no negative inventory
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Hot drains exactly 11 ml with no negative inventory
+PASS Mode fixture starts docked
+PASS Select Ice at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Ice first interval handles 0 ml with the documented final-piece rule
+PASS Ice subsequent interval exhausts 0 ml without extra pieces
+PASS Mode fixture starts docked
+PASS Select Ice at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Ice first interval handles 1 ml with the documented final-piece rule
+PASS Dispensed ice is a native dynamic body already marked placed
+PASS Ice subsequent interval exhausts 1 ml without extra pieces
+PASS Mode fixture starts docked
+PASS Select Ice at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Ice first interval handles 9 ml with the documented final-piece rule
+PASS Dispensed ice is a native dynamic body already marked placed
+PASS Ice subsequent interval exhausts 9 ml without extra pieces
+PASS Mode fixture starts docked
+PASS Select Ice at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Ice first interval handles 10 ml with the documented final-piece rule
+PASS Dispensed ice is a native dynamic body already marked placed
+PASS Ice subsequent interval exhausts 10 ml without extra pieces
+PASS Mode fixture starts docked
+PASS Select Ice at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Ice first interval handles 11 ml with the documented final-piece rule
+PASS Dispensed ice is a native dynamic body already marked placed
+PASS Ice subsequent interval exhausts 11 ml without extra pieces
+PASS Mode fixture starts docked
+PASS Select Ice at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Unavailable ice prefab consumes no shared stock
+PASS Recovered ice generation resumes one interval without an accumulated burst
+PASS Mode fixture starts docked
+PASS Select Ice at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Ice physically blocked nozzle consumes no inventory and creates no overlapping output
+PASS Ice resumes a single normal emission after clearing the nozzle
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Hot physically blocked nozzle consumes no inventory and creates no overlapping output
+PASS Hot resumes a single normal emission after clearing the nozzle
+PASS Mode fixture starts docked
+PASS Select Ice at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Actual registered ice geometry reaches the conservative GPU boundary admission limit
+PASS Full solid-boundary budget blocks ice before instantiation and preserves stock
+PASS Removing geometry restores one regular ice birth without a backlog
+PASS Mode fixture starts docked
+PASS Select Ice at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Ice admission fixture includes the remote real hurricane thin-wall shard proxies
+PASS Real shard edges and registered ice together reach the conservative boundary admission limit
+PASS Disabling shard-liquid contacts frees their actual reserved boundary space
+PASS A zero shard upload budget excludes unsubmitted proxies from ice admission cost
+PASS Restoring shard contact reservations blocks ice creation without consuming inventory
+PASS Boundary admission leaves sufficient real GPU space for every selected hurricane shard proxy
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+INFO receiver activation intended=(0.00313574076, -0.8303391) bodyBefore=(0.00313574076, -0.8303391) transformBefore=(-81, 20) bodyAfter=(-81, 20) transformAfter=(-81, 20)
+PASS Receiving fixture activates before setting the final native and rendered pose
+INFO receiver-before-emission emitted=0 stock=5000 owned=0 snapshot=0 unowned=0 otherOwned=0 insideGeometry=0 missing=0 active=0 maxSpeed=0 blocked=
+INFO receiver-before-emission receiverId=7 body=(0.00313574076, -0.8303391) transform=(0.00313574076, -0.8303391, 0) scale=(1, 1, 1) mouth=(0, -0.175000191) bounds=Center: (0.00, -1.42, 0.00), Extents: (0.59, 1.24, 0.00) simulated=True type=Kinematic dispenserBody=(-1.16415322E-10, 1.74999988) dispenserTransform=(-1.16415322E-10, 1.74999988, 0) nozzle=(-1.16415322E-10, 0.424999833)
+INFO receiver-emitting-5 emitted=4 stock=4996 owned=1.5 snapshot=4 unowned=2.5 otherOwned=0 insideGeometry=1.5 missing=0 active=8 maxSpeed=9.700409 blocked=
+INFO receiver-emitting-5 receiverId=7 body=(0.00313574076, -0.8303391) transform=(0.00313574076, -0.8303391, 0) scale=(1, 1, 1) mouth=(0, -0.175000191) bounds=Center: (0.00, -1.42, 0.00), Extents: (0.59, 1.24, 0.00) simulated=True type=Kinematic dispenserBody=(-1.16415322E-10, 1.74999988) dispenserTransform=(-1.16415322E-10, 1.74999988, 0) nozzle=(-1.16415322E-10, 0.424999833)
+INFO receiver-emitting-10 emitted=8 stock=4992 owned=5.5 snapshot=8 unowned=2.5 otherOwned=0 insideGeometry=5.5 missing=0 active=16 maxSpeed=10.3669558 blocked=
+INFO receiver-emitting-10 receiverId=7 body=(0.00313574076, -0.8303391) transform=(0.00313574076, -0.8303391, 0) scale=(1, 1, 1) mouth=(0, -0.175000191) bounds=Center: (0.00, -1.42, 0.00), Extents: (0.59, 1.24, 0.00) simulated=True type=Kinematic dispenserBody=(-1.16415322E-10, 1.74999988) dispenserTransform=(-1.16415322E-10, 1.74999988, 0) nozzle=(-1.16415322E-10, 0.424999833)
+INFO receiver-emitting-15 emitted=12 stock=4988 owned=9.5 snapshot=12 unowned=2.5 otherOwned=0 insideGeometry=9.5 missing=0 active=24 maxSpeed=10.9203529 blocked=
+INFO receiver-emitting-15 receiverId=7 body=(0.00313574076, -0.8303391) transform=(0.00313574076, -0.8303391, 0) scale=(1, 1, 1) mouth=(0, -0.175000191) bounds=Center: (0.00, -1.42, 0.00), Extents: (0.59, 1.24, 0.00) simulated=True type=Kinematic dispenserBody=(-1.16415322E-10, 1.74999988) dispenserTransform=(-1.16415322E-10, 1.74999988, 0) nozzle=(-1.16415322E-10, 0.424999833)
+INFO receiver-emitting-20 emitted=16 stock=4984 owned=13.5 snapshot=16 unowned=2.5 otherOwned=0 insideGeometry=13.5 missing=0 active=32 maxSpeed=10.8990307 blocked=
+INFO receiver-emitting-20 receiverId=7 body=(0.00313574076, -0.8303391) transform=(0.00313574076, -0.8303391, 0) scale=(1, 1, 1) mouth=(0, -0.175000191) bounds=Center: (0.00, -1.42, 0.00), Extents: (0.59, 1.24, 0.00) simulated=True type=Kinematic dispenserBody=(-1.16415322E-10, 1.74999988) dispenserTransform=(-1.16415322E-10, 1.74999988, 0) nozzle=(-1.16415322E-10, 0.424999833)
+INFO receiver-emitting-25 emitted=20 stock=4980 owned=17.5 snapshot=20 unowned=2.5 otherOwned=0 insideGeometry=17.5 missing=0 active=40 maxSpeed=10.8997679 blocked=
+INFO receiver-emitting-25 receiverId=7 body=(0.00313574076, -0.8303391) transform=(0.00313574076, -0.8303391, 0) scale=(1, 1, 1) mouth=(0, -0.175000191) bounds=Center: (0.00, -1.42, 0.00), Extents: (0.59, 1.24, 0.00) simulated=True type=Kinematic dispenserBody=(-1.16415322E-10, 1.74999988) dispenserTransform=(-1.16415322E-10, 1.74999988, 0) nozzle=(-1.16415322E-10, 0.424999833)
+INFO receiver-after-settling emitted=20 stock=4980 owned=20 snapshot=20 unowned=0 otherOwned=0 insideGeometry=20 missing=0 active=40 maxSpeed=0.07738202 blocked=
+INFO receiver-after-settling receiverId=7 body=(0.00313574076, -0.8303391) transform=(0.00313574076, -0.8303391, 0) scale=(1, 1, 1) mouth=(0, -0.175000191) bounds=Center: (0.00, -1.42, 0.00), Extents: (0.59, 1.24, 0.00) simulated=True type=Kinematic dispenserBody=(-1.16415322E-10, 1.74999988) dispenserTransform=(-1.16415322E-10, 1.74999988, 0) nozzle=(-1.16415322E-10, 0.424999833)
+PASS Actual emitted hot stream enters the existing glass ownership/collision path and retains at least 90 percent of a 20 ml dose
+PASS Released dispenser completes collision-aware retraction to its dock
+PASS Mode fixture starts docked
+PASS Select Ice at the authored button position
+PASS Pick Ice supply above the already filled receiver
+PASS Dispensed native ice enters the receiving glass and remains permanently placed
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Held dispenser cannot pass through the authored tabletop toward a cursor below it
+PASS Held dispenser cannot cross the authored left wall
+PASS Continuous held movement stops or slides at solid obstacle geometry
+PASS Retracting tool rejects mode changes and re-pickup
+PASS Retraction routes around a real blocking collider and docks without tunneling
+PASS Completed retraction stops output and retains the retracted hose curve
+PASS Mode fixture starts docked
+PASS Select Ice at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Full stock cycle 0 creates exactly one placed ice body
+PASS Full stock cycle 0 releases offscreen ice from world registration
+PASS Full stock cycle 1 creates exactly one placed ice body
+PASS Full stock cycle 1 releases offscreen ice from world registration
+PASS Full stock cycle 2 creates exactly one placed ice body
+PASS Full stock cycle 2 releases offscreen ice from world registration
+PASS Full stock cycle 3 creates exactly one placed ice body
+PASS Full stock cycle 3 releases offscreen ice from world registration
+PASS Full stock cycle 4 creates exactly one placed ice body
+PASS Full stock cycle 4 releases offscreen ice from world registration
+PASS Full stock cycle 5 creates exactly one placed ice body
+PASS Full stock cycle 5 releases offscreen ice from world registration
+PASS Full stock cycle 6 creates exactly one placed ice body
+PASS Full stock cycle 6 releases offscreen ice from world registration
+PASS Full stock cycle 7 creates exactly one placed ice body
+PASS Full stock cycle 7 releases offscreen ice from world registration
+PASS Full stock cycle 8 creates exactly one placed ice body
+PASS Full stock cycle 8 releases offscreen ice from world registration
+PASS Full stock cycle 9 creates exactly one placed ice body
+PASS Full stock cycle 9 releases offscreen ice from world registration
+PASS Full stock cycle 10 creates exactly one placed ice body
+PASS Full stock cycle 10 releases offscreen ice from world registration
+PASS Full stock cycle 11 creates exactly one placed ice body
+PASS Full stock cycle 11 releases offscreen ice from world registration
+PASS Full stock cycle 12 creates exactly one placed ice body
+PASS Full stock cycle 12 releases offscreen ice from world registration
+PASS Full stock cycle 13 creates exactly one placed ice body
+PASS Full stock cycle 13 releases offscreen ice from world registration
+PASS Full stock cycle 14 creates exactly one placed ice body
+PASS Full stock cycle 14 releases offscreen ice from world registration
+PASS Full stock cycle 15 creates exactly one placed ice body
+PASS Full stock cycle 15 releases offscreen ice from world registration
+PASS Full stock cycle 16 creates exactly one placed ice body
+PASS Full stock cycle 16 releases offscreen ice from world registration
+PASS Full stock cycle 17 creates exactly one placed ice body
+PASS Full stock cycle 17 releases offscreen ice from world registration
+PASS Full stock cycle 18 creates exactly one placed ice body
+PASS Full stock cycle 18 releases offscreen ice from world registration
+PASS Full stock cycle 19 creates exactly one placed ice body
+PASS Full stock cycle 19 releases offscreen ice from world registration
+PASS Full stock cycle 20 creates exactly one placed ice body
+PASS Full stock cycle 20 releases offscreen ice from world registration
+PASS Full stock cycle 21 creates exactly one placed ice body
+PASS Full stock cycle 21 releases offscreen ice from world registration
+PASS Full stock cycle 22 creates exactly one placed ice body
+PASS Full stock cycle 22 releases offscreen ice from world registration
+PASS Full stock cycle 23 creates exactly one placed ice body
+PASS Full stock cycle 23 releases offscreen ice from world registration
+PASS Full stock cycle 24 creates exactly one placed ice body
+PASS Full stock cycle 24 releases offscreen ice from world registration
+PASS Full stock cycle 25 creates exactly one placed ice body
+PASS Full stock cycle 25 releases offscreen ice from world registration
+PASS Full stock cycle 26 creates exactly one placed ice body
+PASS Full stock cycle 26 releases offscreen ice from world registration
+PASS Full stock cycle 27 creates exactly one placed ice body
+PASS Full stock cycle 27 releases offscreen ice from world registration
+PASS Full stock cycle 28 creates exactly one placed ice body
+PASS Full stock cycle 28 releases offscreen ice from world registration
+PASS Full stock cycle 29 creates exactly one placed ice body
+PASS Full stock cycle 29 releases offscreen ice from world registration
+PASS Full stock cycle 30 creates exactly one placed ice body
+PASS Full stock cycle 30 releases offscreen ice from world registration
+PASS Full stock cycle 31 creates exactly one placed ice body
+PASS Full stock cycle 31 releases offscreen ice from world registration
+PASS Full stock cycle 32 creates exactly one placed ice body
+PASS Full stock cycle 32 releases offscreen ice from world registration
+PASS Full stock cycle 33 creates exactly one placed ice body
+PASS Full stock cycle 33 releases offscreen ice from world registration
+PASS Full stock cycle 34 creates exactly one placed ice body
+PASS Full stock cycle 34 releases offscreen ice from world registration
+PASS Full stock cycle 35 creates exactly one placed ice body
+PASS Full stock cycle 35 releases offscreen ice from world registration
+PASS Full stock cycle 36 creates exactly one placed ice body
+PASS Full stock cycle 36 releases offscreen ice from world registration
+PASS Full stock cycle 37 creates exactly one placed ice body
+PASS Full stock cycle 37 releases offscreen ice from world registration
+PASS Full stock cycle 38 creates exactly one placed ice body
+PASS Full stock cycle 38 releases offscreen ice from world registration
+PASS Full stock cycle 39 creates exactly one placed ice body
+PASS Full stock cycle 39 releases offscreen ice from world registration
+PASS Full stock cycle 40 creates exactly one placed ice body
+PASS Full stock cycle 40 releases offscreen ice from world registration
+PASS Full stock cycle 41 creates exactly one placed ice body
+PASS Full stock cycle 41 releases offscreen ice from world registration
+PASS Full stock cycle 42 creates exactly one placed ice body
+PASS Full stock cycle 42 releases offscreen ice from world registration
+PASS Full stock cycle 43 creates exactly one placed ice body
+PASS Full stock cycle 43 releases offscreen ice from world registration
+PASS Full stock cycle 44 creates exactly one placed ice body
+PASS Full stock cycle 44 releases offscreen ice from world registration
+PASS Full stock cycle 45 creates exactly one placed ice body
+PASS Full stock cycle 45 releases offscreen ice from world registration
+PASS Full stock cycle 46 creates exactly one placed ice body
+PASS Full stock cycle 46 releases offscreen ice from world registration
+PASS Full stock cycle 47 creates exactly one placed ice body
+PASS Full stock cycle 47 releases offscreen ice from world registration
+PASS Full stock cycle 48 creates exactly one placed ice body
+PASS Full stock cycle 48 releases offscreen ice from world registration
+PASS Full stock cycle 49 creates exactly one placed ice body
+PASS Full stock cycle 49 releases offscreen ice from world registration
+PASS Full stock cycle 50 creates exactly one placed ice body
+PASS Full stock cycle 50 releases offscreen ice from world registration
+PASS Full stock cycle 51 creates exactly one placed ice body
+PASS Full stock cycle 51 releases offscreen ice from world registration
+PASS Full stock cycle 52 creates exactly one placed ice body
+PASS Full stock cycle 52 releases offscreen ice from world registration
+PASS Full stock cycle 53 creates exactly one placed ice body
+PASS Full stock cycle 53 releases offscreen ice from world registration
+PASS Full stock cycle 54 creates exactly one placed ice body
+PASS Full stock cycle 54 releases offscreen ice from world registration
+PASS Full stock cycle 55 creates exactly one placed ice body
+PASS Full stock cycle 55 releases offscreen ice from world registration
+PASS Full stock cycle 56 creates exactly one placed ice body
+PASS Full stock cycle 56 releases offscreen ice from world registration
+PASS Full stock cycle 57 creates exactly one placed ice body
+PASS Full stock cycle 57 releases offscreen ice from world registration
+PASS Full stock cycle 58 creates exactly one placed ice body
+PASS Full stock cycle 58 releases offscreen ice from world registration
+PASS Full stock cycle 59 creates exactly one placed ice body
+PASS Full stock cycle 59 releases offscreen ice from world registration
+PASS Full stock cycle 60 creates exactly one placed ice body
+PASS Full stock cycle 60 releases offscreen ice from world registration
+PASS Full stock cycle 61 creates exactly one placed ice body
+PASS Full stock cycle 61 releases offscreen ice from world registration
+PASS Full stock cycle 62 creates exactly one placed ice body
+PASS Full stock cycle 62 releases offscreen ice from world registration
+PASS Full stock cycle 63 creates exactly one placed ice body
+PASS Full stock cycle 63 releases offscreen ice from world registration
+PASS Full stock cycle 64 creates exactly one placed ice body
+PASS Full stock cycle 64 releases offscreen ice from world registration
+PASS Full stock cycle 65 creates exactly one placed ice body
+PASS Full stock cycle 65 releases offscreen ice from world registration
+PASS Full stock cycle 66 creates exactly one placed ice body
+PASS Full stock cycle 66 releases offscreen ice from world registration
+PASS Full stock cycle 67 creates exactly one placed ice body
+PASS Full stock cycle 67 releases offscreen ice from world registration
+PASS Full stock cycle 68 creates exactly one placed ice body
+PASS Full stock cycle 68 releases offscreen ice from world registration
+PASS Full stock cycle 69 creates exactly one placed ice body
+PASS Full stock cycle 69 releases offscreen ice from world registration
+PASS Full stock cycle 70 creates exactly one placed ice body
+PASS Full stock cycle 70 releases offscreen ice from world registration
+PASS Full stock cycle 71 creates exactly one placed ice body
+PASS Full stock cycle 71 releases offscreen ice from world registration
+PASS Full stock cycle 72 creates exactly one placed ice body
+PASS Full stock cycle 72 releases offscreen ice from world registration
+PASS Full stock cycle 73 creates exactly one placed ice body
+PASS Full stock cycle 73 releases offscreen ice from world registration
+PASS Full stock cycle 74 creates exactly one placed ice body
+PASS Full stock cycle 74 releases offscreen ice from world registration
+PASS Full stock cycle 75 creates exactly one placed ice body
+PASS Full stock cycle 75 releases offscreen ice from world registration
+PASS Full stock cycle 76 creates exactly one placed ice body
+PASS Full stock cycle 76 releases offscreen ice from world registration
+PASS Full stock cycle 77 creates exactly one placed ice body
+PASS Full stock cycle 77 releases offscreen ice from world registration
+PASS Full stock cycle 78 creates exactly one placed ice body
+PASS Full stock cycle 78 releases offscreen ice from world registration
+PASS Full stock cycle 79 creates exactly one placed ice body
+PASS Full stock cycle 79 releases offscreen ice from world registration
+PASS Full stock cycle 80 creates exactly one placed ice body
+PASS Full stock cycle 80 releases offscreen ice from world registration
+PASS Full stock cycle 81 creates exactly one placed ice body
+PASS Full stock cycle 81 releases offscreen ice from world registration
+PASS Full stock cycle 82 creates exactly one placed ice body
+PASS Full stock cycle 82 releases offscreen ice from world registration
+PASS Full stock cycle 83 creates exactly one placed ice body
+PASS Full stock cycle 83 releases offscreen ice from world registration
+PASS Full stock cycle 84 creates exactly one placed ice body
+PASS Full stock cycle 84 releases offscreen ice from world registration
+PASS Full stock cycle 85 creates exactly one placed ice body
+PASS Full stock cycle 85 releases offscreen ice from world registration
+PASS Full stock cycle 86 creates exactly one placed ice body
+PASS Full stock cycle 86 releases offscreen ice from world registration
+PASS Full stock cycle 87 creates exactly one placed ice body
+PASS Full stock cycle 87 releases offscreen ice from world registration
+PASS Full stock cycle 88 creates exactly one placed ice body
+PASS Full stock cycle 88 releases offscreen ice from world registration
+PASS Full stock cycle 89 creates exactly one placed ice body
+PASS Full stock cycle 89 releases offscreen ice from world registration
+PASS Full stock cycle 90 creates exactly one placed ice body
+PASS Full stock cycle 90 releases offscreen ice from world registration
+PASS Full stock cycle 91 creates exactly one placed ice body
+PASS Full stock cycle 91 releases offscreen ice from world registration
+PASS Full stock cycle 92 creates exactly one placed ice body
+PASS Full stock cycle 92 releases offscreen ice from world registration
+PASS Full stock cycle 93 creates exactly one placed ice body
+PASS Full stock cycle 93 releases offscreen ice from world registration
+PASS Full stock cycle 94 creates exactly one placed ice body
+PASS Full stock cycle 94 releases offscreen ice from world registration
+PASS Full stock cycle 95 creates exactly one placed ice body
+PASS Full stock cycle 95 releases offscreen ice from world registration
+PASS Full stock cycle 96 creates exactly one placed ice body
+PASS Full stock cycle 96 releases offscreen ice from world registration
+PASS Full stock cycle 97 creates exactly one placed ice body
+PASS Full stock cycle 97 releases offscreen ice from world registration
+PASS Full stock cycle 98 creates exactly one placed ice body
+PASS Full stock cycle 98 releases offscreen ice from world registration
+PASS Full stock cycle 99 creates exactly one placed ice body
+PASS Full stock cycle 99 releases offscreen ice from world registration
+PASS Full stock cycle 100 creates exactly one placed ice body
+PASS Full stock cycle 100 releases offscreen ice from world registration
+PASS Full stock cycle 101 creates exactly one placed ice body
+PASS Full stock cycle 101 releases offscreen ice from world registration
+PASS Full stock cycle 102 creates exactly one placed ice body
+PASS Full stock cycle 102 releases offscreen ice from world registration
+PASS Full stock cycle 103 creates exactly one placed ice body
+PASS Full stock cycle 103 releases offscreen ice from world registration
+PASS Full stock cycle 104 creates exactly one placed ice body
+PASS Full stock cycle 104 releases offscreen ice from world registration
+PASS Full stock cycle 105 creates exactly one placed ice body
+PASS Full stock cycle 105 releases offscreen ice from world registration
+PASS Full stock cycle 106 creates exactly one placed ice body
+PASS Full stock cycle 106 releases offscreen ice from world registration
+PASS Full stock cycle 107 creates exactly one placed ice body
+PASS Full stock cycle 107 releases offscreen ice from world registration
+PASS Full stock cycle 108 creates exactly one placed ice body
+PASS Full stock cycle 108 releases offscreen ice from world registration
+PASS Full stock cycle 109 creates exactly one placed ice body
+PASS Full stock cycle 109 releases offscreen ice from world registration
+PASS Full stock cycle 110 creates exactly one placed ice body
+PASS Full stock cycle 110 releases offscreen ice from world registration
+PASS Full stock cycle 111 creates exactly one placed ice body
+PASS Full stock cycle 111 releases offscreen ice from world registration
+PASS Full stock cycle 112 creates exactly one placed ice body
+PASS Full stock cycle 112 releases offscreen ice from world registration
+PASS Full stock cycle 113 creates exactly one placed ice body
+PASS Full stock cycle 113 releases offscreen ice from world registration
+PASS Full stock cycle 114 creates exactly one placed ice body
+PASS Full stock cycle 114 releases offscreen ice from world registration
+PASS Full stock cycle 115 creates exactly one placed ice body
+PASS Full stock cycle 115 releases offscreen ice from world registration
+PASS Full stock cycle 116 creates exactly one placed ice body
+PASS Full stock cycle 116 releases offscreen ice from world registration
+PASS Full stock cycle 117 creates exactly one placed ice body
+PASS Full stock cycle 117 releases offscreen ice from world registration
+PASS Full stock cycle 118 creates exactly one placed ice body
+PASS Full stock cycle 118 releases offscreen ice from world registration
+PASS Full stock cycle 119 creates exactly one placed ice body
+PASS Full stock cycle 119 releases offscreen ice from world registration
+PASS Full stock cycle 120 creates exactly one placed ice body
+PASS Full stock cycle 120 releases offscreen ice from world registration
+PASS Full stock cycle 121 creates exactly one placed ice body
+PASS Full stock cycle 121 releases offscreen ice from world registration
+PASS Full stock cycle 122 creates exactly one placed ice body
+PASS Full stock cycle 122 releases offscreen ice from world registration
+PASS Full stock cycle 123 creates exactly one placed ice body
+PASS Full stock cycle 123 releases offscreen ice from world registration
+PASS Full stock cycle 124 creates exactly one placed ice body
+PASS Full stock cycle 124 releases offscreen ice from world registration
+PASS Full stock cycle 125 creates exactly one placed ice body
+PASS Full stock cycle 125 releases offscreen ice from world registration
+PASS Full stock cycle 126 creates exactly one placed ice body
+PASS Full stock cycle 126 releases offscreen ice from world registration
+PASS Full stock cycle 127 creates exactly one placed ice body
+PASS Full stock cycle 127 releases offscreen ice from world registration
+PASS Full stock cycle 128 creates exactly one placed ice body
+PASS Full stock cycle 128 releases offscreen ice from world registration
+PASS Full stock cycle 129 creates exactly one placed ice body
+PASS Full stock cycle 129 releases offscreen ice from world registration
+PASS Full stock cycle 130 creates exactly one placed ice body
+PASS Full stock cycle 130 releases offscreen ice from world registration
+PASS Full stock cycle 131 creates exactly one placed ice body
+PASS Full stock cycle 131 releases offscreen ice from world registration
+PASS Full stock cycle 132 creates exactly one placed ice body
+PASS Full stock cycle 132 releases offscreen ice from world registration
+PASS Full stock cycle 133 creates exactly one placed ice body
+PASS Full stock cycle 133 releases offscreen ice from world registration
+PASS Full stock cycle 134 creates exactly one placed ice body
+PASS Full stock cycle 134 releases offscreen ice from world registration
+PASS Full stock cycle 135 creates exactly one placed ice body
+PASS Full stock cycle 135 releases offscreen ice from world registration
+PASS Full stock cycle 136 creates exactly one placed ice body
+PASS Full stock cycle 136 releases offscreen ice from world registration
+PASS Full stock cycle 137 creates exactly one placed ice body
+PASS Full stock cycle 137 releases offscreen ice from world registration
+PASS Full stock cycle 138 creates exactly one placed ice body
+PASS Full stock cycle 138 releases offscreen ice from world registration
+PASS Full stock cycle 139 creates exactly one placed ice body
+PASS Full stock cycle 139 releases offscreen ice from world registration
+PASS Full stock cycle 140 creates exactly one placed ice body
+PASS Full stock cycle 140 releases offscreen ice from world registration
+PASS Full stock cycle 141 creates exactly one placed ice body
+PASS Full stock cycle 141 releases offscreen ice from world registration
+PASS Full stock cycle 142 creates exactly one placed ice body
+PASS Full stock cycle 142 releases offscreen ice from world registration
+PASS Full stock cycle 143 creates exactly one placed ice body
+PASS Full stock cycle 143 releases offscreen ice from world registration
+PASS Full stock cycle 144 creates exactly one placed ice body
+PASS Full stock cycle 144 releases offscreen ice from world registration
+PASS Full stock cycle 145 creates exactly one placed ice body
+PASS Full stock cycle 145 releases offscreen ice from world registration
+PASS Full stock cycle 146 creates exactly one placed ice body
+PASS Full stock cycle 146 releases offscreen ice from world registration
+PASS Full stock cycle 147 creates exactly one placed ice body
+PASS Full stock cycle 147 releases offscreen ice from world registration
+PASS Full stock cycle 148 creates exactly one placed ice body
+PASS Full stock cycle 148 releases offscreen ice from world registration
+PASS Full stock cycle 149 creates exactly one placed ice body
+PASS Full stock cycle 149 releases offscreen ice from world registration
+PASS Full stock cycle 150 creates exactly one placed ice body
+PASS Full stock cycle 150 releases offscreen ice from world registration
+PASS Full stock cycle 151 creates exactly one placed ice body
+PASS Full stock cycle 151 releases offscreen ice from world registration
+PASS Full stock cycle 152 creates exactly one placed ice body
+PASS Full stock cycle 152 releases offscreen ice from world registration
+PASS Full stock cycle 153 creates exactly one placed ice body
+PASS Full stock cycle 153 releases offscreen ice from world registration
+PASS Full stock cycle 154 creates exactly one placed ice body
+PASS Full stock cycle 154 releases offscreen ice from world registration
+PASS Full stock cycle 155 creates exactly one placed ice body
+PASS Full stock cycle 155 releases offscreen ice from world registration
+PASS Full stock cycle 156 creates exactly one placed ice body
+PASS Full stock cycle 156 releases offscreen ice from world registration
+PASS Full stock cycle 157 creates exactly one placed ice body
+PASS Full stock cycle 157 releases offscreen ice from world registration
+PASS Full stock cycle 158 creates exactly one placed ice body
+PASS Full stock cycle 158 releases offscreen ice from world registration
+PASS Full stock cycle 159 creates exactly one placed ice body
+PASS Full stock cycle 159 releases offscreen ice from world registration
+PASS Full stock cycle 160 creates exactly one placed ice body
+PASS Full stock cycle 160 releases offscreen ice from world registration
+PASS Full stock cycle 161 creates exactly one placed ice body
+PASS Full stock cycle 161 releases offscreen ice from world registration
+PASS Full stock cycle 162 creates exactly one placed ice body
+PASS Full stock cycle 162 releases offscreen ice from world registration
+PASS Full stock cycle 163 creates exactly one placed ice body
+PASS Full stock cycle 163 releases offscreen ice from world registration
+PASS Full stock cycle 164 creates exactly one placed ice body
+PASS Full stock cycle 164 releases offscreen ice from world registration
+PASS Full stock cycle 165 creates exactly one placed ice body
+PASS Full stock cycle 165 releases offscreen ice from world registration
+PASS Full stock cycle 166 creates exactly one placed ice body
+PASS Full stock cycle 166 releases offscreen ice from world registration
+PASS Full stock cycle 167 creates exactly one placed ice body
+PASS Full stock cycle 167 releases offscreen ice from world registration
+PASS Full stock cycle 168 creates exactly one placed ice body
+PASS Full stock cycle 168 releases offscreen ice from world registration
+PASS Full stock cycle 169 creates exactly one placed ice body
+PASS Full stock cycle 169 releases offscreen ice from world registration
+PASS Full stock cycle 170 creates exactly one placed ice body
+PASS Full stock cycle 170 releases offscreen ice from world registration
+PASS Full stock cycle 171 creates exactly one placed ice body
+PASS Full stock cycle 171 releases offscreen ice from world registration
+PASS Full stock cycle 172 creates exactly one placed ice body
+PASS Full stock cycle 172 releases offscreen ice from world registration
+PASS Full stock cycle 173 creates exactly one placed ice body
+PASS Full stock cycle 173 releases offscreen ice from world registration
+PASS Full stock cycle 174 creates exactly one placed ice body
+PASS Full stock cycle 174 releases offscreen ice from world registration
+PASS Full stock cycle 175 creates exactly one placed ice body
+PASS Full stock cycle 175 releases offscreen ice from world registration
+PASS Full stock cycle 176 creates exactly one placed ice body
+PASS Full stock cycle 176 releases offscreen ice from world registration
+PASS Full stock cycle 177 creates exactly one placed ice body
+PASS Full stock cycle 177 releases offscreen ice from world registration
+PASS Full stock cycle 178 creates exactly one placed ice body
+PASS Full stock cycle 178 releases offscreen ice from world registration
+PASS Full stock cycle 179 creates exactly one placed ice body
+PASS Full stock cycle 179 releases offscreen ice from world registration
+PASS Full stock cycle 180 creates exactly one placed ice body
+PASS Full stock cycle 180 releases offscreen ice from world registration
+PASS Full stock cycle 181 creates exactly one placed ice body
+PASS Full stock cycle 181 releases offscreen ice from world registration
+PASS Full stock cycle 182 creates exactly one placed ice body
+PASS Full stock cycle 182 releases offscreen ice from world registration
+PASS Full stock cycle 183 creates exactly one placed ice body
+PASS Full stock cycle 183 releases offscreen ice from world registration
+PASS Full stock cycle 184 creates exactly one placed ice body
+PASS Full stock cycle 184 releases offscreen ice from world registration
+PASS Full stock cycle 185 creates exactly one placed ice body
+PASS Full stock cycle 185 releases offscreen ice from world registration
+PASS Full stock cycle 186 creates exactly one placed ice body
+PASS Full stock cycle 186 releases offscreen ice from world registration
+PASS Full stock cycle 187 creates exactly one placed ice body
+PASS Full stock cycle 187 releases offscreen ice from world registration
+PASS Full stock cycle 188 creates exactly one placed ice body
+PASS Full stock cycle 188 releases offscreen ice from world registration
+PASS Full stock cycle 189 creates exactly one placed ice body
+PASS Full stock cycle 189 releases offscreen ice from world registration
+PASS Full stock cycle 190 creates exactly one placed ice body
+PASS Full stock cycle 190 releases offscreen ice from world registration
+PASS Full stock cycle 191 creates exactly one placed ice body
+PASS Full stock cycle 191 releases offscreen ice from world registration
+PASS Full stock cycle 192 creates exactly one placed ice body
+PASS Full stock cycle 192 releases offscreen ice from world registration
+PASS Full stock cycle 193 creates exactly one placed ice body
+PASS Full stock cycle 193 releases offscreen ice from world registration
+PASS Full stock cycle 194 creates exactly one placed ice body
+PASS Full stock cycle 194 releases offscreen ice from world registration
+PASS Full stock cycle 195 creates exactly one placed ice body
+PASS Full stock cycle 195 releases offscreen ice from world registration
+PASS Full stock cycle 196 creates exactly one placed ice body
+PASS Full stock cycle 196 releases offscreen ice from world registration
+PASS Full stock cycle 197 creates exactly one placed ice body
+PASS Full stock cycle 197 releases offscreen ice from world registration
+PASS Full stock cycle 198 creates exactly one placed ice body
+PASS Full stock cycle 198 releases offscreen ice from world registration
+PASS Full stock cycle 199 creates exactly one placed ice body
+PASS Full stock cycle 199 releases offscreen ice from world registration
+PASS Full stock cycle 200 creates exactly one placed ice body
+PASS Full stock cycle 200 releases offscreen ice from world registration
+PASS Full stock cycle 201 creates exactly one placed ice body
+PASS Full stock cycle 201 releases offscreen ice from world registration
+PASS Full stock cycle 202 creates exactly one placed ice body
+PASS Full stock cycle 202 releases offscreen ice from world registration
+PASS Full stock cycle 203 creates exactly one placed ice body
+PASS Full stock cycle 203 releases offscreen ice from world registration
+PASS Full stock cycle 204 creates exactly one placed ice body
+PASS Full stock cycle 204 releases offscreen ice from world registration
+PASS Full stock cycle 205 creates exactly one placed ice body
+PASS Full stock cycle 205 releases offscreen ice from world registration
+PASS Full stock cycle 206 creates exactly one placed ice body
+PASS Full stock cycle 206 releases offscreen ice from world registration
+PASS Full stock cycle 207 creates exactly one placed ice body
+PASS Full stock cycle 207 releases offscreen ice from world registration
+PASS Full stock cycle 208 creates exactly one placed ice body
+PASS Full stock cycle 208 releases offscreen ice from world registration
+PASS Full stock cycle 209 creates exactly one placed ice body
+PASS Full stock cycle 209 releases offscreen ice from world registration
+PASS Full stock cycle 210 creates exactly one placed ice body
+PASS Full stock cycle 210 releases offscreen ice from world registration
+PASS Full stock cycle 211 creates exactly one placed ice body
+PASS Full stock cycle 211 releases offscreen ice from world registration
+PASS Full stock cycle 212 creates exactly one placed ice body
+PASS Full stock cycle 212 releases offscreen ice from world registration
+PASS Full stock cycle 213 creates exactly one placed ice body
+PASS Full stock cycle 213 releases offscreen ice from world registration
+PASS Full stock cycle 214 creates exactly one placed ice body
+PASS Full stock cycle 214 releases offscreen ice from world registration
+PASS Full stock cycle 215 creates exactly one placed ice body
+PASS Full stock cycle 215 releases offscreen ice from world registration
+PASS Full stock cycle 216 creates exactly one placed ice body
+PASS Full stock cycle 216 releases offscreen ice from world registration
+PASS Full stock cycle 217 creates exactly one placed ice body
+PASS Full stock cycle 217 releases offscreen ice from world registration
+PASS Full stock cycle 218 creates exactly one placed ice body
+PASS Full stock cycle 218 releases offscreen ice from world registration
+PASS Full stock cycle 219 creates exactly one placed ice body
+PASS Full stock cycle 219 releases offscreen ice from world registration
+PASS Full stock cycle 220 creates exactly one placed ice body
+PASS Full stock cycle 220 releases offscreen ice from world registration
+PASS Full stock cycle 221 creates exactly one placed ice body
+PASS Full stock cycle 221 releases offscreen ice from world registration
+PASS Full stock cycle 222 creates exactly one placed ice body
+PASS Full stock cycle 222 releases offscreen ice from world registration
+PASS Full stock cycle 223 creates exactly one placed ice body
+PASS Full stock cycle 223 releases offscreen ice from world registration
+PASS Full stock cycle 224 creates exactly one placed ice body
+PASS Full stock cycle 224 releases offscreen ice from world registration
+PASS Full stock cycle 225 creates exactly one placed ice body
+PASS Full stock cycle 225 releases offscreen ice from world registration
+PASS Full stock cycle 226 creates exactly one placed ice body
+PASS Full stock cycle 226 releases offscreen ice from world registration
+PASS Full stock cycle 227 creates exactly one placed ice body
+PASS Full stock cycle 227 releases offscreen ice from world registration
+PASS Full stock cycle 228 creates exactly one placed ice body
+PASS Full stock cycle 228 releases offscreen ice from world registration
+PASS Full stock cycle 229 creates exactly one placed ice body
+PASS Full stock cycle 229 releases offscreen ice from world registration
+PASS Full stock cycle 230 creates exactly one placed ice body
+PASS Full stock cycle 230 releases offscreen ice from world registration
+PASS Full stock cycle 231 creates exactly one placed ice body
+PASS Full stock cycle 231 releases offscreen ice from world registration
+PASS Full stock cycle 232 creates exactly one placed ice body
+PASS Full stock cycle 232 releases offscreen ice from world registration
+PASS Full stock cycle 233 creates exactly one placed ice body
+PASS Full stock cycle 233 releases offscreen ice from world registration
+PASS Full stock cycle 234 creates exactly one placed ice body
+PASS Full stock cycle 234 releases offscreen ice from world registration
+PASS Full stock cycle 235 creates exactly one placed ice body
+PASS Full stock cycle 235 releases offscreen ice from world registration
+PASS Full stock cycle 236 creates exactly one placed ice body
+PASS Full stock cycle 236 releases offscreen ice from world registration
+PASS Full stock cycle 237 creates exactly one placed ice body
+PASS Full stock cycle 237 releases offscreen ice from world registration
+PASS Full stock cycle 238 creates exactly one placed ice body
+PASS Full stock cycle 238 releases offscreen ice from world registration
+PASS Full stock cycle 239 creates exactly one placed ice body
+PASS Full stock cycle 239 releases offscreen ice from world registration
+PASS Full stock cycle 240 creates exactly one placed ice body
+PASS Full stock cycle 240 releases offscreen ice from world registration
+PASS Full stock cycle 241 creates exactly one placed ice body
+PASS Full stock cycle 241 releases offscreen ice from world registration
+PASS Full stock cycle 242 creates exactly one placed ice body
+PASS Full stock cycle 242 releases offscreen ice from world registration
+PASS Full stock cycle 243 creates exactly one placed ice body
+PASS Full stock cycle 243 releases offscreen ice from world registration
+PASS Full stock cycle 244 creates exactly one placed ice body
+PASS Full stock cycle 244 releases offscreen ice from world registration
+PASS Full stock cycle 245 creates exactly one placed ice body
+PASS Full stock cycle 245 releases offscreen ice from world registration
+PASS Full stock cycle 246 creates exactly one placed ice body
+PASS Full stock cycle 246 releases offscreen ice from world registration
+PASS Full stock cycle 247 creates exactly one placed ice body
+PASS Full stock cycle 247 releases offscreen ice from world registration
+PASS Full stock cycle 248 creates exactly one placed ice body
+PASS Full stock cycle 248 releases offscreen ice from world registration
+PASS Full stock cycle 249 creates exactly one placed ice body
+PASS Full stock cycle 249 releases offscreen ice from world registration
+PASS Full stock cycle 250 creates exactly one placed ice body
+PASS Full stock cycle 250 releases offscreen ice from world registration
+PASS Full stock cycle 251 creates exactly one placed ice body
+PASS Full stock cycle 251 releases offscreen ice from world registration
+PASS Full stock cycle 252 creates exactly one placed ice body
+PASS Full stock cycle 252 releases offscreen ice from world registration
+PASS Full stock cycle 253 creates exactly one placed ice body
+PASS Full stock cycle 253 releases offscreen ice from world registration
+PASS Full stock cycle 254 creates exactly one placed ice body
+PASS Full stock cycle 254 releases offscreen ice from world registration
+PASS Full stock cycle 255 creates exactly one placed ice body
+PASS Full stock cycle 255 releases offscreen ice from world registration
+PASS Full stock cycle 256 creates exactly one placed ice body
+PASS Full stock cycle 256 releases offscreen ice from world registration
+PASS Full stock cycle 257 creates exactly one placed ice body
+PASS Full stock cycle 257 releases offscreen ice from world registration
+PASS Full stock cycle 258 creates exactly one placed ice body
+PASS Full stock cycle 258 releases offscreen ice from world registration
+PASS Full stock cycle 259 creates exactly one placed ice body
+PASS Full stock cycle 259 releases offscreen ice from world registration
+PASS Full stock cycle 260 creates exactly one placed ice body
+PASS Full stock cycle 260 releases offscreen ice from world registration
+PASS Full stock cycle 261 creates exactly one placed ice body
+PASS Full stock cycle 261 releases offscreen ice from world registration
+PASS Full stock cycle 262 creates exactly one placed ice body
+PASS Full stock cycle 262 releases offscreen ice from world registration
+PASS Full stock cycle 263 creates exactly one placed ice body
+PASS Full stock cycle 263 releases offscreen ice from world registration
+PASS Full stock cycle 264 creates exactly one placed ice body
+PASS Full stock cycle 264 releases offscreen ice from world registration
+PASS Full stock cycle 265 creates exactly one placed ice body
+PASS Full stock cycle 265 releases offscreen ice from world registration
+PASS Full stock cycle 266 creates exactly one placed ice body
+PASS Full stock cycle 266 releases offscreen ice from world registration
+PASS Full stock cycle 267 creates exactly one placed ice body
+PASS Full stock cycle 267 releases offscreen ice from world registration
+PASS Full stock cycle 268 creates exactly one placed ice body
+PASS Full stock cycle 268 releases offscreen ice from world registration
+PASS Full stock cycle 269 creates exactly one placed ice body
+PASS Full stock cycle 269 releases offscreen ice from world registration
+PASS Full stock cycle 270 creates exactly one placed ice body
+PASS Full stock cycle 270 releases offscreen ice from world registration
+PASS Full stock cycle 271 creates exactly one placed ice body
+PASS Full stock cycle 271 releases offscreen ice from world registration
+PASS Full stock cycle 272 creates exactly one placed ice body
+PASS Full stock cycle 272 releases offscreen ice from world registration
+PASS Full stock cycle 273 creates exactly one placed ice body
+PASS Full stock cycle 273 releases offscreen ice from world registration
+PASS Full stock cycle 274 creates exactly one placed ice body
+PASS Full stock cycle 274 releases offscreen ice from world registration
+PASS Full stock cycle 275 creates exactly one placed ice body
+PASS Full stock cycle 275 releases offscreen ice from world registration
+PASS Full stock cycle 276 creates exactly one placed ice body
+PASS Full stock cycle 276 releases offscreen ice from world registration
+PASS Full stock cycle 277 creates exactly one placed ice body
+PASS Full stock cycle 277 releases offscreen ice from world registration
+PASS Full stock cycle 278 creates exactly one placed ice body
+PASS Full stock cycle 278 releases offscreen ice from world registration
+PASS Full stock cycle 279 creates exactly one placed ice body
+PASS Full stock cycle 279 releases offscreen ice from world registration
+PASS Full stock cycle 280 creates exactly one placed ice body
+PASS Full stock cycle 280 releases offscreen ice from world registration
+PASS Full stock cycle 281 creates exactly one placed ice body
+PASS Full stock cycle 281 releases offscreen ice from world registration
+PASS Full stock cycle 282 creates exactly one placed ice body
+PASS Full stock cycle 282 releases offscreen ice from world registration
+PASS Full stock cycle 283 creates exactly one placed ice body
+PASS Full stock cycle 283 releases offscreen ice from world registration
+PASS Full stock cycle 284 creates exactly one placed ice body
+PASS Full stock cycle 284 releases offscreen ice from world registration
+PASS Full stock cycle 285 creates exactly one placed ice body
+PASS Full stock cycle 285 releases offscreen ice from world registration
+PASS Full stock cycle 286 creates exactly one placed ice body
+PASS Full stock cycle 286 releases offscreen ice from world registration
+PASS Full stock cycle 287 creates exactly one placed ice body
+PASS Full stock cycle 287 releases offscreen ice from world registration
+PASS Full stock cycle 288 creates exactly one placed ice body
+PASS Full stock cycle 288 releases offscreen ice from world registration
+PASS Full stock cycle 289 creates exactly one placed ice body
+PASS Full stock cycle 289 releases offscreen ice from world registration
+PASS Full stock cycle 290 creates exactly one placed ice body
+PASS Full stock cycle 290 releases offscreen ice from world registration
+PASS Full stock cycle 291 creates exactly one placed ice body
+PASS Full stock cycle 291 releases offscreen ice from world registration
+PASS Full stock cycle 292 creates exactly one placed ice body
+PASS Full stock cycle 292 releases offscreen ice from world registration
+PASS Full stock cycle 293 creates exactly one placed ice body
+PASS Full stock cycle 293 releases offscreen ice from world registration
+PASS Full stock cycle 294 creates exactly one placed ice body
+PASS Full stock cycle 294 releases offscreen ice from world registration
+PASS Full stock cycle 295 creates exactly one placed ice body
+PASS Full stock cycle 295 releases offscreen ice from world registration
+PASS Full stock cycle 296 creates exactly one placed ice body
+PASS Full stock cycle 296 releases offscreen ice from world registration
+PASS Full stock cycle 297 creates exactly one placed ice body
+PASS Full stock cycle 297 releases offscreen ice from world registration
+PASS Full stock cycle 298 creates exactly one placed ice body
+PASS Full stock cycle 298 releases offscreen ice from world registration
+PASS Full stock cycle 299 creates exactly one placed ice body
+PASS Full stock cycle 299 releases offscreen ice from world registration
+PASS Full stock cycle 300 creates exactly one placed ice body
+PASS Full stock cycle 300 releases offscreen ice from world registration
+PASS Full stock cycle 301 creates exactly one placed ice body
+PASS Full stock cycle 301 releases offscreen ice from world registration
+PASS Full stock cycle 302 creates exactly one placed ice body
+PASS Full stock cycle 302 releases offscreen ice from world registration
+PASS Full stock cycle 303 creates exactly one placed ice body
+PASS Full stock cycle 303 releases offscreen ice from world registration
+PASS Full stock cycle 304 creates exactly one placed ice body
+PASS Full stock cycle 304 releases offscreen ice from world registration
+PASS Full stock cycle 305 creates exactly one placed ice body
+PASS Full stock cycle 305 releases offscreen ice from world registration
+PASS Full stock cycle 306 creates exactly one placed ice body
+PASS Full stock cycle 306 releases offscreen ice from world registration
+PASS Full stock cycle 307 creates exactly one placed ice body
+PASS Full stock cycle 307 releases offscreen ice from world registration
+PASS Full stock cycle 308 creates exactly one placed ice body
+PASS Full stock cycle 308 releases offscreen ice from world registration
+PASS Full stock cycle 309 creates exactly one placed ice body
+PASS Full stock cycle 309 releases offscreen ice from world registration
+PASS Full stock cycle 310 creates exactly one placed ice body
+PASS Full stock cycle 310 releases offscreen ice from world registration
+PASS Full stock cycle 311 creates exactly one placed ice body
+PASS Full stock cycle 311 releases offscreen ice from world registration
+PASS Full stock cycle 312 creates exactly one placed ice body
+PASS Full stock cycle 312 releases offscreen ice from world registration
+PASS Full stock cycle 313 creates exactly one placed ice body
+PASS Full stock cycle 313 releases offscreen ice from world registration
+PASS Full stock cycle 314 creates exactly one placed ice body
+PASS Full stock cycle 314 releases offscreen ice from world registration
+PASS Full stock cycle 315 creates exactly one placed ice body
+PASS Full stock cycle 315 releases offscreen ice from world registration
+PASS Full stock cycle 316 creates exactly one placed ice body
+PASS Full stock cycle 316 releases offscreen ice from world registration
+PASS Full stock cycle 317 creates exactly one placed ice body
+PASS Full stock cycle 317 releases offscreen ice from world registration
+PASS Full stock cycle 318 creates exactly one placed ice body
+PASS Full stock cycle 318 releases offscreen ice from world registration
+PASS Full stock cycle 319 creates exactly one placed ice body
+PASS Full stock cycle 319 releases offscreen ice from world registration
+PASS Full stock cycle 320 creates exactly one placed ice body
+PASS Full stock cycle 320 releases offscreen ice from world registration
+PASS Full stock cycle 321 creates exactly one placed ice body
+PASS Full stock cycle 321 releases offscreen ice from world registration
+PASS Full stock cycle 322 creates exactly one placed ice body
+PASS Full stock cycle 322 releases offscreen ice from world registration
+PASS Full stock cycle 323 creates exactly one placed ice body
+PASS Full stock cycle 323 releases offscreen ice from world registration
+PASS Full stock cycle 324 creates exactly one placed ice body
+PASS Full stock cycle 324 releases offscreen ice from world registration
+PASS Full stock cycle 325 creates exactly one placed ice body
+PASS Full stock cycle 325 releases offscreen ice from world registration
+PASS Full stock cycle 326 creates exactly one placed ice body
+PASS Full stock cycle 326 releases offscreen ice from world registration
+PASS Full stock cycle 327 creates exactly one placed ice body
+PASS Full stock cycle 327 releases offscreen ice from world registration
+PASS Full stock cycle 328 creates exactly one placed ice body
+PASS Full stock cycle 328 releases offscreen ice from world registration
+PASS Full stock cycle 329 creates exactly one placed ice body
+PASS Full stock cycle 329 releases offscreen ice from world registration
+PASS Full stock cycle 330 creates exactly one placed ice body
+PASS Full stock cycle 330 releases offscreen ice from world registration
+PASS Full stock cycle 331 creates exactly one placed ice body
+PASS Full stock cycle 331 releases offscreen ice from world registration
+PASS Full stock cycle 332 creates exactly one placed ice body
+PASS Full stock cycle 332 releases offscreen ice from world registration
+PASS Full stock cycle 333 creates exactly one placed ice body
+PASS Full stock cycle 333 releases offscreen ice from world registration
+PASS Full stock cycle 334 creates exactly one placed ice body
+PASS Full stock cycle 334 releases offscreen ice from world registration
+PASS Full stock cycle 335 creates exactly one placed ice body
+PASS Full stock cycle 335 releases offscreen ice from world registration
+PASS Full stock cycle 336 creates exactly one placed ice body
+PASS Full stock cycle 336 releases offscreen ice from world registration
+PASS Full stock cycle 337 creates exactly one placed ice body
+PASS Full stock cycle 337 releases offscreen ice from world registration
+PASS Full stock cycle 338 creates exactly one placed ice body
+PASS Full stock cycle 338 releases offscreen ice from world registration
+PASS Full stock cycle 339 creates exactly one placed ice body
+PASS Full stock cycle 339 releases offscreen ice from world registration
+PASS Full stock cycle 340 creates exactly one placed ice body
+PASS Full stock cycle 340 releases offscreen ice from world registration
+PASS Full stock cycle 341 creates exactly one placed ice body
+PASS Full stock cycle 341 releases offscreen ice from world registration
+PASS Full stock cycle 342 creates exactly one placed ice body
+PASS Full stock cycle 342 releases offscreen ice from world registration
+PASS Full stock cycle 343 creates exactly one placed ice body
+PASS Full stock cycle 343 releases offscreen ice from world registration
+PASS Full stock cycle 344 creates exactly one placed ice body
+PASS Full stock cycle 344 releases offscreen ice from world registration
+PASS Full stock cycle 345 creates exactly one placed ice body
+PASS Full stock cycle 345 releases offscreen ice from world registration
+PASS Full stock cycle 346 creates exactly one placed ice body
+PASS Full stock cycle 346 releases offscreen ice from world registration
+PASS Full stock cycle 347 creates exactly one placed ice body
+PASS Full stock cycle 347 releases offscreen ice from world registration
+PASS Full stock cycle 348 creates exactly one placed ice body
+PASS Full stock cycle 348 releases offscreen ice from world registration
+PASS Full stock cycle 349 creates exactly one placed ice body
+PASS Full stock cycle 349 releases offscreen ice from world registration
+PASS Full stock cycle 350 creates exactly one placed ice body
+PASS Full stock cycle 350 releases offscreen ice from world registration
+PASS Full stock cycle 351 creates exactly one placed ice body
+PASS Full stock cycle 351 releases offscreen ice from world registration
+PASS Full stock cycle 352 creates exactly one placed ice body
+PASS Full stock cycle 352 releases offscreen ice from world registration
+PASS Full stock cycle 353 creates exactly one placed ice body
+PASS Full stock cycle 353 releases offscreen ice from world registration
+PASS Full stock cycle 354 creates exactly one placed ice body
+PASS Full stock cycle 354 releases offscreen ice from world registration
+PASS Full stock cycle 355 creates exactly one placed ice body
+PASS Full stock cycle 355 releases offscreen ice from world registration
+PASS Full stock cycle 356 creates exactly one placed ice body
+PASS Full stock cycle 356 releases offscreen ice from world registration
+PASS Full stock cycle 357 creates exactly one placed ice body
+PASS Full stock cycle 357 releases offscreen ice from world registration
+PASS Full stock cycle 358 creates exactly one placed ice body
+PASS Full stock cycle 358 releases offscreen ice from world registration
+PASS Full stock cycle 359 creates exactly one placed ice body
+PASS Full stock cycle 359 releases offscreen ice from world registration
+PASS Full stock cycle 360 creates exactly one placed ice body
+PASS Full stock cycle 360 releases offscreen ice from world registration
+PASS Full stock cycle 361 creates exactly one placed ice body
+PASS Full stock cycle 361 releases offscreen ice from world registration
+PASS Full stock cycle 362 creates exactly one placed ice body
+PASS Full stock cycle 362 releases offscreen ice from world registration
+PASS Full stock cycle 363 creates exactly one placed ice body
+PASS Full stock cycle 363 releases offscreen ice from world registration
+PASS Full stock cycle 364 creates exactly one placed ice body
+PASS Full stock cycle 364 releases offscreen ice from world registration
+PASS Full stock cycle 365 creates exactly one placed ice body
+PASS Full stock cycle 365 releases offscreen ice from world registration
+PASS Full stock cycle 366 creates exactly one placed ice body
+PASS Full stock cycle 366 releases offscreen ice from world registration
+PASS Full stock cycle 367 creates exactly one placed ice body
+PASS Full stock cycle 367 releases offscreen ice from world registration
+PASS Full stock cycle 368 creates exactly one placed ice body
+PASS Full stock cycle 368 releases offscreen ice from world registration
+PASS Full stock cycle 369 creates exactly one placed ice body
+PASS Full stock cycle 369 releases offscreen ice from world registration
+PASS Full stock cycle 370 creates exactly one placed ice body
+PASS Full stock cycle 370 releases offscreen ice from world registration
+PASS Full stock cycle 371 creates exactly one placed ice body
+PASS Full stock cycle 371 releases offscreen ice from world registration
+PASS Full stock cycle 372 creates exactly one placed ice body
+PASS Full stock cycle 372 releases offscreen ice from world registration
+PASS Full stock cycle 373 creates exactly one placed ice body
+PASS Full stock cycle 373 releases offscreen ice from world registration
+PASS Full stock cycle 374 creates exactly one placed ice body
+PASS Full stock cycle 374 releases offscreen ice from world registration
+PASS Full stock cycle 375 creates exactly one placed ice body
+PASS Full stock cycle 375 releases offscreen ice from world registration
+PASS Full stock cycle 376 creates exactly one placed ice body
+PASS Full stock cycle 376 releases offscreen ice from world registration
+PASS Full stock cycle 377 creates exactly one placed ice body
+PASS Full stock cycle 377 releases offscreen ice from world registration
+PASS Full stock cycle 378 creates exactly one placed ice body
+PASS Full stock cycle 378 releases offscreen ice from world registration
+PASS Full stock cycle 379 creates exactly one placed ice body
+PASS Full stock cycle 379 releases offscreen ice from world registration
+PASS Full stock cycle 380 creates exactly one placed ice body
+PASS Full stock cycle 380 releases offscreen ice from world registration
+PASS Full stock cycle 381 creates exactly one placed ice body
+PASS Full stock cycle 381 releases offscreen ice from world registration
+PASS Full stock cycle 382 creates exactly one placed ice body
+PASS Full stock cycle 382 releases offscreen ice from world registration
+PASS Full stock cycle 383 creates exactly one placed ice body
+PASS Full stock cycle 383 releases offscreen ice from world registration
+PASS Full stock cycle 384 creates exactly one placed ice body
+PASS Full stock cycle 384 releases offscreen ice from world registration
+PASS Full stock cycle 385 creates exactly one placed ice body
+PASS Full stock cycle 385 releases offscreen ice from world registration
+PASS Full stock cycle 386 creates exactly one placed ice body
+PASS Full stock cycle 386 releases offscreen ice from world registration
+PASS Full stock cycle 387 creates exactly one placed ice body
+PASS Full stock cycle 387 releases offscreen ice from world registration
+PASS Full stock cycle 388 creates exactly one placed ice body
+PASS Full stock cycle 388 releases offscreen ice from world registration
+PASS Full stock cycle 389 creates exactly one placed ice body
+PASS Full stock cycle 389 releases offscreen ice from world registration
+PASS Full stock cycle 390 creates exactly one placed ice body
+PASS Full stock cycle 390 releases offscreen ice from world registration
+PASS Full stock cycle 391 creates exactly one placed ice body
+PASS Full stock cycle 391 releases offscreen ice from world registration
+PASS Full stock cycle 392 creates exactly one placed ice body
+PASS Full stock cycle 392 releases offscreen ice from world registration
+PASS Full stock cycle 393 creates exactly one placed ice body
+PASS Full stock cycle 393 releases offscreen ice from world registration
+PASS Full stock cycle 394 creates exactly one placed ice body
+PASS Full stock cycle 394 releases offscreen ice from world registration
+PASS Full stock cycle 395 creates exactly one placed ice body
+PASS Full stock cycle 395 releases offscreen ice from world registration
+PASS Full stock cycle 396 creates exactly one placed ice body
+PASS Full stock cycle 396 releases offscreen ice from world registration
+PASS Full stock cycle 397 creates exactly one placed ice body
+PASS Full stock cycle 397 releases offscreen ice from world registration
+PASS Full stock cycle 398 creates exactly one placed ice body
+PASS Full stock cycle 398 releases offscreen ice from world registration
+PASS Full stock cycle 399 creates exactly one placed ice body
+PASS Full stock cycle 399 releases offscreen ice from world registration
+PASS Full stock cycle 400 creates exactly one placed ice body
+PASS Full stock cycle 400 releases offscreen ice from world registration
+PASS Full stock cycle 401 creates exactly one placed ice body
+PASS Full stock cycle 401 releases offscreen ice from world registration
+PASS Full stock cycle 402 creates exactly one placed ice body
+PASS Full stock cycle 402 releases offscreen ice from world registration
+PASS Full stock cycle 403 creates exactly one placed ice body
+PASS Full stock cycle 403 releases offscreen ice from world registration
+PASS Full stock cycle 404 creates exactly one placed ice body
+PASS Full stock cycle 404 releases offscreen ice from world registration
+PASS Full stock cycle 405 creates exactly one placed ice body
+PASS Full stock cycle 405 releases offscreen ice from world registration
+PASS Full stock cycle 406 creates exactly one placed ice body
+PASS Full stock cycle 406 releases offscreen ice from world registration
+PASS Full stock cycle 407 creates exactly one placed ice body
+PASS Full stock cycle 407 releases offscreen ice from world registration
+PASS Full stock cycle 408 creates exactly one placed ice body
+PASS Full stock cycle 408 releases offscreen ice from world registration
+PASS Full stock cycle 409 creates exactly one placed ice body
+PASS Full stock cycle 409 releases offscreen ice from world registration
+PASS Full stock cycle 410 creates exactly one placed ice body
+PASS Full stock cycle 410 releases offscreen ice from world registration
+PASS Full stock cycle 411 creates exactly one placed ice body
+PASS Full stock cycle 411 releases offscreen ice from world registration
+PASS Full stock cycle 412 creates exactly one placed ice body
+PASS Full stock cycle 412 releases offscreen ice from world registration
+PASS Full stock cycle 413 creates exactly one placed ice body
+PASS Full stock cycle 413 releases offscreen ice from world registration
+PASS Full stock cycle 414 creates exactly one placed ice body
+PASS Full stock cycle 414 releases offscreen ice from world registration
+PASS Full stock cycle 415 creates exactly one placed ice body
+PASS Full stock cycle 415 releases offscreen ice from world registration
+PASS Full stock cycle 416 creates exactly one placed ice body
+PASS Full stock cycle 416 releases offscreen ice from world registration
+PASS Full stock cycle 417 creates exactly one placed ice body
+PASS Full stock cycle 417 releases offscreen ice from world registration
+PASS Full stock cycle 418 creates exactly one placed ice body
+PASS Full stock cycle 418 releases offscreen ice from world registration
+PASS Full stock cycle 419 creates exactly one placed ice body
+PASS Full stock cycle 419 releases offscreen ice from world registration
+PASS Full stock cycle 420 creates exactly one placed ice body
+PASS Full stock cycle 420 releases offscreen ice from world registration
+PASS Full stock cycle 421 creates exactly one placed ice body
+PASS Full stock cycle 421 releases offscreen ice from world registration
+PASS Full stock cycle 422 creates exactly one placed ice body
+PASS Full stock cycle 422 releases offscreen ice from world registration
+PASS Full stock cycle 423 creates exactly one placed ice body
+PASS Full stock cycle 423 releases offscreen ice from world registration
+PASS Full stock cycle 424 creates exactly one placed ice body
+PASS Full stock cycle 424 releases offscreen ice from world registration
+PASS Full stock cycle 425 creates exactly one placed ice body
+PASS Full stock cycle 425 releases offscreen ice from world registration
+PASS Full stock cycle 426 creates exactly one placed ice body
+PASS Full stock cycle 426 releases offscreen ice from world registration
+PASS Full stock cycle 427 creates exactly one placed ice body
+PASS Full stock cycle 427 releases offscreen ice from world registration
+PASS Full stock cycle 428 creates exactly one placed ice body
+PASS Full stock cycle 428 releases offscreen ice from world registration
+PASS Full stock cycle 429 creates exactly one placed ice body
+PASS Full stock cycle 429 releases offscreen ice from world registration
+PASS Full stock cycle 430 creates exactly one placed ice body
+PASS Full stock cycle 430 releases offscreen ice from world registration
+PASS Full stock cycle 431 creates exactly one placed ice body
+PASS Full stock cycle 431 releases offscreen ice from world registration
+PASS Full stock cycle 432 creates exactly one placed ice body
+PASS Full stock cycle 432 releases offscreen ice from world registration
+PASS Full stock cycle 433 creates exactly one placed ice body
+PASS Full stock cycle 433 releases offscreen ice from world registration
+PASS Full stock cycle 434 creates exactly one placed ice body
+PASS Full stock cycle 434 releases offscreen ice from world registration
+PASS Full stock cycle 435 creates exactly one placed ice body
+PASS Full stock cycle 435 releases offscreen ice from world registration
+PASS Full stock cycle 436 creates exactly one placed ice body
+PASS Full stock cycle 436 releases offscreen ice from world registration
+PASS Full stock cycle 437 creates exactly one placed ice body
+PASS Full stock cycle 437 releases offscreen ice from world registration
+PASS Full stock cycle 438 creates exactly one placed ice body
+PASS Full stock cycle 438 releases offscreen ice from world registration
+PASS Full stock cycle 439 creates exactly one placed ice body
+PASS Full stock cycle 439 releases offscreen ice from world registration
+PASS Full stock cycle 440 creates exactly one placed ice body
+PASS Full stock cycle 440 releases offscreen ice from world registration
+PASS Full stock cycle 441 creates exactly one placed ice body
+PASS Full stock cycle 441 releases offscreen ice from world registration
+PASS Full stock cycle 442 creates exactly one placed ice body
+PASS Full stock cycle 442 releases offscreen ice from world registration
+PASS Full stock cycle 443 creates exactly one placed ice body
+PASS Full stock cycle 443 releases offscreen ice from world registration
+PASS Full stock cycle 444 creates exactly one placed ice body
+PASS Full stock cycle 444 releases offscreen ice from world registration
+PASS Full stock cycle 445 creates exactly one placed ice body
+PASS Full stock cycle 445 releases offscreen ice from world registration
+PASS Full stock cycle 446 creates exactly one placed ice body
+PASS Full stock cycle 446 releases offscreen ice from world registration
+PASS Full stock cycle 447 creates exactly one placed ice body
+PASS Full stock cycle 447 releases offscreen ice from world registration
+PASS Full stock cycle 448 creates exactly one placed ice body
+PASS Full stock cycle 448 releases offscreen ice from world registration
+PASS Full stock cycle 449 creates exactly one placed ice body
+PASS Full stock cycle 449 releases offscreen ice from world registration
+PASS Full stock cycle 450 creates exactly one placed ice body
+PASS Full stock cycle 450 releases offscreen ice from world registration
+PASS Full stock cycle 451 creates exactly one placed ice body
+PASS Full stock cycle 451 releases offscreen ice from world registration
+PASS Full stock cycle 452 creates exactly one placed ice body
+PASS Full stock cycle 452 releases offscreen ice from world registration
+PASS Full stock cycle 453 creates exactly one placed ice body
+PASS Full stock cycle 453 releases offscreen ice from world registration
+PASS Full stock cycle 454 creates exactly one placed ice body
+PASS Full stock cycle 454 releases offscreen ice from world registration
+PASS Full stock cycle 455 creates exactly one placed ice body
+PASS Full stock cycle 455 releases offscreen ice from world registration
+PASS Full stock cycle 456 creates exactly one placed ice body
+PASS Full stock cycle 456 releases offscreen ice from world registration
+PASS Full stock cycle 457 creates exactly one placed ice body
+PASS Full stock cycle 457 releases offscreen ice from world registration
+PASS Full stock cycle 458 creates exactly one placed ice body
+PASS Full stock cycle 458 releases offscreen ice from world registration
+PASS Full stock cycle 459 creates exactly one placed ice body
+PASS Full stock cycle 459 releases offscreen ice from world registration
+PASS Full stock cycle 460 creates exactly one placed ice body
+PASS Full stock cycle 460 releases offscreen ice from world registration
+PASS Full stock cycle 461 creates exactly one placed ice body
+PASS Full stock cycle 461 releases offscreen ice from world registration
+PASS Full stock cycle 462 creates exactly one placed ice body
+PASS Full stock cycle 462 releases offscreen ice from world registration
+PASS Full stock cycle 463 creates exactly one placed ice body
+PASS Full stock cycle 463 releases offscreen ice from world registration
+PASS Full stock cycle 464 creates exactly one placed ice body
+PASS Full stock cycle 464 releases offscreen ice from world registration
+PASS Full stock cycle 465 creates exactly one placed ice body
+PASS Full stock cycle 465 releases offscreen ice from world registration
+PASS Full stock cycle 466 creates exactly one placed ice body
+PASS Full stock cycle 466 releases offscreen ice from world registration
+PASS Full stock cycle 467 creates exactly one placed ice body
+PASS Full stock cycle 467 releases offscreen ice from world registration
+PASS Full stock cycle 468 creates exactly one placed ice body
+PASS Full stock cycle 468 releases offscreen ice from world registration
+PASS Full stock cycle 469 creates exactly one placed ice body
+PASS Full stock cycle 469 releases offscreen ice from world registration
+PASS Full stock cycle 470 creates exactly one placed ice body
+PASS Full stock cycle 470 releases offscreen ice from world registration
+PASS Full stock cycle 471 creates exactly one placed ice body
+PASS Full stock cycle 471 releases offscreen ice from world registration
+PASS Full stock cycle 472 creates exactly one placed ice body
+PASS Full stock cycle 472 releases offscreen ice from world registration
+PASS Full stock cycle 473 creates exactly one placed ice body
+PASS Full stock cycle 473 releases offscreen ice from world registration
+PASS Full stock cycle 474 creates exactly one placed ice body
+PASS Full stock cycle 474 releases offscreen ice from world registration
+PASS Full stock cycle 475 creates exactly one placed ice body
+PASS Full stock cycle 475 releases offscreen ice from world registration
+PASS Full stock cycle 476 creates exactly one placed ice body
+PASS Full stock cycle 476 releases offscreen ice from world registration
+PASS Full stock cycle 477 creates exactly one placed ice body
+PASS Full stock cycle 477 releases offscreen ice from world registration
+PASS Full stock cycle 478 creates exactly one placed ice body
+PASS Full stock cycle 478 releases offscreen ice from world registration
+PASS Full stock cycle 479 creates exactly one placed ice body
+PASS Full stock cycle 479 releases offscreen ice from world registration
+PASS Full stock cycle 480 creates exactly one placed ice body
+PASS Full stock cycle 480 releases offscreen ice from world registration
+PASS Full stock cycle 481 creates exactly one placed ice body
+PASS Full stock cycle 481 releases offscreen ice from world registration
+PASS Full stock cycle 482 creates exactly one placed ice body
+PASS Full stock cycle 482 releases offscreen ice from world registration
+PASS Full stock cycle 483 creates exactly one placed ice body
+PASS Full stock cycle 483 releases offscreen ice from world registration
+PASS Full stock cycle 484 creates exactly one placed ice body
+PASS Full stock cycle 484 releases offscreen ice from world registration
+PASS Full stock cycle 485 creates exactly one placed ice body
+PASS Full stock cycle 485 releases offscreen ice from world registration
+PASS Full stock cycle 486 creates exactly one placed ice body
+PASS Full stock cycle 486 releases offscreen ice from world registration
+PASS Full stock cycle 487 creates exactly one placed ice body
+PASS Full stock cycle 487 releases offscreen ice from world registration
+PASS Full stock cycle 488 creates exactly one placed ice body
+PASS Full stock cycle 488 releases offscreen ice from world registration
+PASS Full stock cycle 489 creates exactly one placed ice body
+PASS Full stock cycle 489 releases offscreen ice from world registration
+PASS Full stock cycle 490 creates exactly one placed ice body
+PASS Full stock cycle 490 releases offscreen ice from world registration
+PASS Full stock cycle 491 creates exactly one placed ice body
+PASS Full stock cycle 491 releases offscreen ice from world registration
+PASS Full stock cycle 492 creates exactly one placed ice body
+PASS Full stock cycle 492 releases offscreen ice from world registration
+PASS Full stock cycle 493 creates exactly one placed ice body
+PASS Full stock cycle 493 releases offscreen ice from world registration
+PASS Full stock cycle 494 creates exactly one placed ice body
+PASS Full stock cycle 494 releases offscreen ice from world registration
+PASS Full stock cycle 495 creates exactly one placed ice body
+PASS Full stock cycle 495 releases offscreen ice from world registration
+PASS Full stock cycle 496 creates exactly one placed ice body
+PASS Full stock cycle 496 releases offscreen ice from world registration
+PASS Full stock cycle 497 creates exactly one placed ice body
+PASS Full stock cycle 497 releases offscreen ice from world registration
+PASS Full stock cycle 498 creates exactly one placed ice body
+PASS Full stock cycle 498 releases offscreen ice from world registration
+PASS Full stock cycle 499 creates exactly one placed ice body
+PASS Full stock cycle 499 releases offscreen ice from world registration
+PASS All 5000 ml produce exactly 500 normal ice pieces
+PASS Exhausted ice supply stays empty across a long subsequent tick
+INFO Sequential 500-piece throughput wall seconds=0.8796072
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Full hot stock batch 1 materializes finite actual GPU particles
+PASS Full hot stock batch 2 materializes finite actual GPU particles
+PASS Full hot stock batch 3 materializes finite actual GPU particles
+PASS Full hot stock batch 4 materializes finite actual GPU particles
+PASS Full hot stock batch 5 materializes finite actual GPU particles
+PASS Full hot stock batch 6 materializes finite actual GPU particles
+PASS Full hot stock batch 7 materializes finite actual GPU particles
+PASS Full hot stock batch 8 materializes finite actual GPU particles
+PASS Full hot stock batch 9 materializes finite actual GPU particles
+PASS Full hot stock batch 10 materializes finite actual GPU particles
+PASS Full hot stock batch 11 materializes finite actual GPU particles
+PASS Full hot stock batch 12 materializes finite actual GPU particles
+PASS Full hot stock batch 13 materializes finite actual GPU particles
+PASS Full hot stock batch 14 materializes finite actual GPU particles
+PASS Full hot stock batch 15 materializes finite actual GPU particles
+PASS Full hot stock batch 16 materializes finite actual GPU particles
+PASS Full hot stock batch 17 materializes finite actual GPU particles
+PASS Full hot stock batch 18 materializes finite actual GPU particles
+PASS Full hot stock batch 19 materializes finite actual GPU particles
+PASS Full hot stock batch 20 materializes finite actual GPU particles
+PASS Full hot stock batch 21 materializes finite actual GPU particles
+PASS Full hot stock batch 22 materializes finite actual GPU particles
+PASS Full hot stock batch 23 materializes finite actual GPU particles
+PASS Full hot stock batch 24 materializes finite actual GPU particles
+PASS Full hot stock batch 25 materializes finite actual GPU particles
+PASS Full hot stock batch 26 materializes finite actual GPU particles
+PASS Full hot stock batch 27 materializes finite actual GPU particles
+PASS Full hot stock batch 28 materializes finite actual GPU particles
+PASS Full hot stock batch 29 materializes finite actual GPU particles
+PASS Full hot stock batch 30 materializes finite actual GPU particles
+PASS Full hot stock batch 31 materializes finite actual GPU particles
+PASS Full hot stock batch 32 materializes finite actual GPU particles
+PASS Full hot stock batch 33 materializes finite actual GPU particles
+PASS Full hot stock batch 34 materializes finite actual GPU particles
+PASS Full hot stock batch 35 materializes finite actual GPU particles
+PASS Full hot stock batch 36 materializes finite actual GPU particles
+PASS Full hot stock batch 37 materializes finite actual GPU particles
+PASS Full hot stock batch 38 materializes finite actual GPU particles
+PASS Full hot stock batch 39 materializes finite actual GPU particles
+PASS Full hot stock batch 40 materializes finite actual GPU particles
+PASS Full hot stock batch 41 materializes finite actual GPU particles
+PASS Full hot stock batch 42 materializes finite actual GPU particles
+PASS Full hot stock batch 43 materializes finite actual GPU particles
+PASS Full hot stock batch 44 materializes finite actual GPU particles
+PASS Full hot stock batch 45 materializes finite actual GPU particles
+PASS Full hot stock batch 46 materializes finite actual GPU particles
+PASS Full hot stock batch 47 materializes finite actual GPU particles
+PASS Full hot stock batch 48 materializes finite actual GPU particles
+PASS Full hot stock batch 49 materializes finite actual GPU particles
+PASS Full hot stock batch 50 materializes finite actual GPU particles
+PASS Full hot stock batch 51 materializes finite actual GPU particles
+PASS Full hot stock batch 52 materializes finite actual GPU particles
+PASS Full hot stock batch 53 materializes finite actual GPU particles
+PASS Full hot stock batch 54 materializes finite actual GPU particles
+PASS Full hot stock batch 55 materializes finite actual GPU particles
+PASS Full hot stock batch 56 materializes finite actual GPU particles
+PASS Full hot stock batch 57 materializes finite actual GPU particles
+PASS Full hot stock batch 58 materializes finite actual GPU particles
+PASS Full hot stock batch 59 materializes finite actual GPU particles
+PASS Full hot stock batch 60 materializes finite actual GPU particles
+PASS Full hot stock batch 61 materializes finite actual GPU particles
+PASS Full hot stock batch 62 materializes finite actual GPU particles
+PASS Full hot stock batch 63 materializes finite actual GPU particles
+PASS Full hot stock batch 64 materializes finite actual GPU particles
+PASS Full hot stock batch 65 materializes finite actual GPU particles
+PASS Full hot stock batch 66 materializes finite actual GPU particles
+PASS Full hot stock batch 67 materializes finite actual GPU particles
+PASS Full hot stock batch 68 materializes finite actual GPU particles
+PASS Full hot stock batch 69 materializes finite actual GPU particles
+PASS Full hot stock batch 70 materializes finite actual GPU particles
+PASS Full hot stock batch 71 materializes finite actual GPU particles
+PASS Full hot stock batch 72 materializes finite actual GPU particles
+PASS Full hot stock batch 73 materializes finite actual GPU particles
+PASS Full hot stock batch 74 materializes finite actual GPU particles
+PASS Full hot stock batch 75 materializes finite actual GPU particles
+PASS Full hot stock batch 76 materializes finite actual GPU particles
+PASS Full hot stock batch 77 materializes finite actual GPU particles
+PASS Full hot stock batch 78 materializes finite actual GPU particles
+PASS Full hot stock batch 79 materializes finite actual GPU particles
+PASS Full hot stock batch 80 materializes finite actual GPU particles
+PASS Full hot stock batch 81 materializes finite actual GPU particles
+PASS Full hot stock batch 82 materializes finite actual GPU particles
+PASS Full hot stock batch 83 materializes finite actual GPU particles
+PASS Full hot stock batch 84 materializes finite actual GPU particles
+PASS Full hot stock batch 85 materializes finite actual GPU particles
+PASS Full hot stock batch 86 materializes finite actual GPU particles
+PASS Full hot stock batch 87 materializes finite actual GPU particles
+PASS Full hot stock batch 88 materializes finite actual GPU particles
+PASS Full hot stock batch 89 materializes finite actual GPU particles
+PASS Full hot stock batch 90 materializes finite actual GPU particles
+PASS Full hot stock batch 91 materializes finite actual GPU particles
+PASS Full hot stock batch 92 materializes finite actual GPU particles
+PASS Full hot stock batch 93 materializes finite actual GPU particles
+PASS Full hot stock batch 94 materializes finite actual GPU particles
+PASS Full hot stock batch 95 materializes finite actual GPU particles
+PASS Full hot stock batch 96 materializes finite actual GPU particles
+PASS Full hot stock batch 97 materializes finite actual GPU particles
+PASS Full hot stock batch 98 materializes finite actual GPU particles
+PASS Full hot stock batch 99 materializes finite actual GPU particles
+PASS Full hot stock batch 100 materializes finite actual GPU particles
+PASS Full hot stock batch 101 materializes finite actual GPU particles
+PASS Full hot stock batch 102 materializes finite actual GPU particles
+PASS Full hot stock batch 103 materializes finite actual GPU particles
+PASS Full hot stock batch 104 materializes finite actual GPU particles
+PASS Full hot stock batch 105 materializes finite actual GPU particles
+PASS Full hot stock batch 106 materializes finite actual GPU particles
+PASS Full hot stock batch 107 materializes finite actual GPU particles
+PASS Full hot stock batch 108 materializes finite actual GPU particles
+PASS Full hot stock batch 109 materializes finite actual GPU particles
+PASS Full hot stock batch 110 materializes finite actual GPU particles
+PASS Full hot stock batch 111 materializes finite actual GPU particles
+PASS Full hot stock batch 112 materializes finite actual GPU particles
+PASS Full hot stock batch 113 materializes finite actual GPU particles
+PASS Full hot stock batch 114 materializes finite actual GPU particles
+PASS Full hot stock batch 115 materializes finite actual GPU particles
+PASS Full hot stock batch 116 materializes finite actual GPU particles
+PASS Full hot stock batch 117 materializes finite actual GPU particles
+PASS Full hot stock batch 118 materializes finite actual GPU particles
+PASS Full hot stock batch 119 materializes finite actual GPU particles
+PASS Full hot stock batch 120 materializes finite actual GPU particles
+PASS Full hot stock batch 121 materializes finite actual GPU particles
+PASS Full hot stock batch 122 materializes finite actual GPU particles
+PASS Full hot stock batch 123 materializes finite actual GPU particles
+PASS Full hot stock batch 124 materializes finite actual GPU particles
+PASS Full hot stock batch 125 materializes finite actual GPU particles
+PASS Full hot stock batch 126 materializes finite actual GPU particles
+PASS Full hot stock batch 127 materializes finite actual GPU particles
+PASS Full hot stock batch 128 materializes finite actual GPU particles
+PASS Full hot stock batch 129 materializes finite actual GPU particles
+PASS Full hot stock batch 130 materializes finite actual GPU particles
+PASS Full hot stock batch 131 materializes finite actual GPU particles
+PASS Full hot stock batch 132 materializes finite actual GPU particles
+PASS Full hot stock batch 133 materializes finite actual GPU particles
+PASS Full hot stock batch 134 materializes finite actual GPU particles
+PASS Full hot stock batch 135 materializes finite actual GPU particles
+PASS Full hot stock batch 136 materializes finite actual GPU particles
+PASS Full hot stock batch 137 materializes finite actual GPU particles
+PASS Full hot stock batch 138 materializes finite actual GPU particles
+PASS Full hot stock batch 139 materializes finite actual GPU particles
+PASS Full hot stock batch 140 materializes finite actual GPU particles
+PASS Full hot stock batch 141 materializes finite actual GPU particles
+PASS Full hot stock batch 142 materializes finite actual GPU particles
+PASS Full hot stock batch 143 materializes finite actual GPU particles
+PASS Full hot stock batch 144 materializes finite actual GPU particles
+PASS Full hot stock batch 145 materializes finite actual GPU particles
+PASS Full hot stock batch 146 materializes finite actual GPU particles
+PASS Full hot stock batch 147 materializes finite actual GPU particles
+PASS Full hot stock batch 148 materializes finite actual GPU particles
+PASS Full hot stock batch 149 materializes finite actual GPU particles
+PASS Full hot stock batch 150 materializes finite actual GPU particles
+PASS Full hot stock batch 151 materializes finite actual GPU particles
+PASS Full hot stock batch 152 materializes finite actual GPU particles
+PASS Full hot stock batch 153 materializes finite actual GPU particles
+PASS Full hot stock batch 154 materializes finite actual GPU particles
+PASS Full hot stock batch 155 materializes finite actual GPU particles
+PASS Full hot stock batch 156 materializes finite actual GPU particles
+PASS Full hot stock batch 157 materializes finite actual GPU particles
+PASS Full hot stock batch 158 materializes finite actual GPU particles
+PASS Full hot stock batch 159 materializes finite actual GPU particles
+PASS Full hot stock batch 160 materializes finite actual GPU particles
+PASS Full hot stock batch 161 materializes finite actual GPU particles
+PASS Full hot stock batch 162 materializes finite actual GPU particles
+PASS Full hot stock batch 163 materializes finite actual GPU particles
+PASS Full hot stock batch 164 materializes finite actual GPU particles
+PASS Full hot stock batch 165 materializes finite actual GPU particles
+PASS Full hot stock batch 166 materializes finite actual GPU particles
+PASS Full hot stock batch 167 materializes finite actual GPU particles
+PASS Full hot stock batch 168 materializes finite actual GPU particles
+PASS Full hot stock batch 169 materializes finite actual GPU particles
+PASS Full hot stock batch 170 materializes finite actual GPU particles
+PASS Full hot stock batch 171 materializes finite actual GPU particles
+PASS Full hot stock batch 172 materializes finite actual GPU particles
+PASS Full hot stock batch 173 materializes finite actual GPU particles
+PASS Full hot stock batch 174 materializes finite actual GPU particles
+PASS Full hot stock batch 175 materializes finite actual GPU particles
+PASS Full hot stock batch 176 materializes finite actual GPU particles
+PASS Full hot stock batch 177 materializes finite actual GPU particles
+PASS Full hot stock batch 178 materializes finite actual GPU particles
+PASS Full hot stock batch 179 materializes finite actual GPU particles
+PASS Full hot stock batch 180 materializes finite actual GPU particles
+PASS Full hot stock batch 181 materializes finite actual GPU particles
+PASS Full hot stock batch 182 materializes finite actual GPU particles
+PASS Full hot stock batch 183 materializes finite actual GPU particles
+PASS Full hot stock batch 184 materializes finite actual GPU particles
+PASS Full hot stock batch 185 materializes finite actual GPU particles
+PASS Full hot stock batch 186 materializes finite actual GPU particles
+PASS Full hot stock batch 187 materializes finite actual GPU particles
+PASS Full hot stock batch 188 materializes finite actual GPU particles
+PASS Full hot stock batch 189 materializes finite actual GPU particles
+PASS Full hot stock batch 190 materializes finite actual GPU particles
+PASS Full hot stock batch 191 materializes finite actual GPU particles
+PASS Full hot stock batch 192 materializes finite actual GPU particles
+PASS Full hot stock batch 193 materializes finite actual GPU particles
+PASS Full hot stock batch 194 materializes finite actual GPU particles
+PASS Full hot stock batch 195 materializes finite actual GPU particles
+PASS Full hot stock batch 196 materializes finite actual GPU particles
+PASS Full hot stock batch 197 materializes finite actual GPU particles
+PASS Full hot stock batch 198 materializes finite actual GPU particles
+PASS Full hot stock batch 199 materializes finite actual GPU particles
+PASS Full hot stock batch 200 materializes finite actual GPU particles
+PASS Full hot stock batch 201 materializes finite actual GPU particles
+PASS Full hot stock batch 202 materializes finite actual GPU particles
+PASS Full hot stock batch 203 materializes finite actual GPU particles
+PASS Full hot stock batch 204 materializes finite actual GPU particles
+PASS Full hot stock batch 205 materializes finite actual GPU particles
+PASS Full hot stock batch 206 materializes finite actual GPU particles
+PASS Full hot stock batch 207 materializes finite actual GPU particles
+PASS Full hot stock batch 208 materializes finite actual GPU particles
+PASS Full hot stock batch 209 materializes finite actual GPU particles
+PASS Full hot stock batch 210 materializes finite actual GPU particles
+PASS Full hot stock batch 211 materializes finite actual GPU particles
+PASS Full hot stock batch 212 materializes finite actual GPU particles
+PASS Full hot stock batch 213 materializes finite actual GPU particles
+PASS Full hot stock batch 214 materializes finite actual GPU particles
+PASS Full hot stock batch 215 materializes finite actual GPU particles
+PASS Full hot stock batch 216 materializes finite actual GPU particles
+PASS Full hot stock batch 217 materializes finite actual GPU particles
+PASS Full hot stock batch 218 materializes finite actual GPU particles
+PASS Full hot stock batch 219 materializes finite actual GPU particles
+PASS Full hot stock batch 220 materializes finite actual GPU particles
+PASS Full hot stock batch 221 materializes finite actual GPU particles
+PASS Full hot stock batch 222 materializes finite actual GPU particles
+PASS Full hot stock batch 223 materializes finite actual GPU particles
+PASS Full hot stock batch 224 materializes finite actual GPU particles
+PASS Full hot stock batch 225 materializes finite actual GPU particles
+PASS Full hot stock batch 226 materializes finite actual GPU particles
+PASS Full hot stock batch 227 materializes finite actual GPU particles
+PASS Full hot stock batch 228 materializes finite actual GPU particles
+PASS Full hot stock batch 229 materializes finite actual GPU particles
+PASS Full hot stock batch 230 materializes finite actual GPU particles
+PASS Full hot stock batch 231 materializes finite actual GPU particles
+PASS Full hot stock batch 232 materializes finite actual GPU particles
+PASS Full hot stock batch 233 materializes finite actual GPU particles
+PASS Full hot stock batch 234 materializes finite actual GPU particles
+PASS Full hot stock batch 235 materializes finite actual GPU particles
+PASS Full hot stock batch 236 materializes finite actual GPU particles
+PASS Full hot stock batch 237 materializes finite actual GPU particles
+PASS Full hot stock batch 238 materializes finite actual GPU particles
+PASS Full hot stock batch 239 materializes finite actual GPU particles
+PASS Full hot stock batch 240 materializes finite actual GPU particles
+PASS Full hot stock batch 241 materializes finite actual GPU particles
+PASS Full hot stock batch 242 materializes finite actual GPU particles
+PASS Full hot stock batch 243 materializes finite actual GPU particles
+PASS Full hot stock batch 244 materializes finite actual GPU particles
+PASS Full hot stock batch 245 materializes finite actual GPU particles
+PASS Full hot stock batch 246 materializes finite actual GPU particles
+PASS Full hot stock batch 247 materializes finite actual GPU particles
+PASS Full hot stock batch 248 materializes finite actual GPU particles
+PASS Full hot stock batch 249 materializes finite actual GPU particles
+PASS Full hot stock batch 250 materializes finite actual GPU particles
+PASS Full hot stock batch 251 materializes finite actual GPU particles
+PASS Full hot stock batch 252 materializes finite actual GPU particles
+PASS Full hot stock batch 253 materializes finite actual GPU particles
+PASS Full hot stock batch 254 materializes finite actual GPU particles
+PASS Full hot stock batch 255 materializes finite actual GPU particles
+PASS Full hot stock batch 256 materializes finite actual GPU particles
+PASS Full hot stock batch 257 materializes finite actual GPU particles
+PASS Full hot stock batch 258 materializes finite actual GPU particles
+PASS Full hot stock batch 259 materializes finite actual GPU particles
+PASS Full hot stock batch 260 materializes finite actual GPU particles
+PASS Full hot stock batch 261 materializes finite actual GPU particles
+PASS Full hot stock batch 262 materializes finite actual GPU particles
+PASS Full hot stock batch 263 materializes finite actual GPU particles
+PASS Full hot stock batch 264 materializes finite actual GPU particles
+PASS Full hot stock batch 265 materializes finite actual GPU particles
+PASS Full hot stock batch 266 materializes finite actual GPU particles
+PASS Full hot stock batch 267 materializes finite actual GPU particles
+PASS Full hot stock batch 268 materializes finite actual GPU particles
+PASS Full hot stock batch 269 materializes finite actual GPU particles
+PASS Full hot stock batch 270 materializes finite actual GPU particles
+PASS Full hot stock batch 271 materializes finite actual GPU particles
+PASS Full hot stock batch 272 materializes finite actual GPU particles
+PASS Full hot stock batch 273 materializes finite actual GPU particles
+PASS Full hot stock batch 274 materializes finite actual GPU particles
+PASS Full hot stock batch 275 materializes finite actual GPU particles
+PASS Full hot stock batch 276 materializes finite actual GPU particles
+PASS Full hot stock batch 277 materializes finite actual GPU particles
+PASS Full hot stock batch 278 materializes finite actual GPU particles
+PASS Full hot stock batch 279 materializes finite actual GPU particles
+PASS Full hot stock batch 280 materializes finite actual GPU particles
+PASS Full hot stock batch 281 materializes finite actual GPU particles
+PASS Full hot stock batch 282 materializes finite actual GPU particles
+PASS Full hot stock batch 283 materializes finite actual GPU particles
+PASS Full hot stock batch 284 materializes finite actual GPU particles
+PASS Full hot stock batch 285 materializes finite actual GPU particles
+PASS Full hot stock batch 286 materializes finite actual GPU particles
+PASS Full hot stock batch 287 materializes finite actual GPU particles
+PASS Full hot stock batch 288 materializes finite actual GPU particles
+PASS Full hot stock batch 289 materializes finite actual GPU particles
+PASS Full hot stock batch 290 materializes finite actual GPU particles
+PASS Full hot stock batch 291 materializes finite actual GPU particles
+PASS Full hot stock batch 292 materializes finite actual GPU particles
+PASS Full hot stock batch 293 materializes finite actual GPU particles
+PASS Full hot stock batch 294 materializes finite actual GPU particles
+PASS Full hot stock batch 295 materializes finite actual GPU particles
+PASS Full hot stock batch 296 materializes finite actual GPU particles
+PASS Full hot stock batch 297 materializes finite actual GPU particles
+PASS Full hot stock batch 298 materializes finite actual GPU particles
+PASS Full hot stock batch 299 materializes finite actual GPU particles
+PASS Full hot stock batch 300 materializes finite actual GPU particles
+PASS Full hot stock batch 301 materializes finite actual GPU particles
+PASS Full hot stock batch 302 materializes finite actual GPU particles
+PASS Full hot stock batch 303 materializes finite actual GPU particles
+PASS Full hot stock batch 304 materializes finite actual GPU particles
+PASS Full hot stock batch 305 materializes finite actual GPU particles
+PASS Full hot stock batch 306 materializes finite actual GPU particles
+PASS Full hot stock batch 307 materializes finite actual GPU particles
+PASS Full hot stock batch 308 materializes finite actual GPU particles
+PASS Full hot stock batch 309 materializes finite actual GPU particles
+PASS Full hot stock batch 310 materializes finite actual GPU particles
+PASS Full hot stock batch 311 materializes finite actual GPU particles
+PASS Full hot stock batch 312 materializes finite actual GPU particles
+PASS Full hot stock batch 313 materializes finite actual GPU particles
+PASS Full hot stock batch 314 materializes finite actual GPU particles
+PASS Full hot stock batch 315 materializes finite actual GPU particles
+PASS Full hot stock batch 316 materializes finite actual GPU particles
+PASS Full hot stock batch 317 materializes finite actual GPU particles
+PASS Full hot stock batch 318 materializes finite actual GPU particles
+PASS Full hot stock batch 319 materializes finite actual GPU particles
+PASS Full hot stock batch 320 materializes finite actual GPU particles
+PASS Full hot stock batch 321 materializes finite actual GPU particles
+PASS Full hot stock batch 322 materializes finite actual GPU particles
+PASS Full hot stock batch 323 materializes finite actual GPU particles
+PASS Full hot stock batch 324 materializes finite actual GPU particles
+PASS Full hot stock batch 325 materializes finite actual GPU particles
+PASS Full hot stock batch 326 materializes finite actual GPU particles
+PASS Full hot stock batch 327 materializes finite actual GPU particles
+PASS Full hot stock batch 328 materializes finite actual GPU particles
+PASS Full hot stock batch 329 materializes finite actual GPU particles
+PASS Full hot stock batch 330 materializes finite actual GPU particles
+PASS Full hot stock batch 331 materializes finite actual GPU particles
+PASS Full hot stock batch 332 materializes finite actual GPU particles
+PASS Full hot stock batch 333 materializes finite actual GPU particles
+PASS Full hot stock batch 334 materializes finite actual GPU particles
+PASS Full hot stock batch 335 materializes finite actual GPU particles
+PASS Full hot stock batch 336 materializes finite actual GPU particles
+PASS Full hot stock batch 337 materializes finite actual GPU particles
+PASS Full hot stock batch 338 materializes finite actual GPU particles
+PASS Full hot stock batch 339 materializes finite actual GPU particles
+PASS Full hot stock batch 340 materializes finite actual GPU particles
+PASS Full hot stock batch 341 materializes finite actual GPU particles
+PASS Full hot stock batch 342 materializes finite actual GPU particles
+PASS Full hot stock batch 343 materializes finite actual GPU particles
+PASS Full hot stock batch 344 materializes finite actual GPU particles
+PASS Full hot stock batch 345 materializes finite actual GPU particles
+PASS Full hot stock batch 346 materializes finite actual GPU particles
+PASS Full hot stock batch 347 materializes finite actual GPU particles
+PASS Full hot stock batch 348 materializes finite actual GPU particles
+PASS Full hot stock batch 349 materializes finite actual GPU particles
+PASS Full hot stock batch 350 materializes finite actual GPU particles
+PASS Full hot stock batch 351 materializes finite actual GPU particles
+PASS Full hot stock batch 352 materializes finite actual GPU particles
+PASS Full hot stock batch 353 materializes finite actual GPU particles
+PASS Full hot stock batch 354 materializes finite actual GPU particles
+PASS Full hot stock batch 355 materializes finite actual GPU particles
+PASS Full hot stock batch 356 materializes finite actual GPU particles
+PASS Full hot stock batch 357 materializes finite actual GPU particles
+PASS Full hot stock batch 358 materializes finite actual GPU particles
+PASS Full hot stock batch 359 materializes finite actual GPU particles
+PASS Full hot stock batch 360 materializes finite actual GPU particles
+PASS Full hot stock batch 361 materializes finite actual GPU particles
+PASS Full hot stock batch 362 materializes finite actual GPU particles
+PASS Full hot stock batch 363 materializes finite actual GPU particles
+PASS Full hot stock batch 364 materializes finite actual GPU particles
+PASS Full hot stock batch 365 materializes finite actual GPU particles
+PASS Full hot stock batch 366 materializes finite actual GPU particles
+PASS Full hot stock batch 367 materializes finite actual GPU particles
+PASS Full hot stock batch 368 materializes finite actual GPU particles
+PASS Full hot stock batch 369 materializes finite actual GPU particles
+PASS Full hot stock batch 370 materializes finite actual GPU particles
+PASS Full hot stock batch 371 materializes finite actual GPU particles
+PASS Full hot stock batch 372 materializes finite actual GPU particles
+PASS Full hot stock batch 373 materializes finite actual GPU particles
+PASS Full hot stock batch 374 materializes finite actual GPU particles
+PASS Full hot stock batch 375 materializes finite actual GPU particles
+PASS Full hot stock batch 376 materializes finite actual GPU particles
+PASS Full hot stock batch 377 materializes finite actual GPU particles
+PASS Full hot stock batch 378 materializes finite actual GPU particles
+PASS Full hot stock batch 379 materializes finite actual GPU particles
+PASS Full hot stock batch 380 materializes finite actual GPU particles
+PASS Full hot stock batch 381 materializes finite actual GPU particles
+PASS Full hot stock batch 382 materializes finite actual GPU particles
+PASS Full hot stock batch 383 materializes finite actual GPU particles
+PASS Full hot stock batch 384 materializes finite actual GPU particles
+PASS Full hot stock batch 385 materializes finite actual GPU particles
+PASS Full hot stock batch 386 materializes finite actual GPU particles
+PASS Full hot stock batch 387 materializes finite actual GPU particles
+PASS Full hot stock batch 388 materializes finite actual GPU particles
+PASS Full hot stock batch 389 materializes finite actual GPU particles
+PASS Full hot stock batch 390 materializes finite actual GPU particles
+PASS Full hot stock batch 391 materializes finite actual GPU particles
+PASS Full hot stock batch 392 materializes finite actual GPU particles
+PASS Full hot stock batch 393 materializes finite actual GPU particles
+PASS Full hot stock batch 394 materializes finite actual GPU particles
+PASS Full hot stock batch 395 materializes finite actual GPU particles
+PASS Full hot stock batch 396 materializes finite actual GPU particles
+PASS Full hot stock batch 397 materializes finite actual GPU particles
+PASS Full hot stock batch 398 materializes finite actual GPU particles
+PASS Full hot stock batch 399 materializes finite actual GPU particles
+PASS Full hot stock batch 400 materializes finite actual GPU particles
+PASS Full hot stock batch 401 materializes finite actual GPU particles
+PASS Full hot stock batch 402 materializes finite actual GPU particles
+PASS Full hot stock batch 403 materializes finite actual GPU particles
+PASS Full hot stock batch 404 materializes finite actual GPU particles
+PASS Full hot stock batch 405 materializes finite actual GPU particles
+PASS Full hot stock batch 406 materializes finite actual GPU particles
+PASS Full hot stock batch 407 materializes finite actual GPU particles
+PASS Full hot stock batch 408 materializes finite actual GPU particles
+PASS Full hot stock batch 409 materializes finite actual GPU particles
+PASS Full hot stock batch 410 materializes finite actual GPU particles
+PASS Full hot stock batch 411 materializes finite actual GPU particles
+PASS Full hot stock batch 412 materializes finite actual GPU particles
+PASS Full hot stock batch 413 materializes finite actual GPU particles
+PASS Full hot stock batch 414 materializes finite actual GPU particles
+PASS Full hot stock batch 415 materializes finite actual GPU particles
+PASS Full hot stock batch 416 materializes finite actual GPU particles
+PASS Full hot stock batch 417 materializes finite actual GPU particles
+PASS Full hot stock batch 418 materializes finite actual GPU particles
+PASS Full hot stock batch 419 materializes finite actual GPU particles
+PASS Full hot stock batch 420 materializes finite actual GPU particles
+PASS Full hot stock batch 421 materializes finite actual GPU particles
+PASS Full hot stock batch 422 materializes finite actual GPU particles
+PASS Full hot stock batch 423 materializes finite actual GPU particles
+PASS Full hot stock batch 424 materializes finite actual GPU particles
+PASS Full hot stock batch 425 materializes finite actual GPU particles
+PASS Full hot stock batch 426 materializes finite actual GPU particles
+PASS Full hot stock batch 427 materializes finite actual GPU particles
+PASS Full hot stock batch 428 materializes finite actual GPU particles
+PASS Full hot stock batch 429 materializes finite actual GPU particles
+PASS Full hot stock batch 430 materializes finite actual GPU particles
+PASS Full hot stock batch 431 materializes finite actual GPU particles
+PASS Full hot stock batch 432 materializes finite actual GPU particles
+PASS Full hot stock batch 433 materializes finite actual GPU particles
+PASS Full hot stock batch 434 materializes finite actual GPU particles
+PASS Full hot stock batch 435 materializes finite actual GPU particles
+PASS Full hot stock batch 436 materializes finite actual GPU particles
+PASS Full hot stock batch 437 materializes finite actual GPU particles
+PASS Full hot stock batch 438 materializes finite actual GPU particles
+PASS Full hot stock batch 439 materializes finite actual GPU particles
+PASS Full hot stock batch 440 materializes finite actual GPU particles
+PASS Full hot stock batch 441 materializes finite actual GPU particles
+PASS Full hot stock batch 442 materializes finite actual GPU particles
+PASS Full hot stock batch 443 materializes finite actual GPU particles
+PASS Full hot stock batch 444 materializes finite actual GPU particles
+PASS Full hot stock batch 445 materializes finite actual GPU particles
+PASS Full hot stock batch 446 materializes finite actual GPU particles
+PASS Full hot stock batch 447 materializes finite actual GPU particles
+PASS Full hot stock batch 448 materializes finite actual GPU particles
+PASS Full hot stock batch 449 materializes finite actual GPU particles
+PASS Full hot stock batch 450 materializes finite actual GPU particles
+PASS Full hot stock batch 451 materializes finite actual GPU particles
+PASS Full hot stock batch 452 materializes finite actual GPU particles
+PASS Full hot stock batch 453 materializes finite actual GPU particles
+PASS Full hot stock batch 454 materializes finite actual GPU particles
+PASS Full hot stock batch 455 materializes finite actual GPU particles
+PASS Full hot stock batch 456 materializes finite actual GPU particles
+PASS Full hot stock batch 457 materializes finite actual GPU particles
+PASS Full hot stock batch 458 materializes finite actual GPU particles
+PASS Full hot stock batch 459 materializes finite actual GPU particles
+PASS Full hot stock batch 460 materializes finite actual GPU particles
+PASS Full hot stock batch 461 materializes finite actual GPU particles
+PASS Full hot stock batch 462 materializes finite actual GPU particles
+PASS Full hot stock batch 463 materializes finite actual GPU particles
+PASS Full hot stock batch 464 materializes finite actual GPU particles
+PASS Full hot stock batch 465 materializes finite actual GPU particles
+PASS Full hot stock batch 466 materializes finite actual GPU particles
+PASS Full hot stock batch 467 materializes finite actual GPU particles
+PASS Full hot stock batch 468 materializes finite actual GPU particles
+PASS Full hot stock batch 469 materializes finite actual GPU particles
+PASS Full hot stock batch 470 materializes finite actual GPU particles
+PASS Full hot stock batch 471 materializes finite actual GPU particles
+PASS Full hot stock batch 472 materializes finite actual GPU particles
+PASS Full hot stock batch 473 materializes finite actual GPU particles
+PASS Full hot stock batch 474 materializes finite actual GPU particles
+PASS Full hot stock batch 475 materializes finite actual GPU particles
+PASS Full hot stock batch 476 materializes finite actual GPU particles
+PASS Full hot stock batch 477 materializes finite actual GPU particles
+PASS Full hot stock batch 478 materializes finite actual GPU particles
+PASS Full hot stock batch 479 materializes finite actual GPU particles
+PASS Full hot stock batch 480 materializes finite actual GPU particles
+PASS Full hot stock batch 481 materializes finite actual GPU particles
+PASS Full hot stock batch 482 materializes finite actual GPU particles
+PASS Full hot stock batch 483 materializes finite actual GPU particles
+PASS Full hot stock batch 484 materializes finite actual GPU particles
+PASS Full hot stock batch 485 materializes finite actual GPU particles
+PASS Full hot stock batch 486 materializes finite actual GPU particles
+PASS Full hot stock batch 487 materializes finite actual GPU particles
+PASS Full hot stock batch 488 materializes finite actual GPU particles
+PASS Full hot stock batch 489 materializes finite actual GPU particles
+PASS Full hot stock batch 490 materializes finite actual GPU particles
+PASS Full hot stock batch 491 materializes finite actual GPU particles
+PASS Full hot stock batch 492 materializes finite actual GPU particles
+PASS Full hot stock batch 493 materializes finite actual GPU particles
+PASS Full hot stock batch 494 materializes finite actual GPU particles
+PASS Full hot stock batch 495 materializes finite actual GPU particles
+PASS Full hot stock batch 496 materializes finite actual GPU particles
+PASS Full hot stock batch 497 materializes finite actual GPU particles
+PASS Full hot stock batch 498 materializes finite actual GPU particles
+PASS Full hot stock batch 499 materializes finite actual GPU particles
+PASS Full hot stock batch 500 materializes finite actual GPU particles
+PASS Full 5000 ml hot stock is accepted exactly once while GPU allocation is repeatedly reused
+PASS Empty hot supply cannot emit beyond its initial capacity
+INFO Full hot stock GPU recycling batches=500
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS R-equivalent world reset restores off mode, stock, dock and hand state
+PASS Reset removes generated ice
+PASS ACurrent enforces F/G Manual availability
+PASS ACurrent cannot pick the hidden cohesive dispenser
+PASS BReferencePhysics enforces F/G Manual availability
+PASS BReferencePhysics cannot pick the hidden cohesive dispenser
+PASS CReferenceSurface enforces F/G Manual availability
+PASS CReferenceSurface cannot pick the hidden cohesive dispenser
+PASS DImprovedSurface enforces F/G Manual availability
+PASS DImprovedSurface cannot pick the hidden cohesive dispenser
+PASS ECalibratedLiquid enforces F/G Manual availability
+PASS ECalibratedLiquid cannot pick the hidden cohesive dispenser
+PASS FCoherentLiquid enforces F/G Manual availability
+PASS FCoherentLiquid restores a fresh off supply
+PASS GExplosiveBreakage enforces F/G Manual availability
+PASS GExplosiveBreakage restores a fresh off supply
+PASS G keeps explosive breakage and the cohesive liquid solver enabled
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS G accepts actual hot particles and conserves the shared supply
+PASS Released dispenser completes collision-aware retraction to its dock
+PASS Mode fixture starts docked
+PASS Select Ice at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS G emits one native placed ice cube with the same stock and one-time-pickup rules
+PASS Automatic comparison scenarios exclude the dispenser
+PASS Manual re-entry restores the reusable supply
+PASS Returning from G to F preserves natural breakage and the available manual supply
+PASS No Unity errors, assertions or exceptions

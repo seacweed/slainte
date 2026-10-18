@@ -1,0 +1,16 @@
+{
+  "started": "2026-10-18T16:50:58.5400807+09:00",
+  "timeoutSeconds": 300,
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/Library/FluidModelDHarness",
+    "-executeMethod",
+    "ExperimentDesignerValidation.RunPlayTest",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\200-remote-designer-play\\Editor.log"
+  ],
+  "workingDirectory": "A:\\UnityHub\\proj\\slainte"
+}

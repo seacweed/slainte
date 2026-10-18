@@ -49,6 +49,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private void Start()
         {
             started = true;
+            InitializeDispenser();
             foreach (FluidExperimentBody body in GetComponentsInChildren<FluidExperimentBody>()) body.Attach(this);
             if (liquid != null) liquid.Initialize(this);
             foreach (FluidExperimentBody item in items)
@@ -76,6 +77,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         private void FixedUpdate()
         {
+            if (Dispenser != null) Dispenser.StepMotion(Time.fixedDeltaTime);
             RefreshIceContainment();
             foreach (FluidExperimentBody item in items) if (item != null) item.ApplyHeldPose();
             foreach (FluidExperimentBody item in items) if (item != null) item.StepGarnishMotion(Time.fixedDeltaTime);
@@ -93,6 +95,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public void TickLiquid(float dt)
         {
             ProcessGlassBreakage();
+            if (Dispenser != null && Dispenser.isActiveAndEnabled) Dispenser.Tick(dt);
             foreach (FluidExperimentBody item in items) if (item != null) item.ResolveCompletedGarnishContacts();
             RefreshIceContainment();
             for (int i = 0; i < items.Count; i++)
@@ -133,6 +136,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
                         bool ignore = (a.IsHeld || b.IsHeld) && !sameContents;
                         // Contents follow the same external isolation as their held container.
                         if (!sameContents && (a.IsInHeldVessel || b.IsInHeldVessel)) ignore = true;
+                        // The hose tool remains a physical obstacle even while either tool is controlled.
+                        if (a.kind == LabItemKind.Dispenser || b.kind == LabItemKind.Dispenser) ignore = false;
                         foreach (Collider2D other in b.solidColliders)
                             if (other != null && other.enabled) Physics2D.IgnoreCollision(c, other, ignore);
                     }
@@ -145,7 +150,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             float distance = float.MaxValue;
             foreach (FluidExperimentBody item in items)
             {
-                if (item == null || item == held || item.IsHeld || item.IsLooseSolid) continue;
+                if (item == null || item == held || item.IsHeld || item.IsLooseSolid || item.kind == LabItemKind.Dispenser) continue;
                 if (!item.Contains(pointer) || !item.SolidBounds.Intersects(held.SolidBounds)) continue;
                 float d = (item.Position - pointer).sqrMagnitude;
                 if (d < distance) { best = item; distance = d; }
@@ -219,7 +224,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             liquid?.ResetSimulation();
             foreach(InitialState state in initialState)
             {
-                if(state.body==null)continue;
+                if(state.body==null || state.body.kind == LabItemKind.Dispenser)continue;
                 state.body.SetHeld(false);
                 state.body.ResetPickupState();
                 state.body.Teleport(state.position,state.angle);
@@ -227,6 +232,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 state.body.ResetSupply(state.volume,state.ice);
             }
             Physics2D.SyncTransforms();
+            if (Dispenser != null) Dispenser.ResetDispenser();
             SeedLiquids();
         }
         private void OnGUI()

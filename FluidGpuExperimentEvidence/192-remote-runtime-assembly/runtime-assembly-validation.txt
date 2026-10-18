@@ -1,0 +1,48 @@
+PASS Catalog exposes all 28 original prefabs with stable distinct identifiers and categories
+PASS Production prefab has all runtime modules and excludes comparison UI
+PASS Runtime prefab includes simulation, renderer and natural splash asset references
+PASS Legacy shard geometry migrates into a generated asset while preserving the shards API
+PASS Shaker prefab binds editable part geometry and direct artwork references
+PASS A second BuildAll preserves authored bytes and leaves no extra scenes open
+PASS BuildAll preserves a designer's changed breakage threshold
+PASS Two assembled scenes initialize independent cohesive GPU runtimes without manual component wiring
+PASS Camera, interaction, environment and liquid table references are explicitly connected
+PASS Sample starts with natural breakage, liquid-contact fragments and seeded liquid
+PASS Sample glass receives the natural splash profile before simulation
+PASS Independent rig accepts a separate ingredient batch
+PASS Resetting one rig preserves the other's liquid and runtime settings instance
+PASS Replacing settings on a running rig rebuilds GPU resources from a private clone
+PASS Spawn attaches explicit ownership for Bottle
+PASS Spawn attaches explicit ownership for Glass
+PASS Spawn attaches explicit ownership for Ice
+PASS Spawn attaches explicit ownership for IceBucket
+PASS Spawn attaches explicit ownership for Jigger
+PASS Spawn attaches explicit ownership for Shaker
+PASS Reusable shaker template initializes both owned parts
+PASS Spawned shaker cap detaches through the existing interaction contract
+PASS Spawned shaker cap reattaches without rebuilding the owner
+PASS Spawn attaches explicit ownership for Spoon
+PASS Spawn attaches explicit ownership for Garnish
+PASS Spawn preserves a reusable garnish source's world context
+PASS Removing spawned category examples leaves no registered body residue
+PASS Rig reset also clears dynamically spawned sources outside the body registry
+PASS Editable shaker profile exactly preserves legacy part shapes, outlet and liquid guide geometry
+PASS Fragment template preserves the source world scale under a scaled runtime rig
+PASS natural fixture has 40 ml settled in the intact glass
+PASS natural uses a native floor impact above the authored threshold
+PASS natural changes existing owned particle velocity without creating liquid or changing composition
+PASS natural creates 16 physical fragments with separate thin-wall liquid proxies
+PASS natural style applies the expected natural or explosive fragment spin
+PASS natural preserves the liquid ledger through native fragment and table contacts
+PASS natural keeps the released liquid state finite
+PASS natural table collision prevents released liquid from passing through the table interior
+PASS explosive fixture has 40 ml settled in the intact glass
+PASS explosive uses a native floor impact above the authored threshold
+PASS explosive changes existing owned particle velocity without creating liquid or changing composition
+PASS explosive creates 16 physical fragments with separate thin-wall liquid proxies
+PASS explosive style applies the expected natural or explosive fragment spin
+PASS explosive preserves the liquid ledger through native fragment and table contacts
+PASS explosive keeps the released liquid state finite
+PASS explosive table collision prevents released liquid from passing through the table interior
+PASS Reset restores the authored glass and removes fragment contacts
+PASS No Unity errors or assertions during runtime assembly validation

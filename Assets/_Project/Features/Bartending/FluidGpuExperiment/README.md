@@ -4,6 +4,15 @@
 
 ## 실행
 
+F/G Manual에는 오른쪽 상단의 Ice/Hot 디스펜서가 있다. 비교 UI 없는 재사용 런타임과 `Scenes/FluidRuntimeSample.unity`에서도 같은 디스펜서를 사용한다. 수납 중 위쪽 파란 버튼은 Ice, 아래쪽 빨간 버튼은 Hot을 선택하며 같은 버튼을 다시 누르면 None으로 꺼진다. 버튼 밖 본체를 좌클릭하면 집고 다시 좌클릭하면 호스가 감기며 수납 위치로 복귀한다. 디스펜서에는 전용 조작·충돌 규칙이 적용된다. 들고 있을 때 우클릭은 수직 배출이며 커서를 고정하거나 회전하지 않는다. 본체는 집은 동안에도 바닥·다른 물체와 충돌하는 강체로 목표를 따라가므로 장애물 앞에서는 커서와 떨어져 멈출 수 있다. 아래의 일반 도구 우클릭 회전·집기 중 충돌 무시 규칙은 디스펜서에 적용하지 않는다.
+
+복귀 중에는 모드 변경과 재집기를 막는다. 첫 장애물의 경계 상자 모서리를 후보로 우회하고, 유효한 경로가 없으면 대기한다. 복귀 시간 0.5초는 속도를 정하는 목표값이며 거리·가감속·장애물에 따라 실제 수납 시간은 길어질 수 있다. 호스는 길이 변화와 처짐을 표시하며 충돌하지 않는다.
+
+수납 위치와 호스 고정점은 각 World의 좌표계를 기준으로 생성한다. 좁은 런타임 환경에서는 본체 수납 위치를 좌우 벽·천장 안으로 보정하고, 호스 고정점도 함께 옮겨 경계 안에 둔다. 잔량·모드 표시는 해당 World의 입력 카메라를 우선 사용하고, 없으면 액체 출력 카메라와 `Camera.main` 순서로 선택한다. 따라서 런타임에 연결한 카메라는 MainCamera 태그 없이도 디스펜서 상태를 표시할 수 있다.
+
+두 모드는 5000 ml를 공유한다. 물은 40 ml/s, 얼음은 0.3초마다 하나이며 얼음 1개는 10 ml를 차감한다. 양수인 10 ml 미만 잔량도 마지막 얼음 하나를 허용하고 0으로 만든다. 생성 거절·노즐 차단·동시 입자/경계 한도에서는 잔량을 보존하고 대기량을 누적하지 않는다. 5000 ml는 총 재고이며 얼음 500개의 동시 유지를 보장하지 않는다. 생성된 얼음은 다시 집을 수 없고 GPU 시뮬레이션 범위를 1u 이상 벗어나면 정리된다. Hot은 기존 물 성분을 80°C 온도 데이터로 생성하며 열교환·증발·얼음 녹음은 구현하지 않는다. 용량·유량·간격·복귀 목표 시간·온도는 `Prefabs/Dispenser.prefab`과 `Data/DispenserHotWater.asset`에서 조절한다. 소진 후 자동 충전은 없으며 R·모드 재초기화는 None/5000 ml/원래 수납 위치로 복구한다. A–E와 자동 비교 시나리오에는 디스펜서가 나타나지 않는다.
+
+
 F/G의 허리케인 잔은 놓거나 던진 상태에서 강하게 충돌하면 제공된 16개 파편으로 깨진다. 액체·얼음·가니쉬는 현재 위치와 속도를 유지한 채 잔 소속을 벗어난다. 파편은 테이블·벽에 부딪혀 남으며 다시 집을 수 없다. R 또는 모드 재시작은 파편을 정리하고 원래 잔을 복원한다. 다른 잔과 A–E는 기존 동작을 유지한다.
 
 **7번 키 또는 `7: G Explosive Breakage` 버튼**으로 폭발 비산 모드를 선택한다. G는 F의 액체 물리·표시·조작·파손 기준을 그대로 사용하며, 파손 순간에만 파편에 바깥쪽 속도·월드 위쪽 속도·교대 방향 회전을 추가한다. 액체·얼음·가니쉬에는 폭발력을 주지 않는다. Manual에서 허리케인 잔을 높이 놓거나 강하게 던져 파손을 확인하고, `R`로 다시 시험한다. `6`으로 F에 돌아가면 기존의 작은 분리 움직임으로 비교할 수 있다. 아래에서 F라고 설명한 액체·입력 동작은 G에도 적용된다.
@@ -114,14 +123,16 @@ Play 중에는 액체 설정 에셋의 런타임 복사본을 사용한다. GPU 
 
 일반 Play 및 스크립트 리로드에서도 미저장 작업본과 프로파일 복제 선택을 복원한다. 임시 시험·복구 스냅샷은 `DesignerTemp`에 만들고 정상 복구 후 제거하며 Git에서 제외한다. 저장하지 않은 기존 씬은 시험을 위해 저장하거나 덮어쓰지 않는다.
 
-- `Open Runtime Sample`: 비교 UI 없는 조립 예제 `Scenes/FluidRuntimeSample.unity`를 연다. 채워진 잔과 병·쉐이커·숟가락을 배치했다.
+- `Open Runtime Sample`: 비교 UI 없는 조립 예제 `Scenes/FluidRuntimeSample.unity`를 연다. 채워진 잔과 병·쉐이커·숟가락을 배치했으며, Play 시 World가 연결된 디스펜서를 생성한다.
 - `Assemble New Runtime Scene`: 새 씬에 런타임·환경·카메라·허리케인 잔을 연결한다. 이후 Designer에서 다른 프리팹을 배치할 수 있다.
-- `Build Reusable Runtime Assets`: 누락된 공통 프리팹과 카탈로그를 생성한다. 이미 존재하는 설정·템플릿·샘플 씬은 덮어쓰지 않는다.
-- `Prefabs/Runtime/FluidExperimentRuntime.prefab`: World, GPU 액체, 입력, 효과, RuntimeRig를 가진 실행 모듈이다. 카메라·환경은 `RuntimeRig`의 명시적 참조로 연결한다. `FluidExperimentComparison`은 포함하지 않는다.
+- `Build Reusable Runtime Assets`: 누락된 공통 프리팹과 카탈로그를 생성하고, 기존 런타임의 디스펜서 참조가 비어 있으면 보충한다. 이미 연결된 디스펜서 프리팹과 조정값, 기존 설정·템플릿·샘플 씬은 유지한다.
+- `Prefabs/Runtime/FluidExperimentRuntime.prefab`: World, GPU 액체, 입력, 효과, RuntimeRig를 가진 실행 모듈이다. 카메라·환경은 `RuntimeRig`의 명시적 참조로 연결하고, 디스펜서는 World의 `dispenserPrefab`으로 연결한다. `FluidExperimentComparison`은 포함하지 않는다.
 - `Prefabs/Runtime/FluidExperimentEnvironment.prefab`: 테이블·좌우 벽·천장과 환경 바인딩이다. `Table Holds Liquid`를 끄면 테이블에서 액체만 배수한다. 켜면 유한 폭의 테이블 위 액체가 충돌하며 가장자리 밖으로 흐른 액체는 하단 월드 경계에서 회수된다.
 - `Prefabs/Runtime/GlassShard.prefab`, `ShakerPart.prefab`: 파편·분리형 쉐이커 부품의 공통 템플릿이다. 생성 시 비활성 상태에서 소유자·형상·물리 값을 설정한 뒤 활성화한다.
 - `Data/ShakerParts.asset`: 쉐이커 뚜껑·스트레이너 영역, 액체 통로, 두께·질량·부착 거리를 편집한다. 쉐이커 프리팹은 각 그림을 직접 참조하며, 기존 이름·픽셀 좌표 탐색은 이전 에셋의 호환 경로로만 남긴다.
 - `Data/FluidExperimentCatalog.asset`: 기존 객체 프리팹과 기존 `ItemDef`를 참조한다. 별도의 재료 데이터베이스를 만들지 않는다. 런타임 객체 추가는 `RuntimeRig.Spawn`/`SpawnObject`, 액체량 연동은 기존 `Liquid.Ledger`, `IngredientsIn`, `TryTransferContents`를 사용한다.
+
+디스펜서는 World당 하나를 생성·관리하는 고정 도구여서 공용 Catalog와 Designer의 일반 객체 목록에서 제외한다. `RuntimeRig.Spawn`/`SpawnObject`로 추가하지 않고 World의 `dispenserPrefab`을 지정한다. 디스펜서 수치와 스프라이트는 해당 프리팹 Inspector에서 조절한다. 비교 씬의 R·모드 재초기화와 런타임의 `RuntimeRig.ResetRig()`는 관리 중인 디스펜서의 모드·재고·수납 상태를 초기화한다.
 
 새 런타임의 **Natural**은 충격 기반 액체 스플래시·유리 조각 충돌을 사용하고, **Explosive**는 여기에 기존 G 파편 비산을 더한다. 원래 비교 씬의 F/G는 이전 검증 조건을 유지한다. 개별 잔의 `splashProfile`이 비어 있으면 런타임의 `defaultSplashProfile`을 사용한다. 효과를 끄려면 해당 잔의 스플래시 프로파일에서 `Strength`를 0으로 설정한다.
 

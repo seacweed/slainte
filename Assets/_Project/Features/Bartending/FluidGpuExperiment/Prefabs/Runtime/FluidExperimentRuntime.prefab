@@ -56,6 +56,7 @@ MonoBehaviour:
   itemLayer: 29
   showControls: 0
   seedLiquids: 0
+  dispenserPrefab: {fileID: 2699439601915006905, guid: b0796c86dffe3c34ea12935fbd1481bc, type: 3}
   leftBoundary: {fileID: 0}
   rightBoundary: {fileID: 0}
   topBoundary: {fileID: 0}

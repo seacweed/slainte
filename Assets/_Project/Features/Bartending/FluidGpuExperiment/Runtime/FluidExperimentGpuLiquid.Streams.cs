@@ -59,6 +59,9 @@ namespace Slainte.Bartending.FluidGpuExperiment
             foreach (FluidExperimentBody item in world.Items)
                 if (item != null && count < MaximumStreamHeads && item.TryGetStreamHead(out GpuLiquidStreamHead head))
                     streamHeads[count++] = head;
+            if (count < MaximumStreamHeads && world.Dispenser != null
+                && world.Dispenser.TryGetStreamHead(out GpuLiquidStreamHead dispenserHead))
+                streamHeads[count++] = dispenserHead;
             if (count > 0) streamHeadBuffer.SetData(streamHeads, 0, 0, count);
             simulationShader.SetInt("_StreamHeadCount", count);
             simulationShader.SetInt("_StreamRenderingEnabled", useStreamRendering ? 1 : 0);

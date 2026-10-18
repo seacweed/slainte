@@ -126,6 +126,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             ActiveScenario = FluidExperimentScenario.Manual; ScenarioTime = 0;
             foreach (var pair in flowRates) if (pair.Key != null) pair.Key.pourMlPerSecond = pair.Value;
             world.ResetSession();
+            world.SetDispenserActive(UsesCohesiveLiquid);
             world.interactor.enabled = true;
             world.interactor.inputCamera.transform.position = initialCameraPosition;
             world.interactor.inputCamera.orthographicSize = initialCameraSize;
@@ -149,6 +150,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             ResetComparison(); ActiveScenario = scenario;
             world.interactor.pointerBlockRect = ActiveControlsRect;
             if (scenario == FluidExperimentScenario.Manual) return;
+            world.SetDispenserActive(false);
             world.interactor.enabled = false;
             foreach (var body in world.Items)
             {
@@ -306,7 +308,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             GUILayout.EndHorizontal();
             if (ActiveScenario == FluidExperimentScenario.VolumeCheck) DrawVolumeControls();
             GUILayout.Label("Replay: " + ActiveScenario + "  " + ScenarioTime.ToString("F1") + "s");
-            GUILayout.Label("1 - 7: compare    R: restart    LMB: pick/place/parts    RMB: rotate    C: shaker state");
+            GUILayout.Label("1 - 7: compare   R: restart   LMB: pick/place/parts   RMB: rotate/dispense   C: shaker");
             GUILayout.Label(Ready ? "GPU: " + SystemInfo.graphicsDeviceName + "  |  particles: " + Gpu.ActiveCount
                 + "  |  " + Gpu.SnapshotTotalMl.ToString("F1") + " ml" : "GPU unavailable: " + (Error ?? Gpu?.Error));
             GUILayout.Label(ActiveMode == FluidExperimentMode.GExplosiveBreakage

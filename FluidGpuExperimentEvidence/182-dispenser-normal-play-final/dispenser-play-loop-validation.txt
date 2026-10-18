@@ -1,0 +1,33 @@
+PASS Hidden normal-play-loop scene initializes without desktop input
+PASS The authored scene starts in F Manual without a test reset or mode override
+PASS World component and native automatic fixed-step physics stay enabled
+PASS Authored seed liquid and automatic GPU readback stay enabled
+PASS Normal world startup creates the available docked dispenser
+PASS The generated hose layer is included in the real gameplay camera culling mask
+INFO bodies initial originalCount=10 registeredCount=10 missingIds=[] addedIds=[] nonSimulated=[] shardCount=0
+INFO bodies after-natural-settling originalCount=10 registeredCount=9 missingIds=[8] addedIds=[] nonSimulated=[] shardCount=16
+INFO changed original id=8 name=Glass_hurricane initialSimulated=True currentSimulated=True initialType=Dynamic currentType=Dynamic initialActive=True currentActive=False broken=True impactSpeed=5.22394371 impactImpulse=1.9197998
+PASS Natural startup adds no unexpected registered bodies
+PASS Every removed original body is a retained original hurricane object with confirmed native impact fracture
+PASS Every unbroken original retains its initialized simulation, rigidbody type and active state
+PASS Original body and native shard accounting explains the complete startup registry difference
+INFO startupControl=False naturalFractures=1 retainedOriginals=9 shards=16; no fixture teleport, native simulation disable, threshold change or removal was applied
+PASS The real receiving highball retains authored seed liquid before dispensing
+INFO original receiverId=9 position=(-2.87688,-1.39890742) seedMl=60 initialTotalMl=176.5 itemCount=10
+PASS Docked real tool accepts Hot selection
+PASS Normal scene tool enters Held from a controller pickup command
+PASS Actual world.FixedUpdate drives held motion to the cursor target over the authored highball
+PASS Automatic play-loop translation keeps the tool upright without cursor capture
+PASS Actual SimulateAfterPhysics ticks submit hot particles and debit exactly the accepted volume
+PASS Normal play-loop output follows the configured 40 ml per second within one fixed tick and particle quantization
+INFO emissionDuration=0.9999995 consumed=39.5 accepted=39.5 configuredFlow=40 fixedDt=0.0199999921 tolerance=1.3099997
+PASS Emission off stays off across subsequent automatic physics and liquid ticks
+PASS Normal authored-scene liquid remains finite after dispensing
+INFO receiver seedBefore=60 afterSettling=99.5 change=39.5 emittedDose=39.5 totalSnapshotMl=156
+PASS Release command starts normal-play retraction
+PASS Automatic fixed-step motion returns the tool through the real scene to its dock
+PASS Retraction and docking preserve the stopped shared inventory
+PASS Integration keeps production world and GPU scheduling active throughout
+INFO bodies after-docking originalCount=10 registeredCount=9 missingIds=[8] addedIds=[] nonSimulated=[] shardCount=16
+INFO changed original id=8 name=Glass_hurricane initialSimulated=True currentSimulated=True initialType=Dynamic currentType=Dynamic initialActive=True currentActive=False broken=True impactSpeed=5.22394371 impactImpulse=1.9197998
+PASS No Unity errors, assertions or exceptions in the normal play loop

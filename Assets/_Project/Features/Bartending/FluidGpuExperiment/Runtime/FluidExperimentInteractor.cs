@@ -34,7 +34,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         private void Update()
         {
-            if (world == null || inputCamera == null) return;
+            if (world == null || inputCamera == null) { RetractHeldDispenser(); return; }
             if (!Application.isBatchMode && !Application.isFocused) { CancelPointerCapture(); return; }
             Mouse mouse = Mouse.current;
             if (mouse == null) { CancelPointerCapture(); return; }
@@ -42,14 +42,20 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (freshInput && !mouse.rightButton.isPressed) requirePointerRelease = false;
             Vector2 pointer = inputCamera.ScreenToWorldPoint(screen);
             lastPointer = pointer;
-            bool cancelled = PointerCaptureLost(mouse);
+            bool cancelled = PointerCaptureLost(mouse) || (HeldDispenser != null && freshInput
+                && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame);
             if (cancelled)
             {
                 CancelPointerCapture();
                 screen = LogicalPointerScreen;
                 pointer = inputCamera.ScreenToWorldPoint(screen);
             }
-            if (Held != null)
+            if (HeldDispenser != null)
+            {
+                UpdateHeldDispenser(pointer, !cancelled && mouse.rightButton.isPressed
+                    && !requirePointerRelease && !IsPointerBlocked(screen));
+            }
+            else if (Held != null)
             {
                 bool began = false;
                 if (!cancelled && freshInput && mouse.rightButton.wasPressedThisFrame
@@ -87,14 +93,16 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (!cancelled && freshInput && mouse.leftButton.wasPressedThisFrame && !IsPointerBlocked(clickScreen))
             {
                 pointer = inputCamera.ScreenToWorldPoint(clickScreen);
-                if (Held == null && HeldPart == null) PickAt(pointer);
+                if (Held == null && HeldPart == null && HeldDispenser == null) PickAt(pointer);
                 else Drop(pointer);
             }
         }
 
         public bool PickAt(Vector2 point)
         {
-            if (Held != null || HeldPart != null) return false;
+            if (Held != null || HeldPart != null || HeldDispenser != null || world == null) return false;
+            bool dispenserResult = TryDispenserClick(point, out bool dispenserHit);
+            if (dispenserHit) return dispenserResult;
             // Part hit areas exclude the transparent margins of the source sprites.
             // Try the cap before the overlapping strainer and the shaker body.
             if (PickShakerPartAt(point, FluidExperimentShakerPartRole.Cap)
@@ -131,7 +139,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         public bool PickPart(FluidExperimentShakerPart part, Vector2 point)
         {
-            if (Held != null || HeldPart != null || part == null || part.Owner == null
+            if (Held != null || HeldPart != null || HeldDispenser != null || part == null || part.Owner == null
                 || part.Owner.World != world || !part.TryPickUp(point)) return false;
             HeldPart = part;
             lastPointer = point;
@@ -142,7 +150,10 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         public bool Pick(FluidExperimentBody item, Vector2 point)
         {
-            if (Held != null || HeldPart != null || item == null || item.World != world || !item.CanBePicked) return false;
+            if (Held != null || HeldPart != null || HeldDispenser != null || item == null || item.World != world) return false;
+            if (world != null && world.Dispenser != null && world.Dispenser.Body == item)
+                return PickDispenser(world.Dispenser, point);
+            if (!item.CanBePicked) return false;
             Held = item;
             PickupOrigin = item.Position;
             item.SetHeld(true);
@@ -158,6 +169,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public void MoveHeld(Vector2 pointer)
         {
             lastPointer = pointer;
+            if (HeldDispenser != null) { HeldDispenser.MoveToPointer(pointer); return; }
             if (HeldPart != null) { HeldPart.MoveToPointer(pointer); return; }
             if (Held == null || Rotating) return;
             if (Returning)
@@ -250,6 +262,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         public bool Drop(Vector2 pointer)
         {
+            if (HeldDispenser != null) return RetractHeldDispenser();
             if (HeldPart != null)
             {
                 FluidExperimentShakerPart part = HeldPart;
@@ -273,6 +286,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public void ReleaseWithVelocity(Vector2 velocity, float angularVelocity = 0)
         {
             ReleasePointer();
+            RetractHeldDispenser();
             if (Held != null) FinishDrop(velocity, angularVelocity);
             if (HeldPart != null)
             {
@@ -294,6 +308,11 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         internal void Forget(FluidExperimentBody item)
         {
+            if (HeldDispenser != null && HeldDispenser.Body == item)
+            {
+                RetractHeldDispenser();
+                ReleasePointer();
+            }
             if (HeldPart != null && HeldPart.Owner == item) ForgetShakerPart(HeldPart);
             if (Held != item) return;
             ReleasePointer();

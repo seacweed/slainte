@@ -1,0 +1,14 @@
+PASS Hidden normal-play-loop scene initializes without desktop input
+PASS The authored scene starts in F Manual without a test reset or mode override
+PASS World component and native automatic fixed-step physics stay enabled
+PASS Authored seed liquid and automatic GPU readback stay enabled
+PASS Normal world startup creates the available docked dispenser
+PASS The generated hose layer is included in the real gameplay camera culling mask
+INFO bodies initial originalCount=10 registeredCount=10 missingIds=[] addedIds=[] nonSimulated=[] shardCount=0
+INFO bodies after-natural-settling originalCount=10 registeredCount=9 missingIds=[5] addedIds=[] nonSimulated=[] shardCount=16
+INFO changed original id=5 name=Glass_hurricane initialSimulated=True currentSimulated=True initialType=Dynamic currentType=Dynamic initialActive=True currentActive=False broken=True impactSpeed=5.22394371 impactImpulse=1.9197998
+FAIL Natural settling retains every original registered body without fixture removal or replacement
+System.Exception: Natural settling retains every original registered body without fixture removal or replacement
+  at DispenserPlayLoopValidationRunner.Check (System.Boolean okay, System.String text) [0x0002a] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\DispenserPlayLoopValidation.cs:60 
+  at DispenserPlayLoopValidationRunner+<Run>d__15.MoveNext () [0x00335] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\DispenserPlayLoopValidation.cs:125 
+  at DispenserPlayLoopValidationRunner+<Start>d__14.MoveNext () [0x00054] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\DispenserPlayLoopValidation.cs:73 

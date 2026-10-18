@@ -1,0 +1,16 @@
+{
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/Library/FluidModelDHarness",
+    "-executeMethod",
+    "ExperimentInputShakerValidation.Begin",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\173-dispenser-input-regression\\Editor.log"
+  ],
+  "workingDirectory": "A:\\UnityHub\\proj\\slainte",
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe",
+  "timeoutSeconds": 300,
+  "started": "2026-10-18T02:26:07.5334947+09:00"
+}

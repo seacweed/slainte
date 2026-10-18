@@ -82,6 +82,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 grabLocal = Held.WorldToLocal(next);
             }
             else if (HeldPart != null) HeldPart.RebasePointer(next);
+            else if (HeldDispenser != null) HeldDispenser.RebasePointer(next);
             LogicalPointerScreen = nextScreen;
             lastPointer = next;
         }
@@ -131,7 +132,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         private void CancelPointerCapture()
         {
-            requirePointerRelease |= PointerCaptured || PointerHandoffPending || Rotating;
+            requirePointerRelease |= PointerCaptured || PointerHandoffPending || Rotating || HeldDispenser != null;
+            RetractHeldDispenser();
             bool rotating = Rotating;
             Vector2 pivot = rotating ? RotationPointerWorld : lastPointer;
             ReleasePointer(); // Focus loss/Escape never warps into another application.

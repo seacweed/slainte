@@ -39,6 +39,7 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
             }
             MigrateBreakageGeometry(shard);
             BindShakerTemplate(part);
+            FluidExperimentDispenserBuilder.EnsurePrefab();
             var catalog = BuildCatalog();
             BuildEnvironment();
             BuildRuntime(catalog, splash);
@@ -308,6 +309,8 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
                 string guid = AssetDatabase.AssetPathToGUID(normalized);
                 if (entries.Any(entry => entry != null && entry.id == guid)) continue;
                 var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(normalized);
+                // The world owns one dispenser; catalog spawning would create an unmanaged duplicate.
+                if (prefab.GetComponent<FluidExperimentDispenser>() != null) continue;
                 var body = prefab.GetComponent<FluidExperimentBody>();
                 var source = prefab.GetComponent<FluidExperimentGarnishSource>();
                 entries.Add(new FluidExperimentAuthoringCatalog.Entry { id = guid, prefab = prefab,
@@ -360,13 +363,29 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
 
         private static void BuildRuntime(FluidExperimentAuthoringCatalog catalog, FluidExperimentSplashProfile splash)
         {
-            if (AssetDatabase.LoadAssetAtPath<GameObject>(RuntimePrefabPath) != null) return;
+            var existing = AssetDatabase.LoadAssetAtPath<GameObject>(RuntimePrefabPath);
+            if (existing != null)
+            {
+                var authoredWorld = existing.GetComponent<FluidExperimentWorld>();
+                if (authoredWorld == null) throw new InvalidOperationException("Runtime prefab is missing its world.");
+                if (authoredWorld.dispenserPrefab != null) return;
+                var contents = PrefabUtility.LoadPrefabContents(RuntimePrefabPath);
+                try
+                {
+                    if (FluidExperimentDispenserBuilder.BindIfMissing(contents.GetComponent<FluidExperimentWorld>()))
+                        PrefabUtility.SaveAsPrefabAsset(contents, RuntimePrefabPath);
+                }
+                finally { PrefabUtility.UnloadPrefabContents(contents); }
+                return;
+            }
             Scene reference = EditorSceneManager.OpenPreviewScene(FluidExperimentBuilder.ScenePath);
             var root = new GameObject("FluidExperimentRuntime");
             try
             {
                 var source = reference.GetRootGameObjects().SelectMany(go => go.GetComponentsInChildren<FluidExperimentWorld>()).First();
                 var world = root.AddComponent<FluidExperimentWorld>();
+                world.dispenserPrefab = source.dispenserPrefab;
+                FluidExperimentDispenserBuilder.BindIfMissing(world);
                 var liquid = root.AddComponent<FluidExperimentGpuLiquid>();
                 EditorUtility.CopySerialized(source.liquid, liquid);
                 var interactor = root.AddComponent<FluidExperimentInteractor>();

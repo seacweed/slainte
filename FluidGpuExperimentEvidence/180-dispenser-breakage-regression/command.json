@@ -1,0 +1,16 @@
+{
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe",
+  "workingDirectory": "A:\\UnityHub\\proj\\slainte",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/Library/FluidModelDHarness",
+    "-executeMethod",
+    "ExperimentGlassBreakageValidation.Begin",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\180-dispenser-breakage-regression\\Editor.log"
+  ],
+  "started": "2026-10-18T02:36:47.8673337+09:00",
+  "timeoutSeconds": 300
+}

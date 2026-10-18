@@ -139,6 +139,7 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
             var discovered = AssetDatabase.FindAssets("t:Prefab", new[] { FluidExperimentBuilder.Root + "/Prefabs" })
                 .Select(guid => AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(guid)));
             return registered.Concat(discovered).Where(prefab => prefab != null && prefab.GetComponent<FluidExperimentRuntimeRig>() == null
+                && prefab.GetComponent<FluidExperimentDispenser>() == null
                 && (prefab.GetComponent<FluidExperimentBody>() != null || prefab.GetComponent<FluidExperimentGarnishSource>() != null))
                 .Distinct().ToArray();
         }

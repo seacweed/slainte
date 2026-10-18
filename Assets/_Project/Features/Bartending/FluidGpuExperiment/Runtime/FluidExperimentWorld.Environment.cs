@@ -71,7 +71,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             }
         }
 
-        public Vector2 ConstrainHeldPosition(FluidExperimentBody body, Vector2 position, float angle)
+        public Vector2 ConstrainHeldPosition(FluidExperimentBody body, Vector2 position, float angle, float margin = .005f)
         {
             ResolveEnvironment();
             if (body == null || environmentHulls.Count == 0) return position;
@@ -90,7 +90,6 @@ namespace Slainte.Bartending.FluidGpuExperiment
                     foreach (var p in body.collisionProfile.lid) Include(p);
             }
             else foreach (var p in body.liquidWall) Include(p);
-            const float margin = .005f;
             if (leftBoundary != null && leftBoundary.isActiveAndEnabled)
                 position.x = Mathf.Max(position.x, leftBoundary.bounds.max.x - min.x + margin);
             if (rightBoundary != null && rightBoundary.isActiveAndEnabled)

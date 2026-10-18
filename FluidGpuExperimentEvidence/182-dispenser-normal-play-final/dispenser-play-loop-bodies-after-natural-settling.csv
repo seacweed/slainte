@@ -1,0 +1,11 @@
+stage,id,name,kind,registered,active,simulated,bodyType,x,y,angle,initialActive,initialSimulated,initialBodyType,initialX,initialY,initialAngle,initialIceStock,iceStock,broken,impactSpeed,impactImpulse
+after-natural-settling,1,Spoon,Spoon,True,True,True,Dynamic,2.60483766,-1.5615561,-3.55827236,True,True,Dynamic,2.49999976,-0.00392007828,0,20,20,False,0,0
+after-natural-settling,2,Bottle_item_1003,Bottle,True,True,True,Dynamic,-5.60034227,-1.53811979,0.02010881,True,True,Dynamic,-5.60000038,-0.00392007828,0,20,20,False,0,0
+after-natural-settling,3,Bottle_item_1002,Bottle,True,True,True,Dynamic,-8.284283,-1.54364717,-0.525712967,True,True,Dynamic,-8.3,-0.00392007828,0,20,20,False,0,0
+after-natural-settling,4,IceBucket,IceBucket,True,True,True,Dynamic,7.915581,-1.50328541,-0.609649241,True,True,Dynamic,7.89999962,-0.00392007828,0,20,20,False,0,0
+after-natural-settling,5,Shaker,Shaker,True,True,True,Dynamic,5.08243275,-1.4913404,3.9342885,True,True,Dynamic,5.2,-0.00392007828,0,20,20,False,0,0
+after-natural-settling,6,Bottle_item_1001,Bottle,True,True,True,Dynamic,-10.9982853,-1.54803836,-0.132588431,True,True,Dynamic,-11,-0.00392007828,0,20,20,False,0,0
+after-natural-settling,7,Jigger,Jigger,True,True,True,Dynamic,10.5977259,-1.48333037,0.07016303,True,True,Dynamic,10.5999994,-0.00392007828,0,20,20,False,0,0
+after-natural-settling,8,Glass_hurricane,Glass,False,False,True,Dynamic,-0.1981741,-1.39793229,-0.08564507,True,True,Dynamic,-0.200000286,-0.00392007828,0,20,20,True,5.22394371,1.9197998
+after-natural-settling,9,Glass_highball,Glass,True,True,True,Dynamic,-2.87688,-1.39890742,-0.7853083,True,True,Dynamic,-2.90000033,-0.00392007828,0,20,20,False,0,0
+after-natural-settling,10,Dispenser,Dispenser,True,True,True,Kinematic,11.6,7.3,0,True,True,Kinematic,11.6,7.3,0,0,0,False,0,0

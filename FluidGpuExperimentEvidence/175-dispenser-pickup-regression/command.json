@@ -1,0 +1,16 @@
+{
+  "timeoutSeconds": 300,
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe",
+  "started": "2026-10-18T02:28:03.3906752+09:00",
+  "workingDirectory": "A:\\UnityHub\\proj\\slainte",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/Library/FluidModelDHarness",
+    "-executeMethod",
+    "ExperimentGlassPickupLiquidValidation.Begin",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\175-dispenser-pickup-regression\\Editor.log"
+  ]
+}

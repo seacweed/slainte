@@ -1,0 +1,16 @@
+{
+  "workingDirectory": "A:\\UnityHub\\proj\\slainte",
+  "started": "2026-10-18T16:49:28.2663519+09:00",
+  "timeoutSeconds": 300,
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/Library/FluidModelDHarness",
+    "-executeMethod",
+    "ExperimentShardLiquidValidation.Begin",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\195-remote-shard-liquid\\Editor.log"
+  ]
+}

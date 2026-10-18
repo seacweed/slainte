@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Slainte.Bartending.FluidGpuExperiment
 {
-    public enum LabItemKind { Bottle, Glass, Jigger, Shaker, Spoon, IceBucket, Ice, Garnish }
+    public enum LabItemKind { Bottle, Glass, Jigger, Shaker, Spoon, IceBucket, Ice, Garnish, Dispenser }
     [Serializable]
     public sealed class FluidExperimentHull { public Vector2[] points = Array.Empty<Vector2>(); }
 
@@ -43,7 +43,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public bool IsHeld { get; private set; }
         // Physical contents share containment/contact policy, not ingredient or ice-effect identity.
         public bool IsLooseSolid => kind == LabItemKind.Ice || kind == LabItemKind.Garnish;
-        public bool CanBePicked => !IsLooseSolid || !hasBeenPlaced;
+        public bool CanBePicked => kind != LabItemKind.Dispenser && (!IsLooseSolid || !hasBeenPlaced);
         public bool IsVessel => contentRegions.Length > 0;
         public Vector2 Position => Body != null ? Body.position : (Vector2)transform.position;
         public float Angle => Body != null ? Body.rotation : transform.eulerAngles.z;
@@ -334,6 +334,10 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 if (PourTilt < pourStartAngle) { iceTimer = 0; return; }
                 iceTimer += dt;
                 if (iceTimer < icePourInterval) return;
+                // A full dispenser can leave many solids on screen. The other F ice supply
+                // must share the same admission guard instead of overflowing the GPU geometry buffer.
+                if (World.Liquid != null && World.Liquid.CohesivePhysicsActive
+                    && !World.Liquid.CanAdmitDispenserIce(icePrefab)) { iceTimer = 0; return; }
                 iceTimer -= icePourInterval;
                 Vector2 mouth = LocalToWorld(mouthLocal);
                 Vector2 direction = Rotate(Vector2.up, Angle);

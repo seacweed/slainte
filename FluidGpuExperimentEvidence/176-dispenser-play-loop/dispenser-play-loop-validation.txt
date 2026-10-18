@@ -1,0 +1,11 @@
+PASS Hidden normal-play-loop scene initializes without desktop input
+PASS The authored scene starts in F Manual without a test reset or mode override
+PASS World component and native automatic fixed-step physics stay enabled
+PASS Authored seed liquid and automatic GPU readback stay enabled
+PASS Normal world startup creates the available docked dispenser
+PASS The generated hose layer is included in the real gameplay camera culling mask
+FAIL All authored objects retain normal simulation and scene placement
+System.Exception: All authored objects retain normal simulation and scene placement
+  at DispenserPlayLoopValidationRunner.Check (System.Boolean okay, System.String text) [0x0002a] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\DispenserPlayLoopValidation.cs:48 
+  at DispenserPlayLoopValidationRunner+<Run>d__13.MoveNext () [0x002e5] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\DispenserPlayLoopValidation.cs:106 
+  at DispenserPlayLoopValidationRunner+<Start>d__12.MoveNext () [0x00054] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\DispenserPlayLoopValidation.cs:61 
