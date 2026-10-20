@@ -183,16 +183,18 @@ public sealed class DispenserPlayLoopValidationRunner : MonoBehaviour
         Check(dispenser.TryPick(dispenser.Body.Position), "Normal scene tool enters Held from a controller pickup command");
         Vector2 mouthOffset = dispenser.MouthWorld - dispenser.Body.Position;
         target = receiver.LocalToWorld(receiver.mouthLocal) + Vector2.up * .8f - mouthOffset;
-        float initialDistance = Vector2.Distance(dispenser.Body.Position, target);
         dispenser.MoveToPointer(target);
+        Check(Vector2.Distance(dispenser.Body.Position, target) < .002f
+            && Vector2.Distance(dispenser.transform.position, target) < .002f,
+            "Normal-play pointer command immediately updates native and rendered tool poses before the next physics tick");
         for (int i = 0; i < 100; i++)
         {
             yield return wait;
             if (i % 10 == 0) Record("moving-" + i);
         }
         float settledError = Vector2.Distance(dispenser.Body.Position, target);
-        Check(settledError < .12f && settledError < initialDistance * .03f,
-            "Actual world.FixedUpdate drives held motion to the cursor target over the authored highball");
+        Check(settledError < .002f && Vector2.Distance(dispenser.transform.position, target) < .002f,
+            "Actual world.FixedUpdate preserves the exact held cursor pose over the authored highball");
         Check(Mathf.Abs(dispenser.Body.Angle) < .02f && !world.interactor.PointerCaptured,
             "Automatic play-loop translation keeps the tool upright without cursor capture");
         float stockBefore = dispenser.RemainingMl;

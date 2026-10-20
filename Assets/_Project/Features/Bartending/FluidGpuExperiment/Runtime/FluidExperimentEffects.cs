@@ -266,7 +266,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             {
                 // External held objects and a held owner's environment are mutually transparent.
                 var body = solid.body;
-                if (body == null || body == owner || body.IsHeld) continue;
+                if (body == null || body == owner || body.IsHeld || body.DispenserCollisionSuppressed) continue;
                 if (point.x < solid.min.x - radius || point.x > solid.max.x + radius
                     || point.y < solid.min.y - radius || point.y > solid.max.y + radius) continue;
                 if (body.SolidClearance(FluidExperimentBody.Rotate(point - solid.position, -solid.angle)) < radius) return true;
@@ -281,7 +281,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             for (int i = 0; i < items.Count; i++)
             {
                 FluidExperimentBody body = items[i];
-                if (body == null || body.IsHeld || body.collisionProfile == null) continue;
+                if (body == null || body.IsHeld || body.DispenserCollisionSuppressed || body.collisionProfile == null) continue;
                 Vector2 position = body.Position;
                 float angle = body.Angle, radians = angle * Mathf.Deg2Rad;
                 float cosine = Mathf.Cos(radians), sine = Mathf.Sin(radians);

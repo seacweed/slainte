@@ -41,6 +41,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public Rigidbody2D Body { get; private set; }
         public uint Id { get; internal set; }
         public bool IsHeld { get; private set; }
+        internal bool DispenserCollisionSuppressed => kind == LabItemKind.Dispenser && World != null
+            && World.Dispenser != null && World.Dispenser.Body == this && World.Dispenser.CollisionSuppressed;
         // Physical contents share containment/contact policy, not ingredient or ice-effect identity.
         public bool IsLooseSolid => kind == LabItemKind.Ice || kind == LabItemKind.Garnish;
         public bool CanBePicked => kind != LabItemKind.Dispenser && (!IsLooseSolid || !hasBeenPlaced);

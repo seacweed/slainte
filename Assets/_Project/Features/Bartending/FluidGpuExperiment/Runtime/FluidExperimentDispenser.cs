@@ -6,7 +6,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
     public enum FluidExperimentDispenserMode { None, Ice, Hot }
 
     /// <summary>A hose tool owns its input/motion state; its body supplies shared solid geometry only.
-    /// Keeping it out of ordinary held-body teleportation preserves physical contacts while pouring.</summary>
+    /// Held motion follows the pointer immediately; retraction restores native contacts once clear.</summary>
     [DisallowMultipleComponent, RequireComponent(typeof(FluidExperimentBody))]
     public sealed partial class FluidExperimentDispenser : MonoBehaviour
     {
@@ -26,6 +26,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public FluidExperimentBody Body => body;
         public FluidExperimentDispenserState State { get; private set; }
         public FluidExperimentDispenserMode Mode { get; private set; }
+        public bool CollisionSuppressed { get; private set; }
         public float RemainingMl => remainingMl;
         public bool IsAvailable => isActiveAndEnabled && body != null && body.World != null
             && body.World.Liquid != null && body.World.Liquid.CohesivePhysicsActive;
@@ -65,17 +66,18 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (!IsAvailable || State != FluidExperimentDispenserState.Docked || !Contains(point)) return false;
             State = FluidExperimentDispenserState.Held;
             pointerOffset = point - body.Position; target = body.Position;
-            ConfigureMotion(false); StopEmission();
+            ConfigureMotion(true); StopEmission();
             return true;
         }
         public void MoveToPointer(Vector2 point)
         {
-            if (State == FluidExperimentDispenserState.Held)
-                target = body.World.ConstrainHeldPosition(body, point - pointerOffset, 0);
+            if (State != FluidExperimentDispenserState.Held) return;
+            target = point - pointerOffset;
+            ApplyDirectPose(target);
         }
         public void RebasePointer(Vector2 point)
         {
-            // Preserve the desired pose, including a target behind an obstacle, during OS cursor handoff.
+            // Preserve the grabbed point during OS cursor handoff.
             if (State == FluidExperimentDispenserState.Held) pointerOffset = point - target;
         }
         public void SetDispensing(bool value)
@@ -91,7 +93,10 @@ namespace Slainte.Bartending.FluidGpuExperiment
             State = FluidExperimentDispenserState.Retracting;
             target = dockPosition; hasWaypoint = false; stalledTime = 0;
             retractSpeed = Mathf.Clamp(Vector2.Distance(body.Position, dockPosition) / Mathf.Max(.1f, returnDuration), 5, 35);
-            ConfigureMotion(false);
+            Physics2D.SyncTransforms();
+            // A held tool can be inside any solid. Keep contacts off until the return
+            // reaches free space so restoring them cannot kick the overlapped objects.
+            ConfigureMotion(CollisionSuppressed && !CanRestoreReturnContacts());
         }
         public void ResetDispenser()
         {
@@ -99,16 +104,28 @@ namespace Slainte.Bartending.FluidGpuExperiment
             remainingMl = Mathf.Max(0, capacityMl); Mode = FluidExperimentDispenserMode.None;
             State = FluidExperimentDispenserState.Docked; target = dockPosition; hasWaypoint = false;
             spawnedIce.Clear(); SpawnedIceCount = 0; BlockedReason = null;
-            body.Teleport(dockPosition, 0); ConfigureMotion(true); body.SynchronizeHistory();
+            ApplyDirectPose(dockPosition); ConfigureMotion(false);
             RefreshSprite(); ResetHose();
         }
-        private void ConfigureMotion(bool docked)
+        private void ApplyDirectPose(Vector2 position)
         {
+            body.Teleport(position, 0);
+            // Rigidbody interpolation otherwise displays the previous physics pose.
+            body.transform.SetPositionAndRotation(new Vector3(position.x, position.y, body.transform.position.z), Quaternion.identity);
+        }
+        private void ConfigureMotion(bool suppressCollisions)
+        {
+            CollisionSuppressed = suppressCollisions;
             var rb = body.Body;
-            rb.bodyType = docked ? RigidbodyType2D.Kinematic : RigidbodyType2D.Dynamic;
+            rb.bodyType = suppressCollisions || State == FluidExperimentDispenserState.Docked
+                ? RigidbodyType2D.Kinematic : RigidbodyType2D.Dynamic;
+            rb.interpolation = suppressCollisions ? RigidbodyInterpolation2D.None : RigidbodyInterpolation2D.Interpolate;
             rb.gravityScale = 0; rb.constraints = RigidbodyConstraints2D.FreezeRotation;
             rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
             rb.linearVelocity = Vector2.zero; rb.angularVelocity = 0; rb.rotation = 0;
+            foreach (var collider in body.solidColliders)
+                if (collider != null) collider.isTrigger = suppressCollisions;
+            body.SynchronizeHistory();
             body.World?.RefreshCollisionPairs();
         }
         private void RefreshSprite()
@@ -116,7 +133,15 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (bodyRenderer != null) bodyRenderer.sprite = Mode == FluidExperimentDispenserMode.Ice ? iceSprite
                 : Mode == FluidExperimentDispenserMode.Hot ? hotSprite : noneSprite;
         }
-        private void OnDisable() { StopEmission(); }
+        private void OnDisable()
+        {
+            StopEmission();
+            if (!CollisionSuppressed || body == null || body.Body == null) return;
+            // Component-only disable must not leave an active, intangible tool behind.
+            State = FluidExperimentDispenserState.Docked;
+            target = dockPosition; hasWaypoint = false;
+            ApplyDirectPose(dockPosition); ConfigureMotion(false);
+        }
         private void OnGUI()
         {
             if (!IsAvailable) return;

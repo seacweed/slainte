@@ -12,18 +12,26 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private LineRenderer hose;
         private Vector2[] hosePoints, hosePrevious;
 
-        /// <summary>Use velocity-driven native contacts, never teleport a held tool through a glass.
-        /// Retraction chooses visible corners around the first blocking solid and retries if it moves.</summary>
+        /// <summary>Held poses are applied by input. Retraction clears any initial overlap,
+        /// then uses native contacts and routes around the first blocking solid.</summary>
         public void StepMotion(float dt)
         {
-            if (!IsAvailable || dt <= 0 || State == FluidExperimentDispenserState.Docked) return;
+            if (!IsAvailable || dt <= 0 || State != FluidExperimentDispenserState.Retracting) return;
+            if (CollisionSuppressed)
+            {
+                ApplyDirectPose(Vector2.MoveTowards(body.Position, dockPosition, retractSpeed * dt));
+                Physics2D.SyncTransforms();
+                if (!CanRestoreReturnContacts()) return;
+                ConfigureMotion(false);
+                lastMotionPosition = body.Position;
+            }
             Vector2 position = body.Position;
             if (State == FluidExperimentDispenserState.Retracting)
             {
                 if ((position - dockPosition).sqrMagnitude < .0016f && !BlockedAt(dockPosition))
                 {
                     State = FluidExperimentDispenserState.Docked;
-                    body.Teleport(dockPosition, 0); ConfigureMotion(true); body.SynchronizeHistory();
+                    ApplyDirectPose(dockPosition); ConfigureMotion(false);
                     BlockedReason = null; return;
                 }
                 stalledTime = (position - lastMotionPosition).sqrMagnitude < .000025f ? stalledTime + dt : 0;
@@ -43,8 +51,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             }
             lastMotionPosition = position;
             Vector2 error = target - position;
-            float maximum = State == FluidExperimentDispenserState.Retracting ? retractSpeed : 35;
-            Vector2 desired = Vector2.ClampMagnitude(error / Mathf.Max(dt, .055f), maximum);
+            Vector2 desired = Vector2.ClampMagnitude(error / Mathf.Max(dt, .055f), retractSpeed);
             body.Body.linearVelocity = Vector2.MoveTowards(body.Body.linearVelocity, desired, 220 * dt);
             body.Body.angularVelocity = 0;
         }
@@ -52,6 +59,28 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private Vector2 MotionSize => (Vector2)body.SolidBounds.size + Vector2.one * .025f;
         private Vector2 BoundsOffset => (Vector2)body.SolidBounds.center - body.Position;
         private ContactFilter2D SolidFilter => new ContactFilter2D { useTriggers = false };
+        private bool CanRestoreReturnContacts()
+        {
+            var world = body.World;
+            if (world != null)
+            {
+                // A tool wholly outside a wall or below the table may have no current
+                // overlap, but restoring contacts there would trap its return outside.
+                if ((world.ConstrainHeldPosition(body, body.Position, 0, .04f) - body.Position).sqrMagnitude > .000001f)
+                    return false;
+                Bounds bounds = body.SolidBounds;
+                foreach (var floor in world.floorColliders)
+                {
+                    if (floor == null || !floor.isActiveAndEnabled || floor.isTrigger) continue;
+                    // Runtime environment bindings also put walls and the ceiling in this list.
+                    if (floor == world.leftBoundary || floor == world.rightBoundary || floor == world.topBoundary) continue;
+                    Bounds surface = floor.bounds;
+                    if (bounds.max.x >= surface.min.x && bounds.min.x <= surface.max.x
+                        && bounds.min.y < surface.max.y + .025f) return false;
+                }
+            }
+            return !BlockedAt(body.Position);
+        }
         private bool IsObstacle(Collider2D collider)
         {
             if (collider == null || !collider.enabled || collider.isTrigger || !collider.gameObject.activeInHierarchy) return false;

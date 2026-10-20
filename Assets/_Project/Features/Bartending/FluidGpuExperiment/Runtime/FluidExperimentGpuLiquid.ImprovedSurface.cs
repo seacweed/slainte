@@ -249,7 +249,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             for (int bodyIndex = 0; bodyIndex < world.Items.Count; bodyIndex++)
             {
                 FluidExperimentBody body = world.Items[bodyIndex];
-                if (body == null) continue;
+                if (body == null || body.DispenserCollisionSuppressed) continue;
                 if (useCohesivePhysics && body.kind == LabItemKind.Garnish) continue;
                 if (body.collisionProfile != null)
                 {

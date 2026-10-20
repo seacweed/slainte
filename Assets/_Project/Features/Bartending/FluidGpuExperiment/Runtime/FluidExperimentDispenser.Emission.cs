@@ -27,6 +27,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         private bool SpawnBlocked(Vector2 point, float radius)
         {
+            // The upright held body uses triggers, so check its authored solid explicitly.
+            if (CollisionSuppressed && body.SolidClearance(point - body.Position) <= radius) return true;
             int count = Physics2D.OverlapCircle(point, radius, SolidFilter, overlapHits);
             for (int i = 0; i < count; i++)
             {

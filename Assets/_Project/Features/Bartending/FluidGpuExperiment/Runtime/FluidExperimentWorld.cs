@@ -136,7 +136,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
                         bool ignore = (a.IsHeld || b.IsHeld) && !sameContents;
                         // Contents follow the same external isolation as their held container.
                         if (!sameContents && (a.IsInHeldVessel || b.IsInHeldVessel)) ignore = true;
-                        // The hose tool remains a physical obstacle even while either tool is controlled.
+                        // Docked/returning dispensers retain native contacts. Held dispenser
+                        // colliders are triggers, which suppress contacts with every solid.
                         if (a.kind == LabItemKind.Dispenser || b.kind == LabItemKind.Dispenser) ignore = false;
                         foreach (Collider2D other in b.solidColliders)
                             if (other != null && other.enabled) Physics2D.IgnoreCollision(c, other, ignore);

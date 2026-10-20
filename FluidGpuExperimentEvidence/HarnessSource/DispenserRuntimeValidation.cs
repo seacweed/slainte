@@ -102,10 +102,21 @@ public sealed class DispenserRuntimeValidationRunner : MonoBehaviour
             other.World.Dispenser.Body.Body.simulated = false;
             Vector2 target = toolA.DockWorld + Vector2.left * 3;
             toolA.MoveToPointer(target);
+            Check(Vector2.Distance(toolA.Body.Position, target) < .002f
+                && Vector2.Distance(toolA.transform.position, target) < .002f,
+                "Reusable runtime pointer movement immediately updates native and rendered poses before physics");
             for (int i = 0; i < 100; i++) Step(rig);
             Check(Vector2.Distance(toolA.Body.Position, target) < .08f,
                 "Reusable runtime world ticks move the held dispenser inside its narrower environment");
+            Check(rig.World.floorColliders.Contains(rig.World.leftBoundary)
+                && rig.World.floorColliders.Contains(rig.World.rightBoundary)
+                && rig.World.floorColliders.Contains(rig.World.topBoundary),
+                "Reusable environment fixture includes its walls and ceiling in the shared floor-collider registry");
             toolA.BeginRetract();
+            Check(toolA.State == FluidExperimentDispenserState.Retracting && !toolA.CollisionSuppressed
+                && toolA.Body.Body.bodyType == RigidbodyType2D.Dynamic
+                && toolA.Body.solidColliders.Where(collider => collider != null).All(collider => !collider.isTrigger),
+                "Free-space release near the fitted dock restores contacts without treating the registered ceiling as a floor");
             for (int i = 0; i < 250 && toolA.State != FluidExperimentDispenserState.Docked; i++) Step(rig);
             Check(toolA.State == FluidExperimentDispenserState.Docked && Vector2.Distance(toolA.Body.Position, toolA.DockWorld) < .04f,
                 "Runtime dispenser returns to its environment-adjusted dock instead of an out-of-bounds comparison position");

@@ -210,7 +210,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             int boundaryCount = 0, triggerCount = 0, groupCount = 0, iceBoundaryCount = 0;
             foreach (FluidExperimentBody item in world.Items)
             {
-                if (item == null) continue;
+                if (item == null || item.DispenserCollisionSuppressed) continue;
                 // F peels receive liquid motion but never displace or accelerate it.
                 if (useCohesivePhysics && item.kind == LabItemKind.Garnish) continue;
                 Vector2 previousPosition = Vector2.Lerp(item.PreviousPosition, item.Position, from);

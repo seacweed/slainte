@@ -24,8 +24,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (Held != null || HeldPart != null || HeldDispenser != null || world == null
                 || dispenser == null || dispenser != world.Dispenser || !dispenser.IsAvailable
                 || !dispenser.TryPick(point)) return false;
-            // A dispenser owns its collision-aware motion. Never put its body into
-            // the ordinary held-body rotation, teleport or throw path.
+            // The dispenser owns direct pointer following and automatic retraction,
+            // independently of ordinary held-body rotation and throwing.
             HeldDispenser = dispenser;
             Rotating = Returning = false;
             lastPointer = point;

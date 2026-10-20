@@ -259,11 +259,16 @@ public sealed class DispenserValidationRunner : MonoBehaviour
             dispenser.TryClickMode(dispenser.IceButtonWorld);
             Check(dispenser.Mode.ToString() == "Hot", "Held dispenser ignores mode changes while consuming button hits");
             Frame(WorkPoint, false, true);
+            Check(Near(dispenser.Body.Position, WorkPoint) && Near(dispenser.transform.position, WorkPoint),
+                "A single pointer input Update moves both native and rendered tool poses before physics");
             for (int i = 0; i < 100; i++) { Frame(WorkPoint, false, true); Step(); }
             float firstVolume = gpu.EmittedMl;
             Check(dispenser.IsDispensing && firstVolume > 0 && Near(dispenser.Body.Position, WorkPoint, .06f),
                 "Actual RMB hold dispenses while translating to the cursor");
             Vector2 moved = WorkPoint + new Vector2(2, .5f);
+            Frame(moved, false, true);
+            Check(Near(dispenser.Body.Position, moved) && Near(dispenser.transform.position, moved),
+                "RMB cursor movement updates the tool immediately during emission");
             for (int i = 0; i < 40; i++) { Frame(moved, false, true); Step(); }
             Check(Near(dispenser.Body.Position, moved, .06f) && gpu.EmittedMl > firstVolume
                 && !hand.Rotating && !hand.Returning && !hand.PointerCaptured && Near(dispenser.Body.Angle, 0),
@@ -294,6 +299,10 @@ public sealed class DispenserValidationRunner : MonoBehaviour
             for (int i = 0; i < 20; i++) Step();
             Check(hand.HeldDispenser == null && !dispenser.IsDispensing && Near(dispenser.RemainingMl, cancelledVolume),
                 "Shared focus-loss cancellation stops stock consumption and clears the held tool");
+            for (int i = 0; i < 500 && dispenser.State != FluidExperimentDispenserState.Docked; i++) Step();
+            Check(dispenser.State == FluidExperimentDispenserState.Docked && !dispenser.CollisionSuppressed
+                && dispenser.Body.solidColliders.Where(c => c != null).All(c => !c.isTrigger),
+                "Focus-loss retraction restores solid colliders at the dock");
             Check(Cursor.lockState == previousLock && Cursor.visible == previousVisible,
                 "Virtual input never modifies the native cursor lock or visibility");
         }
@@ -417,33 +426,96 @@ public sealed class DispenserValidationRunner : MonoBehaviour
 
     void CollisionAndRetraction()
     {
-        Reset(); PickToWork();
-        Move(new Vector2(0, floorY - 3), 150);
-        Check(dispenser.Body.SolidBounds.min.y >= floorY - .035f,
-            "Held dispenser cannot pass through the authored tabletop toward a cursor below it");
-        Move(WorkPoint);
-        if (world.leftBoundary != null)
+        Reset();
+        Vector2 grabOffset = new Vector2(.1f, -.1f);
+        Check(hand.PickDispenser(dispenser, dispenser.Body.Position + grabOffset),
+            "Off-center body pickup establishes a persistent pointer offset");
+        var destinations = new List<Vector2> { WorkPoint, WorkPoint + new Vector2(9, 4), new Vector2(0, floorY - 3) };
+        if (world.leftBoundary != null) destinations.Add(new Vector2(world.leftBoundary.bounds.min.x - 4, WorkPoint.y));
+        foreach (Vector2 destination in destinations)
         {
-            Move(new Vector2(world.leftBoundary.bounds.min.x - 4, WorkPoint.y), 160);
-            Check(dispenser.Body.SolidBounds.min.x >= world.leftBoundary.bounds.max.x - .04f,
-                "Held dispenser cannot cross the authored left wall");
-            Move(WorkPoint);
+            dispenser.MoveToPointer(destination + grabOffset);
+            Check(Near(dispenser.Body.Position, destination) && Near(dispenser.transform.position, destination),
+                "Held tool immediately preserves the grabbed point for unrestricted cursor target " + destination);
+            Step();
+            Check(Near(dispenser.Body.Position, destination) && Near(dispenser.transform.position, destination)
+                && Near(dispenser.Body.Body.linearVelocity, Vector2.zero),
+                "The following physics tick adds no lag, drift or collision correction at " + destination);
         }
+        dispenser.MoveToPointer(WorkPoint + grabOffset);
+        Vector2 rebasedPointer = WorkPoint + new Vector2(.3f, -.2f);
+        dispenser.RebasePointer(rebasedPointer);
+        dispenser.MoveToPointer(rebasedPointer + Vector2.right);
+        Check(Near(dispenser.Body.Position, WorkPoint + Vector2.right)
+            && Near(dispenser.transform.position, WorkPoint + Vector2.right),
+            "Pointer rebasing preserves the current tool pose and subsequent relative cursor travel");
+        Reset(); PickToWork();
+        Check(dispenser.CollisionSuppressed && dispenser.Body.Body.bodyType == RigidbodyType2D.Kinematic
+            && dispenser.Body.Body.interpolation == RigidbodyInterpolation2D.None,
+            "Held tool uses a non-interpolated kinematic pose");
+        CheckDispenserGeometry(false, "held");
+
+        var probeObject = new GameObject("DispenserDynamicContactProbe");
+        probeObject.layer = world.itemLayer;
+        var probeBody = probeObject.AddComponent<Rigidbody2D>();
+        probeBody.gravityScale = 0;
+        var probe = probeObject.AddComponent<BoxCollider2D>();
+        probe.size = Vector2.one;
+        probeBody.position = dispenser.Body.SolidBounds.center;
+        Vector2 probeStart = probeBody.position;
+        try
+        {
+            Physics2D.SyncTransforms();
+            Check(dispenser.Body.solidColliders.Where(c => c != null && c.enabled).Any(c => c.Distance(probe).isOverlapped),
+                "Held-contact fixture actually overlaps a native dynamic solid");
+            world.RefreshCollisionPairs();
+            for (int i = 0; i < 15; i++) Step();
+            Check(Near(probeBody.position, probeStart) && Near(probeBody.linearVelocity, Vector2.zero)
+                && Near(probeBody.angularVelocity, 0) && Near(dispenser.Body.Position, WorkPoint),
+                "An overlapping held dispenser transfers no impulse after collision-pair refresh");
+            hand.ReleaseWithVelocity(Vector2.zero);
+            Check(dispenser.CollisionSuppressed && dispenser.State == FluidExperimentDispenserState.Retracting,
+                "Release inside a solid keeps contacts suppressed while beginning return");
+            for (int i = 0; i < 600 && dispenser.State != FluidExperimentDispenserState.Docked; i++)
+            {
+                Step();
+                if (!dispenser.CollisionSuppressed)
+                    Check(dispenser.Body.solidColliders.Where(c => c != null && c.enabled)
+                        .All(c => c.Distance(probe).distance >= -.035f),
+                        "Returning contacts restore only after clearing the initial overlap");
+            }
+            Check(dispenser.State == FluidExperimentDispenserState.Docked && Near(probeBody.position, probeStart)
+                && Near(probeBody.linearVelocity, Vector2.zero) && !dispenser.CollisionSuppressed,
+                "Overlap release returns to dock without kicking the dynamic obstacle");
+            CheckDispenserGeometry(true, "docked after overlap release");
+        }
+        finally { probeObject.SetActive(false); Destroy(probeObject); }
+
+        foreach (Vector2 destination in destinations.Skip(2))
+        {
+            Reset(); PickToWork(); dispenser.MoveToPointer(destination);
+            hand.ReleaseWithVelocity(Vector2.zero);
+            Check(dispenser.CollisionSuppressed, "Release beyond the playable boundary starts a safe return from " + destination);
+            for (int i = 0; i < 600 && dispenser.State != FluidExperimentDispenserState.Docked; i++) Step();
+            Check(dispenser.State == FluidExperimentDispenserState.Docked && !dispenser.CollisionSuppressed
+                && Near(dispenser.Body.Position, dispenser.DockWorld, .03f),
+                "Return from outside the playable boundary restores contacts and docks from " + destination);
+        }
+
+        Reset(); PickToWork();
         var obstacleObject = new GameObject("DispenserValidationObstacle");
         obstacleObject.layer = world.itemLayer;
         var obstacle = obstacleObject.AddComponent<BoxCollider2D>();
         obstacle.size = new Vector2(.8f, 2.2f);
         try
         {
-            obstacleObject.transform.position = WorkPoint + new Vector2(2, 0);
-            Physics2D.SyncTransforms();
-            Move(WorkPoint + new Vector2(4, 0), 100);
-            Check(dispenser.Body.solidColliders.Where(c => c != null && c.enabled).All(c => !c.Distance(obstacle).isOverlapped
-                || c.Distance(obstacle).distance >= -.035f), "Continuous held movement stops or slides at solid obstacle geometry");
-            Move(WorkPoint);
             obstacleObject.transform.position = (dispenser.Body.Position + dispenser.DockWorld) * .5f;
             Physics2D.SyncTransforms();
             hand.ReleaseWithVelocity(Vector2.zero);
+            Check(!dispenser.CollisionSuppressed && dispenser.Body.Body.bodyType == RigidbodyType2D.Dynamic
+                && dispenser.Body.solidColliders.Where(c => c != null).All(c => !c.isTrigger),
+                "Release from free space immediately restores native solid contacts");
+            CheckDispenserGeometry(true, "retracting from free space");
             float maximumPenetration = 0;
             bool sawRetraction = dispenser.State.ToString() == "Retracting";
             var beforeMode = dispenser.Mode;
@@ -464,6 +536,24 @@ public sealed class DispenserValidationRunner : MonoBehaviour
         }
         finally { obstacleObject.SetActive(false); Destroy(obstacleObject); }
         Capture("dispenser-returned.png", dispenser.DockWorld, 2.2f);
+    }
+
+    void CheckDispenserGeometry(bool expected, string state)
+    {
+        // Clear CPU scratch data so stale entries beyond this upload cannot satisfy the check.
+        var edges = (Array)Field(gpu, "boundaryUpload");
+        var groups = (Array)Field(gpu, "boundaryGroups");
+        Array.Clear(edges, 0, edges.Length); Array.Clear(groups, 0, groups.Length);
+        Invoke(gpu, "UploadGeometry", 0f, 1f, Dt);
+        bool hasEdges = edges.Cast<object>().Any(value => (uint)Field(value, "VesselId") == dispenser.Body.Id);
+        bool hasGroup = groups.Cast<object>().Any(value => (uint)Field(value, "VesselId") == dispenser.Body.Id);
+        Check(hasEdges == expected && hasGroup == expected,
+            state + " GPU upload " + (expected ? "includes" : "excludes") + " the dispenser's liquid collision geometry");
+        Invoke(gpu, "UploadImprovedSurfaceHulls");
+        var hulls = (IEnumerable)Field(gpu, "improvedSurfaceHulls");
+        bool hasMask = hulls.Cast<object>().Any(value => (uint)Field(value, "VesselId") == dispenser.Body.Id);
+        Check(hasMask == expected,
+            state + " liquid surface mask " + (expected ? "includes" : "excludes") + " the dispenser body");
     }
 
     void BlockedEmissionAndBoundaryBudget()
@@ -701,6 +791,15 @@ public sealed class DispenserValidationRunner : MonoBehaviour
             && Near(dispenser.RemainingMl, 5000) && !dispenser.IsDispensing && hand.HeldDispenser == null,
             "R-equivalent world reset restores off mode, stock, dock and hand state");
         Check(Ice().Length == 0, "Reset removes generated ice");
+        Check(!dispenser.CollisionSuppressed && dispenser.Body.solidColliders.Where(c => c != null).All(c => !c.isTrigger)
+            && Near(dispenser.Body.Position, dispenser.DockWorld) && Near(dispenser.transform.position, dispenser.DockWorld),
+            "World reset restores solid colliders and the native/rendered dock pose");
+        Reset(); PickToWork();
+        dispenser.enabled = false;
+        Check(!dispenser.CollisionSuppressed && dispenser.Body.solidColliders.Where(c => c != null).All(c => !c.isTrigger)
+            && Near(dispenser.Body.Position, dispenser.DockWorld) && Near(dispenser.transform.position, dispenser.DockWorld),
+            "Disabling the held dispenser component restores solid geometry at the dock");
+        dispenser.enabled = true; hand.ReleaseWithVelocity(Vector2.zero);
         foreach (FluidExperimentMode mode in Enum.GetValues(typeof(FluidExperimentMode)))
         {
             comparison.SwitchMode(mode); comparison.StartScenario(FluidExperimentScenario.Manual);

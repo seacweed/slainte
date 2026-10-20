@@ -15,7 +15,7 @@ The fixture uses hidden Unity batchmode, a real D3D11 compute GPU, `Physics2D.Si
 - Native dynamic, permanently placed ice; missing prefab and physically blocked nozzle failures with recovery.
 - Actual registered ice geometry and real hurricane shard proxies exhausting the conservative boundary admission budget, with no creation or stock loss until geometry is released; accepted ice must preserve the active shard geometry allocation.
 - A real 20 ml stream caught by the existing highball, followed by native ice ownership/contact in that receiver.
-- Floor, wall and obstacle collision while held; obstacle-aware return, no re-pick or mode change while returning, and completed docking.
+- Immediate pointer following at the original grab offset, including rendered transforms and targets beyond floors/walls; no held native contacts or GPU liquid displacement/masking; restoration after overlap-safe return, no re-pick or mode change while returning, and completed docking.
 - Full 5000 ml Ice stock as 500 sequential native births with GPU geometry submission and offscreen unregistering.
 - Full 5000 ml Hot stock with actual GPU allocation, materialization and repeated slot recycling.
 - R-equivalent world reset, F/G and A–E switching, actual Hot/Ice output in G, remote 6/4 fracture thresholds, and Manual to automatic-scenario to Manual transitions.
