@@ -36,14 +36,17 @@ Assets/_Project/Features/Narrative/
     EpisodeDataImporter.cs    — EpisodeData → 그래프 (직선 대사 블록 묶기, 위치 유지)
     NarrativeCsvSync.cs       — 원본 CSV 찾기·해시·충돌 질문·CSV → 그래프
     NarrativeRoundTripValidator.cs — CSV ⇄ 그래프 왕복 검증 메뉴
-    NarrativeBlockEditing.cs  — 블록 안 이벤트 추가·이동·삭제, 블록 나누기·합치기 (Undo 포함)
-    NarrativeGraphEditor.cs / NarrativeGraphView.cs / NarrativeInspectorUI.cs
-    NarrativeNodeView.cs      — 블록 카드: 이벤트 줄 목록, 더블클릭 인라인 대사 편집, 접기/펼치기, 우클릭 메뉴
+    NarrativeBlockEditing.cs  — 블록 안 이벤트 추가·이동·삭제·붙여넣기, 블록 나누기·합치기 (Undo 포함)
+    NarrativeGraphClipboard.cs — 노드 묶음·이벤트 줄 복사 형식(OS 클립보드 JSON), 붙여넣기·템플릿 생성 시 Guid·런타임 ID 재발급
+    NarrativeGraphView.cs     — 그래프 ⇄ 영속 데이터 동기화, 검증, 우클릭 메뉴(직접 구성), Cut/Copy/Paste/Duplicate 콜백
+    NarrativeGraphEditor.cs / NarrativeInspectorUI.cs
+    NarrativeNodeView.cs      — 블록 카드: 이벤트 줄 목록·줄 선택, 더블클릭 인라인 대사 편집, 접기/펼치기, 줄 우클릭 메뉴(추가·복사·붙여넣기)
     EventInspectorUI.cs       — 선택한 이벤트 상세 편집(왼쪽 패널), CharacterCatalog(화자·표정 선택)
     NarrativeNodeIdAssigner.cs — 런타임 노드 ID 자동 부여("다음 번호" 규칙: 분기 20 → 21_k_1, 합류 22)
     NarrativeGraphLayout.cs   — 자동 배치(깊이 = 열, 포트 순서 = 행), 임포트와 툴바 "자동 정렬" 공용
     LeftClickPanDragger.cs    — 빈 공간 드래그 = 화면 이동, 클릭 = 선택 해제
-    NarrativeSearchWindow.cs / NarrativeUIHelper.cs / TemplateManager.cs
+    NarrativeSearchWindow.cs  — Space 노드 생성 검색창(템플릿 목록만)
+    NarrativeUIHelper.cs / TemplateManager.cs
 
 Assets/_Project/Features/Business/Editor/EpisodeCsvCodec.cs — CSV ⇄ EpisodeData (그래프와 임포터 공용)
 ```
@@ -67,6 +70,8 @@ Nodes, Edges                                — { BaseNodeGuid, TargetNodeGuid, 
 - **이벤트 하나 = 런타임 노드 하나.** 이벤트의 `RuntimeNodeId`가 곧 CSV의 `nodeId`다. `NarrativeNodeIdAssigner.RegenerateIds`가 그래프를 열 때(`PopulateView`), CSV에서 가져올 때(`EpisodeDataImporter.Import`), 구조를 바꿀 때(이벤트 추가·삭제·이동, 연결, 블록 나누기·합치기), `Compile` 직전에 흐름 전체를 다시 매긴다 — 화면의 ID가 항상 규칙과 같게 유지된다. 결과가 같으면 에셋을 더럽히지 않는다. 순수 변환인 `EpisodeDataImporter.Build`(왕복 검증용)는 CSV ID를 그대로 둔다. 블록 제목은 첫 이벤트의 ID다.
 - **실행 순서**: `Events` 리스트 순서(= 카드의 줄 순서). 선택지 · 제조 이벤트는 블록을 끝내며, 그 뒤 이벤트는 실행되지 않고 오류로 표시된다. 예전 시퀀스 에디터(삭제됨)가 연결선(`StartEventGuid`/`NextEventGuids`)으로 저장한 순서는 그래프를 열 때 `MigrateLegacyOrder`가 한 번 리스트 순서로 옮기고 비운다.
 - **블록 나누기**: 앞쪽 블록은 Next 하나로 새 블록에 잇고, 기존 출력 포트와 연결은 새(뒤쪽) 블록이 물려받는다. **합치기**는 그 반대이며, 다음 블록으로 들어오는 연결이 하나뿐일 때만 허용된다. 두 조작 모두 컴파일 결과를 바꾸지 않는다.
+- **노드 생성 · 복사**: 노드는 템플릿(`TemplateManager`)에서만 만든다 — Base Node(빈 노드 타입 직접 생성) 메뉴는 없다. 템플릿 생성·붙여넣기·복제 모두 `NarrativeGraphClipboard.ResetIdentity`로 노드·이벤트 Guid를 새로 발급하고 `RuntimeNodeId`/`RouterNodeId`를 비워, `RegenerateIds`가 흐름에 맞는 새 번호를 매기게 한다(원본 ID가 그대로 복사되면 CSV nodeId가 겹친다).
+- **클립보드 경로**: GraphView 기본 Cut/Copy/Paste/Duplicate(Ctrl+X/C/V/D)는 `serializeGraphElements`·`canPasteSerializedData`·`unserializeAndPaste`·`deleteSelection` 콜백으로 처리한다. 노드는 `EditorJsonUtility`로 직렬화해 에셋 참조(주문서 등)를 유지하고, 묶음 안 노드끼리의 연결만 함께 담는다. 노드 하나만 선택되고 그 카드에서 이벤트 줄이 선택돼 있으면 같은 단축키·Delete가 줄 단위로 동작한다(줄 선택은 카드의 줄 바깥을 클릭하면 풀림). GraphView 기본 우클릭 메뉴는 쓰지 않고 `BuildContextualMenu`에서 직접 구성한다.
 - **포트**: 블록의 마지막 이벤트가 정한다.
 
 | 마지막 이벤트 | 포트 |
@@ -130,9 +135,10 @@ Nodes, Edges                                — { BaseNodeGuid, TargetNodeGuid, 
 합류: 21_1_k 와 21_2_j 가 만나면 → 22   (가장 깊은 제안부터 오른쪽 두 마디를 떼고 +1, 모두 같아질 때까지)
 공유 분기: 모든 진입이 서로 다른 분기 노드의 같은 포트 k면(갈래마다 있는 제조 노드가 결과를 공유)
           → 그 분기 노드들의 합류 번호 + _k_1   (선택지 20 → 21_i_j(제조) → 결과 22_k_1 → 합류 23)
-부분 합류: 합류 후보 M이 분기 S의 일부 갈래만 모은 것이면(M을 거치지 않는 S의 갈래가 M 뒤에서 다시 만남)
+부분 합류: 합류 후보 M이 분기 S의 일부 갈래만 모은 것이면(M을 거치지 않는 S의 갈래가 M 뒤에서 다시 만나거나, 그 갈래들끼리 따로 만남)
           → 합류 번호 R에 _g_1 (g = 그 분기의 부분 합류 순번), 나중에 모두 만나는 곳은 R+1
           (StrangeCoin_4: 99 → 100_k_1 → 1·2 합류 101_1_1, 3·4 합류 101_2_1 → 102)
+          (CS0: 29 → 30_k_1 → 1·3 합류 31_1_1, 2·4 합류 31_2_1 → 각자 끝남. 두 합류가 같은 번호 31을 다투지 않게 함)
 순환: 되돌아오는 연결(포트 순서 DFS의 back edge)은 번호·순서 계산에서 뺌
 미도달: x1, x2 …        충돌(손으로 꼰 연결에서만): ~2 접미사
 ```

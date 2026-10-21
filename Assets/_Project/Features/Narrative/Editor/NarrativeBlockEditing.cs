@@ -30,6 +30,16 @@ namespace NarrativeFlow.Editor
             return ev;
         }
 
+        // 복사해 둔 이벤트 줄을 끼워 넣는다. 이벤트는 이미 새 Guid로 준비된 것(NarrativeGraphClipboard)이어야 한다.
+        public static bool InsertEvents(EpisodeNodeSO block, int index, IReadOnlyList<EpisodeEvent> events)
+        {
+            if (block == null || events == null || events.Count == 0) return false;
+            Undo.RecordObject(block, "Paste Events");
+            block.Events.InsertRange(Mathf.Clamp(index, 0, block.Events.Count), events);
+            EditorUtility.SetDirty(block);
+            return true;
+        }
+
         public static bool MoveEvent(EpisodeNodeSO block, int index, int delta)
         {
             int target = index + delta;

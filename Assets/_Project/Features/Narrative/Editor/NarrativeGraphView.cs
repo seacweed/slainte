@@ -41,7 +41,17 @@ namespace NarrativeFlow.Editor
             AddSearchWindow();
 
             graphViewChanged += OnGraphViewChanged;
+
+            // GraphView 기본 Cut/Copy/Paste/Duplicate(메뉴·Ctrl+X/C/V/D)는 이 콜백들이 있어야 동작한다.
+            serializeGraphElements = SerializeForClipboard;
+            canPasteSerializedData = CanPaste;
+            unserializeAndPaste = PasteSerialized;
+            deleteSelection = DeleteSelectionOrEvent;
+            RegisterCallback<MouseMoveEvent>(e => _lastMousePosition = contentViewContainer.WorldToLocal(e.mousePosition));
         }
+
+        private const float PasteOffset = 30f;
+        private Vector2? _lastMousePosition;
 
         // 현재 그래프 전체를 자동 배치한다. 화면에 그려진 카드의 실제 높이를 써서 같은 열의 카드가 겹치지 않게 한다.
         public void AutoLayout()
@@ -97,39 +107,23 @@ namespace NarrativeFlow.Editor
                 }
 
                 foreach (var edgeData in currentGraph.Edges)
-                {
-                    if (nodeDictionary.TryGetValue(edgeData.BaseNodeGuid, out var baseNode) &&
-                        nodeDictionary.TryGetValue(edgeData.TargetNodeGuid, out var targetNode))
-                    {
-                        var outputPorts = baseNode.outputContainer.Query<Port>().ToList();
-                        if (edgeData.OutputPortIndex < outputPorts.Count)
-                            AddElement(outputPorts[edgeData.OutputPortIndex].ConnectTo(targetNode.inputContainer.Q<Port>()));
-                    }
-                }
-                
+                    ConnectEdgeView(edgeData, nodeDictionary);
+
                 ValidateAllNodes(); // Validation after load
             }
         }
 
-        public void CreateNode(Type type, Vector2 position)
+        private void ConnectEdgeView(EdgeData edgeData, Dictionary<string, NarrativeNodeView> views)
         {
-            if (currentGraph == null) return;
-            var nodeData = ScriptableObject.CreateInstance(type) as NodeDataSO;
-            nodeData.Guid = Guid.NewGuid().ToString();
-            nodeData.name = nodeData.Guid;
-            nodeData.Position = new Rect(position, new Vector2(150, 200));
-
-            Undo.RegisterCreatedObjectUndo(nodeData, "Create Node");
-            AssetDatabase.AddObjectToAsset(nodeData, currentGraph);
-            Undo.RecordObject(currentGraph, "Add To Graph");
-            currentGraph.Nodes.Add(nodeData);
-            AssetDatabase.SaveAssets();
-
-            AddElement(new NarrativeNodeView(nodeData));
-            NarrativeNodeIdAssigner.RegenerateIds(currentGraph);
-            ValidateAllNodes();
+            if (!views.TryGetValue(edgeData.BaseNodeGuid, out var baseNode) ||
+                !views.TryGetValue(edgeData.TargetNodeGuid, out var targetNode))
+                return;
+            var outputPorts = baseNode.outputContainer.Query<Port>().ToList();
+            if (edgeData.OutputPortIndex < outputPorts.Count)
+                AddElement(outputPorts[edgeData.OutputPortIndex].ConnectTo(targetNode.inputContainer.Q<Port>()));
         }
 
+        // 노드 생성은 템플릿에서만 한다(빈 블록·트리거도 템플릿으로 저장해 두고 쓴다).
         public void CreateNodeFromTemplate(NodeDataSO template, Vector2 position)
         {
             if (currentGraph == null)
@@ -139,22 +133,189 @@ namespace NarrativeFlow.Editor
             }
 
             var nodeData = UnityEngine.Object.Instantiate(template);
-            nodeData.Guid = Guid.NewGuid().ToString();
-            nodeData.name = nodeData.Guid;
-            nodeData.Position = new Rect(position, new Vector2(150, 200));
+            NarrativeGraphClipboard.ResetIdentity(nodeData);
+            nodeData.Position = new Rect(position, template.Position.size);
+            AddNodes(new List<NodeDataSO> { nodeData }, new List<EdgeData>(), "Create Node from Template");
+        }
 
-            Undo.RegisterCreatedObjectUndo(nodeData, "Create Narrative Node from Template");
-            AssetDatabase.AddObjectToAsset(nodeData, currentGraph);
-            
-            Undo.RecordObject(currentGraph, "Add Node To Graph");
-            currentGraph.Nodes.Add(nodeData);
+        // 새 노드 인스턴스들(템플릿 복제·붙여넣기)을 그래프 에셋에 서브에셋으로 붙이고 화면에 그린 뒤 선택한다.
+        // 노드 하나씩 SaveAssets하지 않고 마지막에 한 번만 저장한다.
+        private void AddNodes(List<NodeDataSO> newNodes, List<EdgeData> newEdges, string undoName)
+        {
+            if (currentGraph == null || newNodes.Count == 0) return;
 
+            Undo.RecordObject(currentGraph, undoName);
+            foreach (NodeDataSO node in newNodes)
+            {
+                AssetDatabase.AddObjectToAsset(node, currentGraph);
+                Undo.RegisterCreatedObjectUndo(node, undoName);
+                currentGraph.Nodes.Add(node);
+            }
+            currentGraph.Edges.AddRange(newEdges);
+            EditorUtility.SetDirty(currentGraph);
             AssetDatabase.SaveAssets();
 
-            var nodeView = new NarrativeNodeView(nodeData);
-            AddElement(nodeView);
+            var views = new Dictionary<string, NarrativeNodeView>();
+            foreach (NodeDataSO node in newNodes)
+            {
+                var view = new NarrativeNodeView(node);
+                AddElement(view);
+                views[node.Guid] = view;
+            }
+            foreach (EdgeData edge in newEdges) ConnectEdgeView(edge, views);
+
             NarrativeNodeIdAssigner.RegenerateIds(currentGraph);
             ValidateAllNodes();
+
+            ClearSelection();
+            foreach (var view in views.Values) AddToSelection(view);
+        }
+
+        // ── 복사 / 붙여넣기 ─────────────────────────────────────────────────────
+        // 키보드(Ctrl+C/X/V/D)는 GraphView 기본 처리 → 아래 콜백으로 들어온다. 카드에서 줄을 선택해 둔 상태(노드 하나만
+        // 선택)면 그 줄 단위로, 아니면 선택한 노드 단위로 동작한다. 우클릭 메뉴의 노드 항목은 항상 노드 단위다.
+
+        // 줄 단위 모드: 노드 하나만 선택돼 있고 그 카드에서 이벤트 줄이 선택돼 있을 때.
+        private bool TryGetSelectedEventRow(out NarrativeNodeView view)
+        {
+            view = selection.Count == 1 ? selection[0] as NarrativeNodeView : null;
+            return view != null && view.SelectedEvent != null;
+        }
+
+        private string SerializeForClipboard(IEnumerable<GraphElement> elements)
+        {
+            if (TryGetSelectedEventRow(out var rowView))
+                return NarrativeGraphClipboard.SerializeEvents(new[] { rowView.SelectedEvent });
+            return SerializeNodes(elements.OfType<NarrativeNodeView>());
+        }
+
+        private string SerializeNodes(IEnumerable<NarrativeNodeView> views)
+        {
+            var nodesToCopy = views.Select(v => v.nodeData).Where(n => n != null).ToList();
+            return NarrativeGraphClipboard.SerializeNodes(nodesToCopy, currentGraph != null ? currentGraph.Edges : null);
+        }
+
+        private bool CanPaste(string data)
+        {
+            if (currentGraph == null) return false;
+            if (NarrativeGraphClipboard.HasNodes(data)) return true;
+            return NarrativeGraphClipboard.HasEvents(data) && GetEventPasteTarget() != null;
+        }
+
+        // 줄을 붙여넣을 카드: 선택한 블록 하나(줄 선택이 있으면 그 아래, 없으면 맨 끝에 넣는다).
+        private NarrativeNodeView GetEventPasteTarget()
+        {
+            var view = selection.Count == 1 ? selection[0] as NarrativeNodeView : null;
+            return view?.nodeData is EpisodeNodeSO ? view : null;
+        }
+
+        // GraphView는 Paste와 Duplicate 모두 이 콜백으로 넘긴다(operationName만 다르다).
+        private void PasteSerialized(string operationName, string data)
+        {
+            if (NarrativeGraphClipboard.HasEvents(data))
+            {
+                var target = GetEventPasteTarget();
+                if (target == null) return;
+                int index = target.SelectedEventIndex >= 0 ? target.SelectedEventIndex + 1 : int.MaxValue;
+                target.InsertEvents(index, NarrativeGraphClipboard.DeserializeEvents(data));
+                return;
+            }
+
+            // 붙여넣기는 마우스 위치에, 복제는 원본 옆에 놓는다.
+            Vector2? anchor = operationName == "Paste" ? _lastMousePosition : null;
+            PasteNodes(data, anchor, operationName);
+        }
+
+        private void PasteNodes(string data, Vector2? anchor, string undoName)
+        {
+            if (currentGraph == null || !NarrativeGraphClipboard.TryDeserializeNodes(data, out var newNodes, out var newEdges))
+                return;
+
+            // 묶음의 왼쪽 위를 기준으로 통째로 옮겨 노드 간 배치를 유지한다.
+            Vector2 min = new Vector2(newNodes.Min(n => n.Position.x), newNodes.Min(n => n.Position.y));
+            Vector2 delta = anchor.HasValue ? anchor.Value - min : new Vector2(PasteOffset, PasteOffset);
+            foreach (NodeDataSO node in newNodes)
+                node.Position = new Rect(node.Position.position + delta, node.Position.size);
+
+            AddNodes(newNodes, newEdges, undoName);
+        }
+
+        // Delete 키와 잘라내기(Cut = 복사 후 이 콜백). 줄 단위 모드면 블록 대신 그 줄만 지운다 —
+        // 줄을 고르고 Delete를 눌렀는데 블록 전체가 사라지는 실수를 막는다.
+        private void DeleteSelectionOrEvent(string operationName, AskUser askUser)
+        {
+            if (TryGetSelectedEventRow(out var rowView))
+            {
+                rowView.RemoveSelectedEvent();
+                return;
+            }
+            DeleteSelection();
+        }
+
+        public void CopySelectedNodes()
+        {
+            string data = SerializeNodes(selection.OfType<NarrativeNodeView>());
+            if (!string.IsNullOrEmpty(data)) NarrativeGraphClipboard.Buffer = data;
+        }
+
+        public void CutSelectedNodes()
+        {
+            CopySelectedNodes();
+            DeleteSelection();
+        }
+
+        public void DuplicateSelectedNodes()
+        {
+            string data = SerializeNodes(selection.OfType<NarrativeNodeView>());
+            if (!string.IsNullOrEmpty(data)) PasteNodes(data, null, "Duplicate");
+        }
+
+        // 기본 메뉴(Create Node 검색창·동작하지 않던 항목들) 대신 실제로 쓰는 항목만 직접 구성한다.
+        // 노드 자체 메뉴(연결 끊기 등)는 Node가 먼저 채우고, 이벤트 줄 메뉴는 NarrativeNodeView가 따로 처리한다.
+        public override void BuildContextualMenu(ContextualMenuPopulateEvent evt)
+        {
+            Vector2 graphPosition = contentViewContainer.WorldToLocal(evt.mousePosition);
+            string clipboard = NarrativeGraphClipboard.Buffer;
+
+            // 우클릭한 곳이 노드 안의 라벨 등 자식 요소일 수 있으므로 소속 요소를 거슬러 찾는다.
+            var targetElement = evt.target as VisualElement;
+            var nodeView = targetElement?.GetFirstOfType<NarrativeNodeView>();
+            var edge = nodeView == null ? targetElement?.GetFirstOfType<Edge>() : null;
+            // 선택하지 않은 노드를 우클릭하고 메뉴를 고르면 엉뚱한(기존 선택) 노드가 복사·삭제되므로 우클릭한 대상을 선택한다.
+            GraphElement clicked = (GraphElement)nodeView ?? edge;
+            if (clicked != null && !clicked.selected)
+            {
+                ClearSelection();
+                AddToSelection(clicked);
+            }
+
+            if (clicked == null)
+            {
+                var templates = TemplateManager.GetAllTemplates();
+                foreach (var template in templates)
+                    evt.menu.AppendAction($"노드 만들기/{template.name}", _ => CreateNodeFromTemplate(template, graphPosition));
+                if (templates.Length == 0)
+                    evt.menu.AppendAction("노드 만들기/(템플릿 없음 — 노드 선택 후 Save Template으로 저장)", null, DropdownMenuAction.Status.Disabled);
+                evt.menu.AppendSeparator();
+                evt.menu.AppendAction("붙여넣기", _ => PasteNodes(NarrativeGraphClipboard.Buffer, graphPosition, "Paste"),
+                    currentGraph != null && NarrativeGraphClipboard.HasNodes(clipboard) ? DropdownMenuAction.Status.Normal : DropdownMenuAction.Status.Disabled);
+                return;
+            }
+
+            if (nodeView != null)
+            {
+                evt.menu.AppendSeparator();
+                evt.menu.AppendAction("노드 복사", _ => CopySelectedNodes());
+                evt.menu.AppendAction("노드 잘라내기", _ => CutSelectedNodes());
+                evt.menu.AppendAction("노드 복제", _ => DuplicateSelectedNodes());
+                evt.menu.AppendAction("노드 붙여넣기", _ => PasteNodes(NarrativeGraphClipboard.Buffer, graphPosition, "Paste"),
+                    currentGraph != null && NarrativeGraphClipboard.HasNodes(clipboard) ? DropdownMenuAction.Status.Normal : DropdownMenuAction.Status.Disabled);
+                evt.menu.AppendSeparator();
+                evt.menu.AppendAction("노드 삭제", _ => DeleteSelection());
+                return;
+            }
+
+            evt.menu.AppendAction("연결 삭제", _ => DeleteSelection());
         }
 
         // 그래프 전체 검증. 컴파일러와 같은 규칙(NarrativeBlockModel/BranchLabel)으로 판정해, 노드에 경고가

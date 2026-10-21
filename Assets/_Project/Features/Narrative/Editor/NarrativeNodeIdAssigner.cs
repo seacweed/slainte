@@ -15,6 +15,7 @@ namespace NarrativeFlow.Editor
     //             그 갈래들의 합류 번호에서 갈라진 것으로 본다 → 22_1_1, 22_2_1 … → 합류 23
     //   부분 합류  20의 갈래 일부끼리 먼저 만나고(1·2, 3·4) 나중에 모두 만나면
     //             먼저 만난 곳들을 새 갈래로 본다 → 22_1_1, 22_2_1 … → 모두 만나는 곳 22
+    //             끝내 모두 만나지 않아도(1·3, 2·4가 각자 끝남) 마찬가지로 22_1_1, 22_2_1 …
     //   미도달    x1, x2 …
     // 흐름은 그래프를 실제로 컴파일한 결과(EpisodeData)에서 읽는다 — Trigger 인라인·빈 블록 통과까지
     // 컴파일러와 똑같이 해석해야 화면의 ID와 CSV의 ID가 어긋나지 않기 때문이다.
@@ -125,16 +126,24 @@ namespace NarrativeFlow.Editor
             }
 
             // 분기 split의 어떤 갈래가 merge를 거치지 않고, merge 뒤에서 다시 만난다면 merge는 일부 갈래만의 합류다.
-            // 아예 끝나 버리는 갈래는 따지지 않는다(그 갈래를 뺀 나머지가 모두 만나면 완전한 합류).
+            // merge를 거치지 않는 갈래끼리 다른 곳에서 따로 만나도 일부 갈래만의 합류다 — 두 합류가 끝내 만나지 않으면
+            // 둘 다 같은 번호(inc(inc(split)))를 원하게 되므로, 각자 갈래 번호(31_1_1, 31_2_1)를 받아야 충돌하지 않는다.
+            // 혼자 끝나 버리는 갈래는 따지지 않는다(그 갈래를 뺀 나머지가 모두 만나면 완전한 합류).
             bool IsPartialMerge(string split, string merge)
             {
                 if (!flow.Forward.TryGetValue(split, out List<string> branches)) return false;
                 HashSet<string> after = Reach(merge);
+                List<HashSet<string>> outside = new();
                 foreach (string branch in branches)
                 {
                     HashSet<string> reach = Reach(branch);
-                    if (!reach.Contains(merge) && reach.Overlaps(after)) return true;
+                    if (reach.Contains(merge)) continue;
+                    if (reach.Overlaps(after)) return true;
+                    outside.Add(reach);
                 }
+                for (int i = 0; i < outside.Count; i++)
+                    for (int j = i + 1; j < outside.Count; j++)
+                        if (outside[i].Overlaps(outside[j])) return true;
                 return false;
             }
 

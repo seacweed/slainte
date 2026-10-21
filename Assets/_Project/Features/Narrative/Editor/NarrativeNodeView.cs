@@ -9,11 +9,12 @@ namespace NarrativeFlow.Editor
 {
     // 그래프 노드 카드. 블록(EpisodeNodeSO)은 이벤트를 한 줄씩 보여 주고 그 자리에서 편집한다:
     // 줄 클릭 = 선택(왼쪽 패널에 상세 편집), 대사 더블클릭 = 카드 위에서 바로 수정, ↑↓✕ 버튼과 우클릭 메뉴로
-    // 추가·이동·삭제·블록 나누기. 데이터 변경은 NarrativeBlockEditing, 포트·검증 갱신은 NarrativeGraphView.RefreshBlock.
+    // 추가·이동·삭제·복사/붙여넣기·블록 나누기. 데이터 변경은 NarrativeBlockEditing, 포트·검증 갱신은 NarrativeGraphView.RefreshBlock.
     public class NarrativeNodeView : Node
     {
         private const int CollapsedRowCount = 4;
         private const float CardWidth = NarrativeGraphLayout.CardWidth;
+        private const string EventRowClass = "narrative-event-row";
 
         public NodeDataSO nodeData;
         private VisualElement _body;
@@ -51,6 +52,8 @@ namespace NarrativeFlow.Editor
 
             expanded = true;
             RefreshExpandedState();
+
+            RegisterCallback<MouseDownEvent>(OnCardMouseDown);
         }
 
         private NarrativeGraphView GraphView => GetFirstAncestorOfType<NarrativeGraphView>();
@@ -173,6 +176,7 @@ namespace NarrativeFlow.Editor
             bool selected = index == SelectedEventIndex;
 
             var card = new VisualElement();
+            card.AddToClassList(EventRowClass);
             card.style.borderTopWidth = card.style.borderBottomWidth = card.style.borderLeftWidth = card.style.borderRightWidth = 1;
             Color border = selected ? new Color(0.35f, 0.65f, 1f) : new Color(0.25f, 0.25f, 0.25f);
             card.style.borderTopColor = card.style.borderBottomColor = card.style.borderLeftColor = card.style.borderRightColor = border;
@@ -214,6 +218,17 @@ namespace NarrativeFlow.Editor
                 evt.menu.AppendAction("위에 대사 추가", _ => InsertAt(ep, index, EpisodeEventType.Dialogue));
                 evt.menu.AppendAction("아래에 선택지 추가", _ => InsertAt(ep, index + 1, EpisodeEventType.Choice));
                 evt.menu.AppendAction("아래에 제조 추가", _ => InsertAt(ep, index + 1, EpisodeEventType.BusinessStart));
+                evt.menu.AppendSeparator();
+                // 줄 복사는 다른 블록·다른 그래프로도 붙여넣을 수 있게 OS 클립보드에 담는다(NarrativeGraphClipboard).
+                var pasteStatus = NarrativeGraphClipboard.HasEvents(NarrativeGraphClipboard.Buffer)
+                    ? DropdownMenuAction.Status.Normal : DropdownMenuAction.Status.Disabled;
+                evt.menu.AppendAction("줄 복사", _ => NarrativeGraphClipboard.Buffer = NarrativeGraphClipboard.SerializeEvents(new[] { ev }));
+                evt.menu.AppendAction("줄 복제", _ => InsertEvents(index + 1,
+                    NarrativeGraphClipboard.DeserializeEvents(NarrativeGraphClipboard.SerializeEvents(new[] { ev }))));
+                evt.menu.AppendAction("위에 줄 붙여넣기", _ => InsertEvents(index, NarrativeGraphClipboard.DeserializeEvents(NarrativeGraphClipboard.Buffer)), pasteStatus);
+                evt.menu.AppendAction("아래에 줄 붙여넣기", _ => InsertEvents(index + 1, NarrativeGraphClipboard.DeserializeEvents(NarrativeGraphClipboard.Buffer)), pasteStatus);
+                evt.menu.AppendAction("대사 텍스트만 복사", _ => NarrativeGraphClipboard.Buffer = ev.Text,
+                    string.IsNullOrEmpty(ev.Text) ? DropdownMenuAction.Status.Disabled : DropdownMenuAction.Status.Normal);
                 evt.menu.AppendSeparator();
                 evt.menu.AppendAction("이 줄부터 새 블록으로 나누기", _ => GraphView?.SplitBlock(this, index),
                     NarrativeBlockEditing.CanSplit(ep, index) ? DropdownMenuAction.Status.Normal : DropdownMenuAction.Status.Disabled);
@@ -371,6 +386,40 @@ namespace NarrativeFlow.Editor
             NarrativeBlockEditing.InsertEvent(ep, index, type);
             if (index > CollapsedRowCount - 1) ep.ShowAllEvents = true;
             AfterStructureChange(Mathf.Clamp(index, 0, ep.Events.Count - 1));
+        }
+
+        // 복사해 둔 줄(새 Guid로 준비된 이벤트)을 index에 끼워 넣고, 붙여넣은 마지막 줄을 선택한다.
+        public void InsertEvents(int index, IReadOnlyList<EpisodeEvent> events)
+        {
+            if (!(nodeData is EpisodeNodeSO ep) || events == null || events.Count == 0) return;
+            index = Mathf.Clamp(index, 0, ep.Events.Count);
+            if (!NarrativeBlockEditing.InsertEvents(ep, index, events)) return;
+            int last = index + events.Count - 1;
+            if (last > CollapsedRowCount - 1) ep.ShowAllEvents = true;
+            AfterStructureChange(last);
+        }
+
+        public void RemoveSelectedEvent()
+        {
+            if (!(nodeData is EpisodeNodeSO ep) || SelectedEvent == null) return;
+            int index = SelectedEventIndex;
+            NarrativeBlockEditing.RemoveEvent(ep, index);
+            // 연달아 지울 수 있도록 다음 줄(없으면 이전 줄)로 선택을 옮긴다.
+            AfterStructureChange(ep.Events.Count == 0 ? -1 : Mathf.Min(index, ep.Events.Count - 1));
+        }
+
+        // 카드의 줄 바깥(제목·빈 곳)을 클릭하면 줄 선택을 푼다 — 그래야 Ctrl+C/V/D가 다시 노드 단위로 동작한다.
+        // 버튼(+ 대사 등)과 포트는 제외한다: 버튼은 선택한 줄 기준으로 동작하므로 클릭 직전에 선택을 지우면 안 된다.
+        private void OnCardMouseDown(MouseDownEvent e)
+        {
+            if (e.button != 0 || SelectedEventIndex < 0 || _inlineEditing) return;
+            for (var el = e.target as VisualElement; el != null && el != this; el = el.parent)
+            {
+                if (el is Button || el is Port || el.ClassListContains(EventRowClass)) return;
+            }
+            SelectedEventIndex = -1;
+            RefreshVisuals();
+            GraphView?.window?.OnNodeSelectionChanged(this);
         }
 
         private void Apply(EpisodeNodeSO ep, System.Func<bool> action, int newSelection)

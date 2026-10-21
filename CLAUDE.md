@@ -57,7 +57,7 @@
 | [docs/narrative/episode-engine.md](docs/narrative/episode-engine.md) | 에피소드 오케스트레이션(EpisodeRunner, 분기, 제조 판정 연동, 정산 커스텀 보상), 오디오/BGM/SFX |
 | [docs/narrative/episode-csv-guide.md](docs/narrative/episode-csv-guide.md) | 에피소드 CSV 작성법 (섹션 구조, 열 설명, 예시) |
 | [docs/narrative/narrative-graph-editor.md](docs/narrative/narrative-graph-editor.md) | 그래프 에디터 아키텍처(CSV 병행 사용·원본 CSV 동기화·왕복 검증), 블록 모델·분기 라벨 문법, 컴파일/임포트 |
-| [docs/narrative/narrative-graph-guide.md](docs/narrative/narrative-graph-guide.md) | 그래프 에디터 사용 가이드 (블록 카드에서 대사·표정 편집, 블록 나누기/합치기, 연결, 컴파일·CSV 동기화) |
+| [docs/narrative/narrative-graph-guide.md](docs/narrative/narrative-graph-guide.md) | 그래프 에디터 사용 가이드 (템플릿으로 노드 생성, 노드·대사 줄 복사/붙여넣기, 블록 카드에서 대사·표정 편집, 블록 나누기/합치기, 연결, 컴파일·CSV 동기화) |
 | **ui** |||
 | [docs/ui/restscene-systems.md](docs/ui/restscene-systems.md) | RestScene UI 시스템 (상점, 현황판, 툴팁) |
 | [docs/ui/recipe-book-search.md](docs/ui/recipe-book-search.md) | 도감 검색·상세 UI(RecipeSearchUI, 맛/분위기 태그 팔레트, 레시피 상세, 재료 카테고리 색상), 화면 전환 흐름 |
