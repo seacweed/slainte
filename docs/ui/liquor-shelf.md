@@ -118,7 +118,7 @@ LiquorShelfPanel  [LiquorShelfUI]  ← shelfPanelRect (우측 슬라이드 대�
 - 계산 예: `bottleCount=6, unitVolume=700`인 술이 2410ml 남으면 `fullCount=3`(2100ml, `GetSprite(1f)`), 나머지 310ml인 in-use 1칸(`GetSprite(310/700)`), empty 2칸(`GetSprite(0f)`), 텍스트 `"310/700ml"`
 - **마지막 병이 정확히 꽉 찬 경우도 표시됨**: 텍스트 표시 여부(`showAmount`)는 아이콘 렌더링용 in-use 판정(`remainder > 0f && fullCount < bottleCount`)과 별개 조건(`clampedAmount > 0f`)을 쓴다 — 아이콘 판정만 재사용하면 `remainder == 0`(마지막 병까지 정확히 꽉 참)일 때 "사용 중인 병 없음"으로 오판해 텍스트 전체가 숨겨지는 버그가 있었음. 텍스트에 표시할 값도 `remainder > 0 ? remainder : unitVolume`으로 계산해, 꽉 찬 경우 `"700/700ml"`처럼 뜬다(재고가 0일 때만 텍스트 자체가 숨겨짐)
 - **아이콘 레이아웃**: `stateImages` 10칸 = 1번째 줄(고정 5개) + `secondRowContainer`(2번째 줄, `bottleCount > 5`일 때만 `SetActive(true)`). 개별 아이콘 활성화는 기존처럼 `i < bottleCount` 기준, 2번째 줄 컨테이너는 `VerticalLayoutGroup` + `ContentSizeFitter`(Vertical Fit = Preferred Size)로 감싸서 꺼졌을 때 카드 높이가 자동으로 줄어들게 함
-- 위치 계산은 `TooltipManager.UpdatePosition()`(화면 밖 벗어나면 좌우 자동 전환)의 구조를 참고해 새로 작성 — world position 기반이라 부모가 어디든 계산엔 무관, 단 `Viewport`의 `Mask` 밖(= `LiquorShelfPanel` 직계 자식)에 둬야 렌더링이 잘리지 않음
+- 위치 계산은 공용 `GameAspect.PlaceBesideTarget()`(16:9 게임 영역 오른쪽 끝을 넘으면 좌우 자동 전환)을 호출 — world position 기반이라 부모가 어디든 계산엔 무관, 단 `Viewport`의 `Mask` 밖(= `LiquorShelfPanel` 직계 자식)에 둬야 렌더링이 잘리지 않음
 
 ## 상시 표시 잔여량 바
 

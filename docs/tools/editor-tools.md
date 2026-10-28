@@ -26,6 +26,7 @@ Unity 에디터에서 사용할 수 있는 커스텀 툴 목록입니다.
 | 캐릭터 표정 스프라이트 임포터 | `CharacterExpressionSpriteImporter.cs` | Slainte > 데이터 > 캐릭터 표정 스프라이트 폴더 임포트 |
 | 캐릭터 스프라이트 접두어 제거 | `CharacterSpritePrefixStripper.cs` | Slainte > 데이터 > 캐릭터 스프라이트 접두어 제거 |
 | 에피소드·일자 플레이테스트 런처 | `PlaytestLauncherWindow.cs` | Slainte > Playtest Launcher |
+| 16:9 레이아웃 변환 | `GameAreaLayoutMigrator.cs` | Slainte > 해상도 > 열린 씬 Canvas를 16:9 레이아웃으로 변환 (CanvasScaler Expand 통일 + 자식을 `GameArea16x9` 아래로 이동, [상세](../core/resolution-letterbox.md)) |
 
 ---
 
