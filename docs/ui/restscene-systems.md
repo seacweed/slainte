@@ -128,7 +128,7 @@ homePanel (재료/업그레이드/레시피북 3버튼)
 
 | 필드 | 설명 |
 |---|---|
-| `shopSprite` | `ItemSlotUI` 아이콘에 쓰는 상점 전용 스프라이트(`_blank` 변형). `shelfSprite`(술장, `_lid` 변형)와 별도 필드라 각각 채워야 함 |
+| `shopSprite` | `ItemSlotUI` 아이콘에 쓰는 상점 전용 스프라이트(`_blank` 변형). `shelfSprite`(술장, `_in` 변형)와 별도 필드라 각각 채워야 함 |
 | `category` | `LiquorCategoryDef` 참조. null이면 상점 어느 카테고리에도 노출되지 않음 |
 | `price` | 1병(`unitVolume`) 구매 가격(원화) |
 | `strangeCoinPrice` | 1병(`unitVolume`) 구매 가격(이상한 동전) — 이상한 상점 전용, 비워두면 0이라 항상 구매 가능한 것으로 처리되니 주의 |

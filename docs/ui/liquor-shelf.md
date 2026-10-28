@@ -1,6 +1,6 @@
 # 술장 시스템 (LiquorShelf)
 
-> **영업 씬에서 임시 제외**: 영업 씬의 재료 선택은 [술 선택 공간(IngredientSelection)](ingredient-selection.md)으로 교체됐다. 이 문서의 `LiquorShelfUI`·정보카드·배송 코드는 삭제하지 않고 남겨 두었으니, 배송·잔여량 표시를 복원할 때 참고한다. 병 반환 판정은 `BottleReturnZones`로 옮겼고, `LiquorShelfUI`는 반환 영역으로 등록만 한다.
+> **영업 씬에서 임시 제외**: 영업 씬의 재료 선택은 [술 선택 공간(IngredientSelection)](ingredient-selection.md)으로 교체됐다. 이 문서의 `LiquorShelfUI`·정보카드·배송 패널 코드는 삭제하지 않고 남겨 두었다. 잔여량 표시와 배송은 술 선택 공간 슬롯의 호버·클릭으로 새로 구현됐다([ingredient-selection.md](ingredient-selection.md#잔량-표시와-배송)). 병 반환 판정은 `BottleReturnZones`로 옮겼고, `LiquorShelfUI`는 반환 영역으로 등록만 한다.
 
 ## 개요
 
@@ -23,7 +23,7 @@
 ## 데이터 구조
 
 **`LiquorBottleDef`** (`Assets > Create > Bartending > Liquor Bottle`)
-- `shelfSprite`: `LiquorBottleSlotUI`(술장 슬롯)에 표시되는 스프라이트, `_lid` 변형 이미지 사용
+- `shelfSprite`: `LiquorBottleSlotUI`(술장 슬롯)에 표시되는 스프라이트, `_in` 변형 이미지 사용(`shelfInSprite`)
 - `shopSprite`: `ItemSlotUI`(상점 슬롯)에 표시되는 스프라이트, `_blank` 변형 이미지 사용. `shelfSprite`와 별개 필드이므로 둘 다 채워야 함
 - 바테이블(제조 중 실제로 놓이는 병)에 뜨는 "기본" 이미지는 이 SO가 아니라 별도 `ItemDef.icon`(`Assets/_Project/Features/Bartending/Runtime/Interaction/ItemDef.cs`)에서 관리 — 세 화면(상점/술장/바테이블)이 각각 다른 스프라이트 소스를 참조하는 구조
 - `unlockFlagKey`: 비어있으면 항상 해금

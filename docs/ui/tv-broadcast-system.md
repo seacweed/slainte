@@ -24,7 +24,7 @@ TVBroadcastEntry
 
 | 값 | 효과 |
 |---|---|
-| `DisableDelivery` | 영업 중 술장의 배송(Delivery) 탭 이용 금지 |
+| `DisableDelivery` | 영업 중 술 선택 공간의 재고 0 재료 배송 금지 |
 | `DisableRestShop` | 휴식 화면 일반 상점 클릭 금지 |
 | `BoostOrderTagWeight` | `targetTag`를 가진 주문(또는 `minimumAbvPercent` 이상 도수의 주문)의 추첨 가중치를 `effectMultiplier`배로 |
 | `BoostTips` | 판매 팁 배율 `effectMultiplier`배 |
@@ -42,7 +42,7 @@ TVBroadcastEntry
 
 ## 게임플레이 연결점
 
-- **영업 배송 금지**: `BusinessFlowBootstrap`이 영업 시작 시 활성 방송이 `DisableDelivery`면 `LiquorShelfUI.SetDeliveryAvailable(false, reason)`을 호출 — 술장 배송 탭이 비활성화되고 사유가 로그로 남는다(자세한 배송 탭 동작은 [liquor-shelf.md](liquor-shelf.md#배송delivery-탭) 참고).
+- **영업 배송 금지**: `BusinessFlowBootstrap`이 영업 시작 시 해금 여부와 활성 방송(`DisableDelivery`)을 판정해 `IngredientSelectionUI.SetDeliveryAvailable(available, reason)`을 호출 — 막힌 날에는 재고 0 재료에 배송 가격 줄이 나오지 않고 클릭해도 배송되지 않는다(자세한 동작은 [ingredient-selection.md](ingredient-selection.md#잔량-표시와-배송)). 판정은 영업 시작 때 한 번만 하므로, 플레이 도중 해금 조건을 바꾸면 다음 영업부터 반영된다. 레거시 `LiquorShelfUI`에도 같은 값을 계속 전달한다.
 - **휴식 상점 금지**: 일반 상점 `ObjectInteraction`의 `disableWhenRestShopRestricted`를 켜두면 `IsRestShopDisabled()`로 클릭 자체를 막고 회색 오버레이로 표시(자세한 내용은 [restscene-systems.md](restscene-systems.md#objectinteraction--objectinteractionboard) 참고). TV/작전판 등 제한 대상이 아닌 오브젝트는 이 플래그를 꺼둔다.
 - **손님·주문 가중치**: `BusinessSequencePlanner`가 방문·주문 가중치를 계산할 때 `GetTaggedWeightMultiplier`/`GetOrderWeightMultiplier`를 곱해 반영한다.
 

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using Slainte.Economy;
 
 public enum IngredientUnlockHintType
@@ -23,8 +24,11 @@ public class LiquorBottleDef : ScriptableObject
     public bool     useContextImages;
     [Tooltip("Bottle image used in shops. Expected artwork suffix: _blank.")]
     public Sprite   shopBlankSprite;
-    [Tooltip("Capped bottle image used on the liquor shelf. Expected artwork suffix: _lid.")]
-    public Sprite   shelfLidSprite;
+    [Tooltip("Bottle image used on the liquor shelf while in stock. Expected artwork suffix: _in.")]
+    [FormerlySerializedAs("shelfLidSprite")]
+    public Sprite   shelfInSprite;
+    [Tooltip("Bottle image used on the liquor shelf while out of stock. Expected artwork suffix: _dis. Empty = shelfInSprite.")]
+    public Sprite   shelfDisabledSprite;
     [Tooltip("Uncapped bottle image used on the bar table. Expected artwork: base file name without a suffix.")]
     public Sprite   barSprite;
     [Tooltip("GameProgress flag key. Empty = always unlocked.")]
@@ -83,7 +87,8 @@ public class LiquorBottleDef : ScriptableObject
     }
     public bool HasContextVisuals => useContextImages
         || shopBlankSprite != null
-        || shelfLidSprite != null
+        || shelfInSprite != null
+        || shelfDisabledSprite != null
         || barSprite != null;
 
     public Sprite GetShopSprite()
@@ -93,7 +98,14 @@ public class LiquorBottleDef : ScriptableObject
 
     public Sprite GetShelfSprite()
     {
-        return HasContextVisuals ? shelfLidSprite : sprite;
+        return HasContextVisuals ? shelfInSprite : sprite;
+    }
+
+    // Returns null when no dedicated out-of-stock artwork exists, so callers can fall back to
+    // their own depleted presentation instead of showing the in-stock image unchanged.
+    public Sprite GetShelfDisabledSprite()
+    {
+        return HasContextVisuals ? shelfDisabledSprite : null;
     }
 
     public Sprite GetBarSprite(Sprite legacyItemIcon = null)

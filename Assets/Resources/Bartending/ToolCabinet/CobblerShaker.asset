@@ -29,12 +29,20 @@ MonoBehaviour:
   - {fileID: 21300000, guid: d08dc00d097166a46b27f481a8c9319d, type: 3}
   - {fileID: 21300000, guid: ce997135eb4e48d49a5b6ed6dc79b8a7, type: 3}
   - {fileID: 21300000, guid: 7d27db0f8bbe11f4791015dabc8b58b3, type: 3}
+  shelfInSprite: {fileID: 21300000, guid: d0c45a5a8d441f7469d0ba0868b2af56, type: 3}
+  shelfDisabledSprite: {fileID: 21300000, guid: c6ced9b15b8760e4e89ef08e87b3eae4, type: 3}
   stateSprites: []
   iceSprites: []
   worldPrefab: {fileID: 4054720568392477730, guid: 4fcdbed02cfffa24cbe7caa594c1b2ea, type: 3}
   primaryCapacityMl: 0
   secondaryCapacityMl: 0
   maxCount: 0
+  iceRefillPerSecond: 2
+  chargingShakeAmplitude: 0.055
+  chargingShakeFrequency: 18
+  icePourStartAngle: 90
+  icePourInterval: 0.18
+  icePourExitSpeed: 0.8
   worldScale: 0.7
   worldVisualOffset: {x: 0, y: 0.7}
   useDedicatedAnchor: 0

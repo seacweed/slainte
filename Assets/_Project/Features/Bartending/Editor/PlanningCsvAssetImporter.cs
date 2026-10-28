@@ -97,6 +97,19 @@ namespace Slainte.EditorTools
     {
         private static bool automaticImportAttempted;
 
+        // CSV에는 남기되 술장·상점에는 진열하지 않는 아이템. 제조용 ItemDef는 그대로 만들어 레시피 연결을
+        // 유지하고, 술장 정의·카탈로그 항목만 만들지 않는다. 다시 진열하려면 여기서 빼면 된다.
+        private static readonly HashSet<string> ShelfExcludedItemIds =
+            new(StringComparer.OrdinalIgnoreCase)
+            {
+                "item_1014" // Hot water: removed from the shelf by a planning change, kept for future use.
+            };
+
+        public static bool IsShelfExcluded(string itemId)
+        {
+            return !string.IsNullOrWhiteSpace(itemId) && ShelfExcludedItemIds.Contains(itemId);
+        }
+
         public const string ItemOutputFolder =
             ProjectResourcePaths.AssetRoot + ProjectResourcePaths.BartendingItems;
         public const string ShelfOutputFolder = BartendingAssetPaths.LiquorBottleRoot + "Planning";
@@ -196,6 +209,15 @@ namespace Slainte.EditorTools
                 string id = $"item_{firstItemNumber + offset}";
                 ItemDef item = AssetDatabase.LoadAssetAtPath<ItemDef>(
                     $"{ItemOutputFolder}/{id}.asset");
+                // 술장 제외 아이템은 술장 정의가 없는 게 정상이다. 여기서 빼지 않으면 리로드마다
+                // 깨진 상태로 오판해 CSV를 재임포트하고 제외한 항목을 되살린다.
+                if (IsShelfExcluded(id))
+                {
+                    if (item == null || !string.Equals(item.id, id, StringComparison.OrdinalIgnoreCase))
+                        return true;
+                    continue;
+                }
+
                 LiquorBottleDef bottle = AssetDatabase.LoadAssetAtPath<LiquorBottleDef>(
                     $"{ShelfOutputFolder}/{id}.asset");
 
@@ -336,8 +358,11 @@ namespace Slainte.EditorTools
             List<LiquorBottleDef> csvBottles = shopCatalog != null && shopCatalog.bottles != null
                 ? shopCatalog.bottles.Where(bottle => bottle is not GarnishDef).ToList()
                 : null;
-            Require(csvBottles != null && csvBottles.Count == 15,
-                $"술장/상점 카탈로그가 CSV 재료 15종과 연결되지 않았습니다: {csvBottles?.Count ?? 0}개");
+            int expectedShelfCount = 15 - ShelfExcludedItemIds.Count;
+            Require(csvBottles != null && csvBottles.Count == expectedShelfCount,
+                $"술장/상점 카탈로그가 CSV 재료 {expectedShelfCount}종과 연결되지 않았습니다: {csvBottles?.Count ?? 0}개");
+            Require(csvBottles.All(bottle => bottle == null || !IsShelfExcluded(bottle.id)),
+                "술장 제외 아이템이 술장/상점 카탈로그에 들어 있습니다.");
             foreach (LiquorBottleDef bottle in csvBottles)
             {
                 Require(bottle != null && bottle.item != null,
@@ -407,7 +432,7 @@ namespace Slainte.EditorTools
                 && Mathf.Approximately(tropical.MaxAmount, 6000f),
                 "열대 주스의 가격/이상한 동전 가격/기본 3병/최대 6병 연결이 잘못되었습니다.");
 
-            Debug.Log("[기획 CSV 에셋 검증] 통과: 재료·술장 15종, 기본·주문 가능 레시피 21종, 가격/재고/도수/얼음/Good/Mid/WrongMenu 판정");
+            Debug.Log($"[기획 CSV 에셋 검증] 통과: 재료 15종·술장 {15 - ShelfExcludedItemIds.Count}종, 기본·주문 가능 레시피 21종, 가격/재고/도수/얼음/Good/Mid/WrongMenu 판정");
         }
 
         public static PlanningCsvImportReport Import(
@@ -464,14 +489,23 @@ namespace Slainte.EditorTools
                     }
 
                     ItemDef item = UpsertItem(row, id, displayName, report);
+                    importedItems[id] = item;
+                    report.importedItems++;
+
+                    if (IsShelfExcluded(id))
+                    {
+                        // 술장 아트가 없을 수 있어 아이콘이 있을 때만 클릭 영역을 계산한다(매 임포트 경고 방지).
+                        if (item.icon != null)
+                            ApplySpriteColliderGeometry(item, item.icon, report);
+                        continue;
+                    }
+
                     LiquorBottleDef bottle = UpsertShelfDefinition(row, item, id, displayName, report);
                     ApplySpriteColliderGeometry(
                         item,
                         bottle.GetBarSprite(item.icon),
                         report);
-                    importedItems[id] = item;
                     importedBottles[id] = bottle;
-                    report.importedItems++;
                 }
 
                 LinkLegacyShelfDefinitions(importedItems, importedBottles);
@@ -645,7 +679,10 @@ namespace Slainte.EditorTools
             EnsureFolder(LegacyItemFolder);
             EnsureFolder(LegacyBottleFolder);
             ArchiveStaleFolder<ItemDef>(ItemOutputFolder, LegacyItemFolder, validIds, report);
-            ArchiveStaleFolder<LiquorBottleDef>(ShelfOutputFolder, LegacyBottleFolder, validIds, report);
+            // 술장 제외 아이템의 남은 술장 정의는 미사용으로 보고 보관 폴더로 옮긴다.
+            HashSet<string> validShelfIds = new(validIds, StringComparer.OrdinalIgnoreCase);
+            validShelfIds.ExceptWith(ShelfExcludedItemIds);
+            ArchiveStaleFolder<LiquorBottleDef>(ShelfOutputFolder, LegacyBottleFolder, validShelfIds, report);
         }
 
         private static void ArchiveStaleFolder<T>(
@@ -807,14 +844,25 @@ namespace Slainte.EditorTools
             string iconName = First(row, "IconName", "iconName");
             Sprite shelfSprite = preserveExistingContextVisuals
                 ? definition.GetShelfSprite()
-                : FindSprite(iconName + "_lid");
+                : FindSprite(iconName + "_in");
             if (shelfSprite == null)
                 shelfSprite = FindExistingSprite(
                     displayName,
                     id,
-                    d => d.shelfLidSprite != null ? d.shelfLidSprite : d.sprite);
+                    d => d.shelfInSprite != null ? d.shelfInSprite : d.sprite);
             if (shelfSprite != null)
-                definition.shelfLidSprite = shelfSprite;
+                definition.shelfInSprite = shelfSprite;
+
+            Sprite shelfDisabledSprite = preserveExistingContextVisuals
+                ? definition.GetShelfDisabledSprite()
+                : FindSprite(iconName + "_dis");
+            if (shelfDisabledSprite == null)
+                shelfDisabledSprite = FindExistingSprite(
+                    displayName,
+                    id,
+                    d => d.shelfDisabledSprite);
+            if (shelfDisabledSprite != null)
+                definition.shelfDisabledSprite = shelfDisabledSprite;
 
             Sprite shopSprite = preserveExistingContextVisuals
                 ? definition.GetShopSprite()
@@ -1610,7 +1658,8 @@ namespace Slainte.EditorTools
 
                 destination.useContextImages = source.useContextImages;
                 destination.shopBlankSprite = source.shopBlankSprite;
-                destination.shelfLidSprite = source.shelfLidSprite;
+                destination.shelfInSprite = source.shelfInSprite;
+                destination.shelfDisabledSprite = source.shelfDisabledSprite;
                 destination.barSprite = source.barSprite;
                 return;
             }

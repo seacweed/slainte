@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace Slainte.Bartending
 {
     // 술 선택 공간과 제작 공간 사이, 테이블(table_serve_2) 양옆 블록에 잔·도구를 진열하는 도구 공간.
-    // 왼쪽 줄에는 잔 4종, 오른쪽 줄에는 지거·셰이커·바스푼·얼음 버킷이 놓이며 A/D 대분류 전환과는
+    // 왼쪽 줄에는 잔 4종, 오른쪽 줄에는 지거·셰이커·바스푼이 놓이며 A/D 대분류 전환과는
     // 무관하게 항상 같은 자리에 있다. 도구는 정의당 월드 인스턴스가 하나뿐이므로 실제 보관·꺼내기·반납은
     // BusinessBartendingBootstrap의 캐비닛 슬롯 API에 위임하고, 여기서는 진열 표시와 입력 가드만 맡는다.
     // 들고 있는 도구로 진열 영역을 클릭하면 어느 쪽이든 그 도구의 자리로 반납된다.
@@ -21,8 +21,9 @@ namespace Slainte.Bartending
         {
             ToolKind.Jigger,
             ToolKind.CobblerShaker,
-            ToolKind.BarSpoon,
-            ToolKind.IceBucket
+            // 얼음 버킷은 기획 변경으로 진열에서 뺐다. 카탈로그·캐비닛 인스턴스와 얼음 판정은 새 얼음
+            // 기획이 정해질 때까지 그대로 둔다.
+            ToolKind.BarSpoon
         };
         private static readonly string[] GlassOrder =
         {
@@ -207,6 +208,8 @@ namespace Slainte.Bartending
                     glassCategoryLabel,
                     glassCategoryColor,
                     definition.GetCabinetLayers(),
+                    definition.shelfInSprite,
+                    definition.shelfDisabledSprite,
                     definition.worldScale,
                     false);
             }
@@ -226,6 +229,8 @@ namespace Slainte.Bartending
                     toolCategoryLabel,
                     toolCategoryColor,
                     definition.cabinetLayers ?? Array.Empty<Sprite>(),
+                    definition.shelfInSprite,
+                    definition.shelfDisabledSprite,
                     definition.worldScale,
                     definition.kind == ToolKind.BarSpoon);
             }
@@ -240,10 +245,13 @@ namespace Slainte.Bartending
             string categoryLabel,
             Color categoryColor,
             Sprite[] sprites,
+            Sprite shelfIn,
+            Sprite shelfDisabled,
             float worldScale,
             bool flipVertical)
         {
-            Vector2 iconSize = MeasureSprites(sprites) * Mathf.Max(0.05f, worldScale) * iconScale;
+            Vector2 measured = shelfIn != null ? shelfIn.rect.size : MeasureSprites(sprites);
+            Vector2 iconSize = measured * Mathf.Max(0.05f, worldScale) * iconScale;
             ToolSlotUI slot = Instantiate(slotPrefab, row);
             slot.name = "ToolSlot_" + definitionId;
             RectTransform slotRect = (RectTransform)slot.transform;
@@ -255,6 +263,8 @@ namespace Slainte.Bartending
                 categoryLabel,
                 categoryColor,
                 sprites,
+                shelfIn,
+                shelfDisabled,
                 iconSize,
                 flipVertical);
             slots[definitionId] = slot;

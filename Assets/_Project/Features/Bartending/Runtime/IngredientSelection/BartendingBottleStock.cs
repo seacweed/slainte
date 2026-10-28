@@ -182,6 +182,24 @@ namespace Slainte.Bartending
             garnishReleaseBuffer.Clear();
         }
 
+        // 배송으로 들어온 가득 찬 병 하나를 총량에 더한다. 꺼내 둔 병은 총량에 이미 포함돼 있으므로
+        // 최대 보유량(MaxAmount)으로만 막으면 술장과 제작대를 합친 양이 한도를 넘지 않는다.
+        public void AddDeliveredBottle(LiquorBottleDef definition)
+        {
+            if (definition == null)
+                return;
+
+            GameProgress progress = GameProgress.Instance;
+            if (progress == null)
+                return;
+
+            float total = GetTotalAmount(definition);
+            progress.SetBottleAmount(
+                definition.InventoryId,
+                Mathf.Min(definition.MaxAmount, total + Mathf.Max(0f, definition.unitVolume)));
+            StockChanged?.Invoke(definition.InventoryId);
+        }
+
         private float GetDeployedAmount(string inventoryId)
         {
             float amount = 0f;

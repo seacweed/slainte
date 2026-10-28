@@ -1104,6 +1104,11 @@ namespace Slainte.Bartending
             return bottleStock.GetShelfAmount(shelfDefinition);
         }
 
+        public void AddDeliveredBottle(LiquorBottleDef shelfDefinition)
+        {
+            bottleStock.AddDeliveredBottle(shelfDefinition);
+        }
+
         // 들고 있는 병·가니쉬를 술장에 반환한다. 총량은 실제로 쓴 양만큼만 이미 줄어 있으므로 등록만
         // 해제하면 남은 양이 술장 재고에 그대로 합쳐진다.
         public bool TryReturnHeldBottleToShelf(out string failure)

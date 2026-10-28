@@ -93,6 +93,8 @@ namespace Slainte.Editor
     {
         private const int ExpectedWidth = 310;
         private const int ExpectedHeight = 590;
+        // base, _blank, _in, _dis
+        private const int BottleVariantsPerName = 4;
 
         private static readonly string[] BottleTriplets =
         {
@@ -132,11 +134,14 @@ namespace Slainte.Editor
             "rock_front_white.png"
         };
 
+        private static int ExpectedTextureCount =>
+            BottleTriplets.Length * BottleVariantsPerName + GlassFiles.Length;
+
         [MenuItem("Tools/Slainte/Validate Bartending Art Contract")]
         public static void ValidateFromMenu()
         {
             ValidateAllOrThrow();
-            Debug.Log("[BartendingArt] 43 bottle and 16 layered-glass textures preserve the 310x590 source contract.");
+            Debug.Log($"[BartendingArt] {BottleTriplets.Length * BottleVariantsPerName} bottle and {GlassFiles.Length} layered-glass textures preserve the 310x590 source contract.");
         }
 
         public static void ValidateAllOrThrow()
@@ -153,13 +158,12 @@ namespace Slainte.Editor
                     BartendingArtImportPostprocessor.BottleRoot + name + "_blank.png",
                     failures);
                 validated += ValidateTexture(
-                    BartendingArtImportPostprocessor.BottleRoot + name + "_lid.png",
+                    BartendingArtImportPostprocessor.BottleRoot + name + "_in.png",
+                    failures);
+                validated += ValidateTexture(
+                    BartendingArtImportPostprocessor.BottleRoot + name + "_dis.png",
                     failures);
             }
-
-            validated += ValidateTexture(
-                BartendingArtImportPostprocessor.BottleRoot + "hotwater.png",
-                failures);
 
             foreach (string file in GlassFiles)
             {
@@ -168,8 +172,8 @@ namespace Slainte.Editor
                     failures);
             }
 
-            if (validated != 59)
-                failures.Add($"Expected 59 textures but validated {validated}.");
+            if (validated != ExpectedTextureCount)
+                failures.Add($"Expected {ExpectedTextureCount} textures but validated {validated}.");
 
             if (failures.Count > 0)
                 throw new InvalidOperationException(

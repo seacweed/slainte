@@ -5,9 +5,10 @@ using UnityEngine.UI;
 
 namespace Slainte.Bartending
 {
-    // 도구 공간의 잔·도구 하나. 호버·라벨·클릭 가드는 SelectionSlotUI가 맡고, 여기서는 여러 장으로
-    // 겹친 도구 이미지(셰이커 부품, 잔 앞뒤 등)를 표시한다. 도구는 정의당 월드 인스턴스가 하나뿐이라
-    // 꺼낸 동안에는 반투명으로 남겨 자리를 알려 주고, 보관 중에는 실제 상태(얼음 잔량 등)를 반영한다.
+    // 도구 공간의 잔·도구 하나. 호버·라벨·클릭 가드는 SelectionSlotUI가 맡고, 여기서는 진열 이미지를
+    // 표시한다. 진열 전용 단일 이미지(_in)가 있으면 술장처럼 한 장으로 그리고 꺼낸 동안 _dis로 바꾼다.
+    // 없으면 예전처럼 여러 장으로 겹친 레이어(셰이커 부품, 잔 앞뒤 등)를 그리고 꺼낸 동안 반투명으로 남기며,
+    // 보관 중에는 실제 상태(얼음 잔량 등)를 반영한다. 꺼낸 월드 도구는 어느 쪽이든 레이어 구조 그대로다.
     public sealed class ToolSlotUI : SelectionSlotUI
     {
         [Header("Icon")]
@@ -19,6 +20,8 @@ namespace Slainte.Bartending
         private readonly List<Image> layerImages = new List<Image>();
         private readonly List<Image> outlineImages = new List<Image>();
         private Sprite[] defaultSprites = Array.Empty<Sprite>();
+        private Sprite shelfDisabledSprite;
+        private bool singleImage;
         private RectTransform layerRoot;
         private RectTransform outlineRoot;
         private SlotController boundSlot;
@@ -42,13 +45,23 @@ namespace Slainte.Bartending
             string categoryLabel,
             Color categoryColor,
             Sprite[] sprites,
+            Sprite shelfIn,
+            Sprite shelfDisabled,
             Vector2 iconSize,
             bool flipVertical)
         {
             EnsureInitialized();
             BindOwner(owner);
             DefinitionId = definitionId ?? string.Empty;
-            defaultSprites = sprites != null ? (Sprite[])sprites.Clone() : Array.Empty<Sprite>();
+            // 단일 이미지는 "레이어 1장"으로 취급해 레이어 생성·윤곽선·라벨 배치 경로를 그대로 재사용한다.
+            singleImage = shelfIn != null;
+            shelfDisabledSprite = singleImage ? shelfDisabled : null;
+            defaultSprites = singleImage
+                ? new[] { shelfIn }
+                : sprites != null ? (Sprite[])sprites.Clone() : Array.Empty<Sprite>();
+            // 진열용 단일 아트는 진열 방향 그대로 그려져 있으므로 뒤집지 않는다.
+            if (singleImage)
+                flipVertical = false;
             SetLabels(displayName, categoryLabel, categoryColor);
 
             BuildLayers(iconSize, flipVertical);
@@ -85,8 +98,21 @@ namespace Slainte.Bartending
         public bool IsAvailable => boundSlot != null && boundSlot.IsOccupied;
 
         // 보관 중이면 도구가 알려 주는 현재 모습(얼음 버킷 잔량 등)을, 꺼낸 동안에는 기본 모습을 반투명으로 그린다.
+        // 단일 이미지는 보관 중 _in, 꺼낸 동안 _dis(없으면 _in 반투명)이며 레이어별 상태 제공자는 쓰지 않는다.
         public void RefreshFromSlot()
         {
+            if (singleImage)
+            {
+                bool swap = !IsAvailable && shelfDisabledSprite != null;
+                Sprite sprite = swap ? shelfDisabledSprite : defaultSprites[0];
+                float singleAlpha = IsAvailable || swap ? 1f : depletedAlpha;
+                for (int i = 0; i < layerImages.Count; i++)
+                    ApplyLayer(layerImages[i], sprite, singleAlpha);
+                for (int i = 0; i < outlineImages.Count; i++)
+                    ApplyLayer(outlineImages[i], sprite, singleAlpha);
+                return;
+            }
+
             IBartendingItem item = IsAvailable ? boundSlot.OccupiedItem : null;
             IBartendingCabinetVisualProvider provider = item as IBartendingCabinetVisualProvider;
             float alpha = IsAvailable ? 1f : depletedAlpha;

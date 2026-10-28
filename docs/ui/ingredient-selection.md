@@ -16,7 +16,7 @@
 
 도구 공간은 기존 W/S 도구장 서랍을 대체한다([아래](#도구-공간)). 서랍과 W/S 카메라 세로 이동은 제거됐다.
 
-해금되지 않은 재료, 잔여량 표시, 배송 버튼은 임시로 제외했다. 기존 `LiquorShelfUI`와 배송 코드는 삭제하지 않았으므로 복원할 때 참고한다([liquor-shelf.md](liquor-shelf.md)).
+해금되지 않은 재료는 임시로 제외했다. 잔량 표시와 배송은 슬롯 호버·클릭으로 다시 넣었다([아래](#잔량-표시와-배송)). 기존 `LiquorShelfUI`와 배송 패널 코드는 삭제하지 않았다([liquor-shelf.md](liquor-shelf.md)).
 
 ## 스크립트 구성
 
@@ -26,7 +26,9 @@
 |---|---|
 | `SelectionSlotUI` | 재료·도구 슬롯 공통 기반. 호버 시 위로 슬라이드, 윤곽선, 이름·분류 라벨, 놓기·반납에 소비된 누름 가드. 소유자 계약은 `ISelectionSlotOwner` |
 | `IngredientSelectionUI` | 대분류 줄 생성, A/D 슬라이드 전환, 제조 중 조작 가드, 병·가니쉬 반환 영역(`IBottleReturnZone`) |
-| `IngredientSlotUI` | 재료 하나의 아이콘·이름·소분류 표시, 재고 없음 반투명 |
+| `IngredientSlotUI` | 재료 하나의 아이콘·이름·소분류 표시, 재고 없음은 `_dis` 이미지(`shelfDisabledSprite`)로 교체(전용 이미지가 없으면 반투명), 호버 라벨에 잔량 아이콘 줄과 배송 가격 줄 |
+| `BottleDeliveryService` | 재고 0 재료의 배송 규칙: 가격 계산, 배송 가능 여부(해금·TV 제한), 결제(`IShopCurrency`), 정산 기록, 연출 중 중복 방지, 지급 |
+| `DeliveryRisePresenter` | 배송원(n8 `delivery`)이 바테이블 뒤에서 올라왔다 내려가는 연출. 끝나거나 중단되면 완료 콜백(지급)을 호출 |
 | `IngredientOutlineEffect` | 스프라이트 모양을 따르는 단색 윤곽선(기본 노란색 5px). 메시를 8방향으로 복사하고 전용 셰이더 `Slainte/UI/SpriteSolidOutline`(`Art/Shaders/UI/SpriteSolidOutline.shader`)이 복사본을 단색으로 칠함 |
 | `BartendingBottleStock` | 꺼낸 병·가니쉬와 `GameProgress` 재고를 잇는 재고 규칙(`BusinessBartendingBootstrap` 소유) |
 | `BottleReturnZones` | 병·가니쉬 반환 영역 등록소. 아이템 컨트롤러가 특정 UI 클래스를 모르도록 반환 판정을 분리하고, 같은 프레임 중복 반환을 막음 |
@@ -36,7 +38,7 @@
 | 스크립트 | 역할 |
 |---|---|
 | `ToolSelectionUI` | 도구 공간. 잔·도구 진열 줄 생성, 클릭 집기, 반납 영역(`IToolReturnZone`). 실제 보관·꺼내기·반납은 부트스트랩의 캐비닛 슬롯 API에 위임 |
-| `ToolSlotUI` | 잔·도구 하나. 여러 장의 레이어 이미지 표시, 꺼낸 동안 반투명, 보관 중에는 실제 상태(얼음 잔량 등) 반영 |
+| `ToolSlotUI` | 잔·도구 하나. 진열 전용 단일 이미지(`shelfInSprite`)가 있으면 한 장으로 그리고 꺼낸 동안 `_dis`로 교체. 없으면 여러 장의 레이어 이미지 표시, 꺼낸 동안 반투명, 보관 중에는 실제 상태(얼음 잔량 등) 반영 |
 | `ToolReturnZones` | 도구 반납 영역 등록소. 도구 컨트롤러(잔·비커·셰이커·바스푼·얼음 버킷)가 놓기 전에 먼저 확인 |
 
 가니쉬: `GarnishDef`(`Runtime/LiquorShelf/`)와 `GarnishController`(`Runtime/`). [가니쉬](#가니쉬) 참고.
@@ -55,12 +57,25 @@
   - 예: 300ml 병과 500ml 병을 반환하면 → 다음에 100ml 병, 그다음 700ml 병이 나온다.
 - 재고 변화는 `BusinessBartendingBootstrap.StockChanged(inventoryId)`로 알린다. UI는 해당 재료 슬롯만 갱신한다.
 
+## 잔량 표시와 배송
+
+- **잔량 표시**: 호버 라벨의 소분류 밑에 `stock_` 아이콘을 `bottleCount`칸 한 줄로 보여 준다. 기준은 술장 재고(제작대에 꺼낸 병 제외)다. 가득 찬 병 → 따 둔 병 1칸(남은 비율) → 빈 병 순이며, 아이콘은 `LiquorStockLevelPalette`(`Content/Generated/Inventory/LiquorStockLevel.asset`)가 고른다. 프리팹의 `StockIcon` 템플릿을 필요한 수만큼 한 번 복제해 재사용한다.
+- **배송 가격 줄**: 술장 재고가 0이고 배송이 가능하면 잔량 아이콘 밑에 `[화폐 아이콘] 가격` 줄이 나온다. 소지금이 모자라면 가격이 빨간색이다. 소지금은 변경 이벤트가 없어 호버 순간 슬롯이 최신 상태를 다시 받는다(`IIngredientSlotRefresher`).
+  - 배송 가격 = 상점 가격(`LiquorBottleDef.price`) × `LiquorShopCatalog.shelfDeliveryPriceMultiplier`(기본 10). 상점 가격이 0인 재료(가니쉬 등)는 배송 대상이 아니다.
+  - 배송 가능 = 해금(`BusinessOrderFlowSettings.IsDeliveryUnlocked`) && TV `DisableDelivery` 방송이 없는 날. `BusinessFlowBootstrap`이 영업 시작 때 `IngredientSelectionUI.SetDeliveryAvailable()`로 알려 주며, 그 전에는 막혀 있다.
+- **배송 주문**: 재고 0 슬롯을 클릭하면 즉시 결제하고 정산의 "배송 이용"에 기록한다(`RecordDeliveryPurchase`). 이어 `DeliveryRisePresenter`가 배송원을 바테이블 뒤에서 올렸다 내리고, 끝나는 순간 1병(`unitVolume`, `MaxAmount` 한도)을 총량에 더해(`AddDeliveredBottle`) 슬롯이 다시 활성화된다.
+  - 연출 중에는 다른 배송 클릭을 결제 전에 거절한다.
+  - 연출 도중 오브젝트가 꺼지면 코루틴 대신 `OnDisable`에서 바로 지급한다(결제만 되고 병이 안 들어오는 상황 방지).
+  - 돈이 모자라거나 배송이 막혀 있으면 아무 일도 일어나지 않는다.
+- **클리핑**: 호버 라벨(이름·소분류·잔량·가격, 약 223px)이 위로 올라오면 `RowViewport` 위쪽 경계를 넘으므로, BusinessScene `RowViewport`의 `RectMask2D.padding.w`를 −150으로 두어 클리핑 범위만 위로 넓혔다(슬롯 배치는 그대로). 라벨 줄을 더 늘리면 이 값도 함께 키운다.
+- **연출 배치**: BusinessScene `FrontCameraRig/DeliveryRise`. `CharactersBackContainer` 바로 다음, `TableBackground`보다 앞 형제 순서여야 테이블 뒤에서 솟아오른다. 씬에 놓인 위치가 올라온 위치이고 `riseDistance`(900)만큼 아래가 숨은 위치다. 오브젝트는 항상 켜 두고 `Image.enabled`만 토글한다.
+
 ## 가니쉬
 
 - `GarnishDef : LiquorBottleDef`. 상속 구조라 상점·술 선택 공간·`GameProgress` 재고가 병과 같은 경로로 동작한다.
   - 재고 단위는 **개수**다. `unitVolume = 1`이므로 가격·기본 소지 개수가 그대로 개당 값이 된다.
   - `item`(ItemDef)은 비워 둔다. 재고 ID는 `id`(예: `garni_1001`)를 그대로 쓴다.
-  - 진열·상점 이미지 = `_bottle`(`shelfLidSprite`/`shopBlankSprite`), 꺼냈을 때 = `_garni`(`garnishSprite`).
+  - 진열·상점 이미지 = `_bottle`(`shelfInSprite`/`shopBlankSprite`), 꺼냈을 때 = `_garni`(`garnishSprite`).
 - 에셋 위치: `Features/Bartending/Content/Garnishes/` (`garnish.asset` 카테고리, `garni_1001` 나낭나 필, `garni_1002` 합성 레몬 필).
   - **CSV 임포터가 관리하지 않는다.** 임포트 폴더(`Generated/`) 밖에 두어 보관 처리되지 않게 했다. `PlanningCsvAssetImporter`는 카탈로그를 재구성할 때 `GarnishDef` 항목을 CSV 재료 뒤에 그대로 보존하고, 카탈로그 일치 검사·에셋 검증에서도 제외한다.
   - 새 가니쉬는 SO를 직접 만들어 `Liquor Bottle Catalog`와 `LiquorShopCatalog.bottles`에 추가한다.
@@ -86,11 +101,16 @@
 
 ## 도구 공간
 
-- `table_serve_2`(2560×1440, 양쪽 아래 블록만 불투명)를 배경으로 쓴다. 왼쪽 블록에 잔 4종(락·마티니·하이볼·허리케인), 오른쪽 블록에 지거·셰이커·바스푼·얼음 버킷.
+- `table_serve_2`(2560×1440, 양쪽 아래 블록만 불투명)를 배경으로 쓴다. 왼쪽 블록에 잔 4종(락·마티니·하이볼·허리케인), 오른쪽 블록에 지거·셰이커·바스푼.
+- **얼음 버킷은 기획 변경으로 진열에서 뺐다**(`ToolSelectionUI.ToolOrder`). 카탈로그·캐비닛 인스턴스와 얼음 판정(`iceRequirement`)은 새 얼음 기획이 정해질 때까지 그대로 둔다 — 얼음 필수 레시피는 지금 진열대에서 얼음을 얻을 수 없다.
 - A/D와 무관하게 항상 같은 자리에 있다.
-- 도구는 **정의당 월드 인스턴스 1개**다(기존 도구장과 같은 정책). 세션 시작 시 `PrepareCabinetInventory`가 인스턴스를 숨겨진 캐비닛 슬롯에 넣고, 클릭하면 같은 인스턴스를 꺼낸다. 꺼낸 동안 진열 아이콘은 반투명으로 남는다.
+- 도구는 **정의당 월드 인스턴스 1개**다(기존 도구장과 같은 정책). 세션 시작 시 `PrepareCabinetInventory`가 인스턴스를 숨겨진 캐비닛 슬롯에 넣고, 클릭하면 같은 인스턴스를 꺼낸다.
+- **진열 이미지**: 술장처럼 단일 이미지 한 장이다. 보관 중 `_in`(`GlassDef`/`ToolDef.shelfInSprite`), 꺼낸 동안 `_dis`(`shelfDisabledSprite`). 꺼낸 월드 도구와 제작대 위 모습은 기존 레이어 구조(`worldLayers`)를 그대로 쓴다.
+  - 아트: 잔 `Art/Glasses/{rock|cocktail|highball|hurricane}_in/_dis.png`, 도구 `Art/ToolCabinet/Tools/{cobbler|jigger|barspoon}_in/_dis.png`(310×590). 메뉴 `Tools/Slainte/Tool Cabinet/Apply Shelf Sprites`가 이 두 필드만 연결한다(`Install Or Repair`도 마지막에 같은 연결을 수행).
+  - `shelfInSprite`가 비어 있는 정의는 예전처럼 `cabinetLayers`를 겹쳐 그리고 꺼낸 동안 반투명으로 남긴다.
+  - 단일 이미지는 진열 방향 그대로 그려져 있으므로 바스푼도 뒤집지 않는다(레이어 폴백일 때만 뒤집음).
 - **아이콘 크기** = 스프라이트 원본 픽셀 × 정의의 `worldScale` × `iconScale`. 월드 도구가 `BartendingNativeSpriteSizer`로 같은 식으로 맞춰지므로, 세션이 없어도 제작 테이블 위 크기와 같은 비율로 진열된다. 현재 아트는 모두 310×590 프레임이라 `iconScale` 1이면 칸 하나가 217×413이다. 블록 폭에 맞게 `iconScale`·`slotSpacing`(음수 가능)으로 조정한다.
-- **윤곽선**: 레이어마다 윤곽선을 그리면 레이어 경계가 안쪽에 선으로 남는다. 그래서 윤곽선용 복제본을 실제 레이어 전체보다 뒤(`OutlineLayers`)에 깔아 바깥 실루엣만 보이게 한다.
+- **윤곽선**: 단일 이미지도 "레이어 1장"으로 같은 경로를 탄다. 레이어마다 윤곽선을 그리면 레이어 경계가 안쪽에 선으로 남는다. 그래서 윤곽선용 복제본을 실제 레이어 전체보다 뒤(`OutlineLayers`)에 깔아 바깥 실루엣만 보이게 한다.
 - 아이콘은 아래 가운데 기준으로 서 있으므로 밑부분이 제작 테이블(`CraftingSpace` 배경)에 가려진다.
 - **호버 라벨 위치**: 프리팹에 배치한 위치가 아니라 런타임에 아이콘 프레임 윗변 + `labelGap`(기본 12)으로 덮어쓴다. 아트가 모두 같은 310×590 프레임이라 모든 잔·도구의 라벨이 같은 높이에 뜬다(그려진 부분의 실제 윗변은 쓰지 않음 — 의도된 동작).
 - 씬에 `ToolSelectionUI`가 없거나 `useToolCabinet`이 꺼져 있으면 고정 도구를 테이블에 바로 놓는 기존 방식으로 폴백한다.
@@ -149,4 +169,4 @@
   - 제조 종료 시 자동 반환
   - 병 콜라이더 기하
 - 메뉴 `Slainte/품질 검증/기획 CSV 에셋 검증`은 가니쉬를 제외한 CSV 재료 15종만 검증한다.
-- 배송이 임시로 빠져 있어 `DeliverySystemValidator`는 현재 실패한다.
+- `DeliverySystemValidator`는 기존 배송 패널 기준(카탈로그 15종)이라 현재 실패한다.

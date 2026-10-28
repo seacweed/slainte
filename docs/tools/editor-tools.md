@@ -17,6 +17,9 @@ Unity 에디터에서 사용할 수 있는 커스텀 툴 목록입니다.
 | 기획 CSV 에셋 임포터 | `PlanningCsvAssetImporter.cs` | Slainte > 데이터 > 기획 CSV 임포트 |
 | 기준 기획 CSV 즉시 임포트 | `PlanningCsvAssetImporter.cs` | Slainte > 데이터 > 기준 CSV 바로 임포트 |
 | 기획 CSV 자동 검증 | `PlanningCsvAssetImporter.cs` | Slainte > 품질 검증 > 기획 CSV 에셋 검증 |
+| 바텐딩 병 아트 연결 | `BartendingBottleArtSetup.cs` | Tools > Slainte > Apply Bartending Bottle Art (상점 `_blank`·술장 `_in`/`_dis`·바테이블 기본 이미지) |
+| 바텐딩 아트 규격 검증 | `BartendingArtImportPostprocessor.cs` | Tools > Slainte > Validate Bartending Art Contract (병 14종×4 + 잔 레이어 16 = 72장, 310×590) |
+| 도구장 진열 이미지 연결 | `ToolCabinetAssetInstaller.cs` | Tools > Slainte > Tool Cabinet > Apply Shelf Sprites (잔·도구 `_in`/`_dis` 두 필드만 연결) |
 | 코블러 셰이커 설정 | `CobblerShakerSetup.cs` | Slainte > Business > 코블러 셰이커 설정 적용 |
 | 손님 풀 샘플 설정 | `CustomerPoolSetup.cs` | Slainte > Business > 손님 풀 샘플 설정 적용 |
 | 손님 풀 자동 검증 | `CustomerPoolSetup.cs` | Slainte > 품질 검증 > 손님 풀 검증 |

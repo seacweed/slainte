@@ -18,7 +18,8 @@ MonoBehaviour:
   sprite: {fileID: -6828235300387644391, guid: 91e6f03485dc77849adfd4ec5ea08650, type: 3}
   useContextImages: 1
   shopBlankSprite: {fileID: 21300000, guid: ba470000000000000000000000000005, type: 3}
-  shelfLidSprite: {fileID: 21300000, guid: ba470000000000000000000000000006, type: 3}
+  shelfInSprite: {fileID: 21300000, guid: 44be57ad406440847aa6177d0a5eb0e8, type: 3}
+  shelfDisabledSprite: {fileID: 21300000, guid: bc7b70487db859a47956622f53108b85, type: 3}
   barSprite: {fileID: 21300000, guid: ba470000000000000000000000000004, type: 3}
   unlockFlagKey: 
   subCategory: "\uBCA0\uB974\uBB47"

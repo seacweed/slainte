@@ -26,6 +26,8 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 3922e9f24fb94827853b09f24bb0edee, type: 3}
   - {fileID: 21300000, guid: 41730ae0ea05458fb02c3338ae9bb13b, type: 3}
   - {fileID: 21300000, guid: 2c7288c91ec547789bbd75d6db8c50df, type: 3}
+  shelfInSprite: {fileID: 21300000, guid: 9ab69f3f78f0ac6489c451668db0229b, type: 3}
+  shelfDisabledSprite: {fileID: 21300000, guid: c666d6fcf4f77584aba02886cd96aec4, type: 3}
   collisionReferenceSprite: {fileID: 21300000, guid: 2c7288c91ec547789bbd75d6db8c50df, type: 3}
   worldPrefab: {fileID: 2243653413097636618, guid: 0f545fa15c57b314184f5dc08a58782b, type: 3}
   glassId: highball

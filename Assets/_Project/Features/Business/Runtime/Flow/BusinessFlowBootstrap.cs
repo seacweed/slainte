@@ -24,6 +24,7 @@ namespace Slainte.Business
         private EpisodeRunner episodeRunner;
         private GameModeManager modeManager;
         private LiquorShelfUI liquorShelf;
+        private IngredientSelectionUI ingredientSelection;
         private TVBroadcastDatabase tvBroadcastDatabase;
         private bool runtimeInitialized;
         private bool businessStartRequested;
@@ -119,6 +120,7 @@ namespace Slainte.Business
 
             modeManager = FindInScene<GameModeManager>(scene);
             liquorShelf = FindInScene<LiquorShelfUI>(scene);
+            ingredientSelection = FindInScene<IngredientSelectionUI>(scene);
             liquorShelf?.SetDeliveryUnlocked(
                 settings.IsDeliveryUnlocked(GameProgress.Instance));
             tvBroadcastDatabase = TVBroadcastDatabase.LoadDefault();
@@ -244,11 +246,12 @@ namespace Slainte.Business
                 : null;
             bool deliveryDisabled = active != null
                 && active.effectType == TVBroadcastEffectType.DisableDelivery;
-            liquorShelf?.SetDeliveryAvailable(
-                deliveryUnlocked && !deliveryDisabled,
-                !deliveryUnlocked
-                    ? "물류 특급 에피소드 완료 후 배송이 해금됩니다."
-                    : deliveryDisabled ? active.restrictionReason : string.Empty);
+            bool deliveryAvailable = deliveryUnlocked && !deliveryDisabled;
+            string deliveryReason = !deliveryUnlocked
+                ? "물류 특급 에피소드 완료 후 배송이 해금됩니다."
+                : deliveryDisabled ? active.restrictionReason : string.Empty;
+            liquorShelf?.SetDeliveryAvailable(deliveryAvailable, deliveryReason);
+            ingredientSelection?.SetDeliveryAvailable(deliveryAvailable, deliveryReason);
             if (active != null)
                 DataManager.Instance?.Save();
         }

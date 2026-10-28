@@ -60,7 +60,7 @@ namespace Slainte.Editor
         public static void ApplyFromMenu()
         {
             ApplyAndValidate();
-            Debug.Log("[BartendingArt] Applied shop=blank, shelf=lid, bar=base mappings without filling documented gaps.");
+            Debug.Log("[BartendingArt] Applied shop=blank, shelf=in/dis, bar=base mappings without filling documented gaps.");
         }
 
         public static void RunCommandLineValidation()
@@ -96,12 +96,15 @@ namespace Slainte.Editor
 
             foreach (string id in IntentionalDataOnlyIds)
             {
-                Require(definitions.TryGetValue(id, out LiquorBottleDef definition),
-                    "Documented data-only LiquorBottleDef is missing: " + id + ".");
+                // Data-only entries may be removed from the planning data entirely; only keep
+                // their images empty while they still exist.
+                if (!definitions.TryGetValue(id, out LiquorBottleDef definition))
+                    continue;
 
                 definition.useContextImages = true;
                 definition.shopBlankSprite = null;
-                definition.shelfLidSprite = null;
+                definition.shelfInSprite = null;
+                definition.shelfDisabledSprite = null;
                 definition.barSprite = null;
                 EditorUtility.SetDirty(definition);
             }
@@ -123,15 +126,14 @@ namespace Slainte.Editor
             {
                 ExpectedSprites sprites = new ExpectedSprites(
                     LoadSprite(mapping.ArtName + "_blank.png"),
-                    LoadSprite(mapping.ArtName + "_lid.png"),
+                    LoadSprite(mapping.ArtName + "_in.png"),
+                    LoadSprite(mapping.ArtName + "_dis.png"),
                     LoadSprite(mapping.ArtName + ".png"));
 
                 foreach (string id in mapping.LiquorIds)
                     result.Add(id, sprites);
             }
 
-            Sprite hotWater = LoadSprite("hotwater.png");
-            result.Add("item_1014", new ExpectedSprites(hotWater, hotWater, hotWater));
             return result;
         }
 
@@ -159,7 +161,8 @@ namespace Slainte.Editor
         {
             definition.useContextImages = true;
             definition.shopBlankSprite = sprites.Shop;
-            definition.shelfLidSprite = sprites.Shelf;
+            definition.shelfInSprite = sprites.Shelf;
+            definition.shelfDisabledSprite = sprites.ShelfDisabled;
             definition.barSprite = sprites.Bar;
             EditorUtility.SetDirty(definition);
         }
@@ -193,17 +196,22 @@ namespace Slainte.Editor
                 Require(definition.GetShopSprite() == pair.Value.Shop,
                     pair.Key + " does not use the blank image in the shop.");
                 Require(definition.GetShelfSprite() == pair.Value.Shelf,
-                    pair.Key + " does not use the lid image on the shelf.");
+                    pair.Key + " does not use the in image on the shelf.");
+                Require(definition.GetShelfDisabledSprite() == pair.Value.ShelfDisabled,
+                    pair.Key + " does not use the dis image for the out-of-stock shelf.");
                 Require(definition.GetBarSprite() == pair.Value.Bar,
                     pair.Key + " does not use the uncapped base image on the bar.");
             }
 
             foreach (string id in IntentionalDataOnlyIds)
             {
-                LiquorBottleDef definition = definitions[id];
+                if (!definitions.TryGetValue(id, out LiquorBottleDef definition))
+                    continue;
+
                 Require(definition.useContextImages
                     && definition.GetShopSprite() == null
                     && definition.GetShelfSprite() == null
+                    && definition.GetShelfDisabledSprite() == null
                     && definition.GetBarSprite() == null,
                     id + " must retain intentionally empty context-image fields.");
             }
@@ -225,15 +233,17 @@ namespace Slainte.Editor
 
         private readonly struct ExpectedSprites
         {
-            public ExpectedSprites(Sprite shop, Sprite shelf, Sprite bar)
+            public ExpectedSprites(Sprite shop, Sprite shelf, Sprite shelfDisabled, Sprite bar)
             {
                 Shop = shop;
                 Shelf = shelf;
+                ShelfDisabled = shelfDisabled;
                 Bar = bar;
             }
 
             public Sprite Shop { get; }
             public Sprite Shelf { get; }
+            public Sprite ShelfDisabled { get; }
             public Sprite Bar { get; }
         }
     }

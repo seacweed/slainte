@@ -8,9 +8,13 @@ namespace Slainte.Bartending
 {
     // 바 테이블과 도구 공간 사이에 놓이는 술 선택 공간. 대분류별 재료 줄을 A/D로 슬라이드 전환한다.
     // 항상 보이지만 제조 중에만 조작을 받고, 제조를 빠져나가도 현재 대분류를 유지해 다음 제조를
-    // 같은 줄에서 시작한다. 재고 판단은 BusinessBartendingBootstrap의 재고 모델에 위임하고,
-    // 여기서는 표시와 입력 가드만 맡는다. 들고 있는 병·가니쉬를 이 영역에 놓으면 반환으로 처리된다.
-    public sealed class IngredientSelectionUI : MonoBehaviour, IBottleReturnZone, ISelectionSlotOwner
+    // 같은 줄에서 시작한다. 재고 판단은 BusinessBartendingBootstrap의 재고 모델에, 배송 규칙은
+    // BottleDeliveryService에 위임하고, 여기서는 표시와 입력 가드만 맡는다. 재고가 없는 재료를 클릭하면
+    // 배송을 주문한다. 들고 있는 병·가니쉬를 이 영역에 놓으면 반환으로 처리된다.
+    public sealed class IngredientSelectionUI : MonoBehaviour,
+        IBottleReturnZone,
+        ISelectionSlotOwner,
+        IIngredientSlotRefresher
     {
         private sealed class CategoryRow
         {
@@ -34,6 +38,10 @@ namespace Slainte.Bartending
         [Header("Motion")]
         [SerializeField, Min(0.01f)] private float categorySlideDuration = 0.18f;
 
+        [Header("Delivery")]
+        [Tooltip("Rises from behind the bar table when an out-of-stock ingredient is delivered.")]
+        [SerializeField] private DeliveryRisePresenter deliveryPresenter;
+
         private readonly List<CategoryRow> rows = new List<CategoryRow>();
         private readonly Dictionary<string, List<IngredientSlotUI>> slotsByInventoryId =
             new Dictionary<string, List<IngredientSlotUI>>(StringComparer.OrdinalIgnoreCase);
@@ -47,6 +55,7 @@ namespace Slainte.Bartending
         private Coroutine categoryRoutine;
         private CategoryRow slidingOutRow;
         private CategoryRow slidingInRow;
+        private BottleDeliveryService delivery;
 
         public bool IsInteractable => craftingAvailable;
 
@@ -78,7 +87,20 @@ namespace Slainte.Bartending
                 return;
 
             initialized = true;
+            LiquorShopCatalog shopCatalog = LiquorShopCatalog.LoadDefault();
+            delivery = new BottleDeliveryService(
+                new MoneyShopCurrency(),
+                () => shopCatalog != null ? shopCatalog.shelfDeliveryPriceMultiplier : 10);
             RebuildRowsIfUnlockChanged();
+        }
+
+        // 해금 여부와 TV 방송 제한을 영업 흐름(BusinessFlowBootstrap)이 영업 시작 때 알려 준다.
+        // 알려 주기 전에는 배송을 막아 둔다 — 제한을 모른 채 배송이 열리는 것보다 안전하다.
+        public void SetDeliveryAvailable(bool available, string reason)
+        {
+            EnsureInitialized();
+            delivery.SetAvailable(available, reason);
+            RefreshAllAvailability();
         }
 
         // 표시는 항상 유지하고 조작 가능 여부만 바꾼다. 현재 대분류(currentRowIndex)는 건드리지 않아
@@ -147,11 +169,50 @@ namespace Slainte.Bartending
                 return;
             }
 
-            if (!bartending.TryTakeFromShelf(ingredient.Definition, screenPosition, out string failure)
+            string failure;
+            if (ingredient.IsDepleted)
+            {
+                // 돈이 모자라거나 배송이 막힌 경우도 여기서 걸러진다 — 아무 일도 일어나지 않는 게 정상이라
+                // 경고 대신 일반 로그로만 남긴다.
+                if (!delivery.TryOrder(ingredient.Definition, deliveryPresenter, HandleDelivered, out failure)
+                    && !string.IsNullOrWhiteSpace(failure))
+                {
+                    Debug.Log("[IngredientSelection] " + failure);
+                }
+                RefreshAvailability(ingredient);
+                return;
+            }
+
+            if (!bartending.TryTakeFromShelf(ingredient.Definition, screenPosition, out failure)
                 && !string.IsNullOrWhiteSpace(failure))
             {
                 Debug.LogWarning("[IngredientSelection] " + failure);
             }
+        }
+
+        public void RefreshSlot(IngredientSlotUI slot)
+        {
+            RefreshAvailability(slot);
+        }
+
+        // 연출이 끝난(또는 중단된) 순간 1병을 지급한다. StockChanged로 해당 슬롯이 다시 활성화된다.
+        private void HandleDelivered(LiquorBottleDef definition)
+        {
+            BusinessBartendingBootstrap session = ResolveBartending();
+            if (session != null)
+            {
+                session.AddDeliveredBottle(definition);
+                return;
+            }
+
+            GameProgress progress = GameProgress.Instance;
+            if (progress == null || definition == null)
+                return;
+            float total = progress.EnsureBottleAmount(definition.InventoryId, definition.DefaultAmount);
+            progress.SetBottleAmount(
+                definition.InventoryId,
+                Mathf.Min(definition.MaxAmount, total + definition.unitVolume));
+            RefreshAllAvailability();
         }
 
         public bool ContainsReturnPoint(Vector2 screenPosition)
@@ -455,7 +516,8 @@ namespace Slainte.Bartending
                     : definition.DefaultAmount;
             }
 
-            slot.SetAvailable(shelfAmount > 0.01f);
+            bool depleted = shelfAmount <= 0.01f;
+            slot.SetStock(shelfAmount, delivery.GetOffer(definition, depleted));
         }
 
         private void ClearHovers()
