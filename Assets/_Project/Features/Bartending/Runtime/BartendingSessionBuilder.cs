@@ -4,6 +4,7 @@ using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Slainte.Shared.Display;
 
 namespace Slainte.Bartending
 {
@@ -247,12 +248,8 @@ namespace Slainte.Bartending
 
         private Rect GetFixedServingTargetScreenRect()
         {
-            Vector4 normalized = settings.serveTargetNormalized;
-            Rect screenRect = new Rect(
-                Mathf.Clamp01(normalized.x) * Screen.width,
-                Mathf.Clamp01(normalized.y) * Screen.height,
-                Mathf.Clamp01(normalized.z) * Screen.width,
-                Mathf.Clamp01(normalized.w) * Screen.height);
+            // 정규화 좌표는 전체 화면이 아니라 16:9 게임 영역 기준이어야 레터박스가 생겨도 같은 자리를 가리킨다.
+            Rect screenRect = GameAspect.NormalizedToScreenRect(settings.serveTargetNormalized);
             return ExpandRect(screenRect, settings.serveTargetPaddingPixels);
         }
 
@@ -1547,14 +1544,10 @@ namespace Slainte.Bartending
             return hasBounds;
         }
 
+        // 레터박스 환경에서 루트 캔버스는 띠 영역까지 포함하므로, 실제로 보이는 16:9 게임 영역을 쓴다.
         private static RectTransform GetRootCanvasRect(RectTransform rectTransform)
         {
-            Canvas canvas = rectTransform != null
-                ? rectTransform.GetComponentInParent<Canvas>()
-                : null;
-            return canvas != null && canvas.rootCanvas != null
-                ? canvas.rootCanvas.transform as RectTransform
-                : null;
+            return GameAspect.FindGameAreaRect(rectTransform);
         }
 
         private static Rect GetScreenRect(RectTransform rectTransform)

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using Slainte.Shared.Display;
 
 namespace Slainte.Bartending
 {
@@ -65,6 +66,7 @@ namespace Slainte.Bartending
 
         private void OnEnable()
         {
+            GameAspect.ScreenSizeChanged += HandleScreenSizeChanged;
             if (Application.isPlaying && registerForInput)
                 Active = this;
             if (worldCamera != null)
@@ -77,6 +79,7 @@ namespace Slainte.Bartending
 
         private void OnDisable()
         {
+            GameAspect.ScreenSizeChanged -= HandleScreenSizeChanged;
             if (Active == this)
             {
                 Active = null;
@@ -529,6 +532,18 @@ namespace Slainte.Bartending
             if (!updatingViewportGeometry && isActiveAndEnabled && worldCamera != null)
             {
                 ApplyBottomExtension();
+                BuildTargetTexture();
+            }
+        }
+
+        // 16:9 고정 레이아웃에서는 해상도가 바뀌어도 뷰포트의 캔버스 단위 크기가 그대로라
+        // OnRectTransformDimensionsChange가 오지 않을 수 있다. 실제 픽셀 크기는 달라지므로
+        // 렌더텍스처를 그 해상도에 맞춰 다시 만들어 흐릿하거나 낭비되는 해상도를 피한다.
+        private void HandleScreenSizeChanged()
+        {
+            if (isActiveAndEnabled && worldCamera != null)
+            {
+                Canvas.ForceUpdateCanvases();
                 BuildTargetTexture();
             }
         }

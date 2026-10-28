@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Slainte.Shared.Display;
 
 // 앞 화면(FrontWorld)을 확대·이동해 대화 중인 캐릭터에 시선을 모으는 카메라 리그.
 // 상태는 "확대 여부 + 카메라 중심 X" 두 값뿐이다. 확대는 QHD 윗변을 고정한 채 아래쪽
@@ -166,7 +167,8 @@ public class FrontCameraRig : MonoBehaviour
 
     private float ResolveCanvasHalfWidth()
     {
-        RectTransform canvasRect = rootCanvas != null ? rootCanvas.transform as RectTransform : null;
+        // 포커스 중앙 정렬은 띠를 뺀 16:9 게임 영역 너비 기준이어야 한다(Expand 캔버스는 화면비에 따라 더 넓어짐).
+        RectTransform canvasRect = rootCanvas != null ? GameAspect.FindGameAreaRect(frontWorld) : null;
         if (canvasRect != null)
             return canvasRect.rect.width * 0.5f;
         return frontWorld != null ? frontWorld.rect.width * 0.5f : 0f;

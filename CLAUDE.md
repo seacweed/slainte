@@ -25,6 +25,7 @@
 - **싱글톤**: 전역 상태는 `MonoSingleton<T>`(DontDestroyOnLoad), 씬 종속 UI 매니저는 `SceneSingleton<T>`(씬 수명)로 구분. `DontDestroyOnLoad`는 루트 GameObject에서만 유효하므로 모든 `MonoSingleton`은 CoreScene의 단일 루트 오브젝트 `Managers`에 컴포넌트로 함께 부착(자식으로 분리 금지)
 - **런타임 상태 Source of Truth**: `GameProgress` 하나 — flags, 진행도, 재화, 재고 등 저장이 필요한 모든 상태가 여기로 모임
 - **Canvas**: ScreenSpace-Overlay, Canvas Scaler Reference Resolution **2560×1440 (QHD)**. 1 canvas unit = 1px at QHD
+- **해상도 대응 = 16:9 고정 + 레터박스**: CanvasScaler는 Expand, 실제 UI는 각 루트 Canvas 아래 `GameArea16x9`(`GameAreaRoot`) 안에 둔다. 화면 끝·보이는 영역 판정에 `Screen.width`나 루트 캔버스 크기를 쓰지 말고 `GameAspect`를 사용할 것
 - **네임스페이스**: `Features/Bartending`과 `Features/Business/Runtime/Flow`의 주 코드에는 `Slainte.Bartending`/`Slainte.Business`를 사용한다. Shared의 Input·Lifecycle·Content는 각각 독립 namespace/asmdef 경계를 가진다. 이전 Unity 직렬화 타입에는 전역 namespace가 남아 있으므로 새 파일은 소유 폴더의 기존 관례를 따르고, 기존 타입의 namespace 이동은 `.meta` GUID와 Scene·Prefab 직렬화를 함께 검증하는 별도 마이그레이션으로 처리한다.
 - **에피소드 = 일정에 배정된 인카운터**: 작전판·에피소드 타입·해금/플레이/선택 조건은 없다. 모든 에피소드는 `EpisodeData.scheduledDay/scheduledSlot/slotPriority`(CSV `#META`의 `day`/`slot`/`priority`)로 영업 슬롯에 배정되고, 슬롯 차례에 `triggerCondition`(등장 조건)을 만족하는 최우선 후보 하나만 실행되며 없으면 랜덤 손님이 채운다. 일정 조회는 `IDayScheduleSource`(실제: `EpisodeManager`의 `DayScheduleIndex`)로 추상화되어 있으니 새 일정 소스(플레이테스트 등)는 이 인터페이스를 구현할 것. 조건 판정은 `ProgressConditionEvaluator` 하나로 통일
 - **에피소드 CSV ⇄ 그래프 병행 사용**: CSV ⇄ `EpisodeData` 변환은 `EpisodeCsvCodec`(Read/Write) 한 곳에서만, 그래프 블록 해석(실행 순서·포트·분기 라벨)은 `NarrativeBlockModel` 한 곳에서만 정의한다. 그래프 컴파일은 원본 CSV를 직접 덮어쓰므로 새 필드를 추가할 땐 코덱·컴파일러·임포터를 함께 고치고 `Narrative > Validate CSV ⇄ Graph Round Trip`으로 왕복이 깨지지 않는지 확인할 것
@@ -53,6 +54,7 @@
 | [docs/core/game-flow-design.md](docs/core/game-flow-design.md) | Day 흐름 설계(하루 = 손님 슬롯 N개, 에피소드 일정 배정·등장 조건 판정, 챕터 lastDay·엔딩) |
 | [docs/core/cutscene-system.md](docs/core/cutscene-system.md) | 컷씬 시스템(CutsceneManager/CutsceneUI, 슬라이드 재생 흐름, 화면 전환 동기화, 3개 트리거 지점) |
 | [docs/core/unity-build.md](docs/core/unity-build.md) | Unity 버전, 빌드 방법, 개발 환경 |
+| [docs/core/resolution-letterbox.md](docs/core/resolution-letterbox.md) | 해상도 대응(16:9 게임 영역·레터박스, GameAspect/GameAreaRoot/LetterboxOverlay, 씬 변환 툴, 코드 작성 규칙) |
 | **narrative** |||
 | [docs/narrative/episode-engine.md](docs/narrative/episode-engine.md) | 에피소드 오케스트레이션(EpisodeRunner, 분기, 제조 판정 연동, 정산 커스텀 보상), 오디오/BGM/SFX |
 | [docs/narrative/episode-csv-guide.md](docs/narrative/episode-csv-guide.md) | 에피소드 CSV 작성법 (섹션 구조, 열 설명, 예시) |

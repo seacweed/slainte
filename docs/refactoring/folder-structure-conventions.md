@@ -188,7 +188,7 @@ Slainte.Rest
 Slainte.Shared
 ```
 
-위 이름은 새 모듈의 기본 목표다. 이미 `NarrativeFlow`, `Slainte.TV`, `Slainte.Economy`처럼 독립된 namespace를 쓰는 모듈에는 기존 경계를 유지한다. 같은 모듈 안에 목표 이름과 기존 이름을 임의로 혼용하지 않는다. Shared의 현재 명시적 경계는 `Slainte.Shared.Input`, `Slainte.Shared.Lifecycle`, `Slainte.Content`, `Slainte.EditorTools`다.
+위 이름은 새 모듈의 기본 목표다. 이미 `NarrativeFlow`, `Slainte.TV`, `Slainte.Economy`처럼 독립된 namespace를 쓰는 모듈에는 기존 경계를 유지한다. 같은 모듈 안에 목표 이름과 기존 이름을 임의로 혼용하지 않는다. Shared의 현재 명시적 경계는 `Slainte.Shared.Input`, `Slainte.Shared.Lifecycle`, `Slainte.Shared.Display`, `Slainte.Content`, `Slainte.EditorTools`다.
 
 하위 폴더가 의미 있는 코드 경계를 만들 때만 하위 namespace를 추가한다. 폴더 깊이를 기계적으로 namespace에 모두 복제하지 않는다.
 

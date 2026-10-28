@@ -5,6 +5,7 @@ using Slainte.Content;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Slainte.Shared.Display;
 
 namespace Slainte.Bartending
 {
@@ -1464,14 +1465,10 @@ namespace Slainte.Bartending
             return hasBounds;
         }
 
+        // 레터박스 환경에서 루트 캔버스는 띠 영역까지 포함하므로, 실제로 보이는 16:9 게임 영역을 쓴다.
         private static RectTransform GetRootCanvasRect(RectTransform rectTransform)
         {
-            Canvas canvas = rectTransform != null
-                ? rectTransform.GetComponentInParent<Canvas>()
-                : null;
-            return canvas != null && canvas.rootCanvas != null
-                ? canvas.rootCanvas.transform as RectTransform
-                : null;
+            return GameAspect.FindGameAreaRect(rectTransform);
         }
 
         private static Rect GetScreenRect(RectTransform rectTransform)
