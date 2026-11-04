@@ -202,7 +202,6 @@ MonoBehaviour:
   icePrefab: {fileID: 0}
   iceStock: 0
   icePourInterval: 0.18
-  garnishLiquidMotionTransfer: 0.2
   collisionProfile: {fileID: 11400000, guid: 777f581de33fd064aac3eb38056a7aa2, type: 2}
   iceCapacity: 20
   iceStockRenderer: {fileID: 0}

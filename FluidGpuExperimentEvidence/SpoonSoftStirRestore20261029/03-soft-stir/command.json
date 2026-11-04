@@ -1,0 +1,17 @@
+{
+  "started": "2026-10-29T09:05:24.0996451+09:00",
+  "executable": "A:\\UnityHub\\Unity\\6000.3.5f2\\Editor\\Unity.exe",
+  "forceShaderImport": true,
+  "entryMethod": "SpoonSoftStirValidation.Begin",
+  "timeoutSeconds": 300,
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:\\UnityHub\\proj\\slainte\\Library\\FluidModelDHarness",
+    "-executeMethod",
+    "PhysicsLabValidationDispatch.Run",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\SpoonSoftStirRestore20261029\\03-soft-stir\\Editor.log"
+  ]
+}

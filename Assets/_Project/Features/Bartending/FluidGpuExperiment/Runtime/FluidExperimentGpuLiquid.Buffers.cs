@@ -1,4 +1,4 @@
-// Buffer layout and PBF parameter bindings derived from the existing GPU backend.
+// Shared buffer layout derived from the existing GPU backend.
 // This fork is private to FluidExperiment; the production implementation is unchanged.
 using System;
 using System.Runtime.InteropServices;
@@ -23,24 +23,20 @@ namespace Slainte.Bartending.FluidGpuExperiment
             resetCompositionKernel = RequireKernel("ResetCompositionBuffers");
             spawnKernel = RequireKernel("SpawnParticles");
             integrateKernel = RequireKernel("IntegrateParticles");
-            bool cohesiveIceContacts = useCohesivePhysics && !useImprovedPhysics
-                && activeSolver == FluidExperimentSolver.ReferenceSph;
-            sweepKernel = RequireKernel(cohesiveIceContacts ? "SweepCohesiveIceBoundaries" : "SweepBoundaries");
+            sweepKernel = RequireKernel("SweepCohesiveIceBoundaries");
             snapshotVelocityKernel = RequireKernel("SnapshotVelocities");
             clearGridKernel = RequireKernel("ClearGrid");
             buildGridKernel = RequireKernel("BuildGrid");
-            lambdaKernel = RequireKernel("CalculateDensityLambda");
-            deltaKernel = RequireKernel("CalculatePositionDelta");
-            applyKernel = RequireKernel(cohesiveIceContacts ? "ApplyCohesiveIceContacts" : "ApplyDeltaAndBoundaries");
-            velocityKernel = RequireKernel(cohesiveIceContacts ? "UpdateCohesiveContactVelocities" : "UpdateVelocities");
-            mixKernel = RequireKernel("MixComposition");
+            applyKernel = RequireKernel("ApplyCohesiveIceContacts");
+            velocityKernel = RequireKernel("UpdateCohesiveContactVelocities");
             colorKernel = RequireKernel("UpdateParticleColors");
             techniqueKernel = RequireKernel("ApplyTechnique");
             translateVesselKernel = RequireKernel("TranslateVesselContents");
-            if (useCohesivePhysics) pickupContentsKernel = RequireKernel("CarryPickupContents");
+            pickupContentsKernel = RequireKernel("CarryPickupContents");
             suspendVesselKernel = RequireKernel("SetVesselSuspended");
-            CacheReferenceKernels();
+            CacheCohesiveKernels();
             CacheLedgerKernels();
+            CacheSpoonStirKernels();
         }
 
         private void AllocateBuffers()
@@ -85,6 +81,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
             boundaryGroupBuffer = CreateStructured<GpuLiquidBoundaryGroup>(MaximumBoundarySegments);
             boundaryGroups = new GpuLiquidBoundaryGroup[MaximumBoundarySegments];
             triggerBuffer = CreateStructured<GpuLiquidVesselTrigger>(MaximumVesselTriggers);
+            iceVesselBudgetBuffer = CreateStructured<GpuIceVesselBudget>(MaximumVesselTriggers);
+            iceStepOriginBuffer = CreateStructured<Vector2>(particleCapacity);
             agitatorBuffer = CreateStructured<GpuLiquidAgitator>(MaximumAgitators);
             statisticsBuffer = new GraphicsBuffer(
                 GraphicsBuffer.Target.Structured,
@@ -98,8 +96,9 @@ namespace Slainte.Bartending.FluidGpuExperiment
             agitatorUpload = new GpuLiquidAgitator[MaximumAgitators];
             snapshotParticles = new GpuLiquidParticle[particleCapacity];
             snapshotComposition = new float[particleCapacity * maximumIngredients];
-            AllocateReferenceBuffers();
+            AllocateCohesiveBuffers();
             AllocateLedgerBuffers();
+            AllocateSpoonStir();
         }
 
         private static GraphicsBuffer CreateStructured<T>(int count) where T : struct => new GraphicsBuffer(GraphicsBuffer.Target.Structured, count, Marshal.SizeOf<T>());
@@ -121,38 +120,11 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 "_SmoothingRadius",
                 SolverSmoothingRadius);
             simulationShader.SetFloat(
-                "_RestDensity",
-                Mathf.Max(0.01f, settings.gpuLiquidRestDensity));
-            simulationShader.SetFloat(
-                "_DensityCompliance",
-                Mathf.Max(0f, settings.gpuLiquidDensityCompliance));
-            simulationShader.SetFloat(
-                "_LambdaEpsilon",
-                Mathf.Max(0.000001f, settings.gpuLiquidLambdaEpsilon));
-            simulationShader.SetFloat(
-                "_ArtificialPressureStrength",
-                Mathf.Clamp(settings.gpuLiquidArtificialPressureStrength, 0f, 0.02f));
-            simulationShader.SetFloat(
-                "_ArtificialPressureRadiusRatio",
-                Mathf.Clamp(settings.gpuLiquidArtificialPressureRadiusRatio, 0.1f, 0.9f));
-            simulationShader.SetFloat(
-                "_BoundaryDensityScale",
-                Mathf.Clamp(settings.gpuLiquidBoundaryDensityScale, 0f, 12f));
-            simulationShader.SetFloat(
                 "_WallFriction",
                 Mathf.Clamp01(settings.gpuLiquidWallFriction));
             simulationShader.SetFloat(
                 "_WallRestitution",
                 Mathf.Clamp01(settings.gpuLiquidWallRestitution));
-            simulationShader.SetFloat(
-                "_SplashTransfer",
-                Mathf.Clamp01(settings.gpuLiquidSplashTransfer));
-            simulationShader.SetFloat(
-                "_SplashMinimumImpactSpeed",
-                Mathf.Max(0f, settings.gpuLiquidSplashMinimumImpactSpeed));
-            simulationShader.SetFloat(
-                "_BottomImpactSpread",
-                Mathf.Clamp01(settings.gpuLiquidBottomImpactSpread));
             simulationShader.SetFloat(
                 "_VelocityDamping",
                 Mathf.Clamp01(settings.gpuLiquidVelocityDamping));
@@ -165,9 +137,6 @@ namespace Slainte.Bartending.FluidGpuExperiment
             simulationShader.SetFloat(
                 "_ClosedVesselMaximumRelativeSpeed",
                 Mathf.Max(0.1f, settings.gpuLiquidClosedVesselMaximumRelativeSpeed));
-            simulationShader.SetFloat(
-                "_Viscosity",
-                Mathf.Clamp01(settings.gpuLiquidViscosity));
             simulationShader.SetFloat(
                 "_PassiveMixRate",
                 Mathf.Max(0f, settings.gpuLiquidPassiveMixRate));
@@ -191,25 +160,22 @@ namespace Slainte.Bartending.FluidGpuExperiment
             BindCommonBuffers(sweepKernel);
             BindCommonBuffers(snapshotVelocityKernel);
             BindCommonBuffers(buildGridKernel);
-            BindCommonBuffers(lambdaKernel);
-            BindCommonBuffers(deltaKernel);
             BindCommonBuffers(applyKernel);
             BindCommonBuffers(velocityKernel);
-            BindCommonBuffers(mixKernel);
             BindCommonBuffers(colorKernel);
             BindCommonBuffers(techniqueKernel);
             BindCommonBuffers(translateVesselKernel);
-            if (useCohesivePhysics) BindCommonBuffers(pickupContentsKernel);
+            BindCommonBuffers(pickupContentsKernel);
             BindCommonBuffers(suspendVesselKernel);
-            BindCommonBuffers(streamSurfaceKernel);
             BindCommonBuffers(mergeStreamContactsKernel);
-            BindStreamBuffers(resetStreamLookupKernel);
             simulationShader.SetBuffer(clearGridKernel, "_GridHeads", gridHeadBuffer);
-            BindReferenceParameters();
+            BindLiquidScale();
+            BindCohesiveParameters();
             BindCommonBuffers(conservativeMixWeightsKernel);
             BindCommonBuffers(conservativeMixKernel);
             BindCommonBuffers(collectLedgerKernel);
             BindCommonBuffers(transferContentsKernel);
+            BindSpoonStir();
         }
 
         private void BindCommonBuffers(int kernel)
@@ -233,9 +199,11 @@ namespace Slainte.Bartending.FluidGpuExperiment
             simulationShader.SetBuffer(kernel, "_Boundaries", boundaryBuffer);
             simulationShader.SetBuffer(kernel, "_BoundaryGroups", boundaryGroupBuffer);
             simulationShader.SetBuffer(kernel, "_VesselTriggers", triggerBuffer);
+            simulationShader.SetBuffer(kernel, "_IceVesselBudgets", iceVesselBudgetBuffer);
+            simulationShader.SetBuffer(kernel, "_IceStepOrigins", iceStepOriginBuffer);
+            simulationShader.SetBuffer(kernel, "_IceStepOriginsRead", iceStepOriginBuffer);
             simulationShader.SetBuffer(kernel, "_Agitators", agitatorBuffer);
             simulationShader.SetBuffer(kernel, "_Statistics", statisticsBuffer);
-            simulationShader.SetBuffer(kernel, "_ReferenceDensityPressure", referenceDensityPressureBuffer);
             BindLedgerBuffers(kernel);
         }
 
@@ -246,9 +214,9 @@ namespace Slainte.Bartending.FluidGpuExperiment
             pendingSpawnCount = 0;
             activeParticleCount = 0;
             ResetLedgerState();
+            ResetSpoonStir();
             DispatchForCount(resetKernel, particleCapacity);
             DispatchForCount(resetCompositionKernel, particleCapacity);
-            DispatchForCount(resetStreamLookupKernel, particleCapacity * 2);
         }
 
         private void RebuildGrid()
@@ -259,14 +227,12 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         private void DispatchMix()
         {
-            bool conservativeMix = useImprovedPhysics || useCohesivePhysics;
-            int selectedMixKernel = conservativeMix ? conservativeMixKernel : mixKernel;
-            if (conservativeMix) DispatchForCount(conservativeMixWeightsKernel, particleCapacity);
+            DispatchForCount(conservativeMixWeightsKernel, particleCapacity);
             GraphicsBuffer read = compositionAIsCurrent ? compositionA : compositionB;
             GraphicsBuffer write = compositionAIsCurrent ? compositionB : compositionA;
-            simulationShader.SetBuffer(selectedMixKernel, "_CompositionRead", read);
-            simulationShader.SetBuffer(selectedMixKernel, "_CompositionWrite", write);
-            DispatchForCount(selectedMixKernel, particleCapacity);
+            simulationShader.SetBuffer(conservativeMixKernel, "_CompositionRead", read);
+            simulationShader.SetBuffer(conservativeMixKernel, "_CompositionWrite", write);
+            DispatchForCount(conservativeMixKernel, particleCapacity);
             compositionAIsCurrent = !compositionAIsCurrent;
         }
 

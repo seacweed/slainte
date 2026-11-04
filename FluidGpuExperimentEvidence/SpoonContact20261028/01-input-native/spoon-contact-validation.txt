@@ -1,0 +1,44 @@
+PASS Actual flipped spoon can be picked in F
+PASS Held spoon initially passes through other solids
+PASS Held spoon initially passes through other solids does not own rotation cursor
+PASS Direct rotation API also rejects spoons
+PASS Ghost spoon overlap produces no real native contact or bottle displacement
+PASS Real RMB press enables spoon solid collision
+PASS Real RMB press enables spoon solid collision enables native contacts without cursor capture
+PASS RMB restores spoon contacts with authored environment
+MEASURE nativeContactCallbacks=5 bottleDisplacement=1.026869
+PASS RMB spoon generates actual native contact and moves the dynamic bottle
+PASS RMB mouse travel follows pointer without rotating spoon
+PASS Contact mode uses completed native held movement
+PASS Releasing RMB restores held pass-through immediately
+PASS Releasing RMB restores held pass-through immediately does not own rotation cursor
+PASS RMB release restores original full-kinematic contact setting
+PASS Second RMB press can re-enable collision
+PASS Second RMB press can re-enable collision enables native contacts without cursor capture
+PASS Escape cancels collision
+PASS Escape cancels collision does not own rotation cursor
+PASS Escape requires physical RMB release before rearming
+PASS Escape requires physical RMB release before rearming does not own rotation cursor
+PASS Release and new press rearm after Escape
+PASS Release and new press rearm after Escape enables native contacts without cursor capture
+PASS Focus loss cancels collision
+PASS Focus loss cancels collision does not own rotation cursor
+PASS Focus resume while still pressing cannot rearm
+PASS Focus resume while still pressing cannot rearm does not own rotation cursor
+PASS Fresh press after focus resumes collision
+PASS Fresh press after focus resumes collision enables native contacts without cursor capture
+PASS Visible UI hit region suppresses spoon contact input
+PASS Visible UI hit region suppresses spoon contact input does not own rotation cursor
+PASS RMB away from UI resumes collision
+PASS RMB away from UI resumes collision enables native contacts without cursor capture
+PASS Mouse-device replacement cancels contact until release
+PASS Mouse-device replacement cancels contact until release does not own rotation cursor
+PASS New device release and press can rearm
+PASS New device release and press can rearm enables native contacts without cursor capture
+PASS Left-click drop while RMB held restores released solid collision
+PASS Drop restores native settings and adds no RMB spin
+PASS World Reset restores spoon collision and clears held mode
+PASS Interactor disable restores physical spoon state
+PASS Spoon disable forgets held input and restores authored collider flags
+PASS All spoon interactions preserve native cursor lock and visibility
+PASS No Unity, native physics or input errors

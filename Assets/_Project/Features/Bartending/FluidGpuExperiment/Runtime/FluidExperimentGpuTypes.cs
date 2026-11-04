@@ -82,6 +82,13 @@ namespace Slainte.Bartending.FluidGpuExperiment
     }
 
     [StructLayout(LayoutKind.Sequential)]
+    internal struct GpuIceVesselBudget
+    {
+        public uint VesselId;
+        public float Speed;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
     internal struct GpuLiquidVesselTrigger
     {
         public Vector2 Center;

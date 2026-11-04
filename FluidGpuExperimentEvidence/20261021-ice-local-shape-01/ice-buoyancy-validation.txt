@@ -1,0 +1,19 @@
+MEASURE sampler NonColliding localWet=0.116600811 remoteFlow=(0, 0)
+PASS NonColliding distant liquid does not create local buoyancy
+PASS NonColliding distant current does not drive a stationary local puddle
+MEASURE NonColliding-1 maxOverlap=0 overlapTicks=0 tailSpan=0.0517924577 spin95=14.1918125 peakSpin=25.68604 dryRise=0 ml=56
+FAIL NonColliding-1 stops drifting and rotating in still liquid after vessel movement
+PASS NonColliding-1 avoids deep interpenetration throughout drops and vessel movement
+MEASURE NonColliding-8 maxOverlap=0.17959106 overlapTicks=165 tailSpan=0.00010468535 spin95=0.08186686 peakSpin=576.341553 dryRise=0 ml=58
+PASS NonColliding-8 stops drifting and rotating in still liquid after vessel movement
+FAIL NonColliding-8 avoids deep interpenetration throughout drops and vessel movement
+MEASURE sampler Colliding localWet=0 remoteFlow=(0, 0)
+PASS Colliding distant liquid does not create local buoyancy
+PASS Colliding distant current does not drive a stationary local puddle
+MEASURE Colliding-1 maxOverlap=0 overlapTicks=0 tailSpan=0.01573531 spin95=0.000106750209 peakSpin=49.355442 dryRise=0 ml=71.5
+PASS Colliding-1 stops drifting and rotating in still liquid after vessel movement
+PASS Colliding-1 avoids deep interpenetration throughout drops and vessel movement
+MEASURE Colliding-8 maxOverlap=0.09854838 overlapTicks=40 tailSpan=0.0610502735 spin95=13.5255613 peakSpin=558.0553 dryRise=0.1170743 ml=59
+FAIL Colliding-8 stops drifting and rotating in still liquid after vessel movement
+FAIL Colliding-8 avoids deep interpenetration throughout drops and vessel movement
+PASS No Unity application errors

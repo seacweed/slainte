@@ -1,0 +1,19 @@
+PASS Hidden batch uses actual F GPU with no desktop input
+PASS Authored hurricane has a configured breakage component
+PASS Authored comparison instance imports the mild 0.4 strength, 3 u/s cap and equal F/G splash profile
+PASS Authored profile has 16 shards and tougher default impact thresholds (6/4)
+PASS Only hurricane is breakable in this first version
+PASS Reset restores the original hurricane and clears all shards/queued break state
+INFO gentle impactSpeed=0 impulse=0 mass=0.35
+PASS Gentle short drop and repeated resting contacts do not break the glass
+PASS Gentle fixture actually reaches the physical floor
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Tilted hurricane can be picked
+PASS Held movement, pickup upright correction and automatic rotation return do not break the glass
+PASS Forced native held contact still cannot auto-break
+PASS Reset restores the original hurricane and clears all shards/queued break state
+FAIL Actual high free fall queues an automatic break at default thresholds
+System.Exception: Actual high free fall queues an automatic break at default thresholds
+  at GlassBreakageValidationRunner.Check (System.Boolean ok, System.String text) [0x0002a] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\GlassBreakageValidation.cs:48 
+  at GlassBreakageValidationRunner.StrongDrop () [0x00010] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\GlassBreakageValidation.cs:194 
+  at GlassBreakageValidationRunner+<Start>d__25.MoveNext () [0x00412] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\GlassBreakageValidation.cs:87 

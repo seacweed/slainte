@@ -64,6 +64,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         private void ResetGlassBreakage()
         {
+            ClearShardContactPairs();
             pendingGlassBreakage.Clear();
             foreach (var shard in glassShards)
                 if (shard != null) { shard.gameObject.SetActive(false); Destroy(shard.gameObject); }
@@ -74,22 +75,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         internal void RefreshGlassShardContacts()
         {
-            if (glassShards.Count == 0) return;
-            var environment = new HashSet<Collider2D>();
-            foreach (var floor in floorColliders) if (floor != null) environment.Add(floor);
-            foreach (var hull in EnvironmentHulls) if (hull.Collider != null) environment.Add(hull.Collider);
-            // Per-collider pairs keep this policy local to the experiment. Do not alter
-            // project layers or the global collision matrix used by other scenes.
-            var colliders = GetComponentsInChildren<Collider2D>(true);
-            foreach (var shard in glassShards)
-            {
-                if (shard == null || !shard.isActiveAndEnabled) continue;
-                foreach (var collider in colliders)
-                    if (collider != null && collider != shard.SolidCollider && collider.isActiveAndEnabled)
-                        Physics2D.IgnoreCollision(shard.SolidCollider, collider, !environment.Contains(collider));
-                foreach (var collider in environment)
-                    if (collider.isActiveAndEnabled) Physics2D.IgnoreCollision(shard.SolidCollider, collider, false);
-            }
+            RefreshShardContactPairs();
         }
     }
 }

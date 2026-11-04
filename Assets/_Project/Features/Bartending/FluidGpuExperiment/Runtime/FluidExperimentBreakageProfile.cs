@@ -24,7 +24,11 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         [Header("Shard Motion (after breaking)")]
         [Tooltip("Extra outward shard speed after breaking. Does not affect when the glass breaks.")]
-        [Min(0)] public float separationSpeed = .12f;
+        [Min(0)] public float separationSpeed;
+        [Tooltip("Fraction of the actual contact impulse applied to the captured incoming shard motion. Does not change break thresholds.")]
+        [Range(0, 1)] public float impactVelocityTransfer = .8f;
+        [Tooltip("Additional zero-net-momentum shard spread per unit of measured impact speed. Controlled breaks without a native impact keep the authored separation only.")]
+        [Range(0, .5f)] public float impactScatterScale;
         [Tooltip("How quickly shards lose linear speed after breaking.")]
         [Min(0)] public float linearDamping = .2f;
         [Tooltip("How quickly shards lose rotation speed after breaking.")]

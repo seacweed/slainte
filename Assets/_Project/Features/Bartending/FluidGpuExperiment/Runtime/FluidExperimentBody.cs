@@ -34,8 +34,6 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public FluidExperimentBody icePrefab;
         public int iceStock = 20;
         public float icePourInterval = .18f;
-        [Tooltip("Retained for older comparison assets. F flow-following garnishes do not push liquid.")]
-        [Range(0, 1)] public float garnishLiquidMotionTransfer = .2f;
 
         public FluidExperimentWorld World { get; private set; }
         public Rigidbody2D Body { get; private set; }
@@ -92,6 +90,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         private void OnDisable()
         {
+            RestoreContentsInterpolation();
             SuspendShakerParts();
             EndPourStream();
             ClearIceContainer();
@@ -116,8 +115,11 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (value && !IsHeld) World?.RefreshIceContainment();
             if (value && IsLooseSolid) ClearIceContainer();
             IsHeld = value;
+            if (!value) SpoonContactEnabled = false;
+            UpdateSpoonHoldCollision();
             UpdateGarnishHoldCollision();
             Body.bodyType = value ? RigidbodyType2D.Kinematic : RigidbodyType2D.Dynamic;
+            UpdateHeldContentsInterpolation();
             Body.linearVelocity = Vector2.zero;
             Body.angularVelocity = 0;
             if (value)
@@ -133,9 +135,10 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public void SetHeldPose(Vector2 position, float unwrappedAngle)
         {
             if (!IsHeld) return;
-            targetPosition = UsesLiquidGarnishMotion ? position
+            targetPosition = UsesLiquidGarnishMotion || (kind == LabItemKind.Spoon && SpoonContactEnabled) ? position
                 : World != null ? World.ConstrainHeldPosition(this, position, unwrappedAngle) : position;
             targetAngle = unwrappedAngle;
+            targetPosition = ConstrainSpoonPosition(targetPosition);
         }
 
         internal void RestorePickupPose(Vector2 position, float angle)
@@ -163,6 +166,13 @@ namespace Slainte.Bartending.FluidGpuExperiment
             {
                 if (ice == null || ice.iceContainer != this || ice.IsHeld || !ice.Body.simulated
                     || ice.UsesLiquidGarnishMotion) continue;
+                // Only the initial upright pickup changes this reference frame. Normal
+                // held motion no longer carries F/G ice along with the vessel.
+                if (ice.UsesLiquidSolidMotion)
+                {
+                    ice.Body.position = Position + Rotate(ice.Position - from, turn);
+                    ice.Body.rotation += turn;
+                }
                 // ApplyHeldPose also carried contained ice. Its swept GPU boundary must
                 // not inject the same artificial pickup rotation back into the liquid.
                 ice.RebasePickupHistory(from, Position, turn);
@@ -197,6 +207,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         internal void ApplyHeldPose()
         {
             if (!IsHeld) return;
+            nativeHeldMotionPending = false;
             if ((Position - targetPosition).sqrMagnitude < 1e-12f
                 && Mathf.Abs(Mathf.DeltaAngle(Angle, targetAngle)) < .00001f)
             {
@@ -207,6 +218,33 @@ namespace Slainte.Bartending.FluidGpuExperiment
             Body.position = targetPosition;
             Body.rotation = targetAngle;
             HeldAngle = targetAngle;
+        }
+
+        private bool nativeHeldMotionPending;
+        private float nativeHeldMotionStartAngle;
+
+        // Resolve the whole stack against a moving wall in the native solver.
+        // Teleporting the wall first forces sequential escape repairs to push
+        // individual cubes into their neighbours after native contacts finish.
+        internal void StepHeldPose()
+        {
+            if (!IsHeld) return;
+            targetPosition = ConstrainSpoonPosition(targetPosition);
+            if (!IsVessel || World?.Liquid == null || !World.Liquid.CohesivePhysicsActive)
+            { ApplyHeldPose(); return; }
+            nativeHeldMotionStartAngle = Body.rotation;
+            nativeHeldMotionPending = true;
+            Body.MovePosition(targetPosition);
+            Body.MoveRotation(targetAngle);
+        }
+
+        internal void CompleteHeldMotion()
+        {
+            CompleteSpoonMotion();
+            if (!nativeHeldMotionPending) return;
+            nativeHeldMotionPending = false;
+            // Publish only completed motion, including native speed limits.
+            HeldAngle += Mathf.DeltaAngle(nativeHeldMotionStartAngle, Body.rotation);
         }
 
         public void Release(Vector2 velocity, float angularVelocity)
@@ -355,6 +393,15 @@ namespace Slainte.Bartending.FluidGpuExperiment
             float inverseDt = 1 / Mathf.Max(dt, .0001f);
             return (Position - PreviousPosition - automaticPoseTranslation) * inverseDt
                 + new Vector2(-arm.y, arm.x) * ((StepAngle - automaticPoseAngle) * Mathf.Deg2Rad * inverseDt);
+        }
+
+        internal Vector2 ContactPointVelocity(Vector2 point, float dt)
+        {
+            if (!IsHeld) return Body.GetPointVelocity(point);
+            float inverseDt = 1 / Mathf.Max(dt, .0001f);
+            float turn = HeldAngle - PreviousAngle - automaticPoseAngle;
+            return (Position - PreviousPosition - automaticPoseTranslation) * inverseDt
+                + new Vector2(-(point - Position).y, (point - Position).x) * (turn * Mathf.Deg2Rad * inverseDt);
         }
 
         private void Update()

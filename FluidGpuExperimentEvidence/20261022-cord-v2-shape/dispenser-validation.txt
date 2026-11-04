@@ -1,0 +1,116 @@
+PASS Hidden Unity GPU harness initializes without desktop input
+PASS Authored default remains F coherent liquid
+PASS F Manual instantiates the authored dispenser prefab
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Initially straight slack cord falls under gravity instead of keeping a preset arch
+PASS Settled slack cord takes up its available length without excessive stretch or compression
+PASS Both slack connectors follow the hanging cord tangent without pinned vertical necks
+MEASURE cord slackLength=6.66079044 availableLength=6.66 sag=1.26626873
+PASS Taking up slack yields a straight six-unit taut cable without residual bow or connector hooks
+MEASURE cord tautLength=6 tautDeviation=0
+PASS Released slack develops progressively from gravity and free-node inertia
+PASS A native loaded swinging cable draws straight under real tension
+MEASURE cord firstSlackSag=0.000680923462 nextSlackSag=0.0571527481 nativeTautDeviation=1.10656742E-06
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Authored hose is visibly thicker than the previous 0.065 width
+PASS Hose rounds solver corners with an endpoint-preserving quadratic curve
+PASS 30 Hz moving hose remains finite without stretched individual render segments
+PASS 30 Hz hose stays attached to both endpoints
+PASS 60 Hz moving hose remains finite without stretched individual render segments
+PASS 60 Hz hose stays attached to both endpoints
+PASS 120 Hz moving hose remains finite without stretched individual render segments
+PASS 120 Hz hose stays attached to both endpoints
+MEASURE hose width=0.115 scheduleDifference=0.005274282
+PASS 30 and 120 Hz freely moving hose schedules converge within 0.06 units after six seconds at rest
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Reel shortens only the cable and never drives the body to a preset pose
+PASS Actual native tension pulls the off-center attachment, translating and turning the body during reeling
+MEASURE suspension returnSeconds=1.57999992 tension=12.8964567 turn=47.1241455 xSpan=1.31431675 ySpan=0.288046837 angleLow=-15.5677185 angleHigh=38.17169 lateSpeed=0.0242581945 lateDistance=0.0128775192
+PASS After reeling the body's position and attitude both move as a hanging pendulum
+PASS Native gravity and damping settle the freely hanging body beneath the anchor
+PASS Hanging remains dynamic with free rotation instead of a position lock or angle animation
+PASS Pick settled dispenser for another return
+PASS Second return finishes with the cable still attached
+PASS Picking a swinging tool immediately uprights it without losing the grabbed point
+PASS Player rotation APIs cannot rotate the dispenser or resume its dock swing while held
+PASS Picking detaches the cable's force while preserving its visual connection
+PASS No Unity errors, assertions or exceptions

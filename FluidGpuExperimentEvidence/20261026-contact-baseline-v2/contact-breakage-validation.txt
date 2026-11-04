@@ -1,0 +1,12 @@
+PASS Authored default is F contact baseline in actual hidden GPU execution
+PASS Forced liquid fan and G fragment explosion are excluded from the baseline
+PASS Authored comparison imports its actual floor and thin fragment liquid contacts
+PASS Glass thresholds, native motion inheritance and authored 16-piece geometry stay unchanged
+PASS Static shallow-penetration fixture reserves
+MEASURE floorRepair peakSpeed=10.3688278 minY=-3.13307786 floor=-3.25 radius=0.065
+PASS Static floor repair restores nonpenetration
+FAIL Stationary floor depenetration cannot launch liquid or create kinetic energy
+System.Exception: Stationary floor depenetration cannot launch liquid or create kinetic energy
+  at ContactBreakageRunner.Check (System.Boolean ok, System.String label) [0x0002a] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\ContactBreakageValidation.cs:44 
+  at ContactBreakageRunner.StaticFloorRepair () [0x00162] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\ContactBreakageValidation.cs:129 
+  at ContactBreakageRunner+<Start>d__20.MoveNext () [0x00321] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\ContactBreakageValidation.cs:70 

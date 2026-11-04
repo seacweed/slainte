@@ -1,0 +1,7 @@
+PASS Comparison scene and generated runtime/environment/shard/part/sample assets are absent before rebuild
+PASS BuildAll does not recreate or require the comparison scene
+PASS BuildAll recreates all missing reusable assets without the comparison scene
+PASS Fresh runtime has its reusable modules and no sandbox client
+PASS Fresh runtime binds actual current simulation and surface assets
+PASS Fresh sample scene contains an assembled reusable runtime
+PASS Disposable feature assets and metadata restore to their exact pre-rebuild bytes

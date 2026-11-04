@@ -1,0 +1,11 @@
+PASS Comparison scene and generated runtime/environment/shard/part/sample assets are absent before rebuild
+PASS BuildAll does not recreate or require the comparison scene
+PASS BuildAll recreates all missing reusable assets without the comparison scene
+PASS Fresh runtime has its reusable modules and no sandbox client
+PASS Fresh runtime binds actual current simulation and surface assets
+PASS Fresh sample scene contains an assembled reusable runtime
+RESTORE FAILURE System.ArgumentException: Invalid SceneManagerSetup:
+ No loaded scene found.
+ One active scene is required. Number of active scenes: 0
+  at (wrapper managed-to-native) UnityEditor.SceneManagement.EditorSceneManager.RestoreSceneManagerSetup(UnityEditor.SceneManagement.SceneSetup[])
+  at ExperimentCleanupRuntimeValidation.BeginAuthoring () [0x003c5] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\CleanupRuntimeValidation.cs:100 

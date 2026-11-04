@@ -81,6 +81,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentBody
   kind: 1
   displayName: Hurricane
+  servingGlassId: hurricane
   ingredient: {fileID: 0}
   liquidWall:
   - {x: -0.68471926, y: 0.8434745}
@@ -129,7 +130,6 @@ MonoBehaviour:
   icePrefab: {fileID: 0}
   iceStock: 20
   icePourInterval: 0.18
-  garnishLiquidMotionTransfer: 0.2
   collisionProfile: {fileID: 11400000, guid: a018e6366b8c4e9a8001141aa5fa27a8, type: 2}
   iceCapacity: 20
   iceStockRenderer: {fileID: 0}

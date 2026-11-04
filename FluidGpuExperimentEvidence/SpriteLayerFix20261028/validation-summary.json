@@ -1,0 +1,86 @@
+{
+  "suites": [
+    {
+      "attempt": "04-rendering",
+      "label": "겹침, 소유 액체 합성, 선택, 부품, 복원, 자원 수명",
+      "result": "PASS",
+      "checks": 39
+    },
+    {
+      "attempt": "05-input",
+      "label": "기존 입력, 회전, 셰이커 조작",
+      "result": "PASS",
+      "checks": 1925
+    },
+    {
+      "attempt": "06-runtime",
+      "label": "독립 Runtime, 디스펜서, Reset",
+      "result": "PASS",
+      "checks": 29
+    },
+    {
+      "attempt": "07-auto-f",
+      "label": "F 자동 실행",
+      "result": "PASS",
+      "checks": 29
+    },
+    {
+      "attempt": "08-auto-g",
+      "label": "G 자동 실행",
+      "result": "PASS",
+      "checks": 29
+    },
+    {
+      "attempt": "09-shards",
+      "label": "파편 운동, 접촉, 액체 보존",
+      "result": "PASS",
+      "checks": 76
+    },
+    {
+      "attempt": "10-garnish",
+      "label": "가니시 물리, 소유권, 공급, 모드 전환",
+      "result": "PASS",
+      "checks": 170
+    },
+    {
+      "attempt": "11-cocktails-final",
+      "label": "기존 실제 레시피, 조성, 등급, 제조법, 패널",
+      "result": "PASS",
+      "checks": 61
+    },
+    {
+      "attempt": "12-authoring",
+      "label": "프리팹 참조와 반복 생성 보존",
+      "result": "PASS",
+      "checks": 5
+    }
+  ],
+  "source_mismatches": [],
+  "harness_mismatches": [],
+  "metadata_errors": [],
+  "preservation": {
+    "original_files": 838,
+    "unchanged": 831,
+    "changed": [
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/README.md",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentBody.GarnishMotion.cs",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.cs",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.Rendering.cs",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentInteractor.cs",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentWorld.cs",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentImprovedAccumulation.shader"
+    ],
+    "unexpected": [],
+    "added": [
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.RenderingLayers.cs",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.RenderingLayers.cs.meta",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentInteractor.VisualPicking.cs",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentInteractor.VisualPicking.cs.meta",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentWorld.Rendering.cs",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentWorld.Rendering.cs.meta"
+    ]
+  },
+  "passing_checks": 2363,
+  "validated_source_files": 495,
+  "result": "PASS"
+}

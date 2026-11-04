@@ -185,6 +185,8 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
             if (Root == null) throw new InvalidOperationException("The designer session is closed.");
             if (Body != null)
             {
+                if (Body.kind == LabItemKind.Glass && string.IsNullOrWhiteSpace(Body.servingGlassId))
+                    throw new InvalidOperationException("A serving glass requires a recipe glass ID before saving.");
                 if (!IsValidGeometry(Body.collisionProfile, out string error)) throw new InvalidOperationException(error);
                 if (!Finite(Body.rotationPivotLocal) || !Finite(Body.mouthLocal) || !Finite(Body.mouthDirectionLocal)
                     || !float.IsFinite(Body.capacityMl) || Body.capacityMl < 0 || !float.IsFinite(Body.pourMlPerSecond)

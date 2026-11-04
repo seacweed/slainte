@@ -1,0 +1,8 @@
+PASS Queue exactly 60 ml for Colliding
+MEASURE colliding-low-3 cubes=3 contained=3 span=0.257769674 angularSpan=27.53572 speed95=0.430764765 spin95=20.5972233 sleepRatio=0.005 recovery=0 peakCubeSpeed=2.43538332 peakWaterSpeed=15.0711069 peakWaterUp=10.4245157 peakWaterRise=4.294959 lateWaterEnergy=0.04324446 containedMl=29.5 ledgerError=0
+FAIL colliding-low-3 all cubes settle without sustained jitter
+PASS colliding-low-3 conserves total and retired liquid
+FAIL colliding-low-3 liquid kinetic energy decays after dropping stops
+FAIL colliding-low-3 low-energy drops do not launch liquid
+PASS colliding-low-3 keeps native dynamic bodies
+PASS No Unity application errors

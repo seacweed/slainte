@@ -157,11 +157,13 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
             if (session.Body != null)
             {
                 AddProperties("Basic", session.Body, "displayName", "kind", "ingredient", "capacityMl", "remainingMl", "sealedVessel", "rotationPivotLocal");
+                if (session.Body.kind == LabItemKind.Glass)
+                    AddProperties("Recipe identity", session.Body, "servingGlassId");
                 AddProperties("Pouring", session.Body, "pourMlPerSecond", "pourStartAngle", "fullPourAngle", "exitSpeed", "mouthWidth");
                 if (session.Body.collisionProfile == null)
                     AddProperties("Mouth", session.Body, "mouthLocal", "mouthDirectionLocal", "overrideMouthLip", "mouthLipLocal");
                 else inspector.Add(new HelpBox("Mouth position and exit direction are authored in Collision settings below.", HelpBoxMessageType.Info));
-                AddProperties("Stock and contents", session.Body, "icePrefab", "iceStock", "icePourInterval", "garnishLiquidMotionTransfer");
+                AddProperties("Stock and contents", session.Body, "icePrefab", "iceStock", "icePourInterval");
                 var rigid = session.Body.GetComponent<Rigidbody2D>();
                 if (rigid != null) AddProperties("Body physics", rigid, "m_Mass", "m_GravityScale", "m_LinearDamping", "m_AngularDamping");
                 if (session.Body.pickCollider != null) AddProperties("Pick collider", session.Body.pickCollider, "m_Offset", "m_Size", "m_Radius", "m_Points", "m_Paths");

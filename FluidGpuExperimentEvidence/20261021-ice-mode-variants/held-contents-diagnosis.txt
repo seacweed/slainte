@@ -1,0 +1,11 @@
+PASS Default ice mode is non-colliding
+INFO MODES FCoherentLiquid / NonColliding
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.NullReferenceException: Object reference not set to an instance of an object
+  at Slainte.Bartending.FluidGpuExperiment.FluidExperimentGpuLiquid.UploadImprovedSurfaceHulls () [0x0041c] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\_Project\Features\Bartending\FluidGpuExperiment\Runtime\FluidExperimentGpuLiquid.ImprovedSurface.cs:298 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <1eb9db207454431c84a47bcd81e79c37>:0 
+   --- End of inner exception stack trace ---
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <1eb9db207454431c84a47bcd81e79c37>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <1eb9db207454431c84a47bcd81e79c37>:0 
+  at FloatingContentsValidationRunner.IceModeProbe () [0x0001d] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\FloatingContentsValidation.cs:242 
+  at FloatingContentsValidationRunner+<Start>d__20.MoveNext () [0x002be] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\FloatingContentsValidation.cs:101 

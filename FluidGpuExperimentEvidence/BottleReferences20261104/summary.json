@@ -1,0 +1,140 @@
+{
+  "status": "PASS",
+  "bottle_prefabs": [
+    {
+      "prefab": "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Bottle_item_1001.prefab",
+      "ingredient_id": "item_1001",
+      "display_name": "열대 주스",
+      "guid": "ee4369df1df0483fa6ffa93af11ccabc",
+      "pour_ml_per_second": 20.0,
+      "status": "VALIDATED"
+    },
+    {
+      "prefab": "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Bottle_item_1002.prefab",
+      "ingredient_id": "item_1002",
+      "display_name": "실청",
+      "guid": "4c1a4a39e6644696b907b9d828123535",
+      "pour_ml_per_second": 20.0,
+      "status": "VALIDATED"
+    },
+    {
+      "prefab": "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Bottle_item_1003.prefab",
+      "ingredient_id": "item_1003",
+      "display_name": "합성 레몬",
+      "guid": "ab133b0cfa2b4e81b399f227e7532073",
+      "pour_ml_per_second": 20.0,
+      "status": "VALIDATED"
+    },
+    {
+      "prefab": "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Bottle_item_1004.prefab",
+      "ingredient_id": "item_1004",
+      "display_name": "슬롭",
+      "guid": "7dbe85ce4edb4c91931c1b647b46cf66",
+      "pour_ml_per_second": 20.0,
+      "status": "VALIDATED"
+    },
+    {
+      "prefab": "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Bottle_item_1005.prefab",
+      "ingredient_id": "item_1005",
+      "display_name": "나낭나",
+      "guid": "f285c82e560043e2b9224f18432ded73",
+      "pour_ml_per_second": 20.0,
+      "status": "VALIDATED"
+    },
+    {
+      "prefab": "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Bottle_item_1006.prefab",
+      "ingredient_id": "item_1006",
+      "display_name": "코튼",
+      "guid": "70dd6f46d3d342dcb32966a3081eec8a",
+      "pour_ml_per_second": 20.0,
+      "status": "VALIDATED"
+    },
+    {
+      "prefab": "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Bottle_item_1007.prefab",
+      "ingredient_id": "item_1007",
+      "display_name": "헥타르",
+      "guid": "422d4ac4f09d437e97bbea91f8b0924b",
+      "pour_ml_per_second": 20.0,
+      "status": "VALIDATED"
+    },
+    {
+      "prefab": "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Bottle_item_1008.prefab",
+      "ingredient_id": "item_1008",
+      "display_name": "블레스",
+      "guid": "62bfa1614d934f1799afc3c4a4c1a6c1",
+      "pour_ml_per_second": 20.0,
+      "status": "VALIDATED"
+    },
+    {
+      "prefab": "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Bottle_item_1009.prefab",
+      "ingredient_id": "item_1009",
+      "display_name": "브리즈 보드카",
+      "guid": "10da689025464e2dac81cd603aae6a07",
+      "pour_ml_per_second": 20.0,
+      "status": "VALIDATED"
+    },
+    {
+      "prefab": "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Bottle_item_1010.prefab",
+      "ingredient_id": "item_1010",
+      "display_name": "조니 독스",
+      "guid": "a9c9cd1d3ae540a992291ae5c52d4d8a",
+      "pour_ml_per_second": 20.0,
+      "status": "VALIDATED"
+    },
+    {
+      "prefab": "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Bottle_item_1011.prefab",
+      "ingredient_id": "item_1011",
+      "display_name": "번햄 버번",
+      "guid": "e7b00c943fcb4aef8e545fbe8eeddfac",
+      "pour_ml_per_second": 20.0,
+      "status": "VALIDATED"
+    },
+    {
+      "prefab": "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Bottle_item_1012.prefab",
+      "ingredient_id": "item_1012",
+      "display_name": "바하",
+      "guid": "6d69423336c643339f5f0a17b54b4519",
+      "pour_ml_per_second": 20.0,
+      "status": "VALIDATED"
+    },
+    {
+      "prefab": "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Bottle_item_1013.prefab",
+      "ingredient_id": "item_1013",
+      "display_name": "탄산 미닛",
+      "guid": "f0696d7fe47d40ddbc9717a7e047385e",
+      "pour_ml_per_second": 20.0,
+      "status": "VALIDATED"
+    },
+    {
+      "prefab": "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Bottle_item_1014.prefab",
+      "ingredient_id": "item_1014",
+      "display_name": "뜨거운 물",
+      "guid": "0f193e59a91a4fe4b1ca445705822b1c",
+      "pour_ml_per_second": 20.0,
+      "status": "VALIDATED"
+    },
+    {
+      "prefab": "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Bottle_item_1015.prefab",
+      "ingredient_id": "item_1015",
+      "display_name": "커피 분말",
+      "guid": "47f70b2d4f3b43cfa6ff00d6f3e18ed1",
+      "pour_ml_per_second": 20.0,
+      "status": "VALIDATED"
+    }
+  ],
+  "checks_passed": 20,
+  "changed_files": [
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/README.md",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Editor/FluidExperimentAssemblyBuilder.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Editor/FluidExperimentPrefabAudit.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Scenes/FluidGpuComparison.unity"
+  ],
+  "preserved_baseline_files": 598,
+  "all_bottle_prefabs_unchanged": true,
+  "runtime_code_unchanged": true,
+  "all_meta_guids_unchanged": true,
+  "scene_initial_bottle_count": 3,
+  "redundant_name_overrides_removed": 3,
+  "human_play_performed": false,
+  "initial_attempt": "01-references failed with a variable-name collision in validation fixture; corrected for 02-references"
+}

@@ -1,0 +1,20 @@
+{
+  "CocktailComposition.cs": {
+    "source": "Assets/_Project/Features/Bartending/Runtime/Liquid/Vessels/VesselLiquidTracker.cs",
+    "source_sha256": "06ccf49af3faafb37a64e4ea1a9717d237fe9b4fe3a955a673a2ea2c3838442a",
+    "generated_sha256": "65ed88fc28167e94f9e2dd64ac068bea21363249317bd8ac5005790f9a4aebf3",
+    "end_marker": "    // 병/잔/비커"
+  },
+  "LiquidPayload.cs": {
+    "source": "Assets/_Project/Features/Bartending/Runtime/Liquid/Particles/LiquidParticleData.cs",
+    "source_sha256": "ad6fa683d2465c924b3b4b6867ca8fd764940a3e78fb0f7295b1f89a3f425bd8",
+    "generated_sha256": "a1b915c3636330c5da4e546b3a88feedd74640cc1c093b8915425d1019f67b4c",
+    "end_marker": "    public sealed class LiquidParticleData"
+  },
+  "GameCurrency.cs": {
+    "source": "Assets/_Project/Core/Runtime/Economy/GameCurrency.cs",
+    "source_sha256": "64f088ac9a733d97450107f46c96bfb2e84a7a15dc43ffa518496d4febfd1260",
+    "generated_sha256": "faceb7d2a105e571e0f4774eb1ade6f5aa19418ba2a0005c69b1e5fa45564318",
+    "end_marker": "    public static class GameCurrencyWallet"
+  }
+}

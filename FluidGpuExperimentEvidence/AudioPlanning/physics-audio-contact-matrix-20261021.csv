@@ -1,0 +1,46 @@
+﻿재질A,재질B,소리_라우팅,현재조건
+잔 유리,잔 유리,C03 유리-유리; 병/잔 공명 구분,실제 native contact가 허용되고 발생할 때
+잔 유리,병 유리,C03 유리-유리; 병/잔 공명 구분,실제 native contact가 허용되고 발생할 때
+잔 유리,금속 통/지거,C04 유리-금속,실제 native contact가 허용되고 발생할 때
+잔 유리,스푼/금속 부품,C04 유리-금속,실제 native contact가 허용되고 발생할 때
+잔 유리,얼음,C06 얼음-유리,실제 native contact가 허용되고 발생할 때
+잔 유리,가니쉬 껍질,C09/P02/P04 작은 마른 톡/젖은 툭,실제 native contact가 허용되고 발생할 때
+잔 유리,디스펜서 외함,C12 외함-상대 재질,실제 native contact가 허용되고 발생할 때; Held+CollisionSuppressed 중에는 무음
+잔 유리,유리 파편,N14 무음,현재 파편은 환경 이외 고체 접촉을 무시함
+잔 유리,테이블/환경,C01/02/13/14 상대 표면 충격/미끄러짐/구름,실제 native contact가 허용되고 발생할 때
+병 유리,병 유리,C03 유리-유리; 병/잔 공명 구분,실제 native contact가 허용되고 발생할 때
+병 유리,금속 통/지거,C04 유리-금속,실제 native contact가 허용되고 발생할 때
+병 유리,스푼/금속 부품,C04 유리-금속,실제 native contact가 허용되고 발생할 때
+병 유리,얼음,C06 얼음-유리,실제 native contact가 허용되고 발생할 때
+병 유리,가니쉬 껍질,C09/P02/P04 작은 마른 톡/젖은 툭,실제 native contact가 허용되고 발생할 때
+병 유리,디스펜서 외함,C12 외함-상대 재질,실제 native contact가 허용되고 발생할 때; Held+CollisionSuppressed 중에는 무음
+병 유리,유리 파편,N14 무음,현재 파편은 환경 이외 고체 접촉을 무시함
+병 유리,테이블/환경,C01/02/13/14 상대 표면 충격/미끄러짐/구름,실제 native contact가 허용되고 발생할 때
+금속 통/지거,금속 통/지거,C05 금속-금속; 통/부품 구분,실제 native contact가 허용되고 발생할 때
+금속 통/지거,스푼/금속 부품,C05 금속-금속; 통/부품 구분,실제 native contact가 허용되고 발생할 때
+금속 통/지거,얼음,C07 얼음-금속,실제 native contact가 허용되고 발생할 때
+금속 통/지거,가니쉬 껍질,C09/P02/P04 작은 마른 톡/젖은 툭,실제 native contact가 허용되고 발생할 때
+금속 통/지거,디스펜서 외함,C12 외함-상대 재질,실제 native contact가 허용되고 발생할 때; Held+CollisionSuppressed 중에는 무음
+금속 통/지거,유리 파편,N14 무음,현재 파편은 환경 이외 고체 접촉을 무시함
+금속 통/지거,테이블/환경,C01/02/13/14 상대 표면 충격/미끄러짐/구름,실제 native contact가 허용되고 발생할 때
+스푼/금속 부품,스푼/금속 부품,C05 금속-금속; 통/부품 구분,실제 native contact가 허용되고 발생할 때
+스푼/금속 부품,얼음,C07 얼음-금속,실제 native contact가 허용되고 발생할 때
+스푼/금속 부품,가니쉬 껍질,C09/P02/P04 작은 마른 톡/젖은 툭,실제 native contact가 허용되고 발생할 때
+스푼/금속 부품,디스펜서 외함,C12 외함-상대 재질,실제 native contact가 허용되고 발생할 때; Held+CollisionSuppressed 중에는 무음
+스푼/금속 부품,유리 파편,N14 무음,현재 파편은 환경 이외 고체 접촉을 무시함
+스푼/금속 부품,테이블/환경,C01/02/13/14 상대 표면 충격/미끄러짐/구름,실제 native contact가 허용되고 발생할 때
+얼음,얼음,C08 얼음 딸깍,실제 native contact가 허용되고 발생할 때
+얼음,가니쉬 껍질,C10/P04 젖은 툭,실제 native contact가 허용되고 발생할 때
+얼음,디스펜서 외함,재질별 작은 얼음 충격,실제 native contact가 허용되고 발생할 때; Held+CollisionSuppressed 중에는 무음
+얼음,유리 파편,N14 무음,현재 파편은 환경 이외 고체 접촉을 무시함
+얼음,테이블/환경,재질별 작은 얼음 충격,실제 native contact가 허용되고 발생할 때; floorColliders에 등록된 바닥은 loose solid와 IgnoreCollision이므로 그 쌍은 무음; 실제 접촉 가능한 환경만 허용
+가니쉬 껍질,가니쉬 껍질,C11 미세 마찰/대체로 무음,실제 native contact가 허용되고 발생할 때
+가니쉬 껍질,디스펜서 외함,C09/P02/P04 작은 마른 톡/젖은 툭,실제 native contact가 허용되고 발생할 때; Held+CollisionSuppressed 중에는 무음
+가니쉬 껍질,유리 파편,N14 무음,현재 파편은 환경 이외 고체 접촉을 무시함
+가니쉬 껍질,테이블/환경,C09/P02/P04 작은 마른 톡/젖은 툭,실제 native contact가 허용되고 발생할 때; floorColliders에 등록된 바닥은 loose solid와 IgnoreCollision이므로 그 쌍은 무음; 실제 접촉 가능한 환경만 허용
+디스펜서 외함,디스펜서 외함,현재 없음,World당 디스펜서 1개; 다중 장치 도입 때 외함 충격군 공유
+디스펜서 외함,유리 파편,N14 무음,현재 파편은 환경 이외 고체 접촉을 무시함; Held+CollisionSuppressed 중에는 무음
+디스펜서 외함,테이블/환경,C12 외함-상대 재질,실제 native contact가 허용되고 발생할 때; Held+CollisionSuppressed 중에는 무음
+유리 파편,유리 파편,N14 무음,현재 파편은 환경 이외 고체 접촉을 무시함
+유리 파편,테이블/환경,B04~B06 파편 충격/긁힘,실제 native contact가 허용되고 발생할 때
+테이블/환경,테이블/환경,무음,정적 환경끼리는 물리 발음 대상 아님

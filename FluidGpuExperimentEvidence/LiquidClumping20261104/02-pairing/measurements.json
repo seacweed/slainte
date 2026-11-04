@@ -1,0 +1,32 @@
+{
+    "measurements": [
+        {
+            "label": "pair-0.025",
+            "seconds": 1.0,
+            "ml": 1.0,
+            "width": 0.02500000037252903,
+            "height": 0.0,
+            "meanNearest": 0.02500000037252903,
+            "minimumNearest": 0.02500000037252903,
+            "maxSpeed": 0.0,
+            "meanDensity": 0.637728750705719,
+            "maxCompression": 0.0,
+            "particles": 2,
+            "clusters": 1
+        },
+        {
+            "label": "pair-0",
+            "seconds": 1.0,
+            "ml": 1.0,
+            "width": 0.0,
+            "height": 0.0,
+            "meanNearest": 0.0,
+            "minimumNearest": 0.0,
+            "maxSpeed": 0.0,
+            "meanDensity": 0.7142857313156128,
+            "maxCompression": 0.0,
+            "particles": 2,
+            "clusters": 1
+        }
+    ]
+}

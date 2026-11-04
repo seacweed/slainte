@@ -1,0 +1,17 @@
+﻿{
+    "started":  "2026-10-21T22:21:46.0685664+09:00",
+    "timeoutSeconds":  300,
+    "arguments":  [
+                      "-batchmode",
+                      "-force-d3d11",
+                      "-projectPath",
+                      "A:\\UnityHub\\proj\\slainte\\Library\\FluidModelDHarness",
+                      "-executeMethod",
+                      "PhysicsLabValidationDispatch.Run",
+                      "-logFile",
+                      "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\20261021-ice-delivery-input\\Editor.log"
+                  ],
+    "entryMethod":  "ExperimentInputShakerValidation.Begin",
+    "forceShaderImport":  true,
+    "executable":  "A:\\UnityHub\\Unity\\6000.3.5f2\\Editor\\Unity.exe"
+}

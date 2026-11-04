@@ -24,6 +24,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 BindCommonBuffers(applyBreakSplashKernel);
                 splashBoundShader = simulationShader;
             }
+            if (profile.centerOnLiquid) center = CompletedSplashCenter(owner, center);
             var parameters = profile.BuildParameters(center, point, normal, impactSpeed, impulsePerMass, explosive);
             simulationShader.SetInt("_TransformTargetVessel", unchecked((int)owner));
             simulationShader.SetVector("_BreakSplashCenter", parameters.Center);
@@ -44,6 +45,32 @@ namespace Slainte.Bartending.FluidGpuExperiment
             // Releases active and GPU-reserved slots, invalidates cached surface history
             // and advances the state version. Body.OnDisable may safely release it again.
             ReleaseOwner(owner);
+        }
+
+        // Reuse the completed flow snapshot; never synchronously read GPU data
+        // for a break. Reproject its centroid from the captured vessel pose.
+        private Vector2 CompletedSplashCenter(uint owner, Vector2 fallback)
+        {
+            if (!IsOperational || Ledger == null || Ledger.Generation != generation
+                || world == null || settings == null || snapshotParticles == null || garnishFlowFrames == null
+                || !garnishFlowFrames.TryGetValue(owner, out var frame)
+                || simulationTime - Ledger.SimulationTime > settings.solidMaximumSnapshotAge) return fallback;
+            Vector2 weighted = Vector2.zero; float ml = 0;
+            foreach (var p in snapshotParticles)
+                if (p.Active != 0 && p.VesselId == owner && p.VolumeMl > 0
+                    && FluidExperimentSplashProfile.Finite(p.Position))
+                { weighted += p.Position * p.VolumeMl; ml += p.VolumeMl; }
+            if (ml <= .00001f || !float.IsFinite(ml) || !FluidExperimentSplashProfile.Finite(weighted)) return fallback;
+            Vector2 center = weighted / ml;
+            foreach (var body in world.Items)
+                if (body.Id == owner)
+                {
+                    float angle = (body.Angle - frame.angle) * Mathf.Deg2Rad;
+                    Vector2 offset = center - frame.position;
+                    return body.Position + new Vector2(Mathf.Cos(angle)*offset.x-Mathf.Sin(angle)*offset.y,
+                        Mathf.Sin(angle)*offset.x+Mathf.Cos(angle)*offset.y);
+                }
+            return fallback;
         }
     }
 }

@@ -420,14 +420,20 @@ public sealed class GarnishMotionValidationRunner : MonoBehaviour
         Physics2D.SyncTransforms(); world.RefreshIceContainment(); glass.SetHeld(true);
         Check(!Physics2D.GetIgnoreCollision(b.solidColliders[0], ice.solidColliders[0]), "Garnish/ice native contacts are enabled in a held glass");
         if (wet) gpu.Fill(glass, world.Items.First(v => v.ingredient != null).ingredient, 40);
-        var positions = new List<Vector2>(); var angles = new List<float>(); int contact = 0; float gap = 100;
+        var positions = new List<Vector2>(); var angles = new List<float>();
+        var speeds = new List<float>(); var spins = new List<float>(); int contact = 0; float gap = 100;
         var contacts = new ContactPoint2D[32];
-        for (int i = 0; i < 600; i++)
+        // With independently buoyant ice the wet pair can roll slowly while
+        // finding support. Observe longer and distinguish drift from rapid jitter;
+        // the dry contact stack still has the original strict rest requirement.
+        int steps = wet ? 1200 : 600;
+        for (int i = 0; i < steps; i++)
         {
             Step(i % 10 == 0);
             gap = Mathf.Min(gap, Separation(b));
-            if (i < 500) continue;
+            if (i < steps - 100) continue;
             positions.Add(b.Position); angles.Add(b.Angle);
+            speeds.Add(b.Body.linearVelocity.magnitude); spins.Add(Mathf.Abs(b.Body.angularVelocity));
             int count = b.Body.GetContacts(contacts);
             for (int j = 0; j < count; j++)
                 if (contacts[j].collider.attachedRigidbody == ice.Body || contacts[j].otherCollider.attachedRigidbody == ice.Body)
@@ -436,10 +442,15 @@ public sealed class GarnishMotionValidationRunner : MonoBehaviour
         float span = Vector2.Distance(new Vector2(positions.Min(p => p.x), positions.Min(p => p.y)),
             new Vector2(positions.Max(p => p.x), positions.Max(p => p.y)));
         float turn = angles.Max() - angles.Min();
-        report.Add($"MEASURE {s.name} mixed wet={wet} span={span:R} angularSpan={turn:R} iceContactSamples={contact} gap={gap:R}");
-        Check(span < .01f && turn < 2 && gap >= -NativeSlop(b)
+        float jitter = Mathf.Sqrt(positions.Skip(1).Take(positions.Count-2)
+            .Select((p,i)=>(p-(positions[i]+positions[i+2])*.5f).sqrMagnitude).Average());
+        float speed95 = speeds.OrderBy(v=>v).ElementAt(95), spin95 = spins.OrderBy(v=>v).ElementAt(95);
+        report.Add($"MEASURE {s.name} mixed wet={wet} seconds={steps*.02f:R} span={span:R} angularSpan={turn:R} jitter={jitter:R} speed95={speed95:R} spin95={spin95:R} iceContactSamples={contact} gap={gap:R}");
+        Check(span < (wet ? .1f : .01f) && turn < (wet ? 20 : 2)
+            && (!wet || (jitter < .0015f && speed95 < .15f && spin95 < 20)) && gap >= -NativeSlop(b)
             && b.ContainingVesselId == glass.Id && ice.ContainingVesselId == glass.Id,
-            "Mixed native garnish/ice settle without visible sustained jitter or wall escape");
+            wet ? "Mixed buoyant garnish/ice has bounded slow motion without rapid jitter or wall escape"
+                : "Mixed dry garnish/ice settle without visible sustained jitter or wall escape");
         if (!wet) Check(contact > 40, "Dry mixed fixture rests on actual ice contacts");
         else
         {

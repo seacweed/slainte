@@ -1,0 +1,17 @@
+{
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:\\UnityHub\\proj\\slainte\\Library\\FluidModelDHarness",
+    "-executeMethod",
+    "PhysicsLabValidationDispatch.Run",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\NoCohesion20261104\\01-gpu-comparison\\Editor.log"
+  ],
+  "executable": "A:\\UnityHub\\Unity\\6000.3.5f2\\Editor\\Unity.exe",
+  "entryMethod": "NoCohesionValidation.Begin",
+  "forceShaderImport": true,
+  "timeoutSeconds": 300,
+  "started": "2026-11-04T15:11:41.7482762+09:00"
+}

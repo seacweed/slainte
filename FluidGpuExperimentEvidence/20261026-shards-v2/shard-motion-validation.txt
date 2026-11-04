@@ -1,0 +1,78 @@
+PASS Native shard replay uses authored F without G explosion
+PASS Authored F disables extra radial energy and explicitly retains measured impulse transfer
+PASS The sixteen authored images/outlines and existing break thresholds are retained
+PASS Controlled fixture queues a valid fracture without inventing a native impact
+PASS One complete native fragment set replaces the intact glass
+PASS Shard 0 has finite positive native mass and inertia
+PASS Shard 0 retains its authored collision outline
+PASS Shard 1 has finite positive native mass and inertia
+PASS Shard 1 retains its authored collision outline
+PASS Shard 2 has finite positive native mass and inertia
+PASS Shard 2 retains its authored collision outline
+PASS Shard 3 has finite positive native mass and inertia
+PASS Shard 3 retains its authored collision outline
+PASS Shard 4 has finite positive native mass and inertia
+PASS Shard 4 retains its authored collision outline
+PASS Shard 5 has finite positive native mass and inertia
+PASS Shard 5 retains its authored collision outline
+PASS Shard 6 has finite positive native mass and inertia
+PASS Shard 6 retains its authored collision outline
+PASS Shard 7 has finite positive native mass and inertia
+PASS Shard 7 retains its authored collision outline
+PASS Shard 8 has finite positive native mass and inertia
+PASS Shard 8 retains its authored collision outline
+PASS Shard 9 has finite positive native mass and inertia
+PASS Shard 9 retains its authored collision outline
+PASS Shard 10 has finite positive native mass and inertia
+PASS Shard 10 retains its authored collision outline
+PASS Shard 11 has finite positive native mass and inertia
+PASS Shard 11 retains its authored collision outline
+PASS Shard 12 has finite positive native mass and inertia
+PASS Shard 12 retains its authored collision outline
+PASS Shard 13 has finite positive native mass and inertia
+PASS Shard 13 retains its authored collision outline
+PASS Shard 14 has finite positive native mass and inertia
+PASS Shard 14 retains its authored collision outline
+PASS Shard 15 has finite positive native mass and inertia
+PASS Shard 15 retains its authored collision outline
+MEASURE birth mass=0.35 shardMass=0.35 maxPointVelocityError=4.76837158E-07 maxComOffset=2.40274E-07 pairs=184 pending=0
+PASS Fragment masses sum to the intact source mass
+PASS Every native shard COM inherits the original point velocity and spin without a radial or random kick
+PASS Controlled fixture queues a valid fracture without inventing a native impact
+PASS One complete native fragment set replaces the intact glass
+PASS An actually overlapped birth records deferred contact pairs
+PASS Initially penetrating bottle/shard pairs cannot receive a second separation impulse
+MEASURE overlap stationaryPeak=0 pending=13
+PASS Zero-energy overlapping birth does not explode before separation
+PASS Bottle contact arms once the initially overlapped pair really separates
+PASS Held ordinary objects retain external shard isolation
+PASS Releasing a separated ordinary object restores shard contact
+PASS A later overlapping contact cannot silently disable an armed pair
+PASS drop native contact breaks at the unchanged thresholds
+MEASURE drop breakSeconds=0.789999962 mean=(0.170247391, -1.06427336) birthEnergy=5.857235 peakEnergy=5.857235 lateSpeed=0 lateSpin=0 enabledSiblingPairs=120/120 maxOverlap=0.005307949 pending=0
+PASS drop restores most sibling contacts instead of permanently ghosting the set
+PASS drop does not create a large post-birth energy jump against static surroundings
+PASS drop settles without persistent linear or angular jitter
+PASS drop keeps finite bodies above the physical floor
+PASS spin native contact breaks at the unchanged thresholds
+MEASURE spin breakSeconds=0.78 mean=(-1.61714733, -5.976534) birthEnergy=12.6150913 peakEnergy=12.6150913 lateSpeed=0 lateSpin=0 enabledSiblingPairs=120/120 maxOverlap=0.005000104 pending=0
+PASS spin restores most sibling contacts instead of permanently ghosting the set
+PASS spin does not create a large post-birth energy jump against static surroundings
+PASS spin settles without persistent linear or angular jitter
+PASS spin keeps finite bodies above the physical floor
+PASS bottle-right native contact breaks at the unchanged thresholds
+MEASURE bottle-right breakSeconds=0.049999997 mean=(11.078146, -0.5305641) birthEnergy=68.10388 peakEnergy=68.10388 lateSpeed=0 lateSpin=0 enabledSiblingPairs=120/120 maxOverlap=0.00500102853 pending=0
+PASS bottle-right retains measured directional momentum without a radial burst
+PASS bottle-right restores most sibling contacts instead of permanently ghosting the set
+PASS bottle-right does not create a large post-birth energy jump against static surroundings
+PASS bottle-right settles without persistent linear or angular jitter
+PASS bottle-right keeps finite bodies above the physical floor
+PASS bottle-left native contact breaks at the unchanged thresholds
+MEASURE bottle-left breakSeconds=0.049999997 mean=(-11.8614578, -0.379059285) birthEnergy=70.16788 peakEnergy=70.16788 lateSpeed=0 lateSpin=0 enabledSiblingPairs=120/120 maxOverlap=0.004999986 pending=0
+PASS bottle-left retains measured directional momentum without a radial burst
+PASS bottle-left restores most sibling contacts instead of permanently ghosting the set
+PASS bottle-left does not create a large post-birth energy jump against static surroundings
+PASS bottle-left settles without persistent linear or angular jitter
+PASS bottle-left keeps finite bodies above the physical floor
+PASS Reset removes all shards and contact lifecycle state
+PASS No native, Unity or shader errors

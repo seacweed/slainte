@@ -1,0 +1,112 @@
+PASS Authored F Manual loads the actual shared resource recipes and evaluator adapter
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.6608391 ml per particle
+INFO 주문 성공 | Good | 번햄 사워 한 잔
+요청 레시피: 번햄 사워 (레시피 주문)
+감지된 레시피: 번햄 사워 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 번햄 사워 | 총량 90 ml
+최종 색상: #E8AE62CC | RGBA(0.911, 0.683, 0.384, 0.801)
+- 실청: 15 / 15 ml
+- 슬롭: 30 / 30 ml
+- 합성 레몬: 15 / 15 ml
+- 번햄 버번: 30 / 30 ml
+
+PASS Actual recipe rec_1001 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.7656249 ml per particle
+INFO 주문 성공 | Good | 코튼 사워 한 잔
+요청 레시피: 코튼 사워 (레시피 주문)
+감지된 레시피: 코튼 사워 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 코튼 사워 | 총량 105 ml
+최종 색상: #DE8D34D0 | RGBA(0.869, 0.552, 0.205, 0.815)
+- 코튼: 60 / 60 ml
+- 슬롭: 30 / 30 ml
+- 합성 레몬: 15 / 15 ml
+
+PASS Actual recipe rec_1002 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.5 ml per particle
+INFO 주문 성공 | Good | 갓레이디 한 잔
+요청 레시피: 갓레이디 (레시피 주문)
+감지된 레시피: 갓레이디 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 갓레이디 | 총량 60 ml
+최종 색상: #F1AB8080 | RGBA(0.945, 0.671, 0.5, 0.5)
+- 코튼: 30 / 30 ml
+- 브리즈 보드카: 30 / 30 ml
+
+PASS Actual recipe rec_1003 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.5 ml per particle
+INFO 주문 성공 | Good | 갓로드 한 잔
+요청 레시피: 갓로드 (레시피 주문)
+감지된 레시피: 갓로드 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 갓로드 | 총량 60 ml
+최종 색상: #C65404CC | RGBA(0.776, 0.329, 0.014, 0.8)
+- 코튼: 30 / 30 ml
+- 조니 독스: 30 / 30 ml
+
+PASS Actual recipe rec_1004 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.65625 ml per particle
+INFO 주문 성공 | Good | 셰이디 한 잔
+요청 레시피: 셰이디 (레시피 주문)
+감지된 레시피: 셰이디 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 셰이디 | 총량 90 ml
+최종 색상: #B71E0ACC | RGBA(0.719, 0.116, 0.041, 0.8)
+- 헥타르: 30 / 30 ml
+- 블레스: 30 / 30 ml
+- 번햄 버번: 30 / 30 ml
+
+PASS Actual recipe rec_1005 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Hurricane: 132 grid points, up to 0.9692307 ml per particle
+INFO 주문 성공 | Good | 한여름의 나낭나 한 잔
+요청 레시피: 한여름의 나낭나 (레시피 주문)
+감지된 레시피: 한여름의 나낭나 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 한여름의 나낭나 | 총량 120 ml
+최종 색상: #F5780BF2 | RGBA(0.962, 0.473, 0.044, 0.95)
+- 나낭나: 30 / 30 ml
+- 열대 주스: 90 / 90 ml
+
+PASS Actual recipe rec_1006 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Hurricane: 132 grid points, up to 0.9767441 ml per particle
+INFO 주문 성공 | Good | 한여름의 주스 한 잔
+요청 레시피: 한여름의 주스 (레시피 주문)
+감지된 레시피: 한여름의 주스 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 한여름의 주스 | 총량 120 ml
+최종 색상: #F38D26EC | RGBA(0.952, 0.554, 0.148, 0.925)
+- 실청: 15 / 15 ml
+- 합성 레몬: 15 / 15 ml
+- 열대 주스: 90 / 90 ml
+
+PASS Actual recipe rec_1007 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Hurricane: 132 grid points, up to 1.722656 ml per particle
+INFO 주문 성공 | Good | 아이리시 커피 한 잔
+요청 레시피: 아이리시 커피 (레시피 주문)
+감지된 레시피: 아이리시 커피 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 아이리시 커피 | 총량 210 ml
+최종 색상: #DE8D40D0 | RGBA(0.87, 0.552, 0.251, 0.817)
+- 바하: 40 / 40 ml
+- 실청: 10 / 10 ml
+- 커피 분말: 10 / 10 ml
+- 뜨거운 물: 150 / 150 ml
+
+PASS Actual recipe rec_1008 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Highball: 160 grid points, up to 1.196203 ml per particle
+INFO 주문 실패 | Bad | 블랙 커피 한 잔
+요청 레시피: 블랙 커피 (레시피 주문)
+블랙 커피 조건을 만족하지 않습니다: 제조법 불일치.
+감지된 레시피: 레시피 없음 | 레시피 불일치
+요청 레시피 판정:
+레시피 불일치 | 블랙 커피 | 총량 180 ml
+최종 색상: #382014FF | RGBA(0.22, 0.125, 0.078, 1)
+제조법 불일치
+- 커피 분말: 30 / 30 ml
+- 뜨거운 물: 150 / 150 ml
+
+FAIL Actual recipe rec_1009 yields Good with matching GPU ingredients, glass, ice and technique
+System.Exception: Actual recipe rec_1009 yields Good with matching GPU ingredients, glass, ice and technique
+  at CocktailIntegrationRunner.Check (System.Boolean value, System.String message) [0x0002a] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\CocktailIntegrationValidation.cs:39 
+  at CocktailIntegrationRunner+<Start>d__11.MoveNext () [0x001e3] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\CocktailIntegrationValidation.cs:66 

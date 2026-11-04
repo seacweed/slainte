@@ -15,7 +15,14 @@ public static class ExperimentGlassBreakageValidation
     [InitializeOnLoadMethod] static void Register() => EditorApplication.playModeStateChanged += s =>
     {
         if (s != PlayModeStateChange.EnteredPlayMode || !SessionState.GetBool(Key, false)) return;
-        SessionState.EraseBool(Key); new GameObject("GlassBreakageValidation").AddComponent<GlassBreakageValidationRunner>();
+        SessionState.EraseBool(Key);
+        var comparison=UnityEngine.Object.FindFirstObjectByType<FluidExperimentComparison>();
+        var authored=comparison!=null?comparison.GetComponentInChildren<FluidExperimentBreakableGlass>(true):null;
+        // The contact-only authored baseline deliberately has no splash profile.
+        // Retain the older fan/style suite for restoring that recorded configuration.
+        if(comparison!=null&&comparison.world.shardLiquidCollision&&authored!=null&&authored.splashProfile==null)
+            new GameObject("ContactBreakageValidation").AddComponent<ContactBreakageRunner>();
+        else new GameObject("GlassBreakageValidation").AddComponent<GlassBreakageValidationRunner>();
     };
     public static void Begin()
     {
@@ -39,6 +46,7 @@ public sealed class GlassBreakageValidationRunner : MonoBehaviour
     FluidExperimentBreakageProfile sourceProfile, testProfile;
     ItemDef ingredient;
     float floorY, sourceGravity, sourceLinearDamping, sourceAngularDamping;
+    Vector2 expectedSplashCenter;
     string Evidence => Environment.GetEnvironmentVariable("PHYSICSLAB_EVIDENCE_DIR");
     object Field(object o, string name) => o.GetType().GetField(name, Members).GetValue(o);
     void SetField(object o, string name, object value) => o.GetType().GetField(name, Members).SetValue(o, value);
@@ -71,6 +79,11 @@ public sealed class GlassBreakageValidationRunner : MonoBehaviour
             sourceAngularDamping = glass.Body.angularDamping;
             Check(Application.isBatchMode && gpu.CohesivePhysicsActive, "Hidden batch uses actual F GPU with no desktop input");
             Check(breakable != null && breakable.profile != null, "Authored hurricane has a configured breakage component");
+            Check(breakable.splashProfile != null && breakable.splashProfile.name == "ComparisonBreakageSplash"
+                && Mathf.Abs(breakable.splashProfile.strength-2)<.0001f
+                && Mathf.Abs(breakable.splashProfile.maximumDeltaSpeed-12)<.0001f
+                && Mathf.Abs(breakable.splashProfile.explosiveMultiplier-1)<.0001f,
+                "Authored comparison imports the visible 2.0 strength, 12 u/s cap and equal F/G splash profile");
             sourceProfile = breakable.profile;
             testProfile = Instantiate(sourceProfile); breakable.profile = testProfile;
             Check(testProfile.shards.Length == 16 && Mathf.Abs(testProfile.minimumImpactSpeed - 6f) < .0001f
@@ -82,6 +95,8 @@ public sealed class GlassBreakageValidationRunner : MonoBehaviour
             StrongDrop();
             FilledNativeDrop();
             StrongWallImpact();
+            ImpactDirectedShardMotion();
+            DirectionalLiquidSplash();
             ShardPlacementAndInheritance();
             DetachedShakerIsolation();
             LiquidAndSolidConservation();
@@ -124,7 +139,14 @@ public sealed class GlassBreakageValidationRunner : MonoBehaviour
         Physics2D.SyncTransforms(); world.RefreshCollisionPairs();
     }
     void PhysicsStep(float dt = .01f)
-    { world.SendMessage("FixedUpdate"); Physics2D.SyncTransforms(); Physics2D.Simulate(dt); }
+    {
+        world.SendMessage("FixedUpdate");
+        // This fixture advances many physical ticks inside one editor frame.
+        // Native interpolation needs real rendered frames; use completed poses here.
+        foreach(var rb in world.GetComponentsInChildren<Rigidbody2D>())
+            if(rb.simulated)rb.interpolation=RigidbodyInterpolation2D.None;
+        Physics2D.SyncTransforms();Physics2D.Simulate(dt);
+    }
     void Step(float dt = .01f) { PhysicsStep(dt); world.TickLiquid(dt); }
     bool UntilQueued(int maximumSteps)
     {
@@ -138,11 +160,31 @@ public sealed class GlassBreakageValidationRunner : MonoBehaviour
     }
     void QueueControlledBreak()
     {
+        CaptureExpectedSplashCenter();
         Invoke(breakable, "QueueImpact", 8f, glass.Body.mass * 8f, glass.Position);
         Check(breakable.BreakQueued, "Controlled transaction fixture uses a valid queued impact");
     }
     void CompleteControlledBreak() { QueueControlledBreak(); Invoke(breakable, "CompleteBreak"); }
     GpuLiquidParticle[] Read() { gpu.ReadbackNow(); return (GpuLiquidParticle[])gpu.Snapshot.Clone(); }
+    Vector2 SplashDelta(Vector2 position) => breakable.splashProfile == null ? Vector2.zero
+        : breakable.splashProfile.EvaluateVelocityDelta(position,
+            expectedSplashCenter,
+            breakable.LastImpactPoint,breakable.LastImpactNormal,breakable.LastImpactSpeed,
+            breakable.LastImpactImpulse/glass.Body.mass,world.ExplosiveGlassBreakage);
+    void CaptureExpectedSplashCenter()
+    {
+        expectedSplashCenter=glass.LocalToWorld(FluidExperimentCollisionProfile.BoundsOf(glass.LiquidInteriorPath).center);
+        if(breakable.splashProfile==null || !breakable.splashProfile.centerOnLiquid)return;
+        var liquid=gpu.Snapshot.Where(p=>p.Active!=0 && p.VesselId==glass.Id && p.VolumeMl>0).ToArray();
+        float ml=liquid.Sum(p=>p.VolumeMl);
+        if(ml>0)expectedSplashCenter=liquid.Aggregate(Vector2.zero,(sum,p)=>sum+p.Position*p.VolumeMl)/ml;
+    }
+    bool ReleasedParticleMatches(GpuLiquidParticle before,GpuLiquidParticle after,bool receivesSplash)
+    {
+        bool exact=after.VesselId==0 && Near(after.Velocity,before.Velocity+(receivesSplash?SplashDelta(before.Position):Vector2.zero),.0003f);
+        after.VesselId=before.VesselId;after.Velocity=before.Velocity;
+        return exact && after.Equals(before);
+    }
     void GentleContact()
     {
         Reset(0, .025f);
@@ -219,6 +261,7 @@ public sealed class GlassBreakageValidationRunner : MonoBehaviour
         Check(UntilQueued(180), "A real 40 ml/ice/garnish high drop queues breakage at the unchanged default thresholds");
         uint owner = glass.Id;
         var before = Read(); var composition = (float[])gpu.CompositionSnapshot.Clone();
+        var streamsBefore = gpu.ReadStreamParticles();
         var ledgerBefore = gpu.Ledger.Total;
         var solids = new[] { ice, garnish }; var positions = solids.Select(b => b.Position).ToArray();
         var velocities = solids.Select(b => b.Body.linearVelocity).ToArray(); var spins = solids.Select(b => b.Body.angularVelocity).ToArray();
@@ -227,18 +270,27 @@ public sealed class GlassBreakageValidationRunner : MonoBehaviour
         Check(before.Any(p => p.Active != 0 && p.VesselId == owner), "Filled vessel still owns liquid at the actual collision callback");
         // Commit the actual native callback before advancing the next liquid tick. This lets
         // the comparison distinguish break transaction effects from subsequent free-fall physics.
+        CaptureExpectedSplashCenter();
         Invoke(world, "ProcessGlassBreakage");
         var after = Read(); var ledgerAfter = gpu.Ledger.Total;
-        bool exact = true;
+        bool exact = true;float peakSplash=0,risingMl=0;Vector2 meanSplash=Vector2.zero;int splashed=0;
         for (int i = 0; i < before.Length; i++)
         {
             var a = before[i]; var b = after[i];
-            if (a.VesselId == owner) { exact &= b.VesselId == 0; b.VesselId = owner; }
-            exact &= a.Equals(b);
+            if (a.VesselId == owner)
+            {
+                exact &= ReleasedParticleMatches(a,b,a.Active!=0 || streamsBefore[i].Pending!=0);
+                if(a.Active!=0){Vector2 delta=b.Velocity-a.Velocity;peakSplash=Mathf.Max(peakSplash,delta.magnitude);meanSplash+=delta;splashed++;if(b.Velocity.y>.5f)risingMl+=b.VolumeMl;}
+            }
+            else exact &= a.Equals(b);
         }
         Check(breakable.IsBroken && world.GlassShards.Count == 16 && exact
             && composition.SequenceEqual(gpu.CompositionSnapshot),
-            "Actual filled-impact transaction creates 16 shards and changes only liquid owner IDs");
+            "Actual filled-impact transaction adds exactly one profiled splash while retaining liquid position/history/content and 16 shards");
+        meanSplash/=Mathf.Max(1,splashed);
+        Check(meanSplash.y>.01f && peakSplash<=12.0001f && risingMl>=5,
+            "Real floor break produces at least 5 ml actually moving upward, retaining incoming motion and the 12 u/s delta cap");
+        report.Add($"MEASURE floor splash mean={meanSplash:R} peak={peakSplash:R} risingMl={risingMl:R}");
         Check(ledgerBefore.GeneratedMl == ledgerAfter.GeneratedMl && ledgerBefore.ActiveMl == ledgerAfter.ActiveMl
             && ledgerBefore.GpuPendingMl == ledgerAfter.GpuPendingMl && ledgerBefore.RetiredMl == ledgerAfter.RetiredMl
             && Math.Abs(ledgerAfter.ConservationErrorMl) < .0001,
@@ -247,17 +299,213 @@ public sealed class GlassBreakageValidationRunner : MonoBehaviour
             Check(solids[i].ContainingVesselId == 0 && Near(solids[i].Position, positions[i])
                 && Near(solids[i].Body.linearVelocity, velocities[i]) && solids[i].Body.angularVelocity == spins[i],
                 "Actual impact releases " + solids[i].kind + " without adding a second impulse or position correction");
-        for (int i = 0; i < 30; i++) Step(.02f);
+        for (int i = 0; i < 40; i++)
+        {
+            Step(.02f);
+            if(i%2==0)Capture("floor-splash-"+(i/2).ToString("000")+".png",new Vector2(0,floorY+1.2f),3);
+        }
         Read();
         Check(gpu.Snapshot.Where(p => p.Active != 0).All(p => p.VesselId != owner)
             && Math.Abs(gpu.Ledger.Total.ConservationErrorMl) < .001
             && Math.Abs(gpu.Ledger.Total.GeneratedMl - accepted) < .001,
-            "Released liquid continues 30 real native/GPU ticks without stale vessel ownership or lost accounting");
+            "Released liquid continues 40 real native/GPU ticks without stale vessel ownership or lost accounting");
         Check(solids.All(b => b != null && b.isActiveAndEnabled && b.ContainingVesselId == 0)
             && positions.Select((p, i) => Vector2.Distance(p, solids[i].Position)).All(d => d > .05f),
             "Released ice and garnish continue moving freely after the actual filled-glass break");
         Capture("filled-glass-after-break.png", new Vector2(0, floorY - .2f), 3.0f);
         foreach (var b in solids) { b.gameObject.SetActive(false); Destroy(b.gameObject); }
+    }
+
+    void DirectionalLiquidSplash()
+    {
+        var authored=breakable.splashProfile;
+        Vector2 sample=new Vector2(.4f,2.4f),center=new Vector2(0,.5f);
+        float weak=authored.EvaluateVelocityDelta(sample,center,Vector2.zero,Vector2.up,7,7).magnitude;
+        float strong=authored.EvaluateVelocityDelta(sample,center,Vector2.zero,Vector2.up,14,14).magnitude;
+        Check(strong>weak && strong<=12.0001f,"Authored profile increases splash with impact strength before reaching its cap");
+        Check(Near(authored.EvaluateVelocityDelta(sample,center,Vector2.zero,Vector2.up,14,14,true),
+            authored.EvaluateVelocityDelta(sample,center,Vector2.zero,Vector2.up,14,14,false)),
+            "G's fixed fragment burst does not amplify the authored comparison liquid splash");
+        try
+        {
+            foreach(var mode in new[]{FluidExperimentMode.FCoherentLiquid,FluidExperimentMode.GExplosiveBreakage})
+            {
+                comparison.SwitchMode(mode);DisableAutomaticSimulation();
+                Check(breakable.splashProfile==authored,"Mode switch retains the scene-authored splash reference in "+mode);
+                var off=BottleLiquidSplash(1,12,mode+"-off",false);
+                var right=BottleLiquidSplash(1,12,mode+"-right");
+                var left=BottleLiquidSplash(-1,12,mode+"-left");
+                var fast=BottleLiquidSplash(1,20,mode+"-fast");
+                Check(right.mean.x>.02f && left.mean.x<-.02f,"Actual left/right bottle impacts push liquid in opposite measured contact directions in "+mode);
+                Check(float.IsFinite(fast.mean.x)&&fast.mean.x>0,"Faster actual bottle impact keeps finite, correctly directed liquid splash in "+mode);
+                Check(right.aheadMl>=off.aheadMl+2,
+                    "Splash ON carries at least 2 ml more liquid visibly beyond the bottle front than the matched OFF replay in "+mode);
+                report.Add($"MEASURE visibility {mode} offAheadMl={off.aheadMl:R} onAheadMl={right.aheadMl:R}");
+                Reset(0,.025f);glass.Body.bodyType=RigidbodyType2D.Kinematic;
+                Check(Mathf.Abs(gpu.Fill(glass,ingredient,20)-20)<.001f,"Gentle-drop fixture fills a real glass in "+mode);
+                for(int i=0;i<120;i++)Step(.02f);
+                glass.Body.bodyType=RigidbodyType2D.Dynamic;
+                Check(!UntilQueued(180) && !breakable.IsBroken && glass.gameObject.activeInHierarchy,
+                    "A filled glass dropped gently remains intact and never starts a break splash in "+mode);
+            }
+        }
+        finally
+        {
+            comparison.SwitchMode(FluidExperimentMode.FCoherentLiquid);DisableAutomaticSimulation();
+        }
+    }
+
+    (Vector2 mean,float aheadMl) BottleLiquidSplash(int direction,float speed,string label,bool enabledSplash=true)
+    {
+        Reset(0,3);glass.Body.bodyType=RigidbodyType2D.Kinematic;
+        Check(Mathf.Abs(gpu.Fill(glass,ingredient,40)-40)<.001f,label+" starts with 40 ml");
+        for(int i=0;i<120;i++)Step(.02f);
+        var bottle=world.Items.First(b=>b.kind==LabItemKind.Bottle);
+        var rb=bottle.Body;float mass=rb.mass,gravity=rb.gravityScale,damping=rb.linearDamping;
+        var constraints=rb.constraints;var interpolation=rb.interpolation;
+        var authoredSplash=breakable.splashProfile;FluidExperimentSplashProfile disabledSplash=null;
+        try
+        {
+            if(!enabledSplash){disabledSplash=Instantiate(authoredSplash);disabledSplash.strength=0;breakable.splashProfile=disabledSplash;}
+            rb.simulated=true;rb.bodyType=RigidbodyType2D.Dynamic;rb.gravityScale=0;rb.linearDamping=0;
+            rb.constraints=RigidbodyConstraints2D.FreezeRotation|RigidbodyConstraints2D.FreezePositionY;
+            rb.interpolation=RigidbodyInterpolation2D.None;
+            // Use the actual authored bottle shape and mass, not a proxy collider.
+            Bounds g=glass.SolidBounds;
+            bottle.Teleport(new Vector2(0,g.center.y),0);Physics2D.SyncTransforms();
+            Bounds b=bottle.SolidBounds;
+            float x=direction>0?g.min.x-.5f-b.max.x:g.max.x+.5f-b.min.x;
+            bottle.Teleport(bottle.Position+new Vector2(x,g.center.y-b.center.y),0);
+            glass.Body.bodyType=RigidbodyType2D.Dynamic;glass.Body.gravityScale=0;
+            glass.Body.interpolation=RigidbodyInterpolation2D.None;
+            rb.linearVelocity=Vector2.right*(direction*speed);
+            Physics2D.SyncTransforms();world.RefreshCollisionPairs();
+            PhysicsStep(.001f);world.TickLiquid(.001f);
+            Capture(label+"-before.png",new Vector2(g.center.x,g.center.y-.2f),3.5f);
+            Check(UntilQueued(100),label+" actual bottle queues breakage at the unchanged 6/4 thresholds");
+            var before=Read();var streams=gpu.ReadStreamParticles();
+            var composition=(float[])gpu.CompositionSnapshot.Clone();var ledger=gpu.Ledger.Total;
+            Check(before.Any(p=>p.Active!=0 && p.VesselId==glass.Id),label+" still owns active liquid at contact");
+            CaptureExpectedSplashCenter();
+            Invoke(world,"ProcessGlassBreakage");
+            var after=Read();Vector2 mean=Vector2.zero;float volume=0,peak=0;bool exact=true;
+            for(int i=0;i<before.Length;i++)
+            {
+                var a=before[i];var p=after[i];
+                if(a.VesselId==glass.Id)
+                {
+                    exact &= ReleasedParticleMatches(a,p,a.Active!=0 || streams[i].Pending!=0);
+                    if(a.Active!=0)
+                    {
+                        Vector2 delta=p.Velocity-a.Velocity;mean+=delta*a.VolumeMl;volume+=a.VolumeMl;
+                        peak=Mathf.Max(peak,delta.magnitude);
+                    }
+                }
+                else exact &= a.Equals(p);
+            }
+            mean/=Mathf.Max(.0001f,volume);
+            Check(exact && peak<=12.0001f && (enabledSplash?peak>.01f && direction*mean.x>.02f:peak<.0001f),
+                label+" adds a finite capped contact-directed velocity exactly once and preserves other particle fields");
+            Check(composition.SequenceEqual(gpu.CompositionSnapshot) && ledger.GeneratedMl==gpu.Ledger.Total.GeneratedMl
+                && ledger.ActiveMl==gpu.Ledger.Total.ActiveMl && Math.Abs(gpu.Ledger.Total.ConservationErrorMl)<.001,
+                label+" preserves liquid volume and ingredients at fracture");
+            report.Add($"MEASURE bottle {label} inputSpeed={speed:R} impactSpeed={breakable.LastImpactSpeed:R} impulsePerMass={breakable.LastImpactImpulse/glass.Body.mass:R} normal={breakable.LastImpactNormal:R} meanDelta={mean:R} peakDelta={peak:R} affectedMl={volume:R}");
+            var once=Read();
+            gpu.ReleaseWithSplash(glass.Id,glass.Position,breakable.LastImpactPoint,breakable.LastImpactNormal,
+                breakable.LastImpactSpeed,breakable.LastImpactImpulse/glass.Body.mass,breakable.splashProfile,world.ExplosiveGlassBreakage);
+            Check(once.SequenceEqual(Read()),label+" repeated release cannot apply another splash");
+            float aheadMl=0;
+            for(int i=0;i<40;i++)
+            {
+                Step(.02f);
+                if(i%2==0)
+                {
+                    Read();float front=direction>0?bottle.SolidBounds.max.x+.15f:bottle.SolidBounds.min.x-.15f;
+                    aheadMl=Mathf.Max(aheadMl,gpu.Snapshot.Where(p=>p.Active!=0 && (direction>0?p.Position.x>front:p.Position.x<front)).Sum(p=>p.VolumeMl));
+                }
+                if(i%2==0 && speed==12 && direction==1)
+                    Capture(label+"-"+(i/2).ToString("000")+".png",new Vector2(g.center.x,g.center.y-.2f),3.5f);
+            }
+            Read();
+            Check(Math.Abs(gpu.Ledger.Total.ConservationErrorMl)<.001 && Math.Abs(gpu.Ledger.Total.GeneratedMl-40)<.001,
+                label+" continues native/GPU simulation without losing volume accounting");
+            return(mean,aheadMl);
+        }
+        finally
+        {
+            breakable.splashProfile=authoredSplash;if(disabledSplash!=null)Destroy(disabledSplash);
+            rb.mass=mass;rb.gravityScale=gravity;rb.linearDamping=damping;rb.constraints=constraints;rb.interpolation=interpolation;
+        }
+    }
+
+    void ImpactDirectedShardMotion()
+    {
+        float oldTransfer=testProfile.impactVelocityTransfer,oldScatter=testProfile.impactScatterScale;
+        float oldSeparation=testProfile.separationSpeed;
+        float oldSpeed=testProfile.minimumImpactSpeed,oldImpulse=testProfile.minimumImpulsePerMass;
+        try
+        {
+            testProfile.separationSpeed=0;
+            // Isolate the first native contact. The normal 6/4 gameplay thresholds
+            // were tested above; a delayed threshold crossing can occur after
+            // several earlier contacts have already accelerated the receiver.
+            testProfile.minimumImpactSpeed=.01f;testProfile.minimumImpulsePerMass=.01f;
+            var right=Strike(1,9,Vector2.zero,0);
+            var left=Strike(-1,9,Vector2.zero,0);
+            var faster=Strike(1,15,Vector2.zero,0);
+            Check(right.mean.x>1 && left.mean.x< -1,
+                "Actual moving strikers from opposite sides launch shard momentum in opposite contact directions");
+            Check(faster.mean.x>right.mean.x+1 && faster.spread>right.spread,
+                "A stronger actual strike transfers more directional momentum and fragment spread");
+            testProfile.impactVelocityTransfer=0;testProfile.impactScatterScale=0;
+            var incoming=Strike(1,12,new Vector2(0,2),0);
+            Check(Mathf.Abs(incoming.mean.x)<.02f && Mathf.Abs(incoming.mean.y-2)<.02f,
+                "Zero contact transfer preserves captured incoming translation instead of the already changed post-solver velocity");
+            var spinning=Strike(1,12,Vector2.zero,80);
+            Check(Mathf.Abs(spinning.spin-80)<.02f,
+                "Captured incoming angular velocity survives native impact and reaches every fragment");
+        }
+        finally
+        {
+            testProfile.impactVelocityTransfer=oldTransfer;testProfile.impactScatterScale=oldScatter;
+            testProfile.separationSpeed=oldSeparation;
+            testProfile.minimumImpactSpeed=oldSpeed;testProfile.minimumImpulsePerMass=oldImpulse;
+        }
+    }
+
+    (Vector2 mean,float spin,float spread) Strike(int direction,float speed,Vector2 incoming,float spin)
+    {
+        Reset(0,4);
+        glass.Body.gravityScale=0;glass.Body.linearDamping=0;glass.Body.angularDamping=0;
+        glass.Body.linearVelocity=incoming;glass.Body.angularVelocity=spin;
+        var go=new GameObject("DirectionalFractureStriker");go.layer=world.itemLayer;
+        var rb=go.AddComponent<Rigidbody2D>();rb.gravityScale=0;rb.mass=glass.Body.mass*4;
+        rb.constraints=RigidbodyConstraints2D.FreezeRotation;rb.collisionDetectionMode=CollisionDetectionMode2D.Continuous;
+        var box=go.AddComponent<BoxCollider2D>();box.size=new Vector2(.4f,6);
+        Bounds b=glass.SolidBounds;
+        rb.position=new Vector2(direction>0?b.min.x-.6f:b.max.x+.6f,b.center.y);
+        rb.linearVelocity=Vector2.right*(direction*speed);
+        try
+        {
+            Physics2D.SyncTransforms();
+            Check(UntilQueued(80),$"Real striker direction={direction} speed={speed} queues fracture");
+            Vector2 normal=breakable.LastImpactNormal;
+            Invoke(world,"ProcessGlassBreakage");
+            Check(world.GlassShards.Count==16,"Directional fracture produces one complete native shard set");
+            var shards=world.GlassShards.ToArray();float mass=shards.Sum(s=>s.Body.mass);
+            Vector2 mean=Vector2.zero;float meanSpin=0;
+            foreach(var s in shards){mean+=s.Body.linearVelocity*(s.Body.mass/mass);meanSpin+=s.Body.angularVelocity*(s.Body.mass/mass);}
+            float spread=Mathf.Sqrt(shards.Sum(s=>(s.Body.linearVelocity-mean).sqrMagnitude*s.Body.mass/mass));
+            report.Add($"MEASURE striker dir={direction} speed={speed} incoming={incoming:F5} spin={spin} normal={normal:F5} mean={mean:F5} shardSpin={meanSpin:R} spread={spread:R}");
+            Check(float.IsFinite(mean.x)&&float.IsFinite(mean.y)&&float.IsFinite(spread)&&float.IsFinite(meanSpin),"Native impact fracture motion stays finite");
+            if(speed==15)
+            {
+                for(int i=0;i<8;i++)PhysicsStep();
+                Capture("directional-fracture-right.png",new Vector2(b.center.x+1,b.center.y),3);
+            }
+            return(mean,meanSpin,spread);
+        }
+        finally{go.SetActive(false);Destroy(go);}
     }
     void ShardPlacementAndInheritance()
     {
@@ -395,10 +643,10 @@ public sealed class GlassBreakageValidationRunner : MonoBehaviour
         {
             var a = before[i]; var b = after[i];
             if (a.VesselId == owner)
-            { exactOwned &= b.VesselId == 0; b.VesselId = owner; exactOwned &= a.Equals(b); }
+            { exactOwned &= ReleasedParticleMatches(a,b,a.Active!=0 || streams[i].Pending!=0); }
             else exactOthers &= a.Equals(b);
         }
-        Check(exactOwned, "Breaking clears only owner IDs while preserving every owned GPU position/history/velocity/ml/state");
+        Check(exactOwned, "Owned active and pending GPU liquid adds the expected splash to its existing velocity with all other state preserved");
         Check(exactOthers && composition.SequenceEqual(gpu.CompositionSnapshot) && streams.SequenceEqual(gpu.ReadStreamParticles()),
             "Foreign/spilled liquid, all composition and stream birth timing/tokens are unchanged");
         bool cpuExact = (int)Field(gpu, "pendingSpawnCount") == pendingCount;
@@ -406,10 +654,15 @@ public sealed class GlassBreakageValidationRunner : MonoBehaviour
         {
             object a = commandsBefore.GetValue(i), b = commands.GetValue(i);
             if (Value<uint>(a, "VesselId") == owner)
-            { cpuExact &= Value<uint>(b, "VesselId") == 0; b.GetType().GetField("VesselId").SetValue(b, owner); }
+            {
+                cpuExact &= Value<uint>(b,"VesselId")==0
+                    && Near(Value<Vector2>(b,"Velocity"),Value<Vector2>(a,"Velocity")+SplashDelta(Value<Vector2>(a,"Position")),.0003f);
+                b.GetType().GetField("VesselId").SetValue(b,owner);
+                b.GetType().GetField("Velocity").SetValue(b,Value<Vector2>(a,"Velocity"));
+            }
             cpuExact &= a.Equals(b);
         }
-        Check(cpuExact, "CPU queued births keep all fields and count while losing only the broken owner ID");
+        Check(cpuExact, "CPU queued births add the same splash once while preserving count, content and chronology");
         for (int i = 0; i < solids.Length; i++)
             Check(solids[i].ContainingVesselId == 0 && solids[i].isActiveAndEnabled && Near(solids[i].Position, positions[i])
                 && Near(solids[i].Body.linearVelocity, velocities[i]) && solids[i].Body.angularVelocity == spins[i],
@@ -508,7 +761,7 @@ public sealed class GlassBreakageValidationRunner : MonoBehaviour
             testProfile.separationSpeed = separation;
             testProfile.explosionSpeed = speed; testProfile.explosionUpwardSpeed = upward; testProfile.explosionAngularSpeed = spin;
         }
-        // The G burst changes only glass fragment motion, even for a filled vessel.
+        // G's fixed fragment burst never leaks into the independent liquid splash.
         LiquidAndSolidConservation();
         var previousShards = world.GlassShards.ToArray();
         comparison.SwitchMode(FluidExperimentMode.FCoherentLiquid); DisableAutomaticSimulation();
@@ -560,14 +813,22 @@ public sealed class GlassBreakageValidationRunner : MonoBehaviour
         var oldTarget = camera.targetTexture; var oldPosition = camera.transform.position;
         float oldSize = camera.orthographicSize; var oldActive = RenderTexture.active;
         var target = new RenderTexture(960, 720, 24); var pixels = new Texture2D(960, 720, TextureFormat.RGB24, false);
+        var hidden=new List<SpriteRenderer>();
         try
         {
+            // Disabled fixture bodies can retain old rendered transforms. Hide
+            // their art during capture without moving a physics transform.
+            foreach(var body in world.Items)
+                if(!body.Body.simulated)
+                    foreach(var art in body.GetComponentsInChildren<SpriteRenderer>())
+                        if(art.enabled){hidden.Add(art);art.enabled=false;}
             camera.targetTexture = target; camera.transform.position = new Vector3(center.x, center.y, oldPosition.z);
             camera.orthographicSize = halfHeight; Physics2D.SyncTransforms(); camera.Render(); RenderTexture.active = target;
             pixels.ReadPixels(new Rect(0, 0, 960, 720), 0, 0); pixels.Apply(); File.WriteAllBytes(Path.Combine(Evidence, file), pixels.EncodeToPNG());
         }
         finally
         {
+            foreach(var art in hidden)if(art!=null)art.enabled=true;
             camera.targetTexture = oldTarget; camera.transform.position = oldPosition; camera.orthographicSize = oldSize;
             RenderTexture.active = oldActive; target.Release(); Destroy(target); Destroy(pixels);
         }

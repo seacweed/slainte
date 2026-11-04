@@ -1,0 +1,17 @@
+{
+  "entryMethod": "BottleReferenceValidation.Begin",
+  "timeoutSeconds": 240,
+  "forceShaderImport": true,
+  "executable": "A:\\UnityHub\\Unity\\6000.3.5f2\\Editor\\Unity.exe",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:\\UnityHub\\proj\\slainte\\Library\\FluidModelDHarness",
+    "-executeMethod",
+    "PhysicsLabValidationDispatch.Run",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\BottleReferences20261104\\02-references\\Editor.log"
+  ],
+  "started": "2026-11-04T08:37:30.9497833+09:00"
+}

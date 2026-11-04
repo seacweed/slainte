@@ -1,0 +1,56 @@
+PASS Hidden batch uses actual F GPU with no desktop input
+PASS Authored hurricane has a configured breakage component
+PASS Authored profile has 16 shards and tougher default impact thresholds (6/4)
+PASS Only hurricane is breakable in this first version
+PASS Reset restores the original hurricane and clears all shards/queued break state
+INFO gentle impactSpeed=0 impulse=0.0343178362 mass=0.35
+PASS Gentle short drop and repeated resting contacts do not break the glass
+PASS Gentle fixture actually reaches the physical floor
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Tilted hurricane can be picked
+PASS Held movement, pickup upright correction and automatic rotation return do not break the glass
+PASS Forced native held contact still cannot auto-break
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Actual high free fall queues an automatic break at default thresholds
+PASS Collision callback queues once while the original remains intact until liquid tick
+INFO drop impactSpeed=7.50268364 impulse=2.76980472 mass=0.35
+PASS Native drop crosses both speed and normalized impulse thresholds
+PASS Next liquid tick atomically replaces original geometry with 16 shards
+PASS Repeated completion/contact processing cannot duplicate shards
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Full native-drop fixture starts with 40 ml of settled liquid
+PASS Full native-drop fixture includes contained ice and garnish
+PASS A real 40 ml/ice/garnish high drop queues breakage at the unchanged default thresholds
+INFO filled-drop speed=7.50268364 impulse=2.76980472 activeMl=40 ownedMl=40 iceOwner=11 garnishOwner=11
+PASS Filled vessel still owns liquid at the actual collision callback
+PASS Actual filled-impact transaction creates 16 shards and changes only liquid owner IDs
+PASS Actual filled-impact transaction preserves every generated, active and pending milliliter
+PASS Actual impact releases Ice without adding a second impulse or position correction
+PASS Actual impact releases Garnish without adding a second impulse or position correction
+PASS Released liquid continues 30 real native/GPU ticks without stale vessel ownership or lost accounting
+PASS Released ice and garnish continue moving freely after the actual filled-glass break
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Wall impact uses the authored world boundary
+PASS Actual fast side impact also queues breakage at default thresholds
+PASS Wall collision completes the same single break transaction
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Real striker direction=1 speed=9 queues fracture
+PASS Directional fracture produces one complete native shard set
+MEASURE striker dir=1 speed=9 incoming=(0.00000, 0.00000) spin=0 normal=(1.00000, 0.00000) mean=(10.44596, -2.25872) shardSpin=-163.638565 spread=2.18757153
+PASS Native impact fracture motion stays finite
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Real striker direction=-1 speed=9 queues fracture
+PASS Directional fracture produces one complete native shard set
+MEASURE striker dir=-1 speed=9 incoming=(0.00000, 0.00000) spin=0 normal=(-1.00000, 0.00000) mean=(-10.27772, -2.20753) shardSpin=155.234818 spread=2.07745957
+PASS Native impact fracture motion stays finite
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Real striker direction=1 speed=15 queues fracture
+PASS Directional fracture produces one complete native shard set
+MEASURE striker dir=1 speed=15 incoming=(0.00000, 0.00000) spin=0 normal=(1.00000, 0.00000) mean=(9.10288, -1.09537) shardSpin=-63.2694244 spread=0.9426636
+PASS Native impact fracture motion stays finite
+PASS Actual moving strikers from opposite sides launch shard momentum in opposite contact directions
+FAIL A stronger actual strike transfers more directional momentum and fragment spread
+System.Exception: A stronger actual strike transfers more directional momentum and fragment spread
+  at GlassBreakageValidationRunner.Check (System.Boolean ok, System.String text) [0x0002a] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\GlassBreakageValidation.cs:48 
+  at GlassBreakageValidationRunner.ImpactDirectedShardMotion () [0x000ae] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\GlassBreakageValidation.cs:276 
+  at GlassBreakageValidationRunner+<Start>d__25.MoveNext () [0x0037e] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\GlassBreakageValidation.cs:85 

@@ -92,30 +92,7 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
                 PrefabUtility.SaveAsPrefabAsset(prefab, PrefabPath);
                 AssetDatabase.SaveAssets();
 
-                // The current comparison scene is a connected prefab instance. Do not reserialize it
-                // unless an older disconnected hurricane actually needs its own component/reference.
-                var scene = EditorSceneManager.OpenScene(FluidExperimentBuilder.ScenePath);
-                bool changed = false;
-                foreach (var sceneRoot in scene.GetRootGameObjects())
-                foreach (var body in sceneRoot.GetComponentsInChildren<FluidExperimentBody>(true))
-                {
-                    if (body.name != "Glass_hurricane") continue;
-                    var instance = body.GetComponent<FluidExperimentBreakableGlass>();
-                    if (instance != null && instance.profile == profile) continue;
-                    if (instance == null) instance = body.gameObject.AddComponent<FluidExperimentBreakableGlass>();
-                    instance.profile = profile;
-                    EditorUtility.SetDirty(instance);
-                    if (PrefabUtility.IsPartOfPrefabInstance(instance))
-                        PrefabUtility.RecordPrefabInstancePropertyModifications(instance);
-                    changed = true;
-                }
-                if (changed)
-                {
-                    EditorSceneManager.MarkSceneDirty(scene);
-                    if (!EditorSceneManager.SaveScene(scene, FluidExperimentBuilder.ScenePath))
-                        throw new IOException("Comparison scene save failed.");
-                }
-                Debug.Log("[HurricaneBreakageBuilder] Authored 16 centroid-pivot shards; PNG bytes preserved. Scene changed=" + changed);
+                Debug.Log("[HurricaneBreakageBuilder] Authored 16 centroid-pivot shards; PNG bytes and connected scene overrides preserved.");
             }
             finally { PrefabUtility.UnloadPrefabContents(prefab); }
         }

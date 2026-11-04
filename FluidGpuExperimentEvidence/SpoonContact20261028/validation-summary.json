@@ -1,0 +1,50 @@
+{
+  "original_files": 1335,
+  "unchanged": 1328,
+  "changed": [
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/README.md",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentBody.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentInteractor.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentInteractor.Pointer.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentShakerPart.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentWorld.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentWorld.ShardContacts.cs"
+  ],
+  "unexpected_changes": [],
+  "suites": [
+    {
+      "attempt": "02-input-native-final",
+      "result": "PASS",
+      "checks": 47
+    },
+    {
+      "attempt": "03-stir-cocktails",
+      "result": "PASS",
+      "checks": 61
+    },
+    {
+      "attempt": "04-input-regression",
+      "result": "PASS",
+      "checks": 1925
+    },
+    {
+      "attempt": "05-shards",
+      "result": "PASS",
+      "checks": 76
+    },
+    {
+      "attempt": "06-runtime",
+      "result": "PASS",
+      "checks": 29
+    },
+    {
+      "attempt": "07-garnish",
+      "result": "PASS",
+      "checks": 170
+    }
+  ],
+  "source_mismatches": [],
+  "metadata_errors": [],
+  "passing_checks": 2308,
+  "result": "PASS"
+}

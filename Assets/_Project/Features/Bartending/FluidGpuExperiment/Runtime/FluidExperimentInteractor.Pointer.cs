@@ -132,7 +132,10 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         private void CancelPointerCapture()
         {
-            requirePointerRelease |= PointerCaptured || PointerHandoffPending || Rotating || HeldDispenser != null;
+            requirePointerRelease |= PointerCaptured || PointerHandoffPending || Rotating || HeldDispenser != null
+                || (Held != null && Held.SpoonContactEnabled);
+            Held?.SetSpoonContactEnabled(false);
+            spoonContactMouse = null;
             RetractHeldDispenser();
             bool rotating = Rotating;
             Vector2 pivot = rotating ? RotationPointerWorld : lastPointer;
@@ -161,6 +164,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private bool IsPointerBlocked(Vector2 screen)
         {
             if (pointerBlockRect.Contains(new Vector2(screen.x, Screen.height - screen.y))) return true;
+            if (world != null && world.Cocktails != null && world.Cocktails.BlocksPointer(screen)) return true;
             EventSystem system = EventSystem.current;
             if (system == null) return false;
             if (pointerEvent == null || pointerEventSystem != system)

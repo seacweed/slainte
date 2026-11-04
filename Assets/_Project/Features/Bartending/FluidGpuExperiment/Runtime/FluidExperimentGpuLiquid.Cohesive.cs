@@ -4,11 +4,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
 {
     public sealed partial class FluidExperimentGpuLiquid
     {
-        [Tooltip("F/G compression, cohesion and shear. Select before Initialize; does not enable E calibration or effects.")]
-        public bool useCohesivePhysics;
         public FluidExperimentMaterial cohesiveMaterial = FluidExperimentMaterial.Auto;
-        public bool CohesivePhysicsActive => IsOperational && useCohesivePhysics && !useImprovedPhysics
-            && activeSolver == FluidExperimentSolver.ReferenceSph;
+        public bool CohesivePhysicsActive => IsOperational;
 
         private GraphicsBuffer cohesiveStateBuffer, cohesiveMaterialBuffer, cohesiveDiagnosticsBuffer;
         private Vector4[] cohesiveMaterials;
@@ -17,7 +14,6 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         private void CacheCohesiveKernels()
         {
-            if (!useCohesivePhysics) return;
             cohesiveDensityKernel = RequireKernel("CalculateCohesiveDensity");
             cohesiveDeltaKernel = RequireKernel("CalculateCohesiveDelta");
             cohesiveMaterialKernel = RequireKernel("CalculateCohesiveMaterialForces");
@@ -25,7 +21,6 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         private void AllocateCohesiveBuffers()
         {
-            if (!useCohesivePhysics) return;
             cohesiveStateBuffer = CreateStructured<Vector4>(particleCapacity);
             cohesiveMaterialBuffer = CreateStructured<Vector4>(maximumIngredients);
             cohesiveDiagnosticsBuffer = CreateStructured<Vector4>(particleCapacity);
@@ -37,10 +32,9 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         private void BindCohesiveParameters()
         {
-            if (!useCohesivePhysics) return;
             simulationShader.SetFloat("_CohesiveCompliance", ReferenceFinite(settings.cohesiveDensityCompliance, .000001f, 0, 1));
             simulationShader.SetFloat("_CohesiveCorrectionRatio", ReferenceFinite(settings.cohesiveMaximumCorrectionRatio, .35f, .05f, .75f));
-            simulationShader.SetFloat("_CohesiveTension", ReferenceFinite(settings.cohesiveSurfaceTension, 18, 0, 100));
+            simulationShader.SetFloat("_CohesiveTension", ReferenceFinite(settings.cohesiveSurfaceTension, 0, 0, 100));
             simulationShader.SetFloat("_CohesiveShear", ReferenceFinite(settings.cohesiveShearViscosity, 1, 0, 10));
             simulationShader.SetFloat("_CohesiveRestRatio", ReferenceFinite(settings.cohesiveRestDistanceRatio, .6f, .35f, .9f));
             simulationShader.SetFloat("_CohesiveWallDensity", ReferenceFinite(settings.cohesiveWallDensity, 0, 0, 1));

@@ -1,0 +1,13 @@
+{
+  "status": "ROLLED_BACK",
+  "restored_version": "04-vessel pre-overlap-admission",
+  "verified_source_files": 497,
+  "remaining_mismatches": [],
+  "restored_files": [
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentBody.SpoonContacts.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentBody.Contents.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/README.md"
+  ],
+  "superseded_by": "FluidGpuExperimentEvidence/SpoonSoftStirRestore20261029/restoration.json",
+  "superseded_on": "2026-10-29"
+}

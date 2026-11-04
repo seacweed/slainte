@@ -1,0 +1,122 @@
+{
+  "passed": true,
+  "checks": {
+    "allRunsCompletedAndPassed": true,
+    "continuousMotionAndSettlingAgreeAcrossFrameRates": true,
+    "nativeTetherMotionPreserved": true,
+    "onlyVisualHoseAndReadmeChanged": true,
+    "serializedAssetsAndNativeTetherPreserved": true,
+    "fragmentFluidIceGarnishPreserved": true,
+    "soundPlanningAndPackagesPreserved": true
+  },
+  "changedSinceTaskBaseline": [
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/README.md",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentDispenser.Motion.cs"
+  ],
+  "frameRatePointDifferencesBySecond": {
+    "1": 0.0013506640205470653,
+    "2": 0.0004692983375212496,
+    "3": 6.370243323465229e-05,
+    "4": 7.263904184359935e-05
+  },
+  "totalRuns": 5,
+  "totalPassingAssertions": 3974,
+  "runs": [
+    {
+      "attempt": "20261022-cord-verified-dispenser",
+      "entry": "ExperimentDispenserValidation.Begin",
+      "exitCode": 0,
+      "pid": 45828,
+      "started": "2026-10-22T00:23:13.2574643+09:00",
+      "finished": "2026-10-22T00:24:00.2971370+09:00",
+      "timedOut": false,
+      "passedAssertions": 1962,
+      "failedAssertions": 0,
+      "resultPassed": true,
+      "sourceMismatches": [],
+      "harnessMismatches": [],
+      "applicationErrors": false,
+      "measures": [
+        "MEASURE authored suspension linear=0.9/0.9 angular=1.1/1.1",
+        "MEASURE cord slackLength=6.66079044 availableLength=6.66 sag=1.26626873",
+        "MEASURE cord tautLength=6 tautDeviation=0",
+        "MEASURE cord firstSlackSag=0.000680923462 nextSlackSag=0.0571527481 nativeTautDeviation=1.10656742E-06",
+        "MEASURE hose width=0.115 scheduleDifference=7.24466954E-05",
+        "MEASURE suspension returnSeconds=1.57999992 tension=12.8964567 turn=47.1241455 xSpan=1.31431675 ySpan=0.288046837 angleLow=-15.5677185 angleHigh=38.17169 lateSpeed=0.0242581945 lateDistance=0.0128775192"
+      ],
+      "passed": true
+    },
+    {
+      "attempt": "20261022-cord-verified-runtime",
+      "entry": "ExperimentDispenserRuntimeValidation.Begin",
+      "exitCode": 0,
+      "pid": 38440,
+      "started": "2026-10-22T00:24:14.6245405+09:00",
+      "finished": "2026-10-22T00:24:36.9290400+09:00",
+      "timedOut": false,
+      "passedAssertions": 29,
+      "failedAssertions": 0,
+      "resultPassed": true,
+      "sourceMismatches": [],
+      "harnessMismatches": [],
+      "applicationErrors": false,
+      "measures": [],
+      "passed": true
+    },
+    {
+      "attempt": "20261022-cord-verified-auto-f",
+      "entry": "ExperimentDispenserPlayLoopValidation.Begin",
+      "exitCode": 0,
+      "pid": 28676,
+      "started": "2026-10-22T00:24:38.2263879+09:00",
+      "finished": "2026-10-22T00:25:34.0712391+09:00",
+      "timedOut": false,
+      "passedAssertions": 29,
+      "failedAssertions": 0,
+      "resultPassed": true,
+      "sourceMismatches": [],
+      "harnessMismatches": [],
+      "applicationErrors": false,
+      "measures": [
+        "MEASURE automatic suspension peak=44.5102234 low=-12.6723022 high=44.5102234 late=0.210264638 xSpan=1.58422184 ySpan=0.375902653 lateSpeed=0.027694026"
+      ],
+      "passed": true
+    },
+    {
+      "attempt": "20261022-cord-verified-auto-g",
+      "entry": "ExperimentDispenserPlayLoopValidation.BeginExplosive",
+      "exitCode": 0,
+      "pid": 44884,
+      "started": "2026-10-22T00:25:37.5685661+09:00",
+      "finished": "2026-10-22T00:26:32.5947356+09:00",
+      "timedOut": false,
+      "passedAssertions": 29,
+      "failedAssertions": 0,
+      "resultPassed": true,
+      "sourceMismatches": [],
+      "harnessMismatches": [],
+      "applicationErrors": false,
+      "measures": [
+        "MEASURE automatic suspension peak=44.5102234 low=-12.6723022 high=44.5102234 late=0.210264638 xSpan=1.58422184 ySpan=0.375902653 lateSpeed=0.027694026"
+      ],
+      "passed": true
+    },
+    {
+      "attempt": "20261022-cord-verified-input",
+      "entry": "ExperimentInputShakerValidation.Begin",
+      "exitCode": 0,
+      "pid": 56280,
+      "started": "2026-10-22T00:26:33.7277206+09:00",
+      "finished": "2026-10-22T00:26:57.7366060+09:00",
+      "timedOut": false,
+      "passedAssertions": 1925,
+      "failedAssertions": 0,
+      "resultPassed": true,
+      "sourceMismatches": [],
+      "harnessMismatches": [],
+      "applicationErrors": false,
+      "measures": [],
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "passed": true,
+  "checks": {
+    "scopedTrackedChanges": true,
+    "protectedSerializedAssetsUnchanged": true,
+    "deliveredHarnessParity": true,
+    "allRunsPassed": true
+  },
+  "baseHead": "3d538dce16e9fcb32b32464ace40f086f5e4a60b",
+  "changedTrackedFiles": [
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/DEVELOPMENT_PLAN.md",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/README.md",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentBody.Contents.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentBody.GarnishMotion.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentBody.Geometry.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentBody.IceStock.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentBody.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentComparison.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.Buffers.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.Garnish.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.ImprovedSurface.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuTypes.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentLiquidSettings.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentRuntimeRig.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentWorld.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentCohesiveContacts.hlsl",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentLiquid.compute",
+    "FluidGpuExperimentEvidence/HarnessSource/GarnishMotionValidation.cs",
+    "FluidGpuExperimentEvidence/HarnessSource/IceContactValidation.cs",
+    "FluidGpuExperimentEvidence/README.md"
+  ],
+  "harnessCheckedFiles": 360,
+  "harnessMismatches": [],
+  "generatedFolderMetadataExclusions": [
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Art.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Data.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Editor.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Scenes.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/ThirdParty.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Art/Dispenser.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Art/Garnishes.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Art/Shards.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Art/Shards/Hurricane.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Data/CollisionProfiles.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Editor/Templates.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Runtime.meta"
+  ],
+  "totalPassingAssertions": 29,
+  "suites": [
+    {
+      "attempt": "20261021-ice-bulk-both-native-eight-a",
+      "entryMethod": "CrowdedIcePlayLoopValidation.BeginEight",
+      "exitCode": 0,
+      "timedOut": false,
+      "forceShaderImport": true,
+      "passedAssertions": 29,
+      "failedAssertions": 0,
+      "resultPassed": true,
+      "sourceMismatches": [],
+      "harnessSourceMismatches": [],
+      "harnessSourceFiles": 39,
+      "harnessSnapshot": "FluidGpuExperimentEvidence/HarnessSnapshots/04f529fb70d9663c5bc21ff9447532bb9f1e186adb7b5fb30224f3854963aaed",
+      "currentEntryAndDispatcherMatch": true,
+      "applicationErrors": false
+    }
+  ]
+}

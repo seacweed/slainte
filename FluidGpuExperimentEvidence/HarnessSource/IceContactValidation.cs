@@ -96,6 +96,7 @@ public sealed class ExperimentIceContactValidationRunner : MonoBehaviour
             Physics2D.simulationMode = SimulationMode2D.Script; Physics2D.gravity = new Vector2(0, -9.81f);
             if (movingOnly)
             {
+                gpu.iceLiquidMode = FluidExperimentIceLiquidMode.Colliding;
                 ValidateMovingIce();
                 Require(errors.Count == 0, "No Unity exception, error or assertion");
                 Finish(true); yield break;

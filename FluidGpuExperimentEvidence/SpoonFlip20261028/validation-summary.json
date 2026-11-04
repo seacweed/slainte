@@ -1,0 +1,29 @@
+{
+  "preserved_original_files": 1333,
+  "original_files": 1335,
+  "changed": [
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Spoon.prefab",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentWorld.Rendering.cs"
+  ],
+  "unexpected_changes": [],
+  "suites": [
+    {
+      "attempt": "01-orientation",
+      "result": "PASS",
+      "checks": 46
+    },
+    {
+      "attempt": "02-stir-cocktails",
+      "result": "PASS",
+      "checks": 61
+    },
+    {
+      "attempt": "03-prefabs",
+      "result": "PASS",
+      "checks": 7
+    }
+  ],
+  "source_mismatches": [],
+  "passing_checks": 114,
+  "result": "PASS"
+}

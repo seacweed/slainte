@@ -239,8 +239,8 @@ public sealed class DispenserPlayLoopValidationRunner : MonoBehaviour
             if (i % 10 == 0) Record("retracting-" + i);
         }
         Check(dispenser.State == FluidExperimentDispenserState.Docked
-            && Vector2.Distance(dispenser.Body.Position, dispenser.DockWorld) < .035f,
-            "Automatic fixed-step motion returns the tool through the real scene to its dock");
+            && dispenser.SuspensionJoint.enabled && dispenser.Body.Body.bodyType==RigidbodyType2D.Dynamic,
+            "Automatic native cable retraction finishes without locking the hanging body's pose");
         for (int i = 0; i < 10; i++) yield return wait;
         yield return null; // Let the normal LateUpdate settle the hose before the final capture.
         Check(!dispenser.IsDispensing && Mathf.Abs(dispenser.RemainingMl - stoppedStock) < .001f,
@@ -250,6 +250,22 @@ public sealed class DispenserPlayLoopValidationRunner : MonoBehaviour
             "Integration keeps production world and GPU scheduling active throughout");
         Record("docked");
         Capture("dispenser-normal-play-docked.png");
+        float swingPeak=Mathf.Abs(Mathf.DeltaAngle(0,dispenser.Body.Angle)),swingLate=0,lateSpeed=0;
+        float swingLow=Mathf.DeltaAngle(0,dispenser.Body.Angle),swingHigh=swingLow;
+        Vector2 hangMin=dispenser.Body.Position,hangMax=hangMin;
+        for(int i=0;i<600;i++)
+        {
+            yield return wait;
+            float a=Mathf.DeltaAngle(0,dispenser.Body.Angle);
+            swingPeak=Mathf.Max(swingPeak,Mathf.Abs(a));swingLow=Mathf.Min(swingLow,a);swingHigh=Mathf.Max(swingHigh,a);
+            if(i<150){hangMin=Vector2.Min(hangMin,dispenser.Body.Position);hangMax=Vector2.Max(hangMax,dispenser.Body.Position);}
+            if(i>500){swingLate=Mathf.Max(swingLate,Mathf.Abs(a));lateSpeed=Mathf.Max(lateSpeed,dispenser.Body.Body.linearVelocity.magnitude);}
+            if(i%20==0)Record("dock-swing-"+i);
+        }
+        Vector2 hangSpan=hangMax-hangMin;
+        report.Add($"MEASURE automatic suspension peak={swingPeak:R} low={swingLow:R} high={swingHigh:R} late={swingLate:R} xSpan={hangSpan.x:R} ySpan={hangSpan.y:R} lateSpeed={lateSpeed:R}");
+        Check(swingPeak>2 && hangSpan.x>.1f && hangSpan.y>.02f && lateSpeed<.15f,
+            "Actual automatic physics produces a translating, rotating hanging pendulum that damps without pose locking");
         RecordBodies("after-docking");
         Check(originals.All(state => state.body != null && world.Items.Contains(state.body)) && world.GlassShards.Count == 0,
             "Normal dispensing and retraction preserve every original body without incidental hurricane fracture");

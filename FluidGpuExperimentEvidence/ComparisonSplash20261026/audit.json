@@ -1,0 +1,69 @@
+{
+  "passed": true,
+  "checks": {
+    "allRunsCompletedAndPassed": true,
+    "scopeLimitedToComparisonSceneProfileAndReadme": true,
+    "sceneOnlyAddsTheHurricaneSplashReference": true,
+    "allRuntimeCodeShadersPrefabsExistingProfilesAndMetadataPreserved": true,
+    "soundPlanningAndPackagesPreserved": true
+  },
+  "changedSinceTaskBaseline": [
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/README.md",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Scenes/FluidGpuComparison.unity"
+  ],
+  "newFeatureFiles": [
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Data/ComparisonBreakageSplash.asset",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Data/ComparisonBreakageSplash.asset.meta"
+  ],
+  "totalRuns": 2,
+  "totalPassingAssertions": 336,
+  "runs": [
+    {
+      "attempt": "20261026-splash-final-breakage",
+      "entry": "ExperimentGlassBreakageValidation.Begin",
+      "exitCode": 0,
+      "pid": 36032,
+      "started": "2026-10-26T20:56:44.5498399+09:00",
+      "finished": "2026-10-26T20:57:09.1922810+09:00",
+      "timedOut": false,
+      "passedAssertions": 295,
+      "failedAssertions": 0,
+      "resultPassed": true,
+      "sourceMismatches": [],
+      "harnessMismatches": [],
+      "applicationErrors": false,
+      "measures": [
+        "MEASURE floor splash mean=(-0.119531587, 0.4726499) peak=1.88602245",
+        "MEASURE striker dir=1 speed=9 incoming=(0.00000, 0.00000) spin=0 normal=(1.00000, 0.00000) mean=(4.60670, -0.11421) shardSpin=-204.103592 spread=2.710909",
+        "MEASURE striker dir=-1 speed=9 incoming=(0.00000, 0.00000) spin=0 normal=(-1.00000, 0.00000) mean=(-4.60611, -0.14486) shardSpin=204.1144 spread=2.71105385",
+        "MEASURE striker dir=1 speed=15 incoming=(0.00000, 0.00000) spin=0 normal=(1.00000, 0.00000) mean=(7.67784, -0.19035) shardSpin=-340.17276 spread=4.51818275",
+        "MEASURE striker dir=1 speed=12 incoming=(0.00000, 2.00000) spin=0 normal=(1.00000, 0.00000) mean=(0.00000, 2.00000) shardSpin=0 spread=0",
+        "MEASURE striker dir=1 speed=12 incoming=(0.00000, 0.00000) spin=80 normal=(1.00000, 0.00000) mean=(-1.41536, -0.01734) shardSpin=80 spread=1.06215823",
+        "MEASURE bottle FCoherentLiquid-right inputSpeed=12 impactSpeed=11.9953737 impulsePerMass=6.218977 normal=(0.9996145, -0.02776699) meanDelta=(0.7152883, -1.57658386) peakDelta=2.395383 affectedMl=40",
+        "MEASURE bottle FCoherentLiquid-left inputSpeed=12 impactSpeed=12 impulsePerMass=5.83109665 normal=(-1, 0) meanDelta=(-0.6753575, -1.38363659) peakDelta=2.12700844 affectedMl=40",
+        "MEASURE bottle FCoherentLiquid-fast inputSpeed=20 impactSpeed=19.99229 impulsePerMass=10.3649626 normal=(0.9996145, -0.02776699) meanDelta=(1.13202035, -2.4631772) peakDelta=3.00000048 affectedMl=40",
+        "MEASURE bottle GExplosiveBreakage-right inputSpeed=12 impactSpeed=11.9953737 impulsePerMass=6.218977 normal=(0.9996145, -0.02776699) meanDelta=(0.7152292, -1.57635164) peakDelta=2.39537072 affectedMl=40",
+        "MEASURE bottle GExplosiveBreakage-left inputSpeed=12 impactSpeed=12 impulsePerMass=5.89701 normal=(-1, 0) meanDelta=(-0.682863533, -1.39930964) peakDelta=2.151366 affectedMl=40",
+        "MEASURE bottle GExplosiveBreakage-fast inputSpeed=20 impactSpeed=19.99229 impulsePerMass=10.3649635 normal=(0.9996145, -0.02776699) meanDelta=(1.13198376, -2.4631505) peakDelta=3.00000024 affectedMl=40"
+      ],
+      "passed": true
+    },
+    {
+      "attempt": "20261026-splash-final-kernel",
+      "entry": "ExperimentSplashValidation.Begin",
+      "exitCode": 0,
+      "pid": 16676,
+      "started": "2026-10-26T20:57:09.9337043+09:00",
+      "finished": "2026-10-26T20:57:22.9971140+09:00",
+      "timedOut": false,
+      "passedAssertions": 41,
+      "failedAssertions": 0,
+      "resultPassed": true,
+      "sourceMismatches": [],
+      "harnessMismatches": [],
+      "applicationErrors": false,
+      "measures": [],
+      "passed": true
+    }
+  ]
+}

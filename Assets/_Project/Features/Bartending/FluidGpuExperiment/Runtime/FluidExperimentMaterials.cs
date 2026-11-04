@@ -5,14 +5,10 @@ namespace Slainte.Bartending.FluidGpuExperiment
     /// <summary>Game-scale response presets, not laboratory material measurements.</summary>
     public readonly struct FluidExperimentMaterialPreset
     {
-        public readonly float ViscosityRate, SurfaceTension, Wetting, FoamLifetime, OpacityScale;
-        public readonly float FlowMultiplier, ResponseMultiplier, DripMultiplier;
-        public FluidExperimentMaterialPreset(float viscosity, float tension, float wetting, float foam,
-            float opacity, float flow, float response, float drip)
+        public readonly float ViscosityRate, SurfaceTension;
+        public FluidExperimentMaterialPreset(float viscosity, float tension)
         {
-            ViscosityRate = viscosity; SurfaceTension = tension; Wetting = wetting;
-            FoamLifetime = foam; OpacityScale = opacity; FlowMultiplier = flow;
-            ResponseMultiplier = response; DripMultiplier = drip;
+            ViscosityRate = viscosity; SurfaceTension = tension;
         }
     }
 
@@ -32,10 +28,10 @@ namespace Slainte.Bartending.FluidGpuExperiment
             }
             switch (selection)
             {
-                case FluidExperimentMaterial.Spirit: return new FluidExperimentMaterialPreset(5, .6f, .85f, .35f, 1, 1.1f, .85f, .65f);
-                case FluidExperimentMaterial.Syrup: return new FluidExperimentMaterialPreset(35, 1.15f, .9f, 2, 1, .25f, 3, 1.8f);
-                case FluidExperimentMaterial.Milk: return new FluidExperimentMaterialPreset(16, .8f, .8f, 4, 1.6f, .65f, 1.5f, 1.3f);
-                default: return new FluidExperimentMaterialPreset(8, 1, .7f, .65f, 1, 1, 1, 1);
+                case FluidExperimentMaterial.Spirit: return new FluidExperimentMaterialPreset(5, .6f);
+                case FluidExperimentMaterial.Syrup: return new FluidExperimentMaterialPreset(35, 1.15f);
+                case FluidExperimentMaterial.Milk: return new FluidExperimentMaterialPreset(16, .8f);
+                default: return new FluidExperimentMaterialPreset(8, 1);
             }
         }
     }

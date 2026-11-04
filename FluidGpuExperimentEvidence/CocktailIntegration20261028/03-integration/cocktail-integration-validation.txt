@@ -1,0 +1,6 @@
+PASS Authored F Manual loads the actual shared resource recipes and evaluator adapter
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.6608391 ml per particle
+FAIL Actual recipe rec_1001 yields Good with matching GPU ingredients, glass, ice and technique
+System.Exception: Actual recipe rec_1001 yields Good with matching GPU ingredients, glass, ice and technique
+  at CocktailIntegrationRunner.Check (System.Boolean value, System.String message) [0x0002a] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\CocktailIntegrationValidation.cs:39 
+  at CocktailIntegrationRunner+<Start>d__11.MoveNext () [0x001b3] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\CocktailIntegrationValidation.cs:64 

@@ -1,0 +1,15 @@
+PASS Negative control contains no active ice or garnish
+PASS Negative control queues exactly 60 ml
+PASS Negative control picks actual receiver
+PASS Negative control uses actual click-drop
+PASS Negative control preserves liquid velocity on release
+PASS Negative control conserves total liquid
+MEASURE repeat=0 containedMl=60 activeMl=60 retiredMl=0
+PASS Negative control contains no active ice or garnish
+PASS Negative control queues exactly 60 ml
+PASS Negative control picks actual receiver
+PASS Negative control uses actual click-drop
+PASS Negative control preserves liquid velocity on release
+PASS Negative control conserves total liquid
+MEASURE repeat=1 containedMl=60 activeMl=60 retiredMl=0
+PASS No Unity application errors

@@ -113,13 +113,14 @@ public sealed class DispenserRuntimeValidationRunner : MonoBehaviour
                 && rig.World.floorColliders.Contains(rig.World.topBoundary),
                 "Reusable environment fixture includes its walls and ceiling in the shared floor-collider registry");
             toolA.BeginRetract();
-            Check(toolA.State == FluidExperimentDispenserState.Retracting && !toolA.CollisionSuppressed
-                && toolA.Body.Body.bodyType == RigidbodyType2D.Dynamic
-                && toolA.Body.solidColliders.Where(collider => collider != null).All(collider => !collider.isTrigger),
-                "Free-space release near the fitted dock restores contacts without treating the registered ceiling as a floor");
+            Check(toolA.State == FluidExperimentDispenserState.Retracting && toolA.CollisionSuppressed
+                && toolA.Body.Body.bodyType == RigidbodyType2D.Dynamic && toolA.SuspensionJoint.enabled
+                && toolA.Body.solidColliders.Where(collider => collider != null).All(collider => collider.isTrigger),
+                "Reusable runtime returns without native contacts even when its environment registers walls and ceiling as floor colliders");
             for (int i = 0; i < 250 && toolA.State != FluidExperimentDispenserState.Docked; i++) Step(rig);
-            Check(toolA.State == FluidExperimentDispenserState.Docked && Vector2.Distance(toolA.Body.Position, toolA.DockWorld) < .04f,
-                "Runtime dispenser returns to its environment-adjusted dock instead of an out-of-bounds comparison position");
+            Check(toolA.State == FluidExperimentDispenserState.Docked
+                && Vector2.Distance(toolA.SuspensionPointWorld,toolA.hoseAnchor)<=toolA.SuspensionJoint.distance+.08f,
+                "Runtime dispenser finishes reeling and hangs from the environment-adjusted anchor");
             Check(toolA.TryClickMode(toolA.IceButtonWorld) && toolA.Mode == FluidExperimentDispenserMode.Ice
                 && rig.Interactor.PickDispenser(toolA, toolA.Body.Position), "Reusable interactor selects and acquires the runtime Ice tool");
             toolA.SetDispensing(true);

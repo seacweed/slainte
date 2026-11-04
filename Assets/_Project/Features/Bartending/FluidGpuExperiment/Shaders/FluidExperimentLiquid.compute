@@ -3,20 +3,16 @@
 #pragma kernel ResetCompositionBuffers
 #pragma kernel SpawnParticles
 #pragma kernel IntegrateParticles
-#pragma kernel SweepBoundaries
-#pragma kernel SweepCohesiveIceBoundaries COHESIVE_ICE_CONTACTS
+#pragma kernel SweepCohesiveIceBoundaries
 #pragma kernel SnapshotVelocities
 #pragma kernel ClearGrid
 #pragma kernel BuildGrid
-#pragma kernel CalculateDensityLambda
-#pragma kernel CalculatePositionDelta
-#pragma kernel ApplyDeltaAndBoundaries
-#pragma kernel UpdateVelocities
-#pragma kernel ApplyCohesiveIceContacts COHESIVE_ICE_CONTACTS
-#pragma kernel UpdateCohesiveContactVelocities COHESIVE_ICE_CONTACTS
-#pragma kernel MixComposition
+#pragma kernel ApplyCohesiveIceContacts
+#pragma kernel UpdateCohesiveContactVelocities
 #pragma kernel CalculateConservativeMixWeights
 #pragma kernel MixCompositionConservative
+#pragma kernel CollectSpoonMixture
+#pragma kernel ApplySpoonMixture
 #pragma kernel CollectLiquidLedger
 #pragma kernel TransferVesselContents
 #pragma kernel UpdateParticleColors
@@ -27,14 +23,7 @@
 #pragma kernel SwapContents
 #pragma kernel ReleaseOwner
 #pragma kernel ApplyBreakSplash
-#pragma kernel ResetStreamLookup
-#pragma kernel BuildStreamSurface
 #pragma kernel MergeStreamContacts
-#pragma kernel CalculateReferenceDensityPressure
-#pragma kernel CalculateReferenceDelta
-#pragma kernel CalculateImprovedDensity
-#pragma kernel CalculateImprovedDelta
-#pragma kernel CalculateImprovedViscosity
 #pragma kernel CalculateCohesiveDensity
 #pragma kernel CalculateCohesiveDelta
 #pragma kernel CalculateCohesiveMaterialForces
@@ -50,13 +39,6 @@
 #define STATE_SUSPENDED 4u
 #define MIX_NEIGHBOR_NORMALIZATION 32.0
 
-// F compiles separate contact entry points. A-E do not contain the manifold arrays
-// or their register cost, even though the mathematical non-contact path is shared.
-#if defined(COHESIVE_ICE_CONTACTS)
-#define SweepBoundaries SweepCohesiveIceBoundaries
-#define ApplyDeltaAndBoundaries ApplyCohesiveIceContacts
-#define UpdateVelocities UpdateCohesiveContactVelocities
-#endif
 
 struct LiquidParticle
 {
@@ -69,7 +51,7 @@ struct LiquidParticle
     uint techniqueFlags;
     uint stateFlags;
     uint active;
-    uint padding;
+    uint padding; // F/G ice context: positive source-speed float bits, negative airborne history, or zero.
 };
 
 struct SpawnCommand
@@ -120,6 +102,14 @@ struct VesselTrigger
     uint flags;
 };
 
+struct IceVesselBudget { uint vesselId; float speed; };
+StructuredBuffer<IceVesselBudget> _IceVesselBudgets;
+RWStructuredBuffer<float2> _IceStepOrigins;
+StructuredBuffer<float2> _IceStepOriginsRead;
+int _IceVesselBudgetCount;
+int _RigidIceCollisionEnabled;
+float _IceContactRelaxationRate;
+
 struct Agitator
 {
     float2 a;
@@ -142,7 +132,6 @@ RWStructuredBuffer<float2> _VelocitySnapshot;
 StructuredBuffer<float2> _VelocityRead;
 RWStructuredBuffer<float> _Lambdas;
 // Pressure, near pressure, summed radial-viscosity weight, dimensionless density.
-RWStructuredBuffer<float4> _ReferenceDensityPressure;
 // Lifetime slot sums persist through retirement and reuse. Scalar addresses separate generated,
 // retired and command-index rejection writes, keeping Spawn within D3D11's eight-UAV limit.
 RWStructuredBuffer<float> _LedgerAmounts;
@@ -158,16 +147,13 @@ StructuredBuffer<IngredientVisual> _IngredientVisuals;
 StructuredBuffer<BoundarySegment> _Boundaries;
 StructuredBuffer<VesselTrigger> _VesselTriggers;
 StructuredBuffer<Agitator> _Agitators;
+RWStructuredBuffer<float2> _SpoonMixture;
+RWStructuredBuffer<float> _SpoonComposition;
+float _SpoonFlowResponse, _SpoonFlowAcceleration, _SpoonMixStep;
 RWStructuredBuffer<uint> _Statistics;
 RWStructuredBuffer<StreamParticle> _StreamParticles;
 StructuredBuffer<StreamParticle> _SpawnStreams;
-RWStructuredBuffer<uint2> _StreamLookup;
-StructuredBuffer<StreamHead> _StreamHeads;
-RWStructuredBuffer<StreamSegment> _StreamSegments;
-RWStructuredBuffer<LiquidParticle> _SurfaceParticles;
 RWStructuredBuffer<uint> _StreamContactSnapshot;
-int _StreamHeadCount, _StreamRenderingEnabled;
-float _SimulationTime, _StreamMaximumGap, _StreamMaximumLength;
 
 int _ParticleCapacity;
 int _MaximumIngredients;
@@ -185,40 +171,21 @@ int _TechniqueStateMask;
 int _TransformTargetVessel;
 int _SuspensionTargetVessel;
 int _SuspensionEnabled;
-int _ReferenceSolverEnabled;
-int _ImprovedPhysics;
-int _CohesiveIceContacts;
 int _CohesiveIceBoundaryCount;
 int _TransferTargetVessel;
 
 float _ReferenceParticleVolume;
 float _ReferenceRestDensity;
-float _ReferencePressureStiffness;
-float _ReferenceNearPressureStiffness;
-float _ReferenceViscosityRate;
-float _ReferenceMaximumTensionRatio;
-float _ReferenceMaximumAcceleration;
-float _ReferenceMaximumDisplacementRatio;
 
 float _DeltaTime;
 float _ParticleRadius;
 float _SmoothingRadius;
-float _RestDensity;
-float _DensityCompliance;
-float _LambdaEpsilon;
-float _ArtificialPressureStrength;
-float _ArtificialPressureRadiusRatio;
-float _BoundaryDensityScale;
 float _WallFriction;
 float _WallRestitution;
-float _SplashTransfer;
-float _SplashMinimumImpactSpeed;
-float _BottomImpactSpread;
 float _VelocityDamping;
 float _MaximumSpeed;
 float _ClosedVesselDampingRate;
 float _ClosedVesselMaximumRelativeSpeed;
-float _Viscosity;
 float _PassiveMixRate;
 float _AgitationMixRate;
 float _FullMixRelativeSpeed;
@@ -256,28 +223,7 @@ int GetCellIndex(int2 cell)
     return cell.y * _GridWidth + cell.x;
 }
 
-float KernelPoly6(float distanceSquared)
-{
-    float h2 = _SmoothingRadius * _SmoothingRadius;
-    if (distanceSquared >= h2)
-        return 0.0;
 
-    float difference = h2 - distanceSquared;
-    float h8 = max(1e-8, h2 * h2 * h2 * h2);
-    return 4.0 / (3.14159265 * h8) * difference * difference * difference;
-}
-
-float2 KernelSpikyGradient(float2 offset)
-{
-    float distance = length(offset);
-    if (distance <= 1e-5 || distance >= _SmoothingRadius)
-        return 0.0;
-
-    float h5 = max(1e-8, pow(_SmoothingRadius, 5.0));
-    float coefficient = -30.0 / (3.14159265 * h5);
-    float difference = _SmoothingRadius - distance;
-    return coefficient * difference * difference * offset / distance;
-}
 
 float2 GetPairSeparationOffset(
     uint particleIndex,
@@ -344,6 +290,7 @@ bool IsBoundaryCompatible(uint particleVesselId, uint boundaryVesselId, uint fla
 
 uint ResolveParticleOwner(float2 start, float2 position, uint previousVesselId, float startFraction);
 bool IsClosedVessel(uint vesselId);
+float2 ConstrainIceVessel(float2 start, float2 position, uint vesselId, float startFraction);
 
 float2 RotateBoundaryPoint(float2 p, float radians)
 {
@@ -438,16 +385,14 @@ float2 SweepAgainstBoundary(float2 start, float2 end, BoundarySegment edge)
 }
 
 [numthreads(THREAD_GROUP_SIZE, 1, 1)]
-void SweepBoundaries(uint3 dispatchId : SV_DispatchThreadID)
+void SweepCohesiveIceBoundaries(uint3 dispatchId : SV_DispatchThreadID)
 {
     uint index = dispatchId.x;
     if (index >= (uint)_ParticleCapacity) return;
     LiquidParticle particle = _Particles[index];
     if (_StreamParticles[index].stepDt <= 0.000001 || particle.active == 0u || (particle.stateFlags & STATE_SUSPENDED) != 0u) return;
     float2 position = particle.position;
-#if defined(COHESIVE_ICE_CONTACTS)
     float2 cohesiveIceRecovery = 0.0;
-#endif
     for (int group = 0; group < BoundarySearchGroupCount(); group++)
     {
         uint first, end;
@@ -463,21 +408,27 @@ void SweepBoundaries(uint3 dispatchId : SV_DispatchThreadID)
             edge.angleDelta *= 1.0 - fraction;
             float2 swept = SweepAgainstBoundary(particle.previousPosition, position, edge);
             if (dot(swept - position, swept - position) > 1e-10) _StreamParticles[index].detached = 1u;
-#if defined(COHESIVE_ICE_CONTACTS)
-            if (_CohesiveIceContacts != 0 && _CohesiveIceBoundaryCount > 0 && (edge.flags & 4u) != 0u)
+            if ((edge.flags & 512u) != 0u && dot(swept - position, swept - position) > 1e-10)
+                particle.padding = asuint(max(max(asfloat(particle.padding), 1e-6),
+                    max(length(edge.velocityA), length(edge.velocityB))));
+            if (_CohesiveIceBoundaryCount > 0 && (edge.flags & 4u) != 0u)
                 cohesiveIceRecovery += swept - position;
-#endif
             position = swept;
         }
+    }
+    if (particle.padding != 0u && particle.vesselId != 0u)
+    {
+        float2 contained = ConstrainIceVessel(particle.previousPosition, position, particle.vesselId,
+            _StreamParticles[index].startFraction);
+        cohesiveIceRecovery += contained - position;
+        position = contained;
     }
     particle.vesselId = ResolveParticleOwner(particle.previousPosition, position, particle.vesselId,
         _StreamParticles[index].startFraction);
     // Resolve ownership and CCD using the true original start. Afterwards only the
     // geometric ice correction is removed from velocity reconstruction; moving ice
     // still transfers its physical velocity through the simultaneous contact solve.
-#if defined(COHESIVE_ICE_CONTACTS)
-    if (_CohesiveIceContacts != 0 && _CohesiveIceBoundaryCount > 0) particle.previousPosition += cohesiveIceRecovery;
-#endif
+    if (_CohesiveIceBoundaryCount > 0) particle.previousPosition += cohesiveIceRecovery;
     particle.position = position;
     _Particles[index] = particle;
 }
@@ -557,9 +508,7 @@ bool TryFindNearestCompatibleBoundary(
     return found;
 }
 
-#if defined(COHESIVE_ICE_CONTACTS)
 #include "FluidExperimentCohesiveContacts.hlsl"
-#endif
 
 bool IsInsideVesselTrigger(
     VesselTrigger trigger,
@@ -640,6 +589,49 @@ bool EnteredMouth(BoundarySegment rim, float2 start, float2 finish, out float hi
         previousSide = side; previousT = t;
     }
     return false;
+}
+
+// Crowded ice has lower priority than the glass interior. Repeated projections
+// may otherwise cross an entire thin wall before the next contact query. Repair
+// only those wall escapes; crossing the actual moving mouth still permits pours.
+float2 ConstrainIceVessel(float2 start, float2 position, uint vesselId, float startFraction)
+{
+    if (vesselId == 0u || IsInsideVesselContour(position, vesselId)) return position;
+    uint first, end;
+    VesselContourRange(vesselId, first, end);
+    [loop] for (uint mouth = first; mouth < end; mouth++)
+    {
+        BoundarySegment rim = _Boundaries[mouth];
+        if (rim.vesselId != vesselId || (rim.flags & 128u) == 0u) continue;
+        rim.startPosition = lerp(rim.startPosition, rim.endPosition, startFraction);
+        rim.startAngle += rim.angleDelta * startFraction;
+        rim.angleDelta *= 1.0 - startFraction;
+        // Reverse the rigid trajectory and particle path to reuse exact entry CCD.
+        float2 origin = rim.startPosition; rim.startPosition = rim.endPosition; rim.endPosition = origin;
+        rim.startAngle += rim.angleDelta; rim.angleDelta = -rim.angleDelta;
+        float hitTime;
+        if (EnteredMouth(rim, position, start, hitTime)) return position;
+    }
+    [loop] for (int repair = 0; repair < 3; repair++)
+    {
+        float nearest = 1e30;
+        float2 corrected = position;
+        [loop] for (uint face = first; face < end; face++)
+        {
+            BoundarySegment edge = _Boundaries[face];
+            if (edge.vesselId != vesselId || (edge.flags & 8u) == 0u || (edge.flags & 128u) != 0u) continue;
+            float t;
+            float2 anchor = ClosestPointOnSegment(position, edge.a, edge.b, t);
+            float square = dot(position - anchor, position - anchor);
+            float2 direction = edge.b - edge.a;
+            if (square >= nearest || dot(direction, direction) < 1e-12) continue;
+            nearest = square;
+            corrected = anchor + normalize(float2(-direction.y, direction.x)) * (_ParticleRadius * 1.01);
+        }
+        position = corrected;
+        if (IsInsideVesselContour(position, vesselId)) break;
+    }
+    return position;
 }
 
 uint ResolveParticleOwner(float2 start, float2 position, uint previousVesselId, float startFraction)
@@ -841,8 +833,6 @@ void SpawnParticles(uint3 dispatchId : SV_DispatchThreadID)
     _Particles[particleIndex] = particle;
     StreamParticle stream = _SpawnStreams[commandIndex];
     _StreamParticles[particleIndex] = stream;
-    if (stream.token != 0u)
-        _StreamLookup[stream.token % ((uint)_ParticleCapacity * 2u)] = uint2(stream.token, particleIndex);
 
     uint compositionOffset = particleIndex * (uint)_MaximumIngredients;
     for (int ingredient = 0; ingredient < _MaximumIngredients; ingredient++)
@@ -878,7 +868,7 @@ void TranslateVesselContents(uint3 dispatchId : SV_DispatchThreadID)
         return;
 
     LiquidParticle particle = _Particles[index];
-    if (particle.active == 0u)
+    if (particle.active == 0u && _StreamParticles[index].pending == 0u)
     {
         return;
     }
@@ -942,14 +932,26 @@ void IntegrateParticles(uint3 dispatchId : SV_DispatchThreadID)
         || (particle.stateFlags & STATE_SUSPENDED) != 0u)
         return;
 
+    _IceStepOrigins[index] = particle.position;
     particle.previousPosition = particle.position;
     particle.velocity += _Gravity * dt;
+    uint priorIceContact = particle.padding;
+    particle.padding = _RigidIceCollisionEnabled != 0 && particle.vesselId == 0u && priorIceContact != 0u
+        ? asuint(-1.0) : 0u;
+    [loop] for (int ice = 0; ice < _IceVesselBudgetCount; ice++)
+        if (_IceVesselBudgets[ice].vesselId == particle.vesselId)
+        {
+            particle.padding = asuint(max(1e-6, _IceVesselBudgets[ice].speed));
+            break;
+        }
 
     for (int agitatorIndex = 0; agitatorIndex < _AgitatorCount; agitatorIndex++)
     {
         Agitator agitator = _Agitators[agitatorIndex];
         if (agitator.active == 0u)
             continue;
+        bool softSpoon = (agitator.active & 2u) != 0u;
+        if (softSpoon && particle.vesselId != agitator.vesselId) continue;
         if (agitator.vesselId != 0u
             && particle.vesselId != 0u
             && agitator.vesselId != particle.vesselId)
@@ -967,10 +969,11 @@ void IntegrateParticles(uint3 dispatchId : SV_DispatchThreadID)
             float influence = saturate(
                 1.0 - distanceToAgitator / max(1e-5, agitator.radius + _SmoothingRadius));
             float response = 1.0 - exp(
-                -max(0.0, agitator.strength) * dt);
-            particle.velocity += (agitator.velocity - particle.velocity)
-                * influence
-                * response;
+                -max(0.0, agitator.strength) * (softSpoon ? _SpoonFlowResponse : 1.0) * dt);
+            float2 change = (agitator.velocity - particle.velocity) * influence * response;
+            if (softSpoon)
+                change *= min(1.0, _SpoonFlowAcceleration * dt / max(1e-8, length(change)));
+            particle.velocity += change;
         }
     }
 
@@ -1013,219 +1016,10 @@ void BuildGrid(uint3 dispatchId : SV_DispatchThreadID)
     _GridNext[index] = previousHead;
 }
 
-[numthreads(THREAD_GROUP_SIZE, 1, 1)]
-void CalculateDensityLambda(uint3 dispatchId : SV_DispatchThreadID)
-{
-    uint index = dispatchId.x;
-    if (index >= (uint)_ParticleCapacity)
-        return;
 
-    LiquidParticle particle = _Particles[index];
-    if (_StreamParticles[index].stepDt <= 0.000001 || particle.active == 0u
-        || (particle.stateFlags & STATE_SUSPENDED) != 0u)
-    {
-        _Lambdas[index] = 0.0;
-        return;
-    }
-
-    float density = max(0.01, particle.volumeMl) * KernelPoly6(0.0);
-    float gradientSum = 0.0;
-    float2 selfGradient = 0.0;
-    int2 originCell = GetCell(particle.position);
-
-    for (int y = -1; y <= 1; y++)
-    {
-        for (int x = -1; x <= 1; x++)
-        {
-            int2 cell = originCell + int2(x, y);
-            if (!IsCellValid(cell))
-                continue;
-
-            int neighborIndex = _GridHeads[GetCellIndex(cell)];
-            int guard = 0;
-            while (neighborIndex >= 0 && guard++ < _ParticleCapacity)
-            {
-                if (neighborIndex != (int)index)
-                {
-                    LiquidParticle neighbor = _Particles[neighborIndex];
-                    if (neighbor.active != 0u
-                        && (neighbor.stateFlags & STATE_SUSPENDED) == 0u
-                        && neighbor.vesselId == particle.vesselId)
-                    {
-                        float2 offset = particle.position - neighbor.position;
-                        float distanceSquared = dot(offset, offset);
-                        if (distanceSquared < _SmoothingRadius * _SmoothingRadius)
-                        {
-                            float neighborMass = max(0.01, neighbor.volumeMl);
-                            density += neighborMass * KernelPoly6(distanceSquared);
-                            float2 gradientOffset = GetPairSeparationOffset(
-                                index,
-                                (uint)neighborIndex,
-                                offset);
-                            float2 gradient = -neighborMass
-                                / max(0.01, _RestDensity)
-                                * KernelSpikyGradient(gradientOffset);
-                            gradientSum += dot(gradient, gradient);
-                            selfGradient -= gradient;
-                        }
-                    }
-                }
-                neighborIndex = _GridNext[neighborIndex];
-            }
-        }
-    }
-
-    if (particle.vesselId != 0u && _BoundaryDensityScale > 0.0)
-    {
-        float2 boundaryPoint;
-        float2 boundaryNormal;
-        float boundaryDistance;
-        float boundaryT;
-        float2 boundaryVelocity;
-        if (TryFindNearestCompatibleBoundary(
-            particle.position,
-            particle.vesselId,
-            _SmoothingRadius,
-            boundaryPoint,
-            boundaryNormal,
-            boundaryDistance,
-            boundaryT,
-            boundaryVelocity))
-        {
-            float boundaryMass = max(0.01, particle.volumeMl)
-                * _BoundaryDensityScale;
-            float2 boundaryOffset = particle.position - boundaryPoint;
-            density += boundaryMass * KernelPoly6(
-                boundaryDistance * boundaryDistance);
-            selfGradient += boundaryMass
-                / max(0.01, _RestDensity)
-                * KernelSpikyGradient(boundaryOffset);
-        }
-    }
-
-    gradientSum += dot(selfGradient, selfGradient);
-    // Free surfaces and airborne streams are naturally under-dense. Solving a
-    // negative density constraint pulls those particles together and produces
-    // an elastic, jelly-like rope. Liquid incompressibility only needs to
-    // reject compression here; sparse regions remain ballistic/flowing.
-    float constraint = max(
-        0.0,
-        density / max(0.01, _RestDensity) - 1.0);
-    float alpha = _DensityCompliance / max(1e-8, _StreamParticles[index].stepDt * _StreamParticles[index].stepDt);
-    _Lambdas[index] = -constraint / (gradientSum + _LambdaEpsilon + alpha);
-}
 
 [numthreads(THREAD_GROUP_SIZE, 1, 1)]
-void CalculatePositionDelta(uint3 dispatchId : SV_DispatchThreadID)
-{
-    uint index = dispatchId.x;
-    if (index >= (uint)_ParticleCapacity)
-        return;
-
-    LiquidParticle particle = _Particles[index];
-    if (_StreamParticles[index].stepDt <= 0.000001 || particle.active == 0u
-        || (particle.stateFlags & STATE_SUSPENDED) != 0u)
-    {
-        _PositionDeltas[index] = 0.0;
-        return;
-    }
-
-    float2 delta = 0.0;
-    float artificialPressureReferenceDistance = _SmoothingRadius
-        * clamp(_ArtificialPressureRadiusRatio, 0.1, 0.9);
-    float artificialPressureReference = max(
-        1e-5,
-        KernelPoly6(
-            artificialPressureReferenceDistance
-            * artificialPressureReferenceDistance));
-    int2 originCell = GetCell(particle.position);
-    for (int y = -1; y <= 1; y++)
-    {
-        for (int x = -1; x <= 1; x++)
-        {
-            int2 cell = originCell + int2(x, y);
-            if (!IsCellValid(cell))
-                continue;
-
-            int neighborIndex = _GridHeads[GetCellIndex(cell)];
-            int guard = 0;
-            while (neighborIndex >= 0 && guard++ < _ParticleCapacity)
-            {
-                if (neighborIndex != (int)index)
-                {
-                    LiquidParticle neighbor = _Particles[neighborIndex];
-                    if (neighbor.active != 0u
-                        && (neighbor.stateFlags & STATE_SUSPENDED) == 0u
-                        && neighbor.vesselId == particle.vesselId)
-                    {
-                        float2 offset = particle.position - neighbor.position;
-                        float distanceSquared = dot(offset, offset);
-                        if (distanceSquared < _SmoothingRadius * _SmoothingRadius)
-                        {
-                            float neighborMass = max(0.01, neighbor.volumeMl);
-                            float2 gradientOffset = GetPairSeparationOffset(
-                                index,
-                                (uint)neighborIndex,
-                                offset);
-                            float kernelRatio = min(
-                                KernelPoly6(distanceSquared)
-                                    / artificialPressureReference,
-                                1.5);
-                            float artificialPressure = -_ArtificialPressureStrength
-                                * kernelRatio
-                                * kernelRatio
-                                * kernelRatio
-                                * kernelRatio;
-                            delta += (
-                                _Lambdas[index]
-                                + _Lambdas[neighborIndex]
-                                + artificialPressure)
-                                * neighborMass
-                                / max(0.01, _RestDensity)
-                                * KernelSpikyGradient(gradientOffset);
-                        }
-                    }
-                }
-                neighborIndex = _GridNext[neighborIndex];
-            }
-        }
-    }
-
-    if (particle.vesselId != 0u && _BoundaryDensityScale > 0.0)
-    {
-        float2 boundaryPoint;
-        float2 boundaryNormal;
-        float boundaryDistance;
-        float boundaryT;
-        float2 boundaryVelocity;
-        if (TryFindNearestCompatibleBoundary(
-            particle.position,
-            particle.vesselId,
-            _SmoothingRadius,
-            boundaryPoint,
-            boundaryNormal,
-            boundaryDistance,
-            boundaryT,
-            boundaryVelocity))
-        {
-            float boundaryMass = max(0.01, particle.volumeMl)
-                * _BoundaryDensityScale;
-            delta += _Lambdas[index]
-                * boundaryMass
-                / max(0.01, _RestDensity)
-                * KernelSpikyGradient(particle.position - boundaryPoint);
-        }
-    }
-
-    float maxDelta = _ParticleRadius * 0.75;
-    float deltaLength = length(delta);
-    if (deltaLength > maxDelta)
-        delta *= maxDelta / deltaLength;
-    _PositionDeltas[index] = delta;
-}
-
-[numthreads(THREAD_GROUP_SIZE, 1, 1)]
-void ApplyDeltaAndBoundaries(uint3 dispatchId : SV_DispatchThreadID)
+void ApplyCohesiveIceContacts(uint3 dispatchId : SV_DispatchThreadID)
 {
     uint index = dispatchId.x;
     if (index >= (uint)_ParticleCapacity)
@@ -1239,33 +1033,37 @@ void ApplyDeltaAndBoundaries(uint3 dispatchId : SV_DispatchThreadID)
     float2 position = particle.position + _PositionDeltas[index];
     float bestCorrectionScore = -1.0;
     float2 bestCorrectedPosition = position;
-#if defined(COHESIVE_ICE_CONTACTS)
     bool cohesiveIceContact = false;
-    if (_CohesiveIceContacts != 0 && _CohesiveIceBoundaryCount > 0)
+    float2 removedContactRecovery = 0.0;
+    bool environmentRecovery = false;
+    if (_CohesiveIceBoundaryCount > 0)
     {
         float2 simultaneousPosition;
+        float iceSpeedBudget;
         cohesiveIceContact = TryProjectCohesiveIceContacts(particle.position, position, particle.vesselId,
-            simultaneousPosition);
+            simultaneousPosition, iceSpeedBudget);
         if (cohesiveIceContact)
         {
+            // Retain the contact across projection iterations, including an
+            // outward pressure correction that leaves the final contact layer.
+            if (iceSpeedBudget >= 0)
+                particle.padding = asuint(max(max(asfloat(particle.padding), 1e-6), iceSpeedBudget));
             float2 correction = simultaneousPosition - position;
             // This is contact depenetration only. The pressure/material PositionDelta
             // remains in the reconstructed velocity and is handled by contact impulses.
             particle.previousPosition += correction;
+            removedContactRecovery = correction;
             bestCorrectedPosition = simultaneousPosition;
             if (dot(correction, correction) > 1e-12) bestCorrectionScore = length(correction);
         }
     }
-#endif
     // A pressure projection can cross an edge and end beyond the collision radius.
     // Include its full travel length, also preserving the existing side-change rule
     // where projection onto the edge (rather than path intersection) chooses contact.
     float searchRadius = _ParticleRadius + length(_PositionDeltas[index]);
     for (int group = 0; group < BoundarySearchGroupCount(); group++)
     {
-#if defined(COHESIVE_ICE_CONTACTS)
         if (cohesiveIceContact) break;
-#endif
         uint first, end;
         if (!BoundarySearchRange(group, position - searchRadius, position + searchRadius, false, first, end)) continue;
         for (uint boundaryIndex = first; boundaryIndex < end; boundaryIndex++)
@@ -1293,6 +1091,7 @@ void ApplyDeltaAndBoundaries(uint3 dispatchId : SV_DispatchThreadID)
                 {
                     bestCorrectionScore = score;
                     bestCorrectedPosition = closest + normal * _ParticleRadius;
+                    environmentRecovery = (boundary.flags & 256u) != 0u;
                 }
                 continue;
             }
@@ -1308,6 +1107,7 @@ void ApplyDeltaAndBoundaries(uint3 dispatchId : SV_DispatchThreadID)
                 {
                     bestCorrectionScore = correctionScore;
                     bestCorrectedPosition = closest + normal * _ParticleRadius;
+                    environmentRecovery = (boundary.flags & 256u) != 0u;
                 }
                 continue;
             }
@@ -1315,10 +1115,21 @@ void ApplyDeltaAndBoundaries(uint3 dispatchId : SV_DispatchThreadID)
         }
     }
 
+    // A static floor's overlap repair has no physical work to contribute.
+    // Preserve pressure motion, but keep this geometric repair out of the
+    // reconstructed velocity; the contact impulse below handles true approach.
+    if (environmentRecovery && bestCorrectionScore >= 0.0)
+        particle.previousPosition += bestCorrectedPosition - position - removedContactRecovery;
     if (bestCorrectionScore >= 0.0)
         position = bestCorrectedPosition;
 
     uint previousVesselId = particle.vesselId;
+    if (particle.padding != 0u && previousVesselId != 0u)
+    {
+        float2 contained = ConstrainIceVessel(particle.position, position, previousVesselId, 1.0);
+        particle.previousPosition += contained - position;
+        position = contained;
+    }
     bool preserveClosedVessel = IsClosedVessel(previousVesselId);
     position = ConstrainToClosedVessel(position, previousVesselId);
     particle.vesselId = preserveClosedVessel
@@ -1331,7 +1142,7 @@ void ApplyDeltaAndBoundaries(uint3 dispatchId : SV_DispatchThreadID)
 }
 
 [numthreads(THREAD_GROUP_SIZE, 1, 1)]
-void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
+void UpdateCohesiveContactVelocities(uint3 dispatchId : SV_DispatchThreadID)
 {
     uint index = dispatchId.x;
     if (index >= (uint)_ParticleCapacity)
@@ -1367,101 +1178,9 @@ void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
 
     float2 velocity = (particle.position - particle.previousPosition)
         / max(1e-5, _StreamParticles[index].stepDt);
+    if (particle.padding != 0u)
+        velocity = RegularizeIcePressure(index, particle, velocity);
     bool closedVessel = IsClosedVessel(particle.vesselId);
-    // Reference SPH already applied pair viscosity in its own gather pass. It
-    // must not also receive PBF averaging or hashed tangential splash impulses.
-    if (_ReferenceSolverEnabled == 0)
-    {
-    float2 neighborVelocity = 0.0;
-    float neighborWeight = 0.0;
-    float2 splashVelocity = 0.0;
-    float splashWeight = 0.0;
-    int2 originCell = GetCell(particle.position);
-    for (int y = -1; y <= 1; y++)
-    {
-        for (int x = -1; x <= 1; x++)
-        {
-            int2 cell = originCell + int2(x, y);
-            if (!IsCellValid(cell))
-                continue;
-            int neighborIndex = _GridHeads[GetCellIndex(cell)];
-            int guard = 0;
-            while (neighborIndex >= 0 && guard++ < _ParticleCapacity)
-            {
-                if (neighborIndex != (int)index)
-                {
-                    LiquidParticle neighbor = _Particles[neighborIndex];
-                    float distanceSquared = dot(
-                        particle.position - neighbor.position,
-                        particle.position - neighbor.position);
-                    if (neighbor.active != 0u
-                        && (neighbor.stateFlags & STATE_SUSPENDED) == 0u
-                        && neighbor.vesselId == particle.vesselId
-                        && distanceSquared < _SmoothingRadius * _SmoothingRadius)
-                    {
-                        float weight = KernelPoly6(distanceSquared);
-                        float2 previousNeighborVelocity = _VelocityRead[neighborIndex];
-                        neighborVelocity += previousNeighborVelocity * weight;
-                        neighborWeight += weight;
-
-                        float distance = sqrt(distanceSquared);
-                        if (distance > 1e-5)
-                        {
-                            float2 collisionNormal = (
-                                particle.position - neighbor.position)
-                                / distance;
-                            float closingSpeed = max(
-                                0.0,
-                                -dot(
-                                    velocity - previousNeighborVelocity,
-                                    collisionNormal));
-                            // Tangential splash transfer is useful for an open
-                            // pour, but repeatedly adds energy inside a sealed
-                            // shaker. Closed-vessel motion comes from its walls.
-                            if (!closedVessel
-                                && closingSpeed > _SplashMinimumImpactSpeed)
-                            {
-                                float impactWeight = saturate(
-                                    1.0 - distance
-                                        / max(1e-5, _SmoothingRadius));
-                                uint smallerIndex = min(index, (uint)neighborIndex);
-                                uint largerIndex = max(index, (uint)neighborIndex);
-                                uint pairHash = smallerIndex * 747796405u
-                                    + largerIndex * 2891336453u;
-                                float impactSign = (pairHash & 1u) == 0u
-                                    ? -1.0
-                                    : 1.0;
-                                float2 collisionTangent = float2(
-                                    -collisionNormal.y,
-                                    collisionNormal.x);
-                                splashVelocity += collisionTangent
-                                    * impactSign
-                                    * (closingSpeed - _SplashMinimumImpactSpeed)
-                                    * impactWeight;
-                                splashWeight += impactWeight;
-                            }
-                        }
-                    }
-                }
-                neighborIndex = _GridNext[neighborIndex];
-            }
-        }
-    }
-
-    if (neighborWeight > 1e-5)
-    {
-        velocity = lerp(
-            velocity,
-            neighborVelocity / neighborWeight,
-            TimeScaledBlend(_Viscosity, _StreamParticles[index].stepDt));
-    }
-    if (splashWeight > 1e-5)
-    {
-        velocity += splashVelocity
-            / splashWeight
-            * TimeScaledBlend(_SplashTransfer, _StreamParticles[index].stepDt);
-    }
-    }
 
     float2 boundaryPoint;
     float2 boundaryNormal;
@@ -1469,14 +1188,12 @@ void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
     float boundaryT;
     float2 boundaryVelocity;
     float contactDistance = _ParticleRadius * 1.1;
-#if defined(COHESIVE_ICE_CONTACTS)
     CohesiveContact cohesiveContacts[COHESIVE_CONTACT_CAPACITY];
     bool hasCohesiveIceContact = false;
     int cohesiveContactCount = 0;
-    if (_CohesiveIceContacts != 0 && _CohesiveIceBoundaryCount > 0)
+    if (_CohesiveIceBoundaryCount > 0)
         cohesiveContactCount = GatherCohesiveContacts(particle.position, particle.position,
             particle.vesselId, false, cohesiveContacts, hasCohesiveIceContact);
-#endif
     float boundarySearchDistance = closedVessel
         ? length(_WorldMax - _WorldMin) + _SmoothingRadius
         : contactDistance;
@@ -1489,40 +1206,15 @@ void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
         boundaryDistance,
         boundaryT,
         boundaryVelocity);
-#if defined(COHESIVE_ICE_CONTACTS)
     if (!hasCohesiveIceContact && hasCompatibleBoundary && boundaryDistance <= contactDistance)
-#else
-    if (hasCompatibleBoundary && boundaryDistance <= contactDistance)
-#endif
     {
         float2 relativeVelocity = velocity - boundaryVelocity;
         float normalSpeed = dot(relativeVelocity, boundaryNormal);
         if (normalSpeed < 0.0)
         {
-            float impactSpeed = -normalSpeed;
             relativeVelocity -= (1.0 + saturate(_WallRestitution))
                 * normalSpeed
                 * boundaryNormal;
-
-            // A falling stream should split across the bottom instead of
-            // losing all of its impact energy and settling like a stacked
-            // granular column. Alternate the tangential direction per
-            // particle so an impact produces balanced left/right motion.
-            float floorInfluence = saturate(
-                (boundaryNormal.y - 0.2) / 0.8);
-            uint impactHash = index * 747796405u + 2891336453u;
-            float impactSign = (impactHash & 1u) == 0u ? -1.0 : 1.0;
-            float2 boundaryTangent = float2(
-                boundaryNormal.y,
-                -boundaryNormal.x);
-            if (!closedVessel && _ReferenceSolverEnabled == 0)
-            {
-                relativeVelocity += boundaryTangent
-                    * impactSign
-                    * impactSpeed
-                    * saturate(_BottomImpactSpread)
-                    * floorInfluence;
-            }
         }
 
         float retainedNormalSpeed = dot(relativeVelocity, boundaryNormal);
@@ -1533,11 +1225,27 @@ void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
         velocity = boundaryVelocity + relativeVelocity;
     }
 
-#if defined(COHESIVE_ICE_CONTACTS)
     if (hasCohesiveIceContact)
         velocity = ResolveCohesiveContactVelocity(velocity, _StreamParticles[index].stepDt,
             cohesiveContacts, cohesiveContactCount);
-#endif
+    if (particle.padding != 0u)
+    {
+        // An almost closed moving wedge can satisfy hard normal constraints only
+        // by inventing a very large tangential jet. Use a compliant response when
+        // that would exceed the incoming/rigid-contact kinetic speed budget.
+        // Positions still resolve the full collision; fast incoming streams and
+        // genuine moving-ice impulses retain their available speed.
+        float budget = max(sqrt(IceAvailableSpeedSquare(index, particle)), asfloat(particle.padding));
+        // Ice history can follow a free drop into another receiver or a moving
+        // shard. Its real new wall impulse must not be limited by the old ice.
+        if (hasCompatibleBoundary && boundaryDistance <= contactDistance)
+            budget = max(budget, length(boundaryVelocity));
+        if (hasCohesiveIceContact)
+            [loop] for (int source = 0; source < cohesiveContactCount; source++)
+                budget = max(budget, length(cohesiveContacts[source].velocity));
+        float speed = length(velocity);
+        if (speed > budget && speed > 1e-7) velocity *= budget / speed;
+    }
 
     if (closedVessel && hasCompatibleBoundary)
     {
@@ -1564,117 +1272,6 @@ void UpdateVelocities(uint3 dispatchId : SV_DispatchThreadID)
     _Particles[index] = particle;
 }
 
-[numthreads(THREAD_GROUP_SIZE, 1, 1)]
-void MixComposition(uint3 dispatchId : SV_DispatchThreadID)
-{
-    uint index = dispatchId.x;
-    if (index >= (uint)_ParticleCapacity)
-        return;
-
-    LiquidParticle particle = _Particles[index];
-    uint compositionOffset = index * (uint)_MaximumIngredients;
-    if (_StreamParticles[index].stepDt <= 0.000001 || particle.active == 0u
-        || (particle.stateFlags & STATE_SUSPENDED) != 0u
-        || _IngredientCount <= 0)
-    {
-        for (int inactiveIngredient = 0;
-             inactiveIngredient < _MaximumIngredients;
-             inactiveIngredient++)
-        {
-            _CompositionWrite[compositionOffset + inactiveIngredient] =
-                _CompositionRead[compositionOffset + inactiveIngredient];
-        }
-        return;
-    }
-
-    int2 originCell = GetCell(particle.position);
-    for (int ingredient = 0; ingredient < _IngredientCount; ingredient++)
-    {
-        float selfRatio = _CompositionRead[compositionOffset + ingredient];
-        float ratioDelta = 0.0;
-
-        for (int y = -1; y <= 1; y++)
-        {
-            for (int x = -1; x <= 1; x++)
-            {
-                int2 cell = originCell + int2(x, y);
-                if (!IsCellValid(cell))
-                    continue;
-
-                int neighborIndex = _GridHeads[GetCellIndex(cell)];
-                int guard = 0;
-                while (neighborIndex >= 0 && guard++ < _ParticleCapacity)
-                {
-                    if (neighborIndex != (int)index)
-                    {
-                        LiquidParticle neighbor = _Particles[neighborIndex];
-                        float2 offset = particle.position - neighbor.position;
-                        float distance = length(offset);
-                        bool compatibleVessels = particle.vesselId == neighbor.vesselId
-                            || particle.vesselId == 0u
-                            || neighbor.vesselId == 0u;
-                        if (neighbor.active != 0u
-                            && (neighbor.stateFlags & STATE_SUSPENDED) == 0u
-                            && compatibleVessels
-                            && distance < _SmoothingRadius)
-                        {
-                            float distanceWeight = saturate(
-                                1.0 - distance / max(1e-5, _SmoothingRadius));
-                            float relativeSpeed = length(
-                                particle.velocity - neighbor.velocity);
-                            float agitation = saturate(
-                                relativeSpeed / max(0.01, _FullMixRelativeSpeed));
-                            float mixWeight = (
-                                _PassiveMixRate
-                                + _AgitationMixRate * agitation)
-                                * distanceWeight
-                                * _StreamParticles[index].stepDt
-                                / MIX_NEIGHBOR_NORMALIZATION;
-                            mixWeight = min(
-                                mixWeight,
-                                _MaximumMixPerSubstep
-                                / MIX_NEIGHBOR_NORMALIZATION);
-
-                            float neighborRatio = _CompositionRead[
-                                neighborIndex * _MaximumIngredients + ingredient];
-                            float totalVolume = max(
-                                1e-5,
-                                particle.volumeMl + neighbor.volumeMl);
-                            float equilibrium = (
-                                selfRatio * particle.volumeMl
-                                + neighborRatio * neighbor.volumeMl)
-                                / totalVolume;
-                            ratioDelta += (equilibrium - selfRatio) * mixWeight;
-                        }
-                    }
-                    neighborIndex = _GridNext[neighborIndex];
-                }
-            }
-        }
-
-        _CompositionWrite[compositionOffset + ingredient] =
-            max(0.0, selfRatio + ratioDelta);
-    }
-
-    float ratioTotal = 0.0;
-    for (int sumIngredient = 0; sumIngredient < _IngredientCount; sumIngredient++)
-        ratioTotal += _CompositionWrite[compositionOffset + sumIngredient];
-    if (ratioTotal > 1e-5)
-    {
-        for (int normalizeIngredient = 0;
-             normalizeIngredient < _IngredientCount;
-             normalizeIngredient++)
-        {
-            _CompositionWrite[compositionOffset + normalizeIngredient] /= ratioTotal;
-        }
-    }
-    for (int unusedIngredient = _IngredientCount;
-         unusedIngredient < _MaximumIngredients;
-         unusedIngredient++)
-    {
-        _CompositionWrite[compositionOffset + unusedIngredient] = 0.0;
-    }
-}
 
 [numthreads(THREAD_GROUP_SIZE, 1, 1)]
 void UpdateParticleColors(uint3 dispatchId : SV_DispatchThreadID)
@@ -1764,6 +1361,7 @@ float2 EvaluateBreakSplashDelta(float2 position)
     float2 tangent = float2(_BreakSplashNormal.y, -_BreakSplashNormal.x);
     float side = dot(offset, tangent);
     float sideSign = side < -0.00001 ? -1.0 : side > 0.00001 ? 1.0 : 0.0;
+    if (_BreakSplashImpact.w > 0.00001) sideSign = clamp(side / _BreakSplashImpact.w, -1.0, 1.0);
     float2 direction = radial * _BreakSplashDirection.x
         + tangent * (sideSign * _BreakSplashDirection.y) + _BreakSplashNormal * _BreakSplashDirection.z;
     direction -= _BreakSplashNormal * min(0.0, dot(direction, _BreakSplashNormal));
@@ -1871,6 +1469,47 @@ void MixCompositionConservative(uint3 dispatchId : SV_DispatchThreadID)
         }
         // No independent clamp/renormalization: either would change the global ingredient amount.
         _CompositionWrite[offset + ingredient] = ratio + delta;
+    }
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void CollectSpoonMixture(uint3 id : SV_DispatchThreadID)
+{
+    uint source = id.x / (uint)_MaximumIngredients, ingredient = id.x % (uint)_MaximumIngredients;
+    if (source >= (uint)_AgitatorCount) return;
+    Agitator stir = _Agitators[source];
+    float2 sum = 0;
+    if ((stir.active & 4u) != 0u && ingredient < (uint)_IngredientCount)
+        for (uint i = 0; i < (uint)_ParticleCapacity; ++i)
+        {
+            LiquidParticle p = _Particles[i];
+            if (p.active == 0u || p.vesselId != stir.vesselId || (p.stateFlags & STATE_SUSPENDED) != 0u) continue;
+            sum += float2(p.volumeMl * _CompositionRead[i * (uint)_MaximumIngredients + ingredient], p.volumeMl);
+        }
+    _SpoonMixture[id.x] = sum;
+}
+
+[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+void ApplySpoonMixture(uint3 id : SV_DispatchThreadID)
+{
+    if (id.x >= (uint)_ParticleCapacity) return;
+    LiquidParticle p = _Particles[id.x];
+    if (p.active == 0u || (p.stateFlags & STATE_SUSPENDED) != 0u) return;
+    for (int source = 0; source < _AgitatorCount; ++source)
+    {
+        Agitator stir = _Agitators[source];
+        if ((stir.active & 4u) == 0u || p.vesselId != stir.vesselId) continue;
+        float blend = 1.0 - exp(-_SpoonMixStep * stir.strength);
+        for (int ingredient = 0; ingredient < _IngredientCount; ++ingredient)
+        {
+            float2 sum = _SpoonMixture[source * _MaximumIngredients + ingredient];
+            if (sum.y <= 0) continue;
+            uint address = id.x * (uint)_MaximumIngredients + ingredient;
+            // The same volume-weighted mean and blend apply to every particle in
+            // this vessel: each ingredient's total ml is conserved without a clamp.
+            _SpoonComposition[address] = lerp(_SpoonComposition[address], sum.x / sum.y, blend);
+        }
+        break;
     }
 }
 

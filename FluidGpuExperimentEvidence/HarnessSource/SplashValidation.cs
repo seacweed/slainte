@@ -67,6 +67,10 @@ public sealed class SplashValidationRunner : MonoBehaviour
             Transaction(false, Vector2.up);
             Transaction(true, Vector2.up);
             Transaction(false, Vector2.left);
+            profile.fanSpreadDistance=.8f;
+            Transaction(false, Vector2.up);
+            Transaction(false, Vector2.right);
+            CompletedLiquidCenter(comparison.World);
             NullAndZeroProfile();
             Check(errors.Count == 0, "No shader, buffer or Unity errors during splash transactions");
             success = true;
@@ -107,6 +111,39 @@ public sealed class SplashValidationRunner : MonoBehaviour
         Vector2 burst = profile.EvaluateVelocityDelta(new Vector2(.4f, .4f), center, point, Vector2.up, 8, 8, true);
         Check(burst.magnitude > right.magnitude && burst.magnitude <= profile.maximumDeltaSpeed + .0001f,
             "G increases liquid splash within the same hard speed limit");
+    }
+
+    void CompletedLiquidCenter(FluidExperimentWorld world)
+    {
+        var vessel=world.Items.First(b=>b.IsVessel);
+        Vector2 original=vessel.Position;float originalAngle=vessel.Angle;
+        Vector2 fallback=new Vector2(11,12);
+        try
+        {
+            gpu.ResetSimulation();
+            Vector2 a=original+new Vector2(-.2f,-.4f),b=original+new Vector2(.2f,-.1f);
+            Check(gpu.TryEmit(a,Vector2.zero,ingredient,.5f,vessel.Id)
+                && gpu.TryEmit(b,Vector2.zero,ingredient,1,vessel.Id),"Centroid fixtures reserve two unequal-volume particles");
+            UploadBirths();var particles=Read();var streams=gpu.ReadStreamParticles();
+            for(int i=0;i<particles.Length;i++)if(particles[i].VesselId==vessel.Id)
+            {particles[i].Active=1;streams[i].Pending=0;}
+            ((GraphicsBuffer)Field(gpu,"particleBuffer")).SetData(particles);
+            ((GraphicsBuffer)Field(gpu,"streamParticleBuffer")).SetData(streams);
+            Read();
+            Vector2 expected=(a*.5f+b)/1.5f;
+            Check(Near((Vector2)Invoke(gpu,"CompletedSplashCenter",vessel.Id,fallback),expected),
+                "Fan center uses completed liquid volume weighting instead of empty vessel geometry");
+            vessel.Teleport(original+new Vector2(.7f,.3f),originalAngle+30);
+            Vector2 offset=expected-original;float angle=30*Mathf.Deg2Rad;
+            expected=vessel.Position+new Vector2(Mathf.Cos(angle)*offset.x-Mathf.Sin(angle)*offset.y,
+                Mathf.Sin(angle)*offset.x+Mathf.Cos(angle)*offset.y);
+            Check(Near((Vector2)Invoke(gpu,"CompletedSplashCenter",vessel.Id,fallback),expected),
+                "Completed liquid center reprojects from the captured moving/rotating vessel pose without GPU readback");
+            gpu.ResetSimulation();
+            Check(Near((Vector2)Invoke(gpu,"CompletedSplashCenter",vessel.Id,fallback),fallback),
+                "Reset or missing completed liquid uses the supplied safe geometric fallback");
+        }
+        finally{vessel.Teleport(original,originalAngle);}
     }
 
     void UploadBirths()

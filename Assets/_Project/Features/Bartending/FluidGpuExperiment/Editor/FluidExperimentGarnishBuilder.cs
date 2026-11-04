@@ -1,8 +1,6 @@
 using System;
-using System.IO;
 using System.Linq;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace Slainte.Bartending.FluidGpuExperiment.Editor
@@ -23,18 +21,10 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
         public static void Build()
         {
             if (EditorApplication.isPlaying) throw new InvalidOperationException("Stop Play Mode before authoring.");
-            if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
-            var scene = EditorSceneManager.OpenScene(FluidExperimentBuilder.ScenePath);
-            var world = UnityEngine.Object.FindFirstObjectByType<FluidExperimentWorld>();
-            if (world == null) throw new InvalidOperationException("Experiment world missing.");
-            var lemon = BuildPair("synthLemonPeel", "Synth Lemon Peel", Lemon, new Vector2(50.5f, 47));
-            var nananga = BuildPair("nanangaPeel", "Nananga Peel", Nananga, new Vector2(49, 56.5f));
-            Place(world, lemon, new Vector2(7.8f, 3.4f));
-            Place(world, nananga, new Vector2(9.5f, 3.4f));
-            EditorSceneManager.MarkSceneDirty(scene);
-            if (!EditorSceneManager.SaveScene(scene, FluidExperimentBuilder.ScenePath)) throw new IOException("Scene save failed.");
+            BuildPair("synthLemonPeel", "Synth Lemon Peel", Lemon, new Vector2(50.5f, 47));
+            BuildPair("nanangaPeel", "Nananga Peel", Nananga, new Vector2(49, 56.5f));
             AssetDatabase.SaveAssets();
-            Debug.Log("[GarnishBuilder] Two source/piece pairs authored; F default and existing scene objects retained.");
+            Debug.Log("[GarnishBuilder] Two source/piece prefab pairs authored; existing scene layouts retained.");
         }
 
         private static GameObject BuildPair(string key, string label, Vector2[] pixels, Vector2 pivot)
@@ -76,7 +66,6 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
             rigidbody.mass = .01f;
             rigidbody.linearDamping = 4f;
             rigidbody.angularDamping = 4f;
-            body.garnishLiquidMotionTransfer = .2f;
             var prefab = PrefabUtility.SaveAsPrefabAsset(piece, Root + "/Prefabs/" + key + "_Garnish.prefab");
             Material material = renderer.sharedMaterial;
             UnityEngine.Object.DestroyImmediate(piece);
@@ -117,14 +106,6 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
             if (sprite == null) throw new InvalidOperationException("Sprite import failed: " + path
                 + "; assets=" + string.Join(",", AssetDatabase.LoadAllAssetsAtPath(path).Select(a => a.GetType().Name)));
             return sprite;
-        }
-        private static void Place(FluidExperimentWorld world, GameObject prefab, Vector2 position)
-        {
-            var existing = world.GetComponentsInChildren<FluidExperimentGarnishSource>(true)
-                .Where(s => s.name == prefab.name).ToArray();
-            foreach (var item in existing) UnityEngine.Object.DestroyImmediate(item.gameObject);
-            var instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, world.transform);
-            instance.transform.position = position;
         }
         private static Vector2[] Convert(Vector2[] pixels, Vector2 pivot, float ppu) =>
             pixels.Select(p => new Vector2(p.x - pivot.x, pivot.y - p.y) / ppu).ToArray();

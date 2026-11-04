@@ -1,5 +1,48 @@
 # Fluid GPU Experiment validation
 
+## Current F-only sandbox cleanup (2026-10-29)
+
+The active experiment is a single cohesive-liquid sandbox. A–E choices and the separate G mode were removed; Natural/Explosive remains a breakage option. Current spoon stirring, judging, 33 prefabs, the 28-entry catalog and Designer remain active. The old generated HarnessProject was removed after source archival and regeneration checks. Current isolated validation: 11 suites / 595 passing checks; older failed attempts are retained and explained in the report.
+
+Use `python FluidGpuExperimentEvidence/HarnessSource/prepare_experiment.py` to prepare the supported current fixtures in `Library/FluidModelDHarness`. Historical sources below describe their recorded versions and should not be compiled indiscriminately against current APIs. [Cleanup report](Cleanup20261029/report.md), [final audit](Cleanup20261029/final-audit.json), [development clients](DevelopmentClient/README.md).
+
+
+## Actual tethered dispenser retraction and hanging (2026-10-22)
+
+[Completed report and motion previews](TetheredDispenser20261021/report.md), [reel GIF](TetheredDispenser20261021/reel-preview.gif), [hanging GIF](TetheredDispenser20261021/hanging-preview.gif), [audit](TetheredDispenser20261021/audit.json): **8 completed runs / 4,544 passing assertions**. A native maximum-distance joint pulls the upper attachment as the cable reels in. The body remains dynamic under gravity and swings in position and attitude after reeling; picking immediately uprights it and disables cable force. External collisions stay suppressed. This supersedes the fixed-position angular effect below. Dispenser.prefab only adds eight explicit tuning values; fragment physics, sound planning/code/assets and Packages/Wwise are preserved.
+
+## Hose, collision-free return and impact-directed fracture (2026-10-21)
+
+[Completed report](DispenserFracture20261021/report.md) and [source/scope audit](DispenserFracture20261021/audit.json): **8 completed runs / 4,705 passing assertions**. The thicker hose uses smooth rendering and time-based curvature response; the dispenser returns without native/GPU collision and swings automatically after docking, with immediate upright pickup. Shards inherit captured incoming motion and actual contact impulse/torque. Natural/Explosive styles and 6/4 gameplay thresholds remain. Sound planning, audio code/assets and Packages/Wwise were preserved. Automated and offscreen evidence does not establish human control feel.
+
+## Physics audio requirements (2026-10-21)
+
+[Detailed Korean report](AudioPlanning/physics-audio-requirements-20261021.md) and [Excel-ready cue CSV](AudioPlanning/physics-audio-cue-sheet-20261021.csv): 140 situations (including 21 deliberate-silence and 8 future-feature cases), all 28 catalog entries plus generated tools/parts/shards/environment, 45 solid material pairs, source hooks, layering/lifetime rules and 36 future listening scenarios. This is a source-backed requirements report; no audio runtime or playback validation was added. [Static source audit](AudioPlanning/physics-audio-source-audit-20261021.json).
+
+## Ice behavior correction (2026-10-21, latest)
+
+The earlier final-rest counters did not establish natural motion. Additional reproduction exposed remote-liquid buoyancy/current sampling, moving-wake feedback, repeated correction of loaded stacks, and an incorrect ice-first volume fallback. Ice now uses its submerged polygon and buoyancy centroid, native held-vessel motion, contact-aware wall recovery, and separate bulk-entry/surface/rotation damping. Both modes use connected-pool transport; Colliding ice uses a volume-based immersion reference; NonColliding remains the default.
+
+Completed: **16 required suites + 1 liquid-only control / 4,733 passing assertions**, with final source parity confirmed in [the audit](ice-behavior-final-audit.json). NonColliding eight-cube shaking retained 55/60ml while the two liquid-only controls retained 60/60ml; this remaining retention difference is explicitly unresolved.
+
+See [the current behavior report](ice-behavior-20261021.md). Reproduce with `Run-IceBehaviorRegressions.ps1 -Prefix <unique-name> -Full`; preparation finishes before Unity starts. Failed trials are preserved. Automated physics and render measurements are distinct from direct human control feel.
+
+## Ice contact and crowded-stack stability (2026-10-21, earlier source snapshot)
+
+The two ice modes remain available and NonColliding remains the default. Native ice stacking no longer receives the peel-specific post-solve repair. Colliding ice uses closed-solid contact recovery, physical rigid-body response velocity, bounded pressure-relative motion, true gravity-work history and exact owner-contour wall repair while allowing actual mouth exits. Bulk flow and pool depth sampling avoid using an ice contact film as its own buoyancy/rotation motor.
+
+See [the earlier stability report](ice-stability-20261021.md) and `ice-stability-audit.json` for completed final-source runs, measured limits, preserved failed trials and validation scope. The earlier floating-contents report below is a historical source snapshot, not proof of this final implementation.
+
+Final selected runs: **15 completed executions / 4,717 passing checks**, all exit 0. This includes repeated 8/12-cube cases, a real automatic fixed/async loop, both ice modes, stationary-gap/no-jet and real moving-contact controls, garnish render/motion, a 32-second mixed-float observation and prior feature regressions. Test criteria distinguish slow buoyant drift/roll from rapid jitter; dry/noncolliding stack rest criteria remain strict. That source snapshot matched all of its tested runtime manifests and 362 delivered asset/file-metadata copies; versioned test sources are retained in `HarnessSnapshots`. Selected attempts are listed in `ice-stability-final-runs.json`.
+
+## Floating contents and release inertia (2026-10-21, earlier snapshot)
+
+F/G ice and garnish now retain world-space motion instead of following the held vessel pose or receiving its release velocity. Both receive bounded buoyancy and relative-flow drag from completed world-space snapshots. Click-drop preserves liquid velocity and both position histories, including active, GPU-reserved and CPU-pending births during overlap correction. A–E and the production backend retain their existing policies.
+
+F/G also expose **Ice / liquid > No collision (default) / Collision**. Both use buoyancy and flow drag; only the collision variant uploads ice GPU contacts and surface masks. Live switching preserves particle/native state and survives restart and F/G selection. Held vessels and their contents display the same completed physics pose, including post-physics recovery, to remove the transient outside-wall garnish frames reproduced during rapid movement.
+
+See [the implementation, validation and reproduction report](floating-contents-20261021.md) and [the source/run audit](floating-contents-audit.json). Failed tuning and automatic-loop fixture attempts are retained and excluded from final passing totals. Automated GPU/native physics results do not establish human control feel or frame-rate performance.
+
 Unity 6000.3.5f2, Direct3D11. Earlier baseline runs used NVIDIA GeForce RTX 3070; the D/E development and performance runs below used AMD Radeon(TM) Graphics. Model D interaction and return-motion runs (51 onward) use NVIDIA GeForce RTX 3070. The experiment was exercised in disposable Unity projects under `HarnessProject`, `Library/FluidSwapHarness` or `Library/FluidModelDHarness`, with source assets and read-only dependencies copied from the working tree. The game project was not opened or saved by Unity for this work.
 
 

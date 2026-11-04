@@ -8,6 +8,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public uint ContainingVesselId => iceContainer != null ? iceContainer.Id : 0;
         internal FluidExperimentBody ContainingVessel => iceContainer;
         public bool IsInHeldVessel => iceContainer != null && iceContainer.IsHeld;
+        public bool UsesLiquidSolidMotion => IsLooseSolid && World != null
+            && World.Liquid != null && World.Liquid.CohesivePhysicsActive;
         // Positional escape recovery is not physical wall motion. GPU collision sweeps
         // still use the corrected pose, but may exclude this displacement from response speed.
         public Vector2 IceRecoveryTranslation { get; private set; }
@@ -36,7 +38,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 if (ice == null || ice.iceContainer != this || ice.IsHeld || !ice.Body.simulated) continue;
                 // F garnish is a world-space dynamic body. Moving an empty part of its
                 // vessel must not translate it or rotate it as if it were attached.
-                if (ice.UsesLiquidGarnishMotion) continue;
+                if (ice.UsesLiquidGarnishMotion || ice.UsesLiquidSolidMotion) continue;
                 ice.Body.position = to + Rotate(ice.Position - from, turn);
                 ice.Body.rotation += turn;
                 ice.IceRecoveryTranslation = Rotate(ice.IceRecoveryTranslation, turn);
@@ -53,9 +55,23 @@ namespace Slainte.Bartending.FluidGpuExperiment
             {
                 if (ice == null || ice.iceContainer != this || ice.IsHeld) continue;
                 Vector2 offset = ice.Position - Position;
-                if (ice.UsesLiquidGarnishMotion) continue;
+                if (ice.UsesLiquidGarnishMotion || ice.UsesLiquidSolidMotion) continue;
                 ice.Body.linearVelocity += velocity + new Vector2(-offset.y, offset.x) * omega;
                 ice.Body.angularVelocity += angularVelocity;
+            }
+        }
+
+        // A release overlap correction changes coordinates once, not momentum. Rebase
+        // solid history too, so the GPU does not mistake depenetration for an ice impulse.
+        internal void TranslateContainedSolids(Vector2 delta)
+        {
+            if (World == null || !IsVessel || delta.sqrMagnitude < 1e-12f) return;
+            foreach (var solid in World.Items)
+            {
+                if (solid == null || solid.iceContainer != this || solid.IsHeld || !solid.Body.simulated) continue;
+                solid.Body.position += delta;
+                solid.PreviousPosition += delta;
+                solid.previousIcePosition += delta;
             }
         }
 
@@ -220,19 +236,26 @@ namespace Slainte.Bartending.FluidGpuExperiment
             return along >= 0 && along <= 1;
         }
 
-        private Vector2 ResolveIceWalls(FluidExperimentBody vessel, Vector2 start, Vector2 end)
+        private Vector2 ResolveIceWalls(FluidExperimentBody vessel, Vector2 start, Vector2 end, bool strict = false)
         {
             Vector2[] path = vessel.IceInterior;
             if (path.Length < 3) return end;
-            float slop = Mathf.Max(.003f, Physics2D.defaultContactOffset * 2);
+            float slop = strict ? .00001f : Mathf.Max(.003f, Physics2D.defaultContactOffset * 2);
             float skin = Mathf.Max(.0005f, Physics2D.defaultContactOffset * .1f);
+            if (UsesLiquidSolidMotion)
+            {
+                float pixel = collisionProfile != null ? collisionProfile.sourcePixelSize : .005f;
+                Vector3 scale = transform.lossyScale;
+                float limit = Mathf.Max(.003f, pixel * Mathf.Max(Mathf.Abs(scale.x), Mathf.Abs(scale.y)));
+                return ResolveCompletedIceWalls(vessel, end, limit, skin);
+            }
             float winding = 0;
             for (int i = 0; i < path.Length; i++)
             {
                 Vector2 a = vessel.IceFrameVertex(path[i]), b = vessel.IceFrameVertex(path[(i + 1) % path.Length]);
                 winding += a.x * b.y - b.x * a.y;
             }
-            int edges = path.Length - (vessel.BlocksIceMouth ? 0 : 1);
+            int edges = path.Length - (strict || !vessel.BlocksIceMouth ? 1 : 0);
             Vector2 position = start, remaining = end - start;
             // Small resting/contact corrections are entirely Physics2D's responsibility.
             // Large relative motion can have crossed a wall between native contact steps.
@@ -295,6 +318,45 @@ namespace Slainte.Bartending.FluidGpuExperiment
             return position;
         }
 
+        // F/G already completed native contacts. Recover only vertices which
+        // are actually outside the authored interior, using their closest finite
+        // wall. Replaying the old centre with the final rotated hull can invent
+        // a collision and move a valid cube deep into a neighbouring cube.
+        private Vector2 ResolveCompletedIceWalls(FluidExperimentBody vessel, Vector2 centre, float slop, float skin)
+        {
+            var path = vessel.IceInterior;
+            bool mouth = vessel.IceMouth(out var lip, out _, out var outward) && !vessel.BlocksIceMouth;
+            int edges = path.Length - (vessel.BlocksIceMouth ? 0 : 1);
+            for (int iteration = 0; iteration < 8; iteration++)
+            {
+                float deepest = slop; Vector2 correction = Vector2.zero;
+                foreach (var vertex in iceFrameHull)
+                {
+                    Vector2 point = centre + vertex;
+                    if (mouth && Vector2.Dot(point-lip, outward) >= 0) continue;
+                    bool inside = false; float nearest = float.PositiveInfinity;
+                    Vector2 closest = point;
+                    for (int i = 0; i < path.Length; i++)
+                    {
+                        Vector2 a = vessel.IceFrameVertex(path[i]), b = vessel.IceFrameVertex(path[(i+1)%path.Length]);
+                        if ((a.y > point.y) != (b.y > point.y)
+                            && point.x < (b.x-a.x)*(point.y-a.y)/(b.y-a.y)+a.x) inside = !inside;
+                        if (i >= edges) continue;
+                        Vector2 candidate = FluidExperimentCollisionProfile.Closest(point, a, b);
+                        float distance = Vector2.Distance(point, candidate);
+                        if (distance < nearest) { nearest = distance; closest = candidate; }
+                    }
+                    if (!inside && nearest > deepest)
+                    { deepest = nearest; correction = closest-point; }
+                }
+                if (correction.sqrMagnitude < 1e-12f) break;
+                Vector2 normal = correction.normalized;
+                centre += correction + normal*skin;
+                RemoveInwardIceVelocity(vessel, centre, normal);
+            }
+            return centre;
+        }
+
         // Continuous SAT against a finite segment. Ice-edge axes handle the segment's
         // endpoints, so a corner uses actual shape support instead of an oversized circle.
         private bool SweepIceHull(Vector2 start, Vector2 travel, Vector2 a, Vector2 b,
@@ -331,10 +393,12 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private void RemoveInwardIceVelocity(FluidExperimentBody vessel, Vector2 framePoint, Vector2 frameNormal)
         {
             Vector2 normal = Rotate(frameNormal, vessel.Angle);
-            // Held contents are transported in a common frame and retain their free
-            // velocity. A dynamic vessel instead has a genuine contact-point velocity.
-            Vector2 wallVelocity = vessel.IsHeld ? Vector2.zero
-                : vessel.Body.GetPointVelocity(vessel.Position + Rotate(framePoint, vessel.Angle));
+            // F/G contents stay in world space. Cursor poses have no native kinematic
+            // velocity, so recover against the actual wall motion, not a stationary wall.
+            Vector2 point = vessel.Position + Rotate(framePoint, vessel.Angle);
+            Vector2 wallVelocity = UsesLiquidSolidMotion
+                ? vessel.ContactPointVelocity(point, Time.fixedDeltaTime)
+                : vessel.IsHeld ? Vector2.zero : vessel.Body.GetPointVelocity(point);
             float inwardSpeed = Vector2.Dot(Body.linearVelocity - wallVelocity, normal);
             if (inwardSpeed < 0) Body.linearVelocity -= normal * inwardSpeed;
         }

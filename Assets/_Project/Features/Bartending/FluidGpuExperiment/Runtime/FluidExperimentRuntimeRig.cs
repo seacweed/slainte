@@ -6,14 +6,13 @@ namespace Slainte.Bartending.FluidGpuExperiment
 {
     public enum FluidExperimentBreakageStyle { Natural, Explosive }
 
-    /// <summary>Reusable production composition. The comparison UI is an optional external client.</summary>
+    /// <summary>Reusable cohesive-liquid composition for authored scenes and runtime spawning.</summary>
     [DefaultExecutionOrder(-1000), DisallowMultipleComponent]
     public sealed class FluidExperimentRuntimeRig : MonoBehaviour
     {
         public FluidExperimentWorld world;
         public FluidExperimentGpuLiquid liquid;
         public FluidExperimentInteractor interactor;
-        public FluidExperimentEffects effects;
         public Camera inputCamera;
         public FluidExperimentEnvironmentBinding environment;
         public FluidExperimentAuthoringCatalog catalog;
@@ -21,6 +20,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public ItemDef defaultIngredient;
         public FluidExperimentSplashProfile defaultSplashProfile;
         public FluidExperimentBreakageStyle breakageStyle = FluidExperimentBreakageStyle.Natural;
+        public FluidExperimentIceLiquidMode iceLiquidMode = FluidExperimentIceLiquidMode.NonColliding;
         public bool shardLiquidCollision = true;
         public bool seedLiquids;
         public bool enablePointerInput = true;
@@ -41,7 +41,6 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (world == null) world = GetComponent<FluidExperimentWorld>();
             if (liquid == null) liquid = GetComponent<FluidExperimentGpuLiquid>();
             if (interactor == null) interactor = GetComponent<FluidExperimentInteractor>();
-            if (effects == null) effects = GetComponent<FluidExperimentEffects>();
             if (world == null || liquid == null || interactor == null)
                 throw new InvalidOperationException("Runtime rig requires its World, Liquid and Interactor components.");
             world.liquid = liquid; world.interactor = interactor; world.showControls = false;
@@ -51,10 +50,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
             interactor.world = world; interactor.inputCamera = inputCamera;
             interactor.enabled = enablePointerInput;
             liquid.outputCamera = inputCamera;
-            liquid.solver = FluidExperimentSolver.ReferenceSph;
-            liquid.useCohesivePhysics = true; liquid.useImprovedPhysics = false;
-            liquid.useReferenceSurface = true; liquid.useImprovedSurface = true;
-            liquid.useSurfaceRendering = true; liquid.useStreamRendering = true;
+            liquid.iceLiquidMode = iceLiquidMode;
+            liquid.useSurfaceRendering = true;
             bool restartLiquid = false;
             if (Application.isPlaying && runtimeSettingsSource != liquidSettings)
             {
@@ -70,7 +67,6 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 }
             }
             liquid.settings = runtimeSettings != null ? runtimeSettings : liquidSettings;
-            if (effects != null) effects.world = world;
             if (environment != null) environment.BindTo(world);
             foreach (var glass in world.GetComponentsInChildren<FluidExperimentBreakableGlass>(true))
                 if (glass.splashProfile == null) glass.splashProfile = defaultSplashProfile;

@@ -224,7 +224,6 @@ MonoBehaviour:
   icePrefab: {fileID: 0}
   iceStock: 0
   icePourInterval: 0.18
-  garnishLiquidMotionTransfer: 0.2
   collisionProfile: {fileID: 11400000, guid: 2ee82ea724db3a440a0725c63e04d93c, type: 2}
   iceCapacity: 20
   iceStockRenderer: {fileID: 0}
@@ -279,6 +278,14 @@ MonoBehaviour:
   returnDuration: 0.5
   exitSpeed: 2.4
   hoseSegments: 20
+  hoseWidth: 0.115
+  hoseSlackRatio: 0.09
+  hoseExtraLength: 0.12
+  maximumReelSpeed: 12
+  reelAcceleration: 24
+  suspensionGravityScale: 1
+  suspensionLinearDamping: 0.9
+  suspensionAngularDamping: 1.1
 --- !u!1 &6024684657838608561
 GameObject:
   m_ObjectHideFlags: 0

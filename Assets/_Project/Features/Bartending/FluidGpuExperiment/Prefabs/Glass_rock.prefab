@@ -80,6 +80,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentBody
   kind: 1
   displayName: Rock
+  servingGlassId: rock
   ingredient: {fileID: 0}
   liquidWall:
   - {x: -0.7465271, y: -0.13483058}

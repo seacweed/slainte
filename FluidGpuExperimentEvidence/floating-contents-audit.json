@@ -1,0 +1,129 @@
+{
+  "passed": true,
+  "baseHead": "3d538dce16e9fcb32b32464ace40f086f5e4a60b",
+  "checks": {
+    "trackedChangesWhitelisted": true,
+    "noScenePrefabProfileMetadataOrProjectSettingsChanges": true,
+    "allDeliveredAssetFilesMatchTestedHarness": true,
+    "allSelectedRunsCompletedSuccessfully": true
+  },
+  "changedTrackedFiles": [
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/DEVELOPMENT_PLAN.md",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/README.md",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentBody.Contents.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentBody.GarnishMotion.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentBody.IceStock.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentBody.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentComparison.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.Garnish.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.ImprovedSurface.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentLiquidSettings.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentRuntimeRig.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentWorld.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentLiquid.compute",
+    "FluidGpuExperimentEvidence/README.md"
+  ],
+  "harnessCheckedFiles": 362,
+  "harnessMismatches": [],
+  "folderMetadataNotCopiedByHarness": [
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Art.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Data.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Editor.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Scenes.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/ThirdParty.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Art/Dispenser.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Art/Garnishes.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Art/Shards.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Art/Shards/Hurricane.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Data/CollisionProfiles.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Editor/Templates.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Runtime.meta"
+  ],
+  "totalPassingAssertions": 4580,
+  "suites": [
+    {
+      "attempt": "20261021-ice-mode-variants-02",
+      "exitCode": 0,
+      "timedOut": false,
+      "passedAssertions": 149,
+      "failedAssertions": 0,
+      "resultPassed": true
+    },
+    {
+      "attempt": "20261021-floating-contents-v2",
+      "exitCode": 0,
+      "timedOut": false,
+      "passedAssertions": 182,
+      "failedAssertions": 0,
+      "resultPassed": true
+    },
+    {
+      "attempt": "20261021-solid-rest-v2",
+      "exitCode": 0,
+      "timedOut": false,
+      "passedAssertions": 21,
+      "failedAssertions": 0,
+      "resultPassed": true
+    },
+    {
+      "attempt": "20261021-garnish-render-lemon",
+      "exitCode": 0,
+      "timedOut": false,
+      "passedAssertions": 16,
+      "failedAssertions": 0,
+      "resultPassed": true
+    },
+    {
+      "attempt": "20261021-garnish-render-nananga",
+      "exitCode": 0,
+      "timedOut": false,
+      "passedAssertions": 16,
+      "failedAssertions": 0,
+      "resultPassed": true
+    },
+    {
+      "attempt": "20261021-floating-garnish-v2",
+      "exitCode": 0,
+      "timedOut": false,
+      "passedAssertions": 168,
+      "failedAssertions": 0,
+      "resultPassed": true
+    },
+    {
+      "attempt": "20261021-floating-pickup-v2",
+      "exitCode": 0,
+      "timedOut": false,
+      "passedAssertions": 86,
+      "failedAssertions": 0,
+      "resultPassed": true
+    },
+    {
+      "attempt": "20261021-floating-input-v2",
+      "exitCode": 0,
+      "timedOut": false,
+      "passedAssertions": 1925,
+      "failedAssertions": 0,
+      "resultPassed": true
+    },
+    {
+      "attempt": "20261021-floating-dispenser-v2",
+      "exitCode": 0,
+      "timedOut": false,
+      "passedAssertions": 1810,
+      "failedAssertions": 0,
+      "resultPassed": true
+    },
+    {
+      "attempt": "20261021-floating-breakage-v2",
+      "exitCode": 0,
+      "timedOut": false,
+      "passedAssertions": 207,
+      "failedAssertions": 0,
+      "resultPassed": true
+    }
+  ]
+}

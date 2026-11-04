@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace Slainte.Bartending.FluidGpuExperiment.Editor
@@ -125,22 +124,6 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
             AssetDatabase.SaveAssets();
             Debug.Log("[DispenserBuilder] Authored original sprite modes, " + pixels.Length
                 + "-point silhouette, hot-water definition and dispenser prefab; source PNG bytes retained.");
-        }
-
-        [MenuItem("Slainte/Fluid GPU Experiment/Install Dispenser Into Comparison")]
-        public static void InstallIntoComparison()
-        {
-            if (EditorApplication.isPlaying) throw new InvalidOperationException("Stop Play Mode before authoring.");
-            if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
-            EnsurePrefab();
-            var scene = EditorSceneManager.OpenScene(FluidExperimentBuilder.ScenePath);
-            var world = UnityEngine.Object.FindFirstObjectByType<FluidExperimentWorld>();
-            if (world == null) throw new InvalidOperationException("Experiment world missing.");
-            if (!BindIfMissing(world)) return;
-            EditorSceneManager.MarkSceneDirty(scene);
-            if (!EditorSceneManager.SaveScene(scene, FluidExperimentBuilder.ScenePath))
-                throw new IOException("Comparison scene save failed.");
-            Debug.Log("[DispenserBuilder] Connected runtime dispenser prefab; existing comparison content retained.");
         }
 
         private static FluidExperimentCollisionProfile BuildProfile(Vector2[] pixels)

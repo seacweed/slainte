@@ -41,11 +41,11 @@ namespace Slainte.Bartending.FluidGpuExperiment
             shard.Body.angularDamping = source.profile.angularDamping;
             shard.Body.interpolation = RigidbodyInterpolation2D.Interpolate;
             shard.Body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
-            shard.initialVelocity = original.Body.GetPointVelocity(position);
+            shard.initialVelocity = source.FractureVelocityAt(position);
             // Small coherent separation; area weighting makes the added net momentum zero.
             float extent = Mathf.Max(.1f, original.SolidBounds.extents.magnitude);
-            shard.initialVelocity += (position - center) * (source.profile.separationSpeed / extent);
-            shard.initialSpin = original.Body.angularVelocity;
+            shard.initialVelocity += (position - center) * (source.FractureSeparationSpeed / extent);
+            shard.initialSpin = source.FractureAngularVelocity;
             if (world.ExplosiveGlassBreakage)
             {
                 // G deliberately adds burst energy to the fragments only. Keep the source's

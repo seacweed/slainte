@@ -1,0 +1,17 @@
+{
+  "forceShaderImport": true,
+  "started": "2026-10-21T20:45:37.6888455+09:00",
+  "entryMethod": "IceBuoyancyValidation.Begin",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:\\UnityHub\\proj\\slainte\\Library\\FluidModelDHarness",
+    "-executeMethod",
+    "PhysicsLabValidationDispatch.Run",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\20261021-ice-native-wall-recovery-02\\Editor.log"
+  ],
+  "executable": "A:\\UnityHub\\Unity\\6000.3.5f2\\Editor\\Unity.exe",
+  "timeoutSeconds": 300
+}

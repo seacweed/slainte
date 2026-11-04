@@ -444,6 +444,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentBody
   kind: 1
   displayName: Martini
+  servingGlassId: martini
   ingredient: {fileID: 0}
   liquidWall:
   - {x: -0.916352, y: 0.31042364}

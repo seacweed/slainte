@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Slainte.Bartending.FluidGpuExperiment
@@ -6,6 +7,67 @@ namespace Slainte.Bartending.FluidGpuExperiment
     public sealed partial class FluidExperimentBody
     {
         public FluidExperimentCollisionProfile collisionProfile;
+        private readonly List<Vector2> buoyancyClip = new List<Vector2>(32);
+
+        internal Bounds IceBuoyancyBounds
+        {
+            get
+            {
+                if (collisionProfile == null) return SolidBounds;
+                Bounds bounds = new Bounds(Position, Vector3.zero); bool found = false;
+                // Collider.bounds may still describe the pose before a completed
+                // wall recovery. Sample the same native pose used for immersion.
+                foreach (var hull in collisionProfile.solids) foreach (var local in hull.points)
+                {
+                    Vector2 point = LocalToWorld(local);
+                    if (!found) { bounds = new Bounds(point, Vector3.zero); found = true; }
+                    else bounds.Encapsulate(point);
+                }
+                return bounds;
+            }
+        }
+
+        // Integrate the authored solid below a horizontal liquid surface. Using
+        // its AABB makes immersion change merely because a cube rotates, and
+        // loses the off-centre lift which should oppose an unstable orientation.
+        internal void SampleIceImmersion(float surface, out float fraction, out Vector2 centre)
+        {
+            float fullArea = 0, wetArea = 0;
+            Vector2 moment = Vector2.zero;
+            if (collisionProfile != null)
+                foreach (var hull in collisionProfile.solids)
+                {
+                    float crossSum = 0;
+                    buoyancyClip.Clear();
+                    Vector2 previous = LocalToWorld(hull.points[hull.points.Length - 1]);
+                    foreach (Vector2 local in hull.points)
+                    {
+                        Vector2 point = LocalToWorld(local);
+                        crossSum += previous.x * point.y - point.x * previous.y;
+                        bool beforeWet = previous.y <= surface, pointWet = point.y <= surface;
+                        if (beforeWet != pointWet)
+                            buoyancyClip.Add(Vector2.LerpUnclamped(previous, point,
+                                (surface - previous.y) / (point.y - previous.y)));
+                        if (pointWet) buoyancyClip.Add(point);
+                        previous = point;
+                    }
+                    fullArea += Mathf.Abs(crossSum) * .5f;
+                    if (buoyancyClip.Count < 3) continue;
+                    float wetCross = 0; Vector2 centroidSum = Vector2.zero;
+                    previous = buoyancyClip[buoyancyClip.Count - 1];
+                    foreach (Vector2 point in buoyancyClip)
+                    {
+                        float cross = previous.x * point.y - point.x * previous.y;
+                        wetCross += cross; centroidSum += (previous + point) * cross;
+                        previous = point;
+                    }
+                    if (Mathf.Abs(wetCross) < 1e-8f) continue;
+                    float area = Mathf.Abs(wetCross) * .5f;
+                    wetArea += area; moment += centroidSum / (3 * wetCross) * area;
+                }
+            fraction = fullArea > 1e-8f ? Mathf.Clamp01(wetArea / fullArea) : 0;
+            centre = wetArea > 1e-8f && fraction < .99999f ? moment / wetArea : Body.worldCenterOfMass;
+        }
 
         // Also used by the editor after profile edits. Pick trigger, art and gameplay settings are untouched.
         public void ApplyCollisionProfile()

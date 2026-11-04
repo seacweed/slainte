@@ -1,0 +1,14 @@
+PASS Native automatic world/Physics2D/async-readback scheduling remains enabled
+PASS Native-loop fixture queues 60 ml
+PASS Native receiver acquires both solids before pickup
+PASS Controller picks the actual filled glass
+PASS Actual asynchronous snapshots continue during automatic movement
+MEASURE native-loop Ice relativeSpan=11379.77 owner=0 speed=2521.3103
+PASS Native automatic loop retains independent finite Ice motion
+MEASURE native-loop Garnish relativeSpan=9457.635 owner=0 speed=1691.44812
+PASS Native automatic loop retains independent finite Garnish motion
+PASS Actual click-drop succeeds in automatic Play loop
+FAIL Automatic-loop click-drop preserves every owned liquid velocity and motion history
+PASS Automatic-loop click-drop adds no solid velocity or spin
+PASS Automatic loop conserves generated liquid
+PASS No Unity application errors or assertions

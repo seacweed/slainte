@@ -1,0 +1,17 @@
+{
+  "started": "2026-10-28T14:02:40.2545651+09:00",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:\\UnityHub\\proj\\slainte\\Library\\FluidModelDHarness",
+    "-executeMethod",
+    "PhysicsLabValidationDispatch.Run",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\PrefabReadiness20261028\\03b-original-prefabs-control\\Editor.log"
+  ],
+  "forceShaderImport": true,
+  "entryMethod": "ExperimentRuntimeAssemblyValidation.Begin",
+  "executable": "A:\\UnityHub\\Unity\\6000.3.5f2\\Editor\\Unity.exe",
+  "timeoutSeconds": 240
+}

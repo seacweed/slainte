@@ -1,0 +1,19 @@
+PASS Native automatic world/Physics2D/async-readback scheduling remains enabled
+INFO fixture initial native=(0.00, 1.50) rendered=(0.00, 1.50, 0.00) leftWall=(-14.47, 3.38, 0.00) rightWall=(14.47, 3.38, 0.00)
+PASS Native-loop fixture queues 60 ml
+PASS Deferred comparison startup cannot reset the fixture pose
+PASS Native receiver acquires both solids before pickup
+PASS Controller picks the actual filled glass
+PASS Actual asynchronous snapshots continue during automatic movement
+MEASURE render frames=3544 visualGap=0.00113649608 physicsGap=-0.0103726378 lag=0.1276712
+PASS Native loop samples actual camera render frames
+PASS Rendered garnish remains within one source pixel of glass walls
+MEASURE native-loop Ice relativeSpan=1.02486312 owner=3 speed=0.178750023
+PASS Native automatic loop retains independent bounded Ice motion inside receiver
+MEASURE native-loop Garnish relativeSpan=1.3614291 owner=3 speed=0.279893816
+PASS Native automatic loop retains independent bounded Garnish motion inside receiver
+PASS Actual click-drop succeeds in automatic Play loop
+PASS Automatic-loop click-drop preserves every owned liquid velocity and motion history
+PASS Automatic-loop click-drop adds no solid velocity or spin
+PASS Automatic loop conserves generated liquid
+PASS No Unity application errors or assertions

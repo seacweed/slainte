@@ -1,0 +1,25 @@
+{
+  "result": "PASS",
+  "baseline_file_count": 695,
+  "unchanged_original_file_count": 688,
+  "changed_original_files": [
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/README.md",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Editor/FluidExperimentDesignerSession.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Editor/FluidExperimentDesignerWindow.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Glass_highball.prefab",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Glass_hurricane.prefab",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Glass_martini.prefab",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Glass_rock.prefab"
+  ],
+  "deleted_original_files": [],
+  "glass_prefabs_only_add_identity": {
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Glass_highball.prefab": true,
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Glass_hurricane.prefab": true,
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Glass_martini.prefab": true,
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Glass_rock.prefab": true
+  },
+  "scene_overrides_preserved": true,
+  "catalog_count": 28,
+  "reference_errors": [],
+  "errors": []
+}

@@ -27,6 +27,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private float returnStartAngle;
         private float returnElapsed;
         private float sampledUserAngle;
+        private Mouse spoonContactMouse;
         public Vector2 RotationPointerWorld => Held != null
             ? Held.PointAt(Held.rotationPivotLocal, Held.TargetPosition, Held.TargetAngle) : rotationAnchor;
         private readonly List<MotionSample> samples = new List<MotionSample>(32);
@@ -34,7 +35,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         private void Update()
         {
-            if (world == null || inputCamera == null) { RetractHeldDispenser(); return; }
+            if (world == null || inputCamera == null) { Held?.SetSpoonContactEnabled(false); RetractHeldDispenser(); return; }
             if (!Application.isBatchMode && !Application.isFocused) { CancelPointerCapture(); return; }
             Mouse mouse = Mouse.current;
             if (mouse == null) { CancelPointerCapture(); return; }
@@ -42,7 +43,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (freshInput && !mouse.rightButton.isPressed) requirePointerRelease = false;
             Vector2 pointer = inputCamera.ScreenToWorldPoint(screen);
             lastPointer = pointer;
-            bool cancelled = PointerCaptureLost(mouse) || (HeldDispenser != null && freshInput
+            bool cancelled = PointerCaptureLost(mouse) || (Held != null && Held.SpoonContactEnabled && mouse != spoonContactMouse)
+                || ((HeldDispenser != null || (Held != null && Held.kind == LabItemKind.Spoon)) && freshInput
                 && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame);
             if (cancelled)
             {
@@ -54,6 +56,14 @@ namespace Slainte.Bartending.FluidGpuExperiment
             {
                 UpdateHeldDispenser(pointer, !cancelled && mouse.rightButton.isPressed
                     && !requirePointerRelease && !IsPointerBlocked(screen));
+            }
+            else if (Held != null && Held.kind == LabItemKind.Spoon)
+            {
+                bool contact = !cancelled && !requirePointerRelease && mouse.rightButton.isPressed && !IsPointerBlocked(screen);
+                Held.SetSpoonContactEnabled(contact);
+                spoonContactMouse = contact ? mouse : null;
+                MoveHeld(pointer);
+                Sample(Time.unscaledTime);
             }
             else if (Held != null)
             {
@@ -99,6 +109,13 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
 
         public bool PickAt(Vector2 point)
+        {
+            if (Held != null || HeldPart != null || HeldDispenser != null || world == null) return false;
+            if (world.ObjectSortingActive) return PickVisualTarget(point);
+            return PickAtLegacy(point);
+        }
+
+        private bool PickAtLegacy(Vector2 point)
         {
             if (Held != null || HeldPart != null || HeldDispenser != null || world == null) return false;
             bool dispenserResult = TryDispenserClick(point, out bool dispenserHit);
@@ -182,7 +199,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         public void BeginRotation()
         {
-            if (Held == null || Rotating) return;
+            if (Held == null || Held.kind == LabItemKind.Spoon || Rotating) return;
             if (Returning)
             {
                 Returning = false;
@@ -301,6 +318,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             FluidExperimentBody item = Held;
             if (PointerCaptured) BeginPointerHandoff(RotationPointerWorld);
             Held = null;
+            spoonContactMouse = null;
             Rotating = false;
             Returning = false;
             samples.Clear();
@@ -316,7 +334,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (HeldPart != null && HeldPart.Owner == item) ForgetShakerPart(HeldPart);
             if (Held != item) return;
             ReleasePointer();
-            Held = null; Rotating = Returning = false; samples.Clear();
+            Held = null; spoonContactMouse = null; Rotating = Returning = false; samples.Clear();
         }
         internal void ForgetShakerPart(FluidExperimentShakerPart part)
         {

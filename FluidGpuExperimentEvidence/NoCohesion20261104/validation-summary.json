@@ -1,0 +1,70 @@
+{
+  "status": "PASS",
+  "checks": 33,
+  "runtime": "Unity 6000.3.5f2 / D3D11 GPU",
+  "sceneDefaultTension": 0,
+  "sourceHashesVerified": 479,
+  "productChangesDuringValidation": false,
+  "latestMeasurements": {
+    "water-default": {
+      "label": "water-default",
+      "seconds": 1.0,
+      "ml": 18.0,
+      "width": 0.514685332775116,
+      "height": 0.5085253715515137,
+      "meanNearest": 0.049585916101932526,
+      "minimumNearest": 0.02361791767179966,
+      "maxSpeed": 0.2912295460700989,
+      "meanDensity": 0.951193630695343,
+      "maxCompression": 4.76837158203125e-07,
+      "particles": 36,
+      "clusters": 1
+    },
+    "water-no-attraction": {
+      "label": "water-no-attraction",
+      "seconds": 1.0,
+      "ml": 18.0,
+      "width": 0.75,
+      "height": 0.75,
+      "meanNearest": 0.14999991655349731,
+      "minimumNearest": 0.14999985694885254,
+      "maxSpeed": 0.0,
+      "meanDensity": 0.4789351522922516,
+      "maxCompression": 0.0,
+      "particles": 36,
+      "clusters": 36
+    },
+    "vessel-default": {
+      "label": "vessel-default",
+      "seconds": 2.0,
+      "ml": 30.0,
+      "width": 1.234962821006775,
+      "height": 0.3152637481689453,
+      "meanNearest": 0.05131407082080841,
+      "minimumNearest": 0.004065036773681641,
+      "maxSpeed": 0.04841311275959015,
+      "meanDensity": 0.9995046257972717,
+      "maxCompression": 0.0025392770767211914,
+      "particles": 60,
+      "clusters": 1
+    },
+    "vessel-no-attraction": {
+      "label": "vessel-no-attraction",
+      "seconds": 2.0,
+      "ml": 30.0,
+      "width": 1.237321376800537,
+      "height": 0.311251699924469,
+      "meanNearest": 0.0579175129532814,
+      "minimumNearest": 0.01262764260172844,
+      "maxSpeed": 0.09445130825042725,
+      "meanDensity": 0.9979390501976013,
+      "maxCompression": 0.003243565559387207,
+      "particles": 60,
+      "clusters": 1
+    }
+  },
+  "limitations": [
+    "Controlled zero-gravity patch and kinematic glass fixtures, not manual pouring or stirring.",
+    "Local close-pair overlap and surface bridging not solved by turning off cohesion."
+  ]
+}

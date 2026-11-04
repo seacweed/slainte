@@ -1,0 +1,11 @@
+{
+  "status": "DIAGNOSED_NOT_FIXED",
+  "product_source_unchanged": true,
+  "matching_source_files": 479,
+  "observed_causes": [
+    "cohesive contraction",
+    "close-pair separation gap",
+    "screen-space splat bridging"
+  ],
+  "findings": "findings.txt"
+}

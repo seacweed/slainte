@@ -8,10 +8,13 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 $workspace = Split-Path -Parent $PSScriptRoot
-if (-not $ProjectPath) { $ProjectPath = Join-Path $PSScriptRoot 'HarnessProject' }
+if (-not $ProjectPath) { $ProjectPath = Join-Path $workspace 'Library/FluidModelDHarness' }
 if (-not $UnityExecutable) {
     $version = (Get-Content -LiteralPath (Join-Path $workspace 'ProjectSettings/ProjectVersion.txt') | Select-String '^m_EditorVersion: (.+)$').Matches.Groups[1].Value
     $UnityExecutable = Join-Path ${env:ProgramFiles} "Unity/Hub/Editor/$version/Editor/Unity.exe"
+    if (-not (Test-Path -LiteralPath $UnityExecutable)) {
+        $UnityExecutable = "A:/UnityHub/Unity/$version/Editor/Unity.exe"
+    }
 }
 if (-not (Test-Path -LiteralPath $UnityExecutable)) { throw "Unity executable not found: $UnityExecutable" }
 $attemptDirectory = Join-Path $workspace ('FluidGpuExperimentEvidence/' + $Attempt)

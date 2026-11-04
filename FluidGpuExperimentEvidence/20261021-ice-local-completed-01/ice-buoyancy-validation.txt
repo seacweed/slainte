@@ -1,0 +1,35 @@
+FIXTURE NonColliding queuedMl=80 capacity=400
+FIXTURE NonColliding settledMl=80
+MEASURE sampler NonColliding localWet=0.116600811 remoteFlow=(0, 0)
+PASS NonColliding distant liquid does not create local buoyancy
+PASS NonColliding distant current does not drive a stationary local puddle
+PASS NonColliding detached liquid above the cube supplies no buoyancy
+PASS NonColliding dry ice has no fluid force
+FIXTURE NonColliding queuedMl=80 capacity=400
+FIXTURE NonColliding settledMl=80
+MEASURE NonColliding-1 maxOverlap=0 overlapTicks=0 tailSpan=0.00292943558 spin95=0.107778929 peakSpin=10.4473782 dryRise=0 ml=80
+PASS NonColliding-1 stops drifting and rotating in still liquid after vessel movement
+PASS NonColliding-1 avoids deep interpenetration throughout drops and vessel movement
+FIXTURE NonColliding queuedMl=80 capacity=400
+FIXTURE NonColliding settledMl=80
+MEASURE NonColliding-8 maxOverlap=0.104394615 overlapTicks=43 tailSpan=2.42438146E-05 spin95=0.013162612 peakSpin=646.444458 dryRise=0 ml=80
+PASS NonColliding-8 stops drifting and rotating in still liquid after vessel movement
+FAIL NonColliding-8 avoids deep interpenetration throughout drops and vessel movement
+FIXTURE Colliding queuedMl=80 capacity=400
+FIXTURE Colliding settledMl=80
+MEASURE sampler Colliding localWet=0 remoteFlow=(0, 0)
+PASS Colliding distant liquid does not create local buoyancy
+PASS Colliding distant current does not drive a stationary local puddle
+PASS Colliding detached liquid above the cube supplies no buoyancy
+PASS Colliding dry ice has no fluid force
+FIXTURE Colliding queuedMl=80 capacity=400
+FIXTURE Colliding settledMl=80
+MEASURE Colliding-1 maxOverlap=0 overlapTicks=0 tailSpan=0.0473827943 spin95=0 peakSpin=0 dryRise=0 ml=80
+FAIL Colliding-1 stops drifting and rotating in still liquid after vessel movement
+PASS Colliding-1 avoids deep interpenetration throughout drops and vessel movement
+FIXTURE Colliding queuedMl=80 capacity=400
+FIXTURE Colliding settledMl=80
+MEASURE Colliding-8 maxOverlap=0.227041066 overlapTicks=130 tailSpan=0.139261559 spin95=9.758216 peakSpin=790.4411 dryRise=0 ml=80
+FAIL Colliding-8 stops drifting and rotating in still liquid after vessel movement
+FAIL Colliding-8 avoids deep interpenetration throughout drops and vessel movement
+PASS No Unity application errors

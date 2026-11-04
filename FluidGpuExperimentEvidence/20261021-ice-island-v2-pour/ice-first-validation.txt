@@ -1,0 +1,13 @@
+PASS NonColliding dry cubes settle before any liquid exists
+MEASURE NonColliding emitted=60 contained=60 span=0.0153246876 speed95=0.008419827 spin95=1.01800871 peakWaterUp=1.77724242
+PASS NonColliding pours exactly 60 ml through the opening
+PASS NonColliding retains the poured pool without loss
+PASS NonColliding stops self-excited rise and spin after ice-first pouring
+PASS NonColliding retains three independent native cubes
+PASS Colliding dry cubes settle before any liquid exists
+MEASURE Colliding emitted=60 contained=60 span=0.06753864 speed95=0.0508515351 spin95=10.0998287 peakWaterUp=1.47860682
+PASS Colliding pours exactly 60 ml through the opening
+PASS Colliding retains the poured pool without loss
+FAIL Colliding stops self-excited rise and spin after ice-first pouring
+PASS Colliding retains three independent native cubes
+PASS No Unity application errors

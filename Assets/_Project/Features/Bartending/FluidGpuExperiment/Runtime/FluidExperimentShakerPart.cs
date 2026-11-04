@@ -232,7 +232,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (!IsAttached) RefreshCollisionPairs();
         }
 
-        private void RefreshCollisionPairs()
+        internal void RefreshCollisionPairs()
         {
             if (Owner == null || Owner.World == null || IsAttached) return;
             FluidExperimentWorld world = Owner.World;
@@ -242,7 +242,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 foreach (Collider2D other in item.solidColliders)
                 {
                     if (other == null || !other.enabled) continue;
-                    Ignore(other, IsHeld || item.IsHeld || item.IsInHeldVessel);
+                    Ignore(other, IsHeld || item.SuppressHeldSolidContacts || item.IsInHeldVessel);
                 }
                 if (item.kind == LabItemKind.Shaker)
                 {

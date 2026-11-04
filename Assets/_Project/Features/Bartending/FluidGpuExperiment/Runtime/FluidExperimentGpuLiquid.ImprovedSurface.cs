@@ -35,8 +35,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
     public sealed partial class FluidExperimentGpuLiquid
     {
-        [Header("Improved surface (D / E only)")]
-        public bool useImprovedSurface;
+        [Header("Interpolated liquid surface")]
         public ComputeShader improvedSurfaceCompute;
         public Shader improvedAccumulationShader, improvedCompositeShader;
         [Range(1, 4)] public float improvedMaximumAspect = 3;
@@ -46,8 +45,6 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private ComputeShader improvedSurfaceProgram;
         private GraphicsBuffer improvedSurfaceHistoryBuffer, improvedSurfaceParticleBuffer;
         private GraphicsBuffer improvedSurfaceHullBuffer, improvedSurfaceVertexBuffer, improvedSurfaceVesselBuffer;
-        private GraphicsBuffer improvedSurfaceMaterialBuffer;
-        private readonly Vector4[] improvedSurfaceMaterials = new Vector4[32];
         private readonly List<GpuImprovedSurfaceHull> improvedSurfaceHulls = new List<GpuImprovedSurfaceHull>(64);
         private readonly List<Vector2> improvedSurfaceVertices = new List<Vector2>(MaximumBoundarySegments);
         private readonly List<Vector4> improvedSurfaceVessels = new List<Vector4>(64);
@@ -57,7 +54,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private readonly List<Vector2> improvedPolygonPath = new List<Vector2>(64);
         private readonly Vector2[] improvedBoxPath = new Vector2[4];
         private int improvedUploadedHullCount = -1, improvedUploadedVertexCount = -1;
-        private int improvedUploadedVesselCount = -1, improvedUploadedMaterialCount = -1;
+        private int improvedUploadedVesselCount = -1;
         private int improvedCaptureKernel, improvedBuildKernel, improvedResetKernel, improvedRebaseKernel;
         private float improvedTickDuration = .02f, improvedTickStart, improvedLastTickTime;
         private bool improvedSurfaceTickReady;
@@ -72,7 +69,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         // full fixed-tick endpoint, including exact positions of not-yet-born spawn commands.
         internal void BeginImprovedSurfaceTick(float dt)
         {
-            if (!useImprovedSurface || !EnsureImprovedSurfaceResources()) return;
+            if (!EnsureImprovedSurfaceResources()) return;
             improvedTickDuration = dt;
             improvedTickStart = simulationTime;
             // Capture reads only the particle/stream buffers and capacity. Parameters,
@@ -84,7 +81,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         // changes volume/ownership, or changes the physics time step.
         internal void EndImprovedSurfaceTick(float dt)
         {
-            if (!useImprovedSurface || improvedSurfaceProgram == null) return;
+            if (improvedSurfaceProgram == null) return;
             UploadImprovedSurfaceVessels();
             BindImprovedSurfaceTick();
             improvedSurfaceProgram.Dispatch(improvedBuildKernel, SurfaceDispatchGroups, 1, 1);
@@ -128,7 +125,6 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 improvedSurfaceHullBuffer = CreateStructured<GpuImprovedSurfaceHull>(MaximumBoundarySegments);
                 improvedSurfaceVertexBuffer = CreateStructured<Vector2>(MaximumBoundarySegments);
                 improvedSurfaceVesselBuffer = CreateStructured<Vector4>(MaximumBoundarySegments);
-                improvedSurfaceMaterialBuffer = CreateStructured<Vector4>(32);
                 improvedCaptureKernel = ImprovedSurfaceKernel("CaptureTickStart");
                 improvedBuildKernel = ImprovedSurfaceKernel("BuildSurfaceEllipses");
                 improvedResetKernel = ImprovedSurfaceKernel("ResetSurfaceHistory");
@@ -143,7 +139,6 @@ namespace Slainte.Bartending.FluidGpuExperiment
                     improvedSurfaceProgram.SetBuffer(kernel, "_GridHeads", gridHeadBuffer);
                     improvedSurfaceProgram.SetBuffer(kernel, "_GridNext", gridNextBuffer);
                     improvedSurfaceProgram.SetBuffer(kernel, "_SurfaceVessels", improvedSurfaceVesselBuffer);
-                    improvedSurfaceProgram.SetBuffer(kernel, "_SurfaceMaterials", improvedSurfaceMaterialBuffer);
                 }
                 ResetImprovedSurfaceHistory();
                 ImprovedSurfaceError = null;
@@ -178,38 +173,20 @@ namespace Slainte.Bartending.FluidGpuExperiment
             improvedSurfaceProgram.SetVector("_GridOrigin", settings.gpuLiquidWorldMin);
             improvedSurfaceProgram.SetInt("_GridWidth", gridWidth);
             improvedSurfaceProgram.SetInt("_GridHeight", gridHeight);
-            improvedSurfaceProgram.SetInt("_UseAreaCalibration", useImprovedPhysics ? 1 : 0);
-            improvedSurfaceProgram.SetInt("_IngredientCount", ingredients.Count);
-            improvedSurfaceProgram.SetInt("_MaximumIngredients", maximumIngredients);
-            improvedSurfaceProgram.SetBuffer(improvedBuildKernel, "_CompositionRead", compositionAIsCurrent ? compositionA : compositionB);
-            bool materialsChanged = improvedUploadedMaterialCount != ingredients.Count;
-            for (int i = 0; i < ingredients.Count; i++)
-            {
-                float opacity = useImprovedPhysics ? FluidExperimentMaterials.Resolve(ingredients[i], improvedMaterial).OpacityScale : 1;
-                if (improvedSurfaceMaterials[i].x != opacity) materialsChanged = true;
-                improvedSurfaceMaterials[i] = new Vector4(opacity, 0, 0, 0);
-            }
-            if (materialsChanged && ingredients.Count > 0)
-                improvedSurfaceMaterialBuffer.SetData(improvedSurfaceMaterials, 0, 0, ingredients.Count);
-            improvedUploadedMaterialCount = ingredients.Count;
         }
 
         private void UploadImprovedSurfaceVessels()
         {
             improvedSurfaceVessels.Clear();
-            // Entry zero also supplies the area convention for unowned falling liquid.
-            float fallbackArea = useImprovedPhysics ? AreaPerMl(0) : 0;
-            improvedSurfaceVessels.Add(new Vector4(0, fallbackArea,
-                useImprovedPhysics ? ImprovedKernelRadiusForArea(fallbackArea) : SolverSmoothingRadius, 0));
+            // Entry zero supplies the unchanged cohesive support radius for unowned liquid.
+            improvedSurfaceVessels.Add(new Vector4(0, 0, SolverSmoothingRadius, 0));
             for (int bodyIndex = 0; bodyIndex < world.Items.Count; bodyIndex++)
             {
                 FluidExperimentBody body = world.Items[bodyIndex];
                 if (body == null || !body.IsVessel) continue;
                 if (improvedSurfaceVessels.Count >= MaximumBoundarySegments)
                     throw new InvalidOperationException("Improved surface vessel budget exceeded.");
-                float area = useImprovedPhysics ? AreaPerMl(body) : 0;
-                improvedSurfaceVessels.Add(new Vector4(body.Id, area,
-                    useImprovedPhysics ? ImprovedKernelRadiusForArea(area) : SolverSmoothingRadius, body.IsHeld ? 1 : 0));
+                improvedSurfaceVessels.Add(new Vector4(body.Id, 0, SolverSmoothingRadius, body.IsHeld ? 1 : 0));
             }
             bool changed = improvedUploadedVesselCount != improvedSurfaceVessels.Count;
             for (int i = 0; i < improvedSurfaceVessels.Count; i++)
@@ -241,7 +218,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         // The same authored solid hulls used by CPU/GPU contact provide the visual mask.
         // A virtual open-rim ownership edge and the bottom drain never mask liquid.
-        // F garnishes use sprite overlap only; their physical liquid boundaries remain intact.
+        // F/G floating solids use the same contact/mask policy selected by iceLiquidMode.
         // TransformPoint follows Rigidbody's displayed interpolation rather than its future pose.
         private void UploadImprovedSurfaceHulls()
         {
@@ -250,7 +227,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             {
                 FluidExperimentBody body = world.Items[bodyIndex];
                 if (body == null || body.DispenserCollisionSuppressed) continue;
-                if (useCohesivePhysics && body.kind == LabItemKind.Garnish) continue;
+                if (!ParticipatesInLiquidCollision(body)) continue;
                 if (body.collisionProfile != null)
                 {
                     foreach (FluidExperimentHull hull in body.collisionProfile.solids)
@@ -315,7 +292,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
             }
             improvedSurfaceHulls.Add(new GpuImprovedSurfaceHull { Bounds = new Vector4(min.x, min.y, max.x, max.y),
                 First = (uint)first, Count = (uint)points.Count,
-                VesselId = body == null ? 0u : body.IsLooseSolid && body.ContainingVesselId != 0
+                VesselId = body == null ? 0u : body.kind == LabItemKind.Spoon && body.IsHeld && body.SpoonLiquidVessel != null
+                    ? body.SpoonLiquidVessel.Id : body.IsLooseSolid && body.ContainingVesselId != 0
                     ? body.ContainingVesselId : body.Id,
                 Held = body == null ? 4u : (body.IsHeld ? 1u : 0u) | (body.IsVessel ? 2u : 0u) });
         }
@@ -331,15 +309,14 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private void DisposeImprovedSurface()
         {
             foreach (GraphicsBuffer buffer in new[] { improvedSurfaceHistoryBuffer, improvedSurfaceParticleBuffer,
-                improvedSurfaceHullBuffer, improvedSurfaceVertexBuffer, improvedSurfaceVesselBuffer, improvedSurfaceMaterialBuffer }) buffer?.Dispose();
+                improvedSurfaceHullBuffer, improvedSurfaceVertexBuffer, improvedSurfaceVesselBuffer }) buffer?.Dispose();
             improvedSurfaceHistoryBuffer = improvedSurfaceParticleBuffer = improvedSurfaceHullBuffer = null;
             improvedSurfaceVertexBuffer = improvedSurfaceVesselBuffer = null;
-            improvedSurfaceMaterialBuffer = null;
             if (improvedSurfaceProgram != null) Destroy(improvedSurfaceProgram);
             improvedSurfaceProgram = null; improvedSurfaceTickReady = false;
             improvedSurfaceHulls.Clear(); improvedSurfaceVertices.Clear(); improvedSurfaceVessels.Clear();
             improvedUploadedHullCount = improvedUploadedVertexCount = -1;
-            improvedUploadedVesselCount = improvedUploadedMaterialCount = -1;
+            improvedUploadedVesselCount = -1;
             ImprovedSurfaceError = null;
         }
     }

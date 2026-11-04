@@ -1,0 +1,13 @@
+PASS Hidden batch GPU harness; no desktop input
+PASS Authored comparison scene initializes
+PASS Actual F GPU solver is operational
+PASS Fixture cubes acquire the actual glass before pickup
+PASS Repositioned moving cube reacquires the unheld glass before pickup
+PASS Held glass retains its independently moving ice owner
+PASS Moving probe has full particle-disk wall clearance initially and at its travel endpoint
+INFO Moving probe seed=(-2.76527929,-0.5203752), radius=0.065, dt=0.02
+PASS Moving ice probe queues one stationary particle at its leading face
+PASS Moving cube and liquid have the same compatible held-vessel owner initially
+MEASURE moving ice {"iceTravel":0.13923311233520509,"particleTravel":0.11099648475646973,"maximumParticleXSpeed":0.6965062618255615,"generatedMl":0.5,"activeMl":0.5}
+PASS Real moving ice pushes liquid; resting-contact stabilization does not zero genuine boundary motion
+PASS No Unity exception, error or assertion

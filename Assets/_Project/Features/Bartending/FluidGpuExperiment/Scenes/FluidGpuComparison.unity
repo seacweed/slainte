@@ -189,10 +189,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 379435369}
     m_Modifications:
-    - target: {fileID: 777262680673658179, guid: ab133b0cfa2b4e81b399f227e7532073, type: 3}
-      propertyPath: m_Name
-      value: Bottle_item_1003
-      objectReference: {fileID: 0}
     - target: {fileID: 6395275127943403733, guid: ab133b0cfa2b4e81b399f227e7532073, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5.6000004
@@ -256,6 +252,7 @@ GameObject:
   - component: {fileID: 379435367}
   - component: {fileID: 379435366}
   - component: {fileID: 379435370}
+  - component: {fileID: 379435371}
   m_Layer: 0
   m_Name: FluidExperiment
   m_TagString: Untagged
@@ -273,7 +270,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8375aff9f6f448eeba58ed3a8bc97ccd, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentInteractor
   world: {fileID: 379435368}
   inputCamera: {fileID: 1805964270}
@@ -290,9 +287,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c72a0c2daae34eb0a7877bf107044d6e, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentGpuLiquid
-  useCohesivePhysics: 0
   cohesiveMaterial: 0
   settings: {fileID: 11400000, guid: 2a09e817058445d0b9363bbe03e792ce, type: 2}
   drawShader: {fileID: 4800000, guid: 1a765b72efd4441490172c795eee5940, type: 3}
@@ -300,27 +296,14 @@ MonoBehaviour:
   automaticReadback: 1
   renderParticles: 1
   useSurfaceRendering: 1
-  improvedMaterial: 0
-  useImprovedSurface: 0
   improvedSurfaceCompute: {fileID: 7200000, guid: 370cbf91fbab42449764f71a37fddc8f, type: 3}
   improvedAccumulationShader: {fileID: 4800000, guid: afc7584e75394ea58d77fe99c70ff01c, type: 3}
   improvedCompositeShader: {fileID: 4800000, guid: 4dd823d0fe7243bcb5cee2c3d6192efa, type: 3}
   improvedMaximumAspect: 3
   improvedOpticalAbsorption: 0.18
-  solver: 1
-  useImprovedPhysics: 0
-  useReferenceSurface: 0
-  referenceAccumulationShader: {fileID: 4800000, guid: e005f3520b8e4c51b8880437561bb97f, type: 3}
-  referenceCompositeShader: {fileID: 4800000, guid: 589fb51fc5ba458a802369d1b8ef6b2b, type: 3}
   referenceSupportRadius: 1.9
-  referenceMaximumAspect: 6
-  referenceFullStretchSpeed: 10
   referenceDensityThreshold: 0.42
   referenceEdgeSoftness: 0.025
-  referenceNozzleSupport: 1
-  referenceNozzleReach: 4
-  referenceNozzleMaximumAge: 0.06
-  useStreamRendering: 1
 --- !u!114 &379435368
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -331,12 +314,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb1755b6f8984d2e881788ee4134bbf8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentWorld
   liquid: {fileID: 379435367}
   interactor: {fileID: 379435366}
   floorColliders:
   - {fileID: 632590627}
+  liquidSurfaces:
+  - {fileID: 632590627}
+  shardLiquidCollision: 1
   itemLayer: 29
   showControls: 0
   seedLiquids: 1
@@ -374,6 +360,24 @@ Transform:
   - {fileID: 400925036}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &379435371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379435365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1640c55a99c04e48ac53e26d8fc45e32, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentCocktailSession
+  world: {fileID: 379435368}
+  showControls: 1
+  panelOpen: 0
+  targetGlass: {fileID: 0}
+  requestedRecipeId:
+  uiFont: {fileID: 12800000, guid: 29afba3e5a114b04c9dfa040cebb47bb, type: 3}
 --- !u!114 &379435370
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -384,12 +388,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1b37a226a3f741828ecc24355cd8049a, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentComparison
   world: {fileID: 379435368}
-  effectsShader: {fileID: 4800000, guid: 7a6c5bbed65742ce821d1edc646bd796, type: 3}
-  initialMode: 5
-  automaticScenario: 1
+  breakageStyle: 0
   showControls: 1
 --- !u!1001 &400925035
 PrefabInstance:
@@ -823,10 +825,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3659684557028844266, guid: 4c1a4a39e6644696b907b9d828123535, type: 3}
-      propertyPath: m_Name
-      value: Bottle_item_1002
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -993,7 +991,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
   m_RenderShadows: 1
   m_RequiresDepthTextureOption: 2
@@ -1035,10 +1033,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 379435369}
     m_Modifications:
-    - target: {fileID: 1241430249480759458, guid: ee4369df1df0483fa6ffa93af11ccabc, type: 3}
-      propertyPath: m_Name
-      value: Bottle_item_1001
-      objectReference: {fileID: 0}
     - target: {fileID: 5119563962295965749, guid: ee4369df1df0483fa6ffa93af11ccabc, type: 3}
       propertyPath: m_LocalPosition.x
       value: -11
@@ -1100,6 +1094,10 @@ PrefabInstance:
     - target: {fileID: 1567955184128977622, guid: cdd4cf3ddb1645cbba5bf15a3c86a667, type: 3}
       propertyPath: m_Name
       value: Glass_hurricane
+      objectReference: {fileID: 0}
+    - target: {fileID: 2351671212039727122, guid: cdd4cf3ddb1645cbba5bf15a3c86a667, type: 3}
+      propertyPath: splashProfile
+      value:
       objectReference: {fileID: 0}
     - target: {fileID: 2601072357238551182, guid: cdd4cf3ddb1645cbba5bf15a3c86a667, type: 3}
       propertyPath: m_LocalPosition.x

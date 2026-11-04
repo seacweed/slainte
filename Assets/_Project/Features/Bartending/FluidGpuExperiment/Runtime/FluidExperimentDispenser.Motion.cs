@@ -4,185 +4,146 @@ namespace Slainte.Bartending.FluidGpuExperiment
 {
     public sealed partial class FluidExperimentDispenser
     {
-        private readonly RaycastHit2D[] motionHits = new RaycastHit2D[64];
         private readonly Collider2D[] overlapHits = new Collider2D[64];
-        private Vector2 waypoint, lastMotionPosition;
-        private bool hasWaypoint;
-        private float retractSpeed = 20, stalledTime;
+        private ContactFilter2D SolidFilter => new ContactFilter2D { useTriggers = false };
+        private DistanceJoint2D suspensionJoint;
+        private float retractSpeed = 12, reelSpeed, restCableLength;
+        private Vector2 lastHeldPosition, heldVelocity;
         private LineRenderer hose;
         private Vector2[] hosePoints, hosePrevious;
+        private float hoseAccumulator;
+        private Vector2 lastHoseEnd;
 
-        /// <summary>Held poses are applied by input. Retraction clears any initial overlap,
-        /// then uses native contacts and routes around the first blocking solid.</summary>
+        private void InitializeSuspension()
+        {
+            if (suspensionJoint != null) return;
+            suspensionJoint = gameObject.AddComponent<DistanceJoint2D>();
+            suspensionJoint.enabled = false;
+            suspensionJoint.autoConfigureConnectedAnchor = false;
+            suspensionJoint.autoConfigureDistance = false;
+            suspensionJoint.connectedBody = null;
+            suspensionJoint.maxDistanceOnly = true;
+            suspensionJoint.enableCollision = false;
+            suspensionJoint.anchor = hoseAttachmentLocal;
+        }
+
+        /// <summary>Only the cable length is driven. Physics2D gravity, inertia and
+        /// off-center cable tension move and rotate the freely suspended tool.</summary>
         public void StepMotion(float dt)
         {
-            if (!IsAvailable || dt <= 0 || State != FluidExperimentDispenserState.Retracting) return;
-            if (CollisionSuppressed)
+            if (!IsAvailable || dt <= 0) return;
+            if (State == FluidExperimentDispenserState.Held)
             {
-                ApplyDirectPose(Vector2.MoveTowards(body.Position, dockPosition, retractSpeed * dt));
-                Physics2D.SyncTransforms();
-                if (!CanRestoreReturnContacts()) return;
-                ConfigureMotion(false);
-                lastMotionPosition = body.Position;
+                Vector2 measured = Vector2.ClampMagnitude((body.Position - lastHeldPosition) / dt, Mathf.Max(2, maximumReelSpeed));
+                heldVelocity = Vector2.Lerp(heldVelocity, measured, 1 - Mathf.Exp(-16 * dt));
+                lastHeldPosition = body.Position;
+                return;
             }
-            Vector2 position = body.Position;
-            if (State == FluidExperimentDispenserState.Retracting)
+            if (!suspensionJoint.enabled) return;
+            BlockedReason = null;
+            if (State != FluidExperimentDispenserState.Retracting) return;
+            float remaining = Mathf.Max(0, suspensionJoint.distance - restCableLength);
+            // Brake the reel before its final length; never zero the body's
+            // tangential motion when the line finishes taking up.
+            float acceleration = Mathf.Max(.1f, reelAcceleration);
+            float requestedSpeed = Mathf.Min(retractSpeed, Mathf.Sqrt(2 * acceleration * remaining));
+            reelSpeed = Mathf.MoveTowards(reelSpeed, requestedSpeed, acceleration * dt);
+            suspensionJoint.distance = Mathf.Max(restCableLength, suspensionJoint.distance - reelSpeed * dt);
+            if (suspensionJoint.distance <= restCableLength + .0025f)
             {
-                if ((position - dockPosition).sqrMagnitude < .0016f && !BlockedAt(dockPosition))
-                {
+                suspensionJoint.distance = restCableLength;
+                if (Vector2.Distance(hoseAnchor, SuspensionPointWorld) <= restCableLength + .06f)
                     State = FluidExperimentDispenserState.Docked;
-                    ApplyDirectPose(dockPosition); ConfigureMotion(false);
-                    BlockedReason = null; return;
-                }
-                stalledTime = (position - lastMotionPosition).sqrMagnitude < .000025f ? stalledTime + dt : 0;
-                if (!SweepBlocked(position, dockPosition, out _)) { target = dockPosition; hasWaypoint = false; }
-                else
-                {
-                    if (hasWaypoint && ((position - waypoint).sqrMagnitude < .04f || stalledTime > .3f
-                        || SweepBlocked(position, waypoint, out _))) hasWaypoint = false;
-                    if (!hasWaypoint && SweepBlocked(position, dockPosition, out Collider2D obstacle))
-                    {
-                        hasWaypoint = FindReturnWaypoint(position, obstacle, out waypoint);
-                        if (!hasWaypoint) BlockedReason = "Return path blocked";
-                        else { BlockedReason = null; stalledTime = 0; }
-                    }
-                    target = hasWaypoint ? waypoint : position;
-                }
             }
-            lastMotionPosition = position;
-            Vector2 error = target - position;
-            Vector2 desired = Vector2.ClampMagnitude(error / Mathf.Max(dt, .055f), retractSpeed);
-            body.Body.linearVelocity = Vector2.MoveTowards(body.Body.linearVelocity, desired, 220 * dt);
-            body.Body.angularVelocity = 0;
-        }
-
-        private Vector2 MotionSize => (Vector2)body.SolidBounds.size + Vector2.one * .025f;
-        private Vector2 BoundsOffset => (Vector2)body.SolidBounds.center - body.Position;
-        private ContactFilter2D SolidFilter => new ContactFilter2D { useTriggers = false };
-        private bool CanRestoreReturnContacts()
-        {
-            var world = body.World;
-            if (world != null)
-            {
-                // A tool wholly outside a wall or below the table may have no current
-                // overlap, but restoring contacts there would trap its return outside.
-                if ((world.ConstrainHeldPosition(body, body.Position, 0, .04f) - body.Position).sqrMagnitude > .000001f)
-                    return false;
-                Bounds bounds = body.SolidBounds;
-                foreach (var floor in world.floorColliders)
-                {
-                    if (floor == null || !floor.isActiveAndEnabled || floor.isTrigger) continue;
-                    // Runtime environment bindings also put walls and the ceiling in this list.
-                    if (floor == world.leftBoundary || floor == world.rightBoundary || floor == world.topBoundary) continue;
-                    Bounds surface = floor.bounds;
-                    if (bounds.max.x >= surface.min.x && bounds.min.x <= surface.max.x
-                        && bounds.min.y < surface.max.y + .025f) return false;
-                }
-            }
-            return !BlockedAt(body.Position);
-        }
-        private bool IsObstacle(Collider2D collider)
-        {
-            if (collider == null || !collider.enabled || collider.isTrigger || !collider.gameObject.activeInHierarchy) return false;
-            foreach (Collider2D own in body.solidColliders)
-                if (collider == own || (own != null && Physics2D.GetIgnoreCollision(own, collider))) return false;
-            return true;
-        }
-        private bool BlockedAt(Vector2 position)
-        {
-            int count = Physics2D.OverlapBox(position + BoundsOffset, MotionSize, 0, SolidFilter, overlapHits);
-            for (int i = 0; i < count; i++) if (IsObstacle(overlapHits[i])) return true;
-            return count == overlapHits.Length;
-        }
-        private bool SweepBlocked(Vector2 from, Vector2 to, out Collider2D blocker)
-        {
-            blocker = null;
-            Vector2 delta = to - from;
-            if (delta.sqrMagnitude < .000001f) return false;
-            int count = Physics2D.BoxCast(from + BoundsOffset, MotionSize, 0, delta.normalized, SolidFilter,
-                motionHits, delta.magnitude);
-            float closest = float.MaxValue;
-            for (int i = 0; i < count; i++)
-            {
-                var hit = motionHits[i];
-                if (!IsObstacle(hit.collider) || hit.distance >= closest) continue;
-                // Starting flush with a collider is harmless when the requested path goes away from it.
-                if (hit.distance < .001f && Vector2.Dot(delta, from - (Vector2)hit.collider.bounds.center) > 0) continue;
-                closest = hit.distance; blocker = hit.collider;
-            }
-            return blocker != null;
-        }
-        private bool FindReturnWaypoint(Vector2 from, Collider2D obstacle, out Vector2 selected)
-        {
-            selected = from;
-            if (obstacle == null) return false;
-            Bounds b = obstacle.bounds;
-            Vector2 half = MotionSize * .5f + Vector2.one * .12f;
-            Vector2 low = (Vector2)b.min - half - BoundsOffset;
-            Vector2 high = (Vector2)b.max + half - BoundsOffset;
-            float best = float.MaxValue;
-            // Inflated bounding-box corners give a small deterministic visibility graph.
-            // Upper corners win ties, matching the overhead hose's natural retract direction.
-            for (int i = 0; i < 4; i++)
-            {
-                Vector2 p = new Vector2((i & 1) == 0 ? low.x : high.x, i < 2 ? high.y : low.y);
-                Vector2 constrained = body.World.ConstrainHeldPosition(body, p, 0);
-                if ((constrained - p).sqrMagnitude > .001f || BlockedAt(p) || SweepBlocked(from, p, out _)) continue;
-                float score = Vector2.Distance(from, p) + Vector2.Distance(p, dockPosition);
-                if (SweepBlocked(p, dockPosition, out _)) score += 10;
-                if (i >= 2) score += .1f;
-                if (score >= best) continue;
-                best = score; selected = p;
-            }
-            return best < float.MaxValue;
         }
 
         private void InitializeHose()
         {
             var go = new GameObject("DispenserHose"); go.transform.SetParent(transform, false);
-            // This child is created after the body's registration has assigned its layer.
-            // The comparison camera renders only that layer, not Unity's default layer.
             go.layer = gameObject.layer;
             hose = go.AddComponent<LineRenderer>(); hose.useWorldSpace = true;
-            hose.startWidth = hose.endWidth = .065f; hose.numCornerVertices = 3; hose.numCapVertices = 3;
-            hose.sortingOrder = -3;
+            hose.startWidth = hose.endWidth = Mathf.Max(.01f, hoseWidth);
+            hose.numCornerVertices = 6; hose.numCapVertices = 8; hose.sortingOrder = -3;
             if (hoseMaterial != null) hose.sharedMaterial = hoseMaterial;
             else if (bodyRenderer != null) hose.sharedMaterial = bodyRenderer.sharedMaterial;
             hose.startColor = hose.endColor = new Color(.18f, .2f, .21f, 1);
             ResetHose();
         }
+
         private void ResetHose()
         {
             if (hose == null) return;
             int count = Mathf.Clamp(hoseSegments, 4, 32) + 1;
             if (hosePoints == null || hosePoints.Length != count)
             { hosePoints = new Vector2[count]; hosePrevious = new Vector2[count]; }
-            hose.positionCount = count;
-            Vector2 end = transform.TransformPoint(hoseAttachmentLocal);
+            hose.positionCount = count * 4 + 1;
+            Vector2 end = transform.TransformPoint(hoseAttachmentLocal), span = end - hoseAnchor;
             for (int i = 0; i < count; i++)
-            { hosePoints[i] = hosePrevious[i] = Vector2.Lerp(hoseAnchor, end, i / (float)(count - 1)); hose.SetPosition(i, hosePoints[i]); }
+            {
+                float t = i / (float)(count - 1);
+                hosePoints[i] = hosePrevious[i] = Vector2.Lerp(hoseAnchor, end, t);
+            }
+            lastHoseEnd = end; hoseAccumulator = 0; DrawHose(end);
         }
-        private void LateUpdate()
+
+        private void LateUpdate() => StepHose(Time.deltaTime);
+
+        // Separate simulation entry permits real 30/60/120Hz schedule validation.
+        internal void StepHose(float dt)
         {
             if (hose == null || !IsAvailable) return;
-            int last = hosePoints.Length - 1;
+            if (hosePoints == null || hosePoints.Length != Mathf.Clamp(hoseSegments, 4, 32) + 1) ResetHose();
             Vector2 end = transform.TransformPoint(hoseAttachmentLocal);
-            float dt = Mathf.Min(Time.deltaTime, .033f);
+            if (Vector2.Distance(lastHoseEnd, end) > 3) ResetHose();
+            hoseAccumulator += Mathf.Clamp(dt, 0, .067f);
+            const float step = 1f / 120;
+            int steps = Mathf.Min(8, Mathf.FloorToInt((hoseAccumulator + .000001f) / step));
+            for (int i = 0; i < steps; i++)
+                SimulateHose(step, Vector2.Lerp(lastHoseEnd, end, (i + 1f) / steps));
+            hoseAccumulator = Mathf.Max(0, hoseAccumulator - steps * step);
+            lastHoseEnd = end; DrawHose(end);
+        }
+
+        private void SimulateHose(float dt, Vector2 end)
+        {
+            int last = hosePoints.Length - 1;
+            Vector2 span = end - hoseAnchor;
+            bool suspended = suspensionJoint != null && suspensionJoint.enabled;
+            float availableLength = suspended
+                ? Mathf.Max(span.magnitude, suspensionJoint.distance)
+                : span.magnitude * (1 + Mathf.Clamp(hoseSlackRatio, 0, .3f)) + Mathf.Max(0, hoseExtraLength);
+            // The body and the picture share one cable length. A loaded cable is
+            // straight, including when Rigidbody interpolation draws an older pose.
+            bool loaded = suspended
+                && Vector2.Distance(hoseAnchor, SuspensionPointWorld) >= suspensionJoint.distance - .005f
+                && suspensionJoint.GetReactionForce(Time.fixedDeltaTime).sqrMagnitude > .0001f;
+            if (loaded || availableLength - span.magnitude < .002f)
+            {
+                for (int i = 0; i <= last; i++)
+                    hosePoints[i] = hosePrevious[i] = Vector2.Lerp(hoseAnchor, end, i / (float)last);
+                return;
+            }
             for (int i = 1; i < last; i++)
             {
                 Vector2 p = hosePoints[i];
-                hosePoints[i] += (p - hosePrevious[i]) * .94f + Vector2.down * (8 * dt * dt);
+                // A cord has no preferred curve or bending spring. Free nodes
+                // keep their inertia; gravity takes up slack from either end.
+                hosePoints[i] += (p - hosePrevious[i]) * Mathf.Exp(-2.5f * dt)
+                    + Vector2.down * (9.81f * dt * dt);
                 hosePrevious[i] = p;
             }
-            float length = (Vector2.Distance(hoseAnchor, end) * 1.035f + .08f) / last;
-            for (int iteration = 0; iteration < 8; iteration++)
+            float length = availableLength / last;
+            for (int iteration = 0; iteration < 40; iteration++)
             {
                 hosePoints[0] = hoseAnchor; hosePoints[last] = end;
-                for (int i = 0; i < last; i++)
+                for (int k = 0; k < last; k++)
                 {
+                    int i = (iteration & 1) == 0 ? k : last - 1 - k;
                     Vector2 delta = hosePoints[i + 1] - hosePoints[i];
                     float distance = delta.magnitude;
-                    if (distance < .00001f) continue;
+                    // Only tension is transmitted: a slack cord cannot push its
+                    // neighbors apart as a compressed spring would.
+                    if (distance <= length || distance < .00001f) continue;
                     Vector2 correction = delta * ((distance - length) / distance);
                     if (i == 0) hosePoints[i + 1] -= correction;
                     else if (i + 1 == last) hosePoints[i] += correction;
@@ -190,7 +151,28 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 }
             }
             hosePoints[0] = hoseAnchor; hosePoints[last] = end;
-            for (int i = 0; i <= last; i++) hose.SetPosition(i, hosePoints[i]);
+        }
+
+        private void DrawHose(Vector2 end)
+        {
+            int last = hosePoints.Length - 1;
+            hosePoints[0] = hoseAnchor; hosePoints[last] = end;
+            hose.startWidth = hose.endWidth = Mathf.Max(.01f, hoseWidth);
+            for (int i = 0; i <= last; i++)
+            {
+                Vector2 b = hosePoints[i];
+                Vector2 a = i == 0 ? b : (hosePoints[i - 1] + b) * .5f;
+                Vector2 c = i == last ? b : (b + hosePoints[i + 1]) * .5f;
+                for (int sample = 0; sample < 4; sample++)
+                {
+                    float t = sample * .25f;
+                    // Quadratic corner rounding stays inside the solver's
+                    // polygon; it cannot overshoot into a hook at a connector.
+                    Vector2 p = Vector2.Lerp(Vector2.Lerp(a, b, t), Vector2.Lerp(b, c, t), t);
+                    hose.SetPosition(i * 4 + sample, p);
+                }
+            }
+            hose.SetPosition((last + 1) * 4, end);
         }
     }
 }

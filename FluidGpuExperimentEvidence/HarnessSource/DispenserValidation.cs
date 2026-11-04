@@ -26,6 +26,11 @@ public static class ExperimentDispenserValidation
         SessionState.SetBool(Key, true);
         EditorApplication.isPlaying = true;
     }
+    public static void BeginCord()
+    {
+        SessionState.SetBool("FluidExperiment.CordOnly",true);
+        Begin();
+    }
 }
 
 // This fixture runs only in the disposable hidden GPU harness. Virtual input is
@@ -83,6 +88,13 @@ public sealed class DispenserValidationRunner : MonoBehaviour
             Physics2D.gravity = new Vector2(0, -9.81f);
             floorY = world.floorColliders.Where(c => c != null).Max(c => c.bounds.max.y);
             Reset();
+            if(SessionState.GetBool("FluidExperiment.CordOnly",false))
+            {
+                SessionState.EraseBool("FluidExperiment.CordOnly");
+                HoseAndDockSwing();
+            }
+            else
+            {
             AuthoredContract();
             VirtualInput();
             ModeAndInventory();
@@ -92,9 +104,11 @@ public sealed class DispenserValidationRunner : MonoBehaviour
             ShardBoundaryBudget();
             ReceivingGlassIntegration();
             CollisionAndRetraction();
+            HoseAndDockSwing();
             FullIceInventory();
             FullHotInventory();
             ResetAndModeScope();
+            }
             Check(errors.Count == 0, "No Unity errors, assertions or exceptions");
             success = true;
         }
@@ -166,9 +180,13 @@ public sealed class DispenserValidationRunner : MonoBehaviour
     {
         hand.ReleaseWithVelocity(Vector2.zero);
         for (int i = 0; i < 500 && dispenser.State.ToString() != "Docked"; i++) Step();
-        Check(dispenser.State.ToString() == "Docked" && Near(dispenser.Body.Position, dispenser.DockWorld, .025f),
-            "Released dispenser completes collision-aware retraction to its dock");
+        Check(dispenser.State.ToString() == "Docked" && CableReady(),
+            "Released dispenser finishes reeling and remains freely suspended on its cable");
     }
+    bool CableReady() => dispenser.SuspensionJoint != null && dispenser.SuspensionJoint.enabled
+        && Vector2.Distance(dispenser.hoseAnchor,dispenser.SuspensionPointWorld) <= dispenser.SuspensionJoint.distance+.08f
+        && Mathf.Abs(dispenser.SuspensionJoint.distance-Vector2.Distance(dispenser.hoseAnchor,
+            dispenser.Body.PointAt(dispenser.hoseAttachmentLocal,dispenser.DockWorld,0)))<.005f;
     FluidExperimentBody[] Ice() => world.Items.Where(item => item != null && item.kind == LabItemKind.Ice).ToArray();
     void ClearIce()
     {
@@ -190,8 +208,13 @@ public sealed class DispenserValidationRunner : MonoBehaviour
             "Three distinct imported sprites represent off, Ice and Hot");
         Check(dispenser.bodyRenderer != null && dispenser.bodyRenderer.sprite == dispenser.noneSprite,
             "Docked off mode displays the configured off sprite");
-        Check(dispenser.Contains(dispenser.Body.Position) && dispenser.Body.solidColliders.Any(c => c != null && !c.isTrigger),
-            "Dispenser body is pickable and has solid collision geometry");
+        Check(dispenser.Contains(dispenser.Body.Position) && dispenser.CollisionSuppressed
+            && dispenser.SuspensionJoint.enabled && dispenser.Body.Body.bodyType==RigidbodyType2D.Dynamic,
+            "Dispenser is pickable while genuinely suspended by a native joint without external collisions");
+        report.Add($"MEASURE authored suspension linear={dispenser.suspensionLinearDamping:R}/{dispenser.Body.Body.linearDamping:R} angular={dispenser.suspensionAngularDamping:R}/{dispenser.Body.Body.angularDamping:R}");
+        Check(Near(dispenser.suspensionLinearDamping,.9f)&&Near(dispenser.Body.Body.linearDamping,.9f)
+            &&Near(dispenser.suspensionAngularDamping,1.1f)&&Near(dispenser.Body.Body.angularDamping,1.1f),
+            "Explicit prefab damping reaches the actual native Rigidbody instead of stale missing-field import defaults");
         Check(dispenser.Hose != null && dispenser.Hose.positionCount >= 3
             && dispenser.Hose.GetComponents<Collider2D>().Length == 0,
             "Hose is a multipoint curve with no native collider");
@@ -300,9 +323,8 @@ public sealed class DispenserValidationRunner : MonoBehaviour
             Check(hand.HeldDispenser == null && !dispenser.IsDispensing && Near(dispenser.RemainingMl, cancelledVolume),
                 "Shared focus-loss cancellation stops stock consumption and clears the held tool");
             for (int i = 0; i < 500 && dispenser.State != FluidExperimentDispenserState.Docked; i++) Step();
-            Check(dispenser.State == FluidExperimentDispenserState.Docked && !dispenser.CollisionSuppressed
-                && dispenser.Body.solidColliders.Where(c => c != null).All(c => !c.isTrigger),
-                "Focus-loss retraction restores solid colliders at the dock");
+            Check(dispenser.State == FluidExperimentDispenserState.Docked && dispenser.CollisionSuppressed && CableReady(),
+                "Focus-loss retraction finishes reeling and leaves the tool hanging without collisions");
             Check(Cursor.lockState == previousLock && Cursor.visible == previousVisible,
                 "Virtual input never modifies the native cursor lock or visibility");
         }
@@ -479,15 +501,14 @@ public sealed class DispenserValidationRunner : MonoBehaviour
             for (int i = 0; i < 600 && dispenser.State != FluidExperimentDispenserState.Docked; i++)
             {
                 Step();
-                if (!dispenser.CollisionSuppressed)
-                    Check(dispenser.Body.solidColliders.Where(c => c != null && c.enabled)
-                        .All(c => c.Distance(probe).distance >= -.035f),
-                        "Returning contacts restore only after clearing the initial overlap");
+                if (dispenser.State == FluidExperimentDispenserState.Retracting)
+                    Check(dispenser.CollisionSuppressed && dispenser.Body.solidColliders.Where(c => c != null && c.enabled).All(c => c.isTrigger),
+                        "Every returning tick keeps native collisions suppressed");
             }
             Check(dispenser.State == FluidExperimentDispenserState.Docked && Near(probeBody.position, probeStart)
-                && Near(probeBody.linearVelocity, Vector2.zero) && !dispenser.CollisionSuppressed,
+                && Near(probeBody.linearVelocity, Vector2.zero) && dispenser.CollisionSuppressed && CableReady(),
                 "Overlap release returns to dock without kicking the dynamic obstacle");
-            CheckDispenserGeometry(true, "docked after overlap release");
+            CheckDispenserGeometry(false, "hanging after overlap release");
         }
         finally { probeObject.SetActive(false); Destroy(probeObject); }
 
@@ -497,25 +518,25 @@ public sealed class DispenserValidationRunner : MonoBehaviour
             hand.ReleaseWithVelocity(Vector2.zero);
             Check(dispenser.CollisionSuppressed, "Release beyond the playable boundary starts a safe return from " + destination);
             for (int i = 0; i < 600 && dispenser.State != FluidExperimentDispenserState.Docked; i++) Step();
-            Check(dispenser.State == FluidExperimentDispenserState.Docked && !dispenser.CollisionSuppressed
-                && Near(dispenser.Body.Position, dispenser.DockWorld, .03f),
-                "Return from outside the playable boundary restores contacts and docks from " + destination);
+            Check(dispenser.State == FluidExperimentDispenserState.Docked && dispenser.CollisionSuppressed && CableReady(),
+                "Return from outside the playable boundary finishes reeling without collisions from " + destination);
         }
 
         Reset(); PickToWork();
         var obstacleObject = new GameObject("DispenserValidationObstacle");
         obstacleObject.layer = world.itemLayer;
         var obstacle = obstacleObject.AddComponent<BoxCollider2D>();
-        obstacle.size = new Vector2(.8f, 2.2f);
+        obstacle.size = new Vector2(Mathf.Abs(dispenser.DockWorld.x-dispenser.Body.Position.x)+5,
+            Mathf.Abs(dispenser.DockWorld.y-dispenser.Body.Position.y)+5);
         try
         {
             obstacleObject.transform.position = (dispenser.Body.Position + dispenser.DockWorld) * .5f;
             Physics2D.SyncTransforms();
             hand.ReleaseWithVelocity(Vector2.zero);
-            Check(!dispenser.CollisionSuppressed && dispenser.Body.Body.bodyType == RigidbodyType2D.Dynamic
-                && dispenser.Body.solidColliders.Where(c => c != null).All(c => !c.isTrigger),
-                "Release from free space immediately restores native solid contacts");
-            CheckDispenserGeometry(true, "retracting from free space");
+            Check(dispenser.CollisionSuppressed && dispenser.Body.Body.bodyType == RigidbodyType2D.Dynamic
+                && dispenser.Body.solidColliders.Where(c => c != null).All(c => c.isTrigger),
+                "Release enables gravity and native cable dynamics while keeping external contacts disabled");
+            CheckDispenserGeometry(false, "retracting from free space");
             float maximumPenetration = 0;
             bool sawRetraction = dispenser.State.ToString() == "Retracting";
             var beforeMode = dispenser.Mode;
@@ -529,13 +550,198 @@ public sealed class DispenserValidationRunner : MonoBehaviour
                     maximumPenetration = Mathf.Max(maximumPenetration, -collider.Distance(obstacle).distance);
             }
             Check(sawRetraction && dispenser.State.ToString() == "Docked"
-                && Near(dispenser.Body.Position, dispenser.DockWorld, .03f) && maximumPenetration < .04f,
-                "Retraction routes around a real blocking collider and docks without tunneling");
+                && CableReady() && maximumPenetration > .1f,
+                "The cable pulls its dynamic body through an actual obstacle without external collision");
             Check(!dispenser.IsDispensing && dispenser.Hose.positionCount >= 3,
                 "Completed retraction stops output and retains the retracted hose curve");
         }
         finally { obstacleObject.SetActive(false); Destroy(obstacleObject); }
         Capture("dispenser-returned.png", dispenser.DockWorld, 2.2f);
+    }
+
+    void HoseAndDockSwing()
+    {
+        CordGeometry();
+        Reset(); PickToWork();
+        Check(dispenser.Hose.startWidth >= .11f && dispenser.Hose.endWidth >= .11f,
+            "Authored hose is visibly thicker than the previous 0.065 width");
+        Check(dispenser.Hose.positionCount == (dispenser.hoseSegments + 1) * 4 + 1,
+            "Hose rounds solver corners with an endpoint-preserving quadratic curve");
+        var finalCurves = new List<Vector3[]>();
+        foreach (int fps in new[] { 30, 60, 120 })
+        {
+            dispenser.MoveToPointer(WorkPoint); Invoke(dispenser, "ResetHose");
+            float dt = 1f / fps;
+            bool finite = true; float maximumStep = 0;
+            for (int i = 0; i < fps * 4; i++)
+            {
+                float t = (i + 1f) * dt;
+                // Stop the same continuous input path at every render rate.
+                // An instantaneous 0.8-unit endpoint teleport injects different
+                // velocities at 30/120Hz and is not a comparable motion schedule.
+                float envelope=t<2?Mathf.Pow(Mathf.Sin(t*Mathf.PI*.5f),2):0;
+                Vector2 p = WorkPoint + new Vector2(Mathf.Sin(t * 4) * .8f, Mathf.Sin(t * 2) * .3f)*envelope;
+                dispenser.MoveToPointer(p); Invoke(dispenser, "StepHose", dt);
+                if(fps==60 && i<fps*4 && i%6==0)
+                    Capture("cord-held-"+(i/6).ToString("000")+".png",(dispenser.hoseAnchor+WorkPoint)*.5f,
+                        Vector2.Distance(dispenser.hoseAnchor,WorkPoint)*.6f+1.4f);
+                for (int j = 0; j < dispenser.Hose.positionCount; j++)
+                {
+                    var q = dispenser.Hose.GetPosition(j);
+                    finite &= float.IsFinite(q.x) && float.IsFinite(q.y);
+                    if (j > 0) maximumStep = Mathf.Max(maximumStep, Vector3.Distance(q, dispenser.Hose.GetPosition(j - 1)));
+                }
+                if((i+1)%fps==0)
+                {
+                    File.WriteAllLines(Path.Combine(Evidence,$"cord-{fps}hz-{(i+1)/fps}s.csv"),
+                        Enumerable.Range(0,dispenser.Hose.positionCount).Select(index =>
+                        {var q=dispenser.Hose.GetPosition(index);return FormattableString.Invariant($"{index},{q.x:R},{q.y:R}");}));
+                }
+            }
+            var curve = new Vector3[dispenser.Hose.positionCount]; dispenser.Hose.GetPositions(curve); finalCurves.Add(curve);
+            float span = Vector2.Distance(dispenser.hoseAnchor, dispenser.transform.TransformPoint(dispenser.hoseAttachmentLocal));
+            Check(finite && maximumStep < Mathf.Max(1, span / dispenser.hoseSegments),
+                fps + " Hz moving hose remains finite without stretched individual render segments");
+            Check(Near(curve[0], dispenser.hoseAnchor) && Near(curve[curve.Length - 1], dispenser.transform.TransformPoint(dispenser.hoseAttachmentLocal)),
+                fps + " Hz hose stays attached to both endpoints");
+        }
+        float curveDifference = finalCurves[0].Select((p,i) => Vector3.Distance(p, finalCurves[2][i])).Max();
+        report.Add("MEASURE hose width=" + dispenser.Hose.startWidth.ToString("R") + " scheduleDifference=" + curveDifference.ToString("R"));
+        Check(curveDifference < .06f, "30 and 120 Hz continuous hose schedules converge within 0.06 units after two seconds at rest");
+        Capture("dispenser-hose-thick.png", (dispenser.hoseAnchor + WorkPoint) * .5f, Vector2.Distance(dispenser.hoseAnchor, WorkPoint) * .6f + 1.4f);
+        Vector2 start=dispenser.Body.Position;
+        hand.ReleaseWithVelocity(Vector2.zero);
+        var trajectory=new List<string>{"phase,seconds,x,y,angle,vx,vy,spin,cableLength,attachmentDistance,tension"};
+        float previousLength=dispenser.SuspensionJoint.distance,maxTension=0,returnTurn=0;
+        int returnFrames=0;
+        for (;returnFrames<600 && dispenser.State!=FluidExperimentDispenserState.Docked;returnFrames++)
+        {
+            Step();float length=dispenser.SuspensionJoint.distance;
+            Check(length<=previousLength+.00001f,"Reel shortens only the cable and never drives the body to a preset pose");
+            previousLength=length;
+            maxTension=Mathf.Max(maxTension,dispenser.SuspensionJoint.GetReactionForce(Dt).magnitude);
+            returnTurn=Mathf.Max(returnTurn,Mathf.Abs(Mathf.DeltaAngle(0,dispenser.Body.Angle)));
+            RecordSuspension(trajectory,"retract",returnFrames*Dt);
+            if(returnFrames%5==0)Capture("reel-"+(returnFrames/5).ToString("000")+".png",(start+dispenser.hoseAnchor)*.5f,
+                Vector2.Distance(start,dispenser.hoseAnchor)*.55f+2);
+        }
+        Check(CableReady()&&returnFrames<600&&maxTension>.5f&&returnTurn>5,
+            "Actual native tension pulls the off-center attachment, translating and turning the body during reeling");
+        Vector2 earlyMin=dispenser.Body.Position,earlyMax=earlyMin;
+        float angularLow=Mathf.DeltaAngle(0,dispenser.Body.Angle),angularHigh=angularLow,lateSpeed=0,lateDistance=0;
+        for(int i=0;i<600;i++)
+        {
+            Step();Vector2 p=dispenser.Body.Position;
+            if(i<150){earlyMin=Vector2.Min(earlyMin,p);earlyMax=Vector2.Max(earlyMax,p);}
+            angularLow=Mathf.Min(angularLow,Mathf.DeltaAngle(0,dispenser.Body.Angle));
+            angularHigh=Mathf.Max(angularHigh,Mathf.DeltaAngle(0,dispenser.Body.Angle));
+            if(i>500){lateSpeed=Mathf.Max(lateSpeed,dispenser.Body.Body.linearVelocity.magnitude);lateDistance=Mathf.Max(lateDistance,Vector2.Distance(p,dispenser.DockWorld));}
+            RecordSuspension(trajectory,"hang",i*Dt);
+            if(i<300&&i%5==0)Capture("hang-"+(i/5).ToString("000")+".png",dispenser.hoseAnchor-Vector2.up*2.4f,3.4f);
+        }
+        File.WriteAllLines(Path.Combine(Evidence,"suspension-trajectory.csv"),trajectory);
+        Vector2 travelSpan=earlyMax-earlyMin;
+        report.Add($"MEASURE suspension returnSeconds={returnFrames*Dt:R} tension={maxTension:R} turn={returnTurn:R} xSpan={travelSpan.x:R} ySpan={travelSpan.y:R} angleLow={angularLow:R} angleHigh={angularHigh:R} lateSpeed={lateSpeed:R} lateDistance={lateDistance:R}");
+        Check(travelSpan.x>.12f&&travelSpan.y>.02f&&angularHigh-angularLow>5,
+            "After reeling the body's position and attitude both move as a hanging pendulum");
+        Check(lateSpeed<.1f&&lateDistance<.12f&&CableReady(),"Native gravity and damping settle the freely hanging body beneath the anchor");
+        Check(dispenser.Body.Body.bodyType==RigidbodyType2D.Dynamic&&dispenser.Body.Body.gravityScale>0
+            &&dispenser.Body.Body.constraints==RigidbodyConstraints2D.None,"Hanging remains dynamic with free rotation instead of a position lock or angle animation");
+        Check(hand.PickDispenser(dispenser,dispenser.Body.Position),"Pick settled dispenser for another return");
+        dispenser.MoveToPointer(dispenser.DockWorld+new Vector2(-3,-2));hand.ReleaseWithVelocity(Vector2.zero);
+        for(int i=0;i<600&&dispenser.State!=FluidExperimentDispenserState.Docked;i++)Step();
+        Check(CableReady(),"Second return finishes with the cable still attached");
+        Vector2 localGrab=new Vector2(.1f,.3f),point=dispenser.Body.LocalToWorld(localGrab);
+        Check(hand.PickDispenser(dispenser,point) && Mathf.Abs(Mathf.DeltaAngle(0,dispenser.Body.Angle))<.0001f
+            && Near(dispenser.Body.LocalToWorld(localGrab),point),"Picking a swinging tool immediately uprights it without losing the grabbed point");
+        hand.BeginRotation();hand.RotateBy(180);hand.EndRotation(point);Step();
+        Check(Mathf.Abs(Mathf.DeltaAngle(0,dispenser.Body.Angle))<.0001f&&!hand.Rotating&&!hand.Returning,
+            "Player rotation APIs cannot rotate the dispenser or resume its dock swing while held");
+        Check(!dispenser.SuspensionJoint.enabled&&dispenser.Body.Body.bodyType==RigidbodyType2D.Kinematic,
+            "Picking detaches the cable's force while preserving its visual connection");
+    }
+
+    void CordGeometry()
+    {
+        Reset(); PickToWork();
+        Vector2 end = dispenser.hoseAnchor + Vector2.left * 6;
+        dispenser.MoveToPointer(end - dispenser.hoseAttachmentLocal);
+        Invoke(dispenser,"ResetHose");
+        float initialMidY=dispenser.Hose.GetPosition(dispenser.Hose.positionCount/2).y;
+        var rows=new List<string>{"seconds,chord,renderedLength,midpointSag,maxDeviation"};
+        for(int i=0;i<720;i++)
+        {
+            Invoke(dispenser,"StepHose",1f/120);
+            if(i%12==0)
+            {
+                MeasureCord(out float length,out float deviation);
+                rows.Add(FormattableString.Invariant($"{(i+1f)/120:R},6,{length:R},{end.y-dispenser.Hose.GetPosition(dispenser.Hose.positionCount/2).y:R},{deviation:R}"));
+                if(i<360)Capture("cord-sag-"+(i/12).ToString("000")+".png",(dispenser.hoseAnchor+end)*.5f+Vector2.down*.6f,2.6f);
+            }
+        }
+        File.WriteAllLines(Path.Combine(Evidence,"cord-slack-trajectory.csv"),rows);
+        MeasureCord(out float slackLength,out float sag);
+        float expected=6*(1+dispenser.hoseSlackRatio)+dispenser.hoseExtraLength;
+        Check(initialMidY-dispenser.Hose.GetPosition(dispenser.Hose.positionCount/2).y>.5f && sag>.5f,
+            "Initially straight slack cord falls under gravity instead of keeping a preset arch");
+        Check(Mathf.Abs(slackLength-expected)<.05f,
+            "Settled slack cord takes up its available length without excessive stretch or compression");
+        var first=dispenser.Hose.GetPosition(4)-dispenser.Hose.GetPosition(0);
+        var final=dispenser.Hose.GetPosition(dispenser.Hose.positionCount-1)-dispenser.Hose.GetPosition(dispenser.Hose.positionCount-5);
+        Check(first.x<-.001f && first.y<0 && final.x<-.001f && final.y>0,
+            "Both slack connectors follow the hanging cord tangent without pinned vertical necks");
+        Capture("cord-slack.png",(dispenser.hoseAnchor+end)*.5f+Vector2.down*.6f,2.6f);
+        report.Add($"MEASURE cord slackLength={slackLength:R} availableLength={expected:R} sag={sag:R}");
+        // Feed no extra line: the same previously sagging nodes must become a
+        // straight cable as soon as its two attachments use all available length.
+        dispenser.SuspensionJoint.distance=6;
+        dispenser.SuspensionJoint.enabled=true;
+        Invoke(dispenser,"StepHose",1f/120);
+        MeasureCord(out float tautLength,out float tautDeviation);
+        Check(Mathf.Abs(tautLength-6)<.002f && tautDeviation<.002f,
+            "Taking up slack yields a straight six-unit taut cable without residual bow or connector hooks");
+        Capture("cord-taut.png",(dispenser.hoseAnchor+end)*.5f+Vector2.down*.6f,2.6f);
+        report.Add($"MEASURE cord tautLength={tautLength:R} tautDeviation={tautDeviation:R}");
+        dispenser.SuspensionJoint.enabled=false;
+        // On slackening, displacement develops over time; it is not replaced by
+        // a frame-driven guide curve. Stopped ends still leave moving free nodes.
+        Invoke(dispenser,"StepHose",1f/120);
+        MeasureCord(out _,out float firstSag);
+        for(int i=0;i<12;i++)Invoke(dispenser,"StepHose",1f/120);
+        MeasureCord(out _,out float nextSag);
+        Check(firstSag<.01f && nextSag>firstSag+.02f && nextSag<sag,
+            "Released slack develops progressively from gravity and free-node inertia");
+        // The drawing follows the body's interpolated pose, while native tension
+        // still straightens the cable. It must never leave a transient stiff bow.
+        dispenser.SuspensionJoint.enabled=true;
+        dispenser.SuspensionJoint.distance=6;
+        dispenser.Body.Body.interpolation=RigidbodyInterpolation2D.None;
+        dispenser.Body.Body.bodyType=RigidbodyType2D.Dynamic;
+        dispenser.Body.Body.gravityScale=1;
+        for(int i=0;i<20;i++){Physics2D.Simulate(Dt);Physics2D.SyncTransforms();Invoke(dispenser,"StepHose",Dt);}
+        MeasureCord(out _,out float nativeDeviation);
+        Check(dispenser.SuspensionJoint.GetReactionForce(Dt).magnitude>.1f && nativeDeviation<.002f,
+            "A native loaded swinging cable draws straight under real tension");
+        report.Add($"MEASURE cord firstSlackSag={firstSag:R} nextSlackSag={nextSag:R} nativeTautDeviation={nativeDeviation:R}");
+    }
+
+    void MeasureCord(out float length,out float deviation)
+    {
+        length=deviation=0;
+        Vector2 start=dispenser.Hose.GetPosition(0),end=dispenser.Hose.GetPosition(dispenser.Hose.positionCount-1);
+        Vector2 direction=(end-start).normalized;
+        for(int i=1;i<dispenser.Hose.positionCount;i++)
+        {
+            Vector2 p=dispenser.Hose.GetPosition(i),offset=p-start;
+            length+=Vector2.Distance(p,dispenser.Hose.GetPosition(i-1));
+            deviation=Mathf.Max(deviation,Mathf.Abs(direction.x*offset.y-direction.y*offset.x));
+        }
+    }
+
+    void RecordSuspension(List<string> lines,string phase,float seconds)
+    {
+        var rb=dispenser.Body.Body;var p=rb.position;var v=rb.linearVelocity;
+        lines.Add(FormattableString.Invariant($"{phase},{seconds:R},{p.x:R},{p.y:R},{rb.rotation:R},{v.x:R},{v.y:R},{rb.angularVelocity:R},{dispenser.SuspensionJoint.distance:R},{Vector2.Distance(dispenser.hoseAnchor,dispenser.SuspensionPointWorld):R},{dispenser.SuspensionJoint.GetReactionForce(Dt).magnitude:R}"));
     }
 
     void CheckDispenserGeometry(bool expected, string state)
@@ -791,15 +997,18 @@ public sealed class DispenserValidationRunner : MonoBehaviour
             && Near(dispenser.RemainingMl, 5000) && !dispenser.IsDispensing && hand.HeldDispenser == null,
             "R-equivalent world reset restores off mode, stock, dock and hand state");
         Check(Ice().Length == 0, "Reset removes generated ice");
-        Check(!dispenser.CollisionSuppressed && dispenser.Body.solidColliders.Where(c => c != null).All(c => !c.isTrigger)
+        Check(dispenser.CollisionSuppressed && dispenser.SuspensionJoint.enabled && dispenser.Body.solidColliders.Where(c => c != null).All(c => c.isTrigger)
             && Near(dispenser.Body.Position, dispenser.DockWorld) && Near(dispenser.transform.position, dispenser.DockWorld),
-            "World reset restores solid colliders and the native/rendered dock pose");
+            "World reset restores native suspension at rest without external contacts");
         Reset(); PickToWork();
         dispenser.enabled = false;
         Check(!dispenser.CollisionSuppressed && dispenser.Body.solidColliders.Where(c => c != null).All(c => !c.isTrigger)
             && Near(dispenser.Body.Position, dispenser.DockWorld) && Near(dispenser.transform.position, dispenser.DockWorld),
             "Disabling the held dispenser component restores solid geometry at the dock");
+        float disabledStock=dispenser.RemainingMl;
         dispenser.enabled = true; hand.ReleaseWithVelocity(Vector2.zero);
+        Check(dispenser.SuspensionJoint.enabled&&dispenser.CollisionSuppressed&&Near(dispenser.RemainingMl,disabledStock),
+            "Re-enabling resumes native hanging without refilling the tool or leaving a solid frozen body");
         foreach (FluidExperimentMode mode in Enum.GetValues(typeof(FluidExperimentMode)))
         {
             comparison.SwitchMode(mode); comparison.StartScenario(FluidExperimentScenario.Manual);

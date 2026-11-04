@@ -1,0 +1,19 @@
+INFO vessel=True operational=True error= position=(-3.40, 2.60) scale=(1.00, 1.00, 1.00) radius=0.065 regions=(x:-0.57, y:-1.81, width:1.14, height:2.47) ingredient=item_1003
+PASS Glass_highball contains actual authored ingredient particles
+INFO vessel=True operational=True error= position=(0.00, 2.60) scale=(1.00, 1.00, 1.00) radius=0.065 regions=(x:-0.75, y:-1.82, width:1.50, height:1.68) ingredient=item_1002
+PASS Glass_rock contains actual authored ingredient particles
+INFO vessel=True operational=True error= position=(3.40, 2.60) scale=(1.00, 1.00, 1.00) radius=0.065 regions=(x:-0.92, y:-0.88, width:1.82, height:1.19) ingredient=item_1001
+PASS Glass_martini contains actual authored ingredient particles
+PASS Actual D3D11 improved liquid surface is ready
+PASS Every wet ice belongs to its actual containing vessel
+PASS Dry ice fixture has no containing vessel
+PASS Contained ice uses the immersion shader
+PASS Ice samples its own vessel texture 0
+PASS Ice samples its own vessel texture 1
+PASS Ice samples its own vessel texture 2
+PASS Unowned dry ice retains its original material
+MEASURE firstIceWetPixelChanges=0 dryPixelChanges=1
+FAIL Visible ice tint changes submerged pixels while dry pixels stay unchanged
+System.Exception: Visible ice tint changes submerged pixels while dry pixels stay unchanged
+  at LiquidPolishRunner.Check (System.Boolean ok, System.String label) [0x0002a] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\LiquidPolishValidation.cs:36 
+  at LiquidPolishRunner+<Start>d__19.MoveNext () [0x009a7] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\LiquidPolishValidation.cs:134 

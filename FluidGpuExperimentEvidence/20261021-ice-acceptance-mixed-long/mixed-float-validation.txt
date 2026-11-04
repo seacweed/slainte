@@ -1,0 +1,43 @@
+PASS Mixed pair queues 40 ml
+MEASURE synthLemonPeel_Source seconds=2 span=0.206246659 angleSpan=30.7945938 jitter=0.00133902521 ml=40
+MEASURE synthLemonPeel_Source seconds=4 span=0.05009137 angleSpan=2.596424 jitter=2.31160884E-05 ml=40
+MEASURE synthLemonPeel_Source seconds=6 span=0.172960058 angleSpan=37.54718 jitter=1.8819037E-05 ml=40
+MEASURE synthLemonPeel_Source seconds=8 span=0.174652874 angleSpan=23.8029442 jitter=6.443538E-05 ml=40
+MEASURE synthLemonPeel_Source seconds=10 span=0.0302718449 angleSpan=12.9661789 jitter=7.323517E-06 ml=40
+MEASURE synthLemonPeel_Source seconds=12 span=0.0300085153 angleSpan=11.51373 jitter=2.03926429E-05 ml=40
+MEASURE synthLemonPeel_Source seconds=14 span=0.007061095 angleSpan=2.24480534 jitter=7.745236E-06 ml=40
+MEASURE synthLemonPeel_Source seconds=16 span=0.005184343 angleSpan=1.76273346 jitter=9.204585E-06 ml=40
+MEASURE synthLemonPeel_Source seconds=18 span=0.008679407 angleSpan=2.63557863 jitter=8.162184E-06 ml=40
+MEASURE synthLemonPeel_Source seconds=20 span=0.009004254 angleSpan=2.930844 jitter=7.391615E-06 ml=40
+MEASURE synthLemonPeel_Source seconds=22 span=0.0111353714 angleSpan=3.275878 jitter=9.296986E-06 ml=40
+MEASURE synthLemonPeel_Source seconds=24 span=0.00712508755 angleSpan=1.77323353 jitter=9.828425E-06 ml=40
+MEASURE synthLemonPeel_Source seconds=26 span=0.009881323 angleSpan=2.55593061 jitter=1.17703266E-05 ml=40
+MEASURE synthLemonPeel_Source seconds=28 span=0.0150752766 angleSpan=3.7442193 jitter=5.61123534E-06 ml=40
+PASS Mixed floating pair has bounded slow roll without rapid jitter
+MEASURE synthLemonPeel_Source seconds=30 span=0.0280215926 angleSpan=7.67624 jitter=1.05373447E-05 ml=40
+PASS Mixed floating pair has bounded slow roll without rapid jitter
+MEASURE synthLemonPeel_Source seconds=32 span=0.0127197215 angleSpan=3.69364929 jitter=1.91771524E-05 ml=40
+PASS Mixed floating pair has bounded slow roll without rapid jitter
+PASS Mixed float retains all 40 ml
+PASS Mixed pair queues 40 ml
+MEASURE nanangaPeel_Source seconds=2 span=0.202901125 angleSpan=46.45574 jitter=0.000731576758 ml=40
+MEASURE nanangaPeel_Source seconds=4 span=0.141705126 angleSpan=37.8059235 jitter=3.35609438E-05 ml=40
+MEASURE nanangaPeel_Source seconds=6 span=0.1314647 angleSpan=20.2397785 jitter=3.4898887E-05 ml=40
+MEASURE nanangaPeel_Source seconds=8 span=0.0372613743 angleSpan=13.7509871 jitter=9.661778E-06 ml=40
+MEASURE nanangaPeel_Source seconds=10 span=0.0368482843 angleSpan=12.9253473 jitter=2.41772359E-05 ml=40
+MEASURE nanangaPeel_Source seconds=12 span=0.00385006052 angleSpan=1.25109386 jitter=5.31841E-06 ml=40
+MEASURE nanangaPeel_Source seconds=14 span=0.00252210652 angleSpan=1.090148 jitter=3.80749657E-06 ml=40
+MEASURE nanangaPeel_Source seconds=16 span=0.00168520631 angleSpan=1.04802036 jitter=4.906728E-06 ml=40
+MEASURE nanangaPeel_Source seconds=18 span=0.002013535 angleSpan=1.09437656 jitter=5.728289E-06 ml=40
+MEASURE nanangaPeel_Source seconds=20 span=0.0008346169 angleSpan=0.722734451 jitter=2.3414193E-06 ml=40
+MEASURE nanangaPeel_Source seconds=22 span=0.00179842755 angleSpan=1.05831051 jitter=5.627294E-06 ml=40
+MEASURE nanangaPeel_Source seconds=24 span=0.00147281843 angleSpan=0.832416534 jitter=5.084575E-06 ml=40
+MEASURE nanangaPeel_Source seconds=26 span=0.00161614851 angleSpan=0.9344883 jitter=6.224153E-06 ml=40
+MEASURE nanangaPeel_Source seconds=28 span=0.00151145633 angleSpan=1.00910568 jitter=3.19002061E-06 ml=40
+PASS Mixed floating pair has bounded slow roll without rapid jitter
+MEASURE nanangaPeel_Source seconds=30 span=0.0015208649 angleSpan=0.8978195 jitter=5.064838E-06 ml=40
+PASS Mixed floating pair has bounded slow roll without rapid jitter
+MEASURE nanangaPeel_Source seconds=32 span=0.002091327 angleSpan=0.992742538 jitter=3.27535963E-06 ml=40
+PASS Mixed floating pair has bounded slow roll without rapid jitter
+PASS Mixed float retains all 40 ml
+PASS No Unity application errors

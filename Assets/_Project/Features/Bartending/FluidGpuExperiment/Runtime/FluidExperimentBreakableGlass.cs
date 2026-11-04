@@ -21,6 +21,17 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private bool breakQueued, motionCaptured;
         private Vector2 beforeVelocity, beforeCenter;
         private float beforeSpin;
+        private Vector2 contactImpulse, fractureVelocity, fractureCenter;
+        private float contactAngularImpulse, fractureSpin, fractureScatter;
+        private bool nativeImpactMeasured;
+
+        internal Vector2 FractureVelocityAt(Vector2 point)
+        {
+            Vector2 arm = point - fractureCenter;
+            return fractureVelocity + new Vector2(-arm.y, arm.x) * fractureSpin;
+        }
+        internal float FractureAngularVelocity => fractureSpin * Mathf.Rad2Deg;
+        internal float FractureSeparationSpeed => Mathf.Max(0, profile.separationSpeed) + fractureScatter;
 
         private void Awake() => Body = GetComponent<FluidExperimentBody>();
         private void OnEnable()
@@ -41,6 +52,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         internal void CaptureBeforePhysics()
         {
             motionCaptured = CanBreak;
+            nativeImpactMeasured = false; contactImpulse = Vector2.zero; contactAngularImpulse = 0;
             if (!motionCaptured) return;
             beforeVelocity = Body.Body.linearVelocity;
             beforeCenter = Body.Body.worldCenterOfMass;
@@ -54,10 +66,16 @@ namespace Slainte.Bartending.FluidGpuExperiment
             float impulse = 0, speed = 0;
             Vector2 point = Body.Position;
             Vector2 normal = Vector2.up;
+            Vector2 impulseVector = Vector2.zero;
+            float angularImpulse = 0;
             for (int i = 0; i < collision.contactCount; i++)
             {
                 ContactPoint2D contact = collision.GetContact(i);
                 impulse += Mathf.Max(0, contact.normalImpulse);
+                Vector2 applied = contact.normal * Mathf.Max(0, contact.normalImpulse);
+                impulseVector += applied;
+                Vector2 contactArm = contact.point - (motionCaptured ? beforeCenter : Body.Body.worldCenterOfMass);
+                angularImpulse += contactArm.x * applied.y - contactArm.y * applied.x;
                 float contactSpeed = Mathf.Abs(Vector2.Dot(contact.relativeVelocity, contact.normal));
                 // Contact velocity may already reflect the native solver. Retain the
                 // incoming point speed, including rotation, for resting-surface impacts.
@@ -71,6 +89,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 if (contactSpeed >= speed) { speed = contactSpeed; point = contact.point; normal = contact.normal; }
             }
             LastImpactNormal = normal;
+            nativeImpactMeasured = true; contactImpulse = impulseVector; contactAngularImpulse = angularImpulse;
             QueueImpact(speed, impulse, point);
         }
         private void QueueImpact(float speed, float impulse, Vector2 point)
@@ -79,6 +98,23 @@ namespace Slainte.Bartending.FluidGpuExperiment
             LastImpactSpeed = speed; LastImpactImpulse = impulse; LastImpactPoint = point;
             if (speed < profile.minimumImpactSpeed
                 || impulse < Body.Body.mass * profile.minimumImpulsePerMass) return;
+            // Preserve the motion from before the solver stopped/rebounded the glass.
+            // Apply this collision's measured impulse once, including its off-center
+            // torque. Without a pre-physics sample the native velocity already has
+            // that impulse, so controlled/late breaks must not add it a second time.
+            bool capturedImpact = motionCaptured && nativeImpactMeasured;
+            fractureVelocity = motionCaptured ? beforeVelocity : Body.Body.linearVelocity;
+            fractureCenter = motionCaptured ? beforeCenter : Body.Body.worldCenterOfMass;
+            fractureSpin = motionCaptured ? beforeSpin : Body.Body.angularVelocity * Mathf.Deg2Rad;
+            fractureScatter = 0;
+            if (capturedImpact)
+            {
+                float transfer = Mathf.Clamp01(profile.impactVelocityTransfer);
+                fractureVelocity += contactImpulse * (transfer / Mathf.Max(.0001f, Body.Body.mass));
+                fractureSpin += contactAngularImpulse * transfer / Mathf.Max(.0001f, Body.Body.inertia);
+                fractureScatter = Mathf.Max(0, profile.impactScatterScale)
+                    * Mathf.Min(speed, impulse / Mathf.Max(.0001f, Body.Body.mass));
+            }
             breakQueued = true;
             world.QueueGlassBreakage(this);
         }
@@ -116,6 +152,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
         internal void RestoreIntact()
         {
             breakQueued = motionCaptured = false;
+            nativeImpactMeasured = false; contactImpulse = Vector2.zero; contactAngularImpulse = 0;
+            fractureVelocity = fractureCenter = Vector2.zero; fractureSpin = fractureScatter = 0;
             LastImpactSpeed = LastImpactImpulse = 0;
             LastImpactPoint = Vector2.zero; LastImpactNormal = Vector2.up;
             if (!IsBroken) return;

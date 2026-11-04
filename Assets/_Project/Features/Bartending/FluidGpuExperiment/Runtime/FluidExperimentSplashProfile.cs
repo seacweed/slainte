@@ -20,6 +20,10 @@ namespace Slainte.Bartending.FluidGpuExperiment
         [Min(0)] public float tangentWeight = 1f;
         [Tooltip("Relative contribution away from the struck surface: upward for a floor impact, sideways for a wall impact. Never adds velocity into that surface.")]
         [Min(0)] public float liftWeight = .7f;
+        [Tooltip("Center the fan on the latest completed liquid mass distribution instead of the empty vessel's geometric center.")]
+        public bool centerOnLiquid;
+        [Tooltip("Distance across which the tangential fan changes continuously from left to right. Zero retains the legacy two-sided fan.")]
+        [Min(0)] public float fanSpreadDistance;
 
         [Header("Impact Reach")]
         [Tooltip("Distance from the impact point affected by the splash, in world units. Liquid outside this radius is released without extra speed.")]
@@ -33,7 +37,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         {
             public Vector2 Center, Point, Normal;
             public Vector4 Direction; // radial, tangent, lift, falloff exponent
-            public Vector4 Impact; // radius, available delta speed, maximum delta speed, unused
+            public Vector4 Impact; // radius, available delta speed, maximum delta speed, fan spread distance
 
             public Vector2 Evaluate(Vector2 position)
             {
@@ -46,6 +50,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 Vector2 tangent = new Vector2(Normal.y, -Normal.x);
                 float side = Vector2.Dot(offset, tangent);
                 float sideSign = side < -.00001f ? -1f : side > .00001f ? 1f : 0f;
+                if (Impact.w > .00001f) sideSign = Mathf.Clamp(side / Impact.w, -1, 1);
                 Vector2 direction = radial * Direction.x + tangent * (sideSign * Direction.y) + Normal * Direction.z;
                 direction -= Normal * Mathf.Min(0, Vector2.Dot(direction, Normal));
                 float directionLength = direction.magnitude;
@@ -71,7 +76,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 Direction = new Vector4(Nonnegative(radialWeight, 10), Nonnegative(tangentWeight, 10),
                     Nonnegative(liftWeight, 10), Nonnegative(impactFalloff, 16)),
                 Impact = new Vector4(Mathf.Max(.001f, Nonnegative(impactRadius, 1000)), energy,
-                    Nonnegative(maximumDeltaSpeed, 100), 0)
+                    Nonnegative(maximumDeltaSpeed, 100), Nonnegative(fanSpreadDistance, 1000))
             };
         }
 

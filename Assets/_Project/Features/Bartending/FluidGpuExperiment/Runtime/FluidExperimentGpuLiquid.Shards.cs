@@ -29,6 +29,15 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 float deltaAngle = turn * (to - from) * Mathf.Deg2Rad;
                 Vector2 velocity = (position - previous) / dt;
                 float spin = deltaAngle / dt;
+                if (proxy.Body.bodyType == RigidbodyType2D.Dynamic)
+                {
+                    // The native solver may depenetrate a shard against the floor.
+                    // Keep that pose trajectory for CCD, but never turn the repair
+                    // displacement into a new liquid impulse. Point velocity at
+                    // the body origin also accounts for an offset native COM.
+                    velocity = proxy.Body.GetPointVelocity(proxy.Body.position);
+                    spin = proxy.Body.angularVelocity * Mathf.Deg2Rad;
+                }
                 Vector3 scale = proxy.transform.lossyScale;
                 int first = boundaryCount;
                 foreach (var segment in proxy.Segments)

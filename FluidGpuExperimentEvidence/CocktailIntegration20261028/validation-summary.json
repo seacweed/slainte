@@ -1,0 +1,83 @@
+{
+  "result": "PASS",
+  "suites": [
+    {
+      "attempt": "09-integration",
+      "label": "실제 레시피·등급·최신 조성·온수·제조법·소유권 이동",
+      "result": "PASS",
+      "checks": 61
+    },
+    {
+      "attempt": "10-authoring",
+      "label": "프리팹 참조·명시적 연결·반복 생성 보존",
+      "result": "PASS",
+      "checks": 5
+    },
+    {
+      "attempt": "11-input",
+      "label": "기존 입력·회전·셰이커 조작",
+      "result": "PASS",
+      "checks": 1925
+    },
+    {
+      "attempt": "12-runtime",
+      "label": "독립 런타임·디스펜서·Reset",
+      "result": "PASS",
+      "checks": 29
+    },
+    {
+      "attempt": "13-auto-f",
+      "label": "F 자동 실행",
+      "result": "PASS",
+      "checks": 29
+    },
+    {
+      "attempt": "14-auto-g",
+      "label": "G 자동 실행",
+      "result": "PASS",
+      "checks": 29
+    },
+    {
+      "attempt": "15-shard-motion",
+      "label": "파편 운동·접촉·액체 보존",
+      "result": "PASS",
+      "checks": 76
+    }
+  ],
+  "passing_checks": 2154,
+  "validated_source_files": 489,
+  "source_mismatches": [],
+  "shared_source_mismatches": [],
+  "reference_errors": [],
+  "preservation": {
+    "original_files": 799,
+    "unchanged": 791,
+    "changed": [
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/README.md",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Editor/FluidExperimentAssemblyBuilder.cs",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Editor/FluidExperimentPrefabAudit.cs",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Runtime/FluidExperimentRuntime.prefab",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentComparison.cs",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentInteractor.Pointer.cs",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentWorld.cs",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Scenes/FluidGpuComparison.unity"
+    ],
+    "unexpected": [],
+    "scene_and_runtime_only_add_session": {
+      "Scenes/FluidGpuComparison.unity": true,
+      "Prefabs/Runtime/FluidExperimentRuntime.prefab": true
+    },
+    "added": [
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentCocktailSession.cs",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentCocktailSession.cs.meta",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentCocktailSession.Gui.cs",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentCocktailSession.Gui.cs.meta",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentCocktailSession.Techniques.cs",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentCocktailSession.Techniques.cs.meta",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.Cocktails.cs",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.Cocktails.cs.meta",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentWorld.Cocktails.cs",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentWorld.Cocktails.cs.meta"
+    ]
+  }
+}

@@ -5,6 +5,8 @@ Shader "Slainte/FluidExperiment/LiquidSurface"
         _SurfaceTex ("Premultiplied liquid surface", 2D) = "black" {}
         _HighlightStrength ("Highlight", Range(0,1)) = .3
         _HighlightWidth ("Highlight width in pixels", Range(.5,4)) = 1.5
+        _RimStrength ("Upper contour light", Range(0,1)) = 0
+        _LowerEdgeShade ("Lower contour shade", Range(0,1)) = 0
     }
     SubShader
     {
@@ -24,6 +26,7 @@ Shader "Slainte/FluidExperiment/LiquidSurface"
             CBUFFER_START(UnityPerMaterial)
                 float4 _SurfaceTex_TexelSize;
                 float _HighlightStrength, _HighlightWidth;
+                float _RimStrength, _LowerEdgeShade;
             CBUFFER_END
             struct Attributes { float4 positionOS:POSITION; float2 uv:TEXCOORD0; };
             struct Varyings { float4 positionCS:SV_POSITION; float2 uv:TEXCOORD0; };
@@ -50,6 +53,11 @@ Shader "Slainte/FluidExperiment/LiquidSurface"
                 float shine=edge*light*_HighlightStrength;
                 // Preserve logical opacity and mixed ingredient color; light only the thin contour.
                 surface.rgb+=(surface.a-surface.rgb)*shine;
+                float2 normal = gradient / max(length(gradient), .0001);
+                float upperRim = edge * smoothstep(.25, .9, normal.y) * _RimStrength;
+                float lowerShade = edge * saturate(-normal.y) * _LowerEdgeShade;
+                // Accent the existing contour without enlarging coverage or opacity.
+                surface.rgb = lerp(surface.rgb, surface.a.xxx, upperRim) * (1 - lowerShade);
                 return surface;
             }
             ENDHLSL

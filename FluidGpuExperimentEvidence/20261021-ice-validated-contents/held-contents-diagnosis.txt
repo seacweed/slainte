@@ -1,0 +1,208 @@
+INFO MODE FCoherentLiquid
+PASS F/G solver is active
+PASS Pick glass for release probe
+PASS Seed owned liquid
+PASS Seed unrelated free liquid
+PASS Seed materialized on GPU
+PASS Actual click-drop succeeds without obstacle correction
+MEASURE release click=True moving=False glassDelta=(0.00, 0.00) glassVelocity=(0.00, 0.00) liquidBefore=(1.20, -0.40) liquidAfter=(1.20, -0.40) historyBefore=(0.02, -0.01) historyAfter=(0.02, -0.01)
+PASS Release probe has zero position correction
+PASS Release preserves amount and owner
+PASS Release leaves unrelated free liquid velocity unchanged
+PASS Click-drop preserves owned liquid world velocity
+PASS Click-drop preserves liquid motion history
+PASS Pick glass for release probe
+PASS Seed owned liquid
+PASS Seed unrelated free liquid
+PASS Seed materialized on GPU
+PASS Actual click-drop succeeds without obstacle correction
+MEASURE release click=True moving=True glassDelta=(0.00, 0.00) glassVelocity=(2.00, 0.00) liquidBefore=(1.20, -0.40) liquidAfter=(1.20, -0.40) historyBefore=(0.02, -0.01) historyAfter=(0.02, -0.01)
+PASS Release probe has zero position correction
+PASS Release preserves amount and owner
+PASS Release leaves unrelated free liquid velocity unchanged
+PASS Click-drop preserves owned liquid world velocity
+PASS Click-drop preserves liquid motion history
+PASS Pick glass for release probe
+PASS Seed owned liquid
+PASS Seed unrelated free liquid
+PASS Seed materialized on GPU
+MEASURE release click=False moving=False glassDelta=(0.00, 0.00) glassVelocity=(2.00, 0.30) liquidBefore=(1.20, -0.40) liquidAfter=(1.20, -0.40) historyBefore=(0.02, -0.01) historyAfter=(0.02, -0.01)
+PASS Release probe has zero position correction
+PASS Release preserves amount and owner
+PASS Release leaves unrelated free liquid velocity unchanged
+PASS Programmatic release bypasses the click-drop velocity reset
+PASS Pick glass for corrected release
+PASS Seed owned liquid
+PASS Seed unrelated free liquid
+PASS Seed materialized on GPU
+PASS Click-drop resolves a real floor overlap
+PASS Correction fixture actually moves the vessel out of the floor
+PASS Overlap correction translates both liquid histories and retains velocity
+PASS Seed owned liquid
+PASS Seed unrelated free liquid
+PASS Seed materialized on GPU
+PASS Reserved GPU birth remains inactive before corrected release
+PASS Corrected click-drop with active and both pending queues succeeds
+PASS Active/reserved birth retains velocity, history, volume, state and temperature
+PASS Active/reserved birth retains velocity, history, volume, state and temperature
+PASS CPU pending birth translates once without replacing velocity or consuming its reservation
+PASS Reserved birth keeps stream identity and scheduled timing
+PASS Release correction preserves every particle ingredient fraction
+PASS Solid belongs to probe glass
+PASS Pick glass for carry probe
+MEASURE carry garnish=False glassDelta=(0.06, 0.04) solidDelta=(0.00, 0.00) glassNativeVelocity=(0.00, 0.00) impliedPoseVelocity=(3.00, 2.00) solidVelocity=(0.00, 0.00)
+PASS Neither ice nor garnish is transported by held vessel translation
+PASS Contact recovery uses actual cursor-driven wall speed
+PASS Neither ice nor garnish is rigidly rotated with its held vessel
+PASS Releasing vessel does not inject a second velocity/spin into contents
+PASS Solid belongs to probe glass
+PASS Pick glass for carry probe
+MEASURE carry garnish=True glassDelta=(0.06, 0.04) solidDelta=(0.00, 0.00) glassNativeVelocity=(0.00, 0.00) impliedPoseVelocity=(3.00, 2.00) solidVelocity=(0.00, 0.00)
+PASS Neither ice nor garnish is transported by held vessel translation
+PASS Contact recovery uses actual cursor-driven wall speed
+PASS Neither ice nor garnish is rigidly rotated with its held vessel
+PASS Releasing vessel does not inject a second velocity/spin into contents
+PASS Seed owned liquid
+PASS Seed materialized on GPU
+PASS Synthetic completed snapshot initially supports garnish
+MEASURE reproject unchangedSnapshot=true glassDelta=(1.00, 0.00) sampled=False submergedBefore=0.8914895 submergedAfter=0 sampledFlow=(0.00, 0.00)
+PASS Moving glass cannot carry an old world-space liquid sample with it
+INFO Reprojection probe is synthetic and demonstrates sampler policy, not measured gameplay quality.
+PASS Float probe holds actual glass
+PASS Seed owned liquid
+PASS Seed materialized on GPU
+MEASURE buoyancy garnish=False dy=0.00035482645 vy=0.0177408177
+PASS Submerged ice/garnish accelerates upward from buoyancy
+PASS Flow drag accelerates contents gradually without synchronizing their velocity
+PASS Reversed local flow reverses drag acceleration
+PASS Stopping flow damps relative motion while retaining solid inertia
+PASS Float probe holds actual glass
+PASS Seed owned liquid
+PASS Seed materialized on GPU
+MEASURE buoyancy garnish=True dy=0.000584602356 vy=0.0292295385
+PASS Submerged ice/garnish accelerates upward from buoyancy
+PASS Flow drag accelerates contents gradually without synchronizing their velocity
+PASS Reversed local flow reverses drag acceleration
+PASS Stopping flow damps relative motion while retaining solid inertia
+MEASURE real-wet garnish=False relativeSpan=0.766026556 turnSpan=34.862793 gap=-0.00307739433 owner=9 ml=60
+PASS Moving/rotating wet glass permits independent contents movement
+PASS Repeated direction changes and stopping remain finite
+PASS Native and swept contacts keep deep wall penetration below one pixel
+PASS Actual click release after wet movement succeeds
+PASS Actual wet click-drop preserves solid velocity and angular momentum
+PASS Moving wet fixture conserves all generated liquid
+MEASURE real-wet garnish=True relativeSpan=0.7574315 turnSpan=60.1281662 gap=-0.0036851035 owner=9 ml=60
+PASS Moving/rotating wet glass permits independent contents movement
+PASS Repeated direction changes and stopping remain finite
+PASS Native and swept contacts keep deep wall penetration below one pixel
+PASS Actual click release after wet movement succeeds
+PASS Actual wet click-drop preserves solid velocity and angular momentum
+PASS Moving wet fixture conserves all generated liquid
+MEASURE real-float garnish=False dryY=-0.116754532 wetY=0.5634965 rise=0.680251 drySpan=0 wetSpan=0.0009983182
+PASS Real GPU liquid supports contents above their dry resting height
+PASS Buoyant contents settle without sustained visible vertical jitter
+MEASURE real-float garnish=True dryY=-0.184395641 wetY=0.6557184 rise=0.840114 drySpan=0 wetSpan=0.00229018927
+PASS Real GPU liquid supports contents above their dry resting height
+PASS Buoyant contents settle without sustained visible vertical jitter
+INFO MODE GExplosiveBreakage
+PASS F/G solver is active
+PASS Pick glass for release probe
+PASS Seed owned liquid
+PASS Seed unrelated free liquid
+PASS Seed materialized on GPU
+PASS Actual click-drop succeeds without obstacle correction
+MEASURE release click=True moving=False glassDelta=(0.00, 0.00) glassVelocity=(0.00, 0.00) liquidBefore=(1.20, -0.40) liquidAfter=(1.20, -0.40) historyBefore=(0.02, -0.01) historyAfter=(0.02, -0.01)
+PASS Release probe has zero position correction
+PASS Release preserves amount and owner
+PASS Release leaves unrelated free liquid velocity unchanged
+PASS Click-drop preserves owned liquid world velocity
+PASS Click-drop preserves liquid motion history
+PASS Pick glass for release probe
+PASS Seed owned liquid
+PASS Seed unrelated free liquid
+PASS Seed materialized on GPU
+PASS Actual click-drop succeeds without obstacle correction
+MEASURE release click=True moving=True glassDelta=(0.00, 0.00) glassVelocity=(2.00, 0.00) liquidBefore=(1.20, -0.40) liquidAfter=(1.20, -0.40) historyBefore=(0.02, -0.01) historyAfter=(0.02, -0.01)
+PASS Release probe has zero position correction
+PASS Release preserves amount and owner
+PASS Release leaves unrelated free liquid velocity unchanged
+PASS Click-drop preserves owned liquid world velocity
+PASS Click-drop preserves liquid motion history
+PASS Pick glass for release probe
+PASS Seed owned liquid
+PASS Seed unrelated free liquid
+PASS Seed materialized on GPU
+MEASURE release click=False moving=False glassDelta=(0.00, 0.00) glassVelocity=(2.00, 0.30) liquidBefore=(1.20, -0.40) liquidAfter=(1.20, -0.40) historyBefore=(0.02, -0.01) historyAfter=(0.02, -0.01)
+PASS Release probe has zero position correction
+PASS Release preserves amount and owner
+PASS Release leaves unrelated free liquid velocity unchanged
+PASS Programmatic release bypasses the click-drop velocity reset
+PASS Pick glass for corrected release
+PASS Seed owned liquid
+PASS Seed unrelated free liquid
+PASS Seed materialized on GPU
+PASS Click-drop resolves a real floor overlap
+PASS Correction fixture actually moves the vessel out of the floor
+PASS Overlap correction translates both liquid histories and retains velocity
+PASS Seed owned liquid
+PASS Seed unrelated free liquid
+PASS Seed materialized on GPU
+PASS Reserved GPU birth remains inactive before corrected release
+PASS Corrected click-drop with active and both pending queues succeeds
+PASS Active/reserved birth retains velocity, history, volume, state and temperature
+PASS Active/reserved birth retains velocity, history, volume, state and temperature
+PASS CPU pending birth translates once without replacing velocity or consuming its reservation
+PASS Reserved birth keeps stream identity and scheduled timing
+PASS Release correction preserves every particle ingredient fraction
+PASS Solid belongs to probe glass
+PASS Pick glass for carry probe
+MEASURE carry garnish=False glassDelta=(0.06, 0.04) solidDelta=(0.00, 0.00) glassNativeVelocity=(0.00, 0.00) impliedPoseVelocity=(3.00, 2.00) solidVelocity=(0.00, 0.00)
+PASS Neither ice nor garnish is transported by held vessel translation
+PASS Contact recovery uses actual cursor-driven wall speed
+PASS Neither ice nor garnish is rigidly rotated with its held vessel
+PASS Releasing vessel does not inject a second velocity/spin into contents
+PASS Solid belongs to probe glass
+PASS Pick glass for carry probe
+MEASURE carry garnish=True glassDelta=(0.06, 0.04) solidDelta=(0.00, 0.00) glassNativeVelocity=(0.00, 0.00) impliedPoseVelocity=(3.00, 2.00) solidVelocity=(0.00, 0.00)
+PASS Neither ice nor garnish is transported by held vessel translation
+PASS Contact recovery uses actual cursor-driven wall speed
+PASS Neither ice nor garnish is rigidly rotated with its held vessel
+PASS Releasing vessel does not inject a second velocity/spin into contents
+PASS Seed owned liquid
+PASS Seed materialized on GPU
+PASS Synthetic completed snapshot initially supports garnish
+MEASURE reproject unchangedSnapshot=true glassDelta=(1.00, 0.00) sampled=False submergedBefore=0.8914895 submergedAfter=0 sampledFlow=(0.00, 0.00)
+PASS Moving glass cannot carry an old world-space liquid sample with it
+INFO Reprojection probe is synthetic and demonstrates sampler policy, not measured gameplay quality.
+PASS Float probe holds actual glass
+PASS Seed owned liquid
+PASS Seed materialized on GPU
+MEASURE buoyancy garnish=False dy=0.00035482645 vy=0.0177408177
+PASS Submerged ice/garnish accelerates upward from buoyancy
+PASS Flow drag accelerates contents gradually without synchronizing their velocity
+PASS Reversed local flow reverses drag acceleration
+PASS Stopping flow damps relative motion while retaining solid inertia
+PASS Float probe holds actual glass
+PASS Seed owned liquid
+PASS Seed materialized on GPU
+MEASURE buoyancy garnish=True dy=0.000584602356 vy=0.0292295385
+PASS Submerged ice/garnish accelerates upward from buoyancy
+PASS Flow drag accelerates contents gradually without synchronizing their velocity
+PASS Reversed local flow reverses drag acceleration
+PASS Stopping flow damps relative motion while retaining solid inertia
+MEASURE real-wet garnish=False relativeSpan=0.751695931 turnSpan=32.8198853 gap=-0.00644348655 owner=9 ml=60
+PASS Moving/rotating wet glass permits independent contents movement
+PASS Repeated direction changes and stopping remain finite
+PASS Native and swept contacts keep deep wall penetration below one pixel
+PASS Actual click release after wet movement succeeds
+PASS Actual wet click-drop preserves solid velocity and angular momentum
+PASS Moving wet fixture conserves all generated liquid
+MEASURE real-wet garnish=True relativeSpan=0.7259743 turnSpan=56.72755 gap=-0.005473786 owner=9 ml=60
+PASS Moving/rotating wet glass permits independent contents movement
+PASS Repeated direction changes and stopping remain finite
+PASS Native and swept contacts keep deep wall penetration below one pixel
+PASS Actual click release after wet movement succeeds
+PASS Actual wet click-drop preserves solid velocity and angular momentum
+PASS Moving wet fixture conserves all generated liquid
+PASS D retains its previous carried-ice policy
+PASS No Unity application errors or assertions

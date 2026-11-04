@@ -16,6 +16,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         private void LateUpdate()
         {
+            SynchronizeCompletedContentsDisplay();
             if (kind == LabItemKind.IceBucket
                 && (displayedIceStock != iceStock || displayedIceCapacity != iceCapacity))
                 RefreshIceStockVisual();

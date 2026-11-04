@@ -303,22 +303,36 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
                 AssetDatabase.CreateAsset(catalog, CatalogPath);
             }
             var entries = new List<FluidExperimentAuthoringCatalog.Entry>(catalog.entries);
+            bool changed = false;
             foreach (string path in Directory.GetFiles(Root + "/Prefabs", "*.prefab").OrderBy(path => path, StringComparer.Ordinal))
             {
                 string normalized = path.Replace('\\', '/');
                 string guid = AssetDatabase.AssetPathToGUID(normalized);
-                if (entries.Any(entry => entry != null && entry.id == guid)) continue;
                 var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(normalized);
                 // The world owns one dispenser; catalog spawning would create an unmanaged duplicate.
                 if (prefab.GetComponent<FluidExperimentDispenser>() != null) continue;
                 var body = prefab.GetComponent<FluidExperimentBody>();
+                var existingEntry = entries.FirstOrDefault(entry => entry != null && entry.id == guid);
+                if (existingEntry != null)
+                {
+                    // The bottle prefab owns its ingredient and presentation identity.
+                    if (body != null && body.kind == LabItemKind.Bottle
+                        && (existingEntry.prefab != prefab || existingEntry.ingredient != body.ingredient
+                            || existingEntry.displayName != body.displayName || existingEntry.category != "Bottle"))
+                    {
+                        existingEntry.prefab = prefab; existingEntry.ingredient = body.ingredient;
+                        existingEntry.displayName = body.displayName; existingEntry.category = "Bottle";
+                        changed = true;
+                    }
+                    continue;
+                }
                 var source = prefab.GetComponent<FluidExperimentGarnishSource>();
                 entries.Add(new FluidExperimentAuthoringCatalog.Entry { id = guid, prefab = prefab,
                     displayName = body != null ? body.displayName : source != null ? source.displayName : prefab.name,
                     category = body != null ? body.kind.ToString() : "Garnish Source",
                     ingredient = body != null ? body.ingredient : null });
             }
-            if (entries.Count != catalog.entries.Length)
+            if (changed || entries.Count != catalog.entries.Length)
             { catalog.entries = entries.ToArray(); EditorUtility.SetDirty(catalog); }
             return catalog;
         }
@@ -340,14 +354,8 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
                 line.SetPositions(new[] { new Vector3(-7, .25f), new Vector3(7, .25f) });
                 line.startColor = line.endColor = new Color(.45f, .55f, .6f);
                 line.sortingOrder = -10;
-                // Reuse the authored table's material instead of creating a transient material reference.
-                Scene reference = EditorSceneManager.OpenPreviewScene(FluidExperimentBuilder.ScenePath);
-                try
-                {
-                    var authored = reference.GetRootGameObjects().SelectMany(go => go.GetComponentsInChildren<LineRenderer>()).FirstOrDefault();
-                    if (authored != null) line.sharedMaterial = authored.sharedMaterial;
-                }
-                finally { EditorSceneManager.ClosePreviewScene(reference); }
+                line.sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>(Root + "/Data/TableLine.mat");
+                if (line.sharedMaterial == null) throw new InvalidOperationException("Table line material is missing.");
                 PrefabUtility.SaveAsPrefabAsset(root, EnvironmentPrefabPath);
             }
             finally { UnityEngine.Object.DestroyImmediate(root); }
@@ -368,33 +376,31 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
             {
                 var authoredWorld = existing.GetComponent<FluidExperimentWorld>();
                 if (authoredWorld == null) throw new InvalidOperationException("Runtime prefab is missing its world.");
-                if (authoredWorld.dispenserPrefab != null) return;
+                if (authoredWorld.dispenserPrefab != null && existing.GetComponent<FluidExperimentCocktailSession>() != null) return;
                 var contents = PrefabUtility.LoadPrefabContents(RuntimePrefabPath);
                 try
                 {
-                    if (FluidExperimentDispenserBuilder.BindIfMissing(contents.GetComponent<FluidExperimentWorld>()))
+                    bool changed = FluidExperimentDispenserBuilder.BindIfMissing(contents.GetComponent<FluidExperimentWorld>());
+                    if (contents.GetComponent<FluidExperimentCocktailSession>() == null)
+                    { BindCocktails(contents, contents.GetComponent<FluidExperimentWorld>()); changed = true; }
+                    if (changed)
                         PrefabUtility.SaveAsPrefabAsset(contents, RuntimePrefabPath);
                 }
                 finally { PrefabUtility.UnloadPrefabContents(contents); }
                 return;
             }
-            Scene reference = EditorSceneManager.OpenPreviewScene(FluidExperimentBuilder.ScenePath);
             var root = new GameObject("FluidExperimentRuntime");
             try
             {
-                var source = reference.GetRootGameObjects().SelectMany(go => go.GetComponentsInChildren<FluidExperimentWorld>()).First();
                 var world = root.AddComponent<FluidExperimentWorld>();
-                world.dispenserPrefab = source.dispenserPrefab;
                 FluidExperimentDispenserBuilder.BindIfMissing(world);
                 var liquid = root.AddComponent<FluidExperimentGpuLiquid>();
-                EditorUtility.CopySerialized(source.liquid, liquid);
+                FluidExperimentBuilder.ConfigureLiquid(liquid);
                 var interactor = root.AddComponent<FluidExperimentInteractor>();
-                EditorUtility.CopySerialized(source.interactor, interactor);
-                var effects = root.AddComponent<FluidExperimentEffects>();
-                effects.cosmeticShader = AssetDatabase.LoadAssetAtPath<Shader>(Root + "/Shaders/FluidExperimentEffects.shader");
                 var rig = root.AddComponent<FluidExperimentRuntimeRig>();
-                rig.world = world; rig.liquid = liquid; rig.interactor = interactor; rig.effects = effects;
-                rig.liquidSettings = source.liquid.settings; rig.catalog = catalog; rig.defaultSplashProfile = splash;
+                BindCocktails(root, world);
+                rig.world = world; rig.liquid = liquid; rig.interactor = interactor;
+                rig.liquidSettings = liquid.settings; rig.catalog = catalog; rig.defaultSplashProfile = splash;
                 rig.defaultIngredient = catalog.entries.Select(entry => entry.ingredient).FirstOrDefault(item => item != null);
                 rig.ApplyConfiguration();
                 PrefabUtility.SaveAsPrefabAsset(root, RuntimePrefabPath);
@@ -402,8 +408,14 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
             finally
             {
                 UnityEngine.Object.DestroyImmediate(root);
-                EditorSceneManager.ClosePreviewScene(reference);
             }
+        }
+
+        private static void BindCocktails(GameObject root, FluidExperimentWorld world)
+        {
+            var session = root.AddComponent<FluidExperimentCocktailSession>();
+            session.world = world;
+            session.uiFont = AssetDatabase.LoadAssetAtPath<Font>("Assets/TextMesh Pro/Fonts/NotoSansKR-Regular.ttf");
         }
 
         private static void EnsureFolder(string path)

@@ -6,9 +6,19 @@ using UnityEngine.Rendering;
 
 namespace Slainte.Bartending.FluidGpuExperiment
 {
+    public enum FluidExperimentIceLiquidMode { NonColliding, Colliding }
+
     /// <summary>Instance-scoped GPU liquid. Does not register with the legacy GPU or particle pool.</summary>
     public sealed partial class FluidExperimentGpuLiquid : MonoBehaviour
     {
+        [Tooltip("F/G only. Both modes retain ice buoyancy and flow drag; Colliding also pushes liquid through GPU contacts.")]
+        public FluidExperimentIceLiquidMode iceLiquidMode = FluidExperimentIceLiquidMode.NonColliding;
+        public bool IceLiquidCollisionEnabled => iceLiquidMode == FluidExperimentIceLiquidMode.Colliding;
+
+        // Garnish samples liquid without displacing it; spoon flow uses the stirring source.
+        private bool ParticipatesInLiquidCollision(FluidExperimentBody body) => body.kind != LabItemKind.Spoon
+            && (!body.IsLooseSolid || (body.kind == LabItemKind.Ice && IceLiquidCollisionEnabled));
+
         public FluidExperimentLiquidSettings settings;
         public Shader drawShader;
         public Camera outputCamera;
@@ -20,6 +30,10 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private Material drawMaterial;
         private MaterialPropertyBlock properties;
         private const int ThreadGroupSize = 64, MaximumBoundarySegments = 2048, MaximumVesselTriggers = 256, MaximumAgitators = 8;
+        private GraphicsBuffer iceVesselBudgetBuffer;
+        private GraphicsBuffer iceStepOriginBuffer;
+        private readonly GpuIceVesselBudget[] iceVesselBudgets = new GpuIceVesselBudget[MaximumVesselTriggers];
+        public float MaximumIceContactSpeed { get; private set; }
         private GraphicsBuffer particleBuffer, compositionA, compositionB, particleColorBuffer, positionDeltaBuffer,
             lambdaBuffer, gridHeadBuffer, gridNextBuffer, freeIndexBuffer, freeCountBuffer, spawnCommandBuffer,
             ingredientVisualBuffer, boundaryBuffer, triggerBuffer, agitatorBuffer, statisticsBuffer, velocitySnapshotBuffer;
@@ -31,7 +45,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private GpuLiquidParticle[] snapshotParticles;
         private float[] snapshotComposition;
         private int resetKernel, resetCompositionKernel, spawnKernel, integrateKernel, clearGridKernel, buildGridKernel,
-            lambdaKernel, deltaKernel, applyKernel, velocityKernel, mixKernel, colorKernel, techniqueKernel,
+            applyKernel, velocityKernel, colorKernel, techniqueKernel,
             translateVesselKernel, pickupContentsKernel, suspendVesselKernel, swapKernel, releaseOwnerKernel, sweepKernel, snapshotVelocityKernel;
         private int particleCapacity, maximumIngredients, gridWidth, gridHeight, gridCellCount, pendingSpawnCount, activeParticleCount;
         private bool compositionAIsCurrent = true;
@@ -66,7 +80,6 @@ namespace Slainte.Bartending.FluidGpuExperiment
             {
                 particleCapacity = Mathf.Max(64, settings.gpuLiquidParticleCapacity);
                 maximumIngredients = Mathf.Clamp(settings.gpuLiquidMaximumIngredients, 1, 32);
-                activeSolver = solver;
                 float h = SolverSmoothingRadius;
                 Vector2 size = settings.gpuLiquidWorldMax - settings.gpuLiquidWorldMin;
                 gridWidth = Mathf.CeilToInt(size.x / h); gridHeight = Mathf.CeilToInt(size.y / h);
@@ -122,7 +135,6 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public float Fill(FluidExperimentBody vessel, ItemDef ingredient, float volume)
         {
             if (!vessel.IsVessel || !IsOperational) return 0;
-            if (useImprovedPhysics) return FillCalibrated(vessel, ingredient, volume);
             float emitted = 0;
             foreach (Rect region in vessel.contentRegions)
             {
@@ -176,23 +188,13 @@ namespace Slainte.Bartending.FluidGpuExperiment
             float subDt = dt / steps;
             simulationShader.SetFloat("_DeltaTime", subDt);
             simulationShader.SetVector("_Gravity", Physics2D.gravity);
-            simulationShader.SetInt("_AgitatorCount", 0); // Spoon and ice use moving solid geometry.
+            PrepareSpoonStir(dt);
             for (int step = 0; step < steps; step++)
             {
                 UploadGeometry(step / (float)steps, (step + 1f) / steps, subDt);
                 DispatchForCount(integrateKernel, particleCapacity);
                 DispatchForCount(sweepKernel, particleCapacity);
-                if (activeSolver == FluidExperimentSolver.ReferenceSph)
-                {
-                    StepReferenceFluid();
-                }
-                else for (int iteration = 0; iteration < settings.gpuLiquidSolverIterations; iteration++)
-                {
-                    RebuildGrid();
-                    DispatchForCount(lambdaKernel, particleCapacity);
-                    DispatchForCount(deltaKernel, particleCapacity);
-                    DispatchForCount(applyKernel, particleCapacity);
-                }
+                StepCohesiveFluid();
                 RebuildGrid();
                 DispatchForCount(snapshotVelocityKernel, particleCapacity);
                 BindCurrentComposition(velocityKernel);
@@ -200,6 +202,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 DispatchForCount(mergeStreamContactsKernel, particleCapacity);
                 DispatchMix();
             }
+            DispatchSpoonMix(dt);
             BindCurrentComposition(colorKernel); DispatchForCount(colorKernel, particleCapacity);
             EndImprovedSurfaceTick(dt);
             simulationTime += dt;
@@ -207,12 +210,12 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         private void UploadGeometry(float from, float to, float dt)
         {
-            int boundaryCount = 0, triggerCount = 0, groupCount = 0, iceBoundaryCount = 0;
+            int boundaryCount = 0, triggerCount = 0, groupCount = 0, iceBoundaryCount = 0, iceBudgetCount = 0;
+            MaximumIceContactSpeed = 0;
             foreach (FluidExperimentBody item in world.Items)
             {
                 if (item == null || item.DispenserCollisionSuppressed) continue;
-                // F peels receive liquid motion but never displace or accelerate it.
-                if (useCohesivePhysics && item.kind == LabItemKind.Garnish) continue;
+                if (!ParticipatesInLiquidCollision(item)) continue;
                 Vector2 previousPosition = Vector2.Lerp(item.PreviousPosition, item.Position, from);
                 Vector2 position = Vector2.Lerp(item.PreviousPosition, item.Position, to);
                 float previousAngle = item.PreviousAngle + item.StepAngle * from;
@@ -224,14 +227,42 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 // penetration repair is not physical wall motion and must not inject
                 // an impulse into F liquid through the boundary response velocity.
                 Vector2 responseTravel = position - previousPosition;
-                if (useCohesivePhysics && item.IsLooseSolid)
+                if (item.IsLooseSolid)
                     responseTravel -= item.IceRecoveryTranslation * (to - from);
                 Vector2 linearVelocity = responseTravel / dt;
                 float angularVelocity = angleDelta / dt;
+                if (item.IsLooseSolid && !item.IsHeld
+                    && item.Body.bodyType == RigidbodyType2D.Dynamic)
+                {
+                    // Native contact projection also changes pose. Its displacement
+                    // is not physical momentum: use solved rigid-body velocities
+                    // for response while retaining the full geometry for CCD.
+                    linearVelocity = item.Body.linearVelocity;
+                    angularVelocity = item.Body.angularVelocity * Mathf.Deg2Rad;
+                }
                 uint flags = (item.IsHeld ? 2u : 0u) | (item.IsLooseSolid ? 4u : 0u)
-                    | (item.IsVessel ? 64u : 0u);
+                    | (item.IsVessel ? 64u : 0u) | (item.kind == LabItemKind.Ice ? 512u : 0u);
                 uint contactOwner = item.IsLooseSolid && item.ContainingVesselId != 0
                     ? item.ContainingVesselId : item.Id;
+                if (item.kind == LabItemKind.Spoon && item.IsHeld && item.SpoonLiquidVessel != null)
+                    contactOwner = item.SpoonLiquidVessel.Id;
+                if (item.kind == LabItemKind.Ice && item.ContainingVesselId != 0)
+                {
+                    // Compression travels beyond the immediate ice contact layer.
+                    // Give that vessel's liquid one physical source-speed budget,
+                    // rather than letting a released pressure packet amplify anew.
+                    int slot = 0;
+                    while (slot < iceBudgetCount && iceVesselBudgets[slot].VesselId != contactOwner) slot++;
+                    if (slot == iceBudgetCount)
+                    {
+                        if (iceBudgetCount >= MaximumVesselTriggers)
+                            throw new InvalidOperationException("FluidExperiment ice-vessel budget exceeded.");
+                        iceVesselBudgets[iceBudgetCount++] = new GpuIceVesselBudget { VesselId = contactOwner };
+                    }
+                    float speed = linearVelocity.magnitude + Mathf.Abs(angularVelocity) * item.SolidBounds.extents.magnitude;
+                    iceVesselBudgets[slot].Speed = Mathf.Max(iceVesselBudgets[slot].Speed, speed);
+                    MaximumIceContactSpeed = Mathf.Max(MaximumIceContactSpeed, speed);
+                }
                 int first = boundaryCount, contourFirst, contourEnd;
                 void UploadPath(Vector2[] path, bool closed, bool vesselContour = false, bool ownershipOnly = false)
                 {
@@ -259,7 +290,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                             StartPosition = previousPosition, EndPosition = position,
                             StartAngle = previousAngle * Mathf.Deg2Rad, AngleDelta = angleDelta
                         };
-                        if (useCohesivePhysics && item.IsLooseSolid && !ownershipOnly)
+                        if (item.IsLooseSolid && !ownershipOnly)
                             iceBoundaryCount++;
                     }
                 }
@@ -317,6 +348,10 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (boundaryCount > 0) boundaryBuffer.SetData(boundaryUpload, 0, 0, boundaryCount);
             if (groupCount > 0) boundaryGroupBuffer.SetData(boundaryGroups, 0, 0, groupCount);
             if (triggerCount > 0) triggerBuffer.SetData(triggerUpload, 0, 0, triggerCount);
+            if (iceBudgetCount > 0) iceVesselBudgetBuffer.SetData(iceVesselBudgets, 0, 0, iceBudgetCount);
+            simulationShader.SetInt("_IceVesselBudgetCount", iceBudgetCount);
+            simulationShader.SetInt("_RigidIceCollisionEnabled", IceLiquidCollisionEnabled ? 1 : 0);
+            simulationShader.SetFloat("_IceContactRelaxationRate", Mathf.Max(0, settings.iceContactRelaxationRate));
             simulationShader.SetInt("_BoundaryCount", boundaryCount);
             simulationShader.SetInt("_CohesiveIceBoundaryCount", iceBoundaryCount);
             simulationShader.SetInt("_BoundaryGroupCount", groupCount);
@@ -340,6 +375,22 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 spawnCommands[i].Velocity = FluidExperimentBody.Rotate(spawnCommands[i].Velocity, turn);
             }
             InvalidateImprovedSurfaceHistory(owner, turn);
+            InvalidateSolidFlowSnapshot();
+        }
+
+        // Release depenetration is a translation of both position histories. It must
+        // never zero liquid velocity or add the vessel's sampled throw velocity.
+        internal void TranslateContentsPreservingMotion(uint owner, Vector2 delta)
+        {
+            if (!IsOperational || owner == 0 || delta.sqrMagnitude < 1e-12f) return;
+            liquidStateVersion++;
+            simulationShader.SetInt("_TransformTargetVessel", unchecked((int)owner));
+            simulationShader.SetVector("_TransformDelta", delta);
+            DispatchForCount(translateVesselKernel, particleCapacity);
+            for (int i = 0; i < pendingSpawnCount; i++)
+                if (spawnCommands[i].VesselId == owner) spawnCommands[i].Position += delta;
+            InvalidateImprovedSurfaceHistory(owner);
+            InvalidateSolidFlowSnapshot();
         }
 
         public void SwapContents(uint a, Vector2 deltaA, uint b, Vector2 deltaB)
@@ -363,9 +414,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
             liquidStateVersion++;
             // F destruction releases commands that have not reached the GPU yet as
             // well as active/reserved GPU particles. Keep their contents and timing.
-            if (useCohesivePhysics)
-                for (int i = 0; i < pendingSpawnCount; i++)
-                    if (spawnCommands[i].VesselId == id) spawnCommands[i].VesselId = 0;
+            for (int i = 0; i < pendingSpawnCount; i++)
+                if (spawnCommands[i].VesselId == id) spawnCommands[i].VesselId = 0;
             simulationShader.SetInt("_TransformTargetVessel", (int)id);
             DispatchForCount(releaseOwnerKernel, particleCapacity);
             ResetImprovedSurfaceHistory();
@@ -456,6 +506,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
             availableSlots = Mathf.Max(0, freeAtCapture - (int)(reservations - capture.reservations));
             SnapshotRevision++;
             PublishLedger(capture);
+            CaptureIcePoolReferences();
+            CaptureIceFlowTransport();
             garnishFlowFrames = capture.garnishFrames;
         }
         public float VolumeIn(uint id)
@@ -474,7 +526,9 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private void QueueDraw(ScriptableRenderContext context, Camera camera)
         {
             if (surfaceRenderer != null) surfaceRenderer.forceRenderingOff = true;
+            HideOwnedLiquidLayers();
             if (!IsOperational || !renderParticles || drawMaterial == null || camera != outputCamera) return;
+            world.UpdateVisualSorting();
             if (useSurfaceRendering && DrawLiquidSurface(context, camera)) return;
             Graphics.DrawProcedural(drawMaterial, new Bounds(Vector3.zero, Vector3.one * 100), MeshTopology.Triangles,
                 6, particleCapacity, outputCamera, properties, ShadowCastingMode.Off, false, world.itemLayer);
@@ -488,8 +542,9 @@ namespace Slainte.Bartending.FluidGpuExperiment
             RenderPipelineManager.beginCameraRendering -= QueueDraw;
             DisposeSurfaceRendering();
             DisposeStreamBuffers();
-            DisposeReferenceBuffers();
+            DisposeCohesiveBuffers();
             DisposeLedgerBuffers();
+            DisposeSpoonStir();
             boundaryGroupBuffer?.Dispose(); boundaryGroupBuffer = null;
             GraphicsBuffer[] buffers = { particleBuffer, compositionA, compositionB, particleColorBuffer, positionDeltaBuffer,
                 lambdaBuffer, gridHeadBuffer, gridNextBuffer, freeIndexBuffer, freeCountBuffer, spawnCommandBuffer,
@@ -499,6 +554,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
             lambdaBuffer = gridHeadBuffer = gridNextBuffer = freeIndexBuffer = freeCountBuffer = spawnCommandBuffer = null;
             ingredientVisualBuffer = boundaryBuffer = triggerBuffer = agitatorBuffer = statisticsBuffer = null;
             velocitySnapshotBuffer = null;
+            iceVesselBudgetBuffer?.Dispose(); iceVesselBudgetBuffer = null;
+            iceStepOriginBuffer?.Dispose(); iceStepOriginBuffer = null;
             if (simulationShader != null) Destroy(simulationShader);
             if (drawMaterial != null) Destroy(drawMaterial);
             ingredients.Clear(); ingredientIndices.Clear();

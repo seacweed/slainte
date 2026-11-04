@@ -1,0 +1,15 @@
+﻿{
+    "timeoutSeconds":  180,
+    "started":  "2026-10-21T04:13:34.1799849+09:00",
+    "arguments":  [
+                      "-batchmode",
+                      "-force-d3d11",
+                      "-projectPath",
+                      "A:\\UnityHub\\proj\\slainte\\Library\\FluidModelDHarness",
+                      "-executeMethod",
+                      "FloatingContentsValidation.Begin",
+                      "-logFile",
+                      "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\20261021-floating-contents-delivery\\Editor.log"
+                  ],
+    "executable":  "A:\\UnityHub\\Unity\\6000.3.5f2\\Editor\\Unity.exe"
+}

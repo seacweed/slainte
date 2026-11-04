@@ -9,13 +9,13 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
     {
         public const string Root = "Assets/_Project/Features/Bartending/FluidGpuExperiment";
         public const string ScenePath = Root + "/Scenes/FluidGpuComparison.unity";
-        [MenuItem("Slainte/Fluid GPU Experiment/Open Comparison")]
+        [MenuItem("Slainte/Fluid GPU Experiment/Open Sandbox")]
         public static void Open()
         {
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
             EditorSceneManager.OpenScene(ScenePath);
         }
-        // Used only to finish wiring the new copied scene. No original assets are saved.
+        // Keeps the authored sandbox layout while binding the active liquid assets.
         public static void Build()
         {
             if (EditorApplication.isPlaying) throw new InvalidOperationException("Exit Play Mode before scene authoring.");
@@ -25,23 +25,26 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
             FluidExperimentDispenserBuilder.BindIfMissing(world);
             var comparison = world.GetComponent<FluidExperimentComparison>();
             if (comparison == null) comparison = world.gameObject.AddComponent<FluidExperimentComparison>();
-            comparison.world = world; comparison.initialMode = FluidExperimentMode.FCoherentLiquid;
-            comparison.effectsShader = AssetDatabase.LoadAssetAtPath<Shader>(Root + "/Shaders/FluidExperimentEffects.shader");
-            if (comparison.effectsShader == null) throw new InvalidOperationException("Liquid effects shader is missing.");
+            comparison.world = world;
             world.showControls = false;
-            world.liquid.referenceAccumulationShader = AssetDatabase.LoadAssetAtPath<Shader>(Root + "/Shaders/FluidExperimentReferenceAccumulation.shader");
-            world.liquid.referenceCompositeShader = AssetDatabase.LoadAssetAtPath<Shader>(Root + "/Shaders/FluidExperimentReferenceComposite.shader");
-            world.liquid.improvedSurfaceCompute = AssetDatabase.LoadAssetAtPath<ComputeShader>(Root + "/Shaders/FluidExperimentImprovedSurface.compute");
-            world.liquid.improvedAccumulationShader = AssetDatabase.LoadAssetAtPath<Shader>(Root + "/Shaders/FluidExperimentImprovedAccumulation.shader");
-            world.liquid.improvedCompositeShader = AssetDatabase.LoadAssetAtPath<Shader>(Root + "/Shaders/FluidExperimentImprovedComposite.shader");
-            if (world.liquid.referenceAccumulationShader == null || world.liquid.referenceCompositeShader == null)
-                throw new InvalidOperationException("Reference surface shaders are missing.");
-            if (world.liquid.improvedSurfaceCompute == null || world.liquid.improvedAccumulationShader == null
-                || world.liquid.improvedCompositeShader == null)
-                throw new InvalidOperationException("Improved surface shaders are missing.");
+            ConfigureLiquid(world.liquid);
             EditorSceneManager.MarkSceneDirty(scene);
-            if (!EditorSceneManager.SaveScene(scene, ScenePath)) throw new InvalidOperationException("Comparison scene save failed.");
-            Debug.Log("[FluidGpuExperiment] Authored isolated A/B/C/D/E/F/G comparison (default F): " + ScenePath);
+            if (!EditorSceneManager.SaveScene(scene, ScenePath)) throw new InvalidOperationException("Sandbox scene save failed.");
+            Debug.Log("[FluidGpuExperiment] Active liquid sandbox is ready: " + ScenePath);
+        }
+
+        internal static void ConfigureLiquid(FluidExperimentGpuLiquid liquid)
+        {
+            if (liquid == null) throw new ArgumentNullException(nameof(liquid));
+            if (liquid.settings == null)
+                liquid.settings = AssetDatabase.LoadAssetAtPath<FluidExperimentLiquidSettings>(Root + "/Data/FluidExperimentLiquidSettings.asset");
+            liquid.drawShader = AssetDatabase.LoadAssetAtPath<Shader>(Root + "/Shaders/FluidExperimentLiquid.shader");
+            liquid.improvedSurfaceCompute = AssetDatabase.LoadAssetAtPath<ComputeShader>(Root + "/Shaders/FluidExperimentImprovedSurface.compute");
+            liquid.improvedAccumulationShader = AssetDatabase.LoadAssetAtPath<Shader>(Root + "/Shaders/FluidExperimentImprovedAccumulation.shader");
+            liquid.improvedCompositeShader = AssetDatabase.LoadAssetAtPath<Shader>(Root + "/Shaders/FluidExperimentImprovedComposite.shader");
+            if (liquid.settings == null || liquid.drawShader == null || liquid.improvedSurfaceCompute == null
+                || liquid.improvedAccumulationShader == null || liquid.improvedCompositeShader == null)
+                throw new InvalidOperationException("Active liquid settings or shader assets are missing.");
         }
     }
 }

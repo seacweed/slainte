@@ -1,0 +1,15 @@
+﻿{
+    "timeoutSeconds":  300,
+    "started":  "2026-10-21T17:26:57.2073602+09:00",
+    "arguments":  [
+                      "-batchmode",
+                      "-force-d3d11",
+                      "-projectPath",
+                      "A:\\UnityHub\\proj\\slainte\\Library\\FluidModelDHarness",
+                      "-executeMethod",
+                      "FloatingContentsPlayLoopValidation.BeginNananga",
+                      "-logFile",
+                      "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\20261021-garnish-render-nananga\\Editor.log"
+                  ],
+    "executable":  "A:\\UnityHub\\Unity\\6000.3.5f2\\Editor\\Unity.exe"
+}

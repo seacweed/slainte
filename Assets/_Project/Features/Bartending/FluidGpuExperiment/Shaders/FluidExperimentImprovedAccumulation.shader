@@ -25,6 +25,7 @@ Shader "Hidden/Slainte/FluidExperiment/ImprovedAccumulation"
         StructuredBuffer<Hull> _ImprovedHulls;
         StructuredBuffer<float2> _ImprovedHullVertices;
         int _ImprovedHullCount, _SurfaceVesselCount;
+        int _SurfaceOwnerFilterEnabled, _SurfaceOwnerFilter;
         float _SurfaceInterpolation, _GpuParticleZ;
         struct Attributes { uint vertexId:SV_VertexID; uint instanceId:SV_InstanceID; };
         struct Varyings
@@ -101,6 +102,8 @@ Shader "Hidden/Slainte/FluidExperiment/ImprovedAccumulation"
             output.weight = e.coverageWeight;
             output.active = e.active != 0u && _SurfaceInterpolation + .000001 >= e.birthFraction ? 1u : 0u;
             output.owner = e.vesselId;
+            if (_SurfaceOwnerFilterEnabled != 0 && e.vesselId != (uint)_SurfaceOwnerFilter)
+            { output.active = 0u; return output; }
             for (int i = 1; i < _SurfaceVesselCount; ++i)
                 if ((uint)_SurfaceVessels[i].x == e.vesselId) { output.held = (uint)_SurfaceVessels[i].w; break; }
             float2 extent = abs(e.direction) * e.radii.x + abs(side) * e.radii.y;

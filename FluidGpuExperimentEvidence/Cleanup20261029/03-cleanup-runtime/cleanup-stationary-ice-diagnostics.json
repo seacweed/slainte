@@ -1,0 +1,39 @@
+{
+    "naturalness": "NOT_VALIDATED",
+    "fixtures": [
+        {
+            "iceCount": 1,
+            "ticks": 250,
+            "seconds": 5.0,
+            "requestedMl": 40.0,
+            "acceptedMl": 40.0,
+            "finalMl": 40.0,
+            "floorY": -3.25,
+            "initialWaterHeight": -2.5802078247070314,
+            "maxWaterSpeed": 0.051075033843517306,
+            "peakSurfaceRise": 0.0007328987121582031,
+            "lateWaterEnergy": 0.002270506927743554,
+            "maxIceSpeed": 0.36032015085220339,
+            "maxIceAngularSpeed": 2.5487895011901857,
+            "maxIceWallPenetration": 0.0,
+            "scope": "Per-tick completed GPU snapshots in a floor-supported stationary glass with dynamic gravity-enabled ice. Speed/energy/surface maxima are diagnostics, not naturalness acceptance."
+        },
+        {
+            "iceCount": 3,
+            "ticks": 250,
+            "seconds": 5.0,
+            "requestedMl": 40.0,
+            "acceptedMl": 40.0,
+            "finalMl": 40.0,
+            "floorY": -3.25,
+            "initialWaterHeight": -2.5800726413726808,
+            "maxWaterSpeed": 0.05362943187355995,
+            "peakSurfaceRise": 0.0006768703460693359,
+            "lateWaterEnergy": 0.0024623246863484384,
+            "maxIceSpeed": 0.4483206868171692,
+            "maxIceAngularSpeed": 46.78043746948242,
+            "maxIceWallPenetration": 0.0011242842301726342,
+            "scope": "Per-tick completed GPU snapshots in a floor-supported stationary glass with dynamic gravity-enabled ice. Speed/energy/surface maxima are diagnostics, not naturalness acceptance."
+        }
+    ]
+}

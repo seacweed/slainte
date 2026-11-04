@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed3c9902833f4424af9720fa3a5faa0f, type: 3}
+  m_Name: FluidExperimentLiquidSettings
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentLiquidSettings
+  gpuLiquidAgitationMixRate: 8
+  gpuLiquidArtificialPressureRadiusRatio: 0.3
+  gpuLiquidArtificialPressureStrength: 0.00035
+  gpuLiquidBottomImpactSpread: 0
+  gpuLiquidBoundaryDensityScale: 4
+  gpuLiquidClosedVesselDampingRate: 2
+  gpuLiquidClosedVesselMaximumRelativeSpeed: 6
+  gpuLiquidComputeShader: {fileID: 7200000, guid: 38b42cf1facd4686b0f8928dd8ef99cf, type: 3}
+  gpuLiquidDensityCompliance: 0.000001
+  gpuLiquidFullMixRelativeSpeed: 0.8
+  gpuLiquidLambdaEpsilon: 0.01
+  gpuLiquidMaximumIngredients: 16
+  gpuLiquidMaximumMixPerSubstep: 0.3
+  gpuLiquidMaximumSpeed: 20
+  gpuLiquidParticleCapacity: 4096
+  gpuLiquidParticleRadius: 0.065
+  gpuLiquidParticleVolumeMl: 0.5
+  gpuLiquidPassiveMixRate: 0.02
+  gpuLiquidRestDensity: 150
+  gpuLiquidSmoothingRadius: 0.16
+  gpuLiquidSolverIterations: 5
+  gpuLiquidSplashMinimumImpactSpeed: 1.1
+  gpuLiquidSplashTransfer: 0.06
+  gpuLiquidSubsteps: 2
+  gpuLiquidVelocityDamping: 0.003
+  gpuLiquidViscosity: 0.02
+  gpuLiquidWallFriction: 0.01
+  gpuLiquidWallRestitution: 0
+  gpuLiquidWorldMax: {x: 25, y: 20}
+  gpuLiquidWorldMin: {x: -25, y: -12}
+  liquidMinimumVisibleAlpha: 0.05
+  surfaceAccumulationShader: {fileID: 4800000, guid: 6e1f03b97db049859db6b6a8bec7e03f, type: 3}
+  surfaceCompositeShader: {fileID: 4800000, guid: 520f8b5dfca5448ca064624708336b8f, type: 3}
+  surfaceDisplayShader: {fileID: 4800000, guid: 637b362a1ace41e8b6bfec3b3d5930b2, type: 3}
+  surfaceResolutionScale: 1
+  containedRenderRadius: 1.45
+  airborneRenderRadius: 1.6
+  airborneStretch: 2.2
+  airborneFullStretchSpeed: 4
+  surfaceThreshold: 0.3
+  surfaceMergeStrength: 0.8
+  surfaceEdgeSoftness: 0.035
+  surfaceHighlightStrength: 0.3
+  surfaceHighlightWidth: 1.5
+  streamAccumulationShader: {fileID: 4800000, guid: 9bbfc53ced6945a6b18699e51cee7a39, type: 3}
+  streamMaximumTimeGap: 0.075
+  streamMaximumLength: 0.65

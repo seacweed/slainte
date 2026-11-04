@@ -40,11 +40,8 @@ RWStructuredBuffer<History> _History;
 RWStructuredBuffer<Ellipse> _Ellipses;
 StructuredBuffer<int> _GridHeads, _GridNext;
 StructuredBuffer<float4> _SurfaceVessels;
-StructuredBuffer<float4> _SurfaceMaterials;
-StructuredBuffer<float> _CompositionRead;
-int _ParticleCapacity, _GridWidth, _GridHeight, _SurfaceVesselCount, _UseAreaCalibration, _RebaseVessel;
+int _ParticleCapacity, _GridWidth, _GridHeight, _SurfaceVesselCount, _RebaseVessel;
 float2 _RebaseRotation;
-int _IngredientCount, _MaximumIngredients;
 float _TickStartTime, _TickDuration, _ParticleRadius, _NominalVolume, _SupportMultiplier, _MaximumAspect, _CellSize;
 float2 _GridOrigin;
 
@@ -117,21 +114,9 @@ void BuildSurfaceEllipses(uint3 id : SV_DispatchThreadID)
     result.birthTime = stream.birthTime; result.token = stream.token;
     result.vesselId = p.vesselId; result.active = 1u;
     result.opacityScale = 1;
-    if (_UseAreaCalibration != 0 && _IngredientCount > 0)
-    {
-        float opacity = 0, composition = 0;
-        for (int ingredient = 0; ingredient < _IngredientCount; ++ingredient)
-        {
-            float ratio = max(0, _CompositionRead[index * (uint)_MaximumIngredients + ingredient]);
-            opacity += ratio * _SurfaceMaterials[ingredient].x; composition += ratio;
-        }
-        if (composition > .00001) result.opacityScale = clamp(opacity / composition, .1, 4);
-    }
 
     float4 vessel = VesselParameters(p.vesselId);
-    float support = _UseAreaCalibration != 0
-        ? sqrt(max(.000001, _NominalVolume * vessel.y)) * 1.5
-        : _ParticleRadius * _SupportMultiplier;
+    float support = _ParticleRadius * _SupportMultiplier;
     float h = max(_CellSize * .5, vessel.z);
     float mass = p.volumeMl / max(.00001, _NominalVolume);
     float weightSum = max(.000001, mass);

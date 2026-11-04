@@ -444,6 +444,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentBody
   kind: 1
   displayName: Highball
+  servingGlassId: highball
   ingredient: {fileID: 0}
   liquidWall:
   - {x: -0.5706793, y: 0.6553389}

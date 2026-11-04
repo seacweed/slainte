@@ -1,0 +1,14 @@
+{
+  "sourceArchivePreserved": true,
+  "removedProjectBytes": 1696540661,
+  "removedTemporaryFiles": [
+    "tmp/ice-local-before-source/FluidExperimentBody.GarnishMotion.cs",
+    "tmp/ice-local-before-source/FluidExperimentGpuLiquid.Garnish.cs",
+    "tmp/Run-FloatingFinalBatch.ps1",
+    "tmp/Run-FloatingRegressionBatch.ps1",
+    "tmp/Run-PhysicsAnalysis.ps1"
+  ],
+  "finished": "2026-10-29T11:18:44.7461449+09:00",
+  "removedProject": "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\HarnessProject",
+  "removedProjectFiles": 20334
+}

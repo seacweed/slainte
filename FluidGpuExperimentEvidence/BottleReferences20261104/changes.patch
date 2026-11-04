@@ -1,0 +1,180 @@
+--- before/Editor/FluidExperimentAssemblyBuilder.cs
++++ after/Editor/FluidExperimentAssemblyBuilder.cs
+@@ -303,22 +303,36 @@
+                 AssetDatabase.CreateAsset(catalog, CatalogPath);
+             }
+             var entries = new List<FluidExperimentAuthoringCatalog.Entry>(catalog.entries);
++            bool changed = false;
+             foreach (string path in Directory.GetFiles(Root + "/Prefabs", "*.prefab").OrderBy(path => path, StringComparer.Ordinal))
+             {
+                 string normalized = path.Replace('\\', '/');
+                 string guid = AssetDatabase.AssetPathToGUID(normalized);
+-                if (entries.Any(entry => entry != null && entry.id == guid)) continue;
+                 var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(normalized);
+                 // The world owns one dispenser; catalog spawning would create an unmanaged duplicate.
+                 if (prefab.GetComponent<FluidExperimentDispenser>() != null) continue;
+                 var body = prefab.GetComponent<FluidExperimentBody>();
++                var existingEntry = entries.FirstOrDefault(entry => entry != null && entry.id == guid);
++                if (existingEntry != null)
++                {
++                    // The bottle prefab owns its ingredient and presentation identity.
++                    if (body != null && body.kind == LabItemKind.Bottle
++                        && (existingEntry.prefab != prefab || existingEntry.ingredient != body.ingredient
++                            || existingEntry.displayName != body.displayName || existingEntry.category != "Bottle"))
++                    {
++                        existingEntry.prefab = prefab; existingEntry.ingredient = body.ingredient;
++                        existingEntry.displayName = body.displayName; existingEntry.category = "Bottle";
++                        changed = true;
++                    }
++                    continue;
++                }
+                 var source = prefab.GetComponent<FluidExperimentGarnishSource>();
+                 entries.Add(new FluidExperimentAuthoringCatalog.Entry { id = guid, prefab = prefab,
+                     displayName = body != null ? body.displayName : source != null ? source.displayName : prefab.name,
+                     category = body != null ? body.kind.ToString() : "Garnish Source",
+                     ingredient = body != null ? body.ingredient : null });
+             }
+-            if (entries.Count != catalog.entries.Length)
++            if (changed || entries.Count != catalog.entries.Length)
+             { catalog.entries = entries.ToArray(); EditorUtility.SetDirty(catalog); }
+             return catalog;
+         }
+--- before/Editor/FluidExperimentPrefabAudit.cs
++++ after/Editor/FluidExperimentPrefabAudit.cs
+@@ -1,5 +1,6 @@
+ using System;
+ using System.Collections.Generic;
++using System.IO;
+ using System.Linq;
+ using UnityEditor;
+ using UnityEditor.SceneManagement;
+@@ -33,6 +34,7 @@
+                 return errors;
+             }
+             var ids = new HashSet<string>(StringComparer.Ordinal);
++            var bottleIngredients = new HashSet<string>(StringComparer.Ordinal);
+             foreach (var entry in catalog.entries)
+             {
+                 if (entry == null) { errors.Add("Catalog contains an empty entry."); continue; }
+@@ -46,6 +48,24 @@
+                     errors.Add(path + ": dispenser must be owned by World, outside the spawn catalog.");
+                 if (body != null && entry.ingredient != body.ingredient)
+                     errors.Add(path + ": catalog ingredient differs from the prefab ingredient.");
++                if (body != null && body.kind == LabItemKind.Bottle)
++                {
++                    if (entry.id != AssetDatabase.AssetPathToGUID(path) || entry.category != "Bottle"
++                        || entry.displayName != body.displayName)
++                        errors.Add(path + ": bottle catalog identity, category or display name differs from its prefab.");
++                    if (body.ingredient != null && !bottleIngredients.Add(body.ingredient.id))
++                        errors.Add(path + ": multiple bottle entries use ingredient " + body.ingredient.id);
++                    if (body.ingredient != null && Path.GetFileNameWithoutExtension(path) != "Bottle_" + body.ingredient.id)
++                        errors.Add(path + ": bottle filename differs from its ingredient ID.");
++                }
++            }
++            foreach (string guid in AssetDatabase.FindAssets("t:Prefab", new[] { FluidExperimentBuilder.Root + "/Prefabs" }))
++            {
++                string path = AssetDatabase.GUIDToAssetPath(guid);
++                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
++                var body = prefab != null ? prefab.GetComponent<FluidExperimentBody>() : null;
++                if (body != null && body.kind == LabItemKind.Bottle && !paths.Contains(path))
++                    errors.Add(path + ": bottle is missing from the authoring catalog.");
+             }
+             paths.Add(FluidExperimentDispenserBuilder.PrefabPath);
+             paths.Add(FluidExperimentAssemblyBuilder.RuntimePrefabPath);
+@@ -91,6 +111,7 @@
+                     errors.Add(label + ": recipe glass ID is missing.");
+                 if (body.kind == LabItemKind.Bottle && (body.ingredient == null || string.IsNullOrWhiteSpace(body.ingredient.id)))
+                     errors.Add(label + ": bottle ingredient or ingredient ID is missing.");
++                if (body.kind == LabItemKind.Bottle) ValidateBottle(body, label, errors);
+                 if (body.kind == LabItemKind.IceBucket && body.icePrefab == null)
+                     errors.Add(label + ": ice prefab is missing.");
+                 if (body.kind == LabItemKind.Shaker && (body.shakerProfile == null || body.shakerPartTemplate == null
+@@ -105,6 +126,41 @@
+                     || dispenser.bodyRenderer == null || dispenser.noneSprite == null || dispenser.iceSprite == null
+                     || dispenser.hotSprite == null || dispenser.hoseMaterial == null)
+                     errors.Add(path + ": dispenser supply or artwork reference is missing.");
++        }
++
++        private static void ValidateBottle(FluidExperimentBody body, string label, List<string> errors)
++        {
++            if (body.pickCollider == null || !body.pickCollider.isTrigger
++                || !body.pickCollider.transform.IsChildOf(body.transform))
++                errors.Add(label + ": bottle pick trigger must belong to this bottle.");
++            if (body.solidColliders == null || body.solidColliders.Length == 0
++                || body.solidColliders.Any(c => c == null || c.isTrigger || !c.transform.IsChildOf(body.transform)))
++                errors.Add(label + ": bottle solid colliders are missing, triggers or foreign references.");
++            if (!body.GetComponentsInChildren<SpriteRenderer>(true).Any(r => r.sprite != null))
++                errors.Add(label + ": bottle artwork is missing.");
++            var profile = body.collisionProfile;
++            if (profile != null && (profile.solids == null || profile.solids.Length == 0
++                || profile.solids.Any(h => h == null || h.points == null || h.points.Length < 3
++                    || h.points.Any(p => !float.IsFinite(p.x) || !float.IsFinite(p.y)))
++                || !float.IsFinite(profile.mouth.x) || !float.IsFinite(profile.mouth.y)
++                || !float.IsFinite(profile.exitDirection.x) || !float.IsFinite(profile.exitDirection.y)
++                || profile.exitDirection.sqrMagnitude < .000001f))
++                errors.Add(label + ": bottle collision hull, mouth or exit direction is invalid.");
++            if (!float.IsFinite(body.capacityMl) || !float.IsFinite(body.remainingMl)
++                || body.capacityMl <= 0 || body.remainingMl < 0 || body.remainingMl > body.capacityMl
++                || !float.IsFinite(body.pourMlPerSecond) || body.pourMlPerSecond <= 0
++                || !float.IsFinite(body.pourStartAngle) || !float.IsFinite(body.fullPourAngle)
++                || body.pourStartAngle < 0 || body.fullPourAngle <= body.pourStartAngle || body.fullPourAngle > 180
++                || !float.IsFinite(body.exitSpeed) || body.exitSpeed < 0)
++                errors.Add(label + ": bottle supply or pouring settings are invalid.");
++            if (body.gameObject.scene.IsValid())
++            {
++                var source = PrefabUtility.GetCorrespondingObjectFromSource(body);
++                if (source == null)
++                    errors.Add(label + ": scene bottle has no source prefab connection.");
++                else if (body.ingredient != source.ingredient || body.collisionProfile != source.collisionProfile)
++                    errors.Add(label + ": scene bottle overrides its prefab ingredient or collision profile.");
++            }
+         }
+ 
+         private static void ValidateRig(FluidExperimentRuntimeRig rig, string path, bool sceneInstance, List<string> errors)
+--- before/Scenes/FluidGpuComparison.unity
++++ after/Scenes/FluidGpuComparison.unity
+@@ -189,10 +189,6 @@
+     serializedVersion: 3
+     m_TransformParent: {fileID: 379435369}
+     m_Modifications:
+-    - target: {fileID: 777262680673658179, guid: ab133b0cfa2b4e81b399f227e7532073, type: 3}
+-      propertyPath: m_Name
+-      value: Bottle_item_1003
+-      objectReference: {fileID: 0}
+     - target: {fileID: 6395275127943403733, guid: ab133b0cfa2b4e81b399f227e7532073, type: 3}
+       propertyPath: m_LocalPosition.x
+       value: -5.6000004
+@@ -829,10 +825,6 @@
+       propertyPath: m_LocalEulerAnglesHint.z
+       value: 0
+       objectReference: {fileID: 0}
+-    - target: {fileID: 3659684557028844266, guid: 4c1a4a39e6644696b907b9d828123535, type: 3}
+-      propertyPath: m_Name
+-      value: Bottle_item_1002
+-      objectReference: {fileID: 0}
+     m_RemovedComponents: []
+     m_RemovedGameObjects: []
+     m_AddedGameObjects: []
+@@ -1041,10 +1033,6 @@
+     serializedVersion: 3
+     m_TransformParent: {fileID: 379435369}
+     m_Modifications:
+-    - target: {fileID: 1241430249480759458, guid: ee4369df1df0483fa6ffa93af11ccabc, type: 3}
+-      propertyPath: m_Name
+-      value: Bottle_item_1001
+-      objectReference: {fileID: 0}
+     - target: {fileID: 5119563962295965749, guid: ee4369df1df0483fa6ffa93af11ccabc, type: 3}
+       propertyPath: m_LocalPosition.x
+       value: -11
+--- before/README.md
++++ after/README.md
+@@ -57,3 +57,9 @@
+ 현재 정리의 범위·보존 비교·실행 결과와 한계는 [Cleanup20261029 보고서](../../../../../FluidGpuExperimentEvidence/Cleanup20261029/report.md)에 기록한다. 원본은 같은 폴더의 `before.zip`, `before-manifest.json`과 Git 상태·패치에 보관한다. 이전 실행 자료는 당시 코드의 근거이며 현재 정리본의 실행 결과와 구분한다.
+ 
+ [prepare_validation.py](../../../../../FluidGpuExperimentEvidence/Cleanup20261029/prepare_validation.py)는 현재 소스와 고정된 공유 의존성을 `Library` 하위의 폐기 가능한 검증 프로젝트로 복사한다. 프로젝트 루트에서 `python FluidGpuExperimentEvidence/Cleanup20261029/prepare_validation.py`로 준비한다. 원본 프로젝트의 실행 중인 Editor·AssetImportWorker를 확인한 뒤 별도 프로젝트에서 컴파일·GPU 회귀·참조 검증을 수행한다. 통과 여부는 보고서와 해당 실행 산출물로 확인한다. 자동·오프스크린 검증은 사람이 보는 튐·회전·누출·조작감과 시각적 자연스러움을 대신하지 않는다.
++
++## 병 프리팹 관리
++
++`Prefabs/Bottle_item_1001.prefab`부터 `Bottle_item_1015.prefab`까지 15종을 병별 원본으로 관리한다. 각 병의 재료·외형·충돌 프로필·붓기 설정은 해당 프리팹에서 수정한다. 형태가 서로 다르므로 현재는 개별 프리팹을 유지한다. 샌드박스의 초기 병 3개는 원본 프리팹을 참조하고 배치 Transform만 별도로 저장한다.
++
++`Slainte > Fluid GPU Experiment > Validate Prefab References`는 15종 전체의 카탈로그 등록, 재료 ID, 외형, 충돌·선택 Collider, 주입구·배출 방향, 용량·붓기 값, 씬 연결을 함께 검사한다. 기존 `Slainte > Fluid GPU Experiment > Build Reusable Runtime Assets` 실행 시 병 카탈로그의 재료·표시 이름·분류는 프리팹 원본 값으로 동기화된다.
