@@ -9,22 +9,15 @@
 - [섹션별 작성법](#섹션별-작성법)
   - [META](#meta)
   - [TRIGGER](#trigger)
-  - [PLAY_TRIGGER](#play_trigger)
-  - [OPENING_CHARS](#opening_chars)
-  - [BOARD](#board)
-  - [BOARD_CHARS](#board_chars)
   - [SETTLEMENT_REWARDS](#settlement_rewards)
-  - [SELECT_CHARS](#select_chars)
   - [NODES](#nodes)
   - [NODE_CRAFTING_BRANCHES](#node_crafting_branches)
   - [NODE_CHARS](#node_chars)
   - [CHOICES](#choices)
   - [NODE_BRANCHES](#node_branches)
-  - [NODE_VAR_BRANCHES](#node_var_branches)
-  - [NODE_EPISODE_BRANCHES](#node_episode_branches)
 - [특수 표기법](#특수-표기법)
 - [작성 예시](#작성-예시)
-- [영업 인카운터 풀에 연결](#영업-인카운터-풀에-연결)
+- [영업 일정에 배정](#영업-일정에-배정)
 - [임포트 방법](#임포트-방법)
 - [자주 하는 실수](#자주-하는-실수)
 
@@ -40,8 +33,8 @@
 
 ## 전체 구조
 
-파일은 `#섹션명` 으로 구분된 최대 16개 섹션으로 이루어집니다.  
-각 섹션은 **헤더 행(열 이름)** → **데이터 행** 순서로 작성합니다.
+파일은 `#섹션명` 으로 구분된 최대 11개 섹션으로 이루어집니다.  
+각 섹션은 **헤더 행(열 이름)** → **데이터 행** 순서로 작성합니다. 열은 **헤더의 열 이름으로 찾으므로** 열 순서를 바꾸거나 쓰지 않는 열을 빼도 됩니다.
 
 ```
 #META
@@ -49,24 +42,6 @@
 (데이터 행)
 
 #TRIGGER
-...
-
-#PLAY_TRIGGER
-...
-
-#SELECT_TRIGGER
-...
-
-#SELECT_CHARS
-...
-
-#OPENING_CHARS
-...
-
-#BOARD
-...
-
-#BOARD_CHARS
 ...
 
 #SETTLEMENT_REWARDS
@@ -86,13 +61,11 @@
 
 #NODE_BRANCHES
 ...
-
-#NODE_VAR_BRANCHES
-...
-
-#NODE_EPISODE_BRANCHES
-...
 ```
+
+> 기획 개편으로 `#PLAY_TRIGGER`, `#SELECT_TRIGGER`, `#SELECT_CHARS`, `#BOARD`, `#BOARD_CHARS`, `#OPENING_CHARS` 섹션과 `#META`의 `episodeType`, `mandatorySlot` 열은 **없어졌습니다**. 남아 있어도 임포트는 되지만 무시되며 Console에 경고가 뜹니다 — CSV에서 지워 주세요.
+>
+> 조건 분기도 `#NODE_BRANCHES` 한 섹션으로 합쳐졌습니다. 예전 형식(`#NODE_BRANCHES`의 `requiredAllFlags` 열, `#NODE_VAR_BRANCHES`, `#NODE_EPISODE_BRANCHES`)은 아직 읽히지만 경고가 뜹니다 — [NODE_BRANCHES](#node_branches)의 새 형식으로 옮겨 주세요(그래프에서 Compile하면 자동으로 새 형식으로 다시 써집니다).
 
 > 빈 행은 무시됩니다. 가독성을 위해 섹션 사이에 빈 행을 추가해도 됩니다. 완전히 빈 줄뿐 아니라 **모든 셀이 비어있는 콤마만 있는 줄**(`,,,,,,,,,,,`, 스프레드시트에서 열 개수를 맞추려고 자동으로 채워지는 흔적)도 데이터 행으로 취급되지 않고 건너뜁니다.
 
@@ -102,194 +75,63 @@
 
 ### META
 
-에피소드의 기본 정보입니다. **데이터 행은 반드시 1개** 작성합니다.
+에피소드의 기본 정보와 **영업 일정(등장 시점)**입니다. **데이터 행은 반드시 1개** 작성합니다.
 
 | 열 | 설명 | 예시 |
 |---|---|---|
 | `episodeId` | 에피소드 고유 ID (에셋 파일명에 사용됨) | `StrangeCoin_0` |
-| `episodeTitle` | 게임에 표시될 에피소드 제목 | `이상한 동전 - 0` |
+| `episodeTitle` | 에피소드 제목 | `이상한 동전 - 0` |
 | `firstNodeId` | 대화가 시작될 첫 번째 노드 ID | `0` |
-| `episodeType` | `Default`(Rest 보드에서 직접 선택) / `Mandatory`(영업 전후 자동 삽입) / `Encounter`(영업 중 인카운터). 비우면 `Default` | `Encounter` |
-| `mandatorySlot` | `episodeType=Mandatory`일 때만 사용. `BeforeBusiness` / `AfterBusiness`. 비우면 `None` | `BeforeBusiness` |
-| `chapterId` | 소속 챕터 ID (`ChapterData.chapterId`와 매칭, 챕터 스코프 필수 에피소드 큐 조회에 사용) | `chapter_1` |
+| `chapterId` | 소속 챕터 ID (`ChapterData.chapterId`와 매칭). 비우면 모든 챕터에서 후보가 됨 | `Sector0` |
+| `day` | 등장하는 날짜(1부터). **비우면 영업에 자동으로 등장하지 않습니다** | `5` |
+| `slot` | 그 날의 손님 슬롯 번호(1~하루 손님 수, 기본 1~5) | `3` |
+| `priority` | 같은 `day`/`slot`에 후보가 여럿일 때 우선순위. **큰 값부터** 등장 조건을 확인. 비우면 0 | `10` |
 
 ```csv
 #META
-episodeId,episodeTitle,firstNodeId,episodeType,mandatorySlot,chapterId
-StrangeCoin_0,이상한 동전 - 0,0,Encounter,None,chapter_1
+episodeId,episodeTitle,firstNodeId,chapterId,day,slot,priority
+StrangeCoin_0,이상한 동전 - 0,0,Sector0,5,3,
 ```
 
-> `episodeType`/`mandatorySlot`/`chapterId` 열은 생략해도 됩니다(빈 값은 각각 `Default`/`None`/빈 문자열로 처리됨). 기존 CSV를 그대로 재임포트해도 문제없습니다.
->
-> `Encounter`는 Rest 보드와 필수 에피소드 큐에 나타나지 않습니다. 실제 영업에서 실행하려면 `BusinessOrderFlowSettings.requiredActions` 또는 개발용 통합 테스트 설정에 해당 에피소드를 `EncounterEpisode` 액션으로 등록해야 합니다.
+- 같은 `day`/`slot`에 여러 에피소드를 배정할 수 있습니다. 슬롯 차례가 오면 `priority`가 큰 것부터 `#TRIGGER`(등장 조건)를 확인해 **처음 만족하는 하나만** 등장합니다. 하나도 만족하지 않으면 그 슬롯에는 랜덤 손님이 옵니다.
+- 같은 `priority`끼리는 `episodeId` 순서로 확인합니다. 의도한 순서가 있다면 `priority`를 다르게 주세요.
+- 이미 완료한 에피소드는 다시 등장하지 않습니다. 조건 미충족으로 등장하지 못한 에피소드는 다른 날로 밀리지 않습니다.
 
 ---
 
 ### TRIGGER
 
-이 에피소드가 작전판(Rest 화면)에 **해금(노출)**되는 조건입니다. **행 하나 = 조건 하나**이며, 여러 행을 작성하면 **AND로 결합**됩니다(`SELECT_TRIGGER`와 같은 행 방식이지만, 옵션이 아니라 항목이 전부 AND로 묶인다는 점이 다릅니다). 작전판 툴팁에는 이 행들이 **작성한 순서 그대로, 행별 텍스트와 함께** 표시됩니다.
+이 에피소드의 **등장 조건**입니다. 배정된 슬롯 차례가 왔을 때 판정합니다(같은 날 앞 슬롯에서 세운 flag도 반영됨). **행 하나 = 조건 하나**이며, 여러 행은 **AND로 결합**됩니다.
 
-- 컬럼: `conditionType`(`MinDay`/`RequiredFlag`/`PrerequisiteEpisode`/`RequiredVar`/`MinMoney` 중 하나), `conditionValue`(타입에 따라 의미가 다름 — 아래 표), `text`(툴팁에 표시할 커스텀 힌트. 비우면 조건에서 문구를 자동 생성)
-- **생략 가능** — 섹션 자체를 안 쓰면 "해금 조건 없음"(항상 노출)으로 처리됩니다.
-- `blockedFlags`/`requiredCustomerAppearances` 조건은 CSV로 작성할 수 없습니다 — 필요하면 에셋 인스펙터에서 `triggerCondition` 필드에 직접 입력하세요(그 경우 툴팁에는 표시되지 않습니다).
+- 컬럼: `conditionType`, `conditionValue`
+- **생략 가능** — 섹션을 안 쓰거나 비우면 "조건 없음"(배정된 슬롯에서 항상 등장)입니다.
 
-| `conditionType` | `conditionValue` 형식 | 예시 |
-|---|---|---|
-| `MinDay` | 숫자 | `3` |
-| `RequiredFlag` | 플래그 이름 | `flag_met_customer` |
-| `PrerequisiteEpisode` | 에피소드 ID | `Intro_0` |
-| `RequiredVar` | `varName연산자값` (연산자: `>=` `>` `==` `<` `<=`) | `sally_affinity>=5` |
-| `MinMoney` | 숫자(소지금 이 값 이상이어야 함) | `500000` |
+| `conditionType` | `conditionValue` 형식 | 의미 | 예시 |
+|---|---|---|---|
+| `MinDay` | 숫자 | 이 날짜 이상 | `3` |
+| `MinMoney` | 숫자 | 소지금 이 값 이상 | `150000` |
+| `RequiredFlag` | 플래그 이름 | 이 플래그가 켜져 있어야 함 | `sc_0_good` |
+| `BlockedFlag` | 플래그 이름 | 이 플래그가 켜져 있으면 등장 안 함 | `sc_0_bad` |
+| `PrerequisiteEpisode` | 에피소드 ID | 이 에피소드를 완료했어야 함 | `StrangeCoin_0` |
+| `RequiredVar` | `varName연산자값` (연산자: `>=` `>` `==` `<` `<=`) | 수치 변수 조건 | `sally_affinity>=5` |
+| `CustomerAppearance` | `characterKey>=횟수` | 그 손님이 랜덤 손님으로 이 횟수 이상 등장했어야 함 | `f72>=3` |
 
 ```csv
 #TRIGGER
-conditionType,conditionValue,text
-MinDay,3,3일차 이후
-RequiredFlag,flag_met_customer,손님과 첫 만남
+conditionType,conditionValue
+PrerequisiteEpisode,StrangeCoin_0
+RequiredFlag,sc_0_good
 ```
 
----
-
-### PLAY_TRIGGER
-
-`TRIGGER`(해금 조건)와 컬럼 구성·문법이 완전히 동일하지만 의미가 다릅니다 — 이 조건을 만족해야 작전판에서 **Play 버튼이 활성화**됩니다. 해금은 됐지만 아직 플레이는 못 하는 상태(예: 사진은 작전판에 떴지만 눌러보면 버튼이 비활성)를 표현할 때 씁니다.
-
-- **생략 가능** — 섹션 자체를 안 쓰면 "플레이 조건 없음"(해금되면 바로 플레이 가능)으로 처리됩니다.
-- 작전판 툴팁에는 `TRIGGER`와 `PLAY_TRIGGER`의 모든 행이 **한 목록에 합쳐져서** 표시됩니다(순서는 TRIGGER 행들 다음 PLAY_TRIGGER 행들).
-
-```csv
-#PLAY_TRIGGER
-conditionType,conditionValue,text
-RequiredVar,sally_affinity>=5,사라 호감도 5 이상
-PrerequisiteEpisode,Intro_0,'인트로' 에피소드 완료
-```
-
-> **주의**: `TRIGGER`/`PLAY_TRIGGER`는 `SELECT_TRIGGER`와 마찬가지로 재임포트 시 항상 CSV 내용으로 전체 교체됩니다(섹션이 있으면 없는 행은 사라짐). 섹션 자체를 안 쓰면 "조건 없음"으로 처리될 뿐, 기존 값이 유지되지는 않습니다.
-
----
-
-### SELECT_TRIGGER
-
-작전판 툴팁에서 플레이어가 직접 on/off로 토글할 수 있는 조건입니다. `TRIGGER`/`PLAY_TRIGGER`와 달리 **Play 버튼 활성화 여부에 영향을 주지 않습니다** — 어떤 옵션도 미충족/미선택이어도 에피소드는 평소대로 플레이 가능합니다.
-
-- **행 하나 = 옵션 하나**입니다. 여러 옵션을 만들고 싶으면 행을 여러 개 작성하세요(`OPENING_CHARS`처럼 다중 행 섹션)
-- **옵션들은 서로 배타적**입니다 — 툴팁에서 하나를 켜면 나머지는 자동으로 꺼집니다(라디오 버튼처럼 동작)
-- **옵션 하나당 조건은 딱 하나**입니다(`TRIGGER`/`PLAY_TRIGGER`처럼 여러 조건을 AND로 걸 수 없음). 조건을 여러 개 걸고 싶으면 옵션(행)을 여러 개로 나눠서 작성하세요
-- 그 조건이 충족된 옵션만 토글 인터랙션이 가능(미충족이면 off로 고정, 비활성 표시)
-- 켜진 옵션의 on/off 값은 Play 버튼 클릭(에피소드 시작) 시점에 그 행의 `selectFlag` 열 플래그로 반영됨(켜진 옵션 → `SetFlag`, 나머지 옵션 → `ClearFlag`) — 에피소드 노드의 `flagBranches` 등에서 분기 조건으로 사용
-- 컬럼: `conditionType`(`None`/`MinDay`/`RequiredFlag`/`PrerequisiteEpisode`/`RequiredVar`/`MinMoney` 중 하나), `conditionValue`(타입에 따라 의미가 다름 — 아래 표), `selectFlag`(반영할 플래그 이름), `selectText`(이 옵션 조건 뒤에 표시할 커스텀 힌트 한 줄. 비우면 조건에서 문구를 자동 생성), `revealConditionType`/`revealConditionValue`(이 옵션의 내용을 플레이어에게 공개하는 조건 — 형식은 `conditionType`/`conditionValue`와 동일. 비우면 항상 공개), `hiddenText`(`revealConditionType`/`revealConditionValue` 미충족일 때 `selectText` 대신 표시할 텍스트. **비우면 `"???"`로 표시** — 미충족 시 항상 `"???"`가 아니라, 여기 채워둔 다른 문구를 보여주다가 reveal 조건이 충족되면 `selectText`로 바뀌는 것도 가능)
-
-| `conditionType` / `revealConditionType` | `conditionValue` / `revealConditionValue` 형식 | 예시 |
-|---|---|---|
-| `None` | (비움) | 조건 없음 — 항상 토글 가능 / 항상 공개 |
-| `MinDay` | 숫자 | `3` |
-| `RequiredFlag` | 플래그 이름 | `flag_got_hint` |
-| `PrerequisiteEpisode` | 에피소드 ID | `Intro_0` |
-| `RequiredVar` | `varName연산자값`(`TRIGGER`의 `requiredVars` 문법과 동일) | `sally_affinity>=5` |
-| `MinMoney` | 숫자(소지금 이 값 이상이어야 함) | `500000` |
-
-```csv
-#SELECT_TRIGGER
-conditionType,conditionValue,selectFlag,selectText,revealConditionType,revealConditionValue,hiddenText
-RequiredFlag,flag_got_hint,select_confront_f72,단도직입적으로 물어본다,,,
-RequiredFlag,flag_got_hint,select_evade_f72,모르는 척 넘어간다,MinDay,5,수상한 낌새가 느껴진다
-```
-
-두 번째 옵션은 `MinDay=5` 미만이면 `hiddenText`인 "수상한 낌새가 느껴진다"를 보여주다가, 5일차부터는 `selectText`인 "모르는 척 넘어간다"로 바뀝니다. 첫 번째 옵션처럼 `hiddenText`를 비워두면(reveal 조건도 없으므로 항상 공개) 아무 영향이 없습니다.
-
-> **주의**: `SELECT_TRIGGER`는 재임포트 시 항상 CSV 내용으로 전체 교체됩니다(섹션이 있으면 없는 옵션은 사라짐).
-
----
-
-### SELECT_CHARS
-
-`SELECT_TRIGGER`의 각 옵션이 선택됐을 때 보여줄 초상화(`characterOverrides`)입니다. **선택 사항** — 비워두면(섹션 자체를 안 쓰면) 해당 옵션은 기본 `characters`(아래 `BOARD_CHARS`)를 그대로 사용합니다.
-
-- **행 하나 = 초상화 슬롯 하나**이며, "몇 번째 캐릭터"인지는 별도 열이 아니라 **같은 `selectFlag`끼리 CSV에 작성된 순서**로 정해집니다. 즉 `selectFlag`가 같은 행을 여러 개 작성하면 1번째 행이 `BOARD_CHARS`의 1번째 슬롯, 2번째 행이 2번째 슬롯... 순으로 채워집니다.
-- 슬롯 개수·순서는 `characters`(기본 초상화 목록)와 맞춰야 합니다.
-- `selectFlag`는 `SELECT_TRIGGER`의 `selectFlag` 열과 일치해야 매칭됩니다.
-- **부분 교체 불가**: 한 `selectFlag`에 대해 작성한 행들은 해당 옵션의 초상화 목록 **전체**를 대체합니다(리스트 길이만큼만 표시되고 나머지 슬롯은 사라짐). 예를 들어 캐릭터가 3명 등장하는데 그중 3번째 캐릭터만 바뀌는 경우에도, 1·2번째 캐릭터를 그대로 유지하려면 1·2번째 행에 기존과 동일한 값을 반복해서 **3줄을 모두** 작성해야 합니다. "이 슬롯은 건드리지 않음"을 표현하는 방법은 없습니다.
-
-| 열 | 설명 | 예시 |
-|---|---|---|
-| `selectFlag` | 대상 옵션의 `SELECT_TRIGGER.selectFlag` | `select_confront_f72` |
-| `isHidden` | `true`면 이 슬롯을 "???"로 비공개 표시 | `false` |
-| `characterName` | `isHidden=false`일 때 표시할 캐릭터 이름 | `f72` |
-
-```csv
-#SELECT_CHARS
-selectFlag,isHidden,characterName
-select_confront_f72,false,f72
-select_evade_f72,true,
-```
-
-> **주의**: `#SELECT_CHARS` 섹션 자체가 CSV에 없으면 기존 에셋의 `characterOverrides`가 유지됩니다. 섹션을 쓰면(빈 섹션 포함) 그 옵션들의 초상화는 CSV가 기준이 되며, 행이 없는 `selectFlag`는 초상화가 빈 목록(기본 `characters` 미사용, 초상화 없음)으로 대체됩니다.
-
----
-
-### OPENING_CHARS
-
-에피소드 시작 시 무대에 배치되는 캐릭터 목록입니다.  
-캐릭터가 여러 명이면 **행을 여러 개** 작성합니다.
-
-| 열 | 설명 | 예시 |
-|---|---|---|
-| `characterKey` | 캐릭터 ID | `f72` |
-| `expressionKey` | 시작 표정 | `neutral` |
-| `slotIndex` | 배치 슬롯 (`-1` = 자동, `0` = Center, `1` = Left, `2` = Right, `3` = Left2, `4` = Right2, `5~8` = Interaction0~3 통합 스프라이트 전용) | `-1` |
-
-```csv
-#OPENING_CHARS
-characterKey,expressionKey,slotIndex
-f72,frust,-1
-```
-
----
-
-### BOARD
-
-작전판(Rest 화면)에 표시되는 정보입니다. **선택 사항** — 비워두면(섹션 자체를 안 쓰면) 기존 에셋 값을 유지합니다. **데이터 행은 1개**만 작성합니다.
-
-| 열 | 설명 | 예시 |
-|---|---|---|
-| `episodeDescription` | 작전판에 표시될 에피소드 설명(여러 줄 가능) | `이상한 동전을 주운 손님이 찾아온다.` |
-| `iconNameBoard` | 작전판 카드에 쓸 아이콘 이름 | `icon_coin` |
-| `iconNameArchive` | 아카이브(다시보기)에 쓸 아이콘 이름 | `icon_coin_archive` |
-
-```csv
-#BOARD
-episodeDescription,iconNameBoard,iconNameArchive
-"이상한 동전을 주운 손님이 찾아온다.",icon_coin,icon_coin_archive
-```
-
-> 해금 조건 커스텀 힌트는 `BOARD`가 아니라 `TRIGGER`/`PLAY_TRIGGER` 각 행의 `text` 열에 작성합니다.
-
-> **주의**: 설명에 쉼표가 있으면 `NODES`의 `text`와 마찬가지로 큰따옴표로 감싸야 합니다.
-
----
-
-### BOARD_CHARS
-
-작전판에서 선택 조건 미충족/미선택 시(기본으로) 보여줄 초상화 목록입니다. **선택 사항** — 비워두면(섹션 자체를 안 쓰면) 기존 에셋 값을 유지합니다.
-
-- **행 하나 = 초상화 슬롯 하나**입니다. 여러 명이면 행을 여러 개 작성하고, 순서가 곧 슬롯 순서입니다.
-
-| 열 | 설명 | 예시 |
-|---|---|---|
-| `isHidden` | `true`면 이 슬롯을 "???"로 비공개 표시 | `false` |
-| `characterName` | `isHidden=false`일 때 표시할 캐릭터 이름 | `f72` |
-
-```csv
-#BOARD_CHARS
-isHidden,characterName
-false,f72
-```
+> 예전 `#TRIGGER`의 `text` 열(작전판 툴팁 문구)은 더 이상 쓰지 않습니다. 남아 있어도 무시됩니다.
+>
+> **분기 에피소드 예시**: 앞 에피소드의 결과에 따라 Day 7의 2번 슬롯이 `A_good` 또는 `A_bad`가 되게 하려면, 두 CSV 모두 `day=7, slot=2`로 두고 각각 `RequiredFlag`/`BlockedFlag`로 조건을 나눕니다. 둘 다 아니면(예: 앞 에피소드 자체를 못 봤으면) 랜덤 손님이 옵니다.
 
 ---
 
 ### SETTLEMENT_REWARDS
 
-에피소드가 끝날 때 특정 플래그가 서 있으면 정산 화면에 커스텀 보상 줄을 추가합니다. **선택 사항** — 비워두면(섹션 자체를 안 쓰면) 기존 에셋 값을 유지합니다. 0개, 1개, 여러 개 모두 가능합니다.
+에피소드가 끝날 때 특정 플래그가 서 있으면 정산 화면에 커스텀 보상 줄을 추가합니다. **선택 사항** — 섹션 자체를 안 쓰면 기존 에셋 값을 유지합니다(헤더만 있는 빈 섹션은 "보상 없음"). 0개, 1개, 여러 개 모두 가능합니다.
 
 - **행 하나 = 보상 조건 하나**입니다.
 - 에피소드 종료 시점에 `requiredFlag`가 켜져 있는 행만 정산 화면에 반영됩니다(예: 특정 선택지의 `setFlags`나 제조 결과의 `flag`로 미리 세워둔 플래그).
@@ -315,12 +157,12 @@ celi_apology_paid,150,소란 피워서 미안해 - 셀리
 
 | 열 | 설명 | 예시 |
 |---|---|---|
-| `nodeId` | 노드 고유 ID | `0`, `5-1-1` |
+| `nodeId` | 노드 고유 ID (번호 규칙은 아래 "노드 ID 규칙") | `0`, `6_1_1` |
 | `speakerKey` | 말하는 캐릭터 ID (`shaun` = 주인공) | `f72` |
 | `overrideSpeakerName` | 이름창에 표시할 임시 이름 (비우면 캐릭터 기본 이름 사용) | `???` |
 | `text` | 대사 내용 | `안녕하세요.` |
 | `nextNodeId` | 다음에 이동할 노드 ID (비우면 에피소드 종료) | `1` |
-| `requiresCrafting` | 제조 판정 여부 (`true` / `false`) | `false` |
+| `requiresCrafting` | 제조 판정 여부 (`TRUE` / 빈칸 = 아님) | `TRUE` |
 | `craftingTicketKey` | 사용할 제조 티켓 ID (`requiresCrafting=true` 일 때만 작성) | `sc0_f72` |
 | `craftingOrderTarget` | 판정 기준이 될 레시피 ID 또는 조건 태그 (`requiresCrafting=true` 일 때 필수, 비우면 제조 세션이 시작되지 않음) | `rec_1019` |
 | `bgmCommand` | BGM 명령 (`none` / `play` / `stop`, 비우면 `none`) | `play` |
@@ -333,23 +175,40 @@ celi_apology_paid,150,소란 피워서 미안해 - 셀리
 
 BGM은 무한 반복 재생되며 새로 재생하면 이전 BGM과 크로스페이드로 교체됩니다. SFX는 BGM과 별도 채널에서 한 번만 재생되고(반복 없음), BGM을 멈추지 않으며 여러 개가 겹쳐 재생될 수 있습니다.
 
+**빈칸 = 기본값**: 아래 칸은 비워 두면 기본값이 들어가며, 그래프 에디터가 CSV를 쓸 때도 기본값과 같으면 비워 둡니다. `requiresCrafting` 빈칸 = `FALSE`, `bgmCommand`/`sfxCommand` 빈칸 = 없음, `craftingPaymentEnabled` 빈칸 = 제조 노드이고 `craftingOrderTarget`이 있으면 `TRUE`, `craftingPaymentCurrency` 빈칸 = `Money`, `craftingPaymentMultiplier` 빈칸 = `1`. 주문 유형(`craftingOrderType`)은 `craftingOrderTarget`으로 자동 판별되므로 컬럼을 쓰지 않습니다.
+
 **제조 판정 노드** 작성 시: `text`와 `nextNodeId`는 비우고, `requiresCrafting=true` + `craftingTicketKey` + `craftingOrderTarget`을 작성합니다. `craftingOrderTarget`이 비어 있으면 제조 세션이 시작되지 않아 주문서도 뜨지 않고 판정도 진행되지 않습니다. 제조 결과별 이동 노드·플래그·변수 변경은 `#NODE_CRAFTING_BRANCHES` 섹션에 작성합니다. 선택지별 통화나 배율이 다르면 제조 노드를 나누고 각 노드에 결제 열을 별도로 입력합니다.
 >
 > **레시피 ID vs 맛/분위기 태그**: `craftingOrderTarget`에 뭘 쓰든 별도로 지정할 컬럼은 없습니다 — `EpisodeCraftingBridge.ResolveOrderType()`이 값 자체를 `Assets/Resources/Bartending/Recipes/TasteMoodPalette.asset`(맛/분위기 태그 팔레트)에 대조해서 자동으로 판별합니다. 팔레트에 등록된 태그 문자열(예: `고급스러운`, `씁쓸함`)이면 태그 기반 주문(맛/분위기 조건만 맞으면 통과)으로, 등록 안 된 값이면 레시피 ID(`rec_1019` 등, 정확히 그 레시피여야 통과)로 처리됩니다. 팔레트에 없는 오타 태그를 쓰면 존재하지 않는 레시피 ID로 취급되어 제조가 항상 실패하니, 태그를 쓸 땐 팔레트에 등록된 문자열과 정확히 일치하는지 확인하세요.
 
 **선택지 노드** 작성 시: `nextNodeId`는 비우고 `#CHOICES` 섹션에 선택지를 작성합니다.
 
-**분기 노드** 작성 시: `nextNodeId`는 조건이 모두 맞지 않을 때의 기본 이동 노드입니다. 조건 분기는 `#NODE_BRANCHES` / `#NODE_EPISODE_BRANCHES` / `#NODE_VAR_BRANCHES`에 작성합니다.
+**분기 노드** 작성 시: `nextNodeId`는 조건이 모두 맞지 않을 때의 기본 이동 노드입니다. 조건 분기는 `#NODE_BRANCHES`에 작성합니다.
 
 ```csv
 #NODES
 nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,craftingOrderTarget,bgmCommand,bgmClipName,sfxCommand,sfxClipName,craftingPaymentEnabled,craftingPaymentCurrency,craftingPaymentMultiplier
-0,f72,???,흘..크흘…,1,false,,,play,bgm_tension,,
-5,f72,???,,,true,sc0_f72,rec_1019,,,play,sfx_bell,true,StrangeCoin,2
+0,f72,???,흘..크흘…,1,,,,play,bgm_tension,,,,,
+5,,,,,TRUE,sc0_f72,rec_1019,,,play,sfx_bell,,StrangeCoin,2
 ```
 
 > **주의**: 대사에 쉼표(`,`)가 포함된 경우 반드시 큰따옴표로 감싸야 합니다.  
 > 예: `"여기, 이거 드세요."`
+
+#### 노드 ID 규칙과 줄 순서
+
+그래프 에디터가 CSV를 쓸 때는 아래 규칙으로 번호를 매기고, 노드를 **대화 흐름(블록) 순서**로 나열합니다 — 분기가 나오면 갈래 1을 끝까지, 다음 갈래를 끝까지 쓰고, 합류 노드는 모든 갈래 뒤에 옵니다. 손으로 쓸 때도 같은 규칙을 따르면 그래프를 거쳐도 번호가 바뀌지 않습니다.
+
+| 흐름 | ID |
+|---|---|
+| 직선 | 1씩 증가 (`0 → 1 → 2`) |
+| 분기 (선택지·제조·조건 노드 `20`) | 다음 번호로 갈래마다 `21_1_1`, `21_2_1` … (갈래 번호 = 선택지·결과·분기 순서) |
+| 합류 | `22` |
+| 갈래 안의 분기 (`21_1_3`) | `21_1_4_1_1` … → 합류 `21_1_5` |
+| 갈래마다 있는 제조 노드가 결과를 공유 | 결과 `22_k_1` → 합류 `23` |
+| 갈래 일부가 먼저 만난 뒤 모두 만남 | 먼저 만난 곳 `22_1_1`, `22_2_1` … → 모두 만나는 곳 `22` |
+
+자세한 규칙은 [narrative-graph-guide.md](narrative-graph-guide.md#노드-id-규칙-자동).
 
 ---
 
@@ -427,78 +286,39 @@ nodeId,choiceIndex,buttonText,nextNodeId,setFlags,clearFlags,varChanges
 
 ### NODE_BRANCHES
 
-플래그 상태에 따라 다음 노드를 분기합니다.  
+플래그·변수·에피소드 완료 여부에 따라 다음 노드를 분기합니다. `#TRIGGER`와 같은 조건 타입 이름과 값 형식을 씁니다.
 분기가 없으면 이 섹션은 **헤더만 남기고 비워도** 됩니다.
 
 | 열 | 설명 | 예시 |
 |---|---|---|
 | `nodeId` | 분기가 적용될 노드 ID | `5` |
-| `requiredAllFlags` | 이 플래그가 **모두** 켜져 있어야 분기 (쉼표 구분, AND 조건) | `flag_a,flag_b` |
-| `requiredAnyFlags` | 이 플래그 중 **하나라도** 켜져 있으면 분기 (쉼표 구분, OR 조건) | `flag_c,flag_d` |
-| `nextNodeId` | 조건 충족 시 이동할 노드 ID | `5_alt` |
+| `conditionType` | 조건 종류 (아래 표) | `RequiredFlag` |
+| `conditionValue` | 조건 값 | `flag_a` |
+| `nextNodeId` | 조건 충족 시 이동할 노드 ID | `6_1_1` |
 
-- `requiredAllFlags`와 `requiredAnyFlags` 중 하나만 사용합니다. 둘 다 값이 있으면 `requiredAllFlags`(AND)가 우선합니다.
-- 한 노드에 여러 조건을 쓰려면 **행을 여러 개** 작성합니다. 위에서 아래 순서로 확인하고, 처음으로 맞는 조건으로 이동합니다.
+| conditionType | conditionValue | 분기 조건 |
+|---|---|---|
+| `RequiredFlag` | 플래그 하나 또는 여러 개(`,` 또는 `\|`로 구분 — 쉼표를 쓰면 셀을 따옴표로 감쌈) | 모두 켜져 있으면 |
+| `BlockedFlag` | 위와 같음 | 모두 꺼져 있으면 |
+| `RequiredVar` | `변수이름` + 연산자(`>=` `>` `==` `<` `<=`) + 정수, 예: `sally_affinity>=10` | 비교가 참이면 |
+| `PrerequisiteEpisode` | 에피소드 ID | 그 에피소드를 완료했으면 |
+
+- **한 줄 = 분기 하나**. 한 노드의 줄들을 **위에서 아래 순서로** 확인하고, 처음 맞는 줄의 `nextNodeId`로 이동합니다(조건 종류와 관계없이 줄 순서가 우선순위).
 - 어떤 조건도 맞지 않으면 `#NODES`의 `nextNodeId`로 이동합니다.
-- 확인 순서: `NODE_BRANCHES` → `NODE_EPISODE_BRANCHES` → `NODE_VAR_BRANCHES` → `#NODES`의 기본 `nextNodeId`.
+- "하나라도 켜져 있으면(OR)" 조건은 없습니다. 플래그마다 줄을 따로 쓰면 같은 효과입니다.
 
 ```csv
 #NODE_BRANCHES
-nodeId,requiredAllFlags,requiredAnyFlags,nextNodeId
-5,flag_a,flag_b,,5_and_alt
-6,,flag_c,flag_d,6_or_alt
+nodeId,conditionType,conditionValue,nextNodeId
+5,RequiredFlag,"sc0_true, sc4_1_1_true",6_1_1
+5,BlockedFlag,sc0_true,6_2_1
+5,RequiredVar,sally_affinity>=10,6_3_1
+5,PrerequisiteEpisode,StrangeCoin_0,6_4_1
 ```
 
----
+> 위 예시는 두 플래그가 모두 켜져 있으면 `6_1_1`, 아니고 `sc0_true`가 꺼져 있으면 `6_2_1`, 아니고 `sally_affinity`가 10 이상이면 `6_3_1`, 아니고 StrangeCoin_0을 완료했으면 `6_4_1`, 모두 아니면 `#NODES`의 기본 `nextNodeId`로 이동합니다.
 
-### NODE_VAR_BRANCHES
-
-수치 변수 값에 따라 다음 노드를 분기합니다. 호감도·평판 등 점수 기반 분기에 사용합니다.  
-분기가 없으면 이 섹션은 **헤더만 남기고 비워도** 됩니다.
-
-| 열 | 설명 | 예시 |
-|---|---|---|
-| `nodeId` | 분기가 적용될 노드 ID | `5` |
-| `varName` | 확인할 수치 변수 이름 | `sally_affinity` |
-| `op` | 비교 연산자 (`>=` `>` `==` `<` `<=`) | `>=` |
-| `threshold` | 비교 기준값 | `10` |
-| `nextNodeId` | 조건 충족 시 이동할 노드 ID | `5_high` |
-
-- 한 노드에 여러 조건을 쓰려면 **행을 여러 개** 작성합니다. 위에서 아래 순서로 확인하고, 처음으로 맞는 조건으로 이동합니다.
-- 어떤 조건도 맞지 않으면 `#NODES`의 `nextNodeId`로 이동합니다.
-
-```csv
-#NODE_VAR_BRANCHES
-nodeId,varName,op,threshold,nextNodeId
-5,sally_affinity,>=,10,5_high
-5,sally_affinity,>=,5,5_mid
-```
-
-> 위 예시는 `sally_affinity`가 10 이상이면 `5_high`, 5 이상이면 `5_mid`, 그 미만이면 `#NODES`의 기본 `nextNodeId`로 이동합니다.
-
----
-
-### NODE_EPISODE_BRANCHES
-
-특정 에피소드의 완료 여부에 따라 다음 노드를 분기합니다. "A 에피소드를 클리어한 뒤 B 에피소드를 진행하면 내용이 달라진다" 같은 챕터 간 연동에 사용합니다.  
-분기가 없으면 이 섹션은 **헤더만 남기고 비워도** 됩니다.
-
-| 열 | 설명 | 예시 |
-|---|---|---|
-| `nodeId` | 분기가 적용될 노드 ID | `5` |
-| `requiredCompletedEpisodeId` | 이 에피소드가 완료되어 있어야 분기 | `StrangeCoin_0` |
-| `nextNodeId` | 조건 충족 시 이동할 노드 ID | `5_after_coin` |
-
-- 한 노드에 여러 조건을 쓰려면 **행을 여러 개** 작성합니다. 위에서 아래 순서로 확인하고, 처음으로 맞는 조건으로 이동합니다.
-- 어떤 조건도 맞지 않으면 `NODE_VAR_BRANCHES` → `#NODES`의 기본 `nextNodeId` 순으로 확인합니다.
-
-```csv
-#NODE_EPISODE_BRANCHES
-nodeId,requiredCompletedEpisodeId,nextNodeId
-5,StrangeCoin_0,5_after_coin
-```
-
-> 그래프 에디터에서는 이 조건을 별도 컬럼이 아니라 **엣지 라벨에 에피소드 ID를 그대로 적는 것**(예: `StrangeCoin_0`)으로 표현합니다. 자세한 내용은 [narrative-graph-guide.md](narrative-graph-guide.md) 참고.
+> 그래프 에디터에서는 이 조건을 블록의 포트 라벨(`a&b == true`, `a == false`, `var >= 10`, `StrangeCoin_0`)로 표현하며, 포트 순서가 곧 줄 순서입니다. 자세한 내용은 [narrative-graph-guide.md](narrative-graph-guide.md) 참고.
 
 ---
 
@@ -539,80 +359,64 @@ flag_a|flag_b|flag_c
 
 ```csv
 #META
-episodeId,episodeTitle,firstNodeId,episodeType,mandatorySlot,chapterId
-Example_0,예시 에피소드,0,Default,None,chapter_1
-
-#OPENING_CHARS
-characterKey,expressionKey,slotIndex
-f72,neutral,-1
-
-#BOARD
-episodeDescription,iconNameBoard,iconNameArchive
-"작전판에 표시될 짧은 설명입니다.",icon_example,icon_example_archive
-
-#BOARD_CHARS
-isHidden,characterName
-false,f72
+episodeId,episodeTitle,firstNodeId,chapterId,day,slot,priority
+Example_0,예시 에피소드,0,Sector0,2,4,
 
 #NODES
 nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingTicketKey,craftingOrderTarget,bgmCommand,bgmClipName,sfxCommand,sfxClipName,craftingPaymentEnabled,craftingPaymentCurrency,craftingPaymentMultiplier
-0,f72,???,뭘 마시겠어?,1,false,,,play,bgm_bar,,
-1,shaun,,추천해줘.,2,false,,,none,
-2,f72,,그럼 선택해.,,false,,,none,
-3a,f72,,좋은 선택이야.,4,false,,,none,
-3b,f72,,그것도 나쁘지 않아.,4,false,,,none,
-4,f72,,또 오게.,,false,,,stop,
+0,f72,???,뭘 마시겠어?,1,,,,play,bgm_bar,,,,,
+1,shaun,,추천해줘.,2,,,,,,,,,,
+2,f72,,그럼 선택해.,,,,,,,,,,,
+3_1_1,f72,,좋은 선택이야.,4,,,,,,,,,,
+3_2_1,f72,,그것도 나쁘지 않아.,4,,,,,,,,,,
+4,f72,,또 오게.,,,,,stop,bgm_bar,,,,,
 
 #NODE_CHARS
 nodeId,characterKey,expressionKey,slotIndex
 0,f72,neutral,-1
 1,f72,neutral,-1
 2,f72,smile,-1
-3a,f72,smile,-1
-3b,f72,neutral,-1
+3_1_1,f72,smile,-1
+3_2_1,f72,neutral,-1
 4,f72,neutral,-1
 
 #CHOICES
 nodeId,choiceIndex,buttonText,nextNodeId,setFlags,clearFlags,varChanges
-2,0,맥주,3a,flag_chose_beer,,sally_affinity+5
-2,1,위스키,3b,flag_chose_whiskey,,
+2,0,맥주,3_1_1,flag_chose_beer,,sally_affinity+5
+2,1,위스키,3_2_1,flag_chose_whiskey,,
 
 #NODE_BRANCHES
-nodeId,requiredAllFlags,requiredAnyFlags,nextNodeId
-
-#NODE_VAR_BRANCHES
-nodeId,varName,op,threshold,nextNodeId
-
-#NODE_EPISODE_BRANCHES
-nodeId,requiredCompletedEpisodeId,nextNodeId
+nodeId,conditionType,conditionValue,nextNodeId
 ```
 
 ---
 
-## 영업 인카운터 풀에 연결
+## 영업 일정에 배정
 
-CSV의 `#META` 행에서 `episodeType`을 `Encounter`로 작성한 뒤 임포트합니다. 임포트된 `EpisodeData` 에셋을 `BusinessOrderFlowSettings` 에셋의 `Random Encounters` 목록에 등록하고 상대 가중치를 설정합니다.
+별도 등록 단계는 없습니다. `#META`의 `day`/`slot`을 채워 임포트하면 그 날의 그 슬롯에 자동으로 배정됩니다(`EpisodeManager`가 시작 시 전체 에피소드를 일정표로 색인).
 
-- `triggerCondition`을 만족하고 아직 완료하지 않은 인카운터만 영업 시작 풀에 들어옵니다.
-- 일반 손님과 랜덤 인카운터는 하나의 가중치 후보군에서 추첨됩니다.
-- 인카운터에는 시간 쿨다운이 없으며, 각 `episodeId`는 하나의 영업일에 최대 1회만 시작됩니다.
-- 완료한 인카운터는 이후 영업일에도 다시 풀에 들어오지 않습니다.
-- 같은 날의 `Required Actions`에 필수 인카운터로 등록된 에피소드는 지정된 타이밍을 보장하기 위해 그날의 랜덤 풀에서 제외됩니다.
-
-CSV 임포트는 에피소드 에셋만 만듭니다. `Random Encounters`에 등록하는 단계는 자동으로 실행되지 않습니다.
+- 하루 손님 수는 `Assets/Resources/Business/BusinessOrderFlowSettings.asset`의 **하루 손님 수**(`customersPerDay`, 기본 5)입니다. `slot`은 이 범위 안이어야 합니다.
+- 특정 손님을 특정 날 꼭 등장시키고 싶을 때도 짧은 에피소드로 만들어 같은 방식으로 배정합니다.
+- 챕터의 마지막 날은 `ChapterData`의 `lastDay`로 정합니다. 그 날 정산이 끝나면 엔딩 컷씬이 재생됩니다.
 
 ---
 
 ## 임포트 방법
+
+> 같은 에피소드를 [그래프 에디터](narrative-graph-guide.md)로도 편집할 수 있다. 그래프에서 컴파일하면 **이 원본 CSV 파일을 직접 덮어쓰므로**, CSV를 고친 뒤에는 그래프 설정의 **CSV에서 그래프 다시 만들기**로 그래프를 먼저 갱신하자(잊어도 컴파일 시 변경 감지 경고가 뜬다).
 
 1. Unity 메뉴 → **Tools > Slainte > Import Episode CSV**
 2. **Browse** 버튼으로 작성한 CSV 파일 선택
 3. **Import** 클릭
 4. `Assets/Resources/Narrative/Episodes/EpisodeData_{episodeId}.asset` 으로 저장됨
 
+`Assets/_Project/Features/Narrative/Content/Source/Episodes/`의 CSV 전체를 한 번에 다시 임포트하려면 **Tools > Slainte > Import All Episode CSVs**를 사용합니다. 경고(지워야 할 옛 섹션, 중복 nodeId 등)는 Console에 파일별로 출력됩니다.
+
 같은 `episodeId`의 에셋이 이미 존재하면 **덮어씁니다**.
 
-`BOARD`/`BOARD_CHARS`/`SELECT_CHARS` 섹션은 CSV에 아예 없으면(헤더조차 없으면) 기존 에셋 값을 유지합니다. 즉 이 섹션들만 CSV에 없는 예전 CSV를 재임포트해도 인스펙터에서 채워둔 값이 지워지지 않습니다. 반대로 섹션을 (빈 섹션이라도) 작성하면 그때부터 CSV가 해당 필드의 기준이 됩니다.
+`SETTLEMENT_REWARDS` 섹션은 CSV에 아예 없으면(헤더조차 없으면) 기존 에셋 값을 유지합니다. 섹션을 (빈 섹션이라도) 작성하면 그때부터 CSV가 기준이 됩니다. 나머지 섹션은 항상 CSV 내용으로 교체됩니다.
+
+대사에 줄바꿈을 넣으려면 셀 전체를 큰따옴표로 감싸면 됩니다(스프레드시트에서 셀 안 줄바꿈으로 저장하면 자동 처리).
 
 ---
 
@@ -626,7 +430,6 @@ CSV 임포트는 에피소드 에셋만 만듭니다. `Random Encounters`에 등
 | 표정이 바뀌지 않음 | `#NODE_CHARS`에 해당 노드 행이 없음 | 표정이 바뀌는 노드마다 `#NODE_CHARS` 행 추가 |
 | 쉼표 이후 텍스트가 잘림 | 대사에 쉼표가 있는데 따옴표로 안 감쌈 | 해당 셀을 `"큰따옴표"` 로 감싸기 |
 | 분기가 동작하지 않음 | `varChanges` 형식 오류 | `varName+숫자` 또는 `varName-숫자` 형식 확인 |
-| 필수 에피소드인데 Rest 보드에서 선택 가능 | `episodeType`을 `Mandatory`로 안 바꿈 | `#META`의 `episodeType`, `mandatorySlot` 확인 |
-| 챕터별 필수 에피소드 큐 조회가 안 됨 | `chapterId`가 비어있거나 다른 챕터와 다름 | `#META`의 `chapterId`를 `ChapterData.chapterId`와 일치시키기 |
-| 재임포트했더니 작전판 설명/아이콘/초상화가 사라짐 | `#BOARD`/`#BOARD_CHARS`/`#SELECT_CHARS` 섹션을 (빈 섹션으로) 작성해서 CSV가 기준이 됐는데 실제 값은 안 채움 | 값을 인스펙터로 계속 관리하고 싶으면 해당 섹션을 CSV에서 아예 빼기 |
-| 선택 옵션의 초상화가 기본 초상화로만 나옴 | 해당 `selectFlag`에 대한 `#SELECT_CHARS` 행이 없음(섹션은 있지만 그 flag 행이 없으면 빈 목록으로 대체됨) | `#SELECT_CHARS`에 해당 `selectFlag` 행 추가 |
+| 에피소드가 영업에 안 나옴 | `#META`의 `day`/`slot`이 비어 있음, `chapterId`가 현재 챕터와 다름, 또는 `#TRIGGER` 미충족 | `day`/`slot`/`chapterId`와 등장 조건 확인 |
+| 같은 슬롯의 다른 에피소드가 먼저 나옴 | `priority`가 같거나 반대 | 먼저 확인할 에피소드의 `priority`를 더 크게 |
+| "nodeId가 중복됩니다" 경고 | `#NODES`에 같은 `nodeId`가 두 번 있음 — 뒤쪽 노드는 절대 실행되지 않음 | 하나의 ID를 바꾸고 그 ID를 가리키는 `nextNodeId`도 수정 |

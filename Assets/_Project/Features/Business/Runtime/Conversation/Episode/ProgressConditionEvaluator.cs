@@ -1,6 +1,6 @@
-// 에피소드 시작 조건, 손님 등장 조건, 영업 필수 액션 조건 등 GameProgress 기반 등장/발동 조건을
-// 판정하는 단일 공용 로직(EpisodeManager.CanStart, BusinessSequencePlanner 등에서 재사용).
-// 조건은 minDay → requiredFlags → blockedFlags → prerequisiteEpisodeIds → requiredVars →
+// 에피소드 등장 조건, 손님 등장 조건, 주문 후보 조건 등 GameProgress 기반 등장/발동 조건을
+// 판정하는 단일 공용 로직(DayScheduleResolver, BusinessSequencePlanner 등에서 재사용).
+// 조건은 minDay → minMoney → requiredFlags → blockedFlags → prerequisiteEpisodeIds → requiredVars →
 // requiredCustomerAppearances 순서로 검사하며 모두 AND로 결합, 하나라도 어긋나면 즉시 false.
 public static class ProgressConditionEvaluator
 {
@@ -20,6 +20,9 @@ public static class ProgressConditionEvaluator
             return true;
 
         if (progress.CurrentDay < condition.minDay)
+            return false;
+
+        if (progress.CurrentMoney < condition.minMoney)
             return false;
 
         if (condition.requiredFlags != null)

@@ -1,5 +1,4 @@
 using Slainte.Bartending;
-using Slainte.Shared.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
@@ -8,7 +7,6 @@ public class InputRouter : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private GameModeManager    modeManager;
-    [SerializeField] private FrontCameraRig     cameraRig;
     [SerializeField] private RecipeBookUI       recipeBook;
     [SerializeField] private OrderTicketManager orderTicketManager;
     [SerializeField] private IngredientSelectionUI ingredientSelection;
@@ -18,7 +16,6 @@ public class InputRouter : MonoBehaviour
     [SerializeField] private EpisodeRunner episodeRunner;
 
     [Header("Test")]
-    [SerializeField] private CustomerSpawner customerSpawner;
     [SerializeField] private EpisodeData     testEpisode;
 
     void Update()
@@ -38,16 +35,13 @@ public class InputRouter : MonoBehaviour
         switch (mode)
         {
             case GameMode.OrderMode:
-                HandleCameraInput(keyboard, searchFocused);
                 if (advancePressed) dialogue?.Advance();
                 if (bookPressed)    recipeBook?.Toggle();
                 if (ticketPressed)  orderTicketManager?.ToggleTicket();
-                if (WasPressed(keyboard?.digit1Key, KeyCode.Alpha1))
-                    customerSpawner?.ShowCustomers(new[] { "yukari" });
                 if (WasPressed(keyboard?.digit2Key, KeyCode.Alpha2) && testEpisode != null)
                 {
-                    modeManager?.RequestModeChange(GameMode.EpisodeMode);
-                    episodeRunner?.Begin(testEpisode);
+                    // 개발용 단축키: 진행도 기록 없이 러너만 바로 돌려 연출을 확인한다.
+                    episodeRunner?.BeginBusinessEncounter(testEpisode, null);
                 }
                 break;
 
@@ -56,7 +50,6 @@ public class InputRouter : MonoBehaviour
                 break;
 
             case GameMode.CraftingMode:
-                HandleCameraInput(keyboard, searchFocused);
                 if (advancePressed) RouteAdvanceToEncounter();
                 if (bookPressed)    recipeBook?.Toggle();
                 if (ticketPressed)  orderTicketManager?.ToggleTicket();
@@ -65,14 +58,6 @@ public class InputRouter : MonoBehaviour
                 if (nextPressed)     ingredientSelection?.ShowNext();
                 break;
         }
-    }
-
-    private void HandleCameraInput(Keyboard keyboard, bool searchFocused)
-    {
-        if (cameraRig == null || cameraRig.IsAnimating || searchFocused) return;
-
-        if (WasPressed(keyboard?.sKey, KeyCode.S)) cameraRig.OnCameraInput(CameraDirection.DrawerOpen);
-        if (WasPressed(keyboard?.wKey, KeyCode.W)) cameraRig.OnCameraInput(CameraDirection.DrawerClose);
     }
 
     private static bool WasPressed(KeyControl inputSystemKey, KeyCode legacyKey)

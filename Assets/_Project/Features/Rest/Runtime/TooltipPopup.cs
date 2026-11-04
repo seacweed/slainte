@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Slainte.Shared.Display;
 
 public class TooltipPopup : MonoBehaviour
 {
@@ -25,32 +26,10 @@ public class TooltipPopup : MonoBehaviour
         UpdatePosition(targetRect);
     }
 
+    // 대상 오른쪽에 붙이고, 16:9 게임 영역 오른쪽 끝을 넘으면 왼쪽으로 뒤집는다.
     private void UpdatePosition(RectTransform targetRect)
     {
-        // 1. 타겟 이미지의 세계 좌표를 캔버스 로컬 좌표로 변환
-        Vector3[] corners = new Vector3[4];
-        targetRect.GetWorldCorners(corners);
-        // corners[2]는 우측 상단, [3]은 우측 하단 -> 우측 중앙 위치 계산
-        Vector3 targetRightCenter = (corners[2] + corners[3]) * 0.5f;
-
-        // 2. 팝업이 오른쪽으로 떴을 때 화면 밖으로 나가는지 체크
-        float popupWidth = rect.rect.width;
-        float screenWidth = Screen.width;
-
-        // 오른쪽 끝 좌표가 화면 너비를 넘어가면 왼쪽으로 배치
-        if (targetRightCenter.x + popupWidth > screenWidth)
-        {
-            // 왼쪽 배치 로직
-            rect.pivot = new Vector2(1, 0.5f); // 피봇을 우측 중앙으로 변경
-            Vector3 targetLeftCenter = (corners[0] + corners[1]) * 0.5f;
-            transform.position = targetLeftCenter - new Vector3(10, 0, 0); // 약간의 여백
-        }
-        else
-        {
-            // 오른쪽 배치 로직
-            rect.pivot = new Vector2(0, 0.5f); // 피봇을 좌측 중앙으로 변경
-            transform.position = targetRightCenter + new Vector3(10, 0, 0); // 약간의 여백
-        }
+        GameAspect.PlaceBesideTarget(rect, targetRect);
     }
 
     public void Hide()

@@ -459,7 +459,7 @@ namespace Slainte.Bartending
 
         private void TryDropGlass()
         {
-            if (ToolCabinetController.TryReturnHeldItem(this, mainCamera, Input.mousePosition))
+            if (ToolReturnZones.TryReturnHeldItem(this, Input.mousePosition))
                 return;
 
             if (!BartendingViewport.TryGetPointerWorldPosition(mainCamera, Input.mousePosition, out Vector3 mousePos))

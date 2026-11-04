@@ -55,13 +55,16 @@ ID는 한 번 정하면 이름이 바뀌어도 유지한다. 가격·용량·재
 
 `RGBA`는 `#RRGGBB`, `#RRGGBBAA`, `R,G,B,A` 형식을 지원한다. 비어 있으면 기존 에셋의 색을 유지하며, 새 에셋은 흰색으로 시작하고 경고를 남긴다.
 
-`IconName` 하나로 다음 세 스프라이트를 찾는다.
+`IconName` 하나로 다음 네 스프라이트를 찾는다.
 
 - `ItemDef.icon`: `IconName`
-- `LiquorBottleDef.shelfSprite`: `IconName + "_lid"`
+- `LiquorBottleDef.shelfInSprite`: `IconName + "_in"`
+- `LiquorBottleDef.shelfDisabledSprite`: `IconName + "_dis"`
 - `LiquorBottleDef.shopSprite`: `IconName + "_blank"`
 
-정확한 이름의 스프라이트를 찾지 못하면 같은 표시 이름을 가진 기존 에셋의 참조를 재사용한다. 새 아이콘을 추가한 뒤에는 세 Sprite 이름과 실제 연결을 검증한다.
+`ShelfExcludedItemIds`(술장 제외 목록)에 있는 ID는 제조용 `ItemDef`만 만들고 `LiquorBottleDef`·술장/상점 카탈로그 항목은 만들지 않는다(현재 `item_1014` 뜨거운 물).
+
+정확한 이름의 스프라이트를 찾지 못하면 같은 표시 이름을 가진 기존 에셋의 참조를 재사용한다. 새 아이콘을 추가한 뒤에는 네 Sprite 이름과 실제 연결을 검증한다.
 
 ## 5. `recipes.csv`
 

@@ -4,10 +4,17 @@ using UnityEditor.Experimental.GraphView;
 
 namespace NarrativeFlow.Editor
 {
+    // 빈 공간 왼쪽/가운데 드래그로 화면 이동. 움직이지 않고 떼면(클릭) 선택을 해제한다.
+    // WHY: 빈 공간 마우스 입력을 이 매니퓰레이터가 가로채므로 GraphView 기본 "빈 곳 클릭 = 선택 해제"가
+    // 동작하지 않는다. 누를 때 바로 해제하면 화면을 끌어 옮길 때마다 선택이 풀리므로 뗄 때 판정한다.
     public class LeftClickPanDragger : MouseManipulator
     {
+        private const float ClickTolerance = 4f;
+
         private Vector2 _startPosition;
+        private Vector2 _pressPosition;
         private bool _isDragging;
+        private bool _moved;
 
         public LeftClickPanDragger()
         {
@@ -33,21 +40,15 @@ namespace NarrativeFlow.Editor
         {
             if (_isDragging) return;
 
-            // 빈 공간(GraphView 자체 또는 모눈종이 배경)을 클릭했을 때만 화면 이동 시작
-            if (e.target is GraphView || e.target is GridBackground)
+            // 빈 공간(GraphView 자체 또는 모눈종이 배경)을 눌렀을 때만 시작
+            if ((e.target is GraphView || e.target is GridBackground) && CanStartManipulation(e) && target is GraphView)
             {
-                if (CanStartManipulation(e))
-                {
-                    var graphView = target as GraphView;
-                    if (graphView != null)
-                    {
-                        graphView.ClearSelection();
-                        _startPosition = e.localMousePosition;
-                        _isDragging = true;
-                        target.CaptureMouse();
-                        e.StopPropagation();
-                    }
-                }
+                _startPosition = e.localMousePosition;
+                _pressPosition = e.localMousePosition;
+                _moved = false;
+                _isDragging = true;
+                target.CaptureMouse();
+                e.StopPropagation();
             }
         }
 
@@ -58,6 +59,9 @@ namespace NarrativeFlow.Editor
             var graphView = target as GraphView;
             if (graphView != null)
             {
+                if ((e.localMousePosition - _pressPosition).sqrMagnitude > ClickTolerance * ClickTolerance)
+                    _moved = true;
+
                 Vector2 diff = e.localMousePosition - _startPosition;
 #pragma warning disable CS0618 // Type or member is obsolete
                 Vector3 currentPos = graphView.viewTransform.position;
@@ -77,6 +81,13 @@ namespace NarrativeFlow.Editor
             _isDragging = false;
             target.ReleaseMouse();
             e.StopPropagation();
+
+            if (!_moved && e.button == (int)MouseButton.LeftMouse && target is GraphView graphView)
+            {
+                graphView.ClearSelection();
+                if (graphView is NarrativeGraphView narrative)
+                    narrative.window?.OnNodeSelectionChanged(null);
+            }
         }
     }
 }

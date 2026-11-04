@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Slainte.Shared.Display;
 
 public class TooltipManager : MonoBehaviour
 {
@@ -59,22 +60,6 @@ public class TooltipManager : MonoBehaviour
 
     private void UpdatePosition(RectTransform targetRect)
     {
-        Vector3[] corners = new Vector3[4];
-        targetRect.GetWorldCorners(corners);
-        Vector3 targetRightCenter = (corners[2] + corners[3]) * 0.5f;
-        float popupWidth = _rect.rect.width;
-        float screenWidth = Screen.width;
-
-        if (targetRightCenter.x + popupWidth > screenWidth)
-        {
-            _rect.pivot = new Vector2(1, 0.5f);
-            Vector3 targetLeftCenter = (corners[0] + corners[1]) * 0.5f;
-            _tooltipInstance.transform.position = targetLeftCenter - new Vector3(10, 0, 0);
-        }
-        else
-        {
-            _rect.pivot = new Vector2(0, 0.5f);
-            _tooltipInstance.transform.position = targetRightCenter + new Vector3(10, 0, 0);
-        }
+        GameAspect.PlaceBesideTarget(_rect, targetRect);
     }
 }

@@ -2,6 +2,7 @@ using Slainte.Shared.Lifecycle;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using Slainte.Shared.Display;
 
 public class LiquorBottleInfoCard : SceneSingleton<LiquorBottleInfoCard>
 {
@@ -83,22 +84,6 @@ public class LiquorBottleInfoCard : SceneSingleton<LiquorBottleInfoCard>
 
     private void UpdatePosition(RectTransform targetRect)
     {
-        Vector3[] corners = new Vector3[4];
-        targetRect.GetWorldCorners(corners);
-        Vector3 targetRightCenter = (corners[2] + corners[3]) * 0.5f;
-        float   cardWidth   = rect.rect.width;
-        float   screenWidth = Screen.width;
-
-        if (targetRightCenter.x + cardWidth > screenWidth)
-        {
-            rect.pivot = new Vector2(1, 0.5f);
-            Vector3 targetLeftCenter = (corners[0] + corners[1]) * 0.5f;
-            rect.position = targetLeftCenter - new Vector3(10, 0, 0);
-        }
-        else
-        {
-            rect.pivot = new Vector2(0, 0.5f);
-            rect.position = targetRightCenter + new Vector3(10, 0, 0);
-        }
+        GameAspect.PlaceBesideTarget(rect, targetRect);
     }
 }

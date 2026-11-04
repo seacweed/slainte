@@ -11,18 +11,24 @@ namespace NarrativeFlow
         Dialogue,
         Choice,
         BusinessStart,
-        BusinessEnd,
-        BranchExit
+        BusinessEnd, // 레거시(런타임 노드 없음) — 직렬화 호환용으로만 남김
+        BranchExit   // 레거시(다음 노드가 없으면 어차피 끝나므로 제거됨) — 직렬화 호환용으로만 남김
     }
 
     [Serializable]
     public class EpisodeEvent
     {
         public string Guid = System.Guid.NewGuid().ToString();
-        public Vector2 Position;
-        public List<string> NextEventGuids = new();
+        // 레거시: 예전 시퀀스 에디터가 쓰던 위치·연결. 이벤트 순서는 이제 EpisodeNodeSO.Events 리스트 순서이며,
+        // 그래프를 열 때 NarrativeBlockModel.MigrateLegacyOrder가 이 값을 한 번 읽어 리스트를 정렬한 뒤 비운다.
+        [HideInInspector] public Vector2 Position;
+        [HideInInspector] public List<string> NextEventGuids = new();
 
         public EpisodeEventType Type;
+
+        // 이 이벤트가 컴파일될 런타임 EpisodeNode.nodeId. CSV에서 가져온 ID를 그대로 보존하고, 새로 만든
+        // 이벤트는 첫 컴파일 때 부여된 ID를 기록해 둔다 — 그래야 그래프↔CSV 왕복 시 노드 ID가 흔들리지 않는다.
+        public string RuntimeNodeId;
 
         // Dialogue Fields
         public string SpeakerKey;
@@ -47,6 +53,7 @@ namespace NarrativeFlow
         public OrderTicketData CraftingOrderTicket;
         public string CraftingTicketKey;
         public CocktailOrderType CraftingOrderType = CocktailOrderType.EpisodeOrder;
+        [UnityEngine.Serialization.FormerlySerializedAs("CraftingRecipeId")]
         public string CraftingOrderTarget;
         public bool CraftingPaymentEnabled = true;
         public GameCurrency CraftingPaymentCurrency = GameCurrency.Money;
@@ -72,6 +79,9 @@ namespace NarrativeFlow
 
         public List<VarChangeData> GetCraftingVarChanges(CraftingJobResult result) => CraftingOutcomes.Find(o => o.Result == result)?.VarChanges ?? new();
         public void                 SetCraftingVarChanges(CraftingJobResult result, List<VarChangeData> list) => GetOrAddCraftingOutcome(result).VarChanges = list;
+
+        // 편집 UI용: 결과 항목이 없으면 만들어 실제 리스트를 돌려준다(GetCraftingVarChanges는 없을 때 임시 리스트라 수정이 버려짐).
+        public List<VarChangeData>  GetCraftingVarChangesForEdit(CraftingJobResult result) => GetOrAddCraftingOutcome(result).VarChanges;
     }
 
     [Serializable]
@@ -94,7 +104,7 @@ namespace NarrativeFlow
     public class ChoiceOptionData
     {
         public string ButtonText;
-        public string TargetNodeId; // Graph output port will handle this
+        [HideInInspector] public string TargetNodeId; // 레거시(예전 시퀀스 에디터 내부 연결) — 선택지 경로는 블록 출력 포트로 연결
         public List<string> SetFlags = new();
         public List<string> ClearFlags = new();
         public List<VarChangeData> VarChanges = new();

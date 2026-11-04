@@ -1,22 +1,13 @@
 using Slainte.Shared.Lifecycle;
 using UnityEngine;
 
-// 하루 진행 순서(필수 에피소드 큐, 영업, 정산)를 전담하는 컨트롤러.
-// EpisodeRunner/EpisodeBoardManager/영업 스텁은 GameManager를 직접 호출하지 않고 이 클래스를 거친다.
+// 하루 진행 순서(Rest → 영업 → 정산 → Rest)와 정산 직후 재생할 컷씬을 결정하는 컨트롤러.
+// 하루는 항상 영업 하나로 이루어지고, 에피소드는 영업 슬롯 안에서 인카운터로만 실행된다.
+// Rest의 시작 버튼/영업 종료 처리는 GameManager를 직접 호출하지 않고 이 클래스를 거친다.
 public class DayFlowController : MonoSingleton<DayFlowController>
 {
-    private enum PendingStep
-    {
-        GoToBusiness,
-        GoToSettlement
-    }
-
     [SerializeField] private string endingEpisodeId; // '지구로' 에피소드의 episodeId. Inspector에서 설정.
 
-    // 지금 막 StartEpisode()로 시작시키는 필수 에피소드가 끝난 뒤 무엇을 할지 미리 정해둔다
-    // (BeforeBusiness 에피소드는 GoToBusiness, 그 외/기본 에피소드는 GoToSettlement).
-    // OnEpisodeCompleted()가 소비하자마자 기본값으로 리셋한다.
-    private PendingStep _afterEpisode = PendingStep.GoToSettlement;
     private string _pendingSettlementCutsceneId;
 
     // Rest에서 "영업 시작"을 눌렀을 때 호출.
@@ -24,42 +15,21 @@ public class DayFlowController : MonoSingleton<DayFlowController>
     {
         GameProgress.Instance?.AdvanceDay();
         _pendingSettlementCutsceneId = null;
-        BeginMandatoryOrBusiness();
+        EnterBusiness();
     }
 
-    // MainMenu "게임 시작"에서 최초 1회 호출. Day 1은 이미 1이므로 AdvanceDay를 호출하지 않고,
-    // StartBusinessDay와 동일한 필수 에피소드 큐 로직을 그대로 태운다.
+    // MainMenu "게임 시작"에서 최초 1회 호출. Day 1은 이미 1이므로 AdvanceDay를 호출하지 않는다.
     public void StartFirstDay()
     {
         _pendingSettlementCutsceneId = CutsceneIds.FathersNote;
-        BeginMandatoryOrBusiness();
+        EnterBusiness();
     }
 
-    private void BeginMandatoryOrBusiness()
+    // 영업 인카운터 에피소드가 끝날 때마다 EpisodeManager가 호출.
+    public void NotifyEpisodeCompleted(string episodeId)
     {
-        EpisodeData mandatory = EpisodeManager.Instance?.GetNextMandatoryEpisode();
-        if (mandatory != null && mandatory.mandatorySlot == MandatorySlot.BeforeBusiness)
-        {
-            _afterEpisode = PendingStep.GoToBusiness;
-            EpisodeManager.Instance.StartEpisode(mandatory.episodeId);
-        }
-        else
-        {
-            EnterBusiness();
-        }
-    }
-
-    // Rest 보드에서 기본 에피소드를 선택했을 때 호출.
-    public void StartDefaultEpisode(string episodeId)
-    {
-        GameProgress.Instance?.AdvanceDay();
-
-        _afterEpisode = PendingStep.GoToSettlement;
-        _pendingSettlementCutsceneId =
-            (!string.IsNullOrEmpty(endingEpisodeId) && episodeId == endingEpisodeId)
-                ? CutsceneIds.Ending
-                : null;
-        EpisodeManager.Instance?.StartEpisode(episodeId);
+        if (!string.IsNullOrEmpty(endingEpisodeId) && episodeId == endingEpisodeId)
+            _pendingSettlementCutsceneId = CutsceneIds.Ending;
     }
 
     // 정산 종료 시 SettlementManager가 재생할 컷씬 id를 가져가면서 비운다. 없으면 null.
@@ -70,31 +40,20 @@ public class DayFlowController : MonoSingleton<DayFlowController>
         return id;
     }
 
-    // EpisodeRunner.EndEncounter()에서 호출 (Default/Mandatory 공통).
-    public void OnEpisodeCompleted()
-    {
-        PendingStep step = _afterEpisode;
-        _afterEpisode = PendingStep.GoToSettlement;
-
-        if (step == PendingStep.GoToBusiness)
-            EnterBusiness();
-        else
-            GoToSettlement();
-    }
-
-    // 영업(스텁 또는 추후 실제 구현)이 끝났을 때 호출.
+    // 영업(손님 슬롯 전부)이 끝났을 때 호출.
     public void OnBusinessCompleted()
     {
-        EpisodeData mandatory = EpisodeManager.Instance?.GetNextMandatoryEpisode();
-        if (mandatory != null && mandatory.mandatorySlot == MandatorySlot.AfterBusiness)
-        {
-            _afterEpisode = PendingStep.GoToSettlement;
-            EpisodeManager.Instance.StartEpisode(mandatory.episodeId);
-        }
-        else
-        {
-            GoToSettlement();
-        }
+        // 챕터 마지막 날이면 다음 챕터 기획이 생기기 전까지 정산 뒤 엔딩 컷씬 → 메인메뉴로 보낸다.
+        // 엔딩은 다른 예약 컷씬보다 우선한다(엔딩 뒤로는 진행할 화면이 없으므로).
+        if (IsLastDayOfCurrentChapter())
+            _pendingSettlementCutsceneId = CutsceneIds.Ending;
+
+        GoToSettlement();
+    }
+
+    public void GoToSettlement()
+    {
+        GameManager.Instance?.ChangeState(GameState.Settlement);
     }
 
     private void EnterBusiness()
@@ -102,8 +61,13 @@ public class DayFlowController : MonoSingleton<DayFlowController>
         GameManager.Instance?.ChangeState(GameState.Business);
     }
 
-    public void GoToSettlement()
+    private static bool IsLastDayOfCurrentChapter()
     {
-        GameManager.Instance?.ChangeState(GameState.Settlement);
+        GameProgress progress = GameProgress.Instance;
+        if (progress == null)
+            return false;
+
+        ChapterData chapter = ChapterData.Find(progress.CurrentChapterId);
+        return chapter != null && chapter.lastDay > 0 && progress.CurrentDay >= chapter.lastDay;
     }
 }

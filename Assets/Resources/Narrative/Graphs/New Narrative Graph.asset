@@ -21,13 +21,15 @@ MonoBehaviour:
     height: 137
   CustomFields:
   - FieldName: Title
-    FieldValue: New Block
+    FieldValue: "(\uBE48 \uBE14\uB85D)"
   - FieldName: Description
     FieldValue: 
   StartEventGuid: 
   Events: []
   OutgoingBranches:
   - Next
+  RouterNodeId: 
+  ShowAllEvents: 0
 --- !u!114 &-7127120222914740406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -49,7 +51,7 @@ MonoBehaviour:
     height: 266.4
   CustomFields:
   - FieldName: Title
-    FieldValue: "\uC774\uC0C1\uD55C \uB3D9\uC804"
+    FieldValue: 2
   - FieldName: Description
     FieldValue: s
   - FieldName: DiscoveryCondition
@@ -64,10 +66,9 @@ MonoBehaviour:
   Events:
   - Guid: e9a2e6c4-3713-4508-9e41-2b960d68d1df
     Position: {x: -114.33859, y: -58.40008}
-    NextEventGuids:
-    - ad94c827-e694-424d-b5c0-deb9d5eb425f
-    - 9c2e0f48-97fb-4007-bab6-879738dc18b7
+    NextEventGuids: []
     Type: 0
+    RuntimeNodeId: 2
     SpeakerKey: a
     OverrideSpeakerName: 
     Text: aaaaaa
@@ -75,16 +76,22 @@ MonoBehaviour:
     Choices: []
     BgmCommand: 0
     BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
     CraftingTicketKey: 
-    CraftingFlagGood: 
-    CraftingFlagBad: 
-    CraftingVarChangesGood: []
-    CraftingVarChangesBad: []
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
     ExitBranchName: 
   - Guid: ad94c827-e694-424d-b5c0-deb9d5eb425f
     Position: {x: 56, y: -58}
     NextEventGuids: []
     Type: 1
+    RuntimeNodeId: 3
     SpeakerKey: 
     OverrideSpeakerName: 
     Text: 
@@ -102,16 +109,22 @@ MonoBehaviour:
       VarChanges: []
     BgmCommand: 0
     BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
     CraftingTicketKey: 
-    CraftingFlagGood: 
-    CraftingFlagBad: 
-    CraftingVarChangesGood: []
-    CraftingVarChangesBad: []
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
     ExitBranchName: 
   - Guid: 9c2e0f48-97fb-4007-bab6-879738dc18b7
     Position: {x: 255.16, y: -85}
     NextEventGuids: []
     Type: 0
+    RuntimeNodeId: "\uC774\uC0C1\uD55C_\uB3D9\uC804~2"
     SpeakerKey: a
     OverrideSpeakerName: 
     Text: hi
@@ -119,16 +132,22 @@ MonoBehaviour:
     Choices: []
     BgmCommand: 0
     BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
     CraftingTicketKey: 
-    CraftingFlagGood: 
-    CraftingFlagBad: 
-    CraftingVarChangesGood: []
-    CraftingVarChangesBad: []
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
     ExitBranchName: 
   - Guid: f0c0c7e7-9652-48f5-87e4-ae3e0c8af54c
     Position: {x: 224.79999, y: 57}
     NextEventGuids: []
     Type: 0
+    RuntimeNodeId: "\uC774\uC0C1\uD55C_\uB3D9\uC804~3"
     SpeakerKey: a
     OverrideSpeakerName: 
     Text: no.
@@ -136,16 +155,22 @@ MonoBehaviour:
     Choices: []
     BgmCommand: 0
     BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
     CraftingTicketKey: 
-    CraftingFlagGood: 
-    CraftingFlagBad: 
-    CraftingVarChangesGood: []
-    CraftingVarChangesBad: []
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
     ExitBranchName: 
   OutgoingBranches:
-  - money<10
-  - a==1
-  - New
+  - 1
+  - 2
+  RouterNodeId: 
+  ShowAllEvents: 0
 --- !u!114 &-6074970108715304164
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -171,23 +196,37 @@ MonoBehaviour:
   - FieldName: NewField
     FieldValue: 
   - FieldName: Title
-    FieldValue: aas
+    FieldValue: 1
   StartEventGuid: 
   Events:
   - Guid: 9fd115d1-0953-45cf-baab-6d3f70acd13e
     Position: {x: 114.880005, y: 150.92}
     NextEventGuids: []
     Type: 0
+    RuntimeNodeId: 1
     SpeakerKey: 
     OverrideSpeakerName: 
     Text: 
     CharacterAppearances: []
     Choices: []
+    BgmCommand: 0
+    BgmClipName: 
+    SfxCommand: 0
+    SfxClipName: 
+    CraftingOrderTicket: {fileID: 0}
     CraftingTicketKey: 
+    CraftingOrderType: 6
+    CraftingOrderTarget: 
+    CraftingPaymentEnabled: 1
+    CraftingPaymentCurrency: 0
+    CraftingPaymentMultiplier: 1
+    CraftingOutcomes: []
     ExitBranchName: 
   OutgoingBranches:
   - Next
   - New
+  RouterNodeId: 
+  ShowAllEvents: 0
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -203,13 +242,21 @@ MonoBehaviour:
   EpisodeId: 
   EpisodeTitle: 
   StartNodeGuid: 
+  ChapterId: 
+  ScheduledDay: 0
+  ScheduledSlot: 0
+  SlotPriority: 0
   TriggerCondition:
     minDay: 0
+    minMoney: 0
     requiredFlags: []
     blockedFlags: []
     prerequisiteEpisodeIds: []
     requiredVars: []
-  OpeningCharacters: []
+    requiredCustomerAppearances: []
+  SettlementRewards: []
+  SourceCsvPath: 
+  LastSyncedCsvHash: 
   Nodes:
   - {fileID: -7127120222914740406}
   - {fileID: 4866711699634503307}
@@ -246,7 +293,7 @@ MonoBehaviour:
     height: 226.40002
   CustomFields:
   - FieldName: Title
-    FieldValue: New Episode
+    FieldValue: "(\uBE48 \uBE14\uB85D)"
   - FieldName: Description
     FieldValue: 
   - FieldName: DiscoveryCondition
@@ -262,3 +309,5 @@ MonoBehaviour:
   OutgoingBranches:
   - Next
   - New
+  RouterNodeId: 
+  ShowAllEvents: 0

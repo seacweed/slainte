@@ -54,8 +54,6 @@ public class DataManager : MonoSingleton<DataManager>
             CurrentData.completedEpisodeIds = gp.GetCompletedList();
             CurrentData.affinityKeys        = gp.GetAffinityKeys();
             CurrentData.affinityValues      = gp.GetAffinityValues();
-            CurrentData.boardSlotKeys       = gp.GetBoardSlotKeys();
-            CurrentData.boardSlotValues     = gp.GetBoardSlotValues();
             CurrentData.bottleAmountKeys    = gp.GetBottleAmountKeys();
             CurrentData.bottleAmountValues  = gp.GetBottleAmountValues();
             CurrentData.customerAppearanceKeys   = gp.GetCustomerAppearanceKeys();

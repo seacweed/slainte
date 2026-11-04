@@ -14,6 +14,10 @@ namespace Slainte.Bartending
         public Sprite[] cabinetLayers = Array.Empty<Sprite>();
         [Tooltip("Back color, back line, front color, and front line, in that order.")]
         public Sprite[] worldLayers = Array.Empty<Sprite>();
+        [Tooltip("Single image shown on the tool shelf while stored. Expected artwork suffix: _in. Empty = cabinetLayers.")]
+        public Sprite shelfInSprite;
+        [Tooltip("Single image shown on the tool shelf while taken out. Expected artwork suffix: _dis.")]
+        public Sprite shelfDisabledSprite;
         [Tooltip("Full-canvas sprite used to convert collision profile pixels to local space.")]
         public Sprite collisionReferenceSprite;
         public GameObject worldPrefab;

@@ -2,7 +2,9 @@
     "name": "Slainte.Shared.Editor",
     "rootNamespace": "Slainte.EditorTools",
     "references": [
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "Slainte.Shared.Display",
+        "UnityEngine.UI"
     ],
     "includePlatforms": [
         "Editor"

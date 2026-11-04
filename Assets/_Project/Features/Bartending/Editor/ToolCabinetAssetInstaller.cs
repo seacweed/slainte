@@ -29,6 +29,16 @@ namespace Slainte.Editor
             Debug.Log("[ToolCabinet] Art, definitions, and catalog are installed.");
         }
 
+        // 진열용 단일 이미지만 연결한다. Install Or Repair는 정의 값을 전부 덮어써 수동 조정이 되돌아가므로,
+        // 아트만 새로 들어온 경우엔 이 메뉴로 shelfInSprite/shelfDisabledSprite 두 필드만 채운다.
+        [MenuItem("Tools/Slainte/Tool Cabinet/Apply Shelf Sprites")]
+        public static void ApplyShelfSpritesFromMenu()
+        {
+            int applied = ApplyShelfSprites();
+            AssetDatabase.SaveAssets();
+            Debug.Log($"[ToolCabinet] Shelf _in/_dis sprites applied to {applied} definitions.");
+        }
+
         [MenuItem("Tools/Slainte/Tool Cabinet/Validate Assets")]
         public static void ValidateFromMenu()
         {
@@ -207,9 +217,56 @@ namespace Slainte.Editor
                 EditorUtility.SetDirty(catalog);
             }
 
+            ApplyShelfSprites();
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             ValidateOrThrow();
+        }
+
+        // 정의 에셋 이름 → 진열 아트 기본 이름. 얼음 버킷은 진열에서 빠져 진열 아트가 없다.
+        private static readonly (string AssetName, string Root, string ArtName)[] ShelfArtMappings =
+        {
+            ("Jigger", ToolRoot, "jigger"),
+            ("CobblerShaker", ToolRoot, "cobbler"),
+            ("BarSpoon", ToolRoot, "barspoon"),
+            ("Rock", GlassRoot, "rock"),
+            ("Martini", GlassRoot, "cocktail"),
+            ("Highball", GlassRoot, "highball"),
+            ("Hurricane", GlassRoot, "hurricane")
+        };
+
+        // 아트 파일이 없으면 해당 정의를 건너뛰어 기존 레이어 진열로 폴백되게 둔다.
+        private static int ApplyShelfSprites()
+        {
+            int applied = 0;
+            foreach ((string assetName, string root, string artName) in ShelfArtMappings)
+            {
+                Sprite shelfIn = AssetDatabase.LoadAssetAtPath<Sprite>(root + artName + "_in.png");
+                Sprite shelfDisabled = AssetDatabase.LoadAssetAtPath<Sprite>(root + artName + "_dis.png");
+                if (shelfIn == null)
+                    continue;
+
+                string path = DefinitionRoot + "/" + assetName + ".asset";
+                ScriptableObject definition = AssetDatabase.LoadAssetAtPath<ScriptableObject>(path);
+                switch (definition)
+                {
+                    case ToolDef tool:
+                        tool.shelfInSprite = shelfIn;
+                        tool.shelfDisabledSprite = shelfDisabled;
+                        break;
+                    case GlassDef glass:
+                        glass.shelfInSprite = shelfIn;
+                        glass.shelfDisabledSprite = shelfDisabled;
+                        break;
+                    default:
+                        continue;
+                }
+
+                EditorUtility.SetDirty(definition);
+                applied++;
+            }
+
+            return applied;
         }
 
         private static ToolDef EnsureTool(

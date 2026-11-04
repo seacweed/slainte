@@ -15,17 +15,10 @@ MonoBehaviour:
   episodeId: TheLittles_0
   episodeTitle: "\uC544\uC774\uB4E4 0"
   chapterId: Sector0
-  episodeType: 2
-  mandatorySlot: 0
+  scheduledDay: 2
+  scheduledSlot: 5
+  slotPriority: 1
   triggerCondition:
-    minDay: 5
-    minMoney: 0
-    requiredFlags: []
-    blockedFlags: []
-    prerequisiteEpisodeIds: []
-    requiredVars: []
-    requiredCustomerAppearances: []
-  playCondition:
     minDay: 0
     minMoney: 0
     requiredFlags: []
@@ -33,20 +26,6 @@ MonoBehaviour:
     prerequisiteEpisodeIds: []
     requiredVars: []
     requiredCustomerAppearances: []
-  triggerConditionEntries:
-  - condition:
-      type: 1
-      minDay: 5
-      requiredFlag: 
-      prerequisiteEpisodeId: 
-      varName: 
-      varOp: 0
-      varThreshold: 0
-      minMoney: 0
-    conditionText: 
-  playConditionEntries: []
-  selectConditions: []
-  openingCharacters: []
   firstNodeId: 1
   nodes:
   - nodeId: 1
@@ -55,9 +34,7 @@ MonoBehaviour:
     text: "\uD06C\uD760- \uC5EC\uAE30 \uC220 \uD558\uB098 \uC8FC\uC1FC."
     nextNodeId: 2
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: hide
@@ -88,9 +65,7 @@ MonoBehaviour:
       \uC788\uB2F5\uB2C8\uB2E4. \uC5B4\uB5A4 \uAC78 \uCC3E\uC73C\uC2DC\uB294 \uAC78\uAE4C\uC694?"
     nextNodeId: 3
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: hide
@@ -121,9 +96,7 @@ MonoBehaviour:
       \uC918"
     nextNodeId: 4
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: hide
@@ -153,9 +126,7 @@ MonoBehaviour:
     text: "\u2026\uC190\uB2D8, \uD639\uC2DC \uD38D\uC774 \uCC98\uC74C\uC774\uC2E0\uAC00\uC694?"
     nextNodeId: 5
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: hide
@@ -187,9 +158,7 @@ MonoBehaviour:
       \uC220\uC774\uB098 \uC918!"
     nextNodeId: 6
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: hide
@@ -219,9 +188,7 @@ MonoBehaviour:
     text: "\u2026"
     nextNodeId: 7
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: hide
@@ -251,9 +218,7 @@ MonoBehaviour:
     text: "\uC5D8\uB9AC\uC5C7. \uD639\uC2DC \uB108\uC57C?"
     nextNodeId: 8
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: hide
@@ -283,9 +248,7 @@ MonoBehaviour:
     text: "\uC544, \uC9C4\uC9DC! \uAC70\uC758 \uB2E4 \uC131\uACF5\uD588\uB294\uB370!"
     nextNodeId: 9
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: disappoint
@@ -317,9 +280,7 @@ MonoBehaviour:
       \uB9D0\uC774\uC57C!"
     nextNodeId: 10
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: pout
@@ -351,9 +312,7 @@ MonoBehaviour:
       \uC904\uB3C4 \uC54C\uC544\uC57C\uC9C0."
     nextNodeId: 11
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: pout
@@ -385,9 +344,7 @@ MonoBehaviour:
       \uC6B0\uB9AC \uD38D \uBB38 \uB2EB\uC544\uC57C \uD574."
     nextNodeId: 12
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: pout
@@ -417,9 +374,7 @@ MonoBehaviour:
     text: "\uB098\uB3C4 \uACE7 \uC131\uC778\uC778\uB370\u2026"
     nextNodeId: 13
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: pout
@@ -451,9 +406,7 @@ MonoBehaviour:
       \uB418\uACA0\uB294\uB370*"
     nextNodeId: 14
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: pout
@@ -483,9 +436,7 @@ MonoBehaviour:
     text: 
     nextNodeId: 
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: pout
@@ -500,27 +451,27 @@ MonoBehaviour:
     craftingPaymentMultiplier: 1
     craftingOutcomes:
     - result: 0
-      nextNodeId: 14_1_1
+      nextNodeId: 15_1_1
       flag: tl0_true
       varChanges: []
     - result: 5
-      nextNodeId: 14_2_1
+      nextNodeId: 15_2_1
       flag: tl0_true
       varChanges: []
     - result: 1
-      nextNodeId: 14_1_1
+      nextNodeId: 15_1_1
       flag: tl0_true
       varChanges: []
     - result: 2
-      nextNodeId: 14_1_1
+      nextNodeId: 15_1_1
       flag: tl0_true
       varChanges: []
     - result: 3
-      nextNodeId: 14_1_1
+      nextNodeId: 15_1_1
       flag: tl0_true
       varChanges: []
     - result: 4
-      nextNodeId: 14_2_1
+      nextNodeId: 15_2_1
       flag: tl0_true
       varChanges: []
     nextNodeIdGood: 
@@ -533,15 +484,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 14_1_1
+  - nodeId: 15_1_1
     speakerKey: eliud
     overrideSpeakerName: 
     text: "\uC624! \uC774\uAC74 \uBB50\uC57C?"
-    nextNodeId: 14_1_2
+    nextNodeId: 15_1_2
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: expect
@@ -565,15 +514,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 14_1_2
+  - nodeId: 15_1_2
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC220\uC740 \uC544\uB2C8\uB2C8\uAE4C \uAE30\uB300\uD558\uC9C0\uB294 \uB9C8"
-    nextNodeId: 14_1_3
+    nextNodeId: 15_1_3
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: expect
@@ -597,16 +544,14 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 14_1_3
+  - nodeId: 15_1_3
     speakerKey: eliud
     overrideSpeakerName: 
     text: "\uBB50\uC57C, \uC774\uAC70 \uC65C \uB9DB\uC788\uC5B4? \uC220\uBCF4\uB2E4
       \uC774\uAC8C \uB354 \uB098\uC740 \uAC83 \uAC19\uC740\uB370!"
-    nextNodeId: 14_1_4
+    nextNodeId: 15_1_4
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: expect
@@ -630,15 +575,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 14_1_4
+  - nodeId: 15_1_4
     speakerKey: shaun
     overrideSpeakerName: 
     text: "*\uC220\uB3C4 \uC548 \uBA39\uC5B4\uBCF8 \uB140\uC11D\uC774\u2026*"
-    nextNodeId: 14_1_5
+    nextNodeId: 15_1_5
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: expect
@@ -662,15 +605,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 14_1_5
+  - nodeId: 15_1_5
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC774\uC81C \uADF8\uB9CC \uB3CC\uC544\uAC00\uBD10. \uC601\uC5C5\uC911\uC774\uC796\uC544"
-    nextNodeId: 15
+    nextNodeId: 16
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: expect
@@ -694,15 +635,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 14_2_1
+  - nodeId: 15_2_1
     speakerKey: eliud
     overrideSpeakerName: 
     text: "\uC624! \uC774\uAC74 \uBB50\uC57C?"
-    nextNodeId: 14_2_2
+    nextNodeId: 15_2_2
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: expect
@@ -726,15 +665,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 14_2_2
+  - nodeId: 15_2_2
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uB9C8\uC154\uBCF4\uACE0 \uB180\uB77C\uC9C0\uB098 \uB9D0\uB77C\uACE0"
-    nextNodeId: 14_2_3
+    nextNodeId: 15_2_3
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: expect
@@ -758,15 +695,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 14_2_3
+  - nodeId: 15_2_3
     speakerKey: eliud
     overrideSpeakerName: 
     text: "\uC73C\uC5D1! \uC774\uAC8C \uBB34\uC2A8 \uB9DB\uC774\uC57C!"
-    nextNodeId: 14_2_4
+    nextNodeId: 15_2_4
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: disappoint
@@ -790,15 +725,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 14_2_4
+  - nodeId: 15_2_4
     speakerKey: eliud
     overrideSpeakerName: 
     text: "\uC624\uBE60! \uC77C\uBD80\uB7EC \uC774\uB7F0\uAC70 \uC900\uAC70\uC9C0!"
-    nextNodeId: 14_2_5
+    nextNodeId: 15_2_5
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: pout
@@ -822,15 +755,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 14_2_5
+  - nodeId: 15_2_5
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uD5E4- \uC220\uB9DB\uB3C4 \uBAA8\uB974\uBA74\uC11C \uB098\uC11C\uAE30\uB294"
-    nextNodeId: 14_2_6
+    nextNodeId: 15_2_6
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: pout
@@ -854,15 +785,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 14_2_6
+  - nodeId: 15_2_6
     speakerKey: shaun
     overrideSpeakerName: 
     text: "\uC774\uC81C \uADF8\uB9CC \uB3CC\uC544\uAC00\uBD10. \uC601\uC5C5\uC911\uC774\uC796\uC544"
-    nextNodeId: 15
+    nextNodeId: 16
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: pout
@@ -886,15 +815,13 @@ MonoBehaviour:
     bgmClipName: 
     sfxCommand: 0
     sfxClipName: 
-  - nodeId: 15
+  - nodeId: 16
     speakerKey: eliud
     overrideSpeakerName: 
     text: "\uCE58- \uC54C\uC558\uC5B4. \uB2E4\uC74C\uC5D4 \uAF2D \uC131\uACF5\uD560\uAC70\uC57C!"
     nextNodeId: 
     choices: []
-    flagBranches: []
-    varBranches: []
-    episodeBranches: []
+    branches: []
     characters:
     - characterKey: eliud
       expressionKey: pout
@@ -919,7 +846,3 @@ MonoBehaviour:
     sfxCommand: 0
     sfxClipName: 
   settlementRewards: []
-  episodeDescription: 
-  iconNameBoard: 
-  iconNameArchive: 
-  characters: []

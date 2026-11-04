@@ -12,6 +12,7 @@
 - `Slainte.Shared.Content`: Resources와 StreamingAssets 경로 계약
 - `Slainte.Shared.Input`: 카메라 입력 계약
 - `Slainte.Shared.Lifecycle`: 씬 수명 계약
+- `Slainte.Shared.Display`: 16:9 게임 영역·레터박스(UnityEngine.UI 참조)
 - `Slainte.Shared.Editor`: 공용 에디터 도구
 - `Slainte.Shared.Tests.EditMode`: 공용 계약 테스트
 

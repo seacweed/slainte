@@ -26,6 +26,8 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 94272f0a7b1242f6b94710d057c2dd51, type: 3}
   - {fileID: 21300000, guid: 652438536af348a09ecb71003ef6f2be, type: 3}
   - {fileID: 21300000, guid: 3f05e188b4064bf2be2a1f0c018aa73d, type: 3}
+  shelfInSprite: {fileID: 21300000, guid: d1cb5b5a1fec88a458639407e29b4ff9, type: 3}
+  shelfDisabledSprite: {fileID: 21300000, guid: dbc3e8578be143f40aa2dab1f5626dc9, type: 3}
   collisionReferenceSprite: {fileID: 21300000, guid: 3f05e188b4064bf2be2a1f0c018aa73d, type: 3}
   worldPrefab: {fileID: 2243653413097636618, guid: 0f545fa15c57b314184f5dc08a58782b, type: 3}
   glassId: hurricane

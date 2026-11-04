@@ -66,11 +66,41 @@ namespace NarrativeFlow.Editor
 
         private static void DrawEpisode(VisualElement container, EpisodeNodeSO ep, NarrativeNodeView view, NarrativeGraphView gv)
         {
-            container.Add(NarrativeUIHelper.CreateButton("Open Sequence Editor", () => EpisodeSequenceEditor.Open(ep, gv)).With(b => { b.style.height = 36; b.style.backgroundColor = new Color(0.2f, 0.4f, 0.2f); }).SetMargin(10, 10));
+            DrawSelectedEvent(container, ep, view, gv);
+            DrawBlockTools(container, ep, view, gv);
             
             var sec = new VisualElement().AddClass("inspector-container");
             sec.Add(NarrativeUIHelper.CreateLabel("Outcome Branches", "field-label"));
             container.Add(sec);
+
+            var kind = NarrativeBlockModel.GetTerminalKind(ep);
+            if (kind != BlockTerminalKind.Branches)
+            {
+                // 선택지/제조로 끝나는 블록은 포트가 이벤트 내용으로 정해지므로 여기서 편집하지 않는다.
+                sec.Add(NarrativeUIHelper.CreateLabel(kind == BlockTerminalKind.Choice
+                        ? "선택지 버튼이 곧 포트입니다. 시퀀스 에디터에서 선택지를 편집하세요."
+                        : "제조 결과 6종이 곧 포트입니다.", "info-label")
+                    .With(l => { l.style.color = Color.gray; l.style.whiteSpace = WhiteSpace.Normal; }));
+                var labels = NarrativeBlockModel.GetPortLabels(ep);
+                for (int i = 0; i < labels.Count; i++)
+                {
+                    var row = NarrativeUIHelper.CreateRow();
+                    row.Add(NarrativeUIHelper.CreateLabel(labels[i], "field-value").SetFlex(1));
+                    row.Add(NarrativeUIHelper.CreateWarningIcon(view, $"branch_{i}"));
+                    sec.Add(row);
+                }
+                return;
+            }
+
+            sec.Add(new HelpBox(
+                "라벨 문법 (CSV 분기 섹션과 같음)\n"
+                + "• Next — 조건 없는 기본 다음\n"
+                + "• flag == true / a&b == true(모두 켜짐)\n"
+                + "• flag == false / a&b == false(모두 꺼짐)\n"
+                + "• var >= 5  (>=, >, ==, <, <=)\n"
+                + "• 에피소드ID — 그 에피소드를 완료했으면\n"
+                + "확인 순서: 위 포트부터 차례로, 맞는 게 없으면 Next",
+                HelpBoxMessageType.Info));
 
             System.Action refresh = null;
             refresh = () => NarrativeUIHelper.DrawList(sec, ep.OutgoingBranches, (c, b, i) => {
@@ -85,6 +115,46 @@ namespace NarrativeFlow.Editor
             refresh();
         }
 
+        // 카드에서 고른 이벤트의 상세 편집. 선택이 없으면 사용법만 안내한다.
+        private static void DrawSelectedEvent(VisualElement container, EpisodeNodeSO ep, NarrativeNodeView view, NarrativeGraphView gv)
+        {
+            var section = new VisualElement().AddClass("inspector-container").SetMargin(8, 8);
+            container.Add(section);
+
+            EpisodeEvent ev = view.SelectedEvent;
+            if (ev == null)
+            {
+                section.Add(NarrativeUIHelper.CreateLabel(
+                    "카드에서 줄을 클릭하면 여기서 자세히 편집합니다.\n대사는 카드에서 더블클릭해 바로 고칠 수 있고, 우클릭 메뉴로 추가·블록 나누기를 할 수 있습니다.",
+                    "info-label").With(l => { l.style.whiteSpace = WhiteSpace.Normal; }));
+                return;
+            }
+
+            EventInspectorUI.Draw(
+                section,
+                ev,
+                ep,
+                onChanged: () => { view.RefreshVisuals(); gv.ValidateAllNodes(); },
+                onPortsChanged: () => gv.RefreshBlock(view));
+        }
+
+        private static void DrawBlockTools(VisualElement container, EpisodeNodeSO ep, NarrativeNodeView view, NarrativeGraphView gv)
+        {
+            var row = NarrativeUIHelper.CreateRow().SetMargin(4, 8);
+            int index = view.SelectedEventIndex;
+            var split = NarrativeUIHelper.CreateButton("선택한 줄부터 블록 나누기", () => gv.SplitBlock(view, index)).SetFlex(1);
+            split.SetEnabled(NarrativeBlockEditing.CanSplit(ep, index));
+            split.tooltip = "선택한 이벤트부터 새 블록으로 떼어 내고 Next로 잇습니다. 기존 출력 연결은 새 블록이 물려받습니다.";
+            row.Add(split);
+
+            bool canMerge = NarrativeBlockEditing.TryGetMergeTarget(gv.currentGraph, ep, out _, out string reason);
+            var merge = NarrativeUIHelper.CreateButton("다음 블록과 합치기", () => gv.MergeWithNext(view)).SetFlex(1);
+            merge.SetEnabled(canMerge);
+            merge.tooltip = canMerge ? "Next로 이어진 다음 블록을 이 블록 뒤에 붙입니다." : reason;
+            row.Add(merge);
+            container.Add(row);
+        }
+
         private static void DrawTrigger(VisualElement container, TriggerNodeSO tr, NarrativeNodeView view, NarrativeGraphView gv)
         {
             var list = new VisualElement(); container.Add(list);
@@ -92,7 +162,7 @@ namespace NarrativeFlow.Editor
             refresh = () => NarrativeUIHelper.DrawList(list, tr.Conditions, (c, cond, i) => {
                 var box = new Box().AddClass("inspector-container").SetMargin(0, 5);
                 box.Add(NarrativeUIHelper.CreateRow().With(r => {
-                    r.Add(new EnumField(cond.Type).SetFlex(1).With(x => x.RegisterValueChangedCallback(e => { cond.Type = (TriggerConditionType)e.newValue; gv.ValidateAllNodes(); })));
+                    r.Add(new EnumField(cond.Type).SetFlex(1).With(x => x.RegisterValueChangedCallback(e => { cond.Type = (TriggerConditionType)e.newValue; refresh(); view.RefreshVisuals(); gv.ValidateAllNodes(); })));
                     r.Add(NarrativeUIHelper.CreateButton("X", () => { tr.Conditions.RemoveAt(i); refresh(); view.RefreshVisuals(); gv.NotifyNodeStructureChanged(view); gv.ValidateAllNodes(); }));
                 }));
                 box.Add(NarrativeUIHelper.CreateRow().With(r => {
@@ -100,6 +170,7 @@ namespace NarrativeFlow.Editor
                     r.Add(new TextField { value = cond.Key }.SetFlex(1).With(x => x.RegisterValueChangedCallback(e => { cond.Key = e.newValue; view.RefreshVisuals(); gv.ValidateAllNodes(); })));
                     r.Add(NarrativeUIHelper.CreateWarningIcon(view, $"cond_key_{i}"));
                 }));
+                if (cond.Type != TriggerConditionType.Episode)
                 box.Add(NarrativeUIHelper.CreateRow().With(r => {
                     r.Add(new TextField { value = cond.Operator }.With(x => { x.style.width = 40; x.RegisterValueChangedCallback(e => { cond.Operator = e.newValue; gv.ValidateAllNodes(); }); }));
                     r.Add(new TextField { value = cond.Value }.SetFlex(1).With(x => x.RegisterValueChangedCallback(e => { cond.Value = e.newValue; view.RefreshVisuals(); gv.ValidateAllNodes(); })));
@@ -158,6 +229,8 @@ namespace NarrativeFlow.Editor
                     Undo.RecordObject(graph, "Set StartNode");
                     graph.StartNodeGuid = idx > 0 ? episodeNodes[idx - 1].Guid : "";
                     EditorUtility.SetDirty(graph);
+                    NarrativeNodeIdAssigner.RegenerateIds(graph);
+                    gv.window.ReloadGraph();
                 });
                 container.Add(popup);
             }
@@ -166,17 +239,142 @@ namespace NarrativeFlow.Editor
                 container.Add(NarrativeUIHelper.CreateLabel("(Add episode blocks first)", "info-label").With(l => l.style.color = Color.gray));
             }
 
-            // Trigger & Opening Characters note
+            // Chapter & schedule
             container.Add(NarrativeUIHelper.CreateDivider());
-            container.Add(NarrativeUIHelper.CreateLabel("Trigger / Opening Chars", "field-label"));
-            container.Add(NarrativeUIHelper.CreateLabel("Select the graph asset in the Project panel to edit in the Inspector.", "info-label")
-                .With(l => { l.style.color = Color.gray; l.style.whiteSpace = WhiteSpace.Normal; }));
-            container.Add(new Button(() => { Selection.activeObject = graph; EditorGUIUtility.PingObject(graph); }) { text = "Ping Graph Asset" }.SetMargin(4, 0));
+            container.Add(TextRow("Chapter ID", graph.ChapterId, v => graph.ChapterId = v, graph));
+            container.Add(NarrativeUIHelper.CreateLabel("영업 일정 (CSV #META day / slot / priority)", "field-label").SetMargin(6, 0));
+            var scheduleInfo = NarrativeUIHelper.CreateLabel("", "info-label").With(l => l.style.whiteSpace = WhiteSpace.Normal);
+            System.Action refreshSchedule = () => scheduleInfo.text = DescribeSchedule(graph);
+            container.Add(IntRow("Day", graph.ScheduledDay, v => { graph.ScheduledDay = Mathf.Max(0, v); refreshSchedule(); }, graph));
+            container.Add(IntRow("Slot", graph.ScheduledSlot, v => { graph.ScheduledSlot = Mathf.Max(0, v); refreshSchedule(); }, graph));
+            container.Add(IntRow("Priority", graph.SlotPriority, v => { graph.SlotPriority = v; refreshSchedule(); }, graph));
+            container.Add(scheduleInfo);
+            refreshSchedule();
 
-            // Compile shortcut
+            // 등장 조건 · 정산 보상은 Unity 기본 리스트 편집기로 직접 편집한다(Undo 지원).
             container.Add(NarrativeUIHelper.CreateDivider());
-            container.Add(new Button(() => new EpisodeDataCompiler().Compile(graph)) { text = "Compile to EpisodeData" }
+            var serialized = new SerializedObject(graph);
+            AddProperty(container, serialized, "TriggerCondition", "등장 조건 (CSV #TRIGGER)");
+            AddProperty(container, serialized, "SettlementRewards", "정산 보상 (CSV #SETTLEMENT_REWARDS)");
+
+            DrawCsvSync(container, gv, graph);
+            return;
+
+        }
+
+        private static VisualElement TextRow(string label, string value, System.Action<string> set, Object target)
+        {
+            var row = NarrativeUIHelper.CreateRow();
+            row.Add(NarrativeUIHelper.CreateLabel(label, "field-label").With(l => l.style.width = 90));
+            row.Add(new TextField { value = value }.SetFlex(1).With(x => x.RegisterValueChangedCallback(e =>
+            {
+                Undo.RecordObject(target, $"Set {label}");
+                set(e.newValue);
+                EditorUtility.SetDirty(target);
+            })));
+            return row;
+        }
+
+        private static VisualElement IntRow(string label, int value, System.Action<int> set, Object target)
+        {
+            var row = NarrativeUIHelper.CreateRow();
+            row.Add(NarrativeUIHelper.CreateLabel(label, "field-label").With(l => l.style.width = 90));
+            row.Add(new IntegerField { value = value }.SetFlex(1).With(x => x.RegisterValueChangedCallback(e =>
+            {
+                Undo.RecordObject(target, $"Set {label}");
+                set(e.newValue);
+                EditorUtility.SetDirty(target);
+            })));
+            return row;
+        }
+
+        private static void AddProperty(VisualElement container, SerializedObject serialized, string propertyName, string label)
+        {
+            var property = serialized.FindProperty(propertyName);
+            if (property == null) return;
+            var field = new PropertyField(property, label);
+            field.Bind(serialized);
+            container.Add(field.SetMargin(2, 4));
+        }
+
+        // 같은 (챕터, day, slot)에 배정된 다른 에피소드와 하루 손님 수 범위를 알려준다.
+        private static string DescribeSchedule(NarrativeGraphSO graph)
+        {
+            if (graph.ScheduledDay <= 0 || graph.ScheduledSlot <= 0)
+                return "일정 미배정 — 영업에 자동으로 등장하지 않습니다.";
+
+            var settings = Slainte.Business.BusinessOrderFlowSettings.LoadDefault();
+            int slots = settings != null ? settings.customersPerDay : 5;
+            string info = $"Day {graph.ScheduledDay}의 {graph.ScheduledSlot}번 손님 슬롯";
+            if (graph.ScheduledSlot > slots)
+                info += $"\n⚠ 하루 손님 수({slots})를 넘는 슬롯이라 등장하지 않습니다.";
+
+            var others = Resources.LoadAll<EpisodeData>(Slainte.Content.ProjectResourcePaths.NarrativeEpisodes)
+                .Where(e => e != null
+                    && !string.Equals(e.episodeId, graph.EpisodeId, System.StringComparison.OrdinalIgnoreCase)
+                    && e.scheduledDay == graph.ScheduledDay
+                    && e.scheduledSlot == graph.ScheduledSlot
+                    && (string.IsNullOrEmpty(e.chapterId) || string.IsNullOrEmpty(graph.ChapterId)
+                        || string.Equals(e.chapterId, graph.ChapterId, System.StringComparison.OrdinalIgnoreCase)))
+                .OrderByDescending(e => e.slotPriority)
+                .ToList();
+            if (others.Count == 0)
+                return info + "\n같은 슬롯의 다른 후보 없음.";
+
+            info += "\n같은 슬롯 후보(큰 priority부터 등장 조건 확인):";
+            foreach (var e in others)
+            {
+                info += $"\n  • {e.episodeId} (priority {e.slotPriority})";
+                if (e.slotPriority == graph.SlotPriority) info += " ⚠ priority 같음 — episodeId 순서로 확인됨";
+            }
+            return info;
+        }
+
+        private static void DrawCsvSync(VisualElement container, NarrativeGraphView gv, NarrativeGraphSO graph)
+        {
+            container.Add(NarrativeUIHelper.CreateDivider());
+            container.Add(NarrativeUIHelper.CreateLabel("CSV 동기화", "section-header"));
+
+            string id = string.IsNullOrWhiteSpace(graph.EpisodeId) ? graph.name : graph.EpisodeId;
+            string path = NarrativeCsvSync.ResolveSourceCsvPath(graph, id);
+            bool exists = System.IO.File.Exists(path);
+            string status = !exists ? "아직 없음 — 컴파일하면 새로 만듭니다."
+                : NarrativeCsvSync.HasExternalChanges(graph, path) ? "⚠ 마지막 동기화 이후 CSV가 바뀌었거나 동기화 기록이 없습니다."
+                : "동기화됨";
+            container.Add(NarrativeUIHelper.CreateLabel(path, "info-label").With(l => { l.style.whiteSpace = WhiteSpace.Normal; l.style.color = Color.gray; }));
+            container.Add(NarrativeUIHelper.CreateLabel(status, "info-label").With(l => l.style.whiteSpace = WhiteSpace.Normal));
+
+            container.Add(new Button(() =>
+            {
+                if (new EpisodeDataCompiler().Compile(graph))
+                    gv.window.ShowNotification(new GUIContent("EpisodeData와 CSV에 저장했습니다."));
+                gv.window.ReloadGraph();
+            }) { text = "컴파일 (EpisodeData + 원본 CSV)" }
                 .With(b => { b.style.height = 30; b.style.backgroundColor = new Color(0.15f, 0.35f, 0.15f); }).SetMargin(4, 0));
+
+            if (exists)
+            {
+                container.Add(new Button(() =>
+                {
+                    if (!NarrativeCsvSync.HasExternalChanges(graph, path)
+                        || EditorUtility.DisplayDialog("CSV에서 다시 만들기", "그래프 내용을 CSV 내용으로 교체합니다(블록 위치는 유지). 컴파일하지 않은 그래프 수정은 사라집니다.", "교체", "취소"))
+                    {
+                        NarrativeCsvSync.ImportCsvToGraph(path);
+                        gv.window.ReloadGraph();
+                    }
+                }) { text = "CSV에서 그래프 다시 만들기" }.SetMargin(4, 0));
+            }
+
+            container.Add(new Button(() =>
+            {
+                string picked = EditorUtility.OpenFilePanel("원본 CSV 지정", Slainte.EditorTools.NarrativeAssetPaths.EpisodeSourceRoot, "csv");
+                if (string.IsNullOrEmpty(picked)) return;
+                Undo.RecordObject(graph, "Set Source CSV");
+                graph.SourceCsvPath = NarrativeCsvSync.ToProjectRelative(picked);
+                graph.LastSyncedCsvHash = string.Empty;
+                EditorUtility.SetDirty(graph);
+                gv.window.OnNodeSelectionChanged(null);
+            }) { text = "원본 CSV 파일 지정..." }.SetMargin(4, 0));
         }
 
         private static string GetNodeTitle(EpisodeNodeSO node)

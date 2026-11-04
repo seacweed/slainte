@@ -186,7 +186,7 @@ public static class DeliverySystemValidator
             UnityEngine.Object.FindFirstObjectByType<CharacterStage>(FindObjectsInactive.Include);
         Require(customerSpawner != null && characterStage != null,
             "Customer presentation objects were not found.");
-        customerSpawner.ShowCustomers(new[] { "yukari" });
+        customerSpawner.ShowCustomers(new[] { "rusta" });
         CharacterView[] customers = characterStage.GetComponentsInChildren<CharacterView>(true);
         Require(customers.Length > 0,
             "Test customer was not visible before delivery opened.");

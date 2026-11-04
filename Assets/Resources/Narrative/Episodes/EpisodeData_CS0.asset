@@ -1,0 +1,2449 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ada6baddb75540a4ba25d31b476b855a, type: 3}
+  m_Name: EpisodeData_CS0
+  m_EditorClassIdentifier: Assembly-CSharp::EpisodeData
+  episodeId: CS0
+  episodeTitle: CS
+  chapterId: Sector0
+  scheduledDay: 1
+  scheduledSlot: 2
+  slotPriority: 1
+  triggerCondition:
+    minDay: 0
+    minMoney: 0
+    requiredFlags: []
+    blockedFlags: []
+    prerequisiteEpisodeIds: []
+    requiredVars: []
+    requiredCustomerAppearances: []
+  firstNodeId: 0
+  nodes:
+  - nodeId: 0
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uD760..\uD06C\uD760\u2026"
+    nextNodeId: 1
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 1
+    bgmClipName: Ep_main_0
+    sfxCommand: 1
+    sfxClipName: sfx_come_in
+  - nodeId: 1
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC5EC\uAE30 <b>\uB85C\uB2CC\uC988</b> \uD558\uB098."
+    nextNodeId: 
+    choices:
+    - buttonText: "\uC8C4\uC1A1\uD558\uC9C0\uB9CC, \uADF8\uB7F0 \uBA54\uB274\uB294
+        \uC5C6\uC2B5\uB2C8\uB2E4."
+      nextNodeId: 2_1_1
+      setFlags: []
+      clearFlags: []
+      varChanges: []
+    - buttonText: "\uC5B4\uB5BB\uAC8C\uB4E0 \uB9CC\uB4E4\uC5B4\uBCF4\uACA0\uC2B5\uB2C8\uB2E4."
+      nextNodeId: 2_2_1
+      setFlags: []
+      clearFlags: []
+      varChanges: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 2_1_1
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC190\uB2D8, \uC8C4\uC1A1\uD558\uC9C0\uB9CC, \uADF8\uB7F0 \uBA54\uB274\uB294
+      \uC5C6\uC2B5\uB2C8\uB2E4."
+    nextNodeId: 2_1_2
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 2_1_2
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uB0B4\uAC00 \uB108\uBB34 \uC5B4\uB824\uC6B4 \uAC78 \uC8FC\uBB38\uD588\uB098?"
+    nextNodeId: 2_1_3
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 2_1_3
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "<b>\uB85C\uB2CC\uC988</b>\uB3C4 \uB9CC\uB4E4\uC904 \uBAA8\uB978\uB2E4\uB2C8!"
+    nextNodeId: 3
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 2_2_1
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC74C\u2026 \uC5B4\uB5BB\uAC8C\uB4E0 \uB9CC\uB4E4\uC5B4\uBCF4\uACA0\uC2B5\uB2C8\uB2E4."
+    nextNodeId: 2_2_2
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 2_2_2
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uBB50\uC57C? \uADF8 \uBD88\uC548\uD55C \uB300\uB2F5\uC740?"
+    nextNodeId: 2_2_3
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 2_2_3
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC557, \uC544\uBB34\uAC83\uB3C4 \uC544\uB2D9\uB2C8\uB2E4."
+    nextNodeId: 3
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 3
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC774\uBD10, \uBC14\uD150\uB354. \uB0B4\uAC00 \uB0AD\uC778\uC774\uB77C\uACE0
+      \uBB34\uC2DC\uD558\uB294 \uAC83 \uAC19\uC740\uB370,"
+    nextNodeId: 4
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 4
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uB0AD\uC778\uC774\uAE34 \uD558\uC9C0\uB9CC \uC774\uB798 \uBD2C\uB3C4
+      \uB098, \uACBD\uCC30\uC774\uAC70\uB4E0. \uACBD\uCC30!"
+    nextNodeId: 5
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 5
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC81C\uB300\uB85C \uB0B4\uC624\uB294\uAC8C \uC88B\uC744\uAC70\uC57C!"
+    nextNodeId: 6
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 6
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "*\uB85C\uB2CC\uC988\uB77C\u2026 \uADF8\uB7F0 \uCE75\uD14C\uC77C\uC740
+      \uB4E4\uC5B4\uBCF8 \uC801\uC774 \uC5C6\uC5B4.*"
+    nextNodeId: 7
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 7
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "*\uADF8\uB807\uC9C0\uB9CC \uBB50\uB77C\uB3C4 \uB9CC\uB4E4\uC5B4 \uB4DC\uB824\uC57C
+      \uACA0\uC9C0. \uACBD\uCC30 \uC190\uB2D8\uC774\uB2C8\uAE4C.*"
+    nextNodeId: 8
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 8
+    speakerKey: 
+    overrideSpeakerName: 
+    text: 
+    nextNodeId: 
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 1
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes:
+    - result: 5
+      nextNodeId: 9_1_1
+      flag: sc0_1_false
+      varChanges: []
+    - result: 4
+      nextNodeId: 9_2_1
+      flag: sc0_1_true
+      varChanges: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 9_1_1
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC774\uBD10, \uC774\uAC70 \uB0B4\uAC00 \uC8FC\uBB38\uD55C\uAC70 \uB9DE\uC544?"
+    nextNodeId: 9_1_2
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 9_1_2
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uB410\uB2E4. \uC774 \uB3D9\uB124 \uC218\uC900\uC5D0 \uB531 \uB9DE\uB294
+      \uC220\uC774\uC57C."
+    nextNodeId: 10
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 9_2_1
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC74C \uC774\uAC74\u2026"
+    nextNodeId: 9_2_2
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 9_2_2
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uB098\uC058\uC9C4 \uC54A\uAD70. \uADF8\uB807\uC9C0\uB9CC \uB098\uC758
+      \uB85C\uB2CC\uC988\uB294 \uC774\uB807\uC9C0 \uC54A\uC544!"
+    nextNodeId: 9_2_3
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 9_2_3
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uBB50 \uB410\uC5B4. \uC624\uB298\uC740 \uC774\uAC78\uB85C \uB118\uC5B4\uAC00\uC9C0."
+    nextNodeId: 9_2_4
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 9_2_4
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC774 \uB3D9\uB124\uC5D4 \uBA40\uCA61\uD55C \uAC8C \uC5C6\uB2E4\uB2C8\uAE4C."
+    nextNodeId: 10
+    choices: []
+    branches: []
+    characters: []
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 10
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uADF8 \uB9D0\uC500\uC73C\uB85C \uBBF8\uB8E8\uC5B4\uBCF4\uC544, \uC190\uB2D8\uAED8\uC11C\uB294
+      \uC139\uD130\uBD84\uC774 \uC544\uB2C8\uC2E0\uAC00 \uBCF4\uAD70\uC694."
+    nextNodeId: 11
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 11
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uBCF4\uBA74 \uBAA8\uB974\uB098? \uC5EC\uAE30 \uCD0C\uB728\uAE30\uB4E4\uACFC
+      \uC5EE\uC9C0 \uB9D0\uC544\uC8FC\uBA74 \uC88B\uACA0\uB294\uB370."
+    nextNodeId: 12
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 12
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC774\uB807\uAC8C \uAE4C\uB9AC\uD558\uAC8C \uBE7C\uC785\uC740 \uACBD\uCC30\uC774
+      \uC774\uB7F0 \uCD0C\uAD6C\uC11D \uCD9C\uC2E0\uC774\uACA0\uC5B4?"
+    nextNodeId: 13
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 13
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uAE4C\uB9AC\uD558\uAC8C\u2026?"
+    nextNodeId: 14
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 14
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uB108\u2026 \uADF8\uB7F0 \uB9D0\uB3C4 \uBAA8\uB974\uB294 \uAC70\uB0D0?"
+    nextNodeId: 15
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 15
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC544, \uB410\uB2E4. \uB108\uB791\uC740 \uC601 \uB9D0\uC774 \uC548 \uD1B5\uD558\uACA0\uAD70."
+    nextNodeId: 
+    choices:
+    - buttonText: "\uC190\uB2D8, \uBB34\uC2A8 \uC77C \uC788\uC73C\uC2E0\uAC00\uC694?"
+      nextNodeId: 16_1_1
+      setFlags: []
+      clearFlags: []
+      varChanges: []
+    - buttonText: "\uCD0C\uAD6C\uC11D \uC5C9\uD130\uB9AC \uD38D\uC774\uB77C \uC8C4\uC1A1\uD558\uAC8C
+        \uB410\uB124\uC694."
+      nextNodeId: 16_2_1
+      setFlags: []
+      clearFlags: []
+      varChanges: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 16_1_1
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC190\uB2D8, \uBB34\uC2A8 \uC77C \uC788\uC73C\uC2E0\uAC00\uC694?"
+    nextNodeId: 16_1_2
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 16_1_2
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uADF8\uB798, \uC544\uC8FC \uACE8\uCE58 \uC544\uD508 \uC77C\uC774 \uC788\uC9C0."
+    nextNodeId: 17
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 16_2_1
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uCD0C\uAD6C\uC11D \uC5C9\uD130\uB9AC \uD38D\uC774\uB77C \uC8C4\uC1A1\uD558\uAC8C
+      \uB410\uB124\uC694."
+    nextNodeId: 16_2_2
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 16_2_2
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uADF8\uB798! \uC5C9\uD130\uB9AC\uC9C0! \uC8C4\uB2E4 \uC5C9\uD130\uB9AC\uB77C\uACE0!"
+    nextNodeId: 16_2_3
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 16_2_3
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC7A0\uAE50. \uB108 \uC9C0\uAE08 \uB098 \uBE44\uAF2C\uB294 \uAC70\uB0D0?"
+    nextNodeId: 16_2_4
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 16_2_4
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC5B4\uBA38, \uADF8\uB7F4\uB9AC\uAC00\uC694."
+    nextNodeId: 17
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 17
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC5EC\uAE30 \uD30C\uACAC \uC628 \uC9C0\uB3C4 \uBC8C\uC368 \uC77C\uC8FC\uC77C\uC774
+      \uB2E4 \uB3FC \uAC00\uB294\uB370 \uB9D0\uC774\uC57C."
+    nextNodeId: 18
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 18
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC81C\uB300\uB85C \uB41C \uAC8C \uD558\uB098\uB3C4 \uC5C6\uC5B4. \uBA39\uB294
+      \uAC83\uB9C8\uB2E4 \uC601 \uD615\uD3B8\uC5C6\uB2E4\uACE0!"
+    nextNodeId: 19
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 19
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC74C\uC2DD, \uBB3C, \uACF5\uAE30. \uC2EC\uC9C0\uC5B4 \uC220\uAE4C\uC9C0!"
+    nextNodeId: 20
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 20
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uADF8\uAC74 \uC720\uAC10\uC774\uAD70\uC694."
+    nextNodeId: 21
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 21
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uD639\uC2DC, \uD3C9\uC18C \uC990\uACA8 \uB4DC\uC2DC\uB294 \uC220\uC774
+      \uC788\uB098\uC694?"
+    nextNodeId: 22
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 22
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uCDE8\uD5A5\uC744 \uC54C\uB824 \uC8FC\uC2DC\uBA74 \uC785\uB9DB\uC5D0
+      \uB9DE\uB294 \uAC78 \uCD94\uCC9C\uD574 \uB4DC\uB9B4 \uC218 \uC788\uC744 \uAC83
+      \uAC19\uC2B5\uB2C8\uB2E4."
+    nextNodeId: 23
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 23
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uD750\uC74C, \uC544\uAE4C \uADF8 \uC220\uC744 \uC0DD\uAC01\uD558\uBA74
+      \uC601 \uBBF8\uB365\uC9C0\uB294 \uC54A\uC740\uB370\u2026\u2026."
+    nextNodeId: 24
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 24
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uBC11\uC838\uC57C \uBCF8\uC804\uC774\uB2C8."
+    nextNodeId: 25
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 25
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uADF8\uB7FC..."
+    nextNodeId: 
+    choices:
+    - buttonText: "\uADF8 \uB85C\uB2CC\uC988\uB77C\uB294 \uC220\uC740 \uC5B4\uB5A4
+        \uB9DB\uC778\uAC00\uC694?"
+      nextNodeId: 26_1_1
+      setFlags: []
+      clearFlags: []
+      varChanges: []
+    - buttonText: "\uC88B\uC544\uD558\uB294 \uC74C\uC2DD\uC740 \uBB34\uC5C7\uC778\uAC00\uC694?"
+      nextNodeId: 26_2_1
+      setFlags: []
+      clearFlags: []
+      varChanges: []
+    - buttonText: "\uC5B4\uB5A4 \uC74C\uC545\uC744 \uC990\uACA8\uB4E3\uB098\uC694?"
+      nextNodeId: 26_3_1
+      setFlags: []
+      clearFlags: []
+      varChanges: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 26_1_1
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uADF8 \uB85C\uB2CC\uC988\uB77C\uB294 \uC220\uC740 \uC5B4\uB5A4 \uB9DB\uC778\uAC00\uC694?"
+    nextNodeId: 26_1_2
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 26_1_2
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC88B\uC740 \uC9C8\uBB38\uC774\uAD70. \uC774\uC81C\uC57C \uBC14\uD150\uB354
+      \uB2F5\uB124."
+    nextNodeId: 26_1_3
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 26_1_3
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC5D8\uB9AC\uC2DC\uC544\uB77C\uACE0 \uB4E4\uC5B4 \uBD24\uC5B4? \uAC70\uAE30\uC11C
+      \uD55C\uCC3D \uC720\uD589\uD558\uB294 \uC220\uC774\uC9C0."
+    nextNodeId: 26_1_4
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 26_1_4
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uD5A5\uC774 \uC544\uC8FC \uB3C5\uD2B9\uD574. \uD5A5\uC774 \uAC15\uD55C
+      \uC57D\uCD08\uB97C \uC794\uB729 \uB54C\uB824 \uB123\uC740 \uAC83 \uAC19\uB2EC\uAE4C?"
+    nextNodeId: 26_1_5
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 26_1_5
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uD55C \uBAA8\uAE08\uB9CC \uB9C8\uC154\uB3C4 \uC815\uC2E0\uC774 \uBC88\uCA4D
+      \uB4E4\uC9C0! \uC544\uC8FC \uAC15\uB82C\uD558\uACE0 \uC815\uC5F4\uC801\uC778
+      \uC220\uC774\uB77C\uACE0!"
+    nextNodeId: 27
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 26_2_1
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC88B\uC544\uD558\uB294 \uC74C\uC2DD\uC740 \uBB34\uC5C7\uC778\uAC00\uC694?"
+    nextNodeId: 26_2_2
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 26_2_2
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC5EC\uAE30 \uC628 \uB4A4\uB85C\uB294 \uC9C0\uAE0B\uC9C0\uAE0B\uD55C
+      \uD1B5\uC870\uB9BC\uB9CC \uBA39\uACE0 \uC788\uC5B4."
+    nextNodeId: 26_2_3
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 26_2_3
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC6D0\uB798\uB294 \uB9E4\uC6B4 \uC74C\uC2DD\uC744 \uC990\uACA8 \uBA39\uB294
+      \uD3B8\uC774\uC9C0."
+    nextNodeId: 26_2_4
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 26_2_4
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC5D8\uB9AC\uC2DC\uC544\uB77C\uACE0 \uB4E4\uC5B4 \uBD24\uC5B4? \uAC70\uAE34
+      \uB9E4\uCF64\uD55C \uD280\uAE40 \uC694\uB9AC\uAC00 \uB05D\uB0B4\uC8FC\uAC70\uB4E0."
+    nextNodeId: 26_2_5
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 26_2_5
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC815\uC5F4\uC801\uC778 \uACF3\uC774\uC9C0!"
+    nextNodeId: 27
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 26_3_1
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC5B4\uB5A4 \uC74C\uC545\uC744 \uC990\uACA8\uB4E3\uB098\uC694?"
+    nextNodeId: 26_3_2
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 26_3_2
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC74C\uC545? \uC9C0\uAE08 \uC220 \uC774\uC57C\uAE30\uD558\uB2E4\uAC00
+      \uC6EC \uC74C\uC545\uC774\uC57C?"
+    nextNodeId: 26_3_3
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 26_3_3
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC74C\uC545\uACFC \uC220\uC774 \uBB34\uC2A8 \uC0C1\uAD00\uC778\uB370?"
+    nextNodeId: 26_3_4
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 26_3_4
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uD558, \uB410\uC5B4. \uB098\uB294\u2026"
+    nextNodeId: 26_3_5
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 26_3_5
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uADC0\uAC00 \uC5BC\uC5BC\uD560 \uC815\uB3C4\uB85C \uC2DC\uB044\uB7FD\uACE0,
+      \uC815\uC2E0\uC5C6\uC774 \uB0B4\uC9C0\uB974\uB294 \uC74C\uC545\uC774 \uC88B\uC544."
+    nextNodeId: 26_3_6
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 26_3_6
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC5D8\uB9AC\uC2DC\uC544\uC5D0\uC120 \uADF8\uB7F0 \uC74C\uC545\uC774 \uBC24\uC0C8
+      \uD758\uB7EC\uB098\uC654\uC9C0."
+    nextNodeId: 27
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 27
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uB354 \uAD81\uAE08\uD55C \uC810 \uC788\uB098? \uBC14\uD150\uB354?"
+    nextNodeId: 28
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 28
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC88B\uC544, \uC9C8\uBB38\uC740 \uC5EC\uAE30\uAE4C\uC9C0. \uC19C\uC528\uC880
+      \uBF50\uB0B4\uBCF4\uB77C\uACE0"
+    nextNodeId: 29
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 29
+    speakerKey: 
+    overrideSpeakerName: 
+    text: 
+    nextNodeId: 
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 1
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes:
+    - result: 0
+      nextNodeId: 30_1_1
+      flag: sc0_2_true
+      varChanges: []
+    - result: 5
+      nextNodeId: 30_2_1
+      flag: sc0_2_true
+      varChanges: []
+    - result: 2
+      nextNodeId: 30_3_1
+      flag: sc0_2_false
+      varChanges: []
+    - result: 4
+      nextNodeId: 30_4_1
+      flag: sc0_2_false
+      varChanges: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 30_1_1
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC624\uD638\u2026 \uC774\uAC74 \uC870\uAE08 \uB180\uB77C\uC6B4\uB370?"
+    nextNodeId: 30_1_2
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 30_1_2
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uB85C\uB2CC\uC988\uB791 \uB2E4\uB978 \uC758\uBBF8\uB85C \uAC15\uB82C\uD574."
+    nextNodeId: 30_1_3
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 30_1_3
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC0DD\uAC01\uBCF4\uB2E4, \uC81C\uBC95\uC774\uAD70 \uBC14\uD150\uB354."
+    nextNodeId: 31_1_1
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 30_2_1
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC640, \uC138\uC0C1\uC5D0."
+    nextNodeId: 30_2_2
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 30_2_2
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uD558\uD558! \uC774\uB807\uAC8C\uAE4C\uC9C0 \uC608\uC0C1\uB300\uB85C\uC77C
+      \uC904\uC774\uC57C!"
+    nextNodeId: 31_2_1
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 30_3_1
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC624, \uC774\uAC74 \uB180\uB77C\uC6B4\uB370."
+    nextNodeId: 30_3_2
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 30_3_2
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uB85C\uB2CC\uC988\uB791 \uB2E4\uB978 \uC758\uBBF8\uB85C \uAC15\uB82C\uD574."
+    nextNodeId: 30_3_3
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 30_3_3
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uADF8\uB7F0\uB370 \uC794\uC740 \uC65C \uC774\uB798? \uBB50, \uC220\uB9DB\uC774
+      \uC88B\uC73C\uB2C8 \uC774\uBC88\uC5D4 \uB208\uAC10\uC544 \uC8FC\uC9C0."
+    nextNodeId: 31_1_1
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 31_1_1
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC785\uB9DB\uC5D0 \uB9DE\uC73C\uC168\uB2E4\uB2C8 \uB2E4\uD589\uC785\uB2C8\uB2E4."
+    nextNodeId: 31_1_2
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 31_1_2
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uD558! \uC774\uB7F0 \uCD0C\uAD6C\uC11D\uC5D0\uB3C4 \uC81C\uBC95 \uD558\uB294
+      \uBC14\uD150\uB354\uAC00 \uC788\uC5C8\uAD70."
+    nextNodeId: 31_1_3
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 31_1_3
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uB0A8\uC740 \uD30C\uACAC \uAE30\uAC04 \uC885\uC885 \uB4E4\uB7EC\uC57C\uACA0\uC5B4."
+    nextNodeId: 
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 30_4_1
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC774\uBD10, \uC774\uAC70 \uB0B4\uAC00 \uC8FC\uBB38\uD55C\uAC70 \uB9DE\uC544?"
+    nextNodeId: 30_4_2
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 30_4_2
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uD558\uD558, \uBC14\uD150\uB354. \uB0B4\uAC00 \uD55C \uC598\uAE30\uB294
+      \uB4E3\uAE34 \uD55C \uAC70\uC57C? \uB0B4 \uCDE8\uD5A5\uC774\uB791\uC740 \uC601
+      \uB534\uD310\uC778\uB370?"
+    nextNodeId: 31_2_1
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 31_2_1
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC7AC\uB8CC\uB294 \uBA40\uCA61\uD55C \uAC78 \uC4F0\uB294 \uAC83 \uAC19\uC740\uB370,
+      \uB9DB\uC740 \uC65C \uC774 \uBAA8\uC591\uC774\uC57C?"
+    nextNodeId: 31_2_2
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 31_2_2
+    speakerKey: shaun
+    overrideSpeakerName: 
+    text: "\uC774\uB7F0, \uC81C \uC2E4\uC218\uC785\uB2C8\uB2E4. \uB2E4\uC2DC \uD55C
+      \uC794 \uB9CC\uB4E4\uC5B4\uB4DC\uB9B4\uAE4C\uC694?"
+    nextNodeId: 31_2_3
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 31_2_3
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uC544\uB0D0, \uB410\uC5B4. \uB098\uB3C4 \uC2AC\uC2AC \uAC00 \uBD10\uC57C\uACA0\uC5B4."
+    nextNodeId: 31_2_4
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  - nodeId: 31_2_4
+    speakerKey: f72
+    overrideSpeakerName: ???
+    text: "\uB2E4\uC74C\uC5D0 \uB610 \uC62C\uC9C0\uB294\u2026 \uC194\uC9C1\uD788
+      \uBAA8\uB974\uACA0\uAD70."
+    nextNodeId: 
+    choices: []
+    branches: []
+    characters:
+    - characterKey: f72
+      expressionKey: mid
+      slotIndex: -1
+    requiresCrafting: 0
+    craftingOrderTicket: {fileID: 0}
+    craftingTicketKey: 
+    craftingOrderType: 6
+    craftingOrderTarget: 
+    craftingPaymentEnabled: 0
+    craftingPaymentCurrency: 0
+    craftingPaymentMultiplier: 1
+    craftingOutcomes: []
+    nextNodeIdGood: 
+    nextNodeIdBad: 
+    craftingFlagGood: 
+    craftingFlagBad: 
+    craftingVarChangesGood: []
+    craftingVarChangesBad: []
+    bgmCommand: 0
+    bgmClipName: 
+    sfxCommand: 0
+    sfxClipName: 
+  settlementRewards: []

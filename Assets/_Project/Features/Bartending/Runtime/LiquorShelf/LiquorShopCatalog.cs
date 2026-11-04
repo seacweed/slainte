@@ -16,6 +16,10 @@ public sealed class LiquorShopCatalog : ScriptableObject
     public DeliveryItemSlotUI deliveryItemSlotPrefab;
     public LiquorCategoryButtonUI deliveryCategoryButtonPrefab;
 
+    [Header("Shelf Delivery")]
+    [Tooltip("Delivery price for an out-of-stock shelf ingredient = shop price x this value.")]
+    [Min(1)] public int shelfDeliveryPriceMultiplier = 10;
+
     [Header("Delivery Character")]
     public Sprite deliveryPortrait;
     public Sprite deliveryBusyPortrait;

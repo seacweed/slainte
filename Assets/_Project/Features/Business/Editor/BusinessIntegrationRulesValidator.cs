@@ -1,6 +1,5 @@
 using System;
 using Slainte.Business;
-using Slainte.Content;
 using Slainte.Economy;
 using UnityEditor;
 using UnityEngine;
@@ -9,13 +8,13 @@ namespace Slainte.EditorTools
 {
     public static class BusinessIntegrationRulesValidator
     {
-        [MenuItem("Slainte/Business/Validate Timer Sale And Settlement Rules")]
+        [MenuItem("Slainte/Business/Validate Sale And Settlement Rules")]
         public static void ValidateFromMenu()
         {
             RunValidation();
             EditorUtility.DisplayDialog(
                 "Business Integration Rules",
-                "타이머, 팁, 실제 손님 일반 돈/이상한 동전 결제, 판매 기록과 정산 지급 검증을 통과했습니다.",
+                "팁, 실제 손님 일반 돈/이상한 동전 결제, 판매 기록과 정산 지급 검증을 통과했습니다.",
                 "확인");
         }
 
@@ -26,8 +25,6 @@ namespace Slainte.EditorTools
 
         private static void RunValidation()
         {
-            ValidateClockRules();
-            ValidateEncounterEpisodeType();
             ValidateSaveSuppressionNesting();
             ValidateRewardCalculation();
             ValidateCustomerPaymentRouting();
@@ -35,101 +32,9 @@ namespace Slainte.EditorTools
             ValidateImmediateCurrencyPayout();
             ValidatePlanningInventoryMigration();
             Debug.Log(
-                "[BusinessIntegrationRulesValidator] PASS: timer, Day-5 third/sixth-slot encounters, explicit pause, save isolation, "
+                "[BusinessIntegrationRulesValidator] PASS: save isolation, "
                 + "recipe-price rewards/tips, real-customer Money/StrangeCoin routing and immediate payout, detailed sale save, "
                 + "deferred settlement payout and reset");
-        }
-
-        private static void ValidateClockRules()
-        {
-            float remaining = 10f;
-            float active = 0f;
-            BusinessShiftClock.Advance(ref remaining, ref active, 2.5f, paused: false);
-            RequireApproximately(7.5f, remaining, "일반 영업 중 남은 시간이 감소하지 않았습니다.");
-            RequireApproximately(2.5f, active, "유효 영업 시간이 누적되지 않았습니다.");
-
-            BusinessShiftClock.Advance(ref remaining, ref active, 4f, paused: true);
-            RequireApproximately(7.5f, remaining, "명시적 일시정지 중 남은 시간이 감소했습니다.");
-            RequireApproximately(2.5f, active, "명시적 일시정지 중 유효 영업 시간이 증가했습니다.");
-
-            BusinessShiftClock.Advance(ref remaining, ref active, 20f, paused: false);
-            RequireApproximately(0f, remaining, "영업 시간이 0 아래로 내려갔습니다.");
-            RequireApproximately(10f, active, "마지막 프레임에서 제한시간보다 많이 누적됐습니다.");
-        }
-
-        private static void ValidateEncounterEpisodeType()
-        {
-            EpisodeData strangeCoinEpisode = AssetDatabase.LoadAssetAtPath<EpisodeData>(
-                ProjectResourcePaths.AssetRoot
-                + ProjectResourcePaths.NarrativeEpisodes
-                + "/EpisodeData_StrangeCoin_0.asset");
-            EpisodeData theLittlesEpisode = AssetDatabase.LoadAssetAtPath<EpisodeData>(
-                ProjectResourcePaths.AssetRoot
-                + ProjectResourcePaths.NarrativeEpisodes
-                + "/EpisodeData_TheLittles_0.asset");
-
-            ValidateEncounterEpisode(strangeCoinEpisode, "StrangeCoin_0");
-            ValidateEncounterEpisode(theLittlesEpisode, "TheLittles_0");
-
-            BusinessOrderFlowSettings settings =
-                AssetDatabase.LoadAssetAtPath<BusinessOrderFlowSettings>(
-                    "Assets/Resources/Business/BusinessOrderFlowSettings.asset");
-            Require(settings != null, "영업 설정 에셋을 찾지 못했습니다.");
-
-            if (settings.randomEncounters != null)
-            {
-                for (int i = 0; i < settings.randomEncounters.Count; i++)
-                {
-                    EpisodeData randomEpisode = settings.randomEncounters[i]?.episode;
-                    Require(randomEpisode != strangeCoinEpisode
-                            && randomEpisode != theLittlesEpisode,
-                        "고정 슬롯 인카운터는 랜덤 인카운터 풀에 남아 있으면 안 됩니다.");
-                }
-            }
-
-            ValidateFixedEncounterRule(settings, strangeCoinEpisode, 3);
-            ValidateFixedEncounterRule(settings, theLittlesEpisode, 6);
-        }
-
-        private static void ValidateEncounterEpisode(EpisodeData episode, string episodeId)
-        {
-            Require(episode != null, $"{episodeId} 에피소드 데이터를 찾지 못했습니다.");
-            Require(episode.episodeType == EpisodeType.Encounter,
-                $"{episodeId}의 EpisodeType이 Encounter가 아닙니다: {episode.episodeType}");
-            Require(episode.triggerCondition != null
-                    && episode.triggerCondition.minDay == 5,
-                $"{episodeId} 에피소드는 Day 5부터 등장해야 합니다.");
-            Require(!string.IsNullOrWhiteSpace(episode.firstNodeId)
-                    && episode.FindNode(episode.firstNodeId) != null,
-                $"{episodeId}의 시작 노드를 찾지 못했습니다: {episode.firstNodeId}");
-        }
-
-        private static void ValidateFixedEncounterRule(
-            BusinessOrderFlowSettings settings,
-            EpisodeData episode,
-            int sequenceSlot)
-        {
-            BusinessRequiredActionRule fixedRule = null;
-            if (settings.requiredActions != null)
-            {
-                for (int i = 0; i < settings.requiredActions.Count; i++)
-                {
-                    BusinessRequiredActionRule candidate = settings.requiredActions[i];
-                    if (candidate?.encounterEpisode == episode)
-                    {
-                        fixedRule = candidate;
-                        break;
-                    }
-                }
-            }
-
-            Require(fixedRule != null
-                    && fixedRule.actionType == BusinessRequiredActionType.EncounterEpisode
-                    && fixedRule.timing == BusinessRequiredActionTiming.SequenceSlot
-                    && fixedRule.sequenceSlot == sequenceSlot
-                    && fixedRule.condition != null
-                    && fixedRule.condition.minDay == 5,
-                $"{episode.episodeId}은(는) Day 5 이후 {sequenceSlot}번 영업 슬롯의 필수 인카운터여야 합니다.");
         }
 
         private static void ValidateSaveSuppressionNesting()
@@ -591,8 +496,6 @@ namespace Slainte.EditorTools
                 completedEpisodeIds = progress.GetCompletedList(),
                 affinityKeys = progress.GetAffinityKeys(),
                 affinityValues = progress.GetAffinityValues(),
-                boardSlotKeys = progress.GetBoardSlotKeys(),
-                boardSlotValues = progress.GetBoardSlotValues(),
                 bottleAmountKeys = progress.GetBottleAmountKeys(),
                 bottleAmountValues = progress.GetBottleAmountValues(),
                 customerAppearanceKeys = progress.GetCustomerAppearanceKeys(),
@@ -625,13 +528,6 @@ namespace Slainte.EditorTools
         {
             if (!condition)
                 throw new InvalidOperationException(message);
-        }
-
-        private static void RequireApproximately(float expected, float actual, string message)
-        {
-            if (Mathf.Abs(expected - actual) > 0.001f)
-                throw new InvalidOperationException(
-                    $"{message} expected={expected}, actual={actual}");
         }
     }
 }
