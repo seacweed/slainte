@@ -1,0 +1,15 @@
+{
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/FluidGpuExperimentEvidence/HarnessProject",
+    "-executeMethod",
+    "ExperimentValidation.Begin",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\06-volume-accounting-validation\\Editor.log"
+  ],
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe",
+  "workingDirectory": "A:/UnityHub/proj/slainte",
+  "started": "2026-09-22T17:43:29.9709792+09:00"
+}

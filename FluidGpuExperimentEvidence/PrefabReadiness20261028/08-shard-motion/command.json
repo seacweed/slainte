@@ -1,0 +1,17 @@
+{
+  "forceShaderImport": true,
+  "entryMethod": "ExperimentShardMotionValidation.Begin",
+  "started": "2026-10-28T14:07:58.6209419+09:00",
+  "executable": "A:\\UnityHub\\Unity\\6000.3.5f2\\Editor\\Unity.exe",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:\\UnityHub\\proj\\slainte\\Library\\FluidModelDHarness",
+    "-executeMethod",
+    "PhysicsLabValidationDispatch.Run",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\PrefabReadiness20261028\\08-shard-motion\\Editor.log"
+  ],
+  "timeoutSeconds": 240
+}

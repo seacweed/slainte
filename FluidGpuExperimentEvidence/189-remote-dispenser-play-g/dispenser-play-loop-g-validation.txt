@@ -1,0 +1,34 @@
+PASS Hidden normal-play-loop scene initializes without desktop input
+PASS The remote G variant starts in Manual without a test reset
+PASS Manual startup retains the selected natural/explosive breakage and cohesive liquid settings
+PASS World component and native automatic fixed-step physics stay enabled
+PASS Authored seed liquid and automatic GPU readback stay enabled
+PASS Normal world startup creates the available docked dispenser
+PASS The generated hose layer is included in the real gameplay camera culling mask
+PASS Automatic startup preserves the remote 6/4 hurricane thresholds
+INFO bodies initial originalCount=10 registeredCount=10 missingIds=[] addedIds=[] nonSimulated=[] shardCount=0
+INFO bodies after-natural-settling originalCount=10 registeredCount=10 missingIds=[] addedIds=[] nonSimulated=[] shardCount=0
+PASS Natural startup adds no unexpected registered bodies
+PASS The remote 6/4 thresholds prevent incidental hurricane fracture during authored startup
+PASS Every unbroken original retains its initialized simulation, rigidbody type and active state
+PASS Original body and native shard accounting explains the complete startup registry difference
+INFO startupControl=False naturalFractures=0 retainedOriginals=10 shards=0; no fixture teleport, native simulation disable, threshold change or removal was applied
+PASS The real receiving highball retains authored seed liquid before dispensing
+INFO original receiverId=4 position=(-2.87688,-1.39890742) seedMl=60 initialTotalMl=176.5 itemCount=10
+PASS Docked real tool accepts Hot selection
+PASS Normal scene tool enters Held from a controller pickup command
+PASS Actual world.FixedUpdate drives held motion to the cursor target over the authored highball
+PASS Automatic play-loop translation keeps the tool upright without cursor capture
+PASS Actual SimulateAfterPhysics ticks submit hot particles and debit exactly the accepted volume
+PASS Normal play-loop output follows the configured 40 ml per second within one fixed tick and particle quantization
+INFO emissionDuration=0.9999995 consumed=39.5 accepted=39.5 configuredFlow=40 fixedDt=0.0199999921 tolerance=1.3099997
+PASS Emission off stays off across subsequent automatic physics and liquid ticks
+PASS Normal authored-scene liquid remains finite after dispensing
+INFO receiver seedBefore=60 afterSettling=99.5 change=39.5 emittedDose=39.5 totalSnapshotMl=215.5
+PASS Release command starts normal-play retraction
+PASS Automatic fixed-step motion returns the tool through the real scene to its dock
+PASS Retraction and docking preserve the stopped shared inventory
+PASS Integration keeps production world and GPU scheduling active throughout
+INFO bodies after-docking originalCount=10 registeredCount=10 missingIds=[] addedIds=[] nonSimulated=[] shardCount=0
+PASS Normal dispensing and retraction preserve every original body without incidental hurricane fracture
+PASS No Unity errors, assertions or exceptions in the normal play loop

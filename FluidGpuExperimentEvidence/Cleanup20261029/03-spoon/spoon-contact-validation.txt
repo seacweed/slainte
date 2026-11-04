@@ -1,0 +1,99 @@
+PASS Flipped spoon can be picked
+PASS Held spoon without RMB remains ghosted
+PASS Held spoon without RMB remains ghosted does not own rotation cursor
+PASS Spoon cannot enter rotation
+PASS RMB outside vessel remains ghosted
+PASS RMB outside vessel remains ghosted keeps native solids ghosted without cursor capture
+PASS RMB outside vessel neither contacts nor pushes a real bottle
+PASS RMB while visually overlapping a clear cavity activates without a pose jump
+PASS Controlled already-overlapping wall fixture has tip inside cavity and real native penetration
+PASS RMB on an existing wall overlap stays pending without liquid interaction
+PASS Pending wall overlap neither snaps spoon nor pushes glass
+PASS Releasing RMB while overlapped cancels pending mode without depenetration
+PASS Moving inward out of wall overlap admits vessel while continuing to hold RMB
+PASS RMB spoon tip entering actual cavity acquires that vessel
+PASS Inside vessel still has no native spoon/glass impulse pair
+PASS Large cursor move stops spoon at finite vessel wall: (10.00, 0.00)
+PASS Actual native spoon silhouette stays clear of vessel wall: 0.0009999909
+PASS Wall constraint never moves or accelerates free dynamic glass
+PASS Large RMB mouse delta never rotates or captures spoon cursor
+PASS Large cursor move stops spoon at finite vessel wall: (-10.00, 0.00)
+PASS Actual native spoon silhouette stays clear of vessel wall: 0.001002258
+PASS Wall constraint never moves or accelerates free dynamic glass
+PASS Large RMB mouse delta never rotates or captures spoon cursor
+PASS Large cursor move stops spoon at finite vessel wall: (0.00, -10.00)
+PASS Actual native spoon silhouette stays clear of vessel wall: 0.001000194
+PASS Wall constraint never moves or accelerates free dynamic glass
+PASS Large RMB mouse delta never rotates or captures spoon cursor
+PASS Post-physics spoon recovery preserves freely moving/rotating vessel pose and velocity exactly
+PASS Spoon can withdraw through open mouth and releases vessel constraint
+PASS Spoon can reenter after withdrawal
+PASS Actual rock cavity admits safe spoon at tilt 0
+MEASURE rock tilt=0 requested=(15.96, 6.22) actual=(8.59, 7.03) owner= fullyOutsideMouth=True
+PASS Finite wall blocks side crossing or slides spoon out through open mouth in rock at tilt 0
+PASS Native silhouette stays outside rock wall at tilt 0
+PASS Spoon leaves rock pose and velocities unchanged at tilt 0
+PASS Actual rock cavity admits safe spoon at tilt 20
+MEASURE rock tilt=20 requested=(15.64, 8.98) actual=(8.54, 9.05) owner= fullyOutsideMouth=True
+PASS Finite wall blocks side crossing or slides spoon out through open mouth in rock at tilt 20
+PASS Native silhouette stays outside rock wall at tilt 20
+PASS Spoon leaves rock pose and velocities unchanged at tilt 20
+PASS Actual martini cavity admits safe spoon at tilt 0
+MEASURE martini tilt=0 requested=(15.95, 6.66) actual=(11.46, 10.31) owner= fullyOutsideMouth=True
+PASS Finite wall blocks side crossing or slides spoon out through open mouth in martini at tilt 0
+PASS Native silhouette stays outside martini wall at tilt 0
+PASS Spoon leaves martini pose and velocities unchanged at tilt 0
+PASS Actual martini cavity admits safe spoon at tilt 20
+MEASURE martini tilt=20 requested=(15.48, 9.40) actual=(9.95, 11.31) owner= fullyOutsideMouth=True
+PASS Finite wall blocks side crossing or slides spoon out through open mouth in martini at tilt 20
+PASS Native silhouette stays outside martini wall at tilt 20
+PASS Spoon leaves martini pose and velocities unchanged at tilt 20
+PASS Actual hurricane cavity admits safe spoon at tilt 0
+MEASURE hurricane tilt=0 requested=(15.95, 7.20) actual=(9.57, 9.97) owner= fullyOutsideMouth=True
+PASS Finite wall blocks side crossing or slides spoon out through open mouth in hurricane at tilt 0
+PASS Native silhouette stays outside hurricane wall at tilt 0
+PASS Spoon leaves hurricane pose and velocities unchanged at tilt 0
+PASS Actual hurricane cavity admits safe spoon at tilt 20
+MEASURE hurricane tilt=20 requested=(15.30, 9.90) actual=(8.29, 10.33) owner= fullyOutsideMouth=True
+PASS Finite wall blocks side crossing or slides spoon out through open mouth in hurricane at tilt 20
+PASS Native silhouette stays outside hurricane wall at tilt 20
+PASS Spoon leaves hurricane pose and velocities unchanged at tilt 20
+PASS Original glass interaction resumes after other vessel cases
+PASS Controlled GPU sample lies outside spoon bowl within a real particle contact radius and inside glass
+MEASURE GPU control=(0.16, 3.88) contacted=(0.16, 3.88) free=(0.16, 3.88) emission=(0.16, 3.88)
+PASS Stationary overlapping spoon has no solid collision with owned liquid
+PASS Unowned free liquid at same location ignores held spoon
+PASS RMB-off owned liquid at same location ignores held spoon
+PASS RMB release immediately clears vessel-only interaction
+PASS RMB release immediately clears vessel-only interaction does not own rotation cursor
+PASS RMB release clears selected vessel
+PASS Without RMB spoon crosses former vessel wall freely
+PASS Second RMB press can re-enable collision
+PASS Second RMB press can re-enable collision keeps native solids ghosted without cursor capture
+PASS Escape cancels collision
+PASS Escape cancels collision does not own rotation cursor
+PASS Escape requires physical RMB release before rearming
+PASS Escape requires physical RMB release before rearming does not own rotation cursor
+PASS Release and new press rearm after Escape
+PASS Release and new press rearm after Escape keeps native solids ghosted without cursor capture
+PASS Focus loss cancels collision
+PASS Focus loss cancels collision does not own rotation cursor
+PASS Focus resume while still pressing cannot rearm
+PASS Focus resume while still pressing cannot rearm does not own rotation cursor
+PASS Fresh press after focus resumes collision
+PASS Fresh press after focus resumes collision keeps native solids ghosted without cursor capture
+PASS Visible UI hit region suppresses spoon contact input
+PASS Visible UI hit region suppresses spoon contact input does not own rotation cursor
+PASS RMB away from UI resumes collision
+PASS RMB away from UI resumes collision keeps native solids ghosted without cursor capture
+PASS Mouse-device replacement cancels contact until release
+PASS Mouse-device replacement cancels contact until release does not own rotation cursor
+PASS New device release and press can rearm
+PASS New device release and press can rearm keeps native solids ghosted without cursor capture
+PASS Left-click drop while RMB held restores released solid collision
+PASS Drop restores native settings and adds no RMB spin
+PASS World Reset restores spoon collision and clears held mode
+PASS Interactor disable restores physical spoon state
+PASS Spoon disable forgets held input and restores authored collider flags
+PASS All spoon interactions preserve native cursor lock and visibility
+PASS No Unity, native physics or input errors

@@ -1,0 +1,196 @@
+PASS Authored sandbox initializes current cohesive GPU liquid
+PASS Current cohesive physics is operational in the real GPU runtime
+PASS Optional development benchmark compiles against the current runtime API
+PASS Sandbox reset restores the actual authored body layout, angles and supplies
+PASS Sandbox reset restores its camera and active pointer input
+PASS Moved development volume fixture creates a real 30 ml current-liquid batch
+PASS Stationary glass is supported at the real floor instead of suspended in air
+PASS Collision-toggle fixture queues an actual 40 ml batch
+PASS Ice collision option preserves the live generation, active particles and ingredient volume: Colliding
+PASS Ice collision option preserves the live generation, active particles and ingredient volume: NonColliding
+PASS Optional timing hook records actual GPU-step CPU submission only while enabled
+PASS Natural option produces the complete authored fragment set through real native floor impact
+PASS Natural fragment state is finite
+MEASURE breakageStyle=Natural fragmentMeanSpeedSquared=3.116129
+PASS Explosive option produces the complete authored fragment set through real native floor impact
+PASS Explosive fragment state is finite
+MEASURE breakageStyle=Explosive fragmentMeanSpeedSquared=23.5733624
+PASS Natural/Explosive option changes actual fragment motion under the same native floor impact
+PASS Relative input fixture requires hidden batchmode with native cursor operations disabled
+PASS Pick fixture bottle for queued relative input
+PASS Queued right-button press enters manual rotation and logical capture; current=True, enabled=True, pressed=True, edge=True, update=7/Manual, last=7, read=True, blocked=False, rotating=True, captured=True
+PASS Capture entry ignores only the snapshot containing pre-button movement (actual=0.000000, expected=0.000000)
+PASS twenty one-pixel frames: individual motion remains proportional without snapping (actual=0.500000, expected=0.500000)
+PASS twenty one-pixel frames: individual motion remains proportional without snapping (actual=0.500000, expected=0.500000)
+PASS twenty one-pixel frames: individual motion remains proportional without snapping (actual=0.500000, expected=0.500000)
+PASS twenty one-pixel frames: individual motion remains proportional without snapping (actual=0.500000, expected=0.500000)
+PASS twenty one-pixel frames: individual motion remains proportional without snapping (actual=0.500000, expected=0.500000)
+PASS twenty one-pixel frames: individual motion remains proportional without snapping (actual=0.500000, expected=0.500000)
+PASS twenty one-pixel frames: individual motion remains proportional without snapping (actual=0.500000, expected=0.500000)
+PASS twenty one-pixel frames: individual motion remains proportional without snapping (actual=0.500000, expected=0.500000)
+PASS twenty one-pixel frames: individual motion remains proportional without snapping (actual=0.500000, expected=0.500000)
+PASS twenty one-pixel frames: individual motion remains proportional without snapping (actual=0.500000, expected=0.500000)
+PASS twenty one-pixel frames: individual motion remains proportional without snapping (actual=0.500000, expected=0.500000)
+PASS twenty one-pixel frames: individual motion remains proportional without snapping (actual=0.500000, expected=0.500000)
+PASS twenty one-pixel frames: individual motion remains proportional without snapping (actual=0.500000, expected=0.500000)
+PASS twenty one-pixel frames: individual motion remains proportional without snapping (actual=0.500000, expected=0.500000)
+PASS twenty one-pixel frames: individual motion remains proportional without snapping (actual=0.500000, expected=0.500000)
+PASS twenty one-pixel frames: individual motion remains proportional without snapping (actual=0.500000, expected=0.500000)
+PASS twenty one-pixel frames: individual motion remains proportional without snapping (actual=0.500000, expected=0.500000)
+PASS twenty one-pixel frames: individual motion remains proportional without snapping (actual=0.500000, expected=0.500000)
+PASS twenty one-pixel frames: individual motion remains proportional without snapping (actual=0.500000, expected=0.500000)
+PASS twenty one-pixel frames: individual motion remains proportional without snapping (actual=0.500000, expected=0.500000)
+PASS Pick fixture bottle for queued relative input
+PASS Queued right-button press enters manual rotation and logical capture; current=True, enabled=True, pressed=True, edge=True, update=31/Manual, last=31, read=True, blocked=False, rotating=True, captured=True
+PASS Capture entry ignores only the snapshot containing pre-button movement (actual=0.000000, expected=0.000000)
+PASS one twenty-pixel frame: individual motion remains proportional without snapping (actual=10.000000, expected=10.000000)
+PASS Pick fixture bottle for queued relative input
+PASS Queued right-button press enters manual rotation and logical capture; current=True, enabled=True, pressed=True, edge=True, update=36/Manual, last=36, read=True, blocked=False, rotating=True, captured=True
+PASS Capture entry ignores only the snapshot containing pre-button movement (actual=0.000000, expected=0.000000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS forty half-pixel frames: individual motion remains proportional without snapping (actual=0.250000, expected=0.250000)
+PASS Slow input accumulates all physical mouse travel (actual=10.000000, expected=10.000000)
+PASS Rotation is independent of event distribution across input frames (actual=10.000000, expected=10.000000)
+PASS Subpixel relative input remains continuous without a dead zone (actual=10.000000, expected=10.000000)
+PASS Pick fixture bottle for queued relative input
+PASS Queued right-button press enters manual rotation and logical capture; current=True, enabled=True, pressed=True, edge=True, update=80/Manual, last=80, read=True, blocked=False, rotating=True, captured=True
+PASS Capture entry ignores only the snapshot containing pre-button movement (actual=0.000000, expected=0.000000)
+PASS small direction reversals: individual motion remains proportional without snapping (actual=0.500000, expected=0.500000)
+PASS small direction reversals: individual motion remains proportional without snapping (actual=1.500000, expected=1.500000)
+PASS small direction reversals: individual motion remains proportional without snapping (actual=-1.000000, expected=-1.000000)
+PASS small direction reversals: individual motion remains proportional without snapping (actual=-0.250000, expected=-0.250000)
+PASS small direction reversals: individual motion remains proportional without snapping (actual=-0.750000, expected=-0.750000)
+PASS Opposite relative movement cancels exactly without threshold bias (actual=0.000000, expected=0.000000)
+PASS Pick fixture bottle for queued relative input
+PASS Queued right-button press enters manual rotation and logical capture; current=True, enabled=True, pressed=True, edge=True, update=89/Manual, last=89, read=True, blocked=False, rotating=True, captured=True
+PASS Capture entry ignores only the snapshot containing pre-button movement (actual=0.000000, expected=0.000000)
+PASS Multiple queued physical events accumulate once in an input update despite unrelated absolute positions (actual=1.500000, expected=1.500000)
+PASS Absolute cursor position changes alone cannot rotate a locked item (actual=1.500000, expected=1.500000)
+PASS Repeated Update in the same input update does not apply mouse delta twice (actual=2.000000, expected=2.000000)
+PASS Pick fixture bottle for queued relative input
+PASS Queued right-button press enters manual rotation and logical capture; current=True, enabled=True, pressed=True, edge=True, update=95/Manual, last=95, read=True, blocked=False, rotating=True, captured=True
+PASS Capture entry ignores only the snapshot containing pre-button movement (actual=0.000000, expected=0.000000)
+PASS Boundary-constrained pivot cannot become rotation input: (100.00, 2.00) (actual=179.000000, expected=179.000000)
+PASS Zero relative motion retains the constrained body pose: (100.00, 2.00) (actual=(13.527030, 1.190339), expected=(13.527030, 1.190339))
+PASS Logical cursor follows the actual constrained pivot: (100.00, 2.00) (actual=(726.295800, 227.851800), expected=(726.295800, 227.851800))
+PASS Pick fixture bottle for queued relative input
+PASS Queued right-button press enters manual rotation and logical capture; current=True, enabled=True, pressed=True, edge=True, update=100/Manual, last=100, read=True, blocked=False, rotating=True, captured=True
+PASS Capture entry ignores only the snapshot containing pre-button movement (actual=0.000000, expected=0.000000)
+PASS Boundary-constrained pivot cannot become rotation input: (-100.00, 2.00) (actual=179.000000, expected=179.000000)
+PASS Zero relative motion retains the constrained body pose: (-100.00, 2.00) (actual=(-13.574020, 1.190339), expected=(-13.574020, 1.190339))
+PASS Logical cursor follows the actual constrained pivot: (-100.00, 2.00) (actual=(-86.735570, 227.851800), expected=(-86.735570, 227.851800))
+PASS Pick fixture bottle for queued relative input
+PASS Queued right-button press enters manual rotation and logical capture; current=True, enabled=True, pressed=True, edge=True, update=105/Manual, last=105, read=True, blocked=False, rotating=True, captured=True
+PASS Capture entry ignores only the snapshot containing pre-button movement (actual=0.000000, expected=0.000000)
+PASS Boundary-constrained pivot cannot become rotation input: (0.00, 100.00) (actual=179.000000, expected=179.000000)
+PASS Zero relative motion retains the constrained body pose: (0.00, 100.00) (actual=(-0.025276, 8.293678), expected=(-0.025276, 8.293678))
+PASS Logical cursor follows the actual constrained pivot: (0.00, 100.00) (actual=(319.726800, 440.952000), expected=(319.726800, 440.952000))
+PASS Pick fixture bottle for queued relative input
+PASS Queued right-button press enters manual rotation and logical capture; current=True, enabled=True, pressed=True, edge=True, update=110/Manual, last=110, read=True, blocked=False, rotating=True, captured=True
+PASS Capture entry ignores only the snapshot containing pre-button movement (actual=0.000000, expected=0.000000)
+PASS Right-button release consumes its final physical rotation delta exactly once (actual=41.000000, expected=41.000000)
+PASS Queued right-button release immediately unlocks logical capture and starts return pointer handoff
+PASS Return pointer starts at the last displayed pivot, not the locked absolute pointer (actual=(319.726800, 227.851800), expected=(319.726800, 227.851800))
+PASS Beginning return cannot move the body from a center-to-pivot pointer change (actual=(-0.267898, 1.906645), expected=(-0.267898, 1.906645))
+PASS A stale warp-target absolute coordinate cannot acknowledge handoff after real relative movement
+PASS Pending cursor handoff accepts real mouse movement immediately (actual=(323.726800, 230.851800), expected=(323.726800, 230.851800))
+PASS Mouse movement translates the held object during pointer handoff and upright return (actual=(0.133333, 0.100000), expected=(0.133334, 0.100000))
+PASS Matching native-coordinate input completes handoff without waiting extra frames
+PASS Delayed absolute catch-up with zero new delta cannot apply the previous physical movement a second time (actual=(-0.134565, 2.006645), expected=(-0.134565, 2.006645))
+PASS Absolute pointer tracking resumes continuously on the next frame (actual=(-0.100000, 0.066667), expected=(-0.100000, 0.066667))
+PASS Pick fixture bottle for queued relative input
+PASS Queued right-button press enters manual rotation and logical capture; current=True, enabled=True, pressed=True, edge=True, update=118/Manual, last=118, read=True, blocked=False, rotating=True, captured=True
+PASS Capture entry ignores only the snapshot containing pre-button movement (actual=0.000000, expected=0.000000)
+PASS A delayed warp-target position cannot acknowledge a one-pixel real movement
+PASS One-pixel physical handoff movement is applied without a dead zone (actual=(0.033333, 0.000000), expected=(0.033334, 0.000000))
+PASS Exact one-pixel absolute catch-up completes the handoff
+PASS One-pixel absolute catch-up does not duplicate physical movement (actual=(-0.105714, 1.978693), expected=(-0.105714, 1.978693))
+PASS Pick fixture bottle for queued relative input
+PASS Queued right-button press enters manual rotation and logical capture; current=True, enabled=True, pressed=True, edge=True, update=125/Manual, last=125, read=True, blocked=False, rotating=True, captured=True
+PASS Capture entry ignores only the snapshot containing pre-button movement (actual=0.000000, expected=0.000000)
+PASS Rotation-time click checks the logical pivot against the screen overlay block
+PASS UI raycast at the software cursor prevents a rotation-time click from dropping the body
+PASS EventSystem raycast receives the logical pivot instead of the locked native position (actual=(319.726800, 227.851800), expected=(319.726800, 227.851800))
+PASS Unblocked left click while rotating drops the held body and releases pointer ownership
+PASS Pick fixture bottle for queued relative input
+PASS Queued right-button press enters manual rotation and logical capture; current=True, enabled=True, pressed=True, edge=True, update=133/Manual, last=133, read=True, blocked=False, rotating=True, captured=True
+PASS Capture entry ignores only the snapshot containing pre-button movement (actual=0.000000, expected=0.000000)
+PASS Swap fixture has an overlapping solid and a target pick area at the rotation pivot
+PASS Rotation-time left click swaps using the software pointer's world position; point=(-0.009105, 1.595059), bottle=Bottle_item_1003/(0.000000, 2.000000), target=Bottle_item_1002/(-0.006224, 1.819805), contains=True, candidate=Bottle_item_1002, held=Bottle_item_1002, captured=False
+PASS Pick fixture bottle for queued relative input
+PASS Queued right-button press enters manual rotation and logical capture; current=True, enabled=True, pressed=True, edge=True, update=137/Manual, last=137, read=True, blocked=False, rotating=True, captured=True
+PASS Capture entry ignores only the snapshot containing pre-button movement (actual=0.000000, expected=0.000000)
+PASS Queued Escape clears logical capture and any pending pointer handoff
+PASS Pick fixture bottle for queued relative input
+PASS Queued right-button press enters manual rotation and logical capture; current=True, enabled=True, pressed=True, edge=True, update=142/Manual, last=142, read=True, blocked=False, rotating=True, captured=True
+PASS Capture entry ignores only the snapshot containing pre-button movement (actual=0.000000, expected=0.000000)
+PASS Focus loss cancels capture and handoff without a warp into another application
+PASS Returning focus while RMB remains held does not recapture the pointer
+PASS Pick fixture bottle for queued relative input
+PASS Queued right-button press enters manual rotation and logical capture; current=True, enabled=True, pressed=True, edge=True, update=146/Manual, last=146, read=True, blocked=False, rotating=True, captured=True
+PASS Capture entry ignores only the snapshot containing pre-button movement (actual=0.000000, expected=0.000000)
+PASS Interactor disable releases the item and all pointer state
+PASS Pick fixture bottle for queued relative input
+PASS Queued right-button press enters manual rotation and logical capture; current=True, enabled=True, pressed=True, edge=True, update=149/Manual, last=149, read=True, blocked=False, rotating=True, captured=True
+PASS Capture entry ignores only the snapshot containing pre-button movement (actual=0.000000, expected=0.000000)
+PASS Disabling the held owner clears rotation pointer ownership
+PASS Pick fixture bottle for queued relative input
+PASS Queued right-button press enters manual rotation and logical capture; current=True, enabled=True, pressed=True, edge=True, update=152/Manual, last=152, read=True, blocked=False, rotating=True, captured=True
+PASS Capture entry ignores only the snapshot containing pre-button movement (actual=0.000000, expected=0.000000)
+PASS Session reset leaves no captured or transitioning cursor
+PASS Batchmode input tests leave native cursor lock and visibility untouched
+PASS Stationary glass is supported at the real floor instead of suspended in air
+PASS 1-ice stationary fixture fills its actual requested volume
+PASS 1-ice fixture starts without wall penetration and keeps native gravity enabled
+PASS 1-ice completed ingredient composition remains finite
+PASS 1-ice stationary replay preserves total material volume and supported glass pose
+PASS 1-ice replay respects vessel-wall geometry within native contact tolerance
+DIAGNOSTIC_ONLY {"iceCount":1,"ticks":250,"seconds":5.0,"requestedMl":40.0,"acceptedMl":40.0,"finalMl":40.0,"floorY":-3.25,"initialWaterHeight":-2.5802078247070314,"maxWaterSpeed":0.051075033843517306,"peakSurfaceRise":0.0007328987121582031,"lateWaterEnergy":0.002270506927743554,"maxIceSpeed":0.36032015085220339,"maxIceAngularSpeed":2.5487895011901857,"maxIceWallPenetration":0.0,"scope":"Per-tick completed GPU snapshots in a floor-supported stationary glass with dynamic gravity-enabled ice. Speed/energy/surface maxima are diagnostics, not naturalness acceptance."}
+NOT_VALIDATED stationary visual naturalness, human input feel and splash quality; no speed/energy maximum was relabelled as an acceptance pass.
+PASS Stationary glass is supported at the real floor instead of suspended in air
+PASS 3-ice stationary fixture fills its actual requested volume
+PASS 3-ice fixture starts without wall penetration and keeps native gravity enabled
+PASS 3-ice completed ingredient composition remains finite
+PASS 3-ice stationary replay preserves total material volume and supported glass pose
+PASS 3-ice replay respects vessel-wall geometry within native contact tolerance
+DIAGNOSTIC_ONLY {"iceCount":3,"ticks":250,"seconds":5.0,"requestedMl":40.0,"acceptedMl":40.0,"finalMl":40.0,"floorY":-3.25,"initialWaterHeight":-2.5800726413726808,"maxWaterSpeed":0.05362943187355995,"peakSurfaceRise":0.0006768703460693359,"lateWaterEnergy":0.0024623246863484384,"maxIceSpeed":0.4483206868171692,"maxIceAngularSpeed":46.78043746948242,"maxIceWallPenetration":0.0011242842301726342,"scope":"Per-tick completed GPU snapshots in a floor-supported stationary glass with dynamic gravity-enabled ice. Speed/energy/surface maxima are diagnostics, not naturalness acceptance."}
+NOT_VALIDATED stationary visual naturalness, human input feel and splash quality; no speed/energy maximum was relabelled as an acceptance pass.
+PASS No Unity, native simulation, compute or shader errors during cleanup runtime validation

@@ -1,0 +1,17 @@
+{
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe",
+  "started": "2026-10-09T18:30:37.4953368+09:00",
+  "workingDirectory": "A:\\UnityHub\\proj\\slainte",
+  "timeoutSeconds": 300,
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/Library/FluidModelDHarness",
+    "-executeMethod",
+    "Slainte.Bartending.FluidGpuExperiment.Editor.FluidExperimentGarnishBuilder.Build",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\112-garnish-sprite-author\\Editor.log",
+    "-quit"
+  ]
+}

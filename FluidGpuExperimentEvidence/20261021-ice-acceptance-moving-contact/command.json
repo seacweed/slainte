@@ -1,0 +1,17 @@
+﻿{
+    "started":  "2026-10-21T19:03:23.4560654+09:00",
+    "timeoutSeconds":  300,
+    "arguments":  [
+                      "-batchmode",
+                      "-force-d3d11",
+                      "-projectPath",
+                      "A:\\UnityHub\\proj\\slainte\\Library\\FluidModelDHarness",
+                      "-executeMethod",
+                      "PhysicsLabValidationDispatch.Run",
+                      "-logFile",
+                      "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\20261021-ice-acceptance-moving-contact\\Editor.log"
+                  ],
+    "entryMethod":  "ExperimentIceContactValidation.BeginMovingOnly",
+    "forceShaderImport":  true,
+    "executable":  "A:\\UnityHub\\Unity\\6000.3.5f2\\Editor\\Unity.exe"
+}

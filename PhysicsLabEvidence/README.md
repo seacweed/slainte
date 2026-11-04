@@ -1,0 +1,83 @@
+# PhysicsLab 실행 증거
+
+## 최종 상태
+
+스프라이트/콜라이더 일치 개편은 `40-vessel-contour-validation`의 350개 PASS/2개 SKIP와 `42-collision-profile-isolation`의 10개 PASS, 두 프로세스 종료 0으로 검증했다. 24개 프리팹의 공통 폴리곤, 손잡이 구멍, 0도/67도 CPU·GPU 접촉, 집기 영역 안의 투명 공간, 열린 입구 무충돌, 실제 내부 윤곽에 따른 닫힌 셰이커 복구와 기존 조작·액체 검사를 포함한다. 원거리 위치/속도 RMS 차이는 0, 전역 서브스텝은 2다. 원본 C# 최초 빌드는 오류 0/기존 경고 8, 최종 증분 빌드는 오류 0/경고 0이다.
+
+`33-collision-profile-authoring/geometry-before.png`와 `38-alpha-contour-authoring/geometry-after.png`가 실제 Unity 카메라로 만든 윤곽 전후 화면이다. `41-profile-reapply-idempotence/verification.json`은 프로파일·프리팹·메타 96개의 재적용 전후 바이트 일치를 기록한다. `collision-scope-audit/verification.json`은 기준 커밋 c2d6a21 대비 그림, Transform, Rigidbody, 집기 영역, 게임 수치와 씬 보존, 기존 사용자 ProjectSettings 변경 보존 및 복사된 의존 에셋 137개의 일치를 확인한다. `mouthWidth: 0.14`는 기존 C# 기본값을 Unity가 직렬화한 것이며 수치 변경이 아니다.
+
+34~37의 컴파일/검사 실패도 개별 로그와 분석을 보존했다. 35의 HLSL 예약어 오류는 수정했고 모든 compute kernel의 지원 여부를 초기화에서 검사한다. 36/37의 접촉 수치 차이는 GPU의 기하학적 간격과 Unity 거리 조회를 따로 기록하여 검증한다. 이번 실행에 native crash는 없었다. 복사 프로젝트에서 기존 SearchDatabase 시작 예외는 계속 관측됐으며 최종 보고서와 종료 0을 별도로 확인했다. 에디터 로그 전체 무오류, 기존 게임 씬 전체 회귀, FPS/성능 개선을 주장하지 않는다.
+
+잔 내부 물줄기 수정은 `32-contained-stream-filled-glass`의 137개 PASS/2개 SKIP/종료 0과 `31-contained-stream-isolation`의 10개 PASS/종료 0으로 확인했다. 이전 커밋 `433fab0`에서는 새 입구 통과 검사가 실패하여 문제를 재현했다(`29-contained-stream-baseline`, 종료 1). 수정본은 입구 아래에서도 연결을 유지하고 실제 벽/고인 액체 접촉에서만 표시를 전환한다. 60ml를 미리 채운 실제 하이볼 잔의 정지·이동 따르기 화면을 확인했다. 원거리 위치·속도 차이는 0이고 전역 서브스텝은 2회로 유지된다. 원본 Unity는 종료하거나 재시작하지 않았다.
+
+병 방출 개선 최종 실행은 `27-pour-spacing-visual-validation`의 126개 PASS/2개 SKIP/종료 0과 `28-final-pour-isolation`의 10개 PASS/종료 0이다. 원거리 위치·속도 차이는 0, 고정 서브스텝은 2회다. 원본 C# 빌드는 오류 0개/기존 경고 8개다. 실제 GPU 입자의 방출 시각, 보존량, 연결 조건과 픽셀 출력을 검사하고, 같은 상태의 메타볼/연속 물줄기 화면과 이동·중단 화면을 보존했다. GPU 마커 시간은 배치 에디터에서 얻지 못했으며 성능 측정 완료나 FPS 개선으로 간주하지 않는다.
+
+2026-09-21 표면 표시: `18-metaball-surface/validation.txt`는 75개 PASS/2개 SKIP, Unity 종료 0이다. 기존 누적/합성 셰이더를 재사용한 메타볼 연결, 공중 입자 늘어남과 얇은 하이라이트를 실제 카메라 픽셀로 검사했다. 렌더링 전후 GPU 위치·속도·소유권·ml 불변, 해상도 변경, 자원 재생성과 기존 조작/액체 회귀도 통과했다. 원본 C# 빌드는 오류 0개/기존 경고 8개다. 새 partial을 포함하는 `IncludeSurface.targets`를 빌드에만 전달했으며 Unity가 생성한 csproj는 수정하지 않았다.
+
+2026-09-21 재설계: `13-final-authored-scene/validation.txt`는 실제 씬 복사본의 검사 38개 통과/기존 시스템 존재 검사 2개 SKIP, `14-final-isolation-and-damping/validation.txt`는 실제 GPU 대조 검사 10개 통과다. 두 Unity 프로세스 종료 코드는 0이다. 원본 C# 프로젝트 빌드는 `redesign-compile-restored.json`에서 종료 0을 확인한다.
+
+Unity 6000.3.5f2, NVIDIA RTX 3070, Direct3D11에서 실행했다. `initial-sandbox.png`, `pour-transfer.png`는 실제 카메라 출력이다. Batch 프레임 간격은 GPU 처리 시간 또는 게임 FPS 측정값이 아니다. 이전 37개 검사는 원거리 액체 위치·속도 독립성을 검사하지 않았으므로 새 대조 실험과 구분한다.
+
+## 실행 이력
+
+| 폴더 | 판정 |
+| --- | --- |
+| 33-collision-profile-authoring | 종료 0. 24개 윤곽 프로파일과 프리팹, 실제 전후 겹침 화면 생성 |
+| 34-collision-profile-regression | 종료 1. 검증 코드의 지역 변수명 중복으로 C# 컴파일 실패. 이름 수정 후 진행 |
+| 35-collision-surface-validation | 종료 1. 새 HLSL 코드의 예약어 point 사용으로 커널 무효. 원인 수정 및 초기화 지원 검사 추가 |
+| 36-collision-contact-validation | 종료 1. GPU 해결 후 Unity 거리 조회가 -0.009여서 엄격 일치 검사 실패. 원시 좌표/형상 반경 진단 추가 |
+| 37-collision-skin-diagnostic | 종료 1. GetShapes의 반경 0으로 거리 차이를 설명할 수 없음. 기하 간격과 기존 contact offset 기준을 분리하여 검사 |
+| 38-alpha-contour-authoring | 종료 0. 손잡이 구멍을 남기는 복합 폴리곤 생성, 24개 총 1705선분 |
+| 39-shared-contour-regression | 종료 0. 실제 CPU/GPU 접촉과 손잡이를 포함한 320개 PASS/2개 SKIP |
+| 40-vessel-contour-validation | 종료 0. 열린 입구와 닫힌 셰이커의 내부 복구까지 350개 PASS/2개 SKIP |
+| 41-profile-reapply-idempotence | 종료 0. 재적용 전후 프로파일·프리팹·메타 96개 바이트 동일 |
+| 42-collision-profile-isolation | 종료 0. 원거리 독립성·빠른 접촉·유출·감쇠 10개 PASS |
+| 00-startup-failures | 제한된 파일 접근 환경에서 Unity 시작 실패 3회. 개별 dump, exception 요약, 관측한 콘솔 오류와 명령 보존. 정상 완료로 취급하지 않음 |
+| 01-prefab-build | 정상 캐시 접근 권한으로 전환 후 생성/컴파일 완료. Play Mode 검증은 아님 |
+| 02-playmode-validation | 종료 1. 도구 타격 fixture가 실제 콜라이더 중심과 어긋나 쓰러짐 기준 미달 |
+| 03-controlled-impact-validation | 종료 0. 콜라이더 기준 타격으로 수정한 기존 검사 통과 |
+| 04-geometry-transfer-validation | 종료 1. 외부 Teleport 후 회전 시작 각도 불일치. 화면 캡처의 액체 그리기 시점도 추가 조사 |
+| 05-render-lifecycle-validation | 종료 0. 각도 재취득/카메라별 그리기 수정 후 확장 검사 통과 |
+| 06-settled-liquid-validation | 종료 0. 윤곽 기반 액체 소유권과 가라앉은 액체 이동 보존까지 최종 통과 |
+| 07-final-isolation-validation | 종료 0. 에셋 저장 범위를 PhysicsLab으로 한정한 최종 생성·Play Mode 검사 통과 |
+| 08-coupling-baseline | 종료 -1. 새 최소 프로젝트의 Unity 검색 인덱서 예외 후 지연된 검증 콜백이 실행되지 않아 테스트 프로세스만 종료. 판정 불가/실패 |
+| 09-coupling-baseline-direct-callback | 종료 1. 직접 Play Mode 콜백으로 변경한 뒤 원본 코드의 원거리 액체 영향 재현 |
+| 10-local-contact-redesign | 종료 1. 원거리 차이 0이지만 855도 접촉의 국소 검사 한도 초과 |
+| 11-angular-contact-budget | 종료 0. 접촉 쌍의 각도 기반 검사 한도를 적용한 GPU 검사 통과 |
+| 12-authored-scene-regression | 종료 0. 실제 씬 복사본 회귀 검사 통과(기존 시스템 존재 검사 2개 SKIP) |
+| 13-final-authored-scene | 종료 0. 실제 씬의 국소 검사 한도까지 확인, 38개 PASS/2개 SKIP |
+| 14-final-isolation-and-damping | 종료 0. 원거리 위치/속도 차이 0, 실제 접촉 유지, 시간 기준 감쇠 포함 10개 PASS |
+| 15-upright-pickup-and-return | 종료 0. 집기·우클릭 해제 시 제자리 0도 복귀와 액체 보존 등 63개 PASS/2개 SKIP |
+| 16-final-upright-controls | 종료 0. 즉시 복귀 중간 버전. 회전 중 내려놓기가 취소될 때 포인터 오프셋도 보정, 63개 PASS/2개 SKIP. 원본 C# 빌드 오류 0개 |
+| 17-animated-return-and-cursor | 종료 0. 0.15초 제자리 복귀·커서 목표 추적·복귀 중 재조작을 포함한 최종 버전, 66개 PASS/2개 SKIP. 원본 C# 빌드 오류 0개 |
+| 18-metaball-surface | 종료 0. 표면 연결·얇은 하이라이트·속도 방향 늘어남·렌더링의 물리 불변성을 포함해 75개 PASS/2개 SKIP. 원본 C# 빌드 오류 0개 |
+| 19-pour-stream-integration | 종료 0. 방출 시간 및 물줄기 초기 구현의 기존 회귀 75개 PASS/2개 SKIP |
+| 20-pour-contract-validation | 종료 1. 병 1001의 고정 입구 오프셋이 실제 콜라이더와 충분한 간격을 확보하지 못함. 확대 박스 경계 밖으로 생성점 보정 |
+| 21-nozzle-clearance-and-streams | 종료 1. 병 15종 통과 후 방출 시각 검사의 예상값에 기존 속도 감쇠가 빠진 것을 확인. 분석 기대값 보정 |
+| 22-birth-timing-and-stream-contracts | 종료 1. 잡힌 도구를 물리 호환성 필터가 제외해 연결 표면도 관통함. 시각적 차단과 기존 물리 정책을 분리하고 실제 충돌 fixture는 놓인 고체로 보정 |
+| 23-stream-physics-isolation | 종료 0. 원거리 위치·속도 차이 0과 기존 접촉·감쇠 검사 10개 PASS |
+| 24-complete-pour-validation | 종료 1. 두 바퀴를 20ms에 도는 fixture에서 각 기울임 구간이 0.5ml 미만이어서 방출이 없었음. 해당 검사 유량을 200ml/s로 보정 |
+| 25-pour-surface-and-regression | 종료 -1. 이전 회귀가 유량을 0으로 만든 상태를 촬영 fixture가 재사용. 중첩 IEnumerator 예외가 Guard 밖에서 발생해 실패 보고가 지연되어, 식별한 테스트 PID만 종료하고 로그 보존 |
+| 26-pour-final-validation | 종료 0. 126개 PASS/2개 SKIP, 원본 빌드 오류 0. 실제 화면에서 꺾임·옆 튐이 남아 출구 간격 추가 보정 |
+| 27-pour-spacing-visual-validation | 종료 0. 출구 속도에 기존 Fill 간격을 반영한 최종 코드, 126개 PASS/2개 SKIP. 같은 상태 전후 및 이동·중단 캡처 확인, 원본 빌드 오류 0 |
+| 28-final-pour-isolation | 종료 0. 최종 소스의 원거리 위치·속도 차이 0, 고정 2회 적분과 기존 접촉·감쇠 대조 검사 10개 PASS |
+| 29-contained-stream-baseline | 종료 1. 이전 커밋 433fab0의 런타임/셰이더에 새 검사를 실행해 잔 입구 통과 시 강제 분리를 재현. 의도한 회귀 재현이며 Unity 충돌이나 정상 완료로 취급하지 않음 |
+| 30-contained-stream-fix | 종료 0. 잔 내부 연결·픽셀·수면 접촉과 기존 회귀 137개 PASS/2개 SKIP. 12ml를 미리 채운 촬영, 원본 빌드 오류 0/기존 경고 8개 |
+| 31-contained-stream-isolation | 종료 0. 수정된 GPU 코드의 원거리 위치·속도 차이 0, 기존 접촉·감쇠 검사 10개 PASS |
+| 32-contained-stream-filled-glass | 종료 0. 같은 수정본에 60ml 사전 충전을 적용한 최종 화면, 137개 PASS/2개 SKIP. 줄기가 잔 내부에서 수면까지 이어지는 정지/이동 화면 확인 |
+
+12/13의 새 복사 프로젝트에서 UnityEditor.Search.SearchDatabase의 초기 인덱서 ArgumentOutOfRangeException도 기록되었다. 런타임 검증은 끝까지 실행되어 보고서와 종료 코드가 확보됐지만, 에디터 로그 전체가 무오류라는 뜻은 아니다. 원본 프로젝트나 사용자의 Unity를 종료/재실행하지 않았다.
+
+15/16에서도 같은 SearchDatabase 시작 예외가 기록되었으며 검증 완료 및 프로세스 종료 0을 각각 확인했다. 16의 `verification.json`에 실제 사용한 런타임 소스 일치 여부, 소스·원시 로그 해시, 기존 설정 보존을 기록했다. 검사는 조작 API 기반이며 사람의 실제 마우스 조작감 검증을 뜻하지 않는다.
+
+17은 기존 `BartendingPointerAnchor`와 `BartendingViewport` 소스를 그대로 복사해 커서 모듈을 재사용했다. 회전 보간과 커서 목표 지점은 검사하지만 배치 환경에서 사용자 OS 커서를 강제로 옮기지 않는다. 실제 OS 커서 이동과 조작감은 미검증이다. 이 실행에도 SearchDatabase 시작 예외가 있으며 런타임 보고서와 종료 0을 별도 확인했다. `verification.json`에 최종 코드·원시 로그 해시를 기록한다.
+
+18의 `initial-particles.png`와 `initial-sandbox.png`는 동일한 GPU 상태의 원형/메타볼 표시 비교다. `probe-*.png`는 두 입자의 연결·하이라이트·해상도 및 한 입자의 속도 방향 늘어남을 검증한 출력이다. `pour-transfer.png`와 월드 재활성화 출력도 보존했다. 원본과 테스트 복사본의 소스·의존 에셋 일치, 물리 compute 및 재사용 셰이더 미수정, 기존 ProjectSettings 보존은 `verification.json`에 기록한다. SearchDatabase 시작 예외와 라이선스 토큰 갱신 메시지가 있지만 검증은 끝까지 실행되어 별도 판정과 종료 0을 확보했다. 에디터 로그 전체가 무오류라는 주장은 아니다. 용기별 표면 마스킹, GPU 처리 시간 및 사람의 조작감 검증은 이번 실행 범위가 아니다.
+
+`redesign-compile.json`은 SDK 탐색 경로 접근 거부, `redesign-compile-authorized.json`은 복원 메타데이터 누락으로 각각 종료 1이다. `redesign-compile-restored.json`은 메타데이터 복원 후 컴파일 오류 0/종료 0이다. 실패 기록을 뒤의 성공 기록으로 덮어쓰지 않았다.
+
+`Run-Unity.ps1`은 실행별 command.json/Editor.log/stdout/stderr/exit.json을 만들고 실행 중 새로 생성된 충돌 폴더를 복사한다. 같은 attempt 이름을 거부하고 재실행하지 않는다. 초기 3회는 이 래퍼 도입 전 실패여서 확보하지 못한 로그/exit code는 없다고 명시했다. 덤프 전체를 각각 심볼 분석한 것으로 주장하지 않는다.
+
+원본 로그·스크린샷·덤프와 시작 전 ProjectSettings 사본은 이 작업 폴더에 보존한다. 커밋에는 재현 스크립트, 판정 보고서, 명령·종료 코드, 원인 분석과 증거 해시 목록만 포함한다. 프로젝트 설정 사본과 큰 원시 실행 자료는 커밋하지 않는다.
+
+커밋용 실패 보고서에서 행 끝 공백을 정리한 경우 바이트 그대로의 `validation.raw.txt`를 별도로 보존했다. 원시 증거는 `raw-evidence-sha256.json`, 기존 파일 보존과 최종 검사 수는 `isolation-verification.json`에서 확인한다.

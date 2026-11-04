@@ -1,0 +1,37 @@
+{
+  "seed": 20260930,
+  "kind": "CPU mathematical bound evidence; not Unity/GPU execution",
+  "proof": "o0+t*(o1-o0)+R(a0+t*theta)*v, |p''(t)|=|v|*theta**2.\nThe linear interpolation error is at most max|p''|*t*(1-t)/2 <= r*theta**2/8.\nLinear translation adds no curvature. A segment is a convex combination of its\nendpoints, so an AABB covering both endpoint paths also covers the whole segment.\nFor |theta|>1 the implementation retains the translated full-radius envelope.\nRandom samples supplement this argument; they do not prove shader/GPU equivalence.",
+  "cases": 10000,
+  "sampled_points": 2610000,
+  "branches": {
+    "legacy_translation": 1,
+    "chord": 5170,
+    "full_circle": 4829
+  },
+  "max_chord_error_to_bound_for_angles_at_least_1e_4": 0.9999999899933097,
+  "maximum_unpadded_chord_excess_from_double_roundoff": 2.5780185344445704e-15,
+  "float32_partial_birth_cases": 660,
+  "float32_max_outside": 0.0,
+  "viscosity_threshold_counterexample": {
+    "squared_distance": 1.0000001044244144e-12,
+    "distance": 9.999999974752427e-07,
+    "original_distance_test": false,
+    "squared_only_test": true,
+    "required_fix": "Retain distance > 1e-6 and weight > 0 after the squared-distance early cull"
+  },
+  "float32_compact_support_zero_contribution_cases": 50000,
+  "limits": [
+    "Finite, game-scale coordinates and positive finite kernel radii",
+    "Randomized trajectories and float32 approximation are not actual HLSL execution or collision regression tests",
+    "Legacy abs(angleDelta)<1e-6 branch approximates rotation and is unchanged",
+    "Large-coordinate and very large accumulated-angle floating point robustness is not proven"
+  ],
+  "source_sha256": {
+    "Runtime/FluidExperimentGpuLiquid.Boundaries.cs": "6590047eddb02bd8f868c8c5628556b3242cb16a7565f42feadf6efafb400ddc",
+    "Shaders/FluidExperimentLiquid.compute": "7385bd340e420b98f287916527030b0defea481c0d24ecd68018049c9852ca79",
+    "Shaders/FluidExperimentImproved.hlsl": "0715b80fbdb45a8afd951bca01cf7ed95b5273b8bc3bb7760cc8b01b7dd1c83b"
+  },
+  "viscosity_original_threshold_retained_in_source": true,
+  "status": "BOUND_AND_ZERO_CONTRIBUTION_SAMPLING_PASS"
+}

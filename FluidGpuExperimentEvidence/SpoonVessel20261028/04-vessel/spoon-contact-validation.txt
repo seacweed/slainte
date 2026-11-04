@@ -1,0 +1,62 @@
+PASS Flipped spoon can be picked
+PASS Held spoon without RMB remains ghosted
+PASS Held spoon without RMB remains ghosted does not own rotation cursor
+PASS Spoon cannot enter rotation
+PASS RMB outside vessel remains ghosted
+PASS RMB outside vessel remains ghosted keeps native solids ghosted without cursor capture
+PASS RMB outside vessel neither contacts nor pushes a real bottle
+PASS RMB spoon tip entering actual cavity acquires that vessel
+PASS Inside vessel still has no native spoon/glass impulse pair
+PASS Large cursor move stops spoon at finite vessel wall: (10.00, 0.00)
+PASS Actual native spoon silhouette stays clear of vessel wall: 0.0009999909
+PASS Wall constraint never moves or accelerates free dynamic glass
+PASS Large RMB mouse delta never rotates or captures spoon cursor
+PASS Large cursor move stops spoon at finite vessel wall: (-10.00, 0.00)
+PASS Actual native spoon silhouette stays clear of vessel wall: 0.001002258
+PASS Wall constraint never moves or accelerates free dynamic glass
+PASS Large RMB mouse delta never rotates or captures spoon cursor
+PASS Large cursor move stops spoon at finite vessel wall: (0.00, -10.00)
+PASS Actual native spoon silhouette stays clear of vessel wall: 0.001000194
+PASS Wall constraint never moves or accelerates free dynamic glass
+PASS Large RMB mouse delta never rotates or captures spoon cursor
+PASS Post-physics spoon recovery preserves freely moving/rotating vessel pose and velocity exactly
+PASS Spoon can withdraw through open mouth and releases vessel constraint
+PASS Spoon can reenter after withdrawal
+PASS Controlled GPU sample lies outside spoon bowl within a real particle contact radius and inside glass
+MEASURE GPU control=(0.16, 3.88) contacted=(0.20, 3.91) free=(0.16, 3.88) emission=(0.16, 3.88)
+PASS Actual GPU particle owned by containing glass responds to spoon geometry
+PASS Unowned free liquid at same location ignores held spoon
+PASS RMB-off owned liquid at same location ignores held spoon
+PASS RMB release immediately clears vessel-only interaction
+PASS RMB release immediately clears vessel-only interaction does not own rotation cursor
+PASS RMB release clears selected vessel
+PASS Without RMB spoon crosses former vessel wall freely
+PASS Second RMB press can re-enable collision
+PASS Second RMB press can re-enable collision keeps native solids ghosted without cursor capture
+PASS Escape cancels collision
+PASS Escape cancels collision does not own rotation cursor
+PASS Escape requires physical RMB release before rearming
+PASS Escape requires physical RMB release before rearming does not own rotation cursor
+PASS Release and new press rearm after Escape
+PASS Release and new press rearm after Escape keeps native solids ghosted without cursor capture
+PASS Focus loss cancels collision
+PASS Focus loss cancels collision does not own rotation cursor
+PASS Focus resume while still pressing cannot rearm
+PASS Focus resume while still pressing cannot rearm does not own rotation cursor
+PASS Fresh press after focus resumes collision
+PASS Fresh press after focus resumes collision keeps native solids ghosted without cursor capture
+PASS Visible UI hit region suppresses spoon contact input
+PASS Visible UI hit region suppresses spoon contact input does not own rotation cursor
+PASS RMB away from UI resumes collision
+PASS RMB away from UI resumes collision keeps native solids ghosted without cursor capture
+PASS Mouse-device replacement cancels contact until release
+PASS Mouse-device replacement cancels contact until release does not own rotation cursor
+PASS New device release and press can rearm
+PASS New device release and press can rearm keeps native solids ghosted without cursor capture
+PASS Left-click drop while RMB held restores released solid collision
+PASS Drop restores native settings and adds no RMB spin
+PASS World Reset restores spoon collision and clears held mode
+PASS Interactor disable restores physical spoon state
+PASS Spoon disable forgets held input and restores authored collider flags
+PASS All spoon interactions preserve native cursor lock and visibility
+PASS No Unity, native physics or input errors

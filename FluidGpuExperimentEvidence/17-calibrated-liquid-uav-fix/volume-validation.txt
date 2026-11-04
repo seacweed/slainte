@@ -1,0 +1,231 @@
+PASS Authored comparison controller exists
+Protocol: D highball and E highball/hurricane at 30/60/120 requested ml; 300 fixed .02s ticks, readback every .2s. E target height tolerance:20%; visible area tolerance:20%; generated quantity tolerance:.005ml.
+Heights are world units above the authored interior's lowest point. P95 is volume-weighted owned-particle center height; max extent adds collision radius.
+Unsettled is an observation when the final 1s p95 range exceeds half a particle radius or mean owned-particle RMS speed exceeds .15 world units/s; these are provisional diagnostic thresholds.
+Surface area is actual premultiplied-alpha output before scene compositing, normalized by measured GPU particle opacity; coverage thresholds .05 and .25, raw alpha sum and normalized coverage sum are reported separately.
+PASS Synthetic oracle partitions owned/free/other liquid and excludes inactive slots
+PASS Synthetic oracle measures volume-weighted P95, radius-inclusive max and weighted mean speed
+PASS Synthetic square has known area and nominal quarter-capacity height
+PASS Unowned ID zero is not treated as a selected vessel
+PASS Synthetic triangle nominal half-capacity height follows clipped area rather than linear height
+PASS DImprovedSurface: GPU operational on AMD Radeon(TM) Graphics
+PASS DImprovedSurface-Glass_highball-30ml: public measurement scenario preserves selection and requested amount
+PASS DImprovedSurface-Glass_highball-30ml: accepted Fill quantity is positive, bounded and agrees with GPU reservations
+PASS DImprovedSurface-Glass_highball-30ml: measured glass is stationary and unheld
+PASS DImprovedSurface-Glass_highball-30ml: reset clears prior slots while the new fill is still queued
+PASS DImprovedSurface-Glass_highball-30ml: six independent tail observations cover the final second
+PASS DImprovedSurface-Glass_highball-30ml: runtime metrics agree with independent ownership accounting
+PASS DImprovedSurface-Glass_highball-30ml: runtime particle heights agree with independently sorted volume weights
+PASS DImprovedSurface-Glass_highball-30ml: actual liquid-only surface target is available
+PASS DImprovedSurface-Glass_highball-30ml: GPU ingredient opacity is measurable
+PASS DImprovedSurface-Glass_highball-30ml: area measurement uses a valid rendered image
+PASS DImprovedSurface-Glass_highball-30ml: capturing scene and surface leaves physical state unchanged
+OBSERVATION DImprovedSurface-Glass_highball-30ml: accepted 30/30 ml, owned 30 ml, free 0 ml, retired 0 ml, p95 height 0.619492769241333, visible area 0.73922520875930786, unsettled=False, edge pixels=0.
+PASS DImprovedSurface-Glass_highball-60ml: public measurement scenario preserves selection and requested amount
+PASS DImprovedSurface-Glass_highball-60ml: accepted Fill quantity is positive, bounded and agrees with GPU reservations
+PASS DImprovedSurface-Glass_highball-60ml: measured glass is stationary and unheld
+PASS DImprovedSurface-Glass_highball-60ml: reset clears prior slots while the new fill is still queued
+PASS DImprovedSurface-Glass_highball-60ml: six independent tail observations cover the final second
+PASS DImprovedSurface-Glass_highball-60ml: runtime metrics agree with independent ownership accounting
+PASS DImprovedSurface-Glass_highball-60ml: runtime particle heights agree with independently sorted volume weights
+PASS DImprovedSurface-Glass_highball-60ml: actual liquid-only surface target is available
+PASS DImprovedSurface-Glass_highball-60ml: GPU ingredient opacity is measurable
+PASS DImprovedSurface-Glass_highball-60ml: area measurement uses a valid rendered image
+PASS DImprovedSurface-Glass_highball-60ml: capturing scene and surface leaves physical state unchanged
+OBSERVATION DImprovedSurface-Glass_highball-60ml: accepted 60/60 ml, owned 60 ml, free 0 ml, retired 0 ml, p95 height 1.1103343963623047, visible area 1.3130016326904297, unsettled=False, edge pixels=0.
+PASS DImprovedSurface-Glass_highball-120ml: public measurement scenario preserves selection and requested amount
+PASS DImprovedSurface-Glass_highball-120ml: accepted Fill quantity is positive, bounded and agrees with GPU reservations
+PASS DImprovedSurface-Glass_highball-120ml: measured glass is stationary and unheld
+PASS DImprovedSurface-Glass_highball-120ml: reset clears prior slots while the new fill is still queued
+PASS DImprovedSurface-Glass_highball-120ml: six independent tail observations cover the final second
+PASS DImprovedSurface-Glass_highball-120ml: runtime metrics agree with independent ownership accounting
+PASS DImprovedSurface-Glass_highball-120ml: runtime particle heights agree with independently sorted volume weights
+PASS DImprovedSurface-Glass_highball-120ml: actual liquid-only surface target is available
+PASS DImprovedSurface-Glass_highball-120ml: GPU ingredient opacity is measurable
+PASS DImprovedSurface-Glass_highball-120ml: area measurement uses a valid rendered image
+PASS DImprovedSurface-Glass_highball-120ml: capturing scene and surface leaves physical state unchanged
+OBSERVATION DImprovedSurface-Glass_highball-120ml: accepted 80/120 ml, owned 80 ml, free 0 ml, retired 0 ml, p95 height 1.3990932703018188, visible area 1.6449220180511475, unsettled=True, edge pixels=0.
+PASS ECalibratedLiquid: GPU operational on AMD Radeon(TM) Graphics
+PASS ECalibratedLiquid-Glass_highball-30ml: public measurement scenario preserves selection and requested amount
+PASS ECalibratedLiquid-Glass_highball-30ml: accepted Fill quantity is positive, bounded and agrees with GPU reservations
+PASS ECalibratedLiquid-Glass_highball-30ml: measured glass is stationary and unheld
+PASS ECalibratedLiquid-Glass_highball-30ml: reset clears prior slots while the new fill is still queued
+PASS ECalibratedLiquid-Glass_highball-30ml: six independent tail observations cover the final second
+PASS ECalibratedLiquid-Glass_highball-30ml: runtime metrics agree with independent ownership accounting
+PASS ECalibratedLiquid-Glass_highball-30ml: runtime particle heights agree with independently sorted volume weights
+PASS ECalibratedLiquid-Glass_highball-30ml: actual liquid-only surface target is available
+PASS ECalibratedLiquid-Glass_highball-30ml: GPU ingredient opacity is measurable
+PASS ECalibratedLiquid-Glass_highball-30ml: area measurement uses a valid rendered image
+PASS ECalibratedLiquid-Glass_highball-30ml: capturing scene and surface leaves physical state unchanged
+CALIBRATION ECalibratedLiquid-Glass_highball-30ml: expected height 0.20758384466171265, measured95 extent 0.17738349735736847, height error 0.145485058426857, expected area 0.20340743660926819, interior visible area 0.19110840559005737, area error 0.060465000569820404
+PASS ECalibratedLiquid-Glass_highball-30ml: calibrated fill generates and retains every requested ml
+PASS ECalibratedLiquid-Glass_highball-30ml: particle surface height is within20%of authored capacity reference
+PASS ECalibratedLiquid-Glass_highball-30ml: visible interior area is within20%of requested calibrated area
+OBSERVATION ECalibratedLiquid-Glass_highball-30ml: accepted 30/30 ml, owned 30 ml, free 0 ml, retired 0 ml, p95 height 0.15338349342346191, visible area 0.21156388521194458, unsettled=False, edge pixels=0.
+PASS ECalibratedLiquid-Glass_highball-60ml: public measurement scenario preserves selection and requested amount
+PASS ECalibratedLiquid-Glass_highball-60ml: accepted Fill quantity is positive, bounded and agrees with GPU reservations
+PASS ECalibratedLiquid-Glass_highball-60ml: measured glass is stationary and unheld
+PASS ECalibratedLiquid-Glass_highball-60ml: reset clears prior slots while the new fill is still queued
+PASS ECalibratedLiquid-Glass_highball-60ml: six independent tail observations cover the final second
+PASS ECalibratedLiquid-Glass_highball-60ml: runtime metrics agree with independent ownership accounting
+PASS ECalibratedLiquid-Glass_highball-60ml: runtime particle heights agree with independently sorted volume weights
+PASS ECalibratedLiquid-Glass_highball-60ml: actual liquid-only surface target is available
+PASS ECalibratedLiquid-Glass_highball-60ml: GPU ingredient opacity is measurable
+PASS ECalibratedLiquid-Glass_highball-60ml: area measurement uses a valid rendered image
+PASS ECalibratedLiquid-Glass_highball-60ml: capturing scene and surface leaves physical state unchanged
+CALIBRATION ECalibratedLiquid-Glass_highball-60ml: expected height 0.39426174759864807, measured95 extent 0.35136693716049194, height error 0.10879779607057571, expected area 0.40681487321853638, interior visible area 0.38501438498497009, area error 0.053588226437568665
+PASS ECalibratedLiquid-Glass_highball-60ml: calibrated fill generates and retains every requested ml
+PASS ECalibratedLiquid-Glass_highball-60ml: particle surface height is within20%of authored capacity reference
+PASS ECalibratedLiquid-Glass_highball-60ml: visible interior area is within20%of requested calibrated area
+OBSERVATION ECalibratedLiquid-Glass_highball-60ml: accepted 60/60 ml, owned 60 ml, free 0 ml, retired 0 ml, p95 height 0.32736694812774658, visible area 0.40962114930152893, unsettled=False, edge pixels=0.
+PASS ECalibratedLiquid-Glass_highball-120ml: public measurement scenario preserves selection and requested amount
+PASS ECalibratedLiquid-Glass_highball-120ml: accepted Fill quantity is positive, bounded and agrees with GPU reservations
+PASS ECalibratedLiquid-Glass_highball-120ml: measured glass is stationary and unheld
+PASS ECalibratedLiquid-Glass_highball-120ml: reset clears prior slots while the new fill is still queued
+PASS ECalibratedLiquid-Glass_highball-120ml: six independent tail observations cover the final second
+PASS ECalibratedLiquid-Glass_highball-120ml: runtime metrics agree with independent ownership accounting
+PASS ECalibratedLiquid-Glass_highball-120ml: runtime particle heights agree with independently sorted volume weights
+PASS ECalibratedLiquid-Glass_highball-120ml: actual liquid-only surface target is available
+PASS ECalibratedLiquid-Glass_highball-120ml: GPU ingredient opacity is measurable
+PASS ECalibratedLiquid-Glass_highball-120ml: area measurement uses a valid rendered image
+PASS ECalibratedLiquid-Glass_highball-120ml: capturing scene and surface leaves physical state unchanged
+CALIBRATION ECalibratedLiquid-Glass_highball-120ml: expected height 0.76657319068908691, measured95 extent 0.70067065954208374, height error 0.085970304906368256, expected area 0.81362974643707275, interior visible area 0.77041983604431152, area error 0.05310758575797081
+PASS ECalibratedLiquid-Glass_highball-120ml: calibrated fill generates and retains every requested ml
+PASS ECalibratedLiquid-Glass_highball-120ml: particle surface height is within20%of authored capacity reference
+PASS ECalibratedLiquid-Glass_highball-120ml: visible interior area is within20%of requested calibrated area
+OBSERVATION ECalibratedLiquid-Glass_highball-120ml: accepted 120/120 ml, owned 120 ml, free 0 ml, retired 0 ml, p95 height 0.67667067050933838, visible area 0.80582588911056519, unsettled=False, edge pixels=0.
+PASS ECalibratedLiquid-Glass_hurricane-30ml: public measurement scenario preserves selection and requested amount
+PASS ECalibratedLiquid-Glass_hurricane-30ml: accepted Fill quantity is positive, bounded and agrees with GPU reservations
+PASS ECalibratedLiquid-Glass_hurricane-30ml: measured glass is stationary and unheld
+PASS ECalibratedLiquid-Glass_hurricane-30ml: reset clears prior slots while the new fill is still queued
+PASS ECalibratedLiquid-Glass_hurricane-30ml: six independent tail observations cover the final second
+PASS ECalibratedLiquid-Glass_hurricane-30ml: runtime metrics agree with independent ownership accounting
+PASS ECalibratedLiquid-Glass_hurricane-30ml: runtime particle heights agree with independently sorted volume weights
+PASS ECalibratedLiquid-Glass_hurricane-30ml: actual liquid-only surface target is available
+PASS ECalibratedLiquid-Glass_hurricane-30ml: GPU ingredient opacity is measurable
+PASS ECalibratedLiquid-Glass_hurricane-30ml: area measurement uses a valid rendered image
+PASS ECalibratedLiquid-Glass_hurricane-30ml: capturing scene and surface leaves physical state unchanged
+CALIBRATION ECalibratedLiquid-Glass_hurricane-30ml: expected height 0.26607409119606018, measured95 extent 0.24644465744495392, height error 0.0737743154168129, expected area 0.16540756821632385, interior visible area 0.16200061142444611, area error 0.020597346127033234
+PASS ECalibratedLiquid-Glass_hurricane-30ml: calibrated fill generates and retains every requested ml
+PASS ECalibratedLiquid-Glass_hurricane-30ml: particle surface height is within20%of authored capacity reference
+PASS ECalibratedLiquid-Glass_hurricane-30ml: visible interior area is within20%of requested calibrated area
+OBSERVATION ECalibratedLiquid-Glass_hurricane-30ml: accepted 30/30 ml, owned 30 ml, free 0 ml, retired 0 ml, p95 height 0.22244465351104736, visible area 0.16249445080757141, unsettled=False, edge pixels=0.
+PASS ECalibratedLiquid-Glass_hurricane-60ml: public measurement scenario preserves selection and requested amount
+PASS ECalibratedLiquid-Glass_hurricane-60ml: accepted Fill quantity is positive, bounded and agrees with GPU reservations
+PASS ECalibratedLiquid-Glass_hurricane-60ml: measured glass is stationary and unheld
+PASS ECalibratedLiquid-Glass_hurricane-60ml: reset clears prior slots while the new fill is still queued
+PASS ECalibratedLiquid-Glass_hurricane-60ml: six independent tail observations cover the final second
+PASS ECalibratedLiquid-Glass_hurricane-60ml: runtime metrics agree with independent ownership accounting
+PASS ECalibratedLiquid-Glass_hurricane-60ml: runtime particle heights agree with independently sorted volume weights
+PASS ECalibratedLiquid-Glass_hurricane-60ml: actual liquid-only surface target is available
+PASS ECalibratedLiquid-Glass_hurricane-60ml: GPU ingredient opacity is measurable
+PASS ECalibratedLiquid-Glass_hurricane-60ml: area measurement uses a valid rendered image
+PASS ECalibratedLiquid-Glass_hurricane-60ml: capturing scene and surface leaves physical state unchanged
+CALIBRATION ECalibratedLiquid-Glass_hurricane-60ml: expected height 0.42188426852226257, measured95 extent 0.39748436212539673, height error 0.057835545390844345, expected area 0.33081513643264771, interior visible area 0.31616148352622986, area error 0.044295594096183777
+PASS ECalibratedLiquid-Glass_hurricane-60ml: calibrated fill generates and retains every requested ml
+PASS ECalibratedLiquid-Glass_hurricane-60ml: particle surface height is within20%of authored capacity reference
+PASS ECalibratedLiquid-Glass_hurricane-60ml: visible interior area is within20%of requested calibrated area
+OBSERVATION ECalibratedLiquid-Glass_hurricane-60ml: accepted 60/60 ml, owned 60 ml, free 0 ml, retired 0 ml, p95 height 0.37348437309265137, visible area 0.31955665349960327, unsettled=False, edge pixels=0.
+PASS ECalibratedLiquid-Glass_hurricane-120ml: public measurement scenario preserves selection and requested amount
+PASS ECalibratedLiquid-Glass_hurricane-120ml: accepted Fill quantity is positive, bounded and agrees with GPU reservations
+PASS ECalibratedLiquid-Glass_hurricane-120ml: measured glass is stationary and unheld
+PASS ECalibratedLiquid-Glass_hurricane-120ml: reset clears prior slots while the new fill is still queued
+PASS ECalibratedLiquid-Glass_hurricane-120ml: six independent tail observations cover the final second
+PASS ECalibratedLiquid-Glass_hurricane-120ml: runtime metrics agree with independent ownership accounting
+PASS ECalibratedLiquid-Glass_hurricane-120ml: runtime particle heights agree with independently sorted volume weights
+PASS ECalibratedLiquid-Glass_hurricane-120ml: actual liquid-only surface target is available
+PASS ECalibratedLiquid-Glass_hurricane-120ml: GPU ingredient opacity is measurable
+PASS ECalibratedLiquid-Glass_hurricane-120ml: area measurement uses a valid rendered image
+PASS ECalibratedLiquid-Glass_hurricane-120ml: capturing scene and surface leaves physical state unchanged
+CALIBRATION ECalibratedLiquid-Glass_hurricane-120ml: expected height 0.69124329090118408, measured95 extent 0.646224319934845, height error 0.065127536654472351, expected area 0.66163027286529541, interior visible area 0.62968915700912476, area error 0.0482763834297657
+PASS ECalibratedLiquid-Glass_hurricane-120ml: calibrated fill generates and retains every requested ml
+PASS ECalibratedLiquid-Glass_hurricane-120ml: particle surface height is within20%of authored capacity reference
+PASS ECalibratedLiquid-Glass_hurricane-120ml: visible interior area is within20%of requested calibrated area
+OBSERVATION ECalibratedLiquid-Glass_hurricane-120ml: accepted 120/120 ml, owned 120 ml, free 0 ml, retired 0 ml, p95 height 0.62222433090209961, visible area 0.63429832458496094, unsettled=False, edge pixels=0.
+LIMITATION batch viewport did not accept 960x640; actual controls frame is 640x480. Layout is checked at that actual size.
+PASS Controls layout uses the authored vessel profile
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls layout profile remains in front of the camera
+PASS Controls-visible profile envelope clears the panel and screen edges by 12px: (440.4, 90.0)..(582.9, 392.6), panel right 371.3333
+LIMITATION batch ScreenCapture did not write a usable frame within the bounded wait; profile layout assertions passed independently.
+PASS Fractional Fill accepts exactly .25ml
+PASS A single partial particle preserves .25ml without rounding to the normal particle amount
+PASS Negative volume requests are rejected without changing the accepted fractional fill
+PASS Repeated GPU reset clears active and retired state after fractional fill
+PASS Starting a measurement waits for a fresh completed snapshot
+PASS A completed readback makes the new measurement available
+PASS ACurrent: mode switching restarts the same glass and requested volume
+PASS ACurrent: mode switching invalidates the previous measurement snapshot
+PASS ACurrent: restarted measurement becomes available only after fresh readback
+PASS BReferencePhysics: mode switching restarts the same glass and requested volume
+PASS BReferencePhysics: mode switching invalidates the previous measurement snapshot
+PASS BReferencePhysics: restarted measurement becomes available only after fresh readback
+PASS CReferenceSurface: mode switching restarts the same glass and requested volume
+PASS CReferenceSurface: mode switching invalidates the previous measurement snapshot
+PASS CReferenceSurface: restarted measurement becomes available only after fresh readback
+PASS Manual leaves measurement mode and restores pointer input
+PASS Manual restores dynamic unheld bodies after the harness restores its own simulation override
+PASS Manual restores the authored camera position and zoom
+Measurement/accounting validation completed. Height, area, settling and rejected fill quantities are baseline observations, not calibration guarantees.

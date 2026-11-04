@@ -1,0 +1,6 @@
+PASS Native automatic world/Physics2D/async-readback scheduling remains enabled
+PASS Native-loop fixture queues 60 ml
+FAIL Deferred comparison startup cannot reset the fixture pose
+PASS Native receiver acquires both solids before pickup
+PASS Controller picks the actual filled glass
+FAIL Contents survive automatic receiver movement

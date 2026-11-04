@@ -1,0 +1,662 @@
+{
+  "baseline": "c2d6a21fa14387e65d1b74a82b271b1c92a9c5f0",
+  "prefabs": {
+    "Bottle_item_1001.prefab": {
+      "allowed_geometry_changes": {
+        "1241430249480759458": [
+          "m_Component"
+        ],
+        "3652517446209528912": [
+          "collisionProfile",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "mouthLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "efc44f311a17fd35eca2b31866b1fdf245e2a108f6bc79623f9edf549907e3d3"
+    },
+    "Bottle_item_1002.prefab": {
+      "allowed_geometry_changes": {
+        "3659684557028844266": [
+          "m_Component"
+        ],
+        "1396579105558695525": [
+          "collisionProfile",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "mouthLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "2c75408e8ebbd26e91556aec8618499aebe807036c7566d6b02da626d31a9e7f"
+    },
+    "Bottle_item_1003.prefab": {
+      "allowed_geometry_changes": {
+        "777262680673658179": [
+          "m_Component"
+        ],
+        "254674427129776670": [
+          "collisionProfile",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "mouthLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "b3da323aa8c9a5ac01c03f34c655c8ca99d39a72e768e67f6132a5a2a1216aaa"
+    },
+    "Bottle_item_1004.prefab": {
+      "allowed_geometry_changes": {
+        "5060119843658358760": [
+          "m_Component"
+        ],
+        "1432613642492398867": [
+          "collisionProfile",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "mouthLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "0a12efd4aca8f9afcdddad6db8b041077919e7a9500181f39f3d14cd3fc21a0f"
+    },
+    "Bottle_item_1005.prefab": {
+      "allowed_geometry_changes": {
+        "4911997867084214545": [
+          "m_Component"
+        ],
+        "3346515548039358109": [
+          "collisionProfile",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "mouthLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "cc3e3d9a6da4f6e208f13fadd91321adc188f94ddd9766b5c1ae96a4d5c3fc71"
+    },
+    "Bottle_item_1006.prefab": {
+      "allowed_geometry_changes": {
+        "6173327927662007055": [
+          "m_Component"
+        ],
+        "1199509943320159849": [
+          "collisionProfile",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "mouthLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "8df17f892e1e24f1cd01bcbd85b9495e26812a10dfedf66d24083ea5fa375a8c"
+    },
+    "Bottle_item_1007.prefab": {
+      "allowed_geometry_changes": {
+        "4702681950634784197": [
+          "m_Component"
+        ],
+        "5069416094230157020": [
+          "collisionProfile",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "mouthLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "f2632067a3858b82db116963ebbe6bb54022bfed29209917a0a254555c903920"
+    },
+    "Bottle_item_1008.prefab": {
+      "allowed_geometry_changes": {
+        "5133631349078002977": [
+          "m_Component"
+        ],
+        "1819926862358018336": [
+          "collisionProfile",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "mouthLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "1b2a4945ef4628842b678654c073d7ed4329ff103852505c493c2a74ecb5f7e0"
+    },
+    "Bottle_item_1009.prefab": {
+      "allowed_geometry_changes": {
+        "9017856343656879248": [
+          "m_Component"
+        ],
+        "1260421045689503775": [
+          "collisionProfile",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "mouthLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "15d3a2455ded5a0d3f8a18717d9ce24f42921206c45ed53210bed7188c951ff3"
+    },
+    "Bottle_item_1010.prefab": {
+      "allowed_geometry_changes": {
+        "3804621742749988090": [
+          "m_Component"
+        ],
+        "4248745173949030466": [
+          "collisionProfile",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "mouthLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "256bd8d413c5ed086098c83934b02dc4233254b7f31cc34c4e8d66e618ce3264"
+    },
+    "Bottle_item_1011.prefab": {
+      "allowed_geometry_changes": {
+        "5685256150221072265": [
+          "m_Component"
+        ],
+        "8291152858781431646": [
+          "collisionProfile",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "mouthLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "f87a87fe4fc2a59639c65262571e5dede977e3ac1c704740fa0e76f71f693873"
+    },
+    "Bottle_item_1012.prefab": {
+      "allowed_geometry_changes": {
+        "9025496582530897574": [
+          "m_Component"
+        ],
+        "3081329728505549334": [
+          "collisionProfile",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "mouthLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "46cbedc920991b49929f2ab5d7f79df66c8713317b28957f20c2ddd256a73e10"
+    },
+    "Bottle_item_1013.prefab": {
+      "allowed_geometry_changes": {
+        "9075289662841374473": [
+          "m_Component"
+        ],
+        "2146470631538672076": [
+          "collisionProfile",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "mouthLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "4308977a67e5f6d5322b2b3e397c239d9ae49570ce9c7bc27dbac81b7b8015d8"
+    },
+    "Bottle_item_1014.prefab": {
+      "allowed_geometry_changes": {
+        "7362873855022841920": [
+          "m_Component"
+        ],
+        "2524422241535719457": [
+          "collisionProfile",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "mouthLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "18bf51ec904af540364cf0903a04328c0ddce9061319b52e743f588d2799c54f"
+    },
+    "Bottle_item_1015.prefab": {
+      "allowed_geometry_changes": {
+        "7061412139762553365": [
+          "m_Component"
+        ],
+        "2550860818554193186": [
+          "collisionProfile",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "mouthLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "966a83fcfa759fd5617250373284ac0ed30e24129f51c2f5760d691506646ddc"
+    },
+    "Glass_highball.prefab": {
+      "allowed_geometry_changes": {
+        "9046728341189981464": [
+          "m_Component"
+        ],
+        "5121531329467081539": [
+          "collisionProfile",
+          "contentRegions",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "mouthLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "ffa37ad049924e5a151ae70e2c5fb71232e82c978c6f08e563a55243993976dc"
+    },
+    "Glass_hurricane.prefab": {
+      "allowed_geometry_changes": {
+        "1567955184128977622": [
+          "m_Component"
+        ],
+        "1356331013600029128": [
+          "collisionProfile",
+          "contentRegions",
+          "extraSolidHulls",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "mouthLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "275bf48db54f62bcd56fefa6c5702adeb323d7b9065898d184d6c1982958d1f7"
+    },
+    "Glass_martini.prefab": {
+      "allowed_geometry_changes": {
+        "7959043526796961051": [
+          "m_Component"
+        ],
+        "615595941468845583": [
+          "collisionProfile",
+          "contentRegions",
+          "extraSolidHulls",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "mouthLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "90c95e3cf5be5838ee5c87cbbae1d62db53a1efb5fc32d8c37cf1ef7d7332b53"
+    },
+    "Glass_rock.prefab": {
+      "allowed_geometry_changes": {
+        "1424221887031597965": [
+          "m_Component"
+        ],
+        "620612345723249573": [
+          "collisionProfile",
+          "contentRegions",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "mouthLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "94440709ea479152b1bceb41c2450852649b2abdc3b91f9dd5dc7d23adb9843d"
+    },
+    "Ice.prefab": {
+      "allowed_geometry_changes": {
+        "1754040415381663564": [
+          "m_Component"
+        ],
+        "6643248247316266234": [
+          "collisionProfile",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "45a060784a734330cd96b496aace24099a937bd06a373000cc67291a27e6e021"
+    },
+    "IceBucket.prefab": {
+      "allowed_geometry_changes": {
+        "3795047056570562355": [
+          "m_Component"
+        ],
+        "2484980232890909427": [
+          "collisionProfile",
+          "contentRegions",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "mouthLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "0260abffb586a094c85502130acd0b9349ea7e289722ac421f35a9ad17356613"
+    },
+    "Jigger.prefab": {
+      "allowed_geometry_changes": {
+        "2760984825050641587": [
+          "m_Component"
+        ],
+        "5578902274855356205": [
+          "collisionProfile",
+          "contentRegions",
+          "extraSolidHulls",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "mouthLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "16ce6f90069a9b8108ba028c23d509a88aa972a58a458d783856c8f3fd1ad1e7"
+    },
+    "Shaker.prefab": {
+      "allowed_geometry_changes": {
+        "8354829667090909651": [
+          "m_Component"
+        ],
+        "4539112299817339325": [
+          "capCollider",
+          "collisionProfile",
+          "contentRegions",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "mouthLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "fbc72f0b800c3c098e6cb522950d4d3f9f4066c54c0f5b42695aa7da82c97c4b"
+    },
+    "Spoon.prefab": {
+      "allowed_geometry_changes": {
+        "6889554852635809505": [
+          "m_Component"
+        ],
+        "3329319671723454451": [
+          "collisionProfile",
+          "liquidWall",
+          "mouthDirectionLocal",
+          "mouthLipLocal",
+          "overrideMouthLip",
+          "solidColliders"
+        ]
+      },
+      "sha256": "e25e6fbeb8791131fa5131e5dff444df5dcab9c2b0314ba1d7575aaf5a6046ff"
+    }
+  },
+  "preexisting_project_settings_sha256": "04cbf9e21ba4556e72dad9c729e669e764ea128ec908f29933a329ded3c8f2be",
+  "scene_unchanged": true,
+  "visual_transforms_rigidbody_settings_selection_and_gameplay_fields_preserved": true,
+  "copied_assets_match": {
+    "Assets/_Project/Features/Bartending/Art/Bottles/beatha.png": "bee4bfad565202ad2302d889198e9371c6d1724f2794350d802030e17d97c72a",
+    "Assets/_Project/Features/Bartending/Art/Bottles/bless.png": "5d85f341fd8f77acd0a1457e5c7675f1b2a7ceefa1076abef7f9486938022708",
+    "Assets/_Project/Features/Bartending/Art/Bottles/breezevodka.png": "67ae4af945530fa660e7e1a21d52005f03c9c3e5ff659973653f1f4843f53767",
+    "Assets/_Project/Features/Bartending/Art/Bottles/burnhambourbon.png": "8c73b89a17ad12992cf57a5137314982e9c06c27cf0d05bc1ebe577765d75f18",
+    "Assets/_Project/Features/Bartending/Art/Bottles/coffeepowder.png": "309071885895db53ec5df52bcb90be9616bf95335106de2db57fcb11b8975a15",
+    "Assets/_Project/Features/Bartending/Art/Bottles/cotton.png": "f85ac2628237a6be5676c5eb4005295a6fb3f00b460a345f017686c06cc55ea9",
+    "Assets/_Project/Features/Bartending/Art/Bottles/hectar.png": "4a2db26fe7d5295d383f15faeda02861c4273998e869cc1cfd6370d35b222a18",
+    "Assets/_Project/Features/Bartending/Art/Bottles/hotwater.png": "e0f950b9fa9c4861b2f790b009a3833dfc10b2509f07ff0c9578dd6e959683bf",
+    "Assets/_Project/Features/Bartending/Art/Bottles/johnnydogs.png": "41b499397cb1cbc79cfade2dff57f6c3e79399df9fbd1976d42b9189c0394524",
+    "Assets/_Project/Features/Bartending/Art/Bottles/minutefizz.png": "3f7f951dcf662d6809189188abb515a27336bdfd3c9719a0e30e1ab96a6451e0",
+    "Assets/_Project/Features/Bartending/Art/Bottles/nanangna.png": "db0834506d52bb30d4490eb0f3a021af3a6cf8b142834ff8379b6e6ae27ba61d",
+    "Assets/_Project/Features/Bartending/Art/Bottles/siltrop.png": "87576e1a31c487e08ffff75deac87fae72fa0bd5dc4430e07850ce7e5a57c560",
+    "Assets/_Project/Features/Bartending/Art/Bottles/slop.png": "bfa113c9b6331b3174b78f03a5506d71854c92e005963f1c0bf36cf299bbb543",
+    "Assets/_Project/Features/Bartending/Art/Bottles/syntheticlemon.png": "afdbd3892da670f05c7a3fde1e73e8604086ec10531f706b5f853c831054d5fb",
+    "Assets/_Project/Features/Bartending/Art/Bottles/tropicaljuice.png": "99c1f09b7dadf160c5839d5ee534ec9937c88ac898a47f0964dd554848ab25bc",
+    "Assets/_Project/Features/Bartending/Art/Glasses/cocktail_back_line.png": "15847fd8e053e8122befc6f38bf798496fc78669d97d89556243db397692cd82",
+    "Assets/_Project/Features/Bartending/Art/Glasses/cocktail_back_white.png": "fb8dee7da7453c12a381f4506fee50ed437878cf0d3b0e27cd1461b518107eb2",
+    "Assets/_Project/Features/Bartending/Art/Glasses/cocktail_front_line.png": "fa99314cdd518877bac412dcc5f4cdb09793dbf28daf08a0ac549452ef7e052f",
+    "Assets/_Project/Features/Bartending/Art/Glasses/cocktail_front_white.png": "cc8c1f59ca893833f806fff56c5481c03cd57b095702b27d3722d5e4b48b0387",
+    "Assets/_Project/Features/Bartending/Art/Glasses/highball_back_line.png": "9a6216a8a14631b2c47a4247cfc68362e3e92b7b6d13144043b5e58c3171387c",
+    "Assets/_Project/Features/Bartending/Art/Glasses/highball_back_white.png": "275265b7b204e6f875a877a55e1c8fb3ff701719caa5b88a6964db985c98b009",
+    "Assets/_Project/Features/Bartending/Art/Glasses/highball_front_color.png": "bb2a523db58efbab6fe1c9fc06aec0f610766f884ec6812ec306630a2c56f29d",
+    "Assets/_Project/Features/Bartending/Art/Glasses/highball_front_white.png": "3f4af1dd9657df1e8565eba71f19d8e41ac849f2c9627ecdaea0dbe237c4b09b",
+    "Assets/_Project/Features/Bartending/Art/Glasses/hurricane_back_line.png": "5aa24f834a4bc7e7d01c9b986f1b6df43f5283ecff96a42187f27181fd83cf91",
+    "Assets/_Project/Features/Bartending/Art/Glasses/hurricane_back_white.png": "d9faff07e57a789c912fe92f1b1b7e95e461a265fb75ea30b86c94c228642393",
+    "Assets/_Project/Features/Bartending/Art/Glasses/hurricane_front_line.png": "bf0b928d223d232f9bfca161c900c5190d92cdd3129342c118fa80f727a64fff",
+    "Assets/_Project/Features/Bartending/Art/Glasses/hurricane_front_white.png": "8984aedacab5dbed95a8b5a1399464fd7ad43fc0f46ca352fd17b67106755f53",
+    "Assets/_Project/Features/Bartending/Art/Glasses/rock_back_line.png": "66be8e86f5cb0f7f5ea1efbb21938701fbfc1f7f7f6957a440a57b9386acb17c",
+    "Assets/_Project/Features/Bartending/Art/Glasses/rock_back_white.png": "3f603cfce9bb9b4d56f3814d9a5401f2474a1035ee73d0f75d3df645698c813d",
+    "Assets/_Project/Features/Bartending/Art/Glasses/rock_front_line.png": "106412348f1d2f6427bfe3ccbdad3e999acc93d4ec11621950388cf971bc34b2",
+    "Assets/_Project/Features/Bartending/Art/Glasses/rock_front_white.png": "e124914ee688e89eb134a702bb14c9c71e0b44d8dca5da4f4bd4126cc4702d81",
+    "Assets/_Project/Features/Bartending/Art/ToolCabinet/Ice/ice_01.png": "ce89ef373fc4fc1974d06b62b4da8a76da9e7ab93f34201fb2e3a471fd592f9f",
+    "Assets/_Project/Features/Bartending/Art/ToolCabinet/Tools/barspoon.png": "436447bd4708c8823d3b503b22c8dc15d60ddd10fb13597aa478a256f0f8f2df",
+    "Assets/_Project/Features/Bartending/Art/ToolCabinet/Tools/bucket_back.png": "fe60a72b161b65bad87742e98765b29ee5fc31ec40fae583b2e1d4ac56f0787e",
+    "Assets/_Project/Features/Bartending/Art/ToolCabinet/Tools/bucket_front_6.png": "b5f81510844fdf8a0d4108b3f985dea9fc07fc6f82cb085cbc2a22d3d5a1716a",
+    "Assets/_Project/Features/Bartending/Art/ToolCabinet/Tools/cobbler_cup_back_line.png": "127647eed34e4aa5381b28423254606b02b3bd685871757e724b9b6822ea9e47",
+    "Assets/_Project/Features/Bartending/Art/ToolCabinet/Tools/cobbler_cup_back_white.png": "dac74c7162973884ffb39a0c42029c24fc4e8a216009f4fd151541533be882ac",
+    "Assets/_Project/Features/Bartending/Art/ToolCabinet/Tools/cobbler_cup_front_line.png": "b2b7323990fd4916d275e23d65a175594987587e9531ffa1cd1ac883776c9a0f",
+    "Assets/_Project/Features/Bartending/Art/ToolCabinet/Tools/cobbler_cup_front_white.png": "a0c0a7c9184a73928d42fd05d64357dfb351788c891aca02a88ae18a7d652ed6",
+    "Assets/_Project/Features/Bartending/Art/ToolCabinet/Tools/cobbler_lid.png": "e09e850a2bc32095a5f4060891f01335e2b22ba345afc2c77dd7100cd95ff24f",
+    "Assets/_Project/Features/Bartending/Art/ToolCabinet/Tools/cobbler_strainer.png": "f003c177a20f56550589784c09c1d75dadbee7f8b273cba0ad66dd6b31e6247c",
+    "Assets/_Project/Features/Bartending/Art/ToolCabinet/Tools/jigger_back.png": "5330c2009692f5f55c35b872939a550d78ff12061f80868902521feef4467e94",
+    "Assets/_Project/Features/Bartending/Art/ToolCabinet/Tools/jigger_front.png": "1d8fe248f4aefcb99b0e893760a918b7ae5e73734be8dbae3728318d9cdd0d68",
+    "Assets/_Project/Features/Bartending/Infrastructure/GpuFluid/Graphics/GpuLiquidAccumulation.shader": "89f1e989c89d43e9fe1b1b7a99ca88fe6df8d13625db46209183f6f96ffb7ce1",
+    "Assets/_Project/Features/Bartending/Infrastructure/MetaballFluid/Graphics/LiquidMetaballComposite.shader": "b7c513bc13e53af9f564a8c08f7b0440d071001baa5d6760f020c897e8e612d4",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/BodySurface.physicsMaterial2D": "2b57d22fa0347de0e97abc2297c89c405dcc838b434096a730bf7d6120861e35",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Bottle_item_1001.asset": "cebe2c0ed0c6ceef16d9054d1261607030165e0a99b142fe3476257c19002d84",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Bottle_item_1002.asset": "596bf3d7bcfab35900b9631c47ee7704b7bce1cf52b3558ee15d92d27e51a276",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Bottle_item_1003.asset": "3596edd538f731bd74b9909c1d4ba93629f63d825d388753b6b1e1c32a29270e",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Bottle_item_1004.asset": "9f553d44161756c06be3bf8b5095773cb9dc6718452a52848d4b5983f041f88a",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Bottle_item_1005.asset": "cd4702d02810691c54410affd23bfd986eae6de5491902e532dbb378c7290bcc",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Bottle_item_1006.asset": "e16f59ceafb0765da7a6fb84c2faad906a885d06b34db2f69786c6fc555b429c",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Bottle_item_1007.asset": "dc201d5ff5f43d0969d3f0a5ec9bf142d3b625457e4dbc4ce1913df382e00649",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Bottle_item_1008.asset": "48cc00c838d04c989fb575fca202b6197986552f9357383b413b284fc2153b7c",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Bottle_item_1009.asset": "97242f6fc705ee2cce8b86d284a38c0e3419f86b6636e7025e6b6fdd7b9d8093",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Bottle_item_1010.asset": "8ac867e9e8193711e35d972f76fafcae84549e8b26cd6f409afbc4c4911b6e2d",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Bottle_item_1011.asset": "146eb1173cdbaf0e97b844a69f2a3a1282cac876b60fb911bb031f25b6402fb8",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Bottle_item_1012.asset": "fa8cfbd928d06288a17f46c3f075bbf1286c446006330de58ab202f7e0b2d7c0",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Bottle_item_1013.asset": "f64b2927f6e3de1e876ab1b8a7686313a2f158cff098ca7f5907b65cdb805289",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Bottle_item_1014.asset": "ff11b6c22be5a4c9933758eccfae39c4bbfc05dcd0084936d33ac9586b9cead0",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Bottle_item_1015.asset": "457115b13c30d6f36acddf792655cfd53c0975e3d4e460be0683deb9b4ae22bf",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Glass_highball.asset": "692b2845a54f37224743ec7fd57423f429652a8aa46aef16cfa701f1511d3a75",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Glass_hurricane.asset": "9f0398322ee627314201957b6913dae5921c68eaab471301a8750daf6e534e34",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Glass_martini.asset": "6cea33452ce5618025b9ee47228b13b7a0849960ad40f34ab7a55535a3d16feb",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Glass_rock.asset": "9f32f4fce828735cee9c8f18223be00d8cc0bcd7a2c8bf13b6b7e9caeeead7a7",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Ice.asset": "ed06ca3e23ebedc2bdb1d888ed39584b2747f2049fd7e6c1470a34237704f925",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/IceBucket.asset": "6f0fdcbb27f3ecfeb4810def4cfdd56992702a924612dc37421f94c597afd2d2",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Jigger.asset": "01d8341a0c353d23fb049dc67f410bc721ffca867197c26b21628e2844c95bec",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Shaker.asset": "53e290bfcd01e7a2ae3ea84c4a6d2b79eb4c5a1c841627412efcce2b93bf0c5e",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/CollisionProfiles/Spoon.asset": "a58abcfa92135ab9e507c422be7df46017d9699275cb13fc2bd4c95e18ad08e5",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/PhysicsLabLiquidSettings.asset": "469c559a83be3119150d690e0f96f36bd8de05c9ecd68f1416e023561d066739",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Data/TableLine.mat": "39d0a51f3acecc442cb624d8b688656acca48364cdd1da18c36fca8cc6d1e52d",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Bottle_item_1001.prefab": "efc44f311a17fd35eca2b31866b1fdf245e2a108f6bc79623f9edf549907e3d3",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Bottle_item_1002.prefab": "2c75408e8ebbd26e91556aec8618499aebe807036c7566d6b02da626d31a9e7f",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Bottle_item_1003.prefab": "b3da323aa8c9a5ac01c03f34c655c8ca99d39a72e768e67f6132a5a2a1216aaa",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Bottle_item_1004.prefab": "0a12efd4aca8f9afcdddad6db8b041077919e7a9500181f39f3d14cd3fc21a0f",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Bottle_item_1005.prefab": "cc3e3d9a6da4f6e208f13fadd91321adc188f94ddd9766b5c1ae96a4d5c3fc71",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Bottle_item_1006.prefab": "8df17f892e1e24f1cd01bcbd85b9495e26812a10dfedf66d24083ea5fa375a8c",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Bottle_item_1007.prefab": "f2632067a3858b82db116963ebbe6bb54022bfed29209917a0a254555c903920",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Bottle_item_1008.prefab": "1b2a4945ef4628842b678654c073d7ed4329ff103852505c493c2a74ecb5f7e0",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Bottle_item_1009.prefab": "15d3a2455ded5a0d3f8a18717d9ce24f42921206c45ed53210bed7188c951ff3",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Bottle_item_1010.prefab": "256bd8d413c5ed086098c83934b02dc4233254b7f31cc34c4e8d66e618ce3264",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Bottle_item_1011.prefab": "f87a87fe4fc2a59639c65262571e5dede977e3ac1c704740fa0e76f71f693873",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Bottle_item_1012.prefab": "46cbedc920991b49929f2ab5d7f79df66c8713317b28957f20c2ddd256a73e10",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Bottle_item_1013.prefab": "4308977a67e5f6d5322b2b3e397c239d9ae49570ce9c7bc27dbac81b7b8015d8",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Bottle_item_1014.prefab": "18bf51ec904af540364cf0903a04328c0ddce9061319b52e743f588d2799c54f",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Bottle_item_1015.prefab": "966a83fcfa759fd5617250373284ac0ed30e24129f51c2f5760d691506646ddc",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Glass_highball.prefab": "ffa37ad049924e5a151ae70e2c5fb71232e82c978c6f08e563a55243993976dc",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Glass_hurricane.prefab": "275bf48db54f62bcd56fefa6c5702adeb323d7b9065898d184d6c1982958d1f7",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Glass_martini.prefab": "90c95e3cf5be5838ee5c87cbbae1d62db53a1efb5fc32d8c37cf1ef7d7332b53",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Glass_rock.prefab": "94440709ea479152b1bceb41c2450852649b2abdc3b91f9dd5dc7d23adb9843d",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Ice.prefab": "45a060784a734330cd96b496aace24099a937bd06a373000cc67291a27e6e021",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/IceBucket.prefab": "0260abffb586a094c85502130acd0b9349ea7e289722ac421f35a9ad17356613",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Jigger.prefab": "16ce6f90069a9b8108ba028c23d509a88aa972a58a458d783856c8f3fd1ad1e7",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Shaker.prefab": "fbc72f0b800c3c098e6cb522950d4d3f9f4066c54c0f5b42695aa7da82c97c4b",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Prefabs/Spoon.prefab": "e25e6fbeb8791131fa5131e5dff444df5dcab9c2b0314ba1d7575aaf5a6046ff",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabBody.cs": "d6492165b5e67fc2f1e4174774fcf5f114059d9df9e3458964b8028d0df392c0",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabBody.Geometry.cs": "338e726bda4c76c039dcd47c9f4ce1b441679fc139d4f39ada5e4cfba30998d3",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabBody.Pouring.cs": "f8709ae7b021201f68029e7a3f9a7901f80e42c8a9dae04303f38498a37687fc",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabCollisionProfile.cs": "c09abdf74e64868a4b5143bba6e211db9cdf907d542ebd67fb30042c5434e7a7",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabGpuLiquid.Buffers.cs": "21d20859c76e3a2a429f97f165079c45654665ae6236ba68a76fff2be68a1f8a",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabGpuLiquid.cs": "e4e1bab475e8b69d75aaf8f5af59952bc6b091b0303b4f8ec3175a46e1887f95",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabGpuLiquid.Rendering.cs": "da5322d72e79805a6f377f211eb0b234224dbd239e9adf7338dda2ede30df2c3",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabGpuLiquid.Streams.cs": "7a012f11ad7014df3ebaf2c2af7566f4cd49966e2b6e985e159e5064fc71b24e",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabGpuTypes.cs": "cbb1e2f34fb7cd284941faca06d3a9cd1cf4b84b2e41475ba124bbc95a59459a",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabInteractor.cs": "5d63dcc0c0e4ddc01ae10c49437e018a9745cc98c6bdedd3de967731c92fb126",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabLiquidSettings.cs": "a03d74d712cc7cbd585fc0716d11de968eceaf7f0dd91c5d8a613a5553541307",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabWorld.cs": "105e8af67a2f6b1709548bce5d150a3f1766cf3ed9b988f81621071be8231f7a",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Scenes/BartendingPhysicsSandbox.unity": "be6feb9c285461bcb608a8ccdb7a1f5f23fb178816b83db445742a3166a0cda4",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Shaders/PhysicsLabLiquid.compute": "e9e902242c884fd3caeb66a19a70acddb58a2bd650373548894d0471c3f680e0",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Shaders/PhysicsLabLiquid.shader": "d06229cb1a538928eb6cae3f787cfe407de5fa4386ab49d541dedc19504ffe2a",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Shaders/PhysicsLabLiquidSurface.shader": "321279848cccb509b58e2f1d194c839d7dc27239185ef295d964dd5e0faea037",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Shaders/PhysicsLabStreamAccumulation.shader": "dba0b90ef9ca181da79ff5bcf1a8cbc0378e9b05d4b2e64780ba32fa9ae75664",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Shaders/PhysicsLabStreamSurface.hlsl": "4cba17ad7e31c95a1ff9738e83fb1d29284378f54cce23e1e220020a855415b9",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Shaders/PhysicsLabStreamTypes.hlsl": "46d8311241e1d92ec00d6b04c61bdcf3f198d618143fc49942b756f83b1badcf",
+    "Assets/_Project/Features/Bartending/Runtime/BartendingPointerAnchor.cs": "7090cdd0e6d0f3196be6c117a2ca563d50f454181ad52a621c7ac60b86996347",
+    "Assets/_Project/Features/Bartending/Runtime/BartendingViewport.cs": "0ff585ae0c7f1b1e8cff188c864dd5284081b296e074b0fc2074bd6f11c2b72b",
+    "Assets/_Project/Features/Bartending/Runtime/Interaction/ItemDef.cs": "7a4b9a6a8bb29d85a8c357a2ff673f2eda19d39758015f93b5319e5729225175",
+    "Assets/_Project/Settings/DefaultVolumeProfile.asset": "a8786f6390cead1a67643e0b85a6b31ce1fffca7974ccf077a5297ae87f32d9d",
+    "Assets/_Project/Settings/Renderer2D.asset": "900455794d0d788504847c3aa54e03a0374fd3635afa295ed05c2f646f974705",
+    "Assets/_Project/Settings/UniversalRenderPipelineGlobalSettings.asset": "fc571c4fc48a54a8b591c88bfd6d26194677611467bbe15ad9cb3b7a1431e6de",
+    "Assets/_Project/Settings/UniversalRP.asset": "167d20e3285f9071dc9bcb0a4fee7cdf8bb335dd849ec96e4b3fa39bd401f266",
+    "Assets/Resources/Bartending/Items/item_1001.asset": "911ea0e0571242a0b25699aa813afd1d8cbf66ba3fd345de41d64acbb4e0e178",
+    "Assets/Resources/Bartending/Items/item_1002.asset": "f33b0f716c17c57e34d2822867ec48175367d49c6b7204de10e1377b043bb2b9",
+    "Assets/Resources/Bartending/Items/item_1003.asset": "3731e9bc1cb83fda10f9fc2da5e2a42e8f38d9f43bd9efce1bbb762f9a9a0bbf",
+    "Assets/Resources/Bartending/Items/item_1004.asset": "83b02d04123dae78493f5b1fbe0d58f76e2cf3be7daa257930a8df9aa397dc07",
+    "Assets/Resources/Bartending/Items/item_1005.asset": "bb12b0fd58ffe32f74ec240dff30500bb408969a54aae46044625fb0f628f834",
+    "Assets/Resources/Bartending/Items/item_1006.asset": "dc49d3e545f2f68a136ffcf231a23635a0e226c4e078ae93992b9e56a2385e42",
+    "Assets/Resources/Bartending/Items/item_1007.asset": "49a1b12d31b9f57d1be07c8a931ecdcf5d40906a03384b754909d3cb649d50c0",
+    "Assets/Resources/Bartending/Items/item_1008.asset": "acd00c7536ff76deaa681d2390b7b7f21b2c0ae5ba931ee29abe6e6de5948618",
+    "Assets/Resources/Bartending/Items/item_1009.asset": "ae3176d9d9281b25af2fa9f697b4386732bd207f190230d94f266111b8da378f",
+    "Assets/Resources/Bartending/Items/item_1010.asset": "19fcc9d44cc92e105fe6b9ac99f277c4d3f263d4b1c6f6d7c88f8e724bebc4ee",
+    "Assets/Resources/Bartending/Items/item_1011.asset": "1a95abf47a8779628f585fe3e501786ffb7930b09d5ee22e0f77683b21601a63",
+    "Assets/Resources/Bartending/Items/item_1012.asset": "7fb770d050156eb2aab770a6d7f52e91bc0d5db6c7a78c3e29a7009132d66616",
+    "Assets/Resources/Bartending/Items/item_1013.asset": "4e410316dbc514b1b713b3cae52c6c23382a0790ac2c237363c02ae381f66693",
+    "Assets/Resources/Bartending/Items/item_1014.asset": "dff017f53dc8432ea0d9856ad480f35379181fc089db68835d92cdfe2dd89895",
+    "Assets/Resources/Bartending/Items/item_1015.asset": "4b97986d18eec4d799ba598e1d1931896073c6715255762371585a3f6d1d6436"
+  },
+  "authoring_before_sha256": {
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1001.prefab": "efc44f311a17fd35eca2b31866b1fdf245e2a108f6bc79623f9edf549907e3d3",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1001.prefab.meta": "b22e16b309c5cedf48d0ec16adbaceca5e8f08564af83923cdaac812dfa4b53a",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1002.prefab": "2c75408e8ebbd26e91556aec8618499aebe807036c7566d6b02da626d31a9e7f",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1002.prefab.meta": "c56f22ddbfc9ce46ca38039323cb9213c55207888a800fb8a32f53700de35196",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1003.prefab": "b3da323aa8c9a5ac01c03f34c655c8ca99d39a72e768e67f6132a5a2a1216aaa",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1003.prefab.meta": "2aacd0e7fd1e1861abd797ea4bd8cb796453b5a7a29ebdba8e758cf3a9fc8e88",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1004.prefab": "0a12efd4aca8f9afcdddad6db8b041077919e7a9500181f39f3d14cd3fc21a0f",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1004.prefab.meta": "37a4cc010b6ae6b463a511297b0e8f04539259fc8407ebf92df7421767db6fbb",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1005.prefab": "cc3e3d9a6da4f6e208f13fadd91321adc188f94ddd9766b5c1ae96a4d5c3fc71",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1005.prefab.meta": "33547f5d065ee25cebe44f051e851ea46c5f6d407a700323ba77eb016aef0db7",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1006.prefab": "8df17f892e1e24f1cd01bcbd85b9495e26812a10dfedf66d24083ea5fa375a8c",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1006.prefab.meta": "eb2abff5d04ecd322c845c6256f8fff613ecf841b9f28d144b42221fbcbf01d2",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1007.prefab": "f2632067a3858b82db116963ebbe6bb54022bfed29209917a0a254555c903920",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1007.prefab.meta": "39406a80a56c95cbd979a2bc5c75e0c91301f6aff93675422d8708503ea2e8ee",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1008.prefab": "1b2a4945ef4628842b678654c073d7ed4329ff103852505c493c2a74ecb5f7e0",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1008.prefab.meta": "2dc3e804410e7973deca5af48d2237cfc8426ac872e912e46960d28d500e5d22",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1009.prefab": "15d3a2455ded5a0d3f8a18717d9ce24f42921206c45ed53210bed7188c951ff3",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1009.prefab.meta": "23c3ef1e9f14d5c407161b6cfcb1c073b6c36072f97bef61849930eaaad7fe4f",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1010.prefab": "256bd8d413c5ed086098c83934b02dc4233254b7f31cc34c4e8d66e618ce3264",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1010.prefab.meta": "570656c1145d505b42443a2c5e561fcaeb43c408a5673021262e0ebf5bf8de1e",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1011.prefab": "f87a87fe4fc2a59639c65262571e5dede977e3ac1c704740fa0e76f71f693873",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1011.prefab.meta": "743541d1db938e3829e0d3a6ff5aee5c79ea696e529c65f55a52475c213ddc41",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1012.prefab": "46cbedc920991b49929f2ab5d7f79df66c8713317b28957f20c2ddd256a73e10",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1012.prefab.meta": "a625c9c4206b3bb1636375596e6a837226ddcdb8d0cc6413b1d3d7eee2b61b4d",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1013.prefab": "4308977a67e5f6d5322b2b3e397c239d9ae49570ce9c7bc27dbac81b7b8015d8",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1013.prefab.meta": "aaf1cca0e43e2ff8af75131e49a485806502b0b10e58e6006f5703d00b165662",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1014.prefab": "18bf51ec904af540364cf0903a04328c0ddce9061319b52e743f588d2799c54f",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1014.prefab.meta": "df0321d2d3eedc98ec222b9e6571dca2ddbe85ced339d16f20954be5310e2598",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1015.prefab": "966a83fcfa759fd5617250373284ac0ed30e24129f51c2f5760d691506646ddc",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Bottle_item_1015.prefab.meta": "bf119f059bdc9ad179aa42b117e1eb7714bbe7f689853bb6b89e71f364fc7f30",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Glass_highball.prefab": "ffa37ad049924e5a151ae70e2c5fb71232e82c978c6f08e563a55243993976dc",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Glass_highball.prefab.meta": "5519fb20e5c14ad00a85113ed28f26b0e8f11f8b47305340e3984a33f426299d",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Glass_hurricane.prefab": "275bf48db54f62bcd56fefa6c5702adeb323d7b9065898d184d6c1982958d1f7",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Glass_hurricane.prefab.meta": "d4292e7e52ecc77348cb6f2a88b79c20da865edbbeb927e3ebe056c0f48e33b9",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Glass_martini.prefab": "90c95e3cf5be5838ee5c87cbbae1d62db53a1efb5fc32d8c37cf1ef7d7332b53",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Glass_martini.prefab.meta": "144c69d30ca5c4bdc6996fc009c7636a0284dd003daf7dc9a1fde5824f967147",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Glass_rock.prefab": "94440709ea479152b1bceb41c2450852649b2abdc3b91f9dd5dc7d23adb9843d",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Glass_rock.prefab.meta": "04728b264b7f8c0b323583c4c1e34ec9379d463ab5ab351412f5178c2d80bc82",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Ice.prefab": "45a060784a734330cd96b496aace24099a937bd06a373000cc67291a27e6e021",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Ice.prefab.meta": "5dbf28dd3d4e897fff6529cb996defb255dd831fc0ebb72818da94ce7d076472",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\IceBucket.prefab": "0260abffb586a094c85502130acd0b9349ea7e289722ac421f35a9ad17356613",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\IceBucket.prefab.meta": "217863f92733b258d6cc83a48d5bcc7b6d498b7fa698f714ab8fe5ba7806b4f9",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Jigger.prefab": "16ce6f90069a9b8108ba028c23d509a88aa972a58a458d783856c8f3fd1ad1e7",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Jigger.prefab.meta": "0d770eff1c07bec9e3a151ceda13e3e120882b69710274c03b9935b09f6c7862",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Shaker.prefab": "fbc72f0b800c3c098e6cb522950d4d3f9f4066c54c0f5b42695aa7da82c97c4b",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Shaker.prefab.meta": "158ed4bbf970215b6513338bbbe3e848926aedb58ce8cb45e8e1eb9f42f7fb60",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Spoon.prefab": "e25e6fbeb8791131fa5131e5dff444df5dcab9c2b0314ba1d7575aaf5a6046ff",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Prefabs\\Spoon.prefab.meta": "6b02898ab05ad10cd884ff73e56844f334505e9233a03ac149007cbb8e56e4c2",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1001.asset": "cebe2c0ed0c6ceef16d9054d1261607030165e0a99b142fe3476257c19002d84",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1001.asset.meta": "82236e1d1a62c2b3c38a29e4b14e00a2bca7a61d145ef72ec077158c5f17d57a",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1002.asset": "596bf3d7bcfab35900b9631c47ee7704b7bce1cf52b3558ee15d92d27e51a276",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1002.asset.meta": "1e80c60404f958092078f6df067f60ab414c84bd5f858ea3562760ee5b7c8d5b",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1003.asset": "3596edd538f731bd74b9909c1d4ba93629f63d825d388753b6b1e1c32a29270e",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1003.asset.meta": "4b272d86a541098ae4b96e1190930c39d2cb41a7acff5fef3bc95bbbe073a4a0",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1004.asset": "9f553d44161756c06be3bf8b5095773cb9dc6718452a52848d4b5983f041f88a",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1004.asset.meta": "1b6b906f6cb0411044f7918a466eecb2345ed084a24fd72d44709a3a0cbdac65",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1005.asset": "cd4702d02810691c54410affd23bfd986eae6de5491902e532dbb378c7290bcc",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1005.asset.meta": "648dd5038b645fc87f6aa8a0b787b074c32e08cab2130b1ad520bd1183265abd",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1006.asset": "e16f59ceafb0765da7a6fb84c2faad906a885d06b34db2f69786c6fc555b429c",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1006.asset.meta": "d7f8059c45d472d4a63dea1a1aa8cadc4a250b72f05e6d186b9476478ae9cc90",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1007.asset": "dc201d5ff5f43d0969d3f0a5ec9bf142d3b625457e4dbc4ce1913df382e00649",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1007.asset.meta": "5dee788b796a21a47e1036f758cc0e515e4997fa3c2a6ac692b2846a4e192901",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1008.asset": "48cc00c838d04c989fb575fca202b6197986552f9357383b413b284fc2153b7c",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1008.asset.meta": "669f3dba6a4107bed97d1242b821a95c35d864fe1a00221b39034fa0857c96eb",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1009.asset": "97242f6fc705ee2cce8b86d284a38c0e3419f86b6636e7025e6b6fdd7b9d8093",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1009.asset.meta": "fdeca9e70a256ae6efacf38d18d4cd5355ee96de331badd8551782d59cff3c4a",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1010.asset": "8ac867e9e8193711e35d972f76fafcae84549e8b26cd6f409afbc4c4911b6e2d",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1010.asset.meta": "3cd64b6186f76e3814cbcd14856b5b50b9ab478d61ba570a50859476ce29e097",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1011.asset": "146eb1173cdbaf0e97b844a69f2a3a1282cac876b60fb911bb031f25b6402fb8",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1011.asset.meta": "3f78b042f3ca53b1f9a906fc58dbd23ea332e6d187f4b9a1ba7bb227ae87f99c",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1012.asset": "fa8cfbd928d06288a17f46c3f075bbf1286c446006330de58ab202f7e0b2d7c0",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1012.asset.meta": "8fde1c30767881796725faceab1c58ad174a058be7ed50067d2bfacadba7c694",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1013.asset": "f64b2927f6e3de1e876ab1b8a7686313a2f158cff098ca7f5907b65cdb805289",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1013.asset.meta": "e9985fabd358cca9a423901edeed99c7aa3b67e241f71740b226fc8d648cf33a",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1014.asset": "ff11b6c22be5a4c9933758eccfae39c4bbfc05dcd0084936d33ac9586b9cead0",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1014.asset.meta": "82c9e5e510ebb2bded194430cdc9cbd771e9f5cb7f48f627c4690ffd5c18392a",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1015.asset": "457115b13c30d6f36acddf792655cfd53c0975e3d4e460be0683deb9b4ae22bf",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Bottle_item_1015.asset.meta": "2e39473080461a38c53d4f48eabefe77b45a9a78772f81a755cb3ef2614d8134",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Glass_highball.asset": "692b2845a54f37224743ec7fd57423f429652a8aa46aef16cfa701f1511d3a75",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Glass_highball.asset.meta": "7258b19b5829194a6c97d5637fa15c00135cf66f4e5d2211ad2d7c9a4e9b46c7",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Glass_hurricane.asset": "9f0398322ee627314201957b6913dae5921c68eaab471301a8750daf6e534e34",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Glass_hurricane.asset.meta": "08e4359f50ff7a405813b45464045a26933feb3e8165f9418996d45e779ff365",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Glass_martini.asset": "6cea33452ce5618025b9ee47228b13b7a0849960ad40f34ab7a55535a3d16feb",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Glass_martini.asset.meta": "d56095d433eebbd99ea89398e993081eb6d160531821161dbbbcbac62d0c0203",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Glass_rock.asset": "9f32f4fce828735cee9c8f18223be00d8cc0bcd7a2c8bf13b6b7e9caeeead7a7",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Glass_rock.asset.meta": "b40f48a75f9b999953a69cb7fc2d5b60628527db1218249f0d1ab57492bb1749",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Ice.asset": "ed06ca3e23ebedc2bdb1d888ed39584b2747f2049fd7e6c1470a34237704f925",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Ice.asset.meta": "67748e15a58461a689cc49d9324542cb5db30fbb8cdbaffa9fc03ff6e1cddbfc",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\IceBucket.asset": "6f0fdcbb27f3ecfeb4810def4cfdd56992702a924612dc37421f94c597afd2d2",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\IceBucket.asset.meta": "f89cea39baaf2af6e8b6be869df4ff2b251e6241a6fbc111dd1f950cab594906",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Jigger.asset": "01d8341a0c353d23fb049dc67f410bc721ffca867197c26b21628e2844c95bec",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Jigger.asset.meta": "cb132545e9b8ed19c3ba5de3f33ff0bc29eeccd266eb701e20028164eab8e2a4",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Shaker.asset": "53e290bfcd01e7a2ae3ea84c4a6d2b79eb4c5a1c841627412efcce2b93bf0c5e",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Shaker.asset.meta": "7316d1bdab664615023d69f3583f7119be1eecb8f6ed3f3082d97c4415ff2f0f",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Spoon.asset": "a58abcfa92135ab9e507c422be7df46017d9699275cb13fc2bd4c95e18ad08e5",
+    "Assets\\_Project\\Features\\Bartending\\PhysicsLab\\Data\\CollisionProfiles\\Spoon.asset.meta": "8256b0bbc6c21cf8aeaecab1c32fac7f4c64c58da3a1fd06bd26050ee3a25018"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "started": "2026-09-21T17:09:43.9445328+09:00",
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/PhysicsLabEvidence/HarnessProject",
+    "-executeMethod",
+    "IsolationHarness.Begin",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\PhysicsLabEvidence\\08-coupling-baseline\\Editor.log"
+  ],
+  "workingDirectory": "A:/UnityHub/proj/slainte"
+}

@@ -1,0 +1,5 @@
+System.InvalidOperationException: Cannot create a new scene additively with an untitled scene unsaved.
+  at (wrapper managed-to-native) UnityEditor.SceneManagement.EditorSceneManager.NewScene_Injected(UnityEditor.SceneManagement.NewSceneSetup,UnityEditor.SceneManagement.NewSceneMode,UnityEngine.SceneManagement.Scene&)
+  at UnityEditor.SceneManagement.EditorSceneManager.NewScene (UnityEditor.SceneManagement.NewSceneSetup setup, UnityEditor.SceneManagement.NewSceneMode mode) [0x00000] in <b95741d8534d46b7b21ea8475977e676>:0 
+  at Slainte.Bartending.FluidGpuExperiment.Editor.FluidExperimentAssemblyBuilder.BuildAll () [0x0006e] in C:\unity_proj\slainte\slainte\Library\FluidModelDHarness\Assets\_Project\Features\Bartending\FluidGpuExperiment\Editor\FluidExperimentAssemblyBuilder.cs:46 
+  at ExperimentRuntimeAssemblyValidation.Begin () [0x00012] in C:\unity_proj\slainte\slainte\Library\FluidModelDHarness\Assets\Editor\RuntimeAssemblyValidation.cs:31 

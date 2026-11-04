@@ -1,0 +1,226 @@
+[
+  {
+    "name": "hurricane_shard_01.png",
+    "sha256": "8de2543b55c4a8dea9fc44d29726767e1ca30a60ba13006482a4b1b856568a9d",
+    "width": 310,
+    "height": 590,
+    "alpha_max": 255,
+    "bounds": [
+      40,
+      147,
+      144,
+      289
+    ],
+    "copied_byte_identically": true
+  },
+  {
+    "name": "hurricane_shard_02.png",
+    "sha256": "f013ba1211f3a3e3e4b5f1ed301a3054f394331b1e40be24a3cf23622440b598",
+    "width": 310,
+    "height": 590,
+    "alpha_max": 255,
+    "bounds": [
+      105,
+      145,
+      187,
+      252
+    ],
+    "copied_byte_identically": true
+  },
+  {
+    "name": "hurricane_shard_03.png",
+    "sha256": "7c963a84184f37f1911dac1ba8c8bb26f0e5841ba7b85db0e9ef093cbe3e5831",
+    "width": 310,
+    "height": 590,
+    "alpha_max": 255,
+    "bounds": [
+      178,
+      146,
+      271,
+      278
+    ],
+    "copied_byte_identically": true
+  },
+  {
+    "name": "hurricane_shard_04.png",
+    "sha256": "20617b9d9ee5205f9cb2e8a60aa5e6613223215e1997b24ccc8a725dee7d5cbb",
+    "width": 310,
+    "height": 590,
+    "alpha_max": 255,
+    "bounds": [
+      201,
+      274,
+      261,
+      390
+    ],
+    "copied_byte_identically": true
+  },
+  {
+    "name": "hurricane_shard_05.png",
+    "sha256": "92e26b5f89ed42c2c909d5fe153e615c624f85074c6d888c9f32244c0be7f78e",
+    "width": 310,
+    "height": 590,
+    "alpha_max": 127,
+    "bounds": [
+      126,
+      286,
+      204,
+      405
+    ],
+    "copied_byte_identically": true
+  },
+  {
+    "name": "hurricane_shard_06.png",
+    "sha256": "0ef008224e29da4fed0b95fd26b4c74039d174ac306926a0008f9271cedfa3eb",
+    "width": 310,
+    "height": 590,
+    "alpha_max": 127,
+    "bounds": [
+      149,
+      234,
+      204,
+      305
+    ],
+    "copied_byte_identically": true
+  },
+  {
+    "name": "hurricane_shard_07.png",
+    "sha256": "d29a0c6068bde8ec9e4ec0d71b7f722a7c0cedffed543d2d44f034518842e0e3",
+    "width": 310,
+    "height": 590,
+    "alpha_max": 127,
+    "bounds": [
+      106,
+      253,
+      146,
+      339
+    ],
+    "copied_byte_identically": true
+  },
+  {
+    "name": "hurricane_shard_08.png",
+    "sha256": "36b951f2d2936a893b8167d9e6971516f21d808091083a785cad23fb4257693e",
+    "width": 310,
+    "height": 590,
+    "alpha_max": 255,
+    "bounds": [
+      48,
+      288,
+      133,
+      429
+    ],
+    "copied_byte_identically": true
+  },
+  {
+    "name": "hurricane_shard_09.png",
+    "sha256": "cff41801e2cd67fc2f9cf435093af6b8a86638db61600935d58b21bfe8e9a9fb",
+    "width": 310,
+    "height": 590,
+    "alpha_max": 255,
+    "bounds": [
+      66,
+      389,
+      157,
+      489
+    ],
+    "copied_byte_identically": true
+  },
+  {
+    "name": "hurricane_shard_10.png",
+    "sha256": "39af5e2284ac9e8e73045f70febc196f73a81e849d116b824d8f19da3e9c8adb",
+    "width": 310,
+    "height": 590,
+    "alpha_max": 255,
+    "bounds": [
+      134,
+      413,
+      216,
+      493
+    ],
+    "copied_byte_identically": true
+  },
+  {
+    "name": "hurricane_shard_11.png",
+    "sha256": "2bb8f74fd3828f24cdeb482cbb612b161c6a06759621e0359ccb6708693ae691",
+    "width": 310,
+    "height": 590,
+    "alpha_max": 255,
+    "bounds": [
+      165,
+      390,
+      257,
+      459
+    ],
+    "copied_byte_identically": true
+  },
+  {
+    "name": "hurricane_shard_12.png",
+    "sha256": "beea7c8b8cf588b14e84e2fc446d8a9176e80d73384c84b1fc04797950431c6f",
+    "width": 310,
+    "height": 590,
+    "alpha_max": 255,
+    "bounds": [
+      131,
+      493,
+      174,
+      540
+    ],
+    "copied_byte_identically": true
+  },
+  {
+    "name": "hurricane_shard_13.png",
+    "sha256": "4abc411ea77a80b7a1fc18c0fd9fd4fc0a0ad67da56a4b053f5b38a148c7199c",
+    "width": 310,
+    "height": 590,
+    "alpha_max": 255,
+    "bounds": [
+      128,
+      529,
+      192,
+      575
+    ],
+    "copied_byte_identically": true
+  },
+  {
+    "name": "hurricane_shard_14.png",
+    "sha256": "b9cf4ffeddd4a8ad60e001efa1a5ff5c0753c20522c4aa9cdee22f0a2f7b3ef8",
+    "width": 310,
+    "height": 590,
+    "alpha_max": 255,
+    "bounds": [
+      176,
+      568,
+      241,
+      587
+    ],
+    "copied_byte_identically": true
+  },
+  {
+    "name": "hurricane_shard_15.png",
+    "sha256": "310094554fac0eba8c2c40a28a42ff33c66ce1d22e821df54f07897dc26a0cf7",
+    "width": 310,
+    "height": 590,
+    "alpha_max": 255,
+    "bounds": [
+      127,
+      569,
+      171,
+      588
+    ],
+    "copied_byte_identically": true
+  },
+  {
+    "name": "hurricane_shard_16.png",
+    "sha256": "347a5a3be884ff5e2df8b1136e04bc6015d79fcd0c5eb82e6e18be2bf5c7dbb6",
+    "width": 310,
+    "height": 590,
+    "alpha_max": 255,
+    "bounds": [
+      68,
+      566,
+      137,
+      587
+    ],
+    "copied_byte_identically": true
+  }
+]

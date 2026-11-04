@@ -1,0 +1,34 @@
+{
+  "status": "READY",
+  "active_version": "Surface contour polish only; no additional ice tint",
+  "checks_passed": 78,
+  "runs": [
+    {
+      "run": "07-surface-only",
+      "checks": 17,
+      "exit_code": 0,
+      "source_files": 479
+    },
+    {
+      "run": "08-cocktail",
+      "checks": 61,
+      "exit_code": 0,
+      "source_files": 479
+    }
+  ],
+  "changed_files": [
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/README.md",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Data/FluidExperimentLiquidSettings.asset",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentComparison.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.RenderingLayers.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentLiquidSettings.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentLiquidSurface.shader"
+  ],
+  "unchanged_originals": 1313,
+  "originals": 1319,
+  "ice_alpha": 0.55,
+  "additional_ice_tint": false,
+  "physics_changed": false,
+  "human_play_performed": false,
+  "comparison": "07-surface-only/comparison.png"
+}

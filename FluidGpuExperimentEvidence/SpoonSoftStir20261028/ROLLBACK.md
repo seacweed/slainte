@@ -1,0 +1,4 @@
+The soft stirring/mixing change was rolled back at the user request. All 1,337 pre-change files match their SHA-256 baseline. The two new runtime files were removed from the workspace and isolated harness. Previous vessel wall constraints and overlap admission behavior remain. The isolated harness has been restored to the previous 497-file source manifest. Test logs are retained as cancelled-change history; they do not indicate an applied feature. No Unity validation was rerun after the stop request.
+
+
+2026-10-29: All rollback requests were cancelled by the user. The active version is now the latest pre-rollback soft-stir work, with spoon/liquid collision disabled and overlap waiting preserved. This historical record is superseded by [the restoration report](../SpoonSoftStirRestore20261029/report.md).

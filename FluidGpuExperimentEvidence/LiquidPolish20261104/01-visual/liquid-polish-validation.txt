@@ -1,0 +1,4 @@
+FAIL Glass_highball contains actual authored ingredient particles
+System.Exception: Glass_highball contains actual authored ingredient particles
+  at LiquidPolishRunner.Check (System.Boolean ok, System.String label) [0x0002a] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\LiquidPolishValidation.cs:36 
+  at LiquidPolishRunner+<Start>d__19.MoveNext () [0x002d1] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\LiquidPolishValidation.cs:91 

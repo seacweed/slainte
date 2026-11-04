@@ -1,0 +1,782 @@
+PASS Authored comparison scene initializes
+PASS ACurrent: actual GPU operational on AMD Radeon(TM) Graphics
+PASS ACurrent swap: pick original vessel through public API
+PASS ACurrent swap: held vessel has moved far from its pickup origin
+PASS ACurrent swap: authored overlapping target is selected
+PASS ACurrent swap: both overlapping vessels accept owner-tagged liquid
+PASS ACurrent swap: both vessels own actual GPU particles before handoff
+PASS ACurrent swap: slow overlapping Drop succeeds
+PASS ACurrent swap: released A becomes dynamic while B becomes held
+PASS ACurrent swap: Rigidbody body types agree with handoff
+PASS ACurrent swap: released A remains at its current position (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS ACurrent swap: new held B remains at its own position (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS ACurrent swap: pickup bookkeeping now belongs to B (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS ACurrent swap: swap adds no throw velocity (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS ACurrent swap: swap adds no spin
+PASS ACurrent swap: handoff preserves GPU particle position, mass and owner IDs
+PASS ACurrent swap: unchanged cursor does not jump newly held B (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS ACurrent swap: newly held B follows subsequent cursor motion (actual (3.00000, 6.00000), expected (3.00000, 6.00000))
+PASS ACurrent swap: moving B leaves released A in place (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS ACurrent swap: repeated swap can target released A
+PASS ACurrent swap: repeated Drop succeeds
+PASS ACurrent swap: repeated swap reverses held identity
+PASS ACurrent swap: second release keeps B at its current position (actual (-0.20000, 4.19025), expected (-0.20000, 4.19025))
+PASS ACurrent swap: repeated handoff never returns A to original pickup position (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS ACurrent swap: original A follows cursor after being picked again (actual (-0.20314, 5.41051), expected (-0.20314, 5.41051))
+PASS ACurrent held collisions: unheld body, ice and floor collisions start enabled
+PASS ACurrent held collisions: vessel pickup succeeds
+PASS ACurrent held collisions: held vessel ignores every enabled body, ice and floor pair
+PASS ACurrent held collisions: actual Physics2D simulation advances
+PASS ACurrent held collisions: intersecting held vessel gives ice no collision displacement (actual (-0.00297, 4.18729), expected (-0.00297, 4.18729))
+PASS ACurrent held collisions: held vessel produces no ice contact
+PASS ACurrent held collisions: releasing vessel restores all body, ice and floor collision flags
+PASS ACurrent held collisions: ice itself can be picked up
+PASS ACurrent held collisions: held ice ignores other bodies and floor
+PASS ACurrent held collisions: releasing ice restores body contacts while continuing to ignore the table
+PASS ACurrent GPU held ice: authored ice has a real solid boundary
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS ACurrent GPU held ice: unheld ice positive control displaces an intersecting free particle
+PASS ACurrent GPU held ice: pick ice for GPU collision probe
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS ACurrent GPU held ice: held ice leaves the same free particle undisturbed (actual (7.92286, 4.81714), expected (7.92286, 4.81714))
+PASS ACurrent GPU held ice: held ice does not capture the free particle
+PASS ACurrent GPU held ice: owned-particle seed fits inside the actual glass
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS ACurrent GPU held ice: one owned particle is stationary without nearby ice (actual (4.99686, 4.42129), expected (4.99686, 4.42129))
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS ACurrent GPU held ice: unheld glass positive control permits ice-to-liquid contact
+PASS ACurrent GPU held ice: pick glass while ice intersects its liquid
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS ACurrent GPU held ice: held glass liquid ignores external unheld ice (actual (4.99686, 4.42129), expected (4.99686, 4.42129))
+PASS ACurrent GPU held ice: held glass retains its liquid owner ID
+PASS ACurrent fast handoff normal: pick through public API
+PASS ACurrent fast handoff normal: velocity comes from actual sampled input targets (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS ACurrent fast handoff normal: gesture exceeds the former speed swap cutoff
+PASS ACurrent fast handoff normal: Drop accepts the sampled gesture before the next physics tick
+PASS ACurrent fast handoff normal: target presence alone determines the next held object
+PASS ACurrent fast handoff normal: release commits the latest input position (actual (0.00000, 5.20000), expected (0.00000, 5.20000))
+PASS ACurrent fast handoff normal: release retains sampled linear velocity (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS ACurrent fast handoff normal: release retains sampled angular velocity and pose
+PASS ACurrent fast handoff normal: post-release physics tick 0
+PASS ACurrent fast handoff normal: post-release physics tick 1
+PASS ACurrent fast handoff normal: post-release physics tick 2
+PASS ACurrent fast handoff normal: released body actually continues its sampled motion
+PASS ACurrent fast handoff swap: pick through public API
+PASS ACurrent fast handoff swap: velocity comes from actual sampled input targets (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS ACurrent fast handoff swap: gesture exceeds the former speed swap cutoff
+PASS ACurrent fast handoff swap: Drop accepts the sampled gesture before the next physics tick
+PASS ACurrent fast handoff swap: target presence alone determines the next held object
+PASS ACurrent fast handoff swap: release commits the latest input position (actual (0.00000, 5.20000), expected (0.00000, 5.20000))
+PASS ACurrent fast handoff swap: release retains sampled linear velocity (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS ACurrent fast handoff swap: release retains sampled angular velocity and pose
+PASS ACurrent fast handoff swap: newly picked target starts with fresh velocity history (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS ACurrent fast handoff swap: newly picked target inherits no spin
+PASS ACurrent fast handoff swap: newly picked target inherits no impulse (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS ACurrent fast handoff swap: thrown body ignores its held overlapping target
+PASS ACurrent fast handoff swap: post-release physics tick 0
+PASS ACurrent fast handoff swap: post-release physics tick 1
+PASS ACurrent fast handoff swap: post-release physics tick 2
+PASS ACurrent fast handoff swap: released body actually continues its sampled motion
+PASS ACurrent fast handoff swap: held target stays still during throw simulation (actual (0.00314, 5.78949), expected (0.00314, 5.78949))
+PASS ACurrent fast handoff: same gesture releases at the same position (actual (0.00000, 5.20000), expected (0.00000, 5.20000))
+PASS ACurrent fast handoff: swap preserves normal throw velocity (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS ACurrent fast handoff: swap preserves normal throw angle and angular velocity
+PASS ACurrent fast handoff: held target does not alter subsequent throw trajectory (actual (0.71856, 5.43952), expected (0.71856, 5.43952))
+PASS ACurrent fast handoff: held target does not alter subsequent throw speed (actual (11.96403, 3.98801), expected (11.96403, 3.98801))
+PASS ACurrent fast handoff: simulated spin matches normal release
+PASS ACurrent spinning handoff normal: pick through public API
+PASS ACurrent spinning handoff normal: velocity comes from actual sampled input targets (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS ACurrent spinning handoff normal: gesture exceeds the former spin swap cutoff
+PASS ACurrent spinning handoff normal: Drop accepts the sampled gesture before the next physics tick
+PASS ACurrent spinning handoff normal: target presence alone determines the next held object
+PASS ACurrent spinning handoff normal: release commits the latest input position (actual (-0.54364, 5.01510), expected (-0.54364, 5.01510))
+PASS ACurrent spinning handoff normal: release retains sampled linear velocity (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS ACurrent spinning handoff normal: release retains sampled angular velocity and pose
+PASS ACurrent spinning handoff normal: post-release physics tick 0
+PASS ACurrent spinning handoff normal: post-release physics tick 1
+PASS ACurrent spinning handoff normal: post-release physics tick 2
+PASS ACurrent spinning handoff normal: released body actually continues its sampled motion
+PASS ACurrent spinning handoff swap: pick through public API
+PASS ACurrent spinning handoff swap: velocity comes from actual sampled input targets (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS ACurrent spinning handoff swap: gesture exceeds the former spin swap cutoff
+PASS ACurrent spinning handoff swap: Drop accepts the sampled gesture before the next physics tick
+PASS ACurrent spinning handoff swap: target presence alone determines the next held object
+PASS ACurrent spinning handoff swap: release commits the latest input position (actual (-0.54364, 5.01510), expected (-0.54364, 5.01510))
+PASS ACurrent spinning handoff swap: release retains sampled linear velocity (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS ACurrent spinning handoff swap: release retains sampled angular velocity and pose
+PASS ACurrent spinning handoff swap: newly picked target starts with fresh velocity history (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS ACurrent spinning handoff swap: newly picked target inherits no spin
+PASS ACurrent spinning handoff swap: newly picked target inherits no impulse (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS ACurrent spinning handoff swap: thrown body ignores its held overlapping target
+PASS ACurrent spinning handoff swap: post-release physics tick 0
+PASS ACurrent spinning handoff swap: post-release physics tick 1
+PASS ACurrent spinning handoff swap: post-release physics tick 2
+PASS ACurrent spinning handoff swap: released body actually continues its sampled motion
+PASS ACurrent spinning handoff swap: held target stays still during throw simulation (actual (-0.54051, 5.60459), expected (-0.54051, 5.60459))
+PASS ACurrent spinning handoff: same gesture releases at the same position (actual (-0.54364, 5.01510), expected (-0.54364, 5.01510))
+PASS ACurrent spinning handoff: swap preserves normal throw velocity (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS ACurrent spinning handoff: swap preserves normal throw angle and angular velocity
+PASS ACurrent spinning handoff: held target does not alter subsequent throw trajectory (actual (-0.44519, 5.07388), expected (-0.44519, 5.07388))
+PASS ACurrent spinning handoff: held target does not alter subsequent throw speed (actual (1.12374, 0.30110), expected (1.12374, 0.30110))
+PASS ACurrent spinning handoff: simulated spin matches normal release
+PASS ACurrent automatic return: pick for normal release
+PASS ACurrent automatic return: fixture drops midway through upright animation
+PASS ACurrent automatic return: release and handoff both succeed during automatic return
+PASS ACurrent automatic return: automatic return produces no throw impulse (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS ACurrent automatic return: automatic return produces no spin impulse
+PASS ACurrent automatic return: pick for swap
+PASS ACurrent automatic return: fixture drops midway through upright animation
+PASS ACurrent automatic return: release and handoff both succeed during automatic return
+PASS ACurrent automatic return: automatic return produces no throw impulse (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS ACurrent automatic return: automatic return produces no spin impulse
+PASS ACurrent rejected release: pick fixture inside a gap narrower than its width
+PASS ACurrent rejected release: unresolved penetration rejects the drop
+PASS ACurrent rejected release: rejected handoff preserves held identity and rotation mode
+PASS ACurrent rejected release: rejected release restores the attempted position (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS ACurrent rejected release: rejected release preserves motion samples (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS ACurrent rejected release: rejected release preserves sampled spin
+PASS ACurrent rejected release: rejected drop also preserves an in-progress upright return
+PASS ACurrent rejected release: removing blockers permits the same handoff to complete
+PASS ACurrent rejected release: recovered automatic return still suppresses throw (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS ACurrent rejected release: recovered automatic return still suppresses spin
+PASS ACurrent ice table fall: only ice ignores the table while ordinary items retain support
+PASS ACurrent ice table fall: ice still collides with unheld vessels
+PASS ACurrent ice table fall: actual gravity simulation advances for two seconds
+PASS ACurrent ice table fall: released ice falls entirely below the table
+PASS ACurrent ice table fall: ordinary item remains above the table
+PASS ACurrent ice table fall: ordinary item is supported by actual table contact
+PASS ACurrent ice table fall: fallen ice can be picked up
+PASS ACurrent ice table fall: below-table ice release succeeds
+PASS ACurrent ice table fall: dropping ice below the table never snaps it upward (actual (0.00000, -4.75000), expected (0.00000, -4.75000))
+PASS ACurrent ice table fall: pickup/drop preserves ice table pass-through
+PASS ACurrent ice table fall: re-enabled ice re-registers with table pass-through
+PASS BReferencePhysics: actual GPU operational on AMD Radeon(TM) Graphics
+PASS BReferencePhysics swap: pick original vessel through public API
+PASS BReferencePhysics swap: held vessel has moved far from its pickup origin
+PASS BReferencePhysics swap: authored overlapping target is selected
+PASS BReferencePhysics swap: both overlapping vessels accept owner-tagged liquid
+PASS BReferencePhysics swap: both vessels own actual GPU particles before handoff
+PASS BReferencePhysics swap: slow overlapping Drop succeeds
+PASS BReferencePhysics swap: released A becomes dynamic while B becomes held
+PASS BReferencePhysics swap: Rigidbody body types agree with handoff
+PASS BReferencePhysics swap: released A remains at its current position (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS BReferencePhysics swap: new held B remains at its own position (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS BReferencePhysics swap: pickup bookkeeping now belongs to B (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS BReferencePhysics swap: swap adds no throw velocity (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS BReferencePhysics swap: swap adds no spin
+PASS BReferencePhysics swap: handoff preserves GPU particle position, mass and owner IDs
+PASS BReferencePhysics swap: unchanged cursor does not jump newly held B (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS BReferencePhysics swap: newly held B follows subsequent cursor motion (actual (3.00000, 6.00000), expected (3.00000, 6.00000))
+PASS BReferencePhysics swap: moving B leaves released A in place (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS BReferencePhysics swap: repeated swap can target released A
+PASS BReferencePhysics swap: repeated Drop succeeds
+PASS BReferencePhysics swap: repeated swap reverses held identity
+PASS BReferencePhysics swap: second release keeps B at its current position (actual (-0.20000, 4.19025), expected (-0.20000, 4.19025))
+PASS BReferencePhysics swap: repeated handoff never returns A to original pickup position (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS BReferencePhysics swap: original A follows cursor after being picked again (actual (-0.20314, 5.41051), expected (-0.20314, 5.41051))
+PASS BReferencePhysics held collisions: unheld body, ice and floor collisions start enabled
+PASS BReferencePhysics held collisions: vessel pickup succeeds
+PASS BReferencePhysics held collisions: held vessel ignores every enabled body, ice and floor pair
+PASS BReferencePhysics held collisions: actual Physics2D simulation advances
+PASS BReferencePhysics held collisions: intersecting held vessel gives ice no collision displacement (actual (-0.00297, 4.18729), expected (-0.00297, 4.18729))
+PASS BReferencePhysics held collisions: held vessel produces no ice contact
+PASS BReferencePhysics held collisions: releasing vessel restores all body, ice and floor collision flags
+PASS BReferencePhysics held collisions: ice itself can be picked up
+PASS BReferencePhysics held collisions: held ice ignores other bodies and floor
+PASS BReferencePhysics held collisions: releasing ice restores body contacts while continuing to ignore the table
+PASS BReferencePhysics GPU held ice: authored ice has a real solid boundary
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS BReferencePhysics GPU held ice: unheld ice positive control displaces an intersecting free particle
+PASS BReferencePhysics GPU held ice: pick ice for GPU collision probe
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS BReferencePhysics GPU held ice: held ice leaves the same free particle undisturbed (actual (7.92286, 4.81714), expected (7.92286, 4.81714))
+PASS BReferencePhysics GPU held ice: held ice does not capture the free particle
+PASS BReferencePhysics GPU held ice: owned-particle seed fits inside the actual glass
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS BReferencePhysics GPU held ice: one owned particle is stationary without nearby ice (actual (4.99686, 4.42129), expected (4.99686, 4.42129))
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS BReferencePhysics GPU held ice: unheld glass positive control permits ice-to-liquid contact
+PASS BReferencePhysics GPU held ice: pick glass while ice intersects its liquid
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS BReferencePhysics GPU held ice: held glass liquid ignores external unheld ice (actual (4.99686, 4.42129), expected (4.99686, 4.42129))
+PASS BReferencePhysics GPU held ice: held glass retains its liquid owner ID
+PASS BReferencePhysics fast handoff normal: pick through public API
+PASS BReferencePhysics fast handoff normal: velocity comes from actual sampled input targets (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS BReferencePhysics fast handoff normal: gesture exceeds the former speed swap cutoff
+PASS BReferencePhysics fast handoff normal: Drop accepts the sampled gesture before the next physics tick
+PASS BReferencePhysics fast handoff normal: target presence alone determines the next held object
+PASS BReferencePhysics fast handoff normal: release commits the latest input position (actual (0.00000, 5.20000), expected (0.00000, 5.20000))
+PASS BReferencePhysics fast handoff normal: release retains sampled linear velocity (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS BReferencePhysics fast handoff normal: release retains sampled angular velocity and pose
+PASS BReferencePhysics fast handoff normal: post-release physics tick 0
+PASS BReferencePhysics fast handoff normal: post-release physics tick 1
+PASS BReferencePhysics fast handoff normal: post-release physics tick 2
+PASS BReferencePhysics fast handoff normal: released body actually continues its sampled motion
+PASS BReferencePhysics fast handoff swap: pick through public API
+PASS BReferencePhysics fast handoff swap: velocity comes from actual sampled input targets (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS BReferencePhysics fast handoff swap: gesture exceeds the former speed swap cutoff
+PASS BReferencePhysics fast handoff swap: Drop accepts the sampled gesture before the next physics tick
+PASS BReferencePhysics fast handoff swap: target presence alone determines the next held object
+PASS BReferencePhysics fast handoff swap: release commits the latest input position (actual (0.00000, 5.20000), expected (0.00000, 5.20000))
+PASS BReferencePhysics fast handoff swap: release retains sampled linear velocity (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS BReferencePhysics fast handoff swap: release retains sampled angular velocity and pose
+PASS BReferencePhysics fast handoff swap: newly picked target starts with fresh velocity history (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS BReferencePhysics fast handoff swap: newly picked target inherits no spin
+PASS BReferencePhysics fast handoff swap: newly picked target inherits no impulse (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS BReferencePhysics fast handoff swap: thrown body ignores its held overlapping target
+PASS BReferencePhysics fast handoff swap: post-release physics tick 0
+PASS BReferencePhysics fast handoff swap: post-release physics tick 1
+PASS BReferencePhysics fast handoff swap: post-release physics tick 2
+PASS BReferencePhysics fast handoff swap: released body actually continues its sampled motion
+PASS BReferencePhysics fast handoff swap: held target stays still during throw simulation (actual (0.00314, 5.78949), expected (0.00314, 5.78949))
+PASS BReferencePhysics fast handoff: same gesture releases at the same position (actual (0.00000, 5.20000), expected (0.00000, 5.20000))
+PASS BReferencePhysics fast handoff: swap preserves normal throw velocity (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS BReferencePhysics fast handoff: swap preserves normal throw angle and angular velocity
+PASS BReferencePhysics fast handoff: held target does not alter subsequent throw trajectory (actual (0.71856, 5.43952), expected (0.71856, 5.43952))
+PASS BReferencePhysics fast handoff: held target does not alter subsequent throw speed (actual (11.96403, 3.98801), expected (11.96403, 3.98801))
+PASS BReferencePhysics fast handoff: simulated spin matches normal release
+PASS BReferencePhysics spinning handoff normal: pick through public API
+PASS BReferencePhysics spinning handoff normal: velocity comes from actual sampled input targets (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS BReferencePhysics spinning handoff normal: gesture exceeds the former spin swap cutoff
+PASS BReferencePhysics spinning handoff normal: Drop accepts the sampled gesture before the next physics tick
+PASS BReferencePhysics spinning handoff normal: target presence alone determines the next held object
+PASS BReferencePhysics spinning handoff normal: release commits the latest input position (actual (-0.54364, 5.01510), expected (-0.54364, 5.01510))
+PASS BReferencePhysics spinning handoff normal: release retains sampled linear velocity (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS BReferencePhysics spinning handoff normal: release retains sampled angular velocity and pose
+PASS BReferencePhysics spinning handoff normal: post-release physics tick 0
+PASS BReferencePhysics spinning handoff normal: post-release physics tick 1
+PASS BReferencePhysics spinning handoff normal: post-release physics tick 2
+PASS BReferencePhysics spinning handoff normal: released body actually continues its sampled motion
+PASS BReferencePhysics spinning handoff swap: pick through public API
+PASS BReferencePhysics spinning handoff swap: velocity comes from actual sampled input targets (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS BReferencePhysics spinning handoff swap: gesture exceeds the former spin swap cutoff
+PASS BReferencePhysics spinning handoff swap: Drop accepts the sampled gesture before the next physics tick
+PASS BReferencePhysics spinning handoff swap: target presence alone determines the next held object
+PASS BReferencePhysics spinning handoff swap: release commits the latest input position (actual (-0.54364, 5.01510), expected (-0.54364, 5.01510))
+PASS BReferencePhysics spinning handoff swap: release retains sampled linear velocity (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS BReferencePhysics spinning handoff swap: release retains sampled angular velocity and pose
+PASS BReferencePhysics spinning handoff swap: newly picked target starts with fresh velocity history (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS BReferencePhysics spinning handoff swap: newly picked target inherits no spin
+PASS BReferencePhysics spinning handoff swap: newly picked target inherits no impulse (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS BReferencePhysics spinning handoff swap: thrown body ignores its held overlapping target
+PASS BReferencePhysics spinning handoff swap: post-release physics tick 0
+PASS BReferencePhysics spinning handoff swap: post-release physics tick 1
+PASS BReferencePhysics spinning handoff swap: post-release physics tick 2
+PASS BReferencePhysics spinning handoff swap: released body actually continues its sampled motion
+PASS BReferencePhysics spinning handoff swap: held target stays still during throw simulation (actual (-0.54051, 5.60459), expected (-0.54051, 5.60459))
+PASS BReferencePhysics spinning handoff: same gesture releases at the same position (actual (-0.54364, 5.01510), expected (-0.54364, 5.01510))
+PASS BReferencePhysics spinning handoff: swap preserves normal throw velocity (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS BReferencePhysics spinning handoff: swap preserves normal throw angle and angular velocity
+PASS BReferencePhysics spinning handoff: held target does not alter subsequent throw trajectory (actual (-0.44519, 5.07388), expected (-0.44519, 5.07388))
+PASS BReferencePhysics spinning handoff: held target does not alter subsequent throw speed (actual (1.12374, 0.30110), expected (1.12374, 0.30110))
+PASS BReferencePhysics spinning handoff: simulated spin matches normal release
+PASS BReferencePhysics automatic return: pick for normal release
+PASS BReferencePhysics automatic return: fixture drops midway through upright animation
+PASS BReferencePhysics automatic return: release and handoff both succeed during automatic return
+PASS BReferencePhysics automatic return: automatic return produces no throw impulse (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS BReferencePhysics automatic return: automatic return produces no spin impulse
+PASS BReferencePhysics automatic return: pick for swap
+PASS BReferencePhysics automatic return: fixture drops midway through upright animation
+PASS BReferencePhysics automatic return: release and handoff both succeed during automatic return
+PASS BReferencePhysics automatic return: automatic return produces no throw impulse (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS BReferencePhysics automatic return: automatic return produces no spin impulse
+PASS BReferencePhysics rejected release: pick fixture inside a gap narrower than its width
+PASS BReferencePhysics rejected release: unresolved penetration rejects the drop
+PASS BReferencePhysics rejected release: rejected handoff preserves held identity and rotation mode
+PASS BReferencePhysics rejected release: rejected release restores the attempted position (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS BReferencePhysics rejected release: rejected release preserves motion samples (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS BReferencePhysics rejected release: rejected release preserves sampled spin
+PASS BReferencePhysics rejected release: rejected drop also preserves an in-progress upright return
+PASS BReferencePhysics rejected release: removing blockers permits the same handoff to complete
+PASS BReferencePhysics rejected release: recovered automatic return still suppresses throw (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS BReferencePhysics rejected release: recovered automatic return still suppresses spin
+PASS BReferencePhysics ice table fall: only ice ignores the table while ordinary items retain support
+PASS BReferencePhysics ice table fall: ice still collides with unheld vessels
+PASS BReferencePhysics ice table fall: actual gravity simulation advances for two seconds
+PASS BReferencePhysics ice table fall: released ice falls entirely below the table
+PASS BReferencePhysics ice table fall: ordinary item remains above the table
+PASS BReferencePhysics ice table fall: ordinary item is supported by actual table contact
+PASS BReferencePhysics ice table fall: fallen ice can be picked up
+PASS BReferencePhysics ice table fall: below-table ice release succeeds
+PASS BReferencePhysics ice table fall: dropping ice below the table never snaps it upward (actual (0.00000, -4.75000), expected (0.00000, -4.75000))
+PASS BReferencePhysics ice table fall: pickup/drop preserves ice table pass-through
+PASS BReferencePhysics ice table fall: re-enabled ice re-registers with table pass-through
+PASS CReferenceSurface: actual GPU operational on AMD Radeon(TM) Graphics
+PASS CReferenceSurface swap: pick original vessel through public API
+PASS CReferenceSurface swap: held vessel has moved far from its pickup origin
+PASS CReferenceSurface swap: authored overlapping target is selected
+PASS CReferenceSurface swap: both overlapping vessels accept owner-tagged liquid
+PASS CReferenceSurface swap: both vessels own actual GPU particles before handoff
+PASS CReferenceSurface swap: slow overlapping Drop succeeds
+PASS CReferenceSurface swap: released A becomes dynamic while B becomes held
+PASS CReferenceSurface swap: Rigidbody body types agree with handoff
+PASS CReferenceSurface swap: released A remains at its current position (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS CReferenceSurface swap: new held B remains at its own position (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS CReferenceSurface swap: pickup bookkeeping now belongs to B (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS CReferenceSurface swap: swap adds no throw velocity (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS CReferenceSurface swap: swap adds no spin
+PASS CReferenceSurface swap: handoff preserves GPU particle position, mass and owner IDs
+PASS CReferenceSurface swap: unchanged cursor does not jump newly held B (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS CReferenceSurface swap: newly held B follows subsequent cursor motion (actual (3.00000, 6.00000), expected (3.00000, 6.00000))
+PASS CReferenceSurface swap: moving B leaves released A in place (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS CReferenceSurface swap: repeated swap can target released A
+PASS CReferenceSurface swap: repeated Drop succeeds
+PASS CReferenceSurface swap: repeated swap reverses held identity
+PASS CReferenceSurface swap: second release keeps B at its current position (actual (-0.20000, 4.19025), expected (-0.20000, 4.19025))
+PASS CReferenceSurface swap: repeated handoff never returns A to original pickup position (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS CReferenceSurface swap: original A follows cursor after being picked again (actual (-0.20314, 5.41051), expected (-0.20314, 5.41051))
+PASS CReferenceSurface held collisions: unheld body, ice and floor collisions start enabled
+PASS CReferenceSurface held collisions: vessel pickup succeeds
+PASS CReferenceSurface held collisions: held vessel ignores every enabled body, ice and floor pair
+PASS CReferenceSurface held collisions: actual Physics2D simulation advances
+PASS CReferenceSurface held collisions: intersecting held vessel gives ice no collision displacement (actual (-0.00297, 4.18729), expected (-0.00297, 4.18729))
+PASS CReferenceSurface held collisions: held vessel produces no ice contact
+PASS CReferenceSurface held collisions: releasing vessel restores all body, ice and floor collision flags
+PASS CReferenceSurface held collisions: ice itself can be picked up
+PASS CReferenceSurface held collisions: held ice ignores other bodies and floor
+PASS CReferenceSurface held collisions: releasing ice restores body contacts while continuing to ignore the table
+PASS CReferenceSurface GPU held ice: authored ice has a real solid boundary
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS CReferenceSurface GPU held ice: unheld ice positive control displaces an intersecting free particle
+PASS CReferenceSurface GPU held ice: pick ice for GPU collision probe
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS CReferenceSurface GPU held ice: held ice leaves the same free particle undisturbed (actual (7.92286, 4.81714), expected (7.92286, 4.81714))
+PASS CReferenceSurface GPU held ice: held ice does not capture the free particle
+PASS CReferenceSurface GPU held ice: owned-particle seed fits inside the actual glass
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS CReferenceSurface GPU held ice: one owned particle is stationary without nearby ice (actual (4.99686, 4.42129), expected (4.99686, 4.42129))
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS CReferenceSurface GPU held ice: unheld glass positive control permits ice-to-liquid contact
+PASS CReferenceSurface GPU held ice: pick glass while ice intersects its liquid
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS CReferenceSurface GPU held ice: held glass liquid ignores external unheld ice (actual (4.99686, 4.42129), expected (4.99686, 4.42129))
+PASS CReferenceSurface GPU held ice: held glass retains its liquid owner ID
+PASS CReferenceSurface fast handoff normal: pick through public API
+PASS CReferenceSurface fast handoff normal: velocity comes from actual sampled input targets (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS CReferenceSurface fast handoff normal: gesture exceeds the former speed swap cutoff
+PASS CReferenceSurface fast handoff normal: Drop accepts the sampled gesture before the next physics tick
+PASS CReferenceSurface fast handoff normal: target presence alone determines the next held object
+PASS CReferenceSurface fast handoff normal: release commits the latest input position (actual (0.00000, 5.20000), expected (0.00000, 5.20000))
+PASS CReferenceSurface fast handoff normal: release retains sampled linear velocity (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS CReferenceSurface fast handoff normal: release retains sampled angular velocity and pose
+PASS CReferenceSurface fast handoff normal: post-release physics tick 0
+PASS CReferenceSurface fast handoff normal: post-release physics tick 1
+PASS CReferenceSurface fast handoff normal: post-release physics tick 2
+PASS CReferenceSurface fast handoff normal: released body actually continues its sampled motion
+PASS CReferenceSurface fast handoff swap: pick through public API
+PASS CReferenceSurface fast handoff swap: velocity comes from actual sampled input targets (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS CReferenceSurface fast handoff swap: gesture exceeds the former speed swap cutoff
+PASS CReferenceSurface fast handoff swap: Drop accepts the sampled gesture before the next physics tick
+PASS CReferenceSurface fast handoff swap: target presence alone determines the next held object
+PASS CReferenceSurface fast handoff swap: release commits the latest input position (actual (0.00000, 5.20000), expected (0.00000, 5.20000))
+PASS CReferenceSurface fast handoff swap: release retains sampled linear velocity (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS CReferenceSurface fast handoff swap: release retains sampled angular velocity and pose
+PASS CReferenceSurface fast handoff swap: newly picked target starts with fresh velocity history (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS CReferenceSurface fast handoff swap: newly picked target inherits no spin
+PASS CReferenceSurface fast handoff swap: newly picked target inherits no impulse (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS CReferenceSurface fast handoff swap: thrown body ignores its held overlapping target
+PASS CReferenceSurface fast handoff swap: post-release physics tick 0
+PASS CReferenceSurface fast handoff swap: post-release physics tick 1
+PASS CReferenceSurface fast handoff swap: post-release physics tick 2
+PASS CReferenceSurface fast handoff swap: released body actually continues its sampled motion
+PASS CReferenceSurface fast handoff swap: held target stays still during throw simulation (actual (0.00314, 5.78949), expected (0.00314, 5.78949))
+PASS CReferenceSurface fast handoff: same gesture releases at the same position (actual (0.00000, 5.20000), expected (0.00000, 5.20000))
+PASS CReferenceSurface fast handoff: swap preserves normal throw velocity (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS CReferenceSurface fast handoff: swap preserves normal throw angle and angular velocity
+PASS CReferenceSurface fast handoff: held target does not alter subsequent throw trajectory (actual (0.71856, 5.43952), expected (0.71856, 5.43952))
+PASS CReferenceSurface fast handoff: held target does not alter subsequent throw speed (actual (11.96403, 3.98801), expected (11.96403, 3.98801))
+PASS CReferenceSurface fast handoff: simulated spin matches normal release
+PASS CReferenceSurface spinning handoff normal: pick through public API
+PASS CReferenceSurface spinning handoff normal: velocity comes from actual sampled input targets (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS CReferenceSurface spinning handoff normal: gesture exceeds the former spin swap cutoff
+PASS CReferenceSurface spinning handoff normal: Drop accepts the sampled gesture before the next physics tick
+PASS CReferenceSurface spinning handoff normal: target presence alone determines the next held object
+PASS CReferenceSurface spinning handoff normal: release commits the latest input position (actual (-0.54364, 5.01510), expected (-0.54364, 5.01510))
+PASS CReferenceSurface spinning handoff normal: release retains sampled linear velocity (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS CReferenceSurface spinning handoff normal: release retains sampled angular velocity and pose
+PASS CReferenceSurface spinning handoff normal: post-release physics tick 0
+PASS CReferenceSurface spinning handoff normal: post-release physics tick 1
+PASS CReferenceSurface spinning handoff normal: post-release physics tick 2
+PASS CReferenceSurface spinning handoff normal: released body actually continues its sampled motion
+PASS CReferenceSurface spinning handoff swap: pick through public API
+PASS CReferenceSurface spinning handoff swap: velocity comes from actual sampled input targets (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS CReferenceSurface spinning handoff swap: gesture exceeds the former spin swap cutoff
+PASS CReferenceSurface spinning handoff swap: Drop accepts the sampled gesture before the next physics tick
+PASS CReferenceSurface spinning handoff swap: target presence alone determines the next held object
+PASS CReferenceSurface spinning handoff swap: release commits the latest input position (actual (-0.54364, 5.01510), expected (-0.54364, 5.01510))
+PASS CReferenceSurface spinning handoff swap: release retains sampled linear velocity (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS CReferenceSurface spinning handoff swap: release retains sampled angular velocity and pose
+PASS CReferenceSurface spinning handoff swap: newly picked target starts with fresh velocity history (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS CReferenceSurface spinning handoff swap: newly picked target inherits no spin
+PASS CReferenceSurface spinning handoff swap: newly picked target inherits no impulse (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS CReferenceSurface spinning handoff swap: thrown body ignores its held overlapping target
+PASS CReferenceSurface spinning handoff swap: post-release physics tick 0
+PASS CReferenceSurface spinning handoff swap: post-release physics tick 1
+PASS CReferenceSurface spinning handoff swap: post-release physics tick 2
+PASS CReferenceSurface spinning handoff swap: released body actually continues its sampled motion
+PASS CReferenceSurface spinning handoff swap: held target stays still during throw simulation (actual (-0.54051, 5.60459), expected (-0.54051, 5.60459))
+PASS CReferenceSurface spinning handoff: same gesture releases at the same position (actual (-0.54364, 5.01510), expected (-0.54364, 5.01510))
+PASS CReferenceSurface spinning handoff: swap preserves normal throw velocity (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS CReferenceSurface spinning handoff: swap preserves normal throw angle and angular velocity
+PASS CReferenceSurface spinning handoff: held target does not alter subsequent throw trajectory (actual (-0.44519, 5.07388), expected (-0.44519, 5.07388))
+PASS CReferenceSurface spinning handoff: held target does not alter subsequent throw speed (actual (1.12374, 0.30110), expected (1.12374, 0.30110))
+PASS CReferenceSurface spinning handoff: simulated spin matches normal release
+PASS CReferenceSurface automatic return: pick for normal release
+PASS CReferenceSurface automatic return: fixture drops midway through upright animation
+PASS CReferenceSurface automatic return: release and handoff both succeed during automatic return
+PASS CReferenceSurface automatic return: automatic return produces no throw impulse (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS CReferenceSurface automatic return: automatic return produces no spin impulse
+PASS CReferenceSurface automatic return: pick for swap
+PASS CReferenceSurface automatic return: fixture drops midway through upright animation
+PASS CReferenceSurface automatic return: release and handoff both succeed during automatic return
+PASS CReferenceSurface automatic return: automatic return produces no throw impulse (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS CReferenceSurface automatic return: automatic return produces no spin impulse
+PASS CReferenceSurface rejected release: pick fixture inside a gap narrower than its width
+PASS CReferenceSurface rejected release: unresolved penetration rejects the drop
+PASS CReferenceSurface rejected release: rejected handoff preserves held identity and rotation mode
+PASS CReferenceSurface rejected release: rejected release restores the attempted position (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS CReferenceSurface rejected release: rejected release preserves motion samples (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS CReferenceSurface rejected release: rejected release preserves sampled spin
+PASS CReferenceSurface rejected release: rejected drop also preserves an in-progress upright return
+PASS CReferenceSurface rejected release: removing blockers permits the same handoff to complete
+PASS CReferenceSurface rejected release: recovered automatic return still suppresses throw (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS CReferenceSurface rejected release: recovered automatic return still suppresses spin
+PASS CReferenceSurface ice table fall: only ice ignores the table while ordinary items retain support
+PASS CReferenceSurface ice table fall: ice still collides with unheld vessels
+PASS CReferenceSurface ice table fall: actual gravity simulation advances for two seconds
+PASS CReferenceSurface ice table fall: released ice falls entirely below the table
+PASS CReferenceSurface ice table fall: ordinary item remains above the table
+PASS CReferenceSurface ice table fall: ordinary item is supported by actual table contact
+PASS CReferenceSurface ice table fall: fallen ice can be picked up
+PASS CReferenceSurface ice table fall: below-table ice release succeeds
+PASS CReferenceSurface ice table fall: dropping ice below the table never snaps it upward (actual (0.00000, -4.75000), expected (0.00000, -4.75000))
+PASS CReferenceSurface ice table fall: pickup/drop preserves ice table pass-through
+PASS CReferenceSurface ice table fall: re-enabled ice re-registers with table pass-through
+PASS DImprovedSurface: actual GPU operational on AMD Radeon(TM) Graphics
+PASS DImprovedSurface swap: pick original vessel through public API
+PASS DImprovedSurface swap: held vessel has moved far from its pickup origin
+PASS DImprovedSurface swap: authored overlapping target is selected
+PASS DImprovedSurface swap: both overlapping vessels accept owner-tagged liquid
+PASS DImprovedSurface swap: both vessels own actual GPU particles before handoff
+PASS DImprovedSurface swap: slow overlapping Drop succeeds
+PASS DImprovedSurface swap: released A becomes dynamic while B becomes held
+PASS DImprovedSurface swap: Rigidbody body types agree with handoff
+PASS DImprovedSurface swap: released A remains at its current position (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS DImprovedSurface swap: new held B remains at its own position (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS DImprovedSurface swap: pickup bookkeeping now belongs to B (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS DImprovedSurface swap: swap adds no throw velocity (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS DImprovedSurface swap: swap adds no spin
+PASS DImprovedSurface swap: handoff preserves GPU particle position, mass and owner IDs
+PASS DImprovedSurface swap: unchanged cursor does not jump newly held B (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS DImprovedSurface swap: newly held B follows subsequent cursor motion (actual (3.00000, 6.00000), expected (3.00000, 6.00000))
+PASS DImprovedSurface swap: moving B leaves released A in place (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS DImprovedSurface swap: repeated swap can target released A
+PASS DImprovedSurface swap: repeated Drop succeeds
+PASS DImprovedSurface swap: repeated swap reverses held identity
+PASS DImprovedSurface swap: second release keeps B at its current position (actual (-0.20000, 4.19025), expected (-0.20000, 4.19025))
+PASS DImprovedSurface swap: repeated handoff never returns A to original pickup position (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS DImprovedSurface swap: original A follows cursor after being picked again (actual (-0.20314, 5.41051), expected (-0.20314, 5.41051))
+PASS DImprovedSurface held collisions: unheld body, ice and floor collisions start enabled
+PASS DImprovedSurface held collisions: vessel pickup succeeds
+PASS DImprovedSurface held collisions: held vessel ignores every enabled body, ice and floor pair
+PASS DImprovedSurface held collisions: actual Physics2D simulation advances
+PASS DImprovedSurface held collisions: intersecting held vessel gives ice no collision displacement (actual (-0.00297, 4.18729), expected (-0.00297, 4.18729))
+PASS DImprovedSurface held collisions: held vessel produces no ice contact
+PASS DImprovedSurface held collisions: releasing vessel restores all body, ice and floor collision flags
+PASS DImprovedSurface held collisions: ice itself can be picked up
+PASS DImprovedSurface held collisions: held ice ignores other bodies and floor
+PASS DImprovedSurface held collisions: releasing ice restores body contacts while continuing to ignore the table
+PASS DImprovedSurface GPU held ice: authored ice has a real solid boundary
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS DImprovedSurface GPU held ice: unheld ice positive control displaces an intersecting free particle
+PASS DImprovedSurface GPU held ice: pick ice for GPU collision probe
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS DImprovedSurface GPU held ice: held ice leaves the same free particle undisturbed (actual (7.92286, 4.81714), expected (7.92286, 4.81714))
+PASS DImprovedSurface GPU held ice: held ice does not capture the free particle
+PASS DImprovedSurface GPU held ice: owned-particle seed fits inside the actual glass
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS DImprovedSurface GPU held ice: one owned particle is stationary without nearby ice (actual (4.99686, 4.42129), expected (4.99686, 4.42129))
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS DImprovedSurface GPU held ice: unheld glass positive control permits ice-to-liquid contact
+PASS DImprovedSurface GPU held ice: pick glass while ice intersects its liquid
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS DImprovedSurface GPU held ice: held glass liquid ignores external unheld ice (actual (4.99686, 4.42129), expected (4.99686, 4.42129))
+PASS DImprovedSurface GPU held ice: held glass retains its liquid owner ID
+PASS DImprovedSurface fast handoff normal: pick through public API
+PASS DImprovedSurface fast handoff normal: velocity comes from actual sampled input targets (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS DImprovedSurface fast handoff normal: gesture exceeds the former speed swap cutoff
+PASS DImprovedSurface fast handoff normal: Drop accepts the sampled gesture before the next physics tick
+PASS DImprovedSurface fast handoff normal: target presence alone determines the next held object
+PASS DImprovedSurface fast handoff normal: release commits the latest input position (actual (0.00000, 5.20000), expected (0.00000, 5.20000))
+PASS DImprovedSurface fast handoff normal: release retains sampled linear velocity (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS DImprovedSurface fast handoff normal: release retains sampled angular velocity and pose
+PASS DImprovedSurface fast handoff normal: post-release physics tick 0
+PASS DImprovedSurface fast handoff normal: post-release physics tick 1
+PASS DImprovedSurface fast handoff normal: post-release physics tick 2
+PASS DImprovedSurface fast handoff normal: released body actually continues its sampled motion
+PASS DImprovedSurface fast handoff swap: pick through public API
+PASS DImprovedSurface fast handoff swap: velocity comes from actual sampled input targets (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS DImprovedSurface fast handoff swap: gesture exceeds the former speed swap cutoff
+PASS DImprovedSurface fast handoff swap: Drop accepts the sampled gesture before the next physics tick
+PASS DImprovedSurface fast handoff swap: target presence alone determines the next held object
+PASS DImprovedSurface fast handoff swap: release commits the latest input position (actual (0.00000, 5.20000), expected (0.00000, 5.20000))
+PASS DImprovedSurface fast handoff swap: release retains sampled linear velocity (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS DImprovedSurface fast handoff swap: release retains sampled angular velocity and pose
+PASS DImprovedSurface fast handoff swap: newly picked target starts with fresh velocity history (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS DImprovedSurface fast handoff swap: newly picked target inherits no spin
+PASS DImprovedSurface fast handoff swap: newly picked target inherits no impulse (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS DImprovedSurface fast handoff swap: thrown body ignores its held overlapping target
+PASS DImprovedSurface fast handoff swap: post-release physics tick 0
+PASS DImprovedSurface fast handoff swap: post-release physics tick 1
+PASS DImprovedSurface fast handoff swap: post-release physics tick 2
+PASS DImprovedSurface fast handoff swap: released body actually continues its sampled motion
+PASS DImprovedSurface fast handoff swap: held target stays still during throw simulation (actual (0.00314, 5.78949), expected (0.00314, 5.78949))
+PASS DImprovedSurface fast handoff: same gesture releases at the same position (actual (0.00000, 5.20000), expected (0.00000, 5.20000))
+PASS DImprovedSurface fast handoff: swap preserves normal throw velocity (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS DImprovedSurface fast handoff: swap preserves normal throw angle and angular velocity
+PASS DImprovedSurface fast handoff: held target does not alter subsequent throw trajectory (actual (0.71856, 5.43952), expected (0.71856, 5.43952))
+PASS DImprovedSurface fast handoff: held target does not alter subsequent throw speed (actual (11.96403, 3.98801), expected (11.96403, 3.98801))
+PASS DImprovedSurface fast handoff: simulated spin matches normal release
+PASS DImprovedSurface spinning handoff normal: pick through public API
+PASS DImprovedSurface spinning handoff normal: velocity comes from actual sampled input targets (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS DImprovedSurface spinning handoff normal: gesture exceeds the former spin swap cutoff
+PASS DImprovedSurface spinning handoff normal: Drop accepts the sampled gesture before the next physics tick
+PASS DImprovedSurface spinning handoff normal: target presence alone determines the next held object
+PASS DImprovedSurface spinning handoff normal: release commits the latest input position (actual (-0.54364, 5.01510), expected (-0.54364, 5.01510))
+PASS DImprovedSurface spinning handoff normal: release retains sampled linear velocity (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS DImprovedSurface spinning handoff normal: release retains sampled angular velocity and pose
+PASS DImprovedSurface spinning handoff normal: post-release physics tick 0
+PASS DImprovedSurface spinning handoff normal: post-release physics tick 1
+PASS DImprovedSurface spinning handoff normal: post-release physics tick 2
+PASS DImprovedSurface spinning handoff normal: released body actually continues its sampled motion
+PASS DImprovedSurface spinning handoff swap: pick through public API
+PASS DImprovedSurface spinning handoff swap: velocity comes from actual sampled input targets (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS DImprovedSurface spinning handoff swap: gesture exceeds the former spin swap cutoff
+PASS DImprovedSurface spinning handoff swap: Drop accepts the sampled gesture before the next physics tick
+PASS DImprovedSurface spinning handoff swap: target presence alone determines the next held object
+PASS DImprovedSurface spinning handoff swap: release commits the latest input position (actual (-0.54364, 5.01510), expected (-0.54364, 5.01510))
+PASS DImprovedSurface spinning handoff swap: release retains sampled linear velocity (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS DImprovedSurface spinning handoff swap: release retains sampled angular velocity and pose
+PASS DImprovedSurface spinning handoff swap: newly picked target starts with fresh velocity history (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS DImprovedSurface spinning handoff swap: newly picked target inherits no spin
+PASS DImprovedSurface spinning handoff swap: newly picked target inherits no impulse (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS DImprovedSurface spinning handoff swap: thrown body ignores its held overlapping target
+PASS DImprovedSurface spinning handoff swap: post-release physics tick 0
+PASS DImprovedSurface spinning handoff swap: post-release physics tick 1
+PASS DImprovedSurface spinning handoff swap: post-release physics tick 2
+PASS DImprovedSurface spinning handoff swap: released body actually continues its sampled motion
+PASS DImprovedSurface spinning handoff swap: held target stays still during throw simulation (actual (-0.54051, 5.60459), expected (-0.54051, 5.60459))
+PASS DImprovedSurface spinning handoff: same gesture releases at the same position (actual (-0.54364, 5.01510), expected (-0.54364, 5.01510))
+PASS DImprovedSurface spinning handoff: swap preserves normal throw velocity (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS DImprovedSurface spinning handoff: swap preserves normal throw angle and angular velocity
+PASS DImprovedSurface spinning handoff: held target does not alter subsequent throw trajectory (actual (-0.44519, 5.07388), expected (-0.44519, 5.07388))
+PASS DImprovedSurface spinning handoff: held target does not alter subsequent throw speed (actual (1.12374, 0.30110), expected (1.12374, 0.30110))
+PASS DImprovedSurface spinning handoff: simulated spin matches normal release
+PASS DImprovedSurface automatic return: pick for normal release
+PASS DImprovedSurface automatic return: fixture drops midway through upright animation
+PASS DImprovedSurface automatic return: release and handoff both succeed during automatic return
+PASS DImprovedSurface automatic return: automatic return produces no throw impulse (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS DImprovedSurface automatic return: automatic return produces no spin impulse
+PASS DImprovedSurface automatic return: pick for swap
+PASS DImprovedSurface automatic return: fixture drops midway through upright animation
+PASS DImprovedSurface automatic return: release and handoff both succeed during automatic return
+PASS DImprovedSurface automatic return: automatic return produces no throw impulse (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS DImprovedSurface automatic return: automatic return produces no spin impulse
+PASS DImprovedSurface rejected release: pick fixture inside a gap narrower than its width
+PASS DImprovedSurface rejected release: unresolved penetration rejects the drop
+PASS DImprovedSurface rejected release: rejected handoff preserves held identity and rotation mode
+PASS DImprovedSurface rejected release: rejected release restores the attempted position (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS DImprovedSurface rejected release: rejected release preserves motion samples (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS DImprovedSurface rejected release: rejected release preserves sampled spin
+PASS DImprovedSurface rejected release: rejected drop also preserves an in-progress upright return
+PASS DImprovedSurface rejected release: removing blockers permits the same handoff to complete
+PASS DImprovedSurface rejected release: recovered automatic return still suppresses throw (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS DImprovedSurface rejected release: recovered automatic return still suppresses spin
+PASS DImprovedSurface ice table fall: only ice ignores the table while ordinary items retain support
+PASS DImprovedSurface ice table fall: ice still collides with unheld vessels
+PASS DImprovedSurface ice table fall: actual gravity simulation advances for two seconds
+PASS DImprovedSurface ice table fall: released ice falls entirely below the table
+PASS DImprovedSurface ice table fall: ordinary item remains above the table
+PASS DImprovedSurface ice table fall: ordinary item is supported by actual table contact
+PASS DImprovedSurface ice table fall: fallen ice can be picked up
+PASS DImprovedSurface ice table fall: below-table ice release succeeds
+PASS DImprovedSurface ice table fall: dropping ice below the table never snaps it upward (actual (0.00000, -4.75000), expected (0.00000, -4.75000))
+PASS DImprovedSurface ice table fall: pickup/drop preserves ice table pass-through
+PASS DImprovedSurface ice table fall: re-enabled ice re-registers with table pass-through
+PASS ECalibratedLiquid: actual GPU operational on AMD Radeon(TM) Graphics
+PASS ECalibratedLiquid swap: pick original vessel through public API
+PASS ECalibratedLiquid swap: held vessel has moved far from its pickup origin
+PASS ECalibratedLiquid swap: authored overlapping target is selected
+PASS ECalibratedLiquid swap: both overlapping vessels accept owner-tagged liquid
+PASS ECalibratedLiquid swap: both vessels own actual GPU particles before handoff
+PASS ECalibratedLiquid swap: slow overlapping Drop succeeds
+PASS ECalibratedLiquid swap: released A becomes dynamic while B becomes held
+PASS ECalibratedLiquid swap: Rigidbody body types agree with handoff
+PASS ECalibratedLiquid swap: released A remains at its current position (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS ECalibratedLiquid swap: new held B remains at its own position (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS ECalibratedLiquid swap: pickup bookkeeping now belongs to B (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS ECalibratedLiquid swap: swap adds no throw velocity (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS ECalibratedLiquid swap: swap adds no spin
+PASS ECalibratedLiquid swap: handoff preserves GPU particle position, mass and owner IDs
+PASS ECalibratedLiquid swap: unchanged cursor does not jump newly held B (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS ECalibratedLiquid swap: newly held B follows subsequent cursor motion (actual (3.00000, 6.00000), expected (3.00000, 6.00000))
+PASS ECalibratedLiquid swap: moving B leaves released A in place (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS ECalibratedLiquid swap: repeated swap can target released A
+PASS ECalibratedLiquid swap: repeated Drop succeeds
+PASS ECalibratedLiquid swap: repeated swap reverses held identity
+PASS ECalibratedLiquid swap: second release keeps B at its current position (actual (-0.20000, 4.19025), expected (-0.20000, 4.19025))
+PASS ECalibratedLiquid swap: repeated handoff never returns A to original pickup position (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS ECalibratedLiquid swap: original A follows cursor after being picked again (actual (-0.20314, 5.41051), expected (-0.20314, 5.41051))
+PASS ECalibratedLiquid held collisions: unheld body, ice and floor collisions start enabled
+PASS ECalibratedLiquid held collisions: vessel pickup succeeds
+PASS ECalibratedLiquid held collisions: held vessel ignores every enabled body, ice and floor pair
+PASS ECalibratedLiquid held collisions: actual Physics2D simulation advances
+PASS ECalibratedLiquid held collisions: intersecting held vessel gives ice no collision displacement (actual (-0.00297, 4.18729), expected (-0.00297, 4.18729))
+PASS ECalibratedLiquid held collisions: held vessel produces no ice contact
+PASS ECalibratedLiquid held collisions: releasing vessel restores all body, ice and floor collision flags
+PASS ECalibratedLiquid held collisions: ice itself can be picked up
+PASS ECalibratedLiquid held collisions: held ice ignores other bodies and floor
+PASS ECalibratedLiquid held collisions: releasing ice restores body contacts while continuing to ignore the table
+PASS ECalibratedLiquid GPU held ice: authored ice has a real solid boundary
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS ECalibratedLiquid GPU held ice: unheld ice positive control displaces an intersecting free particle
+PASS ECalibratedLiquid GPU held ice: pick ice for GPU collision probe
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS ECalibratedLiquid GPU held ice: held ice leaves the same free particle undisturbed (actual (7.92286, 4.81714), expected (7.92286, 4.81714))
+PASS ECalibratedLiquid GPU held ice: held ice does not capture the free particle
+PASS ECalibratedLiquid GPU held ice: owned-particle seed fits inside the actual glass
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS ECalibratedLiquid GPU held ice: one owned particle is stationary without nearby ice (actual (4.99686, 4.42129), expected (4.99686, 4.42129))
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS ECalibratedLiquid GPU held ice: unheld glass positive control permits ice-to-liquid contact
+PASS ECalibratedLiquid GPU held ice: pick glass while ice intersects its liquid
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS ECalibratedLiquid GPU held ice: held glass liquid ignores external unheld ice (actual (4.99686, 4.42129), expected (4.99686, 4.42129))
+PASS ECalibratedLiquid GPU held ice: held glass retains its liquid owner ID
+PASS ECalibratedLiquid fast handoff normal: pick through public API
+PASS ECalibratedLiquid fast handoff normal: velocity comes from actual sampled input targets (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS ECalibratedLiquid fast handoff normal: gesture exceeds the former speed swap cutoff
+PASS ECalibratedLiquid fast handoff normal: Drop accepts the sampled gesture before the next physics tick
+PASS ECalibratedLiquid fast handoff normal: target presence alone determines the next held object
+PASS ECalibratedLiquid fast handoff normal: release commits the latest input position (actual (0.00000, 5.20000), expected (0.00000, 5.20000))
+PASS ECalibratedLiquid fast handoff normal: release retains sampled linear velocity (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS ECalibratedLiquid fast handoff normal: release retains sampled angular velocity and pose
+PASS ECalibratedLiquid fast handoff normal: post-release physics tick 0
+PASS ECalibratedLiquid fast handoff normal: post-release physics tick 1
+PASS ECalibratedLiquid fast handoff normal: post-release physics tick 2
+PASS ECalibratedLiquid fast handoff normal: released body actually continues its sampled motion
+PASS ECalibratedLiquid fast handoff swap: pick through public API
+PASS ECalibratedLiquid fast handoff swap: velocity comes from actual sampled input targets (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS ECalibratedLiquid fast handoff swap: gesture exceeds the former speed swap cutoff
+PASS ECalibratedLiquid fast handoff swap: Drop accepts the sampled gesture before the next physics tick
+PASS ECalibratedLiquid fast handoff swap: target presence alone determines the next held object
+PASS ECalibratedLiquid fast handoff swap: release commits the latest input position (actual (0.00000, 5.20000), expected (0.00000, 5.20000))
+PASS ECalibratedLiquid fast handoff swap: release retains sampled linear velocity (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS ECalibratedLiquid fast handoff swap: release retains sampled angular velocity and pose
+PASS ECalibratedLiquid fast handoff swap: newly picked target starts with fresh velocity history (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS ECalibratedLiquid fast handoff swap: newly picked target inherits no spin
+PASS ECalibratedLiquid fast handoff swap: newly picked target inherits no impulse (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS ECalibratedLiquid fast handoff swap: thrown body ignores its held overlapping target
+PASS ECalibratedLiquid fast handoff swap: post-release physics tick 0
+PASS ECalibratedLiquid fast handoff swap: post-release physics tick 1
+PASS ECalibratedLiquid fast handoff swap: post-release physics tick 2
+PASS ECalibratedLiquid fast handoff swap: released body actually continues its sampled motion
+PASS ECalibratedLiquid fast handoff swap: held target stays still during throw simulation (actual (0.00314, 5.78949), expected (0.00314, 5.78949))
+PASS ECalibratedLiquid fast handoff: same gesture releases at the same position (actual (0.00000, 5.20000), expected (0.00000, 5.20000))
+PASS ECalibratedLiquid fast handoff: swap preserves normal throw velocity (actual (11.99996, 3.99998), expected (11.99996, 3.99998))
+PASS ECalibratedLiquid fast handoff: swap preserves normal throw angle and angular velocity
+PASS ECalibratedLiquid fast handoff: held target does not alter subsequent throw trajectory (actual (0.71856, 5.43952), expected (0.71856, 5.43952))
+PASS ECalibratedLiquid fast handoff: held target does not alter subsequent throw speed (actual (11.96403, 3.98801), expected (11.96403, 3.98801))
+PASS ECalibratedLiquid fast handoff: simulated spin matches normal release
+PASS ECalibratedLiquid spinning handoff normal: pick through public API
+PASS ECalibratedLiquid spinning handoff normal: velocity comes from actual sampled input targets (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS ECalibratedLiquid spinning handoff normal: gesture exceeds the former spin swap cutoff
+PASS ECalibratedLiquid spinning handoff normal: Drop accepts the sampled gesture before the next physics tick
+PASS ECalibratedLiquid spinning handoff normal: target presence alone determines the next held object
+PASS ECalibratedLiquid spinning handoff normal: release commits the latest input position (actual (-0.54364, 5.01510), expected (-0.54364, 5.01510))
+PASS ECalibratedLiquid spinning handoff normal: release retains sampled linear velocity (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS ECalibratedLiquid spinning handoff normal: release retains sampled angular velocity and pose
+PASS ECalibratedLiquid spinning handoff normal: post-release physics tick 0
+PASS ECalibratedLiquid spinning handoff normal: post-release physics tick 1
+PASS ECalibratedLiquid spinning handoff normal: post-release physics tick 2
+PASS ECalibratedLiquid spinning handoff normal: released body actually continues its sampled motion
+PASS ECalibratedLiquid spinning handoff swap: pick through public API
+PASS ECalibratedLiquid spinning handoff swap: velocity comes from actual sampled input targets (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS ECalibratedLiquid spinning handoff swap: gesture exceeds the former spin swap cutoff
+PASS ECalibratedLiquid spinning handoff swap: Drop accepts the sampled gesture before the next physics tick
+PASS ECalibratedLiquid spinning handoff swap: target presence alone determines the next held object
+PASS ECalibratedLiquid spinning handoff swap: release commits the latest input position (actual (-0.54364, 5.01510), expected (-0.54364, 5.01510))
+PASS ECalibratedLiquid spinning handoff swap: release retains sampled linear velocity (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS ECalibratedLiquid spinning handoff swap: release retains sampled angular velocity and pose
+PASS ECalibratedLiquid spinning handoff swap: newly picked target starts with fresh velocity history (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS ECalibratedLiquid spinning handoff swap: newly picked target inherits no spin
+PASS ECalibratedLiquid spinning handoff swap: newly picked target inherits no impulse (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS ECalibratedLiquid spinning handoff swap: thrown body ignores its held overlapping target
+PASS ECalibratedLiquid spinning handoff swap: post-release physics tick 0
+PASS ECalibratedLiquid spinning handoff swap: post-release physics tick 1
+PASS ECalibratedLiquid spinning handoff swap: post-release physics tick 2
+PASS ECalibratedLiquid spinning handoff swap: released body actually continues its sampled motion
+PASS ECalibratedLiquid spinning handoff swap: held target stays still during throw simulation (actual (-0.54051, 5.60459), expected (-0.54051, 5.60459))
+PASS ECalibratedLiquid spinning handoff: same gesture releases at the same position (actual (-0.54364, 5.01510), expected (-0.54364, 5.01510))
+PASS ECalibratedLiquid spinning handoff: swap preserves normal throw velocity (actual (1.12711, 0.30201), expected (1.12711, 0.30201))
+PASS ECalibratedLiquid spinning handoff: swap preserves normal throw angle and angular velocity
+PASS ECalibratedLiquid spinning handoff: held target does not alter subsequent throw trajectory (actual (-0.44519, 5.07388), expected (-0.44519, 5.07388))
+PASS ECalibratedLiquid spinning handoff: held target does not alter subsequent throw speed (actual (1.12374, 0.30110), expected (1.12374, 0.30110))
+PASS ECalibratedLiquid spinning handoff: simulated spin matches normal release
+PASS ECalibratedLiquid automatic return: pick for normal release
+PASS ECalibratedLiquid automatic return: fixture drops midway through upright animation
+PASS ECalibratedLiquid automatic return: release and handoff both succeed during automatic return
+PASS ECalibratedLiquid automatic return: automatic return produces no throw impulse (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS ECalibratedLiquid automatic return: automatic return produces no spin impulse
+PASS ECalibratedLiquid automatic return: pick for swap
+PASS ECalibratedLiquid automatic return: fixture drops midway through upright animation
+PASS ECalibratedLiquid automatic return: release and handoff both succeed during automatic return
+PASS ECalibratedLiquid automatic return: automatic return produces no throw impulse (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS ECalibratedLiquid automatic return: automatic return produces no spin impulse
+PASS ECalibratedLiquid rejected release: pick fixture inside a gap narrower than its width
+PASS ECalibratedLiquid rejected release: unresolved penetration rejects the drop
+PASS ECalibratedLiquid rejected release: rejected handoff preserves held identity and rotation mode
+PASS ECalibratedLiquid rejected release: rejected release restores the attempted position (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS ECalibratedLiquid rejected release: rejected release preserves motion samples (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS ECalibratedLiquid rejected release: rejected release preserves sampled spin
+PASS ECalibratedLiquid rejected release: rejected drop also preserves an in-progress upright return
+PASS ECalibratedLiquid rejected release: removing blockers permits the same handoff to complete
+PASS ECalibratedLiquid rejected release: recovered automatic return still suppresses throw (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS ECalibratedLiquid rejected release: recovered automatic return still suppresses spin
+PASS ECalibratedLiquid ice table fall: only ice ignores the table while ordinary items retain support
+PASS ECalibratedLiquid ice table fall: ice still collides with unheld vessels
+PASS ECalibratedLiquid ice table fall: actual gravity simulation advances for two seconds
+PASS ECalibratedLiquid ice table fall: released ice falls entirely below the table
+PASS ECalibratedLiquid ice table fall: ordinary item remains above the table
+PASS ECalibratedLiquid ice table fall: ordinary item is supported by actual table contact
+PASS ECalibratedLiquid ice table fall: fallen ice can be picked up
+PASS ECalibratedLiquid ice table fall: below-table ice release succeeds
+PASS ECalibratedLiquid ice table fall: dropping ice below the table never snaps it upward (actual (0.00000, -4.75000), expected (0.00000, -4.75000))
+PASS ECalibratedLiquid ice table fall: pickup/drop preserves ice table pass-through
+PASS ECalibratedLiquid ice table fall: re-enabled ice re-registers with table pass-through
+A/B/C swap handoff, content ownership and held collision checks passed.

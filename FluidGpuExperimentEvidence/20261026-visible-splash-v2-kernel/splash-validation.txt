@@ -1,0 +1,67 @@
+PASS Splash harness uses actual F GPU in hidden batch mode
+PASS Floor impact produces a two-sided upward fan
+PASS Symmetric particles receive balanced tangential motion
+PASS Wall impact turns the fan with the collision normal
+PASS Extreme explosive impact respects the delta-speed cap and never points into the floor
+PASS Distant owned liquid receives no splash outside the impact radius
+PASS Zero measured contact impulse cannot inject splash energy
+PASS Non-finite impact input cannot produce invalid velocity
+PASS G increases liquid splash within the same hard speed limit
+PASS F GPU fixtures reserve
+PASS F fixtures contain separate active and reserved GPU slots
+PASS F CPU queued fixtures reserve
+PASS F GPU active/pending velocities match CPU formula; position, history, flags, volume and unrelated particles are exact
+PASS F GPU birth delay, stream links, timing and all ingredient composition are unchanged
+PASS F CPU queued births receive identical impulse without changing content, chronology or unrelated commands
+PASS F identical GPU-pending and CPU-queued particle positions/velocities produce the same result
+PASS F repeated break/release cannot add a second impulse
+PASS F released CPU birth uploads later with its original delay and exactly one impulse
+PASS G GPU fixtures reserve
+PASS G fixtures contain separate active and reserved GPU slots
+PASS G CPU queued fixtures reserve
+PASS G GPU active/pending velocities match CPU formula; position, history, flags, volume and unrelated particles are exact
+PASS G GPU birth delay, stream links, timing and all ingredient composition are unchanged
+PASS G CPU queued births receive identical impulse without changing content, chronology or unrelated commands
+PASS G identical GPU-pending and CPU-queued particle positions/velocities produce the same result
+PASS G repeated break/release cannot add a second impulse
+PASS G released CPU birth uploads later with its original delay and exactly one impulse
+PASS F GPU fixtures reserve
+PASS F fixtures contain separate active and reserved GPU slots
+PASS F CPU queued fixtures reserve
+PASS F GPU active/pending velocities match CPU formula; position, history, flags, volume and unrelated particles are exact
+PASS F GPU birth delay, stream links, timing and all ingredient composition are unchanged
+PASS F CPU queued births receive identical impulse without changing content, chronology or unrelated commands
+PASS F identical GPU-pending and CPU-queued particle positions/velocities produce the same result
+PASS F repeated break/release cannot add a second impulse
+PASS F released CPU birth uploads later with its original delay and exactly one impulse
+PASS F GPU fixtures reserve
+PASS F fixtures contain separate active and reserved GPU slots
+PASS F CPU queued fixtures reserve
+PASS F GPU active/pending velocities match CPU formula; position, history, flags, volume and unrelated particles are exact
+PASS F GPU birth delay, stream links, timing and all ingredient composition are unchanged
+PASS F CPU queued births receive identical impulse without changing content, chronology or unrelated commands
+PASS F identical GPU-pending and CPU-queued particle positions/velocities produce the same result
+PASS F repeated break/release cannot add a second impulse
+PASS F released CPU birth uploads later with its original delay and exactly one impulse
+PASS F GPU fixtures reserve
+PASS F fixtures contain separate active and reserved GPU slots
+PASS F CPU queued fixtures reserve
+PASS F GPU active/pending velocities match CPU formula; position, history, flags, volume and unrelated particles are exact
+PASS F GPU birth delay, stream links, timing and all ingredient composition are unchanged
+PASS F CPU queued births receive identical impulse without changing content, chronology or unrelated commands
+PASS F identical GPU-pending and CPU-queued particle positions/velocities produce the same result
+PASS F repeated break/release cannot add a second impulse
+PASS F released CPU birth uploads later with its original delay and exactly one impulse
+PASS Centroid fixtures reserve two unequal-volume particles
+PASS Fan center uses completed liquid volume weighting instead of empty vessel geometry
+PASS Completed liquid center reprojects from the captured moving/rotating vessel pose without GPU readback
+System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation. ---> System.NullReferenceException: Object reference not set to an instance of an object
+  at Slainte.Bartending.FluidGpuExperiment.FluidExperimentGpuLiquid.CompletedSplashCenter (System.UInt32 owner, UnityEngine.Vector2 fallback) [0x00000] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\_Project\Features\Bartending\FluidGpuExperiment\Runtime\FluidExperimentGpuLiquid.Splash.cs:54 
+  at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&)
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in <1eb9db207454431c84a47bcd81e79c37>:0 
+   --- End of inner exception stack trace ---
+  at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x00083] in <1eb9db207454431c84a47bcd81e79c37>:0 
+  at System.Reflection.MethodBase.Invoke (System.Object obj, System.Object[] parameters) [0x00000] in <1eb9db207454431c84a47bcd81e79c37>:0 
+  at SplashValidationRunner.Invoke (System.Object target, System.String name, System.Object[] args) [0x00000] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\SplashValidation.cs:41 
+  at SplashValidationRunner.CompletedLiquidCenter (Slainte.Bartending.FluidGpuExperiment.FluidExperimentWorld world) [0x002bf] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\SplashValidation.cs:143 
+  at SplashValidationRunner+<Start>d__19.MoveNext () [0x001bd] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\SplashValidation.cs:73 

@@ -1,0 +1,15 @@
+{
+  "executable": "C:\\Program Files\\Unity\\Hub\\Editor\\6000.3.5f2\\Editor\\Unity.exe",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "C:/unity_proj/slainte/slainte/Library/FluidSwapHarness",
+    "-executeMethod",
+    "ExperimentVolumeValidation.Begin",
+    "-logFile",
+    "C:\\unity_proj\\slainte\\slainte\\FluidGpuExperimentEvidence\\13-volume-baseline\\Editor.log"
+  ],
+  "started": "2026-09-30T17:21:08.3134511+09:00",
+  "workingDirectory": "C:\\unity_proj\\slainte\\slainte"
+}

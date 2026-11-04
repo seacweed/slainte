@@ -1,0 +1,15 @@
+{
+  "before_rows": 1080,
+  "after_rows": 1080,
+  "exact_equal": false,
+  "max_absolute_difference": {
+    "x": 0.070370831,
+    "y": 0.08835594,
+    "previousX": 0.07032991699999999,
+    "previousY": 0.08828289450000001,
+    "vx": 0.260565788,
+    "vy": 0.22701185499999998,
+    "ml": 0.0,
+    "temperature": 0.0
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "status": "PASS",
+  "kind": "CPU geometry oracle; GPU images and timings require Unity validation",
+  "seed": 20260930,
+  "splats": 6400,
+  "pixel_queries": 108800,
+  "original_occluded_pixels": 25420,
+  "excluded_hull_splats": 2220,
+  "false_negative_masks": 0,
+  "profiles": {
+    "Glass_highball": {
+      "hulls": 1,
+      "pixel_queries": 27200,
+      "excluded_splats": 363
+    },
+    "Glass_hurricane": {
+      "hulls": 1,
+      "pixel_queries": 27200,
+      "excluded_splats": 646
+    },
+    "Spoon": {
+      "hulls": 1,
+      "pixel_queries": 27200,
+      "excluded_splats": 576
+    },
+    "Ice": {
+      "hulls": 1,
+      "pixel_queries": 27200,
+      "excluded_splats": 635
+    }
+  }
+}

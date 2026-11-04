@@ -1,0 +1,27 @@
+{
+  "rows_per_run": 1080,
+  "initial_rows": 360,
+  "initial_exact_equal": true,
+  "before_after_max_absolute_difference": {
+    "x": 0.070370831,
+    "y": 0.08835594,
+    "previousX": 0.07032991699999999,
+    "previousY": 0.08828289450000001,
+    "vx": 0.260565788,
+    "vy": 0.22701185499999998,
+    "ml": 0.0,
+    "temperature": 0.0
+  },
+  "same_current_source_repeat_max_absolute_difference": {
+    "x": 0.153800948,
+    "y": 0.15188563848,
+    "previousX": 0.15374464000000002,
+    "previousY": 0.151943086,
+    "vx": 0.3277066503,
+    "vy": 0.29560421270000004,
+    "ml": 0.0,
+    "temperature": 0.0
+  },
+  "long_trajectory_exact_equal": false,
+  "interpretation": "Initial sampled state matches. Later particle trajectories vary even on repeated identical current source. Exact long-run equality is not established."
+}

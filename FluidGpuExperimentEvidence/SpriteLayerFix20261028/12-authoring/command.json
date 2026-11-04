@@ -1,0 +1,17 @@
+{
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:\\UnityHub\\proj\\slainte\\Library\\FluidModelDHarness",
+    "-executeMethod",
+    "PhysicsLabValidationDispatch.Run",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\SpriteLayerFix20261028\\12-authoring\\Editor.log"
+  ],
+  "started": "2026-10-28T17:47:35.4554711+09:00",
+  "entryMethod": "CocktailSetupValidation.Begin",
+  "timeoutSeconds": 300,
+  "executable": "A:\\UnityHub\\Unity\\6000.3.5f2\\Editor\\Unity.exe",
+  "forceShaderImport": true
+}

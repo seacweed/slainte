@@ -1,0 +1,16 @@
+{
+  "started": "2026-09-30T19:37:46.1476300+09:00",
+  "executable": "C:\\Program Files\\Unity\\Hub\\Editor\\6000.3.5f2\\Editor\\Unity.exe",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "C:/unity_proj/slainte/slainte/Library/FluidSwapHarness",
+    "-executeMethod",
+    "ExperimentPouringValidation.Begin",
+    "-logFile",
+    "C:\\unity_proj\\slainte\\slainte\\FluidGpuExperimentEvidence\\48-motion-pouring-effects-regression\\Editor.log"
+  ],
+  "timeoutSeconds": 300,
+  "workingDirectory": "C:\\unity_proj\\slainte\\slainte"
+}

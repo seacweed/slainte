@@ -1,0 +1,327 @@
+{
+    "status": "PASS",
+    "error": "",
+    "unityVersion": "6000.3.5f2",
+    "gpu": "AMD Radeon(TM) Graphics",
+    "platform": "Unity Editor full authored Manual PlayerLoop, Direct3D11",
+    "protocol": "Full authored Manual scene, E mode, original particle capacity/substeps, all bodies and GUI/effects retained. Public Pick/MoveHeld/BeginRotation/RotateBy drive held motion; hardware mouse polling disabled. Normal PlayerLoop:1s warmup+3s measurement with exactly one explicit1280x720 Camera.Render per rendered frame. No synchronous readback in normal timing. Separate20-sample diagnostic explicitly simulates one .02s CPU/liquid tick, renders, and reads one RT pixel to await completion. This diagnostic is CPU+GPU completed-work wall time, not GPU timestamps or gameplay FPS. Normal statistics exclude diagnostics. GC statistics include the fixed harness overhead; no CSV/JSON allocation occurs in normal samples.",
+    "cases": [
+        {
+            "name": "idle",
+            "itemCount": 9,
+            "bottleCount": 3,
+            "boundarySegments": 727,
+            "capacity": 4096,
+            "substeps": 2,
+            "surfaceWidth": 1280,
+            "surfaceHeight": 720,
+            "normalFrames": 133,
+            "normalFixedSteps": 148,
+            "syncSamples": 20,
+            "renderedFrames": 133,
+            "automaticReadback": true,
+            "controlsEnabled": true,
+            "effectsEnabled": true,
+            "measurementSeconds": 3.001429319381714,
+            "generatedMl": 0.0,
+            "sourceDebitMl": 0.0,
+            "activeMl": 180.0,
+            "ownedMl": 60.0,
+            "retiredMl": 0.0,
+            "maximumSpeed": 1.528670310974121,
+            "frameIntervalMs": {
+                "count": 133,
+                "mean": 22.29714812030076,
+                "p50": 16.733800000000799,
+                "p95": 23.46070000000111,
+                "p99": 313.76000000000206
+            },
+            "gpuSubmissionCpuStepMs": {
+                "count": 148,
+                "mean": 3.035787162162164,
+                "p50": 2.8611,
+                "p95": 4.1147,
+                "p99": 5.2515
+            },
+            "manualCameraCpuMs": {
+                "count": 133,
+                "mean": 1.999654887218045,
+                "p50": 1.6986,
+                "p95": 3.7238,
+                "p99": 7.6856
+            },
+            "mainThreadAllocatedBytes": {
+                "count": 133,
+                "mean": 0.0,
+                "p50": 0.0,
+                "p95": 0.0,
+                "p99": 0.0
+            },
+            "completedLiquidPhysicsAndRenderMs": {
+                "count": 20,
+                "mean": 20.960565,
+                "p50": 20.9879,
+                "p95": 22.7604,
+                "p99": 23.1515
+            },
+            "functionalChecksPassed": true,
+            "inventoryPreserved": true
+        },
+        {
+            "name": "glass-drag",
+            "itemCount": 9,
+            "bottleCount": 3,
+            "boundarySegments": 727,
+            "capacity": 4096,
+            "substeps": 2,
+            "surfaceWidth": 1280,
+            "surfaceHeight": 720,
+            "normalFrames": 180,
+            "normalFixedSteps": 150,
+            "syncSamples": 20,
+            "renderedFrames": 180,
+            "automaticReadback": true,
+            "controlsEnabled": true,
+            "effectsEnabled": true,
+            "measurementSeconds": 3.0001955032348635,
+            "generatedMl": 0.0,
+            "sourceDebitMl": 0.0,
+            "activeMl": 157.5,
+            "ownedMl": 0.5,
+            "retiredMl": 22.5,
+            "maximumSpeed": 17.066566467285158,
+            "frameIntervalMs": {
+                "count": 180,
+                "mean": 16.59972111111113,
+                "p50": 16.63909999999902,
+                "p95": 19.907799999998589,
+                "p99": 21.582199999997444
+            },
+            "gpuSubmissionCpuStepMs": {
+                "count": 150,
+                "mean": 2.769438666666668,
+                "p50": 2.6136,
+                "p95": 3.5864,
+                "p99": 3.8538
+            },
+            "manualCameraCpuMs": {
+                "count": 180,
+                "mean": 1.5820816666666664,
+                "p50": 1.5112,
+                "p95": 2.0735,
+                "p99": 2.5121
+            },
+            "mainThreadAllocatedBytes": {
+                "count": 180,
+                "mean": 0.0,
+                "p50": 0.0,
+                "p95": 0.0,
+                "p99": 0.0
+            },
+            "completedLiquidPhysicsAndRenderMs": {
+                "count": 20,
+                "mean": 28.036025000000003,
+                "p50": 27.4249,
+                "p95": 31.2288,
+                "p99": 34.2621
+            },
+            "functionalChecksPassed": true,
+            "inventoryPreserved": true
+        },
+        {
+            "name": "glass-rotate",
+            "itemCount": 9,
+            "bottleCount": 3,
+            "boundarySegments": 727,
+            "capacity": 4096,
+            "substeps": 2,
+            "surfaceWidth": 1280,
+            "surfaceHeight": 720,
+            "normalFrames": 125,
+            "normalFixedSteps": 143,
+            "syncSamples": 20,
+            "renderedFrames": 125,
+            "automaticReadback": true,
+            "controlsEnabled": true,
+            "effectsEnabled": true,
+            "measurementSeconds": 3.181056022644043,
+            "generatedMl": 0.0,
+            "sourceDebitMl": 0.0,
+            "activeMl": 168.0,
+            "ownedMl": 18.0,
+            "retiredMl": 12.0,
+            "maximumSpeed": 16.834318161010743,
+            "frameIntervalMs": {
+                "count": 125,
+                "mean": 25.4118176,
+                "p50": 16.696200000001939,
+                "p95": 21.020399999997609,
+                "p99": 449.50990000000248
+            },
+            "gpuSubmissionCpuStepMs": {
+                "count": 143,
+                "mean": 2.6248895104895104,
+                "p50": 2.5439,
+                "p95": 3.3118,
+                "p99": 3.9893
+            },
+            "manualCameraCpuMs": {
+                "count": 125,
+                "mean": 1.5238752000000007,
+                "p50": 1.4492,
+                "p95": 1.9394,
+                "p99": 2.1441
+            },
+            "mainThreadAllocatedBytes": {
+                "count": 125,
+                "mean": 0.0,
+                "p50": 0.0,
+                "p95": 0.0,
+                "p99": 0.0
+            },
+            "completedLiquidPhysicsAndRenderMs": {
+                "count": 20,
+                "mean": 26.565619999999997,
+                "p50": 26.2972,
+                "p95": 28.4949,
+                "p99": 30.7159
+            },
+            "functionalChecksPassed": true,
+            "inventoryPreserved": true
+        },
+        {
+            "name": "bottle-pour",
+            "itemCount": 9,
+            "bottleCount": 3,
+            "boundarySegments": 727,
+            "capacity": 4096,
+            "substeps": 2,
+            "surfaceWidth": 1280,
+            "surfaceHeight": 720,
+            "normalFrames": 180,
+            "normalFixedSteps": 150,
+            "syncSamples": 20,
+            "renderedFrames": 180,
+            "automaticReadback": true,
+            "controlsEnabled": true,
+            "effectsEnabled": true,
+            "measurementSeconds": 3.000091552734375,
+            "generatedMl": 15.0,
+            "sourceDebitMl": 15.0,
+            "activeMl": 191.0,
+            "ownedMl": 67.0,
+            "retiredMl": 7.0,
+            "maximumSpeed": 12.917534828186036,
+            "frameIntervalMs": {
+                "count": 180,
+                "mean": 16.588697222222213,
+                "p50": 16.791900000001193,
+                "p95": 21.743399999998304,
+                "p99": 25.32109999999932
+            },
+            "gpuSubmissionCpuStepMs": {
+                "count": 150,
+                "mean": 3.169871333333332,
+                "p50": 2.9932,
+                "p95": 4.5566,
+                "p99": 5.1293
+            },
+            "manualCameraCpuMs": {
+                "count": 180,
+                "mean": 1.9156388888888883,
+                "p50": 1.8663,
+                "p95": 2.7006,
+                "p99": 3.1102
+            },
+            "mainThreadAllocatedBytes": {
+                "count": 180,
+                "mean": 0.0,
+                "p50": 0.0,
+                "p95": 0.0,
+                "p99": 0.0
+            },
+            "completedLiquidPhysicsAndRenderMs": {
+                "count": 20,
+                "mean": 21.163554999999997,
+                "p50": 20.6099,
+                "p95": 24.1792,
+                "p99": 25.0435
+            },
+            "functionalChecksPassed": true,
+            "inventoryPreserved": true
+        }
+    ],
+    "authoredInventory": [
+        {
+            "id": 1,
+            "name": "Bottle_item_1001",
+            "kind": "Bottle"
+        },
+        {
+            "id": 2,
+            "name": "Bottle_item_1003",
+            "kind": "Bottle"
+        },
+        {
+            "id": 3,
+            "name": "Jigger",
+            "kind": "Jigger"
+        },
+        {
+            "id": 4,
+            "name": "Shaker",
+            "kind": "Shaker"
+        },
+        {
+            "id": 5,
+            "name": "Glass_highball",
+            "kind": "Glass"
+        },
+        {
+            "id": 6,
+            "name": "Bottle_item_1002",
+            "kind": "Bottle"
+        },
+        {
+            "id": 7,
+            "name": "Spoon",
+            "kind": "Spoon"
+        },
+        {
+            "id": 8,
+            "name": "IceBucket",
+            "kind": "IceBucket"
+        },
+        {
+            "id": 9,
+            "name": "Glass_hurricane",
+            "kind": "Glass"
+        }
+    ],
+    "authoredKindCounts": [
+        {
+            "kind": "Bottle",
+            "count": 3
+        },
+        {
+            "kind": "Jigger",
+            "count": 1
+        },
+        {
+            "kind": "Shaker",
+            "count": 1
+        },
+        {
+            "kind": "Glass",
+            "count": 2
+        },
+        {
+            "kind": "Spoon",
+            "count": 1
+        },
+        {
+            "kind": "IceBucket",
+            "count": 1
+        }
+    ]
+}

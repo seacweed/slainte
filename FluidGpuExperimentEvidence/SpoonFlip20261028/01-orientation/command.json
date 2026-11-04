@@ -1,0 +1,17 @@
+{
+  "started": "2026-10-28T19:09:39.8835379+09:00",
+  "timeoutSeconds": 300,
+  "executable": "A:\\UnityHub\\Unity\\6000.3.5f2\\Editor\\Unity.exe",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:\\UnityHub\\proj\\slainte\\Library\\FluidModelDHarness",
+    "-executeMethod",
+    "PhysicsLabValidationDispatch.Run",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\SpoonFlip20261028\\01-orientation\\Editor.log"
+  ],
+  "forceShaderImport": true,
+  "entryMethod": "SpriteLayerFixValidation.Begin"
+}

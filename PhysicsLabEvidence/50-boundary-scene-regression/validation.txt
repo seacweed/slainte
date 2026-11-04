@@ -1,0 +1,406 @@
+PASS: Isolated world exists
+PASS: GPU compute active: NVIDIA GeForce RTX 3070 / Direct3D11
+SKIP: Legacy-system presence is not tested in the isolated scene-copy project.
+SKIP: Legacy-system presence is not tested in the isolated scene-copy project.
+PASS: All bodies share one layer
+PASS: All resting bodies are Dynamic
+PASS: Every item rests above the physical floor
+PASS: Pickup resets angle to zero without moving: Bottle_item_1003
+PASS: Pickup preserves the pointer grab offset: Bottle_item_1003
+PASS: Pickup resets angle to zero without moving: Shaker
+PASS: Pickup preserves the pointer grab offset: Shaker
+PASS: Pickup resets angle to zero without moving: IceBucket
+PASS: Pickup preserves the pointer grab offset: IceBucket
+PASS: Pickup resets angle to zero without moving: Glass_hurricane
+PASS: Pickup preserves the pointer grab offset: Glass_hurricane
+PASS: Pickup resets angle to zero without moving: Bottle_item_1001
+PASS: Pickup preserves the pointer grab offset: Bottle_item_1001
+PASS: Pickup resets angle to zero without moving: Glass_highball
+PASS: Pickup preserves the pointer grab offset: Glass_highball
+PASS: Pickup resets angle to zero without moving: Spoon
+PASS: Pickup preserves the pointer grab offset: Spoon
+PASS: Pickup resets angle to zero without moving: Jigger
+PASS: Pickup preserves the pointer grab offset: Jigger
+PASS: Pickup resets angle to zero without moving: Bottle_item_1002
+PASS: Pickup preserves the pointer grab offset: Bottle_item_1002
+PASS: Metaball surface uses the existing accumulation and composite shaders
+PASS: Surface comparison uses the same two GPU particles
+PASS: Metaballs connect the gap between separate particle discs (0 -> 178)
+PASS: Thin contour highlight contributes visible light (max red delta 65)
+PASS: Surface textures follow camera target resolution
+PASS: Rendering mode, highlight and resolution changes leave GPU physics and ml untouched
+PASS: Airborne particle stretches along velocity while narrowing across it
+PASS: Surface UV orientation keeps liquid at its world position
+PASS: Nozzle starts outside the actual bottle hull: Bottle_item_1001
+PASS: Pick area changes cannot move bottle emission: Bottle_item_1001
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1001
+PASS: Nozzle starts outside the actual bottle hull: Bottle_item_1002
+PASS: Pick area changes cannot move bottle emission: Bottle_item_1002
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1002
+PASS: Nozzle starts outside the actual bottle hull: Bottle_item_1003
+PASS: Pick area changes cannot move bottle emission: Bottle_item_1003
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1003
+PASS: Nozzle starts outside the actual bottle hull: Bottle_item_1004
+PASS: Pick area changes cannot move bottle emission: Bottle_item_1004
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1004
+PASS: Nozzle starts outside the actual bottle hull: Bottle_item_1005
+PASS: Pick area changes cannot move bottle emission: Bottle_item_1005
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1005
+PASS: Nozzle starts outside the actual bottle hull: Bottle_item_1006
+PASS: Pick area changes cannot move bottle emission: Bottle_item_1006
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1006
+PASS: Nozzle starts outside the actual bottle hull: Bottle_item_1007
+PASS: Pick area changes cannot move bottle emission: Bottle_item_1007
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1007
+PASS: Nozzle starts outside the actual bottle hull: Bottle_item_1008
+PASS: Pick area changes cannot move bottle emission: Bottle_item_1008
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1008
+PASS: Nozzle starts outside the actual bottle hull: Bottle_item_1009
+PASS: Pick area changes cannot move bottle emission: Bottle_item_1009
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1009
+PASS: Nozzle starts outside the actual bottle hull: Bottle_item_1010
+PASS: Pick area changes cannot move bottle emission: Bottle_item_1010
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1010
+PASS: Nozzle starts outside the actual bottle hull: Bottle_item_1011
+PASS: Pick area changes cannot move bottle emission: Bottle_item_1011
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1011
+PASS: Nozzle starts outside the actual bottle hull: Bottle_item_1012
+PASS: Pick area changes cannot move bottle emission: Bottle_item_1012
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1012
+PASS: Nozzle starts outside the actual bottle hull: Bottle_item_1013
+PASS: Pick area changes cannot move bottle emission: Bottle_item_1013
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1013
+PASS: Nozzle starts outside the actual bottle hull: Bottle_item_1014
+PASS: Pick area changes cannot move bottle emission: Bottle_item_1014
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1014
+PASS: Nozzle starts outside the actual bottle hull: Bottle_item_1015
+PASS: Pick area changes cannot move bottle emission: Bottle_item_1015
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1015
+PASS: All 15 bottle profiles checked without changing shared ItemDefs
+Birth offset positions: early=-2.97003, late=0.01
+PASS: Birth offsets integrate only 15 ms and 5 ms of a 20 ms tick
+PASS: Newborn velocity reconstruction uses its effective integration time
+PASS: End-of-tick birth is visible and conserved without premature motion
+PASS: Emitter birth offsets preserve the global two-substep schedule
+PASS: Consecutive same-source particles form exactly one connecting surface
+PASS: Stream pass closes a visible gap the original metaballs leave empty
+PASS: Stream display buffers leave physical particles and ml untouched
+PASS: Stream connection cannot bridge a solid between two non-contacting particles
+PASS: Solid contact permanently detaches the struck stream particle
+PASS: Different bottles and pour sessions cannot join
+PASS: Slow drips stay detached across a long emission gap
+PASS: Reset and reused particle slots cannot resurrect an old connection
+PASS: Crossing the virtual rim assigns ownership without detaching the stream
+PASS: Stream connection crosses the open rim from outside to inside
+PASS: Sparse particles falling inside a glass are not mistaken for pooled liquid
+PASS: Camera pixels show a continuous stream instead of separated balls inside the glass
+PASS: Contained stream rendering preserves positions, velocities, ownership and volume
+PASS: Contact with existing liquid absorbs a falling stream particle
+PASS: Falling stream ends on the liquid surface without drawing a ribbon through pooled particles
+PASS: Joining the liquid surface keeps all physical particle volume
+PASS: Actual inner-wall contact still breaks the stream inside a held glass
+PASS: Moving bottle distributes four births at 5 ms intervals within one fixed tick
+PASS: Multiple births preserve accepted stock and GPU volume exactly
+PASS: Unwrapped multi-turn motion samples intervening pour angles without global refinement
+PASS: Rejected emission keeps bottle stock intact under GPU backpressure
+PASS: Clearing GPU backpressure does not release an accumulated burst
+PASS: Authored sprite collision profile: Bottle_item_1001(Clone)
+PASS: Body collider uses the authoritative solid surface: Bottle_item_1001(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Bottle_item_1001(Clone)
+CONTACT: Bottle_item_1001(Clone) / angle=0 / start=(11.510170, 5.288038) / end=(11.510170, 5.251288) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Bottle_item_1001(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Bottle_item_1001(Clone)
+CONTACT: Bottle_item_1001(Clone) / angle=67 / start=(13.384480, 5.880192) / end=(13.418300, 5.865833) / CPU gap=-0.009001 / geometric gap=0.000999
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Bottle_item_1001(Clone)
+PASS: Transparent space inside the pick box does not collide: Bottle_item_1001(Clone)
+PASS: Visible handle hole is retained by compound solids: Bottle_item_1001(Clone)
+PASS: CPU collider leaves the handle hole open at 0 degrees: Bottle_item_1001(Clone)
+PASS: GPU disk fits through the transparent handle at 0 degrees: Bottle_item_1001(Clone)
+PASS: CPU collider leaves the handle hole open at 67 degrees: Bottle_item_1001(Clone)
+PASS: GPU disk fits through the transparent handle at 67 degrees: Bottle_item_1001(Clone)
+PASS: Authored sprite collision profile: Bottle_item_1002(Clone)
+PASS: Body collider uses the authoritative solid surface: Bottle_item_1002(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Bottle_item_1002(Clone)
+CONTACT: Bottle_item_1002(Clone) / angle=0 / start=(12.178990, 5.285159) / end=(12.179430, 5.248411) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Bottle_item_1002(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Bottle_item_1002(Clone)
+CONTACT: Bottle_item_1002(Clone) / angle=67 / start=(13.648460, 6.494721) / end=(13.682460, 6.480766) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Bottle_item_1002(Clone)
+PASS: Transparent space inside the pick box does not collide: Bottle_item_1002(Clone)
+PASS: Authored sprite collision profile: Bottle_item_1003(Clone)
+PASS: Body collider uses the authoritative solid surface: Bottle_item_1003(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Bottle_item_1003(Clone)
+CONTACT: Bottle_item_1003(Clone) / angle=0 / start=(11.982710, 5.276513) / end=(11.982710, 5.239763) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Bottle_item_1003(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Bottle_item_1003(Clone)
+CONTACT: Bottle_item_1003(Clone) / angle=67 / start=(13.579720, 6.310666) / end=(13.613550, 6.296307) / CPU gap=-0.008999 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Bottle_item_1003(Clone)
+PASS: Transparent space inside the pick box does not collide: Bottle_item_1003(Clone)
+PASS: Authored sprite collision profile: Bottle_item_1004(Clone)
+PASS: Body collider uses the authoritative solid surface: Bottle_item_1004(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Bottle_item_1004(Clone)
+CONTACT: Bottle_item_1004(Clone) / angle=0 / start=(11.994240, 5.299563) / end=(11.994240, 5.262814) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Bottle_item_1004(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Bottle_item_1004(Clone)
+CONTACT: Bottle_item_1004(Clone) / angle=67 / start=(13.563010, 6.330282) / end=(13.596840, 6.315923) / CPU gap=-0.008999 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Bottle_item_1004(Clone)
+PASS: Transparent space inside the pick box does not collide: Bottle_item_1004(Clone)
+PASS: Authored sprite collision profile: Bottle_item_1005(Clone)
+PASS: Body collider uses the authoritative solid surface: Bottle_item_1005(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Bottle_item_1005(Clone)
+CONTACT: Bottle_item_1005(Clone) / angle=0 / start=(11.917700, 5.294095) / end=(11.922890, 5.257714) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Bottle_item_1005(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Bottle_item_1005(Clone)
+CONTACT: Bottle_item_1005(Clone) / angle=67 / start=(13.538140, 6.257688) / end=(13.573650, 6.248257) / CPU gap=-0.009001 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Bottle_item_1005(Clone)
+PASS: Transparent space inside the pick box does not collide: Bottle_item_1005(Clone)
+PASS: Authored sprite collision profile: Bottle_item_1006(Clone)
+PASS: Body collider uses the authoritative solid surface: Bottle_item_1006(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Bottle_item_1006(Clone)
+CONTACT: Bottle_item_1006(Clone) / angle=0 / start=(11.994240, 5.293801) / end=(11.994240, 5.257051) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Bottle_item_1006(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Bottle_item_1006(Clone)
+CONTACT: Bottle_item_1006(Clone) / angle=67 / start=(13.568310, 6.328031) / end=(13.602140, 6.313671) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Bottle_item_1006(Clone)
+PASS: Transparent space inside the pick box does not collide: Bottle_item_1006(Clone)
+PASS: Authored sprite collision profile: Bottle_item_1007(Clone)
+PASS: Body collider uses the authoritative solid surface: Bottle_item_1007(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Bottle_item_1007(Clone)
+CONTACT: Bottle_item_1007(Clone) / angle=0 / start=(12.029180, 5.296685) / end=(12.029640, 5.259937) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Bottle_item_1007(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Bottle_item_1007(Clone)
+CONTACT: Bottle_item_1007(Clone) / angle=67 / start=(13.579310, 6.361321) / end=(13.613320, 6.347386) / CPU gap=-0.009001 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Bottle_item_1007(Clone)
+PASS: Transparent space inside the pick box does not collide: Bottle_item_1007(Clone)
+PASS: Authored sprite collision profile: Bottle_item_1008(Clone)
+PASS: Body collider uses the authoritative solid surface: Bottle_item_1008(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Bottle_item_1008(Clone)
+CONTACT: Bottle_item_1008(Clone) / angle=0 / start=(11.997120, 5.293801) / end=(11.997120, 5.257051) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Bottle_item_1008(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Bottle_item_1008(Clone)
+CONTACT: Bottle_item_1008(Clone) / angle=67 / start=(13.569440, 6.330683) / end=(13.603270, 6.316324) / CPU gap=-0.009000 / geometric gap=0.000999
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Bottle_item_1008(Clone)
+PASS: Transparent space inside the pick box does not collide: Bottle_item_1008(Clone)
+PASS: Authored sprite collision profile: Bottle_item_1009(Clone)
+PASS: Body collider uses the authoritative solid surface: Bottle_item_1009(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Bottle_item_1009(Clone)
+CONTACT: Bottle_item_1009(Clone) / angle=0 / start=(11.997120, 5.293801) / end=(11.997120, 5.257051) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Bottle_item_1009(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Bottle_item_1009(Clone)
+CONTACT: Bottle_item_1009(Clone) / angle=67 / start=(13.569440, 6.330683) / end=(13.603270, 6.316323) / CPU gap=-0.008999 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Bottle_item_1009(Clone)
+PASS: Transparent space inside the pick box does not collide: Bottle_item_1009(Clone)
+PASS: Authored sprite collision profile: Bottle_item_1010(Clone)
+PASS: Body collider uses the authoritative solid surface: Bottle_item_1010(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Bottle_item_1010(Clone)
+CONTACT: Bottle_item_1010(Clone) / angle=0 / start=(11.602260, 5.288170) / end=(11.605750, 5.251585) / CPU gap=-0.008999 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Bottle_item_1010(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Bottle_item_1010(Clone)
+CONTACT: Bottle_item_1010(Clone) / angle=67 / start=(13.420340, 5.965017) / end=(13.455380, 5.953930) / CPU gap=-0.009001 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Bottle_item_1010(Clone)
+PASS: Transparent space inside the pick box does not collide: Bottle_item_1010(Clone)
+PASS: Authored sprite collision profile: Bottle_item_1011(Clone)
+PASS: Body collider uses the authoritative solid surface: Bottle_item_1011(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Bottle_item_1011(Clone)
+CONTACT: Bottle_item_1011(Clone) / angle=0 / start=(12.000000, 5.288038) / end=(12.000000, 5.251288) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Bottle_item_1011(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Bottle_item_1011(Clone)
+CONTACT: Bottle_item_1011(Clone) / angle=67 / start=(13.575870, 6.331083) / end=(13.609700, 6.316724) / CPU gap=-0.009000 / geometric gap=0.000999
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Bottle_item_1011(Clone)
+PASS: Transparent space inside the pick box does not collide: Bottle_item_1011(Clone)
+PASS: Authored sprite collision profile: Bottle_item_1012(Clone)
+PASS: Body collider uses the authoritative solid surface: Bottle_item_1012(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Bottle_item_1012(Clone)
+CONTACT: Bottle_item_1012(Clone) / angle=0 / start=(12.002880, 5.288038) / end=(12.002880, 5.251288) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Bottle_item_1012(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Bottle_item_1012(Clone)
+CONTACT: Bottle_item_1012(Clone) / angle=67 / start=(13.576990, 6.333735) / end=(13.610820, 6.319376) / CPU gap=-0.009000 / geometric gap=0.000999
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Bottle_item_1012(Clone)
+PASS: Transparent space inside the pick box does not collide: Bottle_item_1012(Clone)
+PASS: Authored sprite collision profile: Bottle_item_1013(Clone)
+PASS: Body collider uses the authoritative solid surface: Bottle_item_1013(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Bottle_item_1013(Clone)
+CONTACT: Bottle_item_1013(Clone) / angle=0 / start=(12.000000, 5.299563) / end=(12.000000, 5.262814) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Bottle_item_1013(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Bottle_item_1013(Clone)
+CONTACT: Bottle_item_1013(Clone) / angle=67 / start=(13.565260, 6.335587) / end=(13.599090, 6.321228) / CPU gap=-0.009000 / geometric gap=0.000999
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Bottle_item_1013(Clone)
+PASS: Transparent space inside the pick box does not collide: Bottle_item_1013(Clone)
+PASS: Authored sprite collision profile: Bottle_item_1014(Clone)
+PASS: Body collider uses the authoritative solid surface: Bottle_item_1014(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Bottle_item_1014(Clone)
+CONTACT: Bottle_item_1014(Clone) / angle=0 / start=(11.933730, 5.276513) / end=(11.933730, 5.239763) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Bottle_item_1014(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Bottle_item_1014(Clone)
+CONTACT: Bottle_item_1014(Clone) / angle=67 / start=(13.560580, 6.265577) / end=(13.594410, 6.251218) / CPU gap=-0.009000 / geometric gap=0.000999
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Bottle_item_1014(Clone)
+PASS: Transparent space inside the pick box does not collide: Bottle_item_1014(Clone)
+PASS: Visible handle hole is retained by compound solids: Bottle_item_1014(Clone)
+PASS: CPU collider leaves the handle hole open at 0 degrees: Bottle_item_1014(Clone)
+PASS: CPU collider leaves the handle hole open at 67 degrees: Bottle_item_1014(Clone)
+PASS: Authored sprite collision profile: Bottle_item_1015(Clone)
+PASS: Body collider uses the authoritative solid surface: Bottle_item_1015(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Bottle_item_1015(Clone)
+CONTACT: Bottle_item_1015(Clone) / angle=0 / start=(11.997120, 5.282275) / end=(11.997120, 5.245525) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Bottle_item_1015(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Bottle_item_1015(Clone)
+CONTACT: Bottle_item_1015(Clone) / angle=67 / start=(13.580050, 6.326180) / end=(13.613880, 6.311820) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Bottle_item_1015(Clone)
+PASS: Authored sprite collision profile: Glass_highball(Clone)
+PASS: Body collider uses the authoritative solid surface: Glass_highball(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Glass_highball(Clone)
+CONTACT: Glass_highball(Clone) / angle=0 / start=(11.393800, 6.629642) / end=(11.357060, 6.629192) / CPU gap=-0.009000 / geometric gap=0.000999
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Glass_highball(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Glass_highball(Clone)
+CONTACT: Glass_highball(Clone) / angle=67 / start=(12.104060, 6.297282) / end=(12.090110, 6.263281) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Glass_highball(Clone)
+PASS: Open vessel rim leaves room for a liquid disk at 0 degrees: Glass_highball(Clone)
+PASS: Ownership rim has no GPU collision at 0 degrees: Glass_highball(Clone)
+PASS: Open vessel rim leaves room for a liquid disk at 67 degrees: Glass_highball(Clone)
+PASS: Ownership rim has no GPU collision at 67 degrees: Glass_highball(Clone)
+PASS: Authored sprite collision profile: Glass_hurricane(Clone)
+PASS: Body collider uses the authoritative solid surface: Glass_hurricane(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Glass_hurricane(Clone)
+CONTACT: Glass_hurricane(Clone) / angle=0 / start=(11.292130, 7.773787) / end=(11.257650, 7.761082) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Glass_hurricane(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Glass_hurricane(Clone)
+CONTACT: Glass_hurricane(Clone) / angle=67 / start=(11.011140, 6.650744) / end=(11.009360, 6.614038) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Glass_hurricane(Clone)
+PASS: Open vessel rim leaves room for a liquid disk at 0 degrees: Glass_hurricane(Clone)
+PASS: Ownership rim has no GPU collision at 0 degrees: Glass_hurricane(Clone)
+PASS: Open vessel rim leaves room for a liquid disk at 67 degrees: Glass_hurricane(Clone)
+PASS: Ownership rim has no GPU collision at 67 degrees: Glass_hurricane(Clone)
+PASS: Authored sprite collision profile: Glass_martini(Clone)
+PASS: Body collider uses the authoritative solid surface: Glass_martini(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Glass_martini(Clone)
+CONTACT: Glass_martini(Clone) / angle=0 / start=(11.441070, 6.799740) / end=(11.412500, 6.776628) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Glass_martini(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Glass_martini(Clone)
+CONTACT: Glass_martini(Clone) / angle=67 / start=(11.965950, 6.407257) / end=(11.976060, 6.371925) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Glass_martini(Clone)
+PASS: Open vessel rim leaves room for a liquid disk at 0 degrees: Glass_martini(Clone)
+PASS: Ownership rim has no GPU collision at 0 degrees: Glass_martini(Clone)
+PASS: Open vessel rim leaves room for a liquid disk at 67 degrees: Glass_martini(Clone)
+PASS: Ownership rim has no GPU collision at 67 degrees: Glass_martini(Clone)
+PASS: Authored sprite collision profile: Glass_rock(Clone)
+PASS: Body collider uses the authoritative solid surface: Glass_rock(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Glass_rock(Clone)
+CONTACT: Glass_rock(Clone) / angle=0 / start=(11.202930, 6.851165) / end=(11.166680, 6.857207) / CPU gap=-0.009000 / geometric gap=0.000999
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Glass_rock(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Glass_rock(Clone)
+CONTACT: Glass_rock(Clone) / angle=67 / start=(11.825560, 6.208136) / end=(11.805840, 6.177129) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Glass_rock(Clone)
+PASS: Open vessel rim leaves room for a liquid disk at 0 degrees: Glass_rock(Clone)
+PASS: Ownership rim has no GPU collision at 0 degrees: Glass_rock(Clone)
+PASS: Open vessel rim leaves room for a liquid disk at 67 degrees: Glass_rock(Clone)
+PASS: Ownership rim has no GPU collision at 67 degrees: Glass_rock(Clone)
+PASS: Authored sprite collision profile: Ice(Clone)
+PASS: Body collider uses the authoritative solid surface: Ice(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Ice(Clone)
+CONTACT: Ice(Clone) / angle=0 / start=(11.922860, 6.787893) / end=(11.922860, 6.751143) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Ice(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Ice(Clone)
+CONTACT: Ice(Clone) / angle=67 / start=(12.165100, 6.846113) / end=(12.198930, 6.831754) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Ice(Clone)
+PASS: Authored sprite collision profile: IceBucket(Clone)
+PASS: Body collider uses the authoritative solid surface: IceBucket(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: IceBucket(Clone)
+CONTACT: IceBucket(Clone) / angle=0 / start=(11.116510, 8.044067) / end=(11.079760, 8.044067) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: IceBucket(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: IceBucket(Clone)
+CONTACT: IceBucket(Clone) / angle=67 / start=(10.693720, 6.594696) / end=(10.679370, 6.560867) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: IceBucket(Clone)
+PASS: Open vessel rim leaves room for a liquid disk at 0 degrees: IceBucket(Clone)
+PASS: Ownership rim has no GPU collision at 0 degrees: IceBucket(Clone)
+PASS: Open vessel rim leaves room for a liquid disk at 67 degrees: IceBucket(Clone)
+PASS: Ownership rim has no GPU collision at 67 degrees: IceBucket(Clone)
+PASS: Authored sprite collision profile: Jigger(Clone)
+PASS: Body collider uses the authoritative solid surface: Jigger(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Jigger(Clone)
+CONTACT: Jigger(Clone) / angle=0 / start=(11.593720, 6.300080) / end=(11.567740, 6.274094) / CPU gap=-0.009001 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Jigger(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Jigger(Clone)
+CONTACT: Jigger(Clone) / angle=67 / start=(12.485540, 6.352540) / end=(12.499300, 6.318467) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Jigger(Clone)
+PASS: Open vessel rim leaves room for a liquid disk at 0 degrees: Jigger(Clone)
+PASS: Ownership rim has no GPU collision at 0 degrees: Jigger(Clone)
+PASS: Open vessel rim leaves room for a liquid disk at 67 degrees: Jigger(Clone)
+PASS: Ownership rim has no GPU collision at 67 degrees: Jigger(Clone)
+PASS: Authored sprite collision profile: Shaker(Clone)
+PASS: Body collider uses the authoritative solid surface: Shaker(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Shaker(Clone)
+CONTACT: Shaker(Clone) / angle=0 / start=(11.347540, 7.115598) / end=(11.321550, 7.141585) / CPU gap=-0.009001 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Shaker(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Shaker(Clone)
+CONTACT: Shaker(Clone) / angle=67 / start=(11.638650, 6.444573) / end=(11.604580, 6.430806) / CPU gap=-0.008999 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Shaker(Clone)
+PASS: Open vessel rim leaves room for a liquid disk at 0 degrees: Shaker(Clone)
+PASS: Ownership rim has no GPU collision at 0 degrees: Shaker(Clone)
+PASS: Sealed vessel recovery uses the actual inner contour at 0 degrees: Shaker(Clone)
+PASS: Open vessel rim leaves room for a liquid disk at 67 degrees: Shaker(Clone)
+PASS: Ownership rim has no GPU collision at 67 degrees: Shaker(Clone)
+PASS: Sealed vessel recovery uses the actual inner contour at 67 degrees: Shaker(Clone)
+PASS: Authored sprite collision profile: Spoon(Clone)
+PASS: Body collider uses the authoritative solid surface: Spoon(Clone)
+PASS: CPU disk touches sprite boundary at 0 degrees: Spoon(Clone)
+CONTACT: Spoon(Clone) / angle=0 / start=(11.997030, 5.309733) / end=(11.997030, 5.272983) / CPU gap=-0.009000 / geometric gap=0.001000
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 0 degrees: Spoon(Clone)
+PASS: CPU disk touches sprite boundary at 67 degrees: Spoon(Clone)
+CONTACT: Spoon(Clone) / angle=67 / start=(13.554740, 6.336830) / end=(13.588570, 6.322471) / CPU gap=-0.009000 / geometric gap=0.000999
+PASS: GPU disk meets authored vertices and CPU contact within the engine contact offset at 67 degrees: Spoon(Clone)
+PASS: Transparent space inside the pick box does not collide: Spoon(Clone)
+PASS: All 24 profiles fit the GPU edge budget and exercise former invisible collisions (edges=1705)
+PASS: Bottle pickup
+PASS: Held body collision suppressed
+PASS: Tilted bottle pickup is upright immediately
+PASS: Unlimited 855 degree accumulated rotation
+PASS: Fast rotation leaves the fluid integration schedule fixed
+PASS: Upright return interpolates quickly without translating the body
+PASS: Return cursor target follows the rotating grab point
+PASS: Automatic upright return does not generate throw velocity or spin
+PASS: Automatic return does not unwind completed turns in GPU motion history
+PASS: RMB release resets to zero at the current position without a pointer jump
+PASS: Repeated negative rotation also returns upright at the current position
+PASS: New RMB rotation interrupts upright return from its current angle
+PASS: 720 degrees does not pour when upright
+PASS: Unheld physically tilted bottle pours
+PASS: Dropped body collision restored
+PASS: Throw transfers linear and angular velocity
+PASS: Pickup/rotation/throw contacts stay within the local sweep budget
+PASS: Filled sealed shaker on GPU
+PASS: GPU volume and ownership after fill
+PASS: Sealed vessel retains liquid through two full rotations
+PASS: Sealed vessel keeps GPU contents through upright return in place
+PASS: Picking up a tilted sealed vessel restores upright and keeps its GPU contents
+PASS: GPU positions remain finite
+PASS: Drop during rotation preserves the release angle
+PASS: Slot-free swap succeeds with different body sizes
+PASS: Swap preserves both angles
+PASS: Swap preserves GPU content amount and owner
+Collision setup: bottle=Bottle_item_1002, bounds=Center: (-7.00, -1.78, 0.00), Extents: (0.64, 1.46, 0.00); hitter=Center: (-9.00, -0.75, 0.00), Extents: (0.41, 0.54, 0.00)
+PASS: Tool collision tips a bottle (102.9 degrees)
+PASS: Filled vessel rotation, swap and impact contacts stay within the local sweep budget
+PASS: Open inverted vessel spills and releases ownership
+PASS: GPU stress uses at least 1000 real particles
+PASS: Stress state remains finite
+Batch Play Mode frame ms: p50=0.34, p95=2.45, p99=7.03; samples=1769
+Frame intervals are batch scheduling diagnostics, not GPU timings or gameplay FPS.
+PASS: Bottle nozzle liquid is captured by a separate glass (14.0 ml)
+PASS: Nozzle transfer conserves emitted ml
+PASS: Negative multi-turn rotation is also unrestricted
+PASS: Tilted ice bucket emits physical colliding ice
+PASS: Reset removes spawned ice and restores all nine dynamic items
+PASS: Reset recreates seeded GPU liquid
+PASS: Settled open vessel retains ownership: Glass_hurricane / 59.5 ml
+PASS: Settled open vessel retains ownership: Glass_highball / 60.0 ml
+PASS: Slow carried glass preserves settled liquid ownership
+PASS: GPU capacity rejects overflow and retains pending reservations across readback
+PASS: World re-enable rebuilds GPU resources and item registration
+PASS: World re-enable recreates surface textures and renderer
+PASS: Controlled bottle stream conserves stock and emitted ml above prefilled liquid
+PASS: Controlled pour has a continuous GPU stream
+PASS: Real highball keeps the falling stream connected below its rim
+PASS: Real pour joins the prefilled liquid surface
+GPU surface marker timing unavailable in this batch editor; no GPU performance claim.
+PASS: Upright bottle stops spawning while detached liquid continues falling
+All runtime checks passed.

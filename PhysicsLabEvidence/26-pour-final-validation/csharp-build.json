@@ -1,0 +1,14 @@
+{
+  "command": "dotnet",
+  "arguments": [
+    "build",
+    "Assembly-CSharp-Editor.csproj",
+    "--no-restore",
+    "-v:minimal",
+    "-p:CustomAfterMicrosoftCommonTargets=A:\\UnityHub\\proj\\slainte\\PhysicsLabEvidence\\26-pour-final-validation\\IncludePhysicsLab.targets"
+  ],
+  "started": "2026-09-21T19:30:13.1290610+09:00",
+  "finished": "2026-09-21T19:30:21.0154813+09:00",
+  "exitCode": 0,
+  "generatedProjectFilesChanged": false
+}

@@ -1,0 +1,229 @@
+PASS Authored comparison controller exists
+Protocol: E Highball/Hurricane direct authored-capacity fill and 200ml settled-content topping with separate final .25ml; exact admission/conservation and finite state, plus at least97%owned retention after2s settling. No calibration or UI cases in this entrypoint.
+PASS highball: authored full capacity is finite and positive
+PASS E-capacity-highball-direct: exact initial 400ml queued against authored 400ml capacity
+PASS E-capacity-highball-direct/initial-queued: all 0 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-direct/initial-queued: exact queued, generated and pending ml
+PASS E-capacity-highball-direct/initial-queued: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-direct/initial-queued: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-direct: additional fill is rejected while authored capacity is fully reserved before physics
+PASS E-capacity-highball-direct/initial: all 800 actual queued spawn commands start owned by the intended vessel with finite ml and disk-safe interior positions (400ml)
+PASS E-capacity-highball-direct/initial-born: all 800 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-direct/initial-born: exact queued, generated and pending ml
+PASS E-capacity-highball-direct/initial-born: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-direct/initial-born: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-direct/full-settle-0.39999999105930328: all 800 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-direct/full-settle-0.39999999105930328: exact queued, generated and pending ml
+PASS E-capacity-highball-direct/full-settle-0.39999999105930328: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-direct/full-settle-0.39999999105930328: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-direct/full-settle-0.79999998211860657: all 800 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-direct/full-settle-0.79999998211860657: exact queued, generated and pending ml
+PASS E-capacity-highball-direct/full-settle-0.79999998211860657: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-direct/full-settle-0.79999998211860657: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-direct/full-settle-1.1999999731779099: all 800 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-direct/full-settle-1.1999999731779099: exact queued, generated and pending ml
+PASS E-capacity-highball-direct/full-settle-1.1999999731779099: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-direct/full-settle-1.1999999731779099: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-direct/full-settle-1.5999999642372131: all 800 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-direct/full-settle-1.5999999642372131: exact queued, generated and pending ml
+PASS E-capacity-highball-direct/full-settle-1.5999999642372131: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-direct/full-settle-1.5999999642372131: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-direct/full-settle-1.9999999552965164: all 800 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-direct/full-settle-1.9999999552965164: exact queued, generated and pending ml
+PASS E-capacity-highball-direct/full-settle-1.9999999552965164: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-direct/full-settle-1.9999999552965164: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-direct: actual liquid-only surface target is available
+PASS E-capacity-highball-direct: GPU ingredient opacity is measurable
+PASS E-capacity-highball-direct: area measurement uses a valid rendered image
+PASS E-capacity-highball-direct: capturing scene and surface leaves physical state unchanged
+CAPACITY OBSERVATION E-capacity-highball-direct: generated 400ml, owned 399.5ml, active 400ml, retired 0ml. Open-rim spill remains physical and separately accounted.
+PASS E-capacity-highball-direct: full-capacity initialization retains at least97%of authored capacity after2s settling (owned 399.5/400ml)
+PASS highball: authored full capacity is finite and positive
+PASS E-capacity-highball-topping: exact initial 200ml queued against authored 400ml capacity
+PASS E-capacity-highball-topping/initial-queued: all 0 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-topping/initial-queued: exact queued, generated and pending ml
+PASS E-capacity-highball-topping/initial-queued: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-topping/initial-queued: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-topping/initial: all 400 actual queued spawn commands start owned by the intended vessel with finite ml and disk-safe interior positions (200ml)
+PASS E-capacity-highball-topping/initial-born: all 400 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-topping/initial-born: exact queued, generated and pending ml
+PASS E-capacity-highball-topping/initial-born: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-topping/initial-born: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-topping/half-settle-0.39999999105930328: all 400 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-topping/half-settle-0.39999999105930328: exact queued, generated and pending ml
+PASS E-capacity-highball-topping/half-settle-0.39999999105930328: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-topping/half-settle-0.39999999105930328: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-topping/half-settle-0.79999998211860657: all 400 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-topping/half-settle-0.79999998211860657: exact queued, generated and pending ml
+PASS E-capacity-highball-topping/half-settle-0.79999998211860657: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-topping/half-settle-0.79999998211860657: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-topping/half-settle-1.1999999731779099: all 400 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-topping/half-settle-1.1999999731779099: exact queued, generated and pending ml
+PASS E-capacity-highball-topping/half-settle-1.1999999731779099: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-topping/half-settle-1.1999999731779099: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-topping/half-settle-1.5999999642372131: all 400 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-topping/half-settle-1.5999999642372131: exact queued, generated and pending ml
+PASS E-capacity-highball-topping/half-settle-1.5999999642372131: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-topping/half-settle-1.5999999642372131: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-topping/half-settle-1.9999999552965164: all 400 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-topping/half-settle-1.9999999552965164: exact queued, generated and pending ml
+PASS E-capacity-highball-topping/half-settle-1.9999999552965164: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-topping/half-settle-1.9999999552965164: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-topping: initial contents remain available when finding new fill sites
+PASS E-capacity-highball-topping: occupied settled particles permit exact 199.75ml topping request
+PASS E-capacity-highball-topping/top-queued: all 400 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-topping/top-queued: exact queued, generated and pending ml
+PASS E-capacity-highball-topping/top-queued: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-topping/top-queued: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-topping: separate final .25ml request accounts for already queued topping particles
+PASS E-capacity-highball-topping/quarter-queued: all 400 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-topping/quarter-queued: exact queued, generated and pending ml
+PASS E-capacity-highball-topping/quarter-queued: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-topping/quarter-queued: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-topping: additional fill is rejected while the vessel capacity is fully reserved
+PASS E-capacity-highball-topping/topping: all 401 actual queued spawn commands start owned by the intended vessel with finite ml and disk-safe interior positions (200ml)
+PASS E-capacity-highball-topping/top-born: all 801 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-topping/top-born: exact queued, generated and pending ml
+PASS E-capacity-highball-topping/top-born: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-topping/top-born: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-topping: both fractional final particles retain .25ml without rounding or duplication
+PASS E-capacity-highball-topping/full-settle-0.39999999105930328: all 801 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-topping/full-settle-0.39999999105930328: exact queued, generated and pending ml
+PASS E-capacity-highball-topping/full-settle-0.39999999105930328: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-topping/full-settle-0.39999999105930328: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-topping/full-settle-0.79999998211860657: all 801 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-topping/full-settle-0.79999998211860657: exact queued, generated and pending ml
+PASS E-capacity-highball-topping/full-settle-0.79999998211860657: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-topping/full-settle-0.79999998211860657: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-topping/full-settle-1.1999999731779099: all 801 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-topping/full-settle-1.1999999731779099: exact queued, generated and pending ml
+PASS E-capacity-highball-topping/full-settle-1.1999999731779099: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-topping/full-settle-1.1999999731779099: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-topping/full-settle-1.5999999642372131: all 801 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-topping/full-settle-1.5999999642372131: exact queued, generated and pending ml
+PASS E-capacity-highball-topping/full-settle-1.5999999642372131: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-topping/full-settle-1.5999999642372131: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-topping/full-settle-1.9999999552965164: all 801 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-topping/full-settle-1.9999999552965164: exact queued, generated and pending ml
+PASS E-capacity-highball-topping/full-settle-1.9999999552965164: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-topping/full-settle-1.9999999552965164: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-topping: actual liquid-only surface target is available
+PASS E-capacity-highball-topping: GPU ingredient opacity is measurable
+PASS E-capacity-highball-topping: area measurement uses a valid rendered image
+PASS E-capacity-highball-topping: capturing scene and surface leaves physical state unchanged
+CAPACITY OBSERVATION E-capacity-highball-topping: generated 400ml, owned 400ml, active 400ml, retired 0ml. Open-rim spill remains physical and separately accounted.
+PASS E-capacity-highball-topping: full-capacity initialization retains at least97%of authored capacity after2s settling (owned 400/400ml)
+PASS hurricane: authored full capacity is finite and positive
+PASS E-capacity-hurricane-direct: exact initial 400ml queued against authored 400ml capacity
+PASS E-capacity-hurricane-direct/initial-queued: all 0 active particles have finite positions, velocities and positive ml
+PASS E-capacity-hurricane-direct/initial-queued: exact queued, generated and pending ml
+PASS E-capacity-hurricane-direct/initial-queued: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-hurricane-direct/initial-queued: total and ingredient conservation hold through capacity filling
+PASS E-capacity-hurricane-direct: additional fill is rejected while authored capacity is fully reserved before physics
+PASS E-capacity-hurricane-direct/initial: all 800 actual queued spawn commands start owned by the intended vessel with finite ml and disk-safe interior positions (400ml)
+PASS E-capacity-hurricane-direct/initial-born: all 800 active particles have finite positions, velocities and positive ml
+PASS E-capacity-hurricane-direct/initial-born: exact queued, generated and pending ml
+PASS E-capacity-hurricane-direct/initial-born: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-hurricane-direct/initial-born: total and ingredient conservation hold through capacity filling
+PASS E-capacity-hurricane-direct/full-settle-0.39999999105930328: all 800 active particles have finite positions, velocities and positive ml
+PASS E-capacity-hurricane-direct/full-settle-0.39999999105930328: exact queued, generated and pending ml
+PASS E-capacity-hurricane-direct/full-settle-0.39999999105930328: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-hurricane-direct/full-settle-0.39999999105930328: total and ingredient conservation hold through capacity filling
+PASS E-capacity-hurricane-direct/full-settle-0.79999998211860657: all 800 active particles have finite positions, velocities and positive ml
+PASS E-capacity-hurricane-direct/full-settle-0.79999998211860657: exact queued, generated and pending ml
+PASS E-capacity-hurricane-direct/full-settle-0.79999998211860657: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-hurricane-direct/full-settle-0.79999998211860657: total and ingredient conservation hold through capacity filling
+PASS E-capacity-hurricane-direct/full-settle-1.1999999731779099: all 800 active particles have finite positions, velocities and positive ml
+PASS E-capacity-hurricane-direct/full-settle-1.1999999731779099: exact queued, generated and pending ml
+PASS E-capacity-hurricane-direct/full-settle-1.1999999731779099: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-hurricane-direct/full-settle-1.1999999731779099: total and ingredient conservation hold through capacity filling
+PASS E-capacity-hurricane-direct/full-settle-1.5999999642372131: all 800 active particles have finite positions, velocities and positive ml
+PASS E-capacity-hurricane-direct/full-settle-1.5999999642372131: exact queued, generated and pending ml
+PASS E-capacity-hurricane-direct/full-settle-1.5999999642372131: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-hurricane-direct/full-settle-1.5999999642372131: total and ingredient conservation hold through capacity filling
+PASS E-capacity-hurricane-direct/full-settle-1.9999999552965164: all 798 active particles have finite positions, velocities and positive ml
+PASS E-capacity-hurricane-direct/full-settle-1.9999999552965164: exact queued, generated and pending ml
+PASS E-capacity-hurricane-direct/full-settle-1.9999999552965164: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-hurricane-direct/full-settle-1.9999999552965164: total and ingredient conservation hold through capacity filling
+PASS E-capacity-hurricane-direct: actual liquid-only surface target is available
+PASS E-capacity-hurricane-direct: GPU ingredient opacity is measurable
+PASS E-capacity-hurricane-direct: area measurement uses a valid rendered image
+PASS E-capacity-hurricane-direct: capturing scene and surface leaves physical state unchanged
+CAPACITY OBSERVATION E-capacity-hurricane-direct: generated 400ml, owned 399ml, active 399ml, retired 1ml. Open-rim spill remains physical and separately accounted.
+PASS E-capacity-hurricane-direct: full-capacity initialization retains at least97%of authored capacity after2s settling (owned 399/400ml)
+PASS hurricane: authored full capacity is finite and positive
+PASS E-capacity-hurricane-topping: exact initial 200ml queued against authored 400ml capacity
+PASS E-capacity-hurricane-topping/initial-queued: all 0 active particles have finite positions, velocities and positive ml
+PASS E-capacity-hurricane-topping/initial-queued: exact queued, generated and pending ml
+PASS E-capacity-hurricane-topping/initial-queued: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-hurricane-topping/initial-queued: total and ingredient conservation hold through capacity filling
+PASS E-capacity-hurricane-topping/initial: all 400 actual queued spawn commands start owned by the intended vessel with finite ml and disk-safe interior positions (200ml)
+PASS E-capacity-hurricane-topping/initial-born: all 400 active particles have finite positions, velocities and positive ml
+PASS E-capacity-hurricane-topping/initial-born: exact queued, generated and pending ml
+PASS E-capacity-hurricane-topping/initial-born: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-hurricane-topping/initial-born: total and ingredient conservation hold through capacity filling
+PASS E-capacity-hurricane-topping/half-settle-0.39999999105930328: all 400 active particles have finite positions, velocities and positive ml
+PASS E-capacity-hurricane-topping/half-settle-0.39999999105930328: exact queued, generated and pending ml
+PASS E-capacity-hurricane-topping/half-settle-0.39999999105930328: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-hurricane-topping/half-settle-0.39999999105930328: total and ingredient conservation hold through capacity filling
+PASS E-capacity-hurricane-topping/half-settle-0.79999998211860657: all 400 active particles have finite positions, velocities and positive ml
+PASS E-capacity-hurricane-topping/half-settle-0.79999998211860657: exact queued, generated and pending ml
+PASS E-capacity-hurricane-topping/half-settle-0.79999998211860657: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-hurricane-topping/half-settle-0.79999998211860657: total and ingredient conservation hold through capacity filling
+PASS E-capacity-hurricane-topping/half-settle-1.1999999731779099: all 400 active particles have finite positions, velocities and positive ml
+PASS E-capacity-hurricane-topping/half-settle-1.1999999731779099: exact queued, generated and pending ml
+PASS E-capacity-hurricane-topping/half-settle-1.1999999731779099: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-hurricane-topping/half-settle-1.1999999731779099: total and ingredient conservation hold through capacity filling
+PASS E-capacity-hurricane-topping/half-settle-1.5999999642372131: all 400 active particles have finite positions, velocities and positive ml
+PASS E-capacity-hurricane-topping/half-settle-1.5999999642372131: exact queued, generated and pending ml
+PASS E-capacity-hurricane-topping/half-settle-1.5999999642372131: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-hurricane-topping/half-settle-1.5999999642372131: total and ingredient conservation hold through capacity filling
+PASS E-capacity-hurricane-topping/half-settle-1.9999999552965164: all 400 active particles have finite positions, velocities and positive ml
+PASS E-capacity-hurricane-topping/half-settle-1.9999999552965164: exact queued, generated and pending ml
+PASS E-capacity-hurricane-topping/half-settle-1.9999999552965164: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-hurricane-topping/half-settle-1.9999999552965164: total and ingredient conservation hold through capacity filling
+PASS E-capacity-hurricane-topping: initial contents remain available when finding new fill sites
+PASS E-capacity-hurricane-topping: occupied settled particles permit exact 199.75ml topping request
+PASS E-capacity-hurricane-topping/top-queued: all 400 active particles have finite positions, velocities and positive ml
+PASS E-capacity-hurricane-topping/top-queued: exact queued, generated and pending ml
+PASS E-capacity-hurricane-topping/top-queued: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-hurricane-topping/top-queued: total and ingredient conservation hold through capacity filling
+PASS E-capacity-hurricane-topping: separate final .25ml request accounts for already queued topping particles
+PASS E-capacity-hurricane-topping/quarter-queued: all 400 active particles have finite positions, velocities and positive ml
+PASS E-capacity-hurricane-topping/quarter-queued: exact queued, generated and pending ml
+PASS E-capacity-hurricane-topping/quarter-queued: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-hurricane-topping/quarter-queued: total and ingredient conservation hold through capacity filling
+PASS E-capacity-hurricane-topping: additional fill is rejected while the vessel capacity is fully reserved
+PASS E-capacity-hurricane-topping/topping: all 401 actual queued spawn commands start owned by the intended vessel with finite ml and disk-safe interior positions (200ml)
+PASS E-capacity-hurricane-topping/top-born: all 801 active particles have finite positions, velocities and positive ml
+PASS E-capacity-hurricane-topping/top-born: exact queued, generated and pending ml
+PASS E-capacity-hurricane-topping/top-born: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-hurricane-topping/top-born: total and ingredient conservation hold through capacity filling
+PASS E-capacity-hurricane-topping: both fractional final particles retain .25ml without rounding or duplication
+PASS E-capacity-hurricane-topping/full-settle-0.39999999105930328: all 801 active particles have finite positions, velocities and positive ml
+PASS E-capacity-hurricane-topping/full-settle-0.39999999105930328: exact queued, generated and pending ml
+PASS E-capacity-hurricane-topping/full-settle-0.39999999105930328: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-hurricane-topping/full-settle-0.39999999105930328: total and ingredient conservation hold through capacity filling
+PASS E-capacity-hurricane-topping/full-settle-0.79999998211860657: all 801 active particles have finite positions, velocities and positive ml
+PASS E-capacity-hurricane-topping/full-settle-0.79999998211860657: exact queued, generated and pending ml
+PASS E-capacity-hurricane-topping/full-settle-0.79999998211860657: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-hurricane-topping/full-settle-0.79999998211860657: total and ingredient conservation hold through capacity filling
+PASS E-capacity-hurricane-topping/full-settle-1.1999999731779099: all 801 active particles have finite positions, velocities and positive ml
+PASS E-capacity-hurricane-topping/full-settle-1.1999999731779099: exact queued, generated and pending ml
+PASS E-capacity-hurricane-topping/full-settle-1.1999999731779099: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-hurricane-topping/full-settle-1.1999999731779099: total and ingredient conservation hold through capacity filling
+PASS E-capacity-hurricane-topping/full-settle-1.5999999642372131: all 801 active particles have finite positions, velocities and positive ml
+PASS E-capacity-hurricane-topping/full-settle-1.5999999642372131: exact queued, generated and pending ml
+PASS E-capacity-hurricane-topping/full-settle-1.5999999642372131: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-hurricane-topping/full-settle-1.5999999642372131: total and ingredient conservation hold through capacity filling
+PASS E-capacity-hurricane-topping/full-settle-1.9999999552965164: all 795 active particles have finite positions, velocities and positive ml
+PASS E-capacity-hurricane-topping/full-settle-1.9999999552965164: exact queued, generated and pending ml
+PASS E-capacity-hurricane-topping/full-settle-1.9999999552965164: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-hurricane-topping/full-settle-1.9999999552965164: total and ingredient conservation hold through capacity filling
+PASS E-capacity-hurricane-topping: actual liquid-only surface target is available
+PASS E-capacity-hurricane-topping: GPU ingredient opacity is measurable
+PASS E-capacity-hurricane-topping: area measurement uses a valid rendered image
+PASS E-capacity-hurricane-topping: capturing scene and surface leaves physical state unchanged
+CAPACITY OBSERVATION E-capacity-hurricane-topping: generated 400ml, owned 393.75ml, active 397.25ml, retired 2.75ml. Open-rim spill remains physical and separately accounted.
+PASS E-capacity-hurricane-topping: full-capacity initialization retains at least97%of authored capacity after2s settling (owned 393.75/400ml)
+Measurement/accounting validation completed. Height, area, settling and rejected fill quantities are baseline observations, not calibration guarantees.

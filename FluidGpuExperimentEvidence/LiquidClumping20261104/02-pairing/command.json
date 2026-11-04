@@ -1,0 +1,17 @@
+{
+  "forceShaderImport": true,
+  "entryMethod": "LiquidClumpingValidation.BeginPairing",
+  "started": "2026-11-04T10:12:47.8330460+09:00",
+  "timeoutSeconds": 240,
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:\\UnityHub\\proj\\slainte\\Library\\FluidModelDHarness",
+    "-executeMethod",
+    "PhysicsLabValidationDispatch.Run",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\LiquidClumping20261104\\02-pairing\\Editor.log"
+  ],
+  "executable": "A:\\UnityHub\\Unity\\6000.3.5f2\\Editor\\Unity.exe"
+}

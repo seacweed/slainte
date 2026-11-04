@@ -1,0 +1,212 @@
+PASS Hidden batch uses actual F GPU with no desktop input
+PASS Authored hurricane has a configured breakage component
+PASS Authored profile has 16 shards and tougher default impact thresholds (6/4)
+PASS Only hurricane is breakable in this first version
+PASS Reset restores the original hurricane and clears all shards/queued break state
+INFO gentle impactSpeed=0 impulse=0.0343178362 mass=0.35
+PASS Gentle short drop and repeated resting contacts do not break the glass
+PASS Gentle fixture actually reaches the physical floor
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Tilted hurricane can be picked
+PASS Held movement, pickup upright correction and automatic rotation return do not break the glass
+PASS Forced native held contact still cannot auto-break
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Actual high free fall queues an automatic break at default thresholds
+PASS Collision callback queues once while the original remains intact until liquid tick
+INFO drop impactSpeed=7.50268364 impulse=2.76980472 mass=0.35
+PASS Native drop crosses both speed and normalized impulse thresholds
+PASS Next liquid tick atomically replaces original geometry with 16 shards
+PASS Repeated completion/contact processing cannot duplicate shards
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Full native-drop fixture starts with 40 ml of settled liquid
+PASS Full native-drop fixture includes contained ice and garnish
+PASS A real 40 ml/ice/garnish high drop queues breakage at the unchanged default thresholds
+INFO filled-drop speed=7.50268364 impulse=2.76980472 activeMl=40 ownedMl=40 iceOwner=11 garnishOwner=11
+PASS Filled vessel still owns liquid at the actual collision callback
+PASS Actual filled-impact transaction creates 16 shards and changes only liquid owner IDs
+PASS Actual filled-impact transaction preserves every generated, active and pending milliliter
+PASS Actual impact releases Ice without adding a second impulse or position correction
+PASS Actual impact releases Garnish without adding a second impulse or position correction
+PASS Released liquid continues 30 real native/GPU ticks without stale vessel ownership or lost accounting
+PASS Released ice and garnish continue moving freely after the actual filled-glass break
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Wall impact uses the authored world boundary
+PASS Actual fast side impact also queues breakage at default thresholds
+PASS Wall collision completes the same single break transaction
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Controlled transaction fixture uses a valid queued impact
+PASS All 16 supplied fragment definitions produce exactly one shard each
+PASS Shard 01 starts at its rotated source centroid
+PASS Shard 01 inherits point velocity and free spin without a burst (actualVelocity=(-0.3485794, -1.4290120), expectedVelocity=(-0.3485794, -1.4290120), actualSpin=72, expectedSpin=72)
+PASS Shard 01 has real polygon physics and unrestricted rotation
+PASS Shard 01 preserves supplied art and is outside pickable fluid bodies
+PASS Shard 02 starts at its rotated source centroid
+PASS Shard 02 inherits point velocity and free spin without a burst (actualVelocity=(-0.7936792, -1.1677870), expectedVelocity=(-0.7936792, -1.1677870), actualSpin=72, expectedSpin=72)
+PASS Shard 02 has real polygon physics and unrestricted rotation
+PASS Shard 02 preserves supplied art and is outside pickable fluid bodies
+PASS Shard 03 starts at its rotated source centroid
+PASS Shard 03 inherits point velocity and free spin without a burst (actualVelocity=(-1.0015360, -0.6674722), expectedVelocity=(-1.0015360, -0.6674722), actualSpin=72, expectedSpin=72)
+PASS Shard 03 has real polygon physics and unrestricted rotation
+PASS Shard 03 preserves supplied art and is outside pickable fluid bodies
+PASS Shard 04 starts at its rotated source centroid
+PASS Shard 04 inherits point velocity and free spin without a burst (actualVelocity=(-0.2095224, 0.0586315), expectedVelocity=(-0.2095224, 0.0586315), actualSpin=72, expectedSpin=72)
+PASS Shard 04 has real polygon physics and unrestricted rotation
+PASS Shard 04 preserves supplied art and is outside pickable fluid bodies
+PASS Shard 05 starts at its rotated source centroid
+PASS Shard 05 inherits point velocity and free spin without a burst (actualVelocity=(0.1410670, -0.2908610), expectedVelocity=(0.1410670, -0.2908610), actualSpin=72, expectedSpin=72)
+PASS Shard 05 has real polygon physics and unrestricted rotation
+PASS Shard 05 preserves supplied art and is outside pickable fluid bodies
+PASS Shard 06 starts at its rotated source centroid
+PASS Shard 06 inherits point velocity and free spin without a burst (actualVelocity=(-0.3537203, -0.6319755), expectedVelocity=(-0.3537203, -0.6319755), actualSpin=72, expectedSpin=72)
+PASS Shard 06 has real polygon physics and unrestricted rotation
+PASS Shard 06 preserves supplied art and is outside pickable fluid bodies
+PASS Shard 07 starts at its rotated source centroid
+PASS Shard 07 inherits point velocity and free spin without a burst (actualVelocity=(-0.0330544, -0.8298780), expectedVelocity=(-0.0330544, -0.8298780), actualSpin=72, expectedSpin=72)
+PASS Shard 07 has real polygon physics and unrestricted rotation
+PASS Shard 07 preserves supplied art and is outside pickable fluid bodies
+PASS Shard 08 starts at its rotated source centroid
+PASS Shard 08 inherits point velocity and free spin without a burst (actualVelocity=(0.5965852, -0.7713590), expectedVelocity=(0.5965852, -0.7713590), actualSpin=72, expectedSpin=72)
+PASS Shard 08 has real polygon physics and unrestricted rotation
+PASS Shard 08 preserves supplied art and is outside pickable fluid bodies
+PASS Shard 09 starts at its rotated source centroid
+PASS Shard 09 inherits point velocity and free spin without a burst (actualVelocity=(0.9433862, -0.1936162), expectedVelocity=(0.9433862, -0.1936162), actualSpin=72, expectedSpin=72)
+PASS Shard 09 has real polygon physics and unrestricted rotation
+PASS Shard 09 preserves supplied art and is outside pickable fluid bodies
+PASS Shard 10 starts at its rotated source centroid
+PASS Shard 10 inherits point velocity and free spin without a burst (actualVelocity=(0.8330238, 0.2639520), expectedVelocity=(0.8330238, 0.2639520), actualSpin=72, expectedSpin=72)
+PASS Shard 10 has real polygon physics and unrestricted rotation
+PASS Shard 10 preserves supplied art and is outside pickable fluid bodies
+PASS Shard 11 starts at its rotated source centroid
+PASS Shard 11 inherits point velocity and free spin without a burst (actualVelocity=(0.3588231, 0.3386514), expectedVelocity=(0.3588231, 0.3386514), actualSpin=72, expectedSpin=72)
+PASS Shard 11 has real polygon physics and unrestricted rotation
+PASS Shard 11 preserves supplied art and is outside pickable fluid bodies
+PASS Shard 12 starts at its rotated source centroid
+PASS Shard 12 inherits point velocity and free spin without a burst (actualVelocity=(1.2578290, 0.3948275), expectedVelocity=(1.2578290, 0.3948275), actualSpin=72, expectedSpin=72)
+PASS Shard 12 has real polygon physics and unrestricted rotation
+PASS Shard 12 preserves supplied art and is outside pickable fluid bodies
+PASS Shard 13 starts at its rotated source centroid
+PASS Shard 13 inherits point velocity and free spin without a burst (actualVelocity=(1.4980410, 0.6380022), expectedVelocity=(1.4980410, 0.6380022), actualSpin=72, expectedSpin=72)
+PASS Shard 13 has real polygon physics and unrestricted rotation
+PASS Shard 13 preserves supplied art and is outside pickable fluid bodies
+PASS Shard 14 starts at its rotated source centroid
+PASS Shard 14 inherits point velocity and free spin without a burst (actualVelocity=(1.4167400, 1.0497080), expectedVelocity=(1.4167400, 1.0497080), actualSpin=72, expectedSpin=72)
+PASS Shard 14 has real polygon physics and unrestricted rotation
+PASS Shard 14 preserves supplied art and is outside pickable fluid bodies
+PASS Shard 15 starts at its rotated source centroid
+PASS Shard 15 inherits point velocity and free spin without a burst (actualVelocity=(1.6888990, 0.7106807), expectedVelocity=(1.6888990, 0.7106807), actualSpin=72, expectedSpin=72)
+PASS Shard 15 has real polygon physics and unrestricted rotation
+PASS Shard 15 preserves supplied art and is outside pickable fluid bodies
+PASS Shard 16 starts at its rotated source centroid
+PASS Shard 16 inherits point velocity and free spin without a burst (actualVelocity=(1.9093630, 0.3872097), expectedVelocity=(1.9093630, 0.3872097), actualSpin=72, expectedSpin=72)
+PASS Shard 16 has real polygon physics and unrestricted rotation
+PASS Shard 16 preserves supplied art and is outside pickable fluid bodies
+PASS Fragment masses sum to the original glass mass
+PASS Mass distribution follows actual fragment area
+PASS Shards retain physical contacts with table and world walls
+PASS Neighbor shards ignore each other to avoid fragment-pile jitter
+PASS Fragments ignore intact items and cannot trigger a chain reaction
+PASS Broken vessel and its fragments contribute no liquid collision boundary
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Controlled transaction fixture uses a valid queued impact
+PASS Detached-cap fixture can open the shaker cap
+PASS Detached-strainer fixture can open the shaker strainer
+PASS Separate cap and strainer fixture is fully detached
+PASS Disabling shaker suspends detached parts and clears their native contact pairs
+PASS Resumed fixture restores both physical lid collider shapes
+PASS Re-enabled separate cap and strainer ignore every shard after FixedUpdate
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Controlled transaction fixture uses a valid queued impact
+PASS Detached-strainer fixture can open the shaker strainer
+PASS Combined lid fixture carries the attached cap
+PASS Disabling shaker suspends detached parts and clears their native contact pairs
+PASS Resumed fixture restores both physical lid collider shapes
+PASS Re-enabled strainer and carried-cap collider ignore every shard after FixedUpdate
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Active owned/spilled/foreign liquid fixtures reserve successfully
+PASS Pending GPU owned/foreign birth fixtures reserve successfully
+PASS Pending CPU owned/foreign birth fixtures reserve successfully
+PASS Conservation fixture contains both active and reserved-but-unborn owned GPU particles
+PASS Ice and garnish initially belong to the hurricane
+PASS Controlled transaction fixture uses a valid queued impact
+PASS Pre-break snapshot cannot be reused to transfer removed contents
+PASS Breaking clears only owner IDs while preserving every owned GPU position/history/velocity/ml/state
+PASS Foreign/spilled liquid, all composition and stream birth timing/tokens are unchanged
+PASS CPU queued births keep all fields and count while losing only the broken owner ID
+PASS Ice loses containment without teleportation, disappearance or added velocity
+PASS Garnish loses containment without teleportation, disappearance or added velocity
+PASS New fragments cannot kick the released ice or garnish
+PASS Queued births activate without returning to the broken vessel or losing volume
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Controlled transaction fixture uses a valid queued impact
+PASS All fragments remain on the table rather than being time-despawned
+INFO shard rest floorY=-3.25 minY=-3.23500156 maxSpeed=0
+PASS Every freely simulated fragment settles against the physical floor without falling through
+PASS A fragment far outside the world is immediately removed from active simulation
+PASS Offscreen cleanup leaves resting visible fragments intact
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Controlled transaction fixture uses a valid queued impact
+PASS Reset/break cycle 1 creates one complete fragment set
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Controlled transaction fixture uses a valid queued impact
+PASS Reset/break cycle 2 creates one complete fragment set
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Controlled transaction fixture uses a valid queued impact
+PASS Reset/break cycle 3 creates one complete fragment set
+PASS Switching away from F restores the original glass and clears fragments
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS D keeps the legacy unbreakable behavior even under the same strong drop
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Switching back to F restores automatic breakage
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS F remains the authored default and does not enable explosive shard motion
+PASS Authored G burst defaults are 5 outward, 2.5 upward and 240 degrees/second spin
+PASS G enables the burst while retaining F cohesive physics and surface rendering
+PASS G material controls fit the expanded seven-mode control panel
+PASS Reset restores the original hurricane and clears all shards/queued break state
+INFO gentle impactSpeed=3.20945972E-16 impulse=0.03431784 mass=0.35
+PASS Gentle short drop and repeated resting contacts do not break the glass
+PASS Gentle fixture actually reaches the physical floor
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS A real high drop queues G breakage at the existing 6/4 impact thresholds
+PASS G collision callback preserves the deferred single break transaction
+PASS A real G floor collision creates exactly 16 physical fragments
+PASS Explosive fragments remain finite through actual floor contacts
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Controlled transaction fixture uses a valid queued impact
+PASS Default G produces one complete set with finite initial velocity and spin
+PASS Default G adds the configured outward speed and world-up lift to inherited point velocity without moving spawn positions
+PASS Default G retains source spin and adds the configured alternating rotation
+PASS Default G visibly widens the fragment cloud after 0.2 seconds of native physics
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Controlled transaction fixture uses a valid queued impact
+PASS Tuned G produces one complete set with finite initial velocity and spin
+PASS Tuned G adds the configured outward speed and world-up lift to inherited point velocity without moving spawn positions
+PASS Tuned G retains source spin and adds the configured alternating rotation
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Controlled transaction fixture uses a valid queued impact
+PASS Zero-strength G produces one complete set with finite initial velocity and spin
+PASS Zero-strength G adds the configured outward speed and world-up lift to inherited point velocity without moving spawn positions
+PASS Zero-strength G retains source spin and adds the configured alternating rotation
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Active owned/spilled/foreign liquid fixtures reserve successfully
+PASS Pending GPU owned/foreign birth fixtures reserve successfully
+PASS Pending CPU owned/foreign birth fixtures reserve successfully
+PASS Conservation fixture contains both active and reserved-but-unborn owned GPU particles
+PASS Ice and garnish initially belong to the hurricane
+PASS Controlled transaction fixture uses a valid queued impact
+PASS Pre-break snapshot cannot be reused to transfer removed contents
+PASS Breaking clears only owner IDs while preserving every owned GPU position/history/velocity/ml/state
+PASS Foreign/spilled liquid, all composition and stream birth timing/tokens are unchanged
+PASS CPU queued births keep all fields and count while losing only the broken owner ID
+PASS Ice loses containment without teleportation, disappearance or added velocity
+PASS Garnish loses containment without teleportation, disappearance or added velocity
+PASS New fragments cannot kick the released ice or garnish
+PASS Queued births activate without returning to the broken vessel or losing volume
+PASS G to F restores the intact glass, removes burst fragments and disables the burst flag
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS Controlled transaction fixture uses a valid queued impact
+PASS F after G with nonzero explosion settings produces one complete set with finite initial velocity and spin
+PASS F after G with nonzero explosion settings adds the configured outward speed and world-up lift to inherited point velocity without moving spawn positions
+PASS F after G with nonzero explosion settings retains source spin and adds the configured alternating rotation
+PASS Reset restores the original hurricane and clears all shards/queued break state
+PASS No Unity errors or assertions

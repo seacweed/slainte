@@ -1,0 +1,88 @@
+--- before/README.md
++++ after/README.md
+@@ -63,3 +63,9 @@
+ `Prefabs/Bottle_item_1001.prefab`부터 `Bottle_item_1015.prefab`까지 15종을 병별 원본으로 관리한다. 각 병의 재료·외형·충돌 프로필·붓기 설정은 해당 프리팹에서 수정한다. 형태가 서로 다르므로 현재는 개별 프리팹을 유지한다. 샌드박스의 초기 병 3개는 원본 프리팹을 참조하고 배치 Transform만 별도로 저장한다.
+ 
+ `Slainte > Fluid GPU Experiment > Validate Prefab References`는 15종 전체의 카탈로그 등록, 재료 ID, 외형, 충돌·선택 Collider, 주입구·배출 방향, 용량·붓기 값, 씬 연결을 함께 검사한다. 기존 `Slainte > Fluid GPU Experiment > Build Reusable Runtime Assets` 실행 시 병 카탈로그의 재료·표시 이름·분류는 프리팹 원본 값으로 동기화된다.
++
++## 액체 표현 비교
++
++샌드박스 상단의 `Polished look` 버튼으로 기본/개선 표현을 리셋 없이 비교한다. 개선 표현은 수면 위쪽의 얇은 하이라이트와 아래쪽 윤곽 음영을 추가한다. 얼음은 원래의 알파 합성으로 액체 색이 비치며, 불투명도 55%와 원본 재질·색을 유지한다. 별도 얼음 틴트는 적용하지 않는다.
++
++공통 설정의 `Liquid appearance (display only)`에서 효과를 끄거나 `surfaceRimStrength`, `surfaceLowerEdgeShade`를 조절할 수 있다. 표시만 바뀌며 액체 입자·성분량·기법 판정·물체 운동에는 영향을 주지 않는다.
+--- before/Data/FluidExperimentLiquidSettings.asset
++++ after/Data/FluidExperimentLiquidSettings.asset
+@@ -35,3 +35,6 @@
+   surfaceResolutionScale: 1
+   surfaceHighlightStrength: 0.3
+   surfaceHighlightWidth: 1.5
++  polishLiquidAppearance: 1
++  surfaceRimStrength: 0.22
++  surfaceLowerEdgeShade: 0.08
+--- before/Runtime/FluidExperimentComparison.cs
++++ after/Runtime/FluidExperimentComparison.cs
+@@ -114,6 +114,9 @@
+                         if (GUILayout.Toggle(Gpu.cohesiveMaterial == material, material.ToString(), GUI.skin.button, GUILayout.Height(23))
+                             && Gpu.cohesiveMaterial != material)
+                         { Gpu.cohesiveMaterial = material; ResetSandbox(); }
++                if (Gpu != null && Gpu.settings != null)
++                    Gpu.settings.polishLiquidAppearance = GUILayout.Toggle(Gpu.settings.polishLiquidAppearance,
++                        "Polished look", GUI.skin.button, GUILayout.Width(105), GUILayout.Height(23));
+                 GUILayout.EndHorizontal();
+                 GUILayout.BeginHorizontal();
+                 GUILayout.Label("Ice / liquid", GUILayout.Width(85));
+--- before/Runtime/FluidExperimentGpuLiquid.RenderingLayers.cs
++++ after/Runtime/FluidExperimentGpuLiquid.RenderingLayers.cs
+@@ -64,6 +64,8 @@
+             properties.SetVector("_SurfaceTex_TexelSize", new Vector4(1f / texture.width, 1f / texture.height, texture.width, texture.height));
+             properties.SetFloat("_HighlightStrength", settings.surfaceHighlightStrength);
+             properties.SetFloat("_HighlightWidth", settings.surfaceHighlightWidth);
++            properties.SetFloat("_RimStrength", settings.polishLiquidAppearance ? settings.surfaceRimStrength : 0);
++            properties.SetFloat("_LowerEdgeShade", settings.polishLiquidAppearance ? settings.surfaceLowerEdgeShade : 0);
+             renderer.SetPropertyBlock(properties);
+             if (world.ObjectSortingActive && world.TryGetLiquidVisualOrder(owner, out int layer, out int order))
+             { renderer.sortingLayerID = layer; renderer.sortingOrder = order; }
+--- before/Runtime/FluidExperimentLiquidSettings.cs
++++ after/Runtime/FluidExperimentLiquidSettings.cs
+@@ -69,5 +69,10 @@
+         [Range(.25f, 1f)] public float surfaceResolutionScale = 1;
+         [Range(0, 1)] public float surfaceHighlightStrength = .3f;
+         [Range(.5f, 4f)] public float surfaceHighlightWidth = 1.5f;
++
++        [Header("Liquid appearance (display only)")]
++        public bool polishLiquidAppearance = true;
++        [Range(0, 1)] public float surfaceRimStrength = .22f;
++        [Range(0, 1)] public float surfaceLowerEdgeShade = .08f;
+     }
+ }
+--- before/Shaders/FluidExperimentLiquidSurface.shader
++++ after/Shaders/FluidExperimentLiquidSurface.shader
+@@ -5,6 +5,8 @@
+         _SurfaceTex ("Premultiplied liquid surface", 2D) = "black" {}
+         _HighlightStrength ("Highlight", Range(0,1)) = .3
+         _HighlightWidth ("Highlight width in pixels", Range(.5,4)) = 1.5
++        _RimStrength ("Upper contour light", Range(0,1)) = 0
++        _LowerEdgeShade ("Lower contour shade", Range(0,1)) = 0
+     }
+     SubShader
+     {
+@@ -24,6 +26,7 @@
+             CBUFFER_START(UnityPerMaterial)
+                 float4 _SurfaceTex_TexelSize;
+                 float _HighlightStrength, _HighlightWidth;
++                float _RimStrength, _LowerEdgeShade;
+             CBUFFER_END
+             struct Attributes { float4 positionOS:POSITION; float2 uv:TEXCOORD0; };
+             struct Varyings { float4 positionCS:SV_POSITION; float2 uv:TEXCOORD0; };
+@@ -50,6 +53,11 @@
+                 float shine=edge*light*_HighlightStrength;
+                 // Preserve logical opacity and mixed ingredient color; light only the thin contour.
+                 surface.rgb+=(surface.a-surface.rgb)*shine;
++                float2 normal = gradient / max(length(gradient), .0001);
++                float upperRim = edge * smoothstep(.25, .9, normal.y) * _RimStrength;
++                float lowerShade = edge * saturate(-normal.y) * _LowerEdgeShade;
++                // Accent the existing contour without enlarging coverage or opacity.
++                surface.rgb = lerp(surface.rgb, surface.a.xxx, upperRim) * (1 - lowerShade);
+                 return surface;
+             }
+             ENDHLSL

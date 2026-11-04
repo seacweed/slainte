@@ -1,0 +1,24 @@
+{
+  "sourceFolderId": "17ygK0qnCecs5j2EfnyFkvR0cQoeKSR86",
+  "acquisition": "Original Google Drive file bytes returned by fetch as base64, decoded without image rewriting.",
+  "files": [
+    {
+      "name": "dispenser_None.png",
+      "fileId": "1M9qkKpniW-_CW6uFfYmToh7sQhXYWnLf",
+      "sizeBytes": 24559,
+      "sha256": "ec38a704d5e1185c9a6d80ff7d0099b59604617cea1dd72124ef14c77c0f5575"
+    },
+    {
+      "name": "dispenser_Ice.png",
+      "fileId": "1ObvBKT5OOJrvOXsWS1KHYE-rxjiWTY_t",
+      "sizeBytes": 34124,
+      "sha256": "6459e13f94f0b3fbc32f8226c119acb41b1518bd207c7a8a26a8bc82f968c6d2"
+    },
+    {
+      "name": "dispenser_Hot.png",
+      "fileId": "1m7mpG5ivM560iBhPkL2zLshp6FjpC2UP",
+      "sizeBytes": 34776,
+      "sha256": "661c6b5ac3a7af2a4817ef942be7910d1ff301a9dc6568e47a2463fb69451861"
+    }
+  ]
+}

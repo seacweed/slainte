@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a418496eeed411f8ee25f474fc7c2b8, type: 3}
+  m_Name: ShakerParts
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentShakerProfile
+  strainerRect:
+    serializedVersion: 2
+    x: -0.6050848
+    y: -0.14237288
+    width: 1.2042372
+    height: 0.9610169
+  capRect:
+    serializedVersion: 2
+    x: -0.29661015
+    y: 0.4449153
+    width: 0.58728814
+    height: 0.46271187
+  leftGuide:
+  - {x: -0.60436505, y: 0.109745674}
+  - {x: -0.5220339, y: 0.29067796}
+  - {x: -0.37966105, y: 0.43898305}
+  - {x: -0.20169494, y: 0.5220338}
+  - {x: -0.20169494, y: 0.818644}
+  rightGuide:
+  - {x: 0.6030524, y: 0.109745674}
+  - {x: 0.52203393, y: 0.29067796}
+  - {x: 0.379661, y: 0.43898305}
+  - {x: 0.20169494, y: 0.5220338}
+  - {x: 0.20169494, y: 0.818644}
+  halfThickness: 0.018
+  strainerMass: 0.08
+  capMass: 0.03
+  attachmentDistance: 0.28

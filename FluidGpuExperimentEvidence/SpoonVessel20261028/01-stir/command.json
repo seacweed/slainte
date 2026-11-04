@@ -1,0 +1,17 @@
+{
+  "timeoutSeconds": 300,
+  "forceShaderImport": true,
+  "entryMethod": "CocktailIntegrationValidation.Begin",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:\\UnityHub\\proj\\slainte\\Library\\FluidModelDHarness",
+    "-executeMethod",
+    "PhysicsLabValidationDispatch.Run",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\SpoonVessel20261028\\01-stir\\Editor.log"
+  ],
+  "executable": "A:\\UnityHub\\Unity\\6000.3.5f2\\Editor\\Unity.exe",
+  "started": "2026-10-28T19:40:18.4647517+09:00"
+}

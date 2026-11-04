@@ -1,0 +1,16 @@
+{
+  "started": "2026-09-22T17:23:41.6373092+09:00",
+  "workingDirectory": "A:/UnityHub/proj/slainte",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/FluidGpuExperimentEvidence/HarnessProject",
+    "-executeMethod",
+    "Slainte.Bartending.FluidGpuExperiment.Editor.FluidExperimentBuilder.Build",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\01-author-comparison\\Editor.log",
+    "-quit"
+  ],
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe"
+}

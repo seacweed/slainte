@@ -1,0 +1,6 @@
+{
+  "command": "dotnet build Assembly-CSharp-Editor.csproj --no-restore -p:CustomAfterMicrosoftCommonTargets=FluidGpuExperimentEvidence/Compile/IncludeExperiment.targets -v:minimal",
+  "exitCode": 0,
+  "started": "2026-10-04T20:36:36.6733131+09:00",
+  "finished": "2026-10-04T20:36:47.1366875+09:00"
+}

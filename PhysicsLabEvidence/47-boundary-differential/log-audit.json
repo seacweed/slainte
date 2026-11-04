@@ -1,0 +1,7 @@
+{
+  "status": "checks_passed_with_editor_exception",
+  "cleanValidation": false,
+  "exception": "UnityEditor.Search.SearchDatabase.EnumerateAll -> GetDefaultSearchDatabase -> SearchInit.IndexationOnStartup",
+  "nativeCrash": false,
+  "action": "Preserve this attempt. Disable search indexOnEditorStartup only in copied harness UserSettings, then validate in separate attempts."
+}

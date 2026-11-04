@@ -1,0 +1,15 @@
+﻿{
+    "timeoutSeconds":  300,
+    "started":  "2026-10-21T17:42:02.6755199+09:00",
+    "arguments":  [
+                      "-batchmode",
+                      "-force-d3d11",
+                      "-projectPath",
+                      "A:\\UnityHub\\proj\\slainte\\Library\\FluidModelDHarness",
+                      "-executeMethod",
+                      "CrowdedIceValidation.Begin",
+                      "-logFile",
+                      "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\20261021-crowded-ice-ambient-01\\Editor.log"
+                  ],
+    "executable":  "A:\\UnityHub\\Unity\\6000.3.5f2\\Editor\\Unity.exe"
+}

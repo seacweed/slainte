@@ -1,0 +1,35 @@
+PASS NonColliding keeps automatic native physics and async GPU scheduling
+PASS NonColliding native fixture queues 60 ml
+MEASURE NonColliding native initial rest maxSpan=5.097597E-06 cubes=12 limit=0.015 speed95=2.42573333E-05 jitter=1.62486259E-07
+PASS NonColliding native initial rest every cube has bounded drift without rapid jitter
+PASS NonColliding retains all twelve dynamic cubes in receiver
+PASS NonColliding retains the pool after twelve ice drops
+PASS NonColliding picks crowded receiver
+PASS NonColliding remains mobile after settling rather than freezing the stack
+MEASURE NonColliding native stop after movement maxSpan=5.72274439E-06 cubes=12 limit=0.015 speed95=9.064023E-06 jitter=7.72235964E-08
+PASS NonColliding native stop after movement every cube has bounded drift without rapid jitter
+PASS NonColliding continues real asynchronous snapshots during motion
+PASS NonColliding actual click-drop succeeds
+PASS NonColliding click-drop preserves every owned particle velocity and motion history
+PASS NonColliding click-drop adds no cube speed or spin
+PASS NonColliding native loop conserves liquid
+PASS NonColliding modest receiver motion does not pump the pool through its walls
+MEASURE native NonColliding relativeTravel=0.9433225 containedMl=60
+PASS Colliding keeps automatic native physics and async GPU scheduling
+PASS Colliding native fixture queues 60 ml
+MEASURE Colliding native initial rest maxSpan=3.768627E-05 cubes=12 limit=0.473501444 speed95=2.05161723E-05 jitter=8.787328E-08
+PASS Colliding native initial rest every cube has bounded drift without rapid jitter
+PASS Colliding retains all twelve dynamic cubes in receiver
+PASS Colliding retains the pool after twelve ice drops
+PASS Colliding picks crowded receiver
+PASS Colliding remains mobile after settling rather than freezing the stack
+MEASURE Colliding native stop after movement maxSpan=0.0005213907 cubes=12 limit=0.473462343 speed95=0.00246126135 jitter=1.35465561E-05
+PASS Colliding native stop after movement every cube has bounded drift without rapid jitter
+PASS Colliding continues real asynchronous snapshots during motion
+PASS Colliding actual click-drop succeeds
+PASS Colliding click-drop preserves every owned particle velocity and motion history
+PASS Colliding click-drop adds no cube speed or spin
+PASS Colliding native loop conserves liquid
+PASS Colliding modest receiver motion does not pump the pool through its walls
+MEASURE native Colliding relativeTravel=1.33355129 containedMl=60
+PASS Native crowded loop has no application errors

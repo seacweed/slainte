@@ -1,0 +1,167 @@
+PASS Authored comparison scene initializes
+PASS ACurrent: actual GPU operational on AMD Radeon(TM) Graphics
+PASS ACurrent swap: pick original vessel through public API
+PASS ACurrent swap: held vessel has moved far from its pickup origin
+PASS ACurrent swap: authored overlapping target is selected
+PASS ACurrent swap: both overlapping vessels accept owner-tagged liquid
+PASS ACurrent swap: both vessels own actual GPU particles before handoff
+PASS ACurrent swap: slow overlapping Drop succeeds
+PASS ACurrent swap: released A becomes dynamic while B becomes held
+PASS ACurrent swap: Rigidbody body types agree with handoff
+PASS ACurrent swap: released A remains at its current position (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS ACurrent swap: new held B remains at its own position (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS ACurrent swap: pickup bookkeeping now belongs to B (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS ACurrent swap: swap adds no throw velocity (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS ACurrent swap: swap adds no spin
+PASS ACurrent swap: handoff preserves GPU particle position, mass and owner IDs
+PASS ACurrent swap: unchanged cursor does not jump newly held B (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS ACurrent swap: newly held B follows subsequent cursor motion (actual (3.00000, 6.00000), expected (3.00000, 6.00000))
+PASS ACurrent swap: moving B leaves released A in place (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS ACurrent swap: repeated swap can target released A
+PASS ACurrent swap: repeated Drop succeeds
+PASS ACurrent swap: repeated swap reverses held identity
+PASS ACurrent swap: second release keeps B at its current position (actual (-0.20000, 4.19025), expected (-0.20000, 4.19025))
+PASS ACurrent swap: repeated handoff never returns A to original pickup position (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS ACurrent swap: original A follows cursor after being picked again (actual (-0.20314, 5.41051), expected (-0.20314, 5.41051))
+PASS ACurrent held collisions: unheld body, ice and floor collisions start enabled
+PASS ACurrent held collisions: vessel pickup succeeds
+PASS ACurrent held collisions: held vessel ignores every enabled body, ice and floor pair
+PASS ACurrent held collisions: actual Physics2D simulation advances
+PASS ACurrent held collisions: intersecting held vessel gives ice no collision displacement (actual (-0.00297, 4.18729), expected (-0.00297, 4.18729))
+PASS ACurrent held collisions: held vessel produces no ice contact
+PASS ACurrent held collisions: releasing vessel restores all body, ice and floor collision flags
+PASS ACurrent held collisions: ice itself can be picked up
+PASS ACurrent held collisions: held ice ignores other bodies and floor
+PASS ACurrent held collisions: releasing ice restores every collision flag
+PASS ACurrent GPU held ice: authored ice has a real solid boundary
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS ACurrent GPU held ice: unheld ice positive control displaces an intersecting free particle
+PASS ACurrent GPU held ice: pick ice for GPU collision probe
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS ACurrent GPU held ice: held ice leaves the same free particle undisturbed (actual (7.92286, 4.81714), expected (7.92286, 4.81714))
+PASS ACurrent GPU held ice: held ice does not capture the free particle
+PASS ACurrent GPU held ice: owned-particle seed fits inside the actual glass
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS ACurrent GPU held ice: one owned particle is stationary without nearby ice (actual (4.99686, 4.42129), expected (4.99686, 4.42129))
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS ACurrent GPU held ice: unheld glass positive control permits ice-to-liquid contact
+PASS ACurrent GPU held ice: pick glass while ice intersects its liquid
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS ACurrent GPU held ice: held glass liquid ignores external unheld ice (actual (4.99686, 4.42129), expected (4.99686, 4.42129))
+PASS ACurrent GPU held ice: held glass retains its liquid owner ID
+PASS BReferencePhysics: actual GPU operational on AMD Radeon(TM) Graphics
+PASS BReferencePhysics swap: pick original vessel through public API
+PASS BReferencePhysics swap: held vessel has moved far from its pickup origin
+PASS BReferencePhysics swap: authored overlapping target is selected
+PASS BReferencePhysics swap: both overlapping vessels accept owner-tagged liquid
+PASS BReferencePhysics swap: both vessels own actual GPU particles before handoff
+PASS BReferencePhysics swap: slow overlapping Drop succeeds
+PASS BReferencePhysics swap: released A becomes dynamic while B becomes held
+PASS BReferencePhysics swap: Rigidbody body types agree with handoff
+PASS BReferencePhysics swap: released A remains at its current position (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS BReferencePhysics swap: new held B remains at its own position (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS BReferencePhysics swap: pickup bookkeeping now belongs to B (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS BReferencePhysics swap: swap adds no throw velocity (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS BReferencePhysics swap: swap adds no spin
+PASS BReferencePhysics swap: handoff preserves GPU particle position, mass and owner IDs
+PASS BReferencePhysics swap: unchanged cursor does not jump newly held B (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS BReferencePhysics swap: newly held B follows subsequent cursor motion (actual (3.00000, 6.00000), expected (3.00000, 6.00000))
+PASS BReferencePhysics swap: moving B leaves released A in place (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS BReferencePhysics swap: repeated swap can target released A
+PASS BReferencePhysics swap: repeated Drop succeeds
+PASS BReferencePhysics swap: repeated swap reverses held identity
+PASS BReferencePhysics swap: second release keeps B at its current position (actual (-0.20000, 4.19025), expected (-0.20000, 4.19025))
+PASS BReferencePhysics swap: repeated handoff never returns A to original pickup position (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS BReferencePhysics swap: original A follows cursor after being picked again (actual (-0.20314, 5.41051), expected (-0.20314, 5.41051))
+PASS BReferencePhysics held collisions: unheld body, ice and floor collisions start enabled
+PASS BReferencePhysics held collisions: vessel pickup succeeds
+PASS BReferencePhysics held collisions: held vessel ignores every enabled body, ice and floor pair
+PASS BReferencePhysics held collisions: actual Physics2D simulation advances
+PASS BReferencePhysics held collisions: intersecting held vessel gives ice no collision displacement (actual (-0.00297, 4.18729), expected (-0.00297, 4.18729))
+PASS BReferencePhysics held collisions: held vessel produces no ice contact
+PASS BReferencePhysics held collisions: releasing vessel restores all body, ice and floor collision flags
+PASS BReferencePhysics held collisions: ice itself can be picked up
+PASS BReferencePhysics held collisions: held ice ignores other bodies and floor
+PASS BReferencePhysics held collisions: releasing ice restores every collision flag
+PASS BReferencePhysics GPU held ice: authored ice has a real solid boundary
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS BReferencePhysics GPU held ice: unheld ice positive control displaces an intersecting free particle
+PASS BReferencePhysics GPU held ice: pick ice for GPU collision probe
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS BReferencePhysics GPU held ice: held ice leaves the same free particle undisturbed (actual (7.92286, 4.81714), expected (7.92286, 4.81714))
+PASS BReferencePhysics GPU held ice: held ice does not capture the free particle
+PASS BReferencePhysics GPU held ice: owned-particle seed fits inside the actual glass
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS BReferencePhysics GPU held ice: one owned particle is stationary without nearby ice (actual (4.99686, 4.42129), expected (4.99686, 4.42129))
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS BReferencePhysics GPU held ice: unheld glass positive control permits ice-to-liquid contact
+PASS BReferencePhysics GPU held ice: pick glass while ice intersects its liquid
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS BReferencePhysics GPU held ice: held glass liquid ignores external unheld ice (actual (4.99686, 4.42129), expected (4.99686, 4.42129))
+PASS BReferencePhysics GPU held ice: held glass retains its liquid owner ID
+PASS CReferenceSurface: actual GPU operational on AMD Radeon(TM) Graphics
+PASS CReferenceSurface swap: pick original vessel through public API
+PASS CReferenceSurface swap: held vessel has moved far from its pickup origin
+PASS CReferenceSurface swap: authored overlapping target is selected
+PASS CReferenceSurface swap: both overlapping vessels accept owner-tagged liquid
+PASS CReferenceSurface swap: both vessels own actual GPU particles before handoff
+PASS CReferenceSurface swap: slow overlapping Drop succeeds
+PASS CReferenceSurface swap: released A becomes dynamic while B becomes held
+PASS CReferenceSurface swap: Rigidbody body types agree with handoff
+PASS CReferenceSurface swap: released A remains at its current position (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS CReferenceSurface swap: new held B remains at its own position (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS CReferenceSurface swap: pickup bookkeeping now belongs to B (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS CReferenceSurface swap: swap adds no throw velocity (actual (0.00000, 0.00000), expected (0.00000, 0.00000))
+PASS CReferenceSurface swap: swap adds no spin
+PASS CReferenceSurface swap: handoff preserves GPU particle position, mass and owner IDs
+PASS CReferenceSurface swap: unchanged cursor does not jump newly held B (actual (0.00000, 5.00000), expected (0.00000, 5.00000))
+PASS CReferenceSurface swap: newly held B follows subsequent cursor motion (actual (3.00000, 6.00000), expected (3.00000, 6.00000))
+PASS CReferenceSurface swap: moving B leaves released A in place (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS CReferenceSurface swap: repeated swap can target released A
+PASS CReferenceSurface swap: repeated Drop succeeds
+PASS CReferenceSurface swap: repeated swap reverses held identity
+PASS CReferenceSurface swap: second release keeps B at its current position (actual (-0.20000, 4.19025), expected (-0.20000, 4.19025))
+PASS CReferenceSurface swap: repeated handoff never returns A to original pickup position (actual (-0.20314, 4.41051), expected (-0.20314, 4.41051))
+PASS CReferenceSurface swap: original A follows cursor after being picked again (actual (-0.20314, 5.41051), expected (-0.20314, 5.41051))
+PASS CReferenceSurface held collisions: unheld body, ice and floor collisions start enabled
+PASS CReferenceSurface held collisions: vessel pickup succeeds
+PASS CReferenceSurface held collisions: held vessel ignores every enabled body, ice and floor pair
+PASS CReferenceSurface held collisions: actual Physics2D simulation advances
+PASS CReferenceSurface held collisions: intersecting held vessel gives ice no collision displacement (actual (-0.00297, 4.18729), expected (-0.00297, 4.18729))
+PASS CReferenceSurface held collisions: held vessel produces no ice contact
+PASS CReferenceSurface held collisions: releasing vessel restores all body, ice and floor collision flags
+PASS CReferenceSurface held collisions: ice itself can be picked up
+PASS CReferenceSurface held collisions: held ice ignores other bodies and floor
+PASS CReferenceSurface held collisions: releasing ice restores every collision flag
+PASS CReferenceSurface GPU held ice: authored ice has a real solid boundary
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS CReferenceSurface GPU held ice: unheld ice positive control displaces an intersecting free particle
+PASS CReferenceSurface GPU held ice: pick ice for GPU collision probe
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS CReferenceSurface GPU held ice: held ice leaves the same free particle undisturbed (actual (7.92286, 4.81714), expected (7.92286, 4.81714))
+PASS CReferenceSurface GPU held ice: held ice does not capture the free particle
+PASS CReferenceSurface GPU held ice: owned-particle seed fits inside the actual glass
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS CReferenceSurface GPU held ice: one owned particle is stationary without nearby ice (actual (4.99686, 4.42129), expected (4.99686, 4.42129))
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS CReferenceSurface GPU held ice: unheld glass positive control permits ice-to-liquid contact
+PASS CReferenceSurface GPU held ice: pick glass while ice intersects its liquid
+PASS Single-particle GPU collision probe accepts seed
+PASS Single-particle GPU collision probe retains one active particle
+PASS CReferenceSurface GPU held ice: held glass liquid ignores external unheld ice (actual (4.99686, 4.42129), expected (4.99686, 4.42129))
+PASS CReferenceSurface GPU held ice: held glass retains its liquid owner ID
+A/B/C swap handoff, content ownership and held collision checks passed.

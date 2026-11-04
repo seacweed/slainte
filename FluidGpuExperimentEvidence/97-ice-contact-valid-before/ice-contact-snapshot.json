@@ -1,0 +1,32 @@
+{
+    "fixtureVersion": 2,
+    "dt": 0.019999999552965165,
+    "settleSeconds": 6.0,
+    "sampleSeconds": 2.0,
+    "cases": [
+        {
+            "name": "Kinematic-Cluster4-Empty",
+            "held": false,
+            "liquid": false,
+            "fixedIce": false,
+            "iceCount": 4,
+            "ownedIceCount": 4,
+            "nearLiquidSamples": 0,
+            "deepPenetrationSamples": 0,
+            "sleepFraction": 0.0,
+            "contactFraction": 1.0,
+            "positionRms": 0.009896219708025456,
+            "positionSpan": 0.04747525602579117,
+            "speedP95": 0.3892591893672943,
+            "maximumStep": 0.03393407166004181,
+            "maximumAngularSpeed": 99.6242904663086,
+            "nearLiquidMeanSpeed": 0.0,
+            "nearLiquidSpeedP95": 0.0,
+            "maximumLiquidSpeed": 0.0,
+            "maximumLedgerError": 0.0,
+            "generatedMl": 0.0,
+            "retainedMl": 0.0,
+            "retiredMl": 0.0
+        }
+    ]
+}

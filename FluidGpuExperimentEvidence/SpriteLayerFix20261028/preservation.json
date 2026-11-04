@@ -1,0 +1,22 @@
+{
+  "original_files": 838,
+  "unchanged": 831,
+  "changed": [
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/README.md",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentBody.GarnishMotion.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.Rendering.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentInteractor.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentWorld.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentImprovedAccumulation.shader"
+  ],
+  "unexpected": [],
+  "added": [
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.RenderingLayers.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.RenderingLayers.cs.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentInteractor.VisualPicking.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentInteractor.VisualPicking.cs.meta",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentWorld.Rendering.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentWorld.Rendering.cs.meta"
+  ]
+}

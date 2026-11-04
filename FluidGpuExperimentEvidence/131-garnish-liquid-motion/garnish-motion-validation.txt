@@ -1,0 +1,15 @@
+PASS Hidden batch starts in F
+PASS synthLemonPeel_Source picks fresh garnish
+MEASURE synthLemonPeel_Source tilt=0 drag local=(-0.852845, -0.608281) separation=0.00555561669
+PASS Fast held drag cannot cross the entire side wall
+PASS Held garnish enters through open mouth
+PASS Inside drag stops on the inner side of wall
+PASS Held rotation keeps full outline outside wall
+PASS Upright return remains outside wall
+MEASURE synthLemonPeel_Source tilt=0 released separation=0.005555587 restSpan=0.088223286
+PASS Released garnish slides/rests without wall penetration or escape
+FAIL Wall contact settles without sustained jitter
+System.Exception: Wall contact settles without sustained jitter
+  at GarnishMotionValidationRunner.Check (System.Boolean ok, System.String text) [0x0002a] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\GarnishMotionValidation.cs:38 
+  at GarnishMotionValidationRunner.WallMotion (Slainte.Bartending.FluidGpuExperiment.FluidExperimentGarnishSource s, System.Single tilt) [0x0049d] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\GarnishMotionValidation.cs:129 
+  at GarnishMotionValidationRunner+<Start>d__13.MoveNext () [0x001c7] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\GarnishMotionValidation.cs:59 

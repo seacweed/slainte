@@ -1,0 +1,9 @@
+{
+    "status": "BUILT",
+    "player": "C:\\unity_proj\\slainte\\slainte\\Library\\FluidSwapHarness\\PlayerBenchmark\\FluidExperimentBenchmark.exe",
+    "project": "C:\\unity_proj\\slainte\\slainte\\Library\\FluidSwapHarness",
+    "error": "",
+    "windowsModuleAvailable": true,
+    "frameTimingEnabled": true,
+    "options": "StandaloneWindows64, non-development, explicit isolated comparison scene"
+}

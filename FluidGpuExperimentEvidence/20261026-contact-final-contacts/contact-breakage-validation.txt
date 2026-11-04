@@ -1,0 +1,76 @@
+PASS Authored default is F contact baseline in actual hidden GPU execution
+PASS Forced liquid fan and G fragment explosion are excluded from the baseline
+PASS Authored comparison imports its actual floor and thin fragment liquid contacts
+PASS Glass thresholds, native motion inheritance and authored 16-piece geometry stay unchanged
+PASS Static shallow-penetration fixture reserves
+MEASURE floorRepair peakSpeed=0 minY=-3.185 floor=-3.25 radius=0.065
+PASS Static floor repair restores nonpenetration
+PASS Stationary floor depenetration cannot launch liquid or create kinetic energy
+PASS Independent free drop reserves
+PASS Independent free drop reserves
+PASS Independent free drop reserves
+PASS Independent free drop reserves
+MEASURE freeDrop initialEnergy=55.24 peakEnergy=55.1356125 minY=-3.185 restingSpeed=9.474695E-05
+PASS Independent drops stay above the real liquid floor with exact volume
+PASS Static inelastic floor contact cannot add energy to isolated falling drops
+PASS Fixture fills the original 40 ml hurricane
+PASS Filled fixture starts settled with 40 ml owned by the glass
+PASS Removing a vessel without fragments changes only ownership, not liquid velocity or position
+MEASURE pool minY=-3.185 activeMl=40 maxSpeed=0.7945479
+PASS An uncontained 40 ml pool actually reaches the floor, remains above it and preserves volume
+PASS Pool drop preserves volume accounting
+PASS Fixture fills the original 40 ml hurricane
+PASS Filled fixture starts settled with 40 ml owned by the glass
+MEASURE vessel breaks=False committed=False minY=-2.52881312 maxSpeed=7.36550331 activeMl=40
+PASS Intact and breakable controls follow their actual native break eligibility
+PASS Vessel drop keeps forty ml above the liquid floor
+PASS Post-impact continuation has no missing shard walls or liquid accounting error
+PASS Fixture fills the original 40 ml hurricane
+PASS Filled fixture starts settled with 40 ml owned by the glass
+PASS Fracture transaction releases liquid with bitwise preserved position, history, velocity, volume and composition
+PASS Fracture replaces the original glass with exactly sixteen shards
+PASS New shard histories start at the activated native pose, preventing a first-tick fictitious sweep
+PASS All thin shard walls enter the very next GPU geometry upload without budget omission
+PASS Original vessel boundaries do not coexist with the replacement shard walls
+PASS Shard contact response uses the solved native point velocity rather than geometric depenetration travel
+MEASURE transition thinSegments=204 uploaded=204 omitted=0
+MEASURE vessel breaks=True committed=True minY=-3.18501 maxSpeed=20 activeMl=40
+PASS Intact and breakable controls follow their actual native break eligibility
+PASS Vessel drop keeps forty ml above the liquid floor
+PASS Post-impact continuation has no missing shard walls or liquid accounting error
+PASS Fixture fills the original 40 ml hurricane
+PASS Filled fixture starts settled with 40 ml owned by the glass
+PASS Fracture transaction releases liquid with bitwise preserved position, history, velocity, volume and composition
+PASS Fracture replaces the original glass with exactly sixteen shards
+PASS New shard histories start at the activated native pose, preventing a first-tick fictitious sweep
+PASS All thin shard walls enter the very next GPU geometry upload without budget omission
+PASS Original vessel boundaries do not coexist with the replacement shard walls
+PASS Shard contact response uses the solved native point velocity rather than geometric depenetration travel
+MEASURE transition thinSegments=204 uploaded=204 omitted=0
+MEASURE staticShards escapedMl=0 peakSpeed=0.163609758
+PASS Static assembled thin shards do not expel a previously settled pool
+PASS Static-fragment test preserves forty ml and uploads every wall
+PASS Fixture fills the original 40 ml hurricane
+PASS Filled fixture starts settled with 40 ml owned by the glass
+PASS Fracture transaction releases liquid with bitwise preserved position, history, velocity, volume and composition
+PASS Fracture replaces the original glass with exactly sixteen shards
+PASS New shard histories start at the activated native pose, preventing a first-tick fictitious sweep
+PASS All thin shard walls enter the very next GPU geometry upload without budget omission
+PASS Original vessel boundaries do not coexist with the replacement shard walls
+PASS Shard contact response uses the solved native point velocity rather than geometric depenetration travel
+MEASURE transition thinSegments=204 uploaded=204 omitted=0
+MEASURE bottle direction=1 committed=True shiftAt300ms=2.14761853 activeMl=40 omitted=0
+PASS Real bottle fracture uses physical contacts with preserved accounting and complete wall geometry
+PASS Fixture fills the original 40 ml hurricane
+PASS Filled fixture starts settled with 40 ml owned by the glass
+PASS Fracture transaction releases liquid with bitwise preserved position, history, velocity, volume and composition
+PASS Fracture replaces the original glass with exactly sixteen shards
+PASS New shard histories start at the activated native pose, preventing a first-tick fictitious sweep
+PASS All thin shard walls enter the very next GPU geometry upload without budget omission
+PASS Original vessel boundaries do not coexist with the replacement shard walls
+PASS Shard contact response uses the solved native point velocity rather than geometric depenetration travel
+MEASURE transition thinSegments=204 uploaded=204 omitted=0
+MEASURE bottle direction=-1 committed=True shiftAt300ms=-2.31943846 activeMl=40 omitted=0
+PASS Real bottle fracture uses physical contacts with preserved accounting and complete wall geometry
+PASS Opposite real bottle contacts transport liquid in opposite directions without a fan
+PASS No Unity, shader or buffer errors

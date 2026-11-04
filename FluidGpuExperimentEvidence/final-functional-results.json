@@ -1,0 +1,58 @@
+{
+  "18-conservative-accounting": {
+    "pass_lines": 8730,
+    "exit_code": 0
+  },
+  "24-surface-pose-validation": {
+    "pass_lines": 115,
+    "exit_code": 0
+  },
+  "25-final-volume-capacity": {
+    "pass_lines": 425,
+    "exit_code": 0
+  },
+  "26-submerged-stir-scenarios": {
+    "pass_lines": 67,
+    "exit_code": 0
+  },
+  "27-held-free-liquid-regression": {
+    "pass_lines": 1071,
+    "exit_code": 0
+  },
+  "31-capacity-seed-validation": {
+    "pass_lines": 223,
+    "exit_code": 0
+  },
+  "34-baseline-owned-fixture": {
+    "pass_lines": 277,
+    "exit_code": 0
+  },
+  "35-normal-frames-all-modes": {
+    "pass_lines": 160,
+    "exit_code": 0
+  },
+  "36-final-material-effects": {
+    "pass_lines": 43,
+    "exit_code": 0
+  },
+  "46-motion-surface-regression": {
+    "pass_lines": 115,
+    "exit_code": 0
+  },
+  "47-motion-interaction-regression": {
+    "pass_lines": 1071,
+    "exit_code": 0
+  },
+  "48-motion-pouring-effects-regression": {
+    "pass_lines": 43,
+    "exit_code": 0
+  },
+  "49-motion-volume-capacity-regression": {
+    "pass_lines": 431,
+    "exit_code": 0
+  },
+  "50-motion-fast-rotation-baseline": {
+    "pass_lines": 277,
+    "exit_code": 0
+  }
+}

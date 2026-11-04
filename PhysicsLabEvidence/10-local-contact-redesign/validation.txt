@@ -1,0 +1,14 @@
+PASS: Actual compute GPU: NVIDIA GeForce RTX 3070 / Direct3D11
+A/A repeat RMS position=0, velocity=0
+Remote drag RMS position=0, velocity=0; steps=2
+Remote rotation RMS position=0, velocity=0; steps=2
+PASS: Unrelated motion leaves the liquid solver step count fixed
+PASS: Remote open/sealed liquid position and velocity unaffected by fast drag
+PASS: Remote open/sealed liquid position and velocity unaffected by multi-turn rotation
+PASS: Fast crossing solid pushes contacted fluid instead of tunnelling: x=2.165
+PASS: Sealed vessel retains contents during fast translation and 855-degree rotation
+PASS: Fast-contact state remains finite
+FAIL: Fast-contact sweep finishes within its local work budget
+System.Exception: Fast-contact sweep finishes within its local work budget
+  at IsolationHarness.Require (System.Boolean condition, System.String message) [0x00029] in A:\UnityHub\proj\slainte\PhysicsLabEvidence\HarnessProject\Assets\Editor\IsolationHarness.cs:39
+  at IsolationHarness.Run () [0x0036e] in A:\UnityHub\proj\slainte\PhysicsLabEvidence\HarnessProject\Assets\Editor\IsolationHarness.cs:141

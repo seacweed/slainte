@@ -1,0 +1,47 @@
+MEASURE noncolliding-dry-8 cubes=8 contained=8 span=0 angularSpan=7.62939453E-06 speed95=4.39964154E-08 spin95=1.17632035E-05 sleepRatio=0.04 recovery=0 peakCubeSpeed=6.74489832 peakWaterSpeed=0 peakWaterUp=0 peakWaterRise=0 lateWaterEnergy=0 containedMl=0 ledgerError=0
+MEASURE surface noncolliding-dry-8 settledP95=0 excessHeight=0 jitterRms=0 contactSpeed=0
+PASS noncolliding-dry-8 has bounded drift and no sustained contact jitter
+PASS noncolliding-dry-8 keeps native dynamic bodies
+PASS Queue exactly 60 ml for NonColliding
+MEASURE noncolliding-wet-8 cubes=8 contained=8 span=4.198759E-06 angularSpan=0.000762939453 speed95=2.27097025E-05 spin95=0.002940578 sleepRatio=0.04 recovery=0 peakCubeSpeed=5.37638569 peakWaterSpeed=0.07752975 peakWaterUp=0.06655099 peakWaterRise=0.0023611784 lateWaterEnergy=0.0002645027 containedMl=60 ledgerError=0
+MEASURE surface noncolliding-wet-8 settledP95=0.7152089 excessHeight=0.0118860248 jitterRms=1.37899292E-07 contactSpeed=0
+PASS noncolliding-wet-8 has bounded drift and no sustained contact jitter
+PASS noncolliding-wet-8 conserves total and retired liquid
+PASS noncolliding-wet-8 liquid kinetic energy decays after dropping stops
+PASS noncolliding-wet-8 keeps native dynamic bodies
+PASS Queue exactly 60 ml for NonColliding
+MEASURE noncolliding-wet-12 cubes=12 contained=12 span=1.3191122E-05 angularSpan=0.00141441822 speed95=4.53769026E-05 spin95=0.00291663455 sleepRatio=0.04 recovery=0 peakCubeSpeed=5.364293 peakWaterSpeed=0.08565089 peakWaterUp=0.0728531 peakWaterRise=0.000451385975 lateWaterEnergy=0.000198371679 containedMl=60 ledgerError=0
+MEASURE surface noncolliding-wet-12 settledP95=0.7140748 excessHeight=0.00686686 jitterRms=3.469059E-07 contactSpeed=0
+PASS noncolliding-wet-12 has bounded drift and no sustained contact jitter
+PASS noncolliding-wet-12 conserves total and retired liquid
+PASS noncolliding-wet-12 liquid kinetic energy decays after dropping stops
+PASS noncolliding-wet-12 keeps native dynamic bodies
+PASS Queue exactly 60 ml for Colliding
+PASS colliding-low-3 incoming cube starts outside every existing solid
+PASS colliding-low-3 incoming cube starts outside every existing solid
+PASS colliding-low-3 incoming cube starts outside every existing solid
+MEASURE colliding-low-3 cubes=3 contained=3 span=1.06832078E-06 angularSpan=0.000457763672 speed95=1.96892438E-06 spin95=0.00022453205 sleepRatio=0.04 recovery=0 peakCubeSpeed=2.761005 peakWaterSpeed=12.659812 peakWaterUp=1.77402627 peakWaterRise=0.7335454 lateWaterEnergy=0.0041480693 containedMl=42 ledgerError=0
+MEASURE surface colliding-low-3 settledP95=0.207963556 excessHeight=1.24977648 jitterRms=1.82193709E-08 contactSpeed=3.20928
+PASS colliding-low-3 has bounded drift and no sustained contact jitter
+PASS colliding-low-3 conserves total and retired liquid
+PASS colliding-low-3 liquid kinetic energy decays after dropping stops
+PASS colliding-low-3 launch speed stays within actual ice input motion
+FAIL colliding-low-3 low-energy drops do not launch liquid above the displaced surface
+PASS colliding-low-3 keeps native dynamic bodies
+PASS Queue exactly 60 ml for Colliding
+MEASURE colliding-wet-8 cubes=8 contained=8 span=0.0192015562 angularSpan=1.790143 speed95=0.0206542984 spin95=2.97645283 sleepRatio=0.015 recovery=0 peakCubeSpeed=5.4147296 peakWaterSpeed=12.7682219 peakWaterUp=4.72147036 peakWaterRise=1.05577421 lateWaterEnergy=0.0114048049 containedMl=56 ledgerError=0
+MEASURE surface colliding-wet-8 settledP95=0.7658487 excessHeight=1.0112884 jitterRms=7.556958E-05 contactSpeed=5.4147296
+FAIL colliding-wet-8 has bounded drift and no sustained contact jitter
+PASS colliding-wet-8 conserves total and retired liquid
+PASS colliding-wet-8 liquid kinetic energy decays after dropping stops
+PASS colliding-wet-8 launch speed stays within actual ice input motion
+PASS colliding-wet-8 keeps native dynamic bodies
+PASS Queue exactly 60 ml for Colliding
+MEASURE colliding-wet-12 cubes=12 contained=12 span=0.000198949623 angularSpan=0.04378891 speed95=1.47442679E-05 spin95=0.00142918224 sleepRatio=0.04 recovery=0 peakCubeSpeed=5.416666 peakWaterSpeed=13.302393 peakWaterUp=4.41417456 peakWaterRise=1.23418832 lateWaterEnergy=0.008362661 containedMl=52 ledgerError=0
+MEASURE surface colliding-wet-12 settledP95=0.590018 excessHeight=1.36585093 jitterRms=3.71833E-07 contactSpeed=5.416666
+PASS colliding-wet-12 has bounded drift and no sustained contact jitter
+PASS colliding-wet-12 conserves total and retired liquid
+PASS colliding-wet-12 liquid kinetic energy decays after dropping stops
+PASS colliding-wet-12 launch speed stays within actual ice input motion
+PASS colliding-wet-12 keeps native dynamic bodies
+PASS No Unity application errors

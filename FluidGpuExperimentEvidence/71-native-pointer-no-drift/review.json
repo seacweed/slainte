@@ -1,0 +1,6 @@
+{
+  "status": "INTERRUPTED_NOT_VERIFIED",
+  "reason": "User stopped Computer Use with Escape before final native pointer verification completed. On resumption user requested background verification only, with no Computer Use.",
+  "cleanup": "The previously launched pointer-test process was identified by its recorded PID and exact isolated project/entry point, then stopped before reusing the harness.",
+  "claim": "No final OS cursor no-drift or human interaction approval is claimed by this attempt."
+}

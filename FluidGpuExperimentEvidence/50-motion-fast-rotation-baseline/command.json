@@ -1,0 +1,16 @@
+{
+  "timeoutSeconds": 300,
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "C:/unity_proj/slainte/slainte/Library/FluidSwapHarness",
+    "-executeMethod",
+    "ExperimentValidation.Begin",
+    "-logFile",
+    "C:\\unity_proj\\slainte\\slainte\\FluidGpuExperimentEvidence\\50-motion-fast-rotation-baseline\\Editor.log"
+  ],
+  "executable": "C:\\Program Files\\Unity\\Hub\\Editor\\6000.3.5f2\\Editor\\Unity.exe",
+  "started": "2026-09-30T19:40:37.0787373+09:00",
+  "workingDirectory": "C:\\unity_proj\\slainte\\slainte"
+}

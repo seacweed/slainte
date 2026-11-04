@@ -1,0 +1,11 @@
+{
+  "reason": "Previous attempt denied access to local Microsoft SDKs during MSBuild evaluation; rerun with SDK read access.",
+  "command": [
+    "dotnet",
+    "build",
+    "Assembly-CSharp-Editor.csproj",
+    "--no-restore",
+    "-v:minimal",
+    "-p:CustomAfterMicrosoftCommonTargets=A:\\UnityHub\\proj\\slainte\\PhysicsLabEvidence\\boundary-performance\\compile-sdk-access\\IncludePhysicsLab.targets"
+  ]
+}

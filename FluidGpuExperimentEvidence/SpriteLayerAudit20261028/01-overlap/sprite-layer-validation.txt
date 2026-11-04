@@ -1,0 +1,11 @@
+MEASURE pipeline=UniversalRP camera=True sortMode=Default axis=(0.00, 0.00, 1.00)
+PASS Holding an ordinary bottle leaves its order unchanged at 3; glass fronts remain 4
+MEASURE same-order bottle creation reversal changedPixels=0
+MEASURE garnish outside=45 heldInside=2 held=True owner=0
+PASS Held garnish loses foreground order merely by overlapping any vessel interior, despite having no owner
+PASS Contained ice stays above all glass fronts while contained garnish is below them
+MEASURE liquid surface order=0 queue=3000 z=0
+PASS Both jigger faces and the entire spoon share the back order -1 below liquid order 0
+PASS A real overlapping bottle/jigger pick region exists
+MEASURE click=(0.10, 0.31) picked=Jigger bottleOrder=3 jiggerOrder=-1
+PASS Nearest-origin picking can select the lower-order jigger behind a bottle

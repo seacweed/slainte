@@ -1,0 +1,31 @@
+PASS NonColliding keeps automatic native physics and async GPU scheduling
+PASS NonColliding native fixture queues 60 ml
+MEASURE NonColliding native initial rest maxSpan=2.437451E-05 cubes=12
+PASS NonColliding native initial rest every cube settles below the jitter limit
+PASS NonColliding retains all twelve dynamic cubes in receiver
+PASS NonColliding picks crowded receiver
+PASS NonColliding remains mobile after settling rather than freezing the stack
+MEASURE NonColliding native stop after movement maxSpan=0.004859859 cubes=12
+PASS NonColliding native stop after movement every cube settles below the jitter limit
+PASS NonColliding continues real asynchronous snapshots during motion
+PASS NonColliding actual click-drop succeeds
+PASS NonColliding click-drop preserves every owned particle velocity and motion history
+PASS NonColliding click-drop adds no cube speed or spin
+PASS NonColliding native loop conserves liquid
+MEASURE native NonColliding relativeTravel=0.4546438 containedMl=60
+PASS Colliding keeps automatic native physics and async GPU scheduling
+PASS Colliding native fixture queues 60 ml
+MEASURE Colliding native initial rest maxSpan=0.00602933345 cubes=12
+PASS Colliding native initial rest every cube settles below the jitter limit
+PASS Colliding retains all twelve dynamic cubes in receiver
+PASS Colliding picks crowded receiver
+PASS Colliding remains mobile after settling rather than freezing the stack
+MEASURE Colliding native stop after movement maxSpan=1.76206231E-06 cubes=12
+PASS Colliding native stop after movement every cube settles below the jitter limit
+PASS Colliding continues real asynchronous snapshots during motion
+PASS Colliding actual click-drop succeeds
+PASS Colliding click-drop preserves every owned particle velocity and motion history
+PASS Colliding click-drop adds no cube speed or spin
+PASS Colliding native loop conserves liquid
+MEASURE native Colliding relativeTravel=0.8669082 containedMl=2.5
+PASS Native crowded loop has no application errors

@@ -1,0 +1,14 @@
+PASS Hidden batch GPU harness; no desktop input
+PASS Authored comparison scene initializes
+PASS Actual F GPU solver is operational
+INFO dt=0.02, settle=6s, sample=2s; limits sleep>=0.8, rms<=0.002, span<=0.01, speed-p95<=0.02; fixed-ice near-liquid mean<=0.1, p95<=0.5
+PASS Fixture cubes acquire the actual glass before pickup
+MEASURE {"name":"Kinematic-Cluster4-Empty","held":false,"liquid":false,"fixedIce":false,"iceCount":4,"ownedIceCount":4,"nearLiquidSamples":0,"deepPenetrationSamples":0,"sleepFraction":0.0,"contactFraction":1.0,"positionRms":0.009896219708025456,"positionSpan":0.04747525602579117,"speedP95":0.3892591893672943,"maximumStep":0.03393407166004181,"maximumAngularSpeed":99.6242904663086,"nearLiquidMeanSpeed":0.0,"nearLiquidSpeedP95":0.0,"maximumLiquidSpeed":0.0,"maximumLedgerError":0.0,"generatedMl":0.0,"retainedMl":0.0,"retiredMl":0.0}
+PASS Kinematic-Cluster4-Empty stationary glass retains all ice
+PASS Fixture cubes acquire the actual glass before pickup
+FAIL Liquid fixture admits exactly 60 ml outside every ice solid and its particle-radius clearance
+System.Exception: Liquid fixture admits exactly 60 ml outside every ice solid and its particle-radius clearance
+  at ExperimentIceContactValidationRunner.Require (System.Boolean success, System.String label, System.Boolean logPass) [0x00030] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\IceContactValidation.cs:380 
+  at ExperimentIceContactValidationRunner.Prepare (System.Boolean held, System.Boolean liquid, System.Boolean fixedIce) [0x00475] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\IceContactValidation.cs:150 
+  at ExperimentIceContactValidationRunner.Measure (System.Boolean held, System.Boolean liquid, System.Boolean fixedIce) [0x00000] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\IceContactValidation.cs:167 
+  at ExperimentIceContactValidationRunner+<Start>d__24.MoveNext () [0x002ff] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\IceContactValidation.cs:92 

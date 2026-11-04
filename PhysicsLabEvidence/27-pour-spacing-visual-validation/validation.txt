@@ -1,0 +1,134 @@
+PASS: Isolated world exists
+PASS: GPU compute active: NVIDIA GeForce RTX 3070 / Direct3D11
+SKIP: Legacy-system presence is not tested in the isolated scene-copy project.
+SKIP: Legacy-system presence is not tested in the isolated scene-copy project.
+PASS: All bodies share one layer
+PASS: All resting bodies are Dynamic
+PASS: Every item rests above the physical floor
+PASS: Pickup resets angle to zero without moving: Bottle_item_1003
+PASS: Pickup preserves the pointer grab offset: Bottle_item_1003
+PASS: Pickup resets angle to zero without moving: Glass_highball
+PASS: Pickup preserves the pointer grab offset: Glass_highball
+PASS: Pickup resets angle to zero without moving: Bottle_item_1001
+PASS: Pickup preserves the pointer grab offset: Bottle_item_1001
+PASS: Pickup resets angle to zero without moving: Spoon
+PASS: Pickup preserves the pointer grab offset: Spoon
+PASS: Pickup resets angle to zero without moving: Shaker
+PASS: Pickup preserves the pointer grab offset: Shaker
+PASS: Pickup resets angle to zero without moving: Glass_hurricane
+PASS: Pickup preserves the pointer grab offset: Glass_hurricane
+PASS: Pickup resets angle to zero without moving: Jigger
+PASS: Pickup preserves the pointer grab offset: Jigger
+PASS: Pickup resets angle to zero without moving: Bottle_item_1002
+PASS: Pickup preserves the pointer grab offset: Bottle_item_1002
+PASS: Pickup resets angle to zero without moving: IceBucket
+PASS: Pickup preserves the pointer grab offset: IceBucket
+PASS: Metaball surface uses the existing accumulation and composite shaders
+PASS: Surface comparison uses the same two GPU particles
+PASS: Metaballs connect the gap between separate particle discs (0 -> 178)
+PASS: Thin contour highlight contributes visible light (max red delta 65)
+PASS: Surface textures follow camera target resolution
+PASS: Rendering mode, highlight and resolution changes leave GPU physics and ml untouched
+PASS: Airborne particle stretches along velocity while narrowing across it
+PASS: Surface UV orientation keeps liquid at its world position
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1001
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1001
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1002
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1002
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1003
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1003
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1004
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1004
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1005
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1005
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1006
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1006
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1007
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1007
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1008
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1008
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1009
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1009
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1010
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1010
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1011
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1011
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1012
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1012
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1013
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1013
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1014
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1014
+PASS: Nozzle starts outside the bottle hull: Bottle_item_1015
+PASS: Bottle flow rises smoothly from zero to full: Bottle_item_1015
+PASS: All 15 bottle profiles checked without changing shared ItemDefs
+Birth offset positions: early=-2.97003, late=0.01
+PASS: Birth offsets integrate only 15 ms and 5 ms of a 20 ms tick
+PASS: Newborn velocity reconstruction uses its effective integration time
+PASS: End-of-tick birth is visible and conserved without premature motion
+PASS: Emitter birth offsets preserve the global two-substep schedule
+PASS: Consecutive same-source particles form exactly one connecting surface
+PASS: Stream pass closes a visible gap the original metaballs leave empty
+PASS: Stream display buffers leave physical particles and ml untouched
+PASS: Stream connection cannot bridge a solid between two non-contacting particles
+PASS: Solid contact permanently detaches the struck stream particle
+PASS: Different bottles and pour sessions cannot join
+PASS: Slow drips stay detached across a long emission gap
+PASS: Reset and reused particle slots cannot resurrect an old connection
+PASS: Moving bottle distributes four births at 5 ms intervals within one fixed tick
+PASS: Multiple births preserve accepted stock and GPU volume exactly
+PASS: Unwrapped multi-turn motion samples intervening pour angles without global refinement
+PASS: Rejected emission keeps bottle stock intact under GPU backpressure
+PASS: Clearing GPU backpressure does not release an accumulated burst
+PASS: Bottle pickup
+PASS: Held body collision suppressed
+PASS: Tilted bottle pickup is upright immediately
+PASS: Unlimited 855 degree accumulated rotation
+PASS: Fast rotation leaves the fluid integration schedule fixed
+PASS: Upright return interpolates quickly without translating the body
+PASS: Return cursor target follows the rotating grab point
+PASS: Automatic upright return does not generate throw velocity or spin
+PASS: Automatic return does not unwind completed turns in GPU motion history
+PASS: RMB release resets to zero at the current position without a pointer jump
+PASS: Repeated negative rotation also returns upright at the current position
+PASS: New RMB rotation interrupts upright return from its current angle
+PASS: 720 degrees does not pour when upright
+PASS: Unheld physically tilted bottle pours
+PASS: Dropped body collision restored
+PASS: Throw transfers linear and angular velocity
+PASS: Pickup/rotation/throw contacts stay within the local sweep budget
+PASS: Filled sealed shaker on GPU
+PASS: GPU volume and ownership after fill
+PASS: Sealed vessel retains liquid through two full rotations
+PASS: Sealed vessel keeps GPU contents through upright return in place
+PASS: Picking up a tilted sealed vessel restores upright and keeps its GPU contents
+PASS: GPU positions remain finite
+PASS: Drop during rotation preserves the release angle
+PASS: Slot-free swap succeeds with different body sizes
+PASS: Swap preserves both angles
+PASS: Swap preserves GPU content amount and owner
+Collision setup: bottle=Bottle_item_1002, bounds=Center: (-7.00, -1.76, 0.00), Extents: (0.65, 1.48, 0.00); hitter=Center: (-9.00, -0.73, 0.00), Extents: (0.40, 0.56, 0.00)
+PASS: Tool collision tips a bottle (90.3 degrees)
+PASS: Filled vessel rotation, swap and impact contacts stay within the local sweep budget
+PASS: Open inverted vessel spills and releases ownership
+PASS: GPU stress uses at least 1000 real particles
+PASS: Stress state remains finite
+Batch Play Mode frame ms: p50=0.24, p95=0.34, p99=0.79; samples=4554
+Frame intervals are batch scheduling diagnostics, not GPU timings or gameplay FPS.
+PASS: Bottle nozzle liquid is captured by a separate glass (14.0 ml)
+PASS: Nozzle transfer conserves emitted ml
+PASS: Negative multi-turn rotation is also unrestricted
+PASS: Tilted ice bucket emits physical colliding ice
+PASS: Reset removes spawned ice and restores all nine dynamic items
+PASS: Reset recreates seeded GPU liquid
+PASS: Settled open vessel retains ownership: Glass_highball / 60.0 ml
+PASS: Settled open vessel retains ownership: Glass_hurricane / 16.5 ml
+PASS: Slow carried glass preserves settled liquid ownership
+PASS: GPU capacity rejects overflow and retains pending reservations across readback
+PASS: World re-enable rebuilds GPU resources and item registration
+PASS: World re-enable recreates surface textures and renderer
+PASS: Controlled bottle stream conserves stock and emitted ml
+PASS: Controlled pour has a continuous GPU stream
+GPU surface marker timing unavailable in this batch editor; no GPU performance claim.
+PASS: Upright bottle stops spawning while detached liquid continues falling
+All runtime checks passed.

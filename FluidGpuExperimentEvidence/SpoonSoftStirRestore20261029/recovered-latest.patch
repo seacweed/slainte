@@ -1,0 +1,243 @@
+*** Begin Patch
+*** Update File: A:/UnityHub/proj/slainte/Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentCocktailSession.Techniques.cs
+@@
+             foreach (var spoon in world.Items)
+             {
+-                if (spoon == null || spoon.kind != LabItemKind.Spoon || !spoon.IsHeld || spoon.collisionProfile == null) continue;
+-                if (!spoon.SpoonContactEnabled || spoon.SpoonLiquidVessel != vessel) continue;
+-                Vector2 relative = (spoon.Position - spoon.PreviousPosition - (vessel.Position - vessel.PreviousPosition)) / dt;
+-                float angular = Mathf.Abs(Mathf.DeltaAngle(spoon.PreviousAngle, spoon.Angle)
+-                    - Mathf.DeltaAngle(vessel.PreviousAngle, vessel.Angle)) / dt;
+-                if (relative.magnitude < stirMinimumSpeed && angular < stirMinimumAngularSpeed) continue;
+-                if (SpoonTouchesLiquid(spoon, vessel)) return true;
++                if (TryGetStirContact(spoon, vessel, dt, out _, out _, out bool moving) && moving) return true;
+             }
+             return false;
+         }
+ 
+-        private bool SpoonTouchesLiquid(FluidExperimentBody spoon, FluidExperimentBody vessel)
++        internal bool TryGetStirContact(FluidExperimentBody spoon, FluidExperimentBody vessel, float dt,
++            out Vector2 relative, out Vector2 wetPoint, out bool moving)
++        {
++            relative = wetPoint = Vector2.zero; moving = false;
++            if (dt <= 0 || spoon == null || spoon.kind != LabItemKind.Spoon || !spoon.IsHeld || spoon.collisionProfile == null
++                || !spoon.SpoonContactEnabled || spoon.SpoonLiquidVessel != vessel) return false;
++            relative = (spoon.Position - spoon.PreviousPosition - (vessel.Position - vessel.PreviousPosition)) / dt;
++            float angular = Mathf.Abs(Mathf.DeltaAngle(spoon.PreviousAngle, spoon.Angle)
++                - Mathf.DeltaAngle(vessel.PreviousAngle, vessel.Angle)) / dt;
++            moving = relative.magnitude >= stirMinimumSpeed || angular >= stirMinimumAngularSpeed;
++            return SpoonTouchesLiquid(spoon, vessel, out wetPoint);
++        }
++
++        private bool SpoonTouchesLiquid(FluidExperimentBody spoon, FluidExperimentBody vessel, out Vector2 wetPoint)
+         {
++            wetPoint = Vector2.zero; int count = 0;
+@@
+                 foreach (var hull in spoon.collisionProfile.solids)
+                 {
+-                    if (FluidExperimentCollisionProfile.Contains(hull.points, spoon.WorldToLocal(particle.Position))) return true;
+-                    for (int i = 0; i < hull.points.Length; i++)
++                    bool touches = FluidExperimentCollisionProfile.Contains(hull.points, spoon.WorldToLocal(particle.Position));
++                    for (int i = 0; !touches && i < hull.points.Length; i++)
+@@
+-                        if ((particle.Position - a - edge * t).sqrMagnitude <= reachSquared) return true;
++                        if ((particle.Position - a - edge * t).sqrMagnitude <= reachSquared) touches = true;
+                     }
++                    if (touches) { wetPoint += particle.Position; count++; break; }
+                 }
+             }
+-            return false;
++            if (count > 0) wetPoint /= count;
++            return count > 0;
+*** Update File: A:/UnityHub/proj/slainte/Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.cs
+@@
+-        private bool ParticipatesInLiquidCollision(FluidExperimentBody body) => body.kind == LabItemKind.Spoon && body.IsHeld
+-            ? body.SpoonLiquidVessel != null
+-            : !useCohesivePhysics || !body.IsLooseSolid || (body.kind == LabItemKind.Ice && IceLiquidCollisionEnabled);
++        private bool ParticipatesInLiquidCollision(FluidExperimentBody body) => body.kind != LabItemKind.Spoon
++            && (!useCohesivePhysics || !body.IsLooseSolid || (body.kind == LabItemKind.Ice && IceLiquidCollisionEnabled));
+@@
+-            simulationShader.SetInt("_AgitatorCount", 0); // Spoon and ice use moving solid geometry.
++            PrepareSpoonStir(dt);
+@@
+-            BindCurrentComposition(colorKernel); DispatchForCount(colorKernel, particleCapacity);
++            DispatchSpoonMix(dt);
++            BindCurrentComposition(colorKernel); DispatchForCount(colorKernel, particleCapacity);
+@@
+             DisposeLedgerBuffers();
++            DisposeSpoonStir();
+*** Update File: A:/UnityHub/proj/slainte/Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.Buffers.cs
+@@
+             CacheLedgerKernels();
++            CacheSpoonStirKernels();
+@@
+             AllocateLedgerBuffers();
++            AllocateSpoonStir();
+@@
+             BindCommonBuffers(transferContentsKernel);
++            BindSpoonStir();
+@@
+             ResetLedgerState();
++            ResetSpoonStir();
+*** Add File: A:/UnityHub/proj/slainte/Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.Stirring.cs
++using System.Collections.Generic;
++using UnityEngine;
++
++namespace Slainte.Bartending.FluidGpuExperiment
++{
++    public sealed partial class FluidExperimentGpuLiquid
++    {
++        [Header("Spoon stirring (F/G Manual and Runtime)")]
++        public bool enableSpoonStirring = true;
++        [Min(0)] public float spoonFlowSpeed = .16f;
++        [Min(0)] public float spoonFlowAcceleration = .6f;
++        [Min(.01f)] public float spoonFlowRadius = .4f;
++        [Min(0)] public float spoonFlowResponse = 6;
++        [Min(0)] public float spoonMixRate = 1.6f;
++        [Min(.01f)] public float spoonFullStirSpeed = .45f;
++        [Min(0)] public float spoonSettleDuration = .3f;
++        public int SpoonStirSources { get; private set; }
++        public int SpoonMixSources { get; private set; }
++        public float MaximumSpoonFlowTargetSpeed { get; private set; }
++        private GraphicsBuffer spoonMixtureBuffer;
++        private int collectSpoonMixKernel, applySpoonMixKernel;
++        private readonly Dictionary<FluidExperimentBody, float> spoonTails = new Dictionary<FluidExperimentBody, float>();
++        private readonly HashSet<FluidExperimentBody> seenSpoons = new HashSet<FluidExperimentBody>();
++        private readonly HashSet<uint> stirredVessels = new HashSet<uint>();
++        private readonly List<FluidExperimentBody> expiredSpoons = new List<FluidExperimentBody>();
++
++        private void CacheSpoonStirKernels()
++        { collectSpoonMixKernel = RequireKernel("CollectSpoonMixture"); applySpoonMixKernel = RequireKernel("ApplySpoonMixture"); }
++        private void AllocateSpoonStir() => spoonMixtureBuffer = CreateStructured<Vector2>(MaximumAgitators * maximumIngredients);
++        private void BindSpoonStir()
++        {
++            BindCommonBuffers(collectSpoonMixKernel); BindCommonBuffers(applySpoonMixKernel);
++            simulationShader.SetBuffer(collectSpoonMixKernel, "_SpoonMixture", spoonMixtureBuffer);
++            simulationShader.SetBuffer(applySpoonMixKernel, "_SpoonMixture", spoonMixtureBuffer);
++        }
++        private void ResetSpoonStir()
++        {
++            spoonTails.Clear(); SpoonStirSources = SpoonMixSources = 0; MaximumSpoonFlowTargetSpeed = 0;
++            simulationShader.SetInt("_AgitatorCount", 0);
++        }
++        private void DisposeSpoonStir() { spoonMixtureBuffer?.Dispose(); spoonMixtureBuffer = null; spoonTails.Clear(); }
++
++        private void PrepareSpoonStir(float dt)
++        {
++            SpoonStirSources = SpoonMixSources = 0; MaximumSpoonFlowTargetSpeed = 0;
++            seenSpoons.Clear(); stirredVessels.Clear();
++            var session = world.Cocktails;
++            if (enableSpoonStirring && session != null && session.Available)
++                foreach (var spoon in world.Items)
++                {
++                    if (spoon == null || spoon.kind != LabItemKind.Spoon) continue;
++                    var vessel = spoon.SpoonLiquidVessel;
++                    if (vessel == null || !session.TryGetStirContact(spoon, vessel, dt, out var relative, out var point, out bool moving)) continue;
++                    seenSpoons.Add(spoon);
++                    spoonTails.TryGetValue(spoon, out float tail);
++                    tail = moving ? spoonSettleDuration : Mathf.Max(0, tail - dt);
++                    spoonTails[spoon] = tail;
++                    if ((!moving && tail <= 0) || SpoonStirSources >= MaximumAgitators || !stirredVessels.Add(vessel.Id)) continue;
++                    float strength = moving ? Mathf.Clamp01(Mathf.Max(.05f, relative.magnitude / Mathf.Max(.01f, spoonFullStirSpeed)))
++                        : tail / Mathf.Max(.001f, spoonSettleDuration);
++                    Vector2 velocity = moving ? Vector2.ClampMagnitude(relative * .3f, Mathf.Max(0, spoonFlowSpeed)) : Vector2.zero;
++                    velocity.y *= .35f;
++                    MaximumSpoonFlowTargetSpeed = Mathf.Max(MaximumSpoonFlowTargetSpeed, velocity.magnitude);
++                    agitatorUpload[SpoonStirSources++] = new GpuLiquidAgitator { A = point, B = point, Velocity = velocity,
++                        Radius = spoonFlowRadius, Strength = strength, VesselId = vessel.Id, Active = moving ? 7u : 3u };
++                    if (moving) SpoonMixSources++;
++                }
++            expiredSpoons.Clear();
++            foreach (var spoon in spoonTails.Keys) if (!seenSpoons.Contains(spoon)) expiredSpoons.Add(spoon);
++            foreach (var spoon in expiredSpoons) spoonTails.Remove(spoon);
++            if (SpoonStirSources > 0) agitatorBuffer.SetData(agitatorUpload, 0, 0, SpoonStirSources);
++            simulationShader.SetInt("_AgitatorCount", SpoonStirSources);
++            simulationShader.SetFloat("_SpoonFlowResponse", Mathf.Max(0, spoonFlowResponse));
++            simulationShader.SetFloat("_SpoonFlowAcceleration", Mathf.Max(0, spoonFlowAcceleration));
++        }
++        private void DispatchSpoonMix(float dt)
++        {
++            if (SpoonMixSources == 0 || spoonMixRate <= 0) return;
++            BindCurrentComposition(collectSpoonMixKernel);
++            DispatchForCount(collectSpoonMixKernel, SpoonStirSources * maximumIngredients);
++            simulationShader.SetBuffer(applySpoonMixKernel, "_SpoonComposition", compositionAIsCurrent ? compositionA : compositionB);
++            simulationShader.SetFloat("_SpoonMixStep", Mathf.Max(0, spoonMixRate) * dt);
++            DispatchForCount(applySpoonMixKernel, particleCapacity);
++        }
++    }
++}
+*** Add File: A:/UnityHub/proj/slainte/Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.Stirring.cs.meta
++fileFormatVersion: 2
++guid: a47c862f86be4adf92d48ee85c17d196
+*** Update File: A:/UnityHub/proj/slainte/Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentLiquid.compute
+@@
+ #pragma kernel MixCompositionConservative
++#pragma kernel CollectSpoonMixture
++#pragma kernel ApplySpoonMixture
+@@
+ StructuredBuffer<Agitator> _Agitators;
++RWStructuredBuffer<float2> _SpoonMixture;
++RWStructuredBuffer<float> _SpoonComposition;
++float _SpoonFlowResponse, _SpoonFlowAcceleration, _SpoonMixStep;
+@@
+         if (agitator.active == 0u)
+             continue;
++        bool softSpoon = (agitator.active & 2u) != 0u;
++        if (softSpoon && particle.vesselId != agitator.vesselId) continue;
+@@
+-                -max(0.0, agitator.strength) * dt);
+-            particle.velocity += (agitator.velocity - particle.velocity)
+-                * influence
+-                * response;
++                -max(0.0, agitator.strength) * (softSpoon ? _SpoonFlowResponse : 1.0) * dt);
++            float2 change = (agitator.velocity - particle.velocity) * influence * response;
++            if (softSpoon)
++                change *= min(1.0, _SpoonFlowAcceleration * dt / max(1e-8, length(change)));
++            particle.velocity += change;
+@@
+-[numthreads(THREAD_GROUP_SIZE, 1, 1)]
+-void CollectLiquidLedger(uint3 dispatchId : SV_DispatchThreadID)
++[numthreads(THREAD_GROUP_SIZE, 1, 1)]
++void CollectSpoonMixture(uint3 id : SV_DispatchThreadID)
++{
++    uint source = id.x / (uint)_MaximumIngredients, ingredient = id.x % (uint)_MaximumIngredients;
++    if (source >= (uint)_AgitatorCount) return;
++    Agitator stir = _Agitators[source];
++    float2 sum = 0;
++    if ((stir.active & 4u) != 0u && ingredient < (uint)_IngredientCount)
++        for (uint i = 0; i < (uint)_ParticleCapacity; ++i)
++        {
++            LiquidParticle p = _Particles[i];
++            if (p.active == 0u || p.vesselId != stir.vesselId || (p.stateFlags & STATE_SUSPENDED) != 0u) continue;
++            sum += float2(p.volumeMl * _CompositionRead[i * (uint)_MaximumIngredients + ingredient], p.volumeMl);
++        }
++    _SpoonMixture[id.x] = sum;
++}
++
++[numthreads(THREAD_GROUP_SIZE, 1, 1)]
++void ApplySpoonMixture(uint3 id : SV_DispatchThreadID)
++{
++    if (id.x >= (uint)_ParticleCapacity) return;
++    LiquidParticle p = _Particles[id.x];
++    if (p.active == 0u || (p.stateFlags & STATE_SUSPENDED) != 0u) return;
++    for (int source = 0; source < _AgitatorCount; ++source)
++    {
++        Agitator stir = _Agitators[source];
++        if ((stir.active & 4u) == 0u || p.vesselId != stir.vesselId) continue;
++        float blend = 1.0 - exp(-_SpoonMixStep * stir.strength);
++        for (int ingredient = 0; ingredient < _IngredientCount; ++ingredient)
++        {
++            float2 sum = _SpoonMixture[source * _MaximumIngredients + ingredient];
++            if (sum.y <= 0) continue;
++            uint address = id.x * (uint)_MaximumIngredients + ingredient;
++            // The same volume-weighted mean and blend apply to every particle in
++            // this vessel: each ingredient's total ml is conserved without a clamp.
++            _SpoonComposition[address] = lerp(_SpoonComposition[address], sum.x / sum.y, blend);
++        }
++        break;
++    }
++}
++
++[numthreads(THREAD_GROUP_SIZE, 1, 1)]
++void CollectLiquidLedger(uint3 dispatchId : SV_DispatchThreadID)
+*** End Patch

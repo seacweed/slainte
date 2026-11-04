@@ -1,0 +1,8 @@
+*.log
+*.png
+*.dmp
+stdout.txt
+stderr.txt
+/HarnessProject/
+!Previews/*.png
+/Cleanup20261029/*.zip

@@ -1,0 +1,15 @@
+{
+  "started": "2026-09-22T01:58:46.0560332+09:00",
+  "workingDirectory": "A:/UnityHub/proj/slainte",
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/PhysicsLabEvidence/SceneHarnessProject",
+    "-executeMethod",
+    "BoundaryBenchmark.BeginDifferential",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\PhysicsLabEvidence\\52-boundary-differential-clean\\Editor.log"
+  ]
+}

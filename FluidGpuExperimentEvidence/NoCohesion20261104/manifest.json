@@ -1,0 +1,22 @@
+[
+  {
+    "path": "Assets\\_Project\\Features\\Bartending\\FluidGpuExperiment\\Runtime\\FluidExperimentLiquidSettings.cs",
+    "before": "82e777720332735ba424a19133dd1f36fd3512f5569b4517e371c6d037af9532",
+    "after": "d53bbc784557e5054c26ef4c67b488765bb29f66c6dfe2c201642ea06c6247cb"
+  },
+  {
+    "path": "Assets\\_Project\\Features\\Bartending\\FluidGpuExperiment\\Runtime\\FluidExperimentGpuLiquid.Cohesive.cs",
+    "before": "76ab8cff68ef5e4b1b958f108ade5caf505919b17175e0774bdfa32583c22623",
+    "after": "ebda981628552cbc618f1bf2655347f18fc5452c362e32e4c7a19a78a520b508"
+  },
+  {
+    "path": "Assets\\_Project\\Features\\Bartending\\FluidGpuExperiment\\Data\\FluidExperimentLiquidSettings.asset",
+    "before": "2d62284a7e4415be0102b048206a44ad95f887660d8b21ee3ccea46fa427f311",
+    "after": "abbf581abb2264c1a27dd66594f73da4a54cf6a7bd1a9420a2d86e07a832a530"
+  },
+  {
+    "path": "Assets\\_Project\\Features\\Bartending\\FluidGpuExperiment\\README.md",
+    "before": "27fb3075e75f1d2200986e04871bca4e405c3bc3fc9f6c5973cbec03ee968efe",
+    "after": "73a329fd6d7984ad6499148af0602898dd5ed98f1f4a49989742dee134dd456c"
+  }
+]

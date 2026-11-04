@@ -1,0 +1,22 @@
+PASS Two reusable runtime compositions initialize actual GPU resources without desktop input
+PASS Sample and second sandbox use the reusable runtime without a comparison controller
+PASS The remote sample retains seeded liquid, natural breakage and shard-liquid contact
+PASS The original 28 catalog entries remain intact; the single world-owned dispenser is excluded from ordinary spawning
+PASS IndependentDispenserRuntime instantiates and registers its own configured dispenser
+PASS IndependentDispenserRuntime starts with exactly one docked, off, full supply
+PASS IndependentDispenserRuntime uses its explicit runtime camera for visible hose, input and liquid rendering
+PASS FluidExperimentRuntime instantiates and registers its own configured dispenser
+PASS FluidExperimentRuntime starts with exactly one docked, off, full supply
+PASS FluidExperimentRuntime uses its explicit runtime camera for visible hose, input and liquid rendering
+PASS Dispenser instances never share ownership across independent runtime worlds
+PASS Runtime dock fits the actual environment walls and ceiling, without assuming the comparison dock coordinates
+PASS FluidExperimentRuntime accepts docked Hot selection and pickup
+PASS FluidExperimentRuntime sends exactly 4 ml only to its own world and supply ledger
+PASS IndependentDispenserRuntime accepts docked Hot selection and pickup
+PASS IndependentDispenserRuntime sends exactly 4 ml only to its own world and supply ledger
+PASS Both independent GPU buffers materialize the dispenser's hot-water particles
+PASS Reusable runtime world ticks move the held dispenser inside its narrower environment
+FAIL Runtime dispenser returns to its environment-adjusted dock instead of an out-of-bounds comparison position
+System.Exception: Runtime dispenser returns to its environment-adjusted dock instead of an out-of-bounds comparison position
+  at DispenserRuntimeValidationRunner.Check (System.Boolean okay, System.String text) [0x0002a] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\DispenserRuntimeValidation.cs:48 
+  at DispenserRuntimeValidationRunner+<Start>d__10.MoveNext () [0x00533] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\DispenserRuntimeValidation.cs:110 

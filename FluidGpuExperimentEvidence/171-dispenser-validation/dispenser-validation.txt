@@ -1,0 +1,167 @@
+PASS Hidden Unity GPU harness initializes without desktop input
+PASS Authored default remains F coherent liquid
+PASS F Manual instantiates the authored dispenser prefab
+PASS F Manual starts available, docked and off
+PASS The authored shared capacity is 5000 ml
+PASS The authored rates are 40 ml per second and one ice per 0.3 seconds
+PASS Dispenser has authored hot water and existing native ice references
+PASS Hot water carries an explicit hot serving temperature
+PASS Three distinct imported sprites represent off, Ice and Hot
+PASS Docked off mode displays the configured off sprite
+PASS Dispenser body is pickable and has solid collision geometry
+PASS Hose is a multipoint curve with no native collider
+PASS Dispenser has no internal liquid vessel or loose-solid behavior
+PASS Docked/off tool cannot dispense even when asked
+PASS Actual Ice button click selects mode without picking the overlapping body
+PASS Repeated Update or holding LMB does not toggle twice
+PASS Clicking the active Ice button toggles off
+PASS Actual Hot button click selects the hot sprite
+PASS Actual body click acquires the dedicated dispenser hand state
+PASS Held dispenser ignores mode changes while consuming button hits
+PASS Actual RMB hold dispenses while translating to the cursor
+PASS RMB movement continues emission without rotation, upright return or cursor capture
+PASS RMB release stops immediately without trailing inventory drain
+PASS Actual Escape cancels emission and releases the dispenser for safe retraction
+PASS Cancelled input returns the tool to its dock
+PASS Shared focus-loss cancellation stops stock consumption and clears the held tool
+PASS Virtual input never modifies the native cursor lock or visibility
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS One second of Hot follows 40 ml/s and subtracts exactly the accepted GPU volume
+PASS Released dispenser completes collision-aware retraction to its dock
+PASS Mode fixture starts docked
+PASS Select Ice at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Switching from Hot to Ice spends the same shared inventory
+PASS Released dispenser completes collision-aware retraction to its dock
+PASS Retraction preserves mode and remaining inventory
+PASS Active mode can be toggled off after docking
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Held None mode never consumes inventory
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Hot emission queues actual GPU spawn commands
+PASS Hot particle 0 begins straight down without inherited dispenser movement or vessel ownership
+PASS Hot particle 0 carries the configured water temperature
+PASS Hot particle 1 begins straight down without inherited dispenser movement or vessel ownership
+PASS Hot particle 1 carries the configured water temperature
+PASS Hot particle 2 begins straight down without inherited dispenser movement or vessel ownership
+PASS Hot particle 2 carries the configured water temperature
+PASS Hot particle 3 begins straight down without inherited dispenser movement or vessel ownership
+PASS Hot particle 3 carries the configured water temperature
+PASS Hot particle 4 begins straight down without inherited dispenser movement or vessel ownership
+PASS Hot particle 4 carries the configured water temperature
+PASS Hot particle 5 begins straight down without inherited dispenser movement or vessel ownership
+PASS Hot particle 5 carries the configured water temperature
+PASS Hot particle 6 begins straight down without inherited dispenser movement or vessel ownership
+PASS Hot particle 6 carries the configured water temperature
+PASS Hot particle 7 begins straight down without inherited dispenser movement or vessel ownership
+PASS Hot particle 7 carries the configured water temperature
+PASS Queued hot water becomes finite actual GPU particles
+PASS Hot water uses the existing connected stream representation
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Exhausted GPU allocation rejects hot emission without inventory loss
+PASS Restoring GPU slots emits only current flow, with no accumulated rejected burst
+PASS Recovery from allocation failure preserves exact stock accounting
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Hot drains exactly 0 ml with no negative inventory
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Hot drains exactly 1 ml with no negative inventory
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Hot drains exactly 9 ml with no negative inventory
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Hot drains exactly 10 ml with no negative inventory
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Hot drains exactly 11 ml with no negative inventory
+PASS Mode fixture starts docked
+PASS Select Ice at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Ice first interval handles 0 ml with the documented final-piece rule
+PASS Ice subsequent interval exhausts 0 ml without extra pieces
+PASS Mode fixture starts docked
+PASS Select Ice at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Ice first interval handles 1 ml with the documented final-piece rule
+PASS Dispensed ice is a native dynamic body already marked placed
+PASS Ice subsequent interval exhausts 1 ml without extra pieces
+PASS Mode fixture starts docked
+PASS Select Ice at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Ice first interval handles 9 ml with the documented final-piece rule
+PASS Dispensed ice is a native dynamic body already marked placed
+PASS Ice subsequent interval exhausts 9 ml without extra pieces
+PASS Mode fixture starts docked
+PASS Select Ice at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Ice first interval handles 10 ml with the documented final-piece rule
+PASS Dispensed ice is a native dynamic body already marked placed
+PASS Ice subsequent interval exhausts 10 ml without extra pieces
+PASS Mode fixture starts docked
+PASS Select Ice at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Ice first interval handles 11 ml with the documented final-piece rule
+PASS Dispensed ice is a native dynamic body already marked placed
+PASS Ice subsequent interval exhausts 11 ml without extra pieces
+PASS Mode fixture starts docked
+PASS Select Ice at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Unavailable ice prefab consumes no shared stock
+PASS Recovered ice generation resumes one interval without an accumulated burst
+PASS Mode fixture starts docked
+PASS Select Ice at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Ice physically blocked nozzle consumes no inventory and creates no overlapping output
+PASS Ice resumes a single normal emission after clearing the nozzle
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Hot physically blocked nozzle consumes no inventory and creates no overlapping output
+PASS Hot resumes a single normal emission after clearing the nozzle
+PASS Mode fixture starts docked
+PASS Select Ice at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+PASS Actual registered ice geometry reaches the conservative GPU boundary admission limit
+PASS Full solid-boundary budget blocks ice before instantiation and preserves stock
+PASS Removing geometry restores one regular ice birth without a backlog
+PASS Mode fixture starts docked
+PASS Select Hot at the authored button position
+PASS Pick dispenser through its interactor API
+PASS Held dispenser reaches the unobstructed work position
+FAIL Actual emitted hot stream enters the existing glass ownership/collision path and retains at least 90 percent of a 20 ml dose
+System.Exception: Actual emitted hot stream enters the existing glass ownership/collision path and retains at least 90 percent of a 20 ml dose
+  at DispenserValidationRunner.Check (System.Boolean okay, System.String text) [0x0002a] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\DispenserValidation.cs:52 
+  at DispenserValidationRunner.ReceivingGlassIntegration () [0x00104] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\DispenserValidation.cs:510 
+  at DispenserValidationRunner+<Start>d__20.MoveNext () [0x0024e] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\DispenserValidation.cs:92 

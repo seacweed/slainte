@@ -1,0 +1,202 @@
+[
+  {
+    "path": "00-startup-failures/Crash_2026-09-19_081621729/crash.dmp",
+    "bytes": 173726,
+    "sha256": "12be58962d3768bf5d7866b5d6dfffb17720ef6ce7351b4b093e0fb9e86a8d56"
+  },
+  {
+    "path": "00-startup-failures/Crash_2026-09-19_081645407/crash.dmp",
+    "bytes": 168302,
+    "sha256": "7ac2c1e8ed95caa465ac4a188b33326107ce32f1cc00b3feccec87e5b2e724cd"
+  },
+  {
+    "path": "00-startup-failures/Crash_2026-09-19_081739889/crash.dmp",
+    "bytes": 168942,
+    "sha256": "d9057104271f2d1aec230cdf1fb457cbcf71ffe95a5f86960560c353b33bfbf1"
+  },
+  {
+    "path": "01-prefab-build/Editor.log",
+    "bytes": 53113,
+    "sha256": "5e7bc8e59c72a1f31a0611d268caf987fb877f48cd6135e615096842e82ac1fd"
+  },
+  {
+    "path": "02-playmode-validation/Editor.log",
+    "bytes": 48362,
+    "sha256": "9081e3a3fd6f73758e4d0397fe28a0d25263c4490cbf9c119f038c107586aa51"
+  },
+  {
+    "path": "02-playmode-validation/stderr.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "02-playmode-validation/stdout.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "02-playmode-validation/validation.raw.txt",
+    "bytes": 1660,
+    "sha256": "bf6812080fb52d444effbf48204e8a20e9b1f2659418d48b673f8b1b7bc3cad3"
+  },
+  {
+    "path": "03-controlled-impact-validation/Editor.log",
+    "bytes": 46277,
+    "sha256": "4b5667f7796cb1220218bb72794a8a35562cbd3ab369ed6a071309bfad597c39"
+  },
+  {
+    "path": "03-controlled-impact-validation/sandbox.png",
+    "bytes": 97835,
+    "sha256": "82aa0d9d14c89258a839bf11c99c0041c50a3eb76aa8e531eafbcb48648baee5"
+  },
+  {
+    "path": "03-controlled-impact-validation/stderr.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "03-controlled-impact-validation/stdout.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "04-geometry-transfer-validation/Editor.log",
+    "bytes": 66502,
+    "sha256": "19656844c7d7b752fd406c56c9ebd62e7563a14da789693f2a79c9ead978aec8"
+  },
+  {
+    "path": "04-geometry-transfer-validation/initial-sandbox.png",
+    "bytes": 103042,
+    "sha256": "1d1ce411227c6c2bd44a5834e744dceec17a5af85692529b482591e8304f8e6e"
+  },
+  {
+    "path": "04-geometry-transfer-validation/pour-transfer.png",
+    "bytes": 90780,
+    "sha256": "5013f677681cd5a8353ad7aa3dc53c92c175d1bfda5cb1ebbfa4b2f701b541c1"
+  },
+  {
+    "path": "04-geometry-transfer-validation/sandbox.png",
+    "bytes": 96590,
+    "sha256": "0b12d093119711d82a6f3441a1eca79b42d39306b179e58c5755731f0567ee3a"
+  },
+  {
+    "path": "04-geometry-transfer-validation/stderr.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "04-geometry-transfer-validation/stdout.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "04-geometry-transfer-validation/validation.raw.txt",
+    "bytes": 2295,
+    "sha256": "8a2b94a4555a8c44e8b64ccc43c0821f72a8d27a29ad69e27a6b1178e480d53b"
+  },
+  {
+    "path": "05-render-lifecycle-validation/Editor.log",
+    "bytes": 52661,
+    "sha256": "d419344387069928a35f5c571bccf0a96229174f957c3b312af0fdf4148acf24"
+  },
+  {
+    "path": "05-render-lifecycle-validation/initial-sandbox.png",
+    "bytes": 110280,
+    "sha256": "86b289485da530e2e10b769360ab04e127b10f431fc91c7a7ccd5baf4aeeeaf4"
+  },
+  {
+    "path": "05-render-lifecycle-validation/pour-transfer.png",
+    "bytes": 100199,
+    "sha256": "e5fd0d85a8219dca7f2058b6285bc2a14b29d75a69fd49143de029723849a8d7"
+  },
+  {
+    "path": "05-render-lifecycle-validation/sandbox.png",
+    "bytes": 110588,
+    "sha256": "6ef84ef1904f13f43a8cfe900e8c6e2902692ae8cfb95088155f8d1e76495950"
+  },
+  {
+    "path": "05-render-lifecycle-validation/stderr.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "05-render-lifecycle-validation/stdout.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "06-settled-liquid-validation/Editor.log",
+    "bytes": 52610,
+    "sha256": "f5ab9c313a691009c2566ce0a10a2e53562914457e13c721cedb8a703ebc340c"
+  },
+  {
+    "path": "06-settled-liquid-validation/initial-sandbox.png",
+    "bytes": 107963,
+    "sha256": "3a1570e332a7347a3a86ddc7f2cc530a016325e0d8018eb46e81e2302a792483"
+  },
+  {
+    "path": "06-settled-liquid-validation/pour-transfer.png",
+    "bytes": 101096,
+    "sha256": "4c9ec8efb66ded10c1860a919f5793918ffc808fddf19123d3be68d302b29135"
+  },
+  {
+    "path": "06-settled-liquid-validation/sandbox.png",
+    "bytes": 107574,
+    "sha256": "261e50bd6b02faf6b5b22c15bfad59acf0bb82a6c584c85a0a82172211d0cd68"
+  },
+  {
+    "path": "06-settled-liquid-validation/stderr.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "06-settled-liquid-validation/stdout.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "07-final-isolation-validation/Editor.log",
+    "bytes": 52365,
+    "sha256": "03fb4014c15ca5b76064da169325cfadd488e1d7d1c5e91e883fb8d4d02117f4"
+  },
+  {
+    "path": "07-final-isolation-validation/initial-sandbox.png",
+    "bytes": 107891,
+    "sha256": "fdb06c1b2ca702d318b2c9153b800974fdab324769d2d76a6d8f9b72a27c1f5d"
+  },
+  {
+    "path": "07-final-isolation-validation/pour-transfer.png",
+    "bytes": 106996,
+    "sha256": "1ce30a8de5ba06a114f2b93e24e6e84f11f42a08c67b6986e172e83a289096c1"
+  },
+  {
+    "path": "07-final-isolation-validation/sandbox.png",
+    "bytes": 114334,
+    "sha256": "73212f4f983be79bf7a51c07895a4ca933dfa789c6eee54142b4def78d7f9916"
+  },
+  {
+    "path": "07-final-isolation-validation/stderr.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "07-final-isolation-validation/stdout.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "build.log",
+    "bytes": 53113,
+    "sha256": "5e7bc8e59c72a1f31a0611d268caf987fb877f48cd6135e615096842e82ac1fd"
+  },
+  {
+    "path": "ProjectSettings.before.asset",
+    "bytes": 20645,
+    "sha256": "04cbf9e21ba4556e72dad9c729e669e764ea128ec908f29933a329ded3c8f2be"
+  },
+  {
+    "path": "validation.raw.txt",
+    "bytes": 1660,
+    "sha256": "bf6812080fb52d444effbf48204e8a20e9b1f2659418d48b673f8b1b7bc3cad3"
+  }
+]

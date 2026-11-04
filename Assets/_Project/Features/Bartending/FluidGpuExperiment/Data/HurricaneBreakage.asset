@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63a825e6e55d4d669be8101f376468de, type: 3}
+  m_Name: HurricaneBreakage
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentBreakageProfile
+  minimumImpactSpeed: 6
+  minimumImpulsePerMass: 4
+  separationSpeed: 0
+  impactVelocityTransfer: 0.8
+  impactScatterScale: 0
+  linearDamping: 0.2
+  angularDamping: 0.3
+  shardMaterial: {fileID: 6200000, guid: 5093e4150ee016742a43d30fadb39029, type: 2}
+  explosionSpeed: 5
+  explosionUpwardSpeed: 2.5
+  explosionAngularSpeed: 240
+  generatedGeometry: {fileID: 11400000, guid: 835fa290e2e40134880bbd31adc4071b, type: 2}
+  shardTemplate: {fileID: 8792614301705377043, guid: aa983b1e0a6f84f40b6c2e4d84573ac7, type: 3}
+  legacyShards: []

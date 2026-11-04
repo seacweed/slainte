@@ -1,0 +1,17 @@
+{
+  "executable": "A:\\UnityHub\\Unity\\6000.3.5f2\\Editor\\Unity.exe",
+  "forceShaderImport": true,
+  "entryMethod": "SpoonContactValidation.Begin",
+  "timeoutSeconds": 300,
+  "started": "2026-10-28T19:23:15.3772191+09:00",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:\\UnityHub\\proj\\slainte\\Library\\FluidModelDHarness",
+    "-executeMethod",
+    "PhysicsLabValidationDispatch.Run",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\SpoonContact20261028\\01-input-native\\Editor.log"
+  ]
+}

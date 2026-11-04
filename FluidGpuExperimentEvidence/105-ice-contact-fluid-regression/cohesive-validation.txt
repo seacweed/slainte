@@ -1,0 +1,88 @@
+PASS Validation runs without desktop input in the hidden GPU harness
+PASS Authored comparison scene initializes
+PASS The authored default is Model F
+PASS Legacy baseline uses two actual authored ingredients
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy ACurrent GPU is operational
+PASS Legacy ACurrent particles stay finite
+PASS Legacy ACurrent total liquid ledger is conserved
+PASS Legacy baseline retains all eight unique-volume particles
+PASS Legacy baseline uses two actual authored ingredients
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy BReferencePhysics GPU is operational
+PASS Legacy BReferencePhysics particles stay finite
+PASS Legacy BReferencePhysics total liquid ledger is conserved
+PASS Legacy baseline retains all eight unique-volume particles
+PASS Legacy baseline uses two actual authored ingredients
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy CReferenceSurface GPU is operational
+PASS Legacy CReferenceSurface particles stay finite
+PASS Legacy CReferenceSurface total liquid ledger is conserved
+PASS Legacy baseline retains all eight unique-volume particles
+PASS Legacy baseline uses two actual authored ingredients
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy DImprovedSurface GPU is operational
+PASS Legacy DImprovedSurface particles stay finite
+PASS Legacy DImprovedSurface total liquid ledger is conserved
+PASS Legacy baseline retains all eight unique-volume particles
+PASS Legacy baseline uses two actual authored ingredients
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy baseline admits a uniquely weighted particle
+PASS Legacy ECalibratedLiquid GPU is operational
+PASS Legacy ECalibratedLiquid particles stay finite
+PASS Legacy ECalibratedLiquid total liquid ledger is conserved
+PASS Legacy baseline retains all eight unique-volume particles
+PASS A-E baseline covers every preserved comparison mode
+PASS ACurrent preserves baseline settings and feature flags
+PASS ACurrent preserves baseline active count
+PASS ACurrent matches pre-change GPU fixture (position=0, velocity=0, composition=0)
+PASS BReferencePhysics preserves baseline settings and feature flags
+PASS BReferencePhysics preserves baseline active count
+PASS BReferencePhysics matches pre-change GPU fixture (position=0, velocity=0, composition=0)
+PASS CReferenceSurface preserves baseline settings and feature flags
+PASS CReferenceSurface preserves baseline active count
+PASS CReferenceSurface matches pre-change GPU fixture (position=0, velocity=0, composition=0)
+PASS DImprovedSurface preserves baseline settings and feature flags
+PASS DImprovedSurface preserves baseline active count
+PASS DImprovedSurface matches pre-change GPU fixture (position=0, velocity=0, composition=0)
+PASS ECalibratedLiquid preserves baseline settings and feature flags
+PASS ECalibratedLiquid preserves baseline active count
+FAIL ECalibratedLiquid matches pre-change GPU fixture (position=0.002893814, velocity=0.02259887, composition=0.00190323591)
+System.Exception: ECalibratedLiquid matches pre-change GPU fixture (position=0.002893814, velocity=0.02259887, composition=0.00190323591)
+  at ExperimentCohesiveValidationRunner.Check (System.Boolean success, System.String label) [0x0002a] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\CohesiveValidation.cs:395 
+  at ExperimentCohesiveValidationRunner.SnapshotLegacyModes () [0x004ad] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\CohesiveValidation.cs:136 
+  at ExperimentCohesiveValidationRunner+<Start>d__11.MoveNext () [0x001a7] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\CohesiveValidation.cs:77 

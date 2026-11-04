@@ -1,0 +1,90 @@
+PASS Hidden batch uses actual F GPU without desktop input
+PASS Owned liquid fixture exists at 90, clamp=False
+PASS Real interactor picks tilted glass
+PASS Pre-pickup snapshot cannot transfer changed liquid state
+PASS Both liquid position histories and velocity rotate with no added speed
+PASS Spilled and foreign-owner liquid are byte-identical
+PASS Volume, composition, temperature and state flags are preserved
+PASS CPU queued birth follows exactly once
+PASS Surface endpoints rebase and ellipse directions rotate only for this glass
+PASS Pickup adds no glass sweep or wall velocity on next tick, including whole turns
+PASS Owned liquid fixture exists at -90, clamp=False
+PASS Real interactor picks tilted glass
+PASS Pre-pickup snapshot cannot transfer changed liquid state
+PASS Both liquid position histories and velocity rotate with no added speed
+PASS Spilled and foreign-owner liquid are byte-identical
+PASS Volume, composition, temperature and state flags are preserved
+PASS CPU queued birth follows exactly once
+PASS Surface endpoints rebase and ellipse directions rotate only for this glass
+PASS Pickup adds no glass sweep or wall velocity on next tick, including whole turns
+PASS Owned liquid fixture exists at 135, clamp=False
+PASS Real interactor picks tilted glass
+PASS Pre-pickup snapshot cannot transfer changed liquid state
+PASS Both liquid position histories and velocity rotate with no added speed
+PASS Spilled and foreign-owner liquid are byte-identical
+PASS Volume, composition, temperature and state flags are preserved
+PASS CPU queued birth follows exactly once
+PASS Surface endpoints rebase and ellipse directions rotate only for this glass
+PASS Pickup adds no glass sweep or wall velocity on next tick, including whole turns
+PASS Owned liquid fixture exists at -135, clamp=False
+PASS Real interactor picks tilted glass
+PASS Pre-pickup snapshot cannot transfer changed liquid state
+PASS Both liquid position histories and velocity rotate with no added speed
+PASS Spilled and foreign-owner liquid are byte-identical
+PASS Volume, composition, temperature and state flags are preserved
+PASS CPU queued birth follows exactly once
+PASS Surface endpoints rebase and ellipse directions rotate only for this glass
+PASS Pickup adds no glass sweep or wall velocity on next tick, including whole turns
+PASS Owned liquid fixture exists at 180, clamp=False
+PASS Real interactor picks tilted glass
+PASS Pre-pickup snapshot cannot transfer changed liquid state
+PASS Both liquid position histories and velocity rotate with no added speed
+PASS Spilled and foreign-owner liquid are byte-identical
+PASS Volume, composition, temperature and state flags are preserved
+PASS CPU queued birth follows exactly once
+PASS Surface endpoints rebase and ellipse directions rotate only for this glass
+PASS Pickup adds no glass sweep or wall velocity on next tick, including whole turns
+PASS Owned liquid fixture exists at 855, clamp=False
+PASS Real interactor picks tilted glass
+PASS Pre-pickup snapshot cannot transfer changed liquid state
+PASS Both liquid position histories and velocity rotate with no added speed
+PASS Spilled and foreign-owner liquid are byte-identical
+PASS Volume, composition, temperature and state flags are preserved
+PASS CPU queued birth follows exactly once
+PASS Surface endpoints rebase and ellipse directions rotate only for this glass
+PASS Pickup adds no glass sweep or wall velocity on next tick, including whole turns
+PASS Owned liquid fixture exists at 90, clamp=True
+PASS Real interactor picks tilted glass
+PASS Pre-pickup snapshot cannot transfer changed liquid state
+PASS Both liquid position histories and velocity rotate with no added speed
+PASS Spilled and foreign-owner liquid are byte-identical
+PASS Volume, composition, temperature and state flags are preserved
+PASS CPU queued birth follows exactly once
+PASS Surface endpoints rebase and ellipse directions rotate only for this glass
+PASS Pickup adds no glass sweep or wall velocity on next tick, including whole turns
+PASS Fixture exercises ceiling-induced pickup translation
+PASS GPU reserved-but-unborn particle fixture
+PASS GPU pending birth moves without changing its stream identity or timing
+PASS Pending birth activates inside upright glass without loss or duplication
+PASS Pending genuine translation survives pickup history rebase
+PASS Mouse movement after pickup remains real boundary motion
+PASS Manual tilt never carries GPU liquid
+PASS Right-button upright return never carries GPU liquid
+PASS Both loose-solid fixtures belong to tilted glass
+PASS Carried ice has no artificial pickup sweep to kick liquid
+PASS Ice free speed and spin are retained
+PASS Released native garnish is not attached to pickup carry
+INFO Glass_hurricane angle=90 fill=40 retained=40 maxSpeed=0.08387
+PASS Settled tilted-glass pickup retains every drop without a speed spike
+PASS Post-pickup GPU ledger conserves volume
+INFO Glass_hurricane angle=-135 fill=40 retained=40 maxSpeed=0.06944
+PASS Settled tilted-glass pickup retains every drop without a speed spike
+PASS Post-pickup GPU ledger conserves volume
+INFO Glass_highball angle=90 fill=40 retained=40 maxSpeed=0.12462
+PASS Settled tilted-glass pickup retains every drop without a speed spike
+PASS Post-pickup GPU ledger conserves volume
+INFO Glass_highball angle=-135 fill=40 retained=40 maxSpeed=0.13393
+PASS Settled tilted-glass pickup retains every drop without a speed spike
+PASS Post-pickup GPU ledger conserves volume
+PASS D retains original liquid and swept pickup behavior
+PASS No Unity errors or assertions

@@ -1,0 +1,20 @@
+[
+  {
+    "dump": "PhysicsLabEvidence\\00-startup-failures\\Crash_2026-09-19_081621729\\crash.dmp",
+    "bytes": 173726,
+    "exceptionCode": "0x80000003",
+    "exceptionAddress": "0x7ff89bcc33e4"
+  },
+  {
+    "dump": "PhysicsLabEvidence\\00-startup-failures\\Crash_2026-09-19_081645407\\crash.dmp",
+    "bytes": 168302,
+    "exceptionCode": "0x80000003",
+    "exceptionAddress": "0x7ff86dcc33e4"
+  },
+  {
+    "dump": "PhysicsLabEvidence\\00-startup-failures\\Crash_2026-09-19_081739889\\crash.dmp",
+    "bytes": 168942,
+    "exceptionCode": "0x80000003",
+    "exceptionAddress": "0x7ff86dcc33e4"
+  }
+]

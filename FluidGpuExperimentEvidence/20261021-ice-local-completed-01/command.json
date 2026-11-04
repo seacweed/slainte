@@ -1,0 +1,17 @@
+{
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:\\UnityHub\\proj\\slainte\\Library\\FluidModelDHarness",
+    "-executeMethod",
+    "PhysicsLabValidationDispatch.Run",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\20261021-ice-local-completed-01\\Editor.log"
+  ],
+  "forceShaderImport": true,
+  "executable": "A:\\UnityHub\\Unity\\6000.3.5f2\\Editor\\Unity.exe",
+  "started": "2026-10-21T20:51:57.6317903+09:00",
+  "timeoutSeconds": 300,
+  "entryMethod": "IceBuoyancyValidation.BeginSmooth"
+}

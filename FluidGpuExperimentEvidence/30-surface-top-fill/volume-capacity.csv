@@ -1,0 +1,3 @@
+case,stage,capacity_ml,queued_ml,generated_ml,cpu_pending_ml,gpu_pending_ml,active_ml,owned_ml,free_ml,other_owner_ml,retired_ml,transferred_ml,active_count,partial_count,conservation_error_ml
+E-capacity-highball-direct,initial-queued,400,400,0,400,0,0,0,0,0,0,0,0,0,0
+E-capacity-highball-direct,initial-born,400,400,400,0,0,400,396.5,3.5,0,0,0,800,0,0

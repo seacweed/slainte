@@ -1,0 +1,3 @@
+Exit 1. GetShapes reports polygon radius 0, so it does not explain the -0.009 signed query gap as an exposed shape radius. The actual GPU position is 0.066 from the segment for a particle radius of 0.065 (the sweep adds 0.001 clearance). The project's existing defaultContactOffset is 0.01.
+
+The final contact test separately requires GPU geometric clearance within 0.004 of the authored vertices and the CPU signed contact query within the existing engine contact offset plus 0.002. Both raw values are recorded for every prefab and rotation; no global physics or simulation radius settings were changed. This distinguishes exact geometric agreement from Unity's contact-query tolerance rather than pretending both distance APIs are numerically identical.

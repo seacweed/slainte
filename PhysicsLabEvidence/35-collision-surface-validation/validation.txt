@@ -1,0 +1,32 @@
+PASS: Isolated world exists
+PASS: GPU compute active: NVIDIA GeForce RTX 3070 / Direct3D11
+SKIP: Legacy-system presence is not tested in the isolated scene-copy project.
+SKIP: Legacy-system presence is not tested in the isolated scene-copy project.
+PASS: All bodies share one layer
+PASS: All resting bodies are Dynamic
+PASS: Every item rests above the physical floor
+PASS: Pickup resets angle to zero without moving: Bottle_item_1003
+PASS: Pickup preserves the pointer grab offset: Bottle_item_1003
+PASS: Pickup resets angle to zero without moving: IceBucket
+PASS: Pickup preserves the pointer grab offset: IceBucket
+PASS: Pickup resets angle to zero without moving: Glass_hurricane
+PASS: Pickup preserves the pointer grab offset: Glass_hurricane
+PASS: Pickup resets angle to zero without moving: Glass_highball
+PASS: Pickup preserves the pointer grab offset: Glass_highball
+PASS: Pickup resets angle to zero without moving: Shaker
+PASS: Pickup preserves the pointer grab offset: Shaker
+PASS: Pickup resets angle to zero without moving: Spoon
+PASS: Pickup preserves the pointer grab offset: Spoon
+PASS: Pickup resets angle to zero without moving: Jigger
+PASS: Pickup preserves the pointer grab offset: Jigger
+PASS: Pickup resets angle to zero without moving: Bottle_item_1002
+PASS: Pickup preserves the pointer grab offset: Bottle_item_1002
+PASS: Pickup resets angle to zero without moving: Bottle_item_1001
+PASS: Pickup preserves the pointer grab offset: Bottle_item_1001
+PASS: Metaball surface uses the existing accumulation and composite shaders
+PASS: Surface comparison uses the same two GPU particles
+System.Exception: Metaballs connect the gap between separate particle discs (0 -> 0)
+  at Slainte.Bartending.PhysicsLab.Editor.PhysicsLabValidationRunner.Require (System.Boolean condition, System.String message) [0x00020] in A:\UnityHub\proj\slainte\PhysicsLabEvidence\SceneHarnessProject\Assets\_Project\Features\Bartending\PhysicsLab\Editor\PhysicsLabValidator.cs:437 
+  at Slainte.Bartending.PhysicsLab.Editor.PhysicsLabValidationRunner.ValidateSurfaceRendering () [0x001a9] in A:\UnityHub\proj\slainte\PhysicsLabEvidence\SceneHarnessProject\Assets\_Project\Features\Bartending\PhysicsLab\Editor\PhysicsLabValidator.cs:378 
+  at Slainte.Bartending.PhysicsLab.Editor.PhysicsLabValidationRunner+<Run>d__14.MoveNext () [0x0041d] in A:\UnityHub\proj\slainte\PhysicsLabEvidence\SceneHarnessProject\Assets\_Project\Features\Bartending\PhysicsLab\Editor\PhysicsLabValidator.cs:149 
+  at Slainte.Bartending.PhysicsLab.Editor.PhysicsLabValidationRunner+<Guard>d__11.MoveNext () [0x00045] in A:\UnityHub\proj\slainte\PhysicsLabEvidence\SceneHarnessProject\Assets\_Project\Features\Bartending\PhysicsLab\Editor\PhysicsLabValidator.cs:92 

@@ -1,0 +1,69 @@
+PASS: Isolated world exists
+PASS: GPU compute active: NVIDIA GeForce RTX 3070 / Direct3D11
+SKIP: Legacy-system presence is not tested in the isolated scene-copy project.
+SKIP: Legacy-system presence is not tested in the isolated scene-copy project.
+PASS: All bodies share one layer
+PASS: All resting bodies are Dynamic
+PASS: Every item rests above the physical floor
+PASS: Pickup resets angle to zero without moving: IceBucket
+PASS: Pickup preserves the pointer grab offset: IceBucket
+PASS: Pickup resets angle to zero without moving: Glass_highball
+PASS: Pickup preserves the pointer grab offset: Glass_highball
+PASS: Pickup resets angle to zero without moving: Glass_hurricane
+PASS: Pickup preserves the pointer grab offset: Glass_hurricane
+PASS: Pickup resets angle to zero without moving: Shaker
+PASS: Pickup preserves the pointer grab offset: Shaker
+PASS: Pickup resets angle to zero without moving: Jigger
+PASS: Pickup preserves the pointer grab offset: Jigger
+PASS: Pickup resets angle to zero without moving: Bottle_item_1002
+PASS: Pickup preserves the pointer grab offset: Bottle_item_1002
+PASS: Pickup resets angle to zero without moving: Spoon
+PASS: Pickup preserves the pointer grab offset: Spoon
+PASS: Pickup resets angle to zero without moving: Bottle_item_1001
+PASS: Pickup preserves the pointer grab offset: Bottle_item_1001
+PASS: Pickup resets angle to zero without moving: Bottle_item_1003
+PASS: Pickup preserves the pointer grab offset: Bottle_item_1003
+PASS: Bottle pickup
+PASS: Held body collision suppressed
+PASS: Tilted bottle pickup is upright immediately
+PASS: Unlimited 855 degree accumulated rotation
+PASS: Fast rotation leaves the fluid integration schedule fixed
+PASS: Automatic upright return does not generate throw velocity or spin
+PASS: Automatic return does not unwind completed turns in GPU motion history
+PASS: RMB release resets to zero at the current position without a pointer jump
+PASS: Repeated negative rotation also returns upright at the current position
+PASS: 720 degrees does not pour when upright
+PASS: Unheld physically tilted bottle pours
+PASS: Dropped body collision restored
+PASS: Throw transfers linear and angular velocity
+PASS: Pickup/rotation/throw contacts stay within the local sweep budget
+PASS: Filled sealed shaker on GPU
+PASS: GPU volume and ownership after fill
+PASS: Sealed vessel retains liquid through two full rotations
+PASS: Sealed vessel keeps GPU contents through upright return in place
+PASS: Picking up a tilted sealed vessel restores upright and keeps its GPU contents
+PASS: GPU positions remain finite
+PASS: Drop during rotation preserves the release angle
+PASS: Slot-free swap succeeds with different body sizes
+PASS: Swap preserves both angles
+PASS: Swap preserves GPU content amount and owner
+Collision setup: bottle=Bottle_item_1001, bounds=Center: (-7.00, -1.64, 0.00), Extents: (0.87, 1.60, 0.00); hitter=Center: (-9.00, -0.52, 0.00), Extents: (0.40, 0.56, 0.00)
+PASS: Tool collision tips a bottle (90.0 degrees)
+PASS: Filled vessel rotation, swap and impact contacts stay within the local sweep budget
+PASS: Open inverted vessel spills and releases ownership
+PASS: GPU stress uses at least 1000 real particles
+PASS: Stress state remains finite
+Batch Play Mode frame ms: p50=0.22, p95=0.28, p99=0.65; samples=5043
+Frame intervals are batch scheduling diagnostics, not GPU timings or gameplay FPS.
+PASS: Bottle nozzle liquid is captured by a separate glass (11.5 ml)
+PASS: Nozzle transfer conserves emitted ml
+PASS: Negative multi-turn rotation is also unrestricted
+PASS: Tilted ice bucket emits physical colliding ice
+PASS: Reset removes spawned ice and restores all nine dynamic items
+PASS: Reset recreates seeded GPU liquid
+PASS: Settled open vessel retains ownership: Glass_highball / 60.0 ml
+PASS: Settled open vessel retains ownership: Glass_hurricane / 16.5 ml
+PASS: Slow carried glass preserves settled liquid ownership
+PASS: GPU capacity rejects overflow and retains pending reservations across readback
+PASS: World re-enable rebuilds GPU resources and item registration
+All runtime checks passed.

@@ -1,0 +1,17 @@
+{
+  "timeoutSeconds": 300,
+  "entryMethod": "LiquidPolishValidation.Begin",
+  "started": "2026-11-04T09:38:34.1285693+09:00",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:\\UnityHub\\proj\\slainte\\Library\\FluidModelDHarness",
+    "-executeMethod",
+    "PhysicsLabValidationDispatch.Run",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\LiquidPolish20261104\\01-visual\\Editor.log"
+  ],
+  "forceShaderImport": true,
+  "executable": "A:\\UnityHub\\Unity\\6000.3.5f2\\Editor\\Unity.exe"
+}

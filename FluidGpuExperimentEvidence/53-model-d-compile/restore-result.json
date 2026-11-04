@@ -1,0 +1,7 @@
+{
+  "command": "dotnet restore Assembly-CSharp-Editor.csproj --source A:/UnityHub/proj/slainte/FluidGpuExperimentEvidence/53-model-d-compile/local-package-source -p:CustomAfterMicrosoftCommonTargets=A:/UnityHub/proj/slainte/FluidGpuExperimentEvidence/Compile/IncludeExperiment.targets -v:minimal",
+  "started": "2026-09-30T23:02:35.8682923+09:00",
+  "finished": "2026-09-30T23:02:37.8266419+09:00",
+  "exitCode": 0,
+  "scope": "Offline restore metadata with an empty local package source"
+}

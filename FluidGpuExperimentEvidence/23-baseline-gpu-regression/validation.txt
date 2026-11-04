@@ -1,0 +1,73 @@
+PASS: Comparison controller exists in the authored scene
+PASS: Compute-capable device: AMD Radeon(TM) Graphics / Direct3D11
+PASS: No original PhysicsLab behaviour is active in the comparison scene
+PASS: ACurrent: actual GPU initializes ()
+PASS: ACurrent: controller reports the selected mode
+PASS: ACurrent: exactly one active experiment world
+PASS: ACurrent: mutable solver settings are a runtime copy
+PASS: ACurrent: compute asset belongs to the isolated experiment
+PASS: ACurrent: same initial liquid quantity and particle count (60 ml / 120)
+PASS: ACurrent initial state: active particle position, velocity, volume and composition are finite and valid
+PASS: ACurrent initial state: fixed configured integration schedule
+PASS: ACurrent resting state: active particle position, velocity, volume and composition are finite and valid
+PASS: ACurrent resting state: fixed configured integration schedule
+PASS: ACurrent: resting liquid volume conserved
+PASS: ACurrent-rest: GPU surface produces visible camera pixels (2691 changed pixels)
+PASS: ACurrent-rest: rendering leaves particle positions and velocities unchanged
+PASS: ACurrent: consecutive resets cannot duplicate or retain stale particles
+PASS: ACurrent: explicit GPU reset clears particle and composition buffers
+PASS: Remote isolation seed fits inside the real highball
+PASS: Remote isolation begins with one tagged, moving particle owned by the stationary glass
+PASS: Remote motion never changes configured substep count across all 20 ticks
+PASS: Remote isolation preserves the particle birth identity, mass and stationary-glass ownership
+PASS: Remote isolation seed fits inside the real highball
+PASS: Remote isolation begins with one tagged, moving particle owned by the stationary glass
+PASS: Remote motion never changes configured substep count across all 20 ticks
+PASS: Remote isolation preserves the particle birth identity, mass and stationary-glass ownership
+PASS: Remote isolation seed fits inside the real highball
+PASS: Remote isolation begins with one tagged, moving particle owned by the stationary glass
+PASS: Remote motion never changes configured substep count across all 20 ticks
+PASS: Remote isolation preserves the particle birth identity, mass and stationary-glass ownership
+ACurrent remote control RMS: repeat=(0, 0); moved=(0, 0)
+PASS: ACurrent: single-particle control repeats within strict absolute position/velocity tolerance
+PASS: ACurrent: moving and spinning an unrelated held bottle leaves the isolated liquid trajectory unchanged
+Remote-isolation test deliberately uses one moving owned particle to exclude chaotic neighbor summation; dense-fluid behavior is covered by separate rest, pour, coincident and high-count tests.
+PASS: ACurrent fast closed rotation: active particle position, velocity, volume and composition are finite and valid
+PASS: ACurrent fast closed rotation: fixed configured integration schedule
+PASS: ACurrent: sealed shaker retains all liquid after 855-degree rotation and translation
+PASS: ACurrent: retained liquid is geometrically inside the moved sealed shaker
+PASS: ACurrent: fast closed rotation does not exhaust local collision sweep budget
+PASS: ACurrent real bottle pour: active particle position, velocity, volume and composition are finite and valid
+PASS: ACurrent real bottle pour: fixed configured integration schedule
+PASS: ACurrent: authored bottle emitter conserves stock and emitted volume (62 ml)
+PASS: ACurrent: real pour conserves all prefilled and newly emitted GPU liquid
+PASS: ACurrent: particles born from the actual bottle reach a real glass (55.5 ml)
+PASS: ACurrent-pour-visible: GPU surface produces visible camera pixels (7713 changed pixels)
+PASS: ACurrent-pour-visible: rendering leaves particle positions and velocities unchanged
+PASS: ACurrent Tilt: GPU reset leaves no stale slot volume before initial births
+PASS: ACurrent Tilt: initial fill has no pending births after the first integration tick
+ACurrent Tilt accounting: emitted=60, active=60, retiredOutside=0 ml / 0 particles; bounds=(-25.00, -12.00)..(25.00, 20.00)
+PASS: ACurrent Tilt: no further emission or retired-slot reuse during the replay
+PASS: ACurrent Tilt: every inactive nonzero-volume slot matches an observed retirement outside simulation bounds
+PASS: ACurrent Tilt: active plus explicitly retired liquid equals accepted volume (active=60, retired=0, emitted=60 ml)
+PASS: ACurrent Tilt: active particle position, velocity, volume and composition are finite and valid
+PASS: ACurrent Tilt: fixed configured integration schedule
+PASS: ACurrent Tilt: accepted volume is monotonic
+PASS: ACurrent: stir replay permits actual spoon-to-owned-liquid contacts
+PASS: ACurrent Stir: GPU reset leaves no stale slot volume before initial births
+PASS: ACurrent Stir: initial fill has no pending births after the first integration tick
+ACurrent Stir retired step=78 slot=3994 ml=0.5 previous=(14.7283688, -11.8902016) velocity=(9.19465, -13.1210327) owner=0 retired=(14.8203154, -12.0223932) outside=True
+ACurrent Stir retired step=100 slot=3993 ml=0.5 previous=(13.4298248, -11.7707291) velocity=(5.9323144, -12.7432747) owner=0 retired=(13.5482931, -12.0281534) outside=True
+ACurrent Stir retired step=104 slot=4001 ml=0.5 previous=(10.41902, -11.9512281) velocity=(4.19175768, -12.6996326) owner=0 retired=(10.4609375, -12.0792055) outside=True
+ACurrent Stir retired step=104 slot=4002 ml=0.5 previous=(10.5523062, -11.9004059) velocity=(4.191849, -12.6996326) owner=0 retired=(10.5942249, -12.0283833) outside=True
+ACurrent Stir retired step=109 slot=3992 ml=0.5 previous=(13.748745, -11.9762249) velocity=(5.177083, -12.8208609) owner=0 retired=(13.8005161, -12.1054144) outside=True
+ACurrent Stir retired step=114 slot=3976 ml=0.5 previous=(1.74095845, -11.8428783) velocity=(0.49235487, -13.1232195) owner=0 retired=(1.75079083, -12.10789) outside=True
+ACurrent Stir retired step=120 slot=3978 ml=0.5 previous=(0.993772447, -11.78594) velocity=(0.1783904, -13.2309475) owner=0 retired=(0.9973349, -12.0531015) outside=True
+ACurrent Stir accounting: emitted=60, active=56.5, retiredOutside=3.5 ml / 7 particles; bounds=(-25.00, -12.00)..(25.00, 20.00)
+PASS: ACurrent Stir: no further emission or retired-slot reuse during the replay
+PASS: ACurrent Stir: every inactive nonzero-volume slot matches an observed retirement outside simulation bounds
+PASS: ACurrent Stir: active plus explicitly retired liquid equals accepted volume (active=56.5, retired=3.5, emitted=60 ml)
+PASS: ACurrent Stir: active particle position, velocity, volume and composition are finite and valid
+PASS: ACurrent Stir: fixed configured integration schedule
+PASS: ACurrent Stir: accepted volume is monotonic
+PASS: ACurrent SealedShake: GPU reset leaves no stale slot volume before initial births

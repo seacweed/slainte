@@ -1,0 +1,47 @@
+PASS Actual F scene initializes GPU object sorting on D3D11
+PASS Shared spoon prefab inherits vertical flip without changing held angle
+PASS Flipped lower bowl matches actual native PolygonCollider2D
+PASS Native collider does not retain old upper bowl width
+PASS GPU uploads all flipped spoon contour edges
+PASS GPU physical boundary group uses the same flipped spoon geometry
+PASS Flipped spoon remains pickable at its lower bowl
+PASS Pick, rotate and release preserve flipped orientation
+PASS Opt-out preserves authored bottle and glass orders
+PASS Held bottle draws above every face of the glass
+PASS Actual pixels change at the held bottle/glass overlap
+PASS Released bottle keeps deterministic foreground relative to untouched glass
+PASS Unowned held garnish stays in foreground while crossing vessel interior
+PASS Actual containment owns both released garnish and ice
+PASS Both contained solids share the band between liquid and front glass
+PASS Raised filled glass carries its GPU liquid between its own faces
+PASS Raised vessel surface contains actual nontransparent GPU liquid pixels
+PASS Rendering and sorting leave GPU particle/composition state byte-equivalent
+PASS Sorting and rendering do not move or accelerate native rigidbodies
+PASS Jigger back and front straddle its own liquid surface
+MEASURE jigger requested=20 emitted=3.5 owned=3.5 pixels=1754
+PASS Jigger renders actual emitted GPU contents on its own layer
+PASS Inserted spoon tip uses vessel content band above liquid and behind glass front
+PASS Withdrawn held spoon returns to foreground
+PASS Real bottle/jigger overlap includes pointer nearer hidden jigger origin
+PASS Click selects visible foreground bottle instead of nearest hidden origin
+PASS Click follows actual changed visual order after jigger is brought forward
+PASS Actual strainer detaches with its cap
+PASS Detached held strainer and carried cap draw in foreground
+PASS Carried cap retains internal front order on detached strainer
+PASS Released detached part retains stable visual group
+PASS Strainer reattaches using existing native mechanism
+PASS Actual cap detaches independently
+PASS Held detached cap draws above full shaker
+PASS Filled vessel owner layer contains liquid
+PASS Empty vessel owner layer excludes all other vessel particles
+PASS Free-liquid layer excludes all contained liquid
+PASS Raised vessel and its own liquid both sort above another vessel
+PASS Separated owners produce disjoint real liquid masks
+PASS Camera resize recreates all owner textures at matching dimensions
+PASS Removed vessel output immediately stops rendering
+PASS Simulation reset clears retained owner textures before next display
+PASS Leaving cohesive F/G restores exact authored A-E sprite orders
+PASS Returning to cohesive mode reapplies deterministic groups
+PASS Actual G comparison mode initializes sorting after GPU resource disposal/recreation
+PASS Actual D comparison keeps authored legacy rendering policy
+PASS No Unity, shader or buffer errors

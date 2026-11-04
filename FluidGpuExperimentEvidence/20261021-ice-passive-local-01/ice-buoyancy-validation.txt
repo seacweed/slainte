@@ -1,0 +1,31 @@
+FIXTURE NonColliding queuedMl=80 capacity=400
+FIXTURE NonColliding settledMl=80
+MEASURE sampler NonColliding localWet=0.116600811 remoteFlow=(0, 0)
+PASS NonColliding distant liquid does not create local buoyancy
+PASS NonColliding distant current does not drive a stationary local puddle
+FIXTURE NonColliding queuedMl=80 capacity=400
+FIXTURE NonColliding settledMl=80
+MEASURE NonColliding-1 maxOverlap=0 overlapTicks=0 tailSpan=0.0287707113 spin95=29.191143 peakSpin=71.24971 dryRise=0 ml=56
+FAIL NonColliding-1 stops drifting and rotating in still liquid after vessel movement
+PASS NonColliding-1 avoids deep interpenetration throughout drops and vessel movement
+FIXTURE NonColliding queuedMl=80 capacity=400
+FIXTURE NonColliding settledMl=80
+MEASURE NonColliding-8 maxOverlap=0.258567572 overlapTicks=109 tailSpan=167.178452 spin95=124.663383 peakSpin=728.774353 dryRise=0 ml=56
+FAIL NonColliding-8 stops drifting and rotating in still liquid after vessel movement
+FAIL NonColliding-8 avoids deep interpenetration throughout drops and vessel movement
+FIXTURE Colliding queuedMl=80 capacity=400
+FIXTURE Colliding settledMl=80
+MEASURE sampler Colliding localWet=0 remoteFlow=(0, 0)
+PASS Colliding distant liquid does not create local buoyancy
+PASS Colliding distant current does not drive a stationary local puddle
+FIXTURE Colliding queuedMl=80 capacity=400
+FIXTURE Colliding settledMl=80
+MEASURE Colliding-1 maxOverlap=0 overlapTicks=0 tailSpan=0.0396640226 spin95=4.310952 peakSpin=98.6518 dryRise=0 ml=67
+FAIL Colliding-1 stops drifting and rotating in still liquid after vessel movement
+PASS Colliding-1 avoids deep interpenetration throughout drops and vessel movement
+FIXTURE Colliding queuedMl=80 capacity=400
+FIXTURE Colliding settledMl=80
+MEASURE Colliding-8 maxOverlap=0.186877757 overlapTicks=19 tailSpan=0.237580925 spin95=17.5162754 peakSpin=640.7872 dryRise=0 ml=69.5
+FAIL Colliding-8 stops drifting and rotating in still liquid after vessel movement
+FAIL Colliding-8 avoids deep interpenetration throughout drops and vessel movement
+PASS No Unity application errors

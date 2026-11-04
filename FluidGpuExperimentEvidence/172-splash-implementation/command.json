@@ -1,0 +1,16 @@
+{
+  "started": "2026-10-15T14:32:18.9230130+09:00",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "C:/unity_proj/slainte/slainte/Library/FluidModelDHarness",
+    "-executeMethod",
+    "ExperimentSplashValidation.Begin",
+    "-logFile",
+    "C:\\unity_proj\\slainte\\slainte\\FluidGpuExperimentEvidence\\172-splash-implementation\\Editor.log"
+  ],
+  "timeoutSeconds": 300,
+  "executable": "C:\\Program Files\\Unity\\Hub\\Editor\\6000.3.5f2\\Editor\\Unity.exe",
+  "workingDirectory": "C:\\unity_proj\\slainte\\slainte"
+}

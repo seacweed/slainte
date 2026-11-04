@@ -1,0 +1,20 @@
+{
+  "passed": 10,
+  "exitCode": 0,
+  "sourceMatchesFinal": true,
+  "runtimeAndComputeSha256": {
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabBody.cs": "6d295880f2db1cf6c4fb3069778fc04c462278452e827076e090da18aa04be58",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabBody.Pouring.cs": "c2fcfde3a412e1af6d08f599e3f1d7e436762c6729f50e87396e77a7690f38c7",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabGpuLiquid.Buffers.cs": "14afedf85a3441994081a6bb6cdeda6d3c541969e33ff1c10838f1d42e4b7846",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabGpuLiquid.cs": "a1f698a74bd8b16a57475d7e313ed62baecd98057d0e59ef65f38f4eff07fa61",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabGpuLiquid.Rendering.cs": "da5322d72e79805a6f377f211eb0b234224dbd239e9adf7338dda2ede30df2c3",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabGpuLiquid.Streams.cs": "e3c2972b1b6f8bd5dcaca2fc368349a277ed1c23e307f3d71a4df4534f65f976",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabGpuTypes.cs": "cbb1e2f34fb7cd284941faca06d3a9cd1cf4b84b2e41475ba124bbc95a59459a",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabInteractor.cs": "5d63dcc0c0e4ddc01ae10c49437e018a9745cc98c6bdedd3de967731c92fb126",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabLiquidSettings.cs": "a03d74d712cc7cbd585fc0716d11de968eceaf7f0dd91c5d8a613a5553541307",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Runtime/PhysicsLabWorld.cs": "105e8af67a2f6b1709548bce5d150a3f1766cf3ed9b988f81621071be8231f7a",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Shaders/PhysicsLabLiquid.compute": "6b7d6f36ebf0bb5e0b8bab5822622ce6f06fb727991946ffbb8ba17a1e18aa38",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Shaders/PhysicsLabStreamSurface.hlsl": "0ce352f3da5c155b198f787bad01c5fe36f33cada4718db779bf8d019289be1b",
+    "Assets/_Project/Features/Bartending/PhysicsLab/Shaders/PhysicsLabStreamTypes.hlsl": "5aa838a0ac113de26bb4fe5105d4c93814e9dfbc5b857aa08723719ecbc5230a"
+  }
+}

@@ -1,0 +1,687 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "name": "preserved algorithm Shaders/FluidExperimentCohesive.hlsl",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved algorithm Runtime/FluidExperimentGpuLiquid.Stirring.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved algorithm Runtime/FluidExperimentGpuLiquid.Accounting.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved algorithm Runtime/FluidExperimentGpuLiquid.Cocktails.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved algorithm Runtime/FluidExperimentGpuLiquid.Shards.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved algorithm Runtime/FluidExperimentGpuLiquid.Boundaries.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved algorithm Shaders/FluidExperimentCohesiveContacts.hlsl",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved cohesive simulation dispatch",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved F-specialized algorithm Runtime/FluidExperimentGpuLiquid.Garnish.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved F-specialized algorithm Runtime/FluidExperimentGpuLiquid.IceFlow.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved F-specialized algorithm Runtime/FluidExperimentGpuLiquid.Splash.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved both AreaPerMl overloads",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved shader helper ReferenceParticleActive",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved shader helper ReferenceMass",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved shader helper MergeStreamContacts",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved shader helper StreamBlocked",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "retained liquid defaults unchanged",
+      "passed": true,
+      "details": {}
+    },
+    {
+      "name": "all retained compute entrypoints defined",
+      "passed": true,
+      "details": []
+    },
+    {
+      "name": "all C# kernel requests exist",
+      "passed": true,
+      "details": []
+    },
+    {
+      "name": "all retained entrypoints have clients",
+      "passed": true,
+      "details": []
+    },
+    {
+      "name": "preserved compute kernel ResetParticles",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved compute kernel ResetCompositionBuffers",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved compute kernel IntegrateParticles",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved compute kernel SnapshotVelocities",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved compute kernel ClearGrid",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved compute kernel BuildGrid",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved compute kernel CarryPickupContents",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved compute kernel SetVesselSuspended",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved compute kernel TranslateVesselContents",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved compute kernel SwapContents",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved compute kernel ReleaseOwner",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved compute kernel CollectSpoonMixture",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved compute kernel ApplySpoonMixture",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved compute kernel CollectLiquidLedger",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved compute kernel TransferVesselContents",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved compute kernel CalculateConservativeMixWeights",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved compute kernel MixCompositionConservative",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved compute kernel UpdateParticleColors",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved compute kernel ApplyTechnique",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "preserved compute kernel ApplyBreakSplash",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Editor\\FluidExperimentAssemblyBuilder.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Editor\\FluidExperimentBreakageBuilder.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Editor\\FluidExperimentBuilder.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Editor\\FluidExperimentDesignerPlayTest.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Editor\\FluidExperimentDesignerSession.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Editor\\FluidExperimentDesignerWindow.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Editor\\FluidExperimentDispenserBuilder.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Editor\\FluidExperimentGarnishBuilder.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Editor\\FluidExperimentPrefabAudit.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentAuthoringCatalog.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentBody.Contents.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentBody.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentBody.GarnishMotion.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentBody.Geometry.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentBody.IceStock.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentBody.Identity.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentBody.Pouring.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentBody.Shaker.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentBody.SpoonContacts.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentBreakableGlass.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentBreakageProfile.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentCocktailSession.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentCocktailSession.Gui.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentCocktailSession.Techniques.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentCollisionProfile.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentComparison.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentDispenser.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentDispenser.Emission.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentDispenser.Motion.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentEnvironmentBinding.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentGarnishSource.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentGlassShard.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentGpuLiquid.Accounting.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentGpuLiquid.Boundaries.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentGpuLiquid.Buffers.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentGpuLiquid.CalibratedFill.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentGpuLiquid.Cocktails.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentGpuLiquid.Cohesive.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentGpuLiquid.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentGpuLiquid.Garnish.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentGpuLiquid.IceFlow.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentGpuLiquid.ImprovedSurface.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentGpuLiquid.Reference.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentGpuLiquid.Rendering.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentGpuLiquid.RenderingLayers.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentGpuLiquid.Shards.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentGpuLiquid.Splash.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentGpuLiquid.Stirring.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentGpuLiquid.Streams.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentGpuTypes.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentInteractor.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentInteractor.Dispenser.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentInteractor.Pointer.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentInteractor.VisualPicking.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentLiquidSettings.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentMaterials.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentObjectFactory.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentPerformance.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentRuntimeRig.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentShakerPart.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentShakerProfile.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentShardGeometry.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentShardLiquidProxy.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentSplashProfile.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentVolumeMetrics.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentWorld.Breakage.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentWorld.Cocktails.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentWorld.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentWorld.Dispenser.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentWorld.Environment.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentWorld.Rendering.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Runtime\\FluidExperimentWorld.ShardContacts.cs",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Shaders\\FluidExperimentBoundaryRanges.hlsl",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Shaders\\FluidExperimentCohesive.hlsl",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Shaders\\FluidExperimentCohesiveContacts.hlsl",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Shaders\\FluidExperimentImprovedAccumulation.shader",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Shaders\\FluidExperimentImprovedComposite.shader",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Shaders\\FluidExperimentImprovedSurface.compute",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Shaders\\FluidExperimentLiquid.compute",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Shaders\\FluidExperimentLiquid.shader",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Shaders\\FluidExperimentLiquidSurface.shader",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Shaders\\FluidExperimentReference.hlsl",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Shaders\\FluidExperimentStreamSurface.hlsl",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "balanced braces Shaders\\FluidExperimentStreamTypes.hlsl",
+      "passed": true,
+      "details": null
+    }
+  ],
+  "settingsRemoved": [
+    "airborneFullStretchSpeed",
+    "airborneRenderRadius",
+    "airborneStretch",
+    "containedRenderRadius",
+    "gpuLiquidArtificialPressureRadiusRatio",
+    "gpuLiquidArtificialPressureStrength",
+    "gpuLiquidBottomImpactSpread",
+    "gpuLiquidBoundaryDensityScale",
+    "gpuLiquidDensityCompliance",
+    "gpuLiquidLambdaEpsilon",
+    "gpuLiquidRestDensity",
+    "gpuLiquidSmoothingRadius",
+    "gpuLiquidSolverIterations",
+    "gpuLiquidSplashMinimumImpactSpeed",
+    "gpuLiquidSplashTransfer",
+    "gpuLiquidViscosity",
+    "improvedDensityCompliance",
+    "improvedKernelRatio",
+    "improvedMaximumCorrectionRatio",
+    "improvedMaximumKernelRadius",
+    "improvedParticleRadius",
+    "improvedShearViscosity",
+    "improvedSolverIterations",
+    "improvedSurfaceTension",
+    "improvedWallDensity",
+    "improvedWetting",
+    "referenceMaximumAcceleration",
+    "referenceMaximumDisplacementRatio",
+    "referenceMaximumTensionRatio",
+    "referenceNearPressureStiffness",
+    "referencePressureStiffness",
+    "referenceViscosityRate",
+    "streamAccumulationShader",
+    "streamMaximumLength",
+    "streamMaximumTimeGap",
+    "surfaceAccumulationShader",
+    "surfaceCompositeShader",
+    "surfaceEdgeSoftness",
+    "surfaceMergeStrength",
+    "surfaceThreshold"
+  ],
+  "kernelCounts": {
+    "before": 41,
+    "after": 28
+  },
+  "kernelsRemoved": [
+    "ApplyDeltaAndBoundaries",
+    "BuildStreamSurface",
+    "CalculateDensityLambda",
+    "CalculateImprovedDelta",
+    "CalculateImprovedDensity",
+    "CalculateImprovedViscosity",
+    "CalculatePositionDelta",
+    "CalculateReferenceDelta",
+    "CalculateReferenceDensityPressure",
+    "MixComposition",
+    "ResetStreamLookup",
+    "SweepBoundaries",
+    "UpdateVelocities"
+  ],
+  "scope": "Static source/token and authored-default parity. GPU runtime evidence is separate."
+}

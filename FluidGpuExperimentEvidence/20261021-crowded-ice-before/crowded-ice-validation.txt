@@ -1,0 +1,35 @@
+MEASURE noncolliding-dry-8 cubes=8 contained=8 span=0.3201853 angularSpan=244.929169 speed95=0.6590558 spin95=60.79272 sleepRatio=0 recovery=0 peakCubeSpeed=6.74489832 peakWaterSpeed=0 peakWaterRise=0 lateWaterEnergy=0 containedMl=0 ledgerError=0
+FAIL noncolliding-dry-8 all cubes settle without sustained jitter
+PASS noncolliding-dry-8 keeps native dynamic bodies
+PASS Queue exactly 60 ml for NonColliding
+MEASURE noncolliding-wet-8 cubes=8 contained=8 span=1.13728174E-05 angularSpan=0.00110626221 speed95=2.93747962E-05 spin95=0.004526241 sleepRatio=0 recovery=0 peakCubeSpeed=5.3393 peakWaterSpeed=0.07773316 peakWaterRise=0.00312125683 lateWaterEnergy=0.00017122674 containedMl=60 ledgerError=0
+PASS noncolliding-wet-8 all cubes settle without sustained jitter
+PASS noncolliding-wet-8 conserves total and retired liquid
+PASS noncolliding-wet-8 liquid kinetic energy decays after dropping stops
+PASS noncolliding-wet-8 keeps native dynamic bodies
+PASS Queue exactly 60 ml for NonColliding
+MEASURE noncolliding-wet-12 cubes=12 contained=12 span=1.577439 angularSpan=680.543335 speed95=0.71518594 spin95=53.8082275 sleepRatio=0 recovery=0 peakCubeSpeed=5.34020853 peakWaterSpeed=0.100655213 peakWaterRise=0.00139671564 lateWaterEnergy=0.000297300168 containedMl=60 ledgerError=0
+FAIL noncolliding-wet-12 all cubes settle without sustained jitter
+PASS noncolliding-wet-12 conserves total and retired liquid
+PASS noncolliding-wet-12 liquid kinetic energy decays after dropping stops
+PASS noncolliding-wet-12 keeps native dynamic bodies
+PASS Queue exactly 60 ml for Colliding
+MEASURE colliding-low-3 cubes=3 contained=3 span=1.31339312 angularSpan=129.3918 speed95=1.08361888 spin95=100.671 sleepRatio=0 recovery=0 peakCubeSpeed=2.105954 peakWaterSpeed=8.544915 peakWaterRise=1.57018983 lateWaterEnergy=0.5898106 containedMl=58.5 ledgerError=0
+FAIL colliding-low-3 all cubes settle without sustained jitter
+PASS colliding-low-3 conserves total and retired liquid
+FAIL colliding-low-3 liquid kinetic energy decays after dropping stops
+FAIL colliding-low-3 low-energy drops do not launch liquid
+PASS colliding-low-3 keeps native dynamic bodies
+PASS Queue exactly 60 ml for Colliding
+MEASURE colliding-wet-8 cubes=8 contained=8 span=7.630385E-06 angularSpan=0.00107955933 speed95=5.04706659E-05 spin95=0.00570234237 sleepRatio=0.04 recovery=0 peakCubeSpeed=5.306983 peakWaterSpeed=20.0000019 peakWaterRise=9.275462 lateWaterEnergy=3.514792 containedMl=37.5 ledgerError=0
+PASS colliding-wet-8 all cubes settle without sustained jitter
+PASS colliding-wet-8 conserves total and retired liquid
+FAIL colliding-wet-8 liquid kinetic energy decays after dropping stops
+PASS colliding-wet-8 keeps native dynamic bodies
+PASS Queue exactly 60 ml for Colliding
+MEASURE colliding-wet-12 cubes=12 contained=12 span=1.06796491 angularSpan=536.383057 speed95=0.743709743 spin95=55.8519745 sleepRatio=0 recovery=0 peakCubeSpeed=5.307282 peakWaterSpeed=20.0000019 peakWaterRise=9.263979 lateWaterEnergy=9.882352 containedMl=12 ledgerError=0
+FAIL colliding-wet-12 all cubes settle without sustained jitter
+PASS colliding-wet-12 conserves total and retired liquid
+FAIL colliding-wet-12 liquid kinetic energy decays after dropping stops
+PASS colliding-wet-12 keeps native dynamic bodies
+PASS No Unity application errors

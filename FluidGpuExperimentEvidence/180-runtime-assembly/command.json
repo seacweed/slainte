@@ -1,0 +1,16 @@
+{
+  "workingDirectory": "C:\\unity_proj\\slainte\\slainte",
+  "timeoutSeconds": 300,
+  "executable": "C:\\Program Files\\Unity\\Hub\\Editor\\6000.3.5f2\\Editor\\Unity.exe",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "C:/unity_proj/slainte/slainte/Library/FluidModelDHarness",
+    "-executeMethod",
+    "ExperimentRuntimeAssemblyValidation.Begin",
+    "-logFile",
+    "C:\\unity_proj\\slainte\\slainte\\FluidGpuExperimentEvidence\\180-runtime-assembly\\Editor.log"
+  ],
+  "started": "2026-10-15T14:45:53.4268154+09:00"
+}

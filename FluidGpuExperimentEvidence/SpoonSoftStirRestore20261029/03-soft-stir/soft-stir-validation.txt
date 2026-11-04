@@ -1,0 +1,16 @@
+PASS Fixture has separate 1ml/3ml ingredient pairs in target, foreign vessel and free liquid
+PASS Spoon enters target cavity without a wall overlap
+PASS An initially stationary wet spoon starts neither mixing nor flow
+MEASURE varianceBefore=0.375 varianceAfter=0.0026663266435442 activeTicks=87 peakTarget=0.16 sparseFixturePeakSpeed=0.02596746
+PASS Moving the wet spoon homogenizes the two-ingredient target mixture
+PASS Sparse zero-gravity fixture receives a small nonzero flow without a solid spoon impulse
+PASS Each ingredient's ml is conserved for owner 11
+PASS Each ingredient's ml is conserved for owner 12
+PASS Each ingredient's ml is conserved for owner 0
+PASS Spoon mixing leaves isolated foreign-vessel and unowned-liquid composition unchanged
+PASS Stirring leaves target vessel pose and velocities unchanged
+PASS Stopping spoon motion immediately stops added mixture homogenization
+PASS The short settling flow expires while spoon remains wet
+PASS RMB release clears the vessel and both stirring sources
+PASS Simulation reset clears stirring state
+PASS No Unity, shader, buffer or application errors in soft stirring validation

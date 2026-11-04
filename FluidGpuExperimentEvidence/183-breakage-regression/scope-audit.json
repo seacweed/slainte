@@ -1,0 +1,71 @@
+{
+  "passed": false,
+  "audited_at_utc": "2026-10-15T05:51:54.282437+00:00",
+  "basis": "Current working tree/index versus HEAD, plus non-ignored untracked files. Ignored Library output is excluded from change scope.",
+  "head": "0baeb556da46f18914cea3cf00e335741f392052",
+  "validation_project": "C:\\unity_proj\\slainte\\slainte\\Library\\FluidModelDHarness",
+  "scope": {
+    "tracked_changed_files": 22,
+    "non_ignored_untracked_files": 113,
+    "counts_by_allowed_root": {
+      "support": 1,
+      "feature": 67,
+      "evidence": 66,
+      "documentation": 1
+    },
+    "allowed_roots": [
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment",
+      "FluidGpuExperimentEvidence"
+    ],
+    "allowed_documentation_files": [
+      "docs/tools/editor-tools.md"
+    ],
+    "allowed_support_files": [
+      ".gitignore"
+    ]
+  },
+  "fresh_asset_checks": {
+    "feature_guid_count": 182,
+    "validated_asset_counts": {
+      ".asset": 32,
+      ".mat": 1,
+      ".cs": 56,
+      ".unity": 3,
+      ".prefab": 32,
+      ".hlsl": 7,
+      ".shader": 8,
+      ".compute": 2
+    },
+    "harness_test_source_count": 27,
+    "shared_reference_metadata_count": 66,
+    "copied_shared_dependency_count": 74
+  },
+  "failures": {
+    "changes_outside_scope": [],
+    "missing_metadata": [],
+    "malformed_metadata": [],
+    "orphan_metadata": [],
+    "duplicate_or_original_fork_guids": [],
+    "references_to_original_fork_assets": [],
+    "missing_validation_copies": [],
+    "different_validation_copies": [
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Data/CollisionProfiles/Glass_highball.asset",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Data/CollisionProfiles/Shaker.asset"
+    ],
+    "validation_metadata_guid_mismatches": [],
+    "harness_test_source_mismatches": [],
+    "shared_dependency_manifest_mismatches": []
+  },
+  "line_ending_equivalent_shared_copies": [],
+  "historical_baseline": {
+    "report": "FluidGpuExperimentEvidence/final-isolation-audit.json",
+    "preserved_report_sha256": "643906a090a68c37bb47f87e063cca49201cfbf95a7c3170ac4149dc552cdd35",
+    "prior_report_passed": false,
+    "prior_report_changed_file_count": 576,
+    "saved_original_file_count": 4451,
+    "current_differences_from_saved_hashes": 575,
+    "line_endings_only_differences": 483,
+    "other_or_missing_historical_differences": 92,
+    "interpretation": "The older original-tracked-sha256 baseline is distinct from current HEAD. Its failed report is retained unchanged; this audit does not claim historical original bytes are identical."
+  }
+}

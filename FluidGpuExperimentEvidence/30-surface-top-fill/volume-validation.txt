@@ -1,0 +1,17 @@
+PASS Authored comparison controller exists
+Protocol: E Highball/Hurricane direct authored-capacity fill and 200ml settled-content topping with separate final .25ml; exact admission/conservation and finite state, plus at least97%owned retention after2s settling. No calibration or UI cases in this entrypoint.
+PASS highball: authored full capacity is finite and positive
+PASS E-capacity-highball-direct: exact initial 400ml queued against authored 400ml capacity
+PASS E-capacity-highball-direct/initial-queued: all 0 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-direct/initial-queued: exact queued, generated and pending ml
+PASS E-capacity-highball-direct/initial-queued: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-direct/initial-queued: total and ingredient conservation hold through capacity filling
+PASS E-capacity-highball-direct/initial-born: all 800 active particles have finite positions, velocities and positive ml
+PASS E-capacity-highball-direct/initial-born: exact queued, generated and pending ml
+PASS E-capacity-highball-direct/initial-born: owned/free/other/retired partition preserves every generated ml
+PASS E-capacity-highball-direct/initial-born: total and ingredient conservation hold through capacity filling
+FAIL E-capacity-highball-direct: every initially generated ml starts owned by the intended vessel
+System.Exception: E-capacity-highball-direct: every initially generated ml starts owned by the intended vessel
+  at ExperimentVolumeValidationRunner.Require (System.Boolean condition, System.String message) [0x0002a] in C:\unity_proj\slainte\slainte\Library\FluidSwapHarness\Assets\Editor\VolumeValidation.cs:735 
+  at ExperimentVolumeValidationRunner+<ValidateCalibratedCapacity>d__24.MoveNext () [0x0028c] in C:\unity_proj\slainte\slainte\Library\FluidSwapHarness\Assets\Editor\VolumeValidation.cs:302 
+  at ExperimentVolumeValidationRunner+<Guard>d__20.MoveNext () [0x00086] in C:\unity_proj\slainte\slainte\Library\FluidSwapHarness\Assets\Editor\VolumeValidation.cs:132 

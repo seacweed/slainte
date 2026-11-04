@@ -1,0 +1,13 @@
+{
+  "SpoonSoftStirValidation.cs": "59513ae51af06d31d203174112e10dc758923de1ecbf40e7680f6cb5fe5f247f",
+  "PrefabReadinessValidation.cs": "df6578133136985d73cfa8bd4a5d0db0ae187d335eba07ff71fdcfe36987466c",
+  "RuntimeAssemblyValidation.cs": "1cba8a5a6b9f9065c3ba7ae82209cd5832341c0343bf881a84a9e561c70cdef5",
+  "DesignerValidation.cs": "ed5431c5b280d5dbabb8ca813c20663947c1235cf4cb9413a7277dec74790534",
+  "DispenserRuntimeValidation.cs": "6ef6635badc4da090accec439bfb404ed0c35ba82623627b50ccc552517abeef",
+  "RelativePointerValidation.cs": "57bd5b6ef12ea906099a5e04a294f5667ec47b3d8fe0a7ad2709341c3207be01",
+  "PhysicsLabValidationDispatch.cs": "e9c223e438cea9337716b776c931af756fa54764b7269ccf75421e253ce22c87",
+  "CleanupParityValidation.cs": "735b9c80a49c4ffdd906b4bb53f1673c0074f7ee8de860a0d9898182b69ba0df",
+  "SpoonContactValidation.cs": "0adcf1bbb24f3021b5d1aaf2b95d238a85426e9a6c505b9b9ab3f99c763f66cd",
+  "ShardMotionValidation.cs": "60ee0f1af577e874102a7a1bdcec603fc90fcfd152b0f46d548609be7b56d2ea",
+  "CocktailIntegrationValidation.cs": "608f27a25ddc106cbcd6e68a988a307f413e19dd2c6348b755e731f5fd8b470b"
+}

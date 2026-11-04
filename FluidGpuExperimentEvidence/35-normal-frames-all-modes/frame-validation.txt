@@ -1,0 +1,163 @@
+STARTED: normal PlayerLoop validation; no result yet.
+PASS: Authored comparison controller exists
+PASS: GPU operational on AMD Radeon(TM) Graphics / Direct3D11
+PASS: Normal fixed-update physics and advancing game time are enabled
+PASS: Authored automatic replay and World coroutine remain enabled
+PASS: Every authored Rigidbody2D remains simulated
+PASS: ACurrent: GPU mode initializes
+PASS: ACurrent: real frames advance Pour to 2.419998s
+PASS: ACurrent: physics and GPU coroutine stayed active throughout Pour
+PASS: ACurrent normal Pour: all active GPU particle states are finite
+PASS: ACurrent normal Pour: a coherent completed GPU ledger is available
+PASS: ACurrent normal Pour: particle snapshot and ledger agree on active volume (98 ml)
+PASS: ACurrent normal Pour: generated liquid equals active + retired + transferred + GPU pending (generated=98, active=98, retired=0 ml)
+PASS: ACurrent normal Pour: requested and queued volume are fully accounted, including pending and rejected births
+PASS: ACurrent: actual bottle emits and deducts the same volume (38 ml)
+PASS: ACurrent: source-tagged bottle liquid reaches the glass (31.5 ml)
+PASS: ACurrent normal Pour: visual Transform agrees with Rigidbody2D within .03 units (maximum 0)
+PASS: ACurrent-frame-pour: saved nonuniform camera PNG with an operational GPU surface (46239 foreground pixels)
+PASS: ACurrent: Stir cup and spoon are unheld kinematic collision participants
+PASS: ACurrent Stir early: visual Transform agrees with Rigidbody2D within .03 units (maximum 2.98023224E-08)
+PASS: ACurrent-frame-stir-early: saved nonuniform camera PNG with an operational GPU surface (29450 foreground pixels)
+PASS: ACurrent: real replay moves spoon physics and sprite (0.50560385/0.50560385)
+PASS: ACurrent: unheld kinematic cup remains stationary while spoon moves
+PASS: ACurrent: Stir keeps cup and spoon unheld and kinematic during playback
+PASS: ACurrent Stir late: visual Transform agrees with Rigidbody2D within .03 units (maximum 0)
+PASS: ACurrent normal Stir: all active GPU particle states are finite
+PASS: ACurrent normal Stir: a coherent completed GPU ledger is available
+PASS: ACurrent normal Stir: particle snapshot and ledger agree on active volume (60 ml)
+PASS: ACurrent normal Stir: generated liquid equals active + retired + transferred + GPU pending (generated=60, active=60, retired=0 ml)
+PASS: ACurrent normal Stir: requested and queued volume are fully accounted, including pending and rejected births
+PASS: ACurrent-frame-stir-late: saved nonuniform camera PNG with an operational GPU surface (28075 foreground pixels)
+PASS: ACurrent: Manual resets replay state
+PASS: ACurrent: Manual restores every body's original emission rate and supply
+PASS: ACurrent: Manual releases replay bodies and restores dynamic physics
+PASS: ACurrent: Manual restores authored camera position and size
+PASS: ACurrent: Manual enables picking and retains the controls' pointer exclusion rectangle
+PASS: ACurrent: normal simulation survives returning to Manual
+PASS: BReferencePhysics: GPU mode initializes
+PASS: BReferencePhysics: real frames advance Pour to 2.419998s
+PASS: BReferencePhysics: physics and GPU coroutine stayed active throughout Pour
+PASS: BReferencePhysics normal Pour: all active GPU particle states are finite
+PASS: BReferencePhysics normal Pour: a coherent completed GPU ledger is available
+PASS: BReferencePhysics normal Pour: particle snapshot and ledger agree on active volume (98 ml)
+PASS: BReferencePhysics normal Pour: generated liquid equals active + retired + transferred + GPU pending (generated=98, active=98, retired=0 ml)
+PASS: BReferencePhysics normal Pour: requested and queued volume are fully accounted, including pending and rejected births
+PASS: BReferencePhysics: actual bottle emits and deducts the same volume (38 ml)
+PASS: BReferencePhysics: source-tagged bottle liquid reaches the glass (31.5 ml)
+PASS: BReferencePhysics normal Pour: visual Transform agrees with Rigidbody2D within .03 units (maximum 0)
+PASS: BReferencePhysics-frame-pour: saved nonuniform camera PNG with an operational GPU surface (46242 foreground pixels)
+PASS: BReferencePhysics: Stir cup and spoon are unheld kinematic collision participants
+PASS: BReferencePhysics Stir early: visual Transform agrees with Rigidbody2D within .03 units (maximum 2.98023224E-08)
+PASS: BReferencePhysics-frame-stir-early: saved nonuniform camera PNG with an operational GPU surface (29754 foreground pixels)
+PASS: BReferencePhysics: real replay moves spoon physics and sprite (0.494448364/0.494448364)
+PASS: BReferencePhysics: unheld kinematic cup remains stationary while spoon moves
+PASS: BReferencePhysics: Stir keeps cup and spoon unheld and kinematic during playback
+PASS: BReferencePhysics Stir late: visual Transform agrees with Rigidbody2D within .03 units (maximum 0)
+PASS: BReferencePhysics normal Stir: all active GPU particle states are finite
+PASS: BReferencePhysics normal Stir: a coherent completed GPU ledger is available
+PASS: BReferencePhysics normal Stir: particle snapshot and ledger agree on active volume (60 ml)
+PASS: BReferencePhysics normal Stir: generated liquid equals active + retired + transferred + GPU pending (generated=60, active=60, retired=0 ml)
+PASS: BReferencePhysics normal Stir: requested and queued volume are fully accounted, including pending and rejected births
+PASS: BReferencePhysics-frame-stir-late: saved nonuniform camera PNG with an operational GPU surface (28445 foreground pixels)
+PASS: BReferencePhysics: Manual resets replay state
+PASS: BReferencePhysics: Manual restores every body's original emission rate and supply
+PASS: BReferencePhysics: Manual releases replay bodies and restores dynamic physics
+PASS: BReferencePhysics: Manual restores authored camera position and size
+PASS: BReferencePhysics: Manual enables picking and retains the controls' pointer exclusion rectangle
+PASS: BReferencePhysics: normal simulation survives returning to Manual
+PASS: CReferenceSurface: GPU mode initializes
+PASS: CReferenceSurface: real frames advance Pour to 2.419998s
+PASS: CReferenceSurface: physics and GPU coroutine stayed active throughout Pour
+PASS: CReferenceSurface normal Pour: all active GPU particle states are finite
+PASS: CReferenceSurface normal Pour: a coherent completed GPU ledger is available
+PASS: CReferenceSurface normal Pour: particle snapshot and ledger agree on active volume (98 ml)
+PASS: CReferenceSurface normal Pour: generated liquid equals active + retired + transferred + GPU pending (generated=98, active=98, retired=0 ml)
+PASS: CReferenceSurface normal Pour: requested and queued volume are fully accounted, including pending and rejected births
+PASS: CReferenceSurface: actual bottle emits and deducts the same volume (38 ml)
+PASS: CReferenceSurface: source-tagged bottle liquid reaches the glass (31.5 ml)
+PASS: CReferenceSurface normal Pour: visual Transform agrees with Rigidbody2D within .03 units (maximum 0)
+PASS: CReferenceSurface-frame-pour: saved nonuniform camera PNG with an operational GPU surface (46789 foreground pixels)
+PASS: CReferenceSurface: Stir cup and spoon are unheld kinematic collision participants
+PASS: CReferenceSurface Stir early: visual Transform agrees with Rigidbody2D within .03 units (maximum 0)
+PASS: CReferenceSurface-frame-stir-early: saved nonuniform camera PNG with an operational GPU surface (29631 foreground pixels)
+PASS: CReferenceSurface: real replay moves spoon physics and sprite (0.494448364/0.494448364)
+PASS: CReferenceSurface: unheld kinematic cup remains stationary while spoon moves
+PASS: CReferenceSurface: Stir keeps cup and spoon unheld and kinematic during playback
+PASS: CReferenceSurface Stir late: visual Transform agrees with Rigidbody2D within .03 units (maximum 0)
+PASS: CReferenceSurface normal Stir: all active GPU particle states are finite
+PASS: CReferenceSurface normal Stir: a coherent completed GPU ledger is available
+PASS: CReferenceSurface normal Stir: particle snapshot and ledger agree on active volume (60 ml)
+PASS: CReferenceSurface normal Stir: generated liquid equals active + retired + transferred + GPU pending (generated=60, active=60, retired=0 ml)
+PASS: CReferenceSurface normal Stir: requested and queued volume are fully accounted, including pending and rejected births
+PASS: CReferenceSurface-frame-stir-late: saved nonuniform camera PNG with an operational GPU surface (28373 foreground pixels)
+PASS: CReferenceSurface: Manual resets replay state
+PASS: CReferenceSurface: Manual restores every body's original emission rate and supply
+PASS: CReferenceSurface: Manual releases replay bodies and restores dynamic physics
+PASS: CReferenceSurface: Manual restores authored camera position and size
+PASS: CReferenceSurface: Manual enables picking and retains the controls' pointer exclusion rectangle
+PASS: CReferenceSurface: normal simulation survives returning to Manual
+PASS: DImprovedSurface: GPU mode initializes
+PASS: DImprovedSurface: real frames advance Pour to 2.419998s
+PASS: DImprovedSurface: physics and GPU coroutine stayed active throughout Pour
+PASS: DImprovedSurface normal Pour: all active GPU particle states are finite
+PASS: DImprovedSurface normal Pour: a coherent completed GPU ledger is available
+PASS: DImprovedSurface normal Pour: particle snapshot and ledger agree on active volume (98 ml)
+PASS: DImprovedSurface normal Pour: generated liquid equals active + retired + transferred + GPU pending (generated=98, active=98, retired=0 ml)
+PASS: DImprovedSurface normal Pour: requested and queued volume are fully accounted, including pending and rejected births
+PASS: DImprovedSurface: actual bottle emits and deducts the same volume (38 ml)
+PASS: DImprovedSurface: source-tagged bottle liquid reaches the glass (31.5 ml)
+PASS: DImprovedSurface normal Pour: visual Transform agrees with Rigidbody2D within .03 units (maximum 0)
+PASS: DImprovedSurface-frame-pour: saved nonuniform camera PNG with an operational GPU surface (47002 foreground pixels)
+PASS: DImprovedSurface: Stir cup and spoon are unheld kinematic collision participants
+PASS: DImprovedSurface Stir early: visual Transform agrees with Rigidbody2D within .03 units (maximum 9.536743E-07)
+PASS: DImprovedSurface-frame-stir-early: saved nonuniform camera PNG with an operational GPU surface (29469 foreground pixels)
+PASS: DImprovedSurface: real replay moves spoon physics and sprite (0.494448364/0.494448364)
+PASS: DImprovedSurface: unheld kinematic cup remains stationary while spoon moves
+PASS: DImprovedSurface: Stir keeps cup and spoon unheld and kinematic during playback
+PASS: DImprovedSurface Stir late: visual Transform agrees with Rigidbody2D within .03 units (maximum 5.96046448E-08)
+PASS: DImprovedSurface normal Stir: all active GPU particle states are finite
+PASS: DImprovedSurface normal Stir: a coherent completed GPU ledger is available
+PASS: DImprovedSurface normal Stir: particle snapshot and ledger agree on active volume (60 ml)
+PASS: DImprovedSurface normal Stir: generated liquid equals active + retired + transferred + GPU pending (generated=60, active=60, retired=0 ml)
+PASS: DImprovedSurface normal Stir: requested and queued volume are fully accounted, including pending and rejected births
+PASS: DImprovedSurface-frame-stir-late: saved nonuniform camera PNG with an operational GPU surface (28177 foreground pixels)
+PASS: DImprovedSurface: Manual resets replay state
+PASS: DImprovedSurface: Manual restores every body's original emission rate and supply
+PASS: DImprovedSurface: Manual releases replay bodies and restores dynamic physics
+PASS: DImprovedSurface: Manual restores authored camera position and size
+PASS: DImprovedSurface: Manual enables picking and retains the controls' pointer exclusion rectangle
+PASS: DImprovedSurface: normal simulation survives returning to Manual
+PASS: ECalibratedLiquid: GPU mode initializes
+PASS: ECalibratedLiquid: real frames advance Pour to 2.419998s
+PASS: ECalibratedLiquid: physics and GPU coroutine stayed active throughout Pour
+PASS: ECalibratedLiquid normal Pour: all active GPU particle states are finite
+PASS: ECalibratedLiquid normal Pour: a coherent completed GPU ledger is available
+PASS: ECalibratedLiquid normal Pour: particle snapshot and ledger agree on active volume (67.5 ml)
+PASS: ECalibratedLiquid normal Pour: generated liquid equals active + retired + transferred + GPU pending (generated=67.5, active=67.5, retired=0 ml)
+PASS: ECalibratedLiquid normal Pour: requested and queued volume are fully accounted, including pending and rejected births
+PASS: ECalibratedLiquid: actual bottle emits and deducts the same volume (7.5 ml)
+PASS: ECalibratedLiquid: source-tagged bottle liquid reaches the glass (6.5 ml)
+PASS: ECalibratedLiquid normal Pour: visual Transform agrees with Rigidbody2D within .03 units (maximum 0)
+PASS: ECalibratedLiquid-frame-pour: saved nonuniform camera PNG with an operational GPU surface (45185 foreground pixels)
+PASS: ECalibratedLiquid: Stir cup and spoon are unheld kinematic collision participants
+PASS: ECalibratedLiquid Stir early: visual Transform agrees with Rigidbody2D within .03 units (maximum 0)
+PASS: ECalibratedLiquid-frame-stir-early: saved nonuniform camera PNG with an operational GPU surface (26514 foreground pixels)
+PASS: ECalibratedLiquid: real replay moves spoon physics and sprite (0.5026419/0.502642)
+PASS: ECalibratedLiquid: unheld kinematic cup remains stationary while spoon moves
+PASS: ECalibratedLiquid: Stir keeps cup and spoon unheld and kinematic during playback
+PASS: ECalibratedLiquid Stir late: visual Transform agrees with Rigidbody2D within .03 units (maximum 1.49011612E-08)
+PASS: ECalibratedLiquid normal Stir: all active GPU particle states are finite
+PASS: ECalibratedLiquid normal Stir: a coherent completed GPU ledger is available
+PASS: ECalibratedLiquid normal Stir: particle snapshot and ledger agree on active volume (60 ml)
+PASS: ECalibratedLiquid normal Stir: generated liquid equals active + retired + transferred + GPU pending (generated=60, active=60, retired=0 ml)
+PASS: ECalibratedLiquid normal Stir: requested and queued volume are fully accounted, including pending and rejected births
+PASS: ECalibratedLiquid-frame-stir-late: saved nonuniform camera PNG with an operational GPU surface (26228 foreground pixels)
+PASS: ECalibratedLiquid: Manual resets replay state
+PASS: ECalibratedLiquid: Manual restores every body's original emission rate and supply
+PASS: ECalibratedLiquid: Manual releases replay bodies and restores dynamic physics
+PASS: ECalibratedLiquid: Manual restores authored camera position and size
+PASS: ECalibratedLiquid: Manual enables picking and retains the controls' pointer exclusion rectangle
+PASS: ECalibratedLiquid: normal simulation survives returning to Manual
+
+FINISHED: PASS

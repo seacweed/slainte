@@ -1,0 +1,120 @@
+{
+  "result": "PASS",
+  "suites": [
+    {
+      "attempt": "02-authoring",
+      "label": "프리팹·씬 참조, ID 상속, Designer, 읽기 전용 검사",
+      "result": "PASS",
+      "assertions": 18,
+      "exit": {
+        "finished": "2026-10-28T13:59:48.9151935+09:00",
+        "started": "2026-10-28T13:58:41.2099216+09:00",
+        "pid": 30208,
+        "timedOut": false,
+        "exitCode": 0
+      }
+    },
+    {
+      "attempt": "07-runtime-bindings",
+      "label": "독립 런타임, 카메라·환경·디스펜서 연결과 Reset",
+      "result": "PASS",
+      "assertions": 29,
+      "exit": {
+        "timedOut": false,
+        "started": "2026-10-28T14:03:56.6416742+09:00",
+        "finished": "2026-10-28T14:04:42.6798441+09:00",
+        "pid": 28244,
+        "exitCode": 0
+      }
+    },
+    {
+      "attempt": "04-input",
+      "label": "기존 입력·회전·셰이커 조작",
+      "result": "PASS",
+      "assertions": 1925,
+      "exit": {
+        "timedOut": false,
+        "pid": 26276,
+        "finished": "2026-10-28T14:05:23.6035942+09:00",
+        "started": "2026-10-28T14:04:44.8598012+09:00",
+        "exitCode": 0
+      }
+    },
+    {
+      "attempt": "05-auto-f",
+      "label": "F 자동 실행과 디스펜서",
+      "result": "PASS",
+      "assertions": 29,
+      "exit": {
+        "finished": "2026-10-28T14:06:34.4522207+09:00",
+        "timedOut": false,
+        "pid": 4400,
+        "exitCode": 0,
+        "started": "2026-10-28T14:05:25.4610537+09:00"
+      }
+    },
+    {
+      "attempt": "06-auto-g",
+      "label": "G 자동 실행과 디스펜서",
+      "result": "PASS",
+      "assertions": 29,
+      "exit": {
+        "started": "2026-10-28T14:06:37.9369349+09:00",
+        "timedOut": false,
+        "pid": 35068,
+        "finished": "2026-10-28T14:07:56.9242250+09:00",
+        "exitCode": 0
+      }
+    },
+    {
+      "attempt": "08-shard-motion",
+      "label": "현재 파편 운동·충돌·액체 보존",
+      "result": "PASS",
+      "assertions": 76,
+      "exit": {
+        "exitCode": 0,
+        "finished": "2026-10-28T14:08:44.8106405+09:00",
+        "timedOut": false,
+        "started": "2026-10-28T14:07:58.6209419+09:00",
+        "pid": 12784
+      }
+    }
+  ],
+  "passed_assertions": 2106,
+  "validated_feature_files": 387,
+  "source_mismatches": [],
+  "legacy_runtime_failure_reproduced_with_original_prefabs": true,
+  "legacy_failures": [
+    [
+      "FAIL natural style applies the expected natural or explosive fragment spin"
+    ],
+    [
+      "FAIL natural style applies the expected natural or explosive fragment spin"
+    ]
+  ],
+  "preservation": {
+    "result": "PASS",
+    "baseline_file_count": 695,
+    "unchanged_original_file_count": 688,
+    "changed_original_files": [
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/README.md",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Editor/FluidExperimentDesignerSession.cs",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Editor/FluidExperimentDesignerWindow.cs",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Glass_highball.prefab",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Glass_hurricane.prefab",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Glass_martini.prefab",
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Glass_rock.prefab"
+    ],
+    "deleted_original_files": [],
+    "glass_prefabs_only_add_identity": {
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Glass_highball.prefab": true,
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Glass_hurricane.prefab": true,
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Glass_martini.prefab": true,
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment/Prefabs/Glass_rock.prefab": true
+    },
+    "scene_overrides_preserved": true,
+    "catalog_count": 28,
+    "reference_errors": [],
+    "errors": []
+  }
+}

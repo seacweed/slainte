@@ -1,0 +1,13 @@
+{
+  "executable": "dotnet",
+  "exitCode": 0,
+  "finished": "2026-09-21T19:57:18.9635850+09:00",
+  "arguments": [
+    "build",
+    "Assembly-CSharp-Editor.csproj",
+    "--no-restore",
+    "-v:minimal",
+    "-p:CustomAfterMicrosoftCommonTargets=A:\\UnityHub\\proj\\slainte\\PhysicsLabEvidence\\32-contained-stream-filled-glass\\IncludePhysicsLab.targets"
+  ],
+  "started": "2026-09-21T19:57:14.6832961+09:00"
+}

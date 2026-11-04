@@ -1,0 +1,17 @@
+{
+  "workingDirectory": "C:\\unity_proj\\slainte\\slainte",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "C:/unity_proj/slainte/slainte/Library/FluidModelDHarness",
+    "-executeMethod",
+    "FluidSceneProbe.Run",
+    "-logFile",
+    "C:\\unity_proj\\slainte\\slainte\\FluidGpuExperimentEvidence\\176-unsaved-scene-api\\Editor.log",
+    "-quit"
+  ],
+  "timeoutSeconds": 180,
+  "executable": "C:\\Program Files\\Unity\\Hub\\Editor\\6000.3.5f2\\Editor\\Unity.exe",
+  "started": "2026-10-15T14:39:04.8241622+09:00"
+}

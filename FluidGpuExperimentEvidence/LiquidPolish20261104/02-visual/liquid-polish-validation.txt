@@ -1,0 +1,8 @@
+INFO vessel=True operational=False error=System.NullReferenceException: Object reference not set to an instance of an object
+  at Slainte.Bartending.FluidGpuExperiment.FluidExperimentGpuLiquid.ResetSpoonStir () [0x00000] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\_Project\Features\Bartending\FluidGpuExperiment\Runtime\FluidExperimentGpuLiquid.Stirring.cs:38 
+  at Slainte.Bartending.FluidGpuExperiment.FluidExperimentGpuLiquid.DispatchReset () [0x00026] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\_Project\Features\Bartending\FluidGpuExperiment\Runtime\FluidExperimentGpuLiquid.Buffers.cs:217 
+  at Slainte.Bartending.FluidGpuExperiment.FluidExperimentGpuLiquid.Initialize (Slainte.Bartending.FluidGpuExperiment.FluidExperimentWorld owner) [0x0014e] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\_Project\Features\Bartending\FluidGpuExperiment\Runtime\FluidExperimentGpuLiquid.cs:93  position=(-3.40, 2.60) scale=(1.00, 1.00, 1.00) radius=0.065 regions=(x:-0.57, y:-1.81, width:1.14, height:2.47) ingredient=item_1003
+FAIL Glass_highball contains actual authored ingredient particles
+System.Exception: Glass_highball contains actual authored ingredient particles
+  at LiquidPolishRunner.Check (System.Boolean ok, System.String label) [0x0002a] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\LiquidPolishValidation.cs:36 
+  at LiquidPolishRunner+<Start>d__19.MoveNext () [0x00412] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\LiquidPolishValidation.cs:94 

@@ -1,0 +1,5 @@
+{
+  "reason": "Known failed CapturePourSequence assertion: prior fixture left pourMlPerSecond=0. Nested coroutine exception was not propagated to Guard. Stop only this failed test process; preserve logs.",
+  "terminated": "2026-09-21T19:29:10.4592075+09:00",
+  "pid": 33032
+}

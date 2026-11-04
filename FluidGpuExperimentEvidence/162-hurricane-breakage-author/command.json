@@ -1,0 +1,17 @@
+{
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/Library/FluidModelDHarness",
+    "-executeMethod",
+    "Slainte.Bartending.FluidGpuExperiment.Editor.FluidExperimentBreakageBuilder.Build",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\162-hurricane-breakage-author\\Editor.log",
+    "-quit"
+  ],
+  "started": "2026-10-11T08:58:31.9844933+09:00",
+  "workingDirectory": "A:\\UnityHub\\proj\\slainte",
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe",
+  "timeoutSeconds": 300
+}

@@ -1,0 +1,115 @@
+PASS 114 checks; GPU=NVIDIA GeForce RTX 3070
+PASS comparison initialized within 20 seconds
+PASS no renderer, compute, or runtime errors
+PASS DImprovedSurface: interpolation fixture accepted
+PASS DImprovedSurface: improved renderer initialized
+PASS DImprovedSurface: endpoints span the whole fixed tick, not the last substep
+PASS DImprovedSurface: 30fps fraction 0 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 30fps fraction 0.66666668653488159 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 30fps fraction 0.33333340287208557 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 30fps fraction 1.1175870895385742E-07 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 30fps fraction 0.66666680574417114 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 30fps fraction 0.33333352208137512 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 30fps fraction 2.2351741790771484E-07 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 30fps fraction 0.66666692495346069 renders at the interpolated GPU endpoint
+PASS no renderer, compute, or runtime errors
+PASS DImprovedSurface: 60fps fraction 0 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 60fps fraction 0.83333337306976318 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 60fps fraction 0.66666668653488159 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 60fps fraction 0.50000005960464478 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 60fps fraction 0.33333340287208557 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 60fps fraction 0.16666676104068756 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 60fps fraction 1.1175870895385742E-07 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 60fps fraction 0.83333349227905273 renders at the interpolated GPU endpoint
+PASS no renderer, compute, or runtime errors
+PASS DImprovedSurface: 120fps fraction 0 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 120fps fraction 0.41666668653488159 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 120fps fraction 0.83333337306976318 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 120fps fraction 0.25000002980232239 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 120fps fraction 0.66666668653488159 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 120fps fraction 0.083333380520343781 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 120fps fraction 0.50000005960464478 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 120fps fraction 0.91666674613952637 renders at the interpolated GPU endpoint
+PASS no renderer, compute, or runtime errors
+PASS DImprovedSurface: 144fps fraction 0 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 144fps fraction 0.347222238779068 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 144fps fraction 0.694444477558136 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 144fps fraction 0.04166669026017189 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 144fps fraction 0.38888892531394958 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 144fps fraction 0.73611116409301758 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 144fps fraction 0.083333380520343781 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 144fps fraction 0.43055561184883118 renders at the interpolated GPU endpoint
+PASS no renderer, compute, or runtime errors
+PASS DImprovedSurface: all frame-rate render probes leave physical positions, velocities, owners and ml unchanged
+PASS DImprovedSurface: .25ml contributes exactly half the integrated density area of .5ml
+PASS DImprovedSurface: covariance fixture contains seven particles
+PASS DImprovedSurface: horizontal neighbor covariance controls anisotropy despite vertical velocity
+PASS DImprovedSurface: rotated covariance preserves integrated density area
+PASS DImprovedSurface: delayed birth accepted
+PASS DImprovedSurface: delayed birth records its exact nozzle origin and fraction after reset
+PASS DImprovedSurface: unborn particle produces no visible density
+PASS DImprovedSurface: delayed particle appears after its birth fraction
+PASS DImprovedSurface: actual authored thin-wall pixels are masked without erasing the contained liquid (697 wall pixels, 0 leaks, alpha=3434.7420654296875, hulls=15)
+PASS DImprovedSurface: contained splats produce no disconnected density beyond the outer side or bottom walls (0 exterior pixels)
+PASS DImprovedSurface: held vessel still blocks its own liquid support through and beyond its walls
+PASS DImprovedSurface: foreign-ghost fixture begins inside actual solid glass
+PASS DImprovedSurface: held receiver masks its solid wall for free liquid too
+PASS DImprovedSurface: virtual ownership rim does not mask a falling drop
+PASS DImprovedSurface: real spilled particles remain visible below the glass instead of being clipped to its interior
+PASS DImprovedSurface: explicit vessel translation rebases both display endpoints without a ghost trail
+PASS ECalibratedLiquid: interpolation fixture accepted
+PASS ECalibratedLiquid: improved renderer initialized
+PASS ECalibratedLiquid: endpoints span the whole fixed tick, not the last substep
+PASS ECalibratedLiquid: 30fps fraction 0 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 30fps fraction 0.66666668653488159 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 30fps fraction 0.33333340287208557 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 30fps fraction 1.1175870895385742E-07 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 30fps fraction 0.66666680574417114 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 30fps fraction 0.33333352208137512 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 30fps fraction 2.2351741790771484E-07 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 30fps fraction 0.66666692495346069 renders at the interpolated GPU endpoint
+PASS no renderer, compute, or runtime errors
+PASS ECalibratedLiquid: 60fps fraction 0 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 60fps fraction 0.83333337306976318 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 60fps fraction 0.66666668653488159 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 60fps fraction 0.50000005960464478 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 60fps fraction 0.33333340287208557 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 60fps fraction 0.16666676104068756 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 60fps fraction 1.1175870895385742E-07 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 60fps fraction 0.83333349227905273 renders at the interpolated GPU endpoint
+PASS no renderer, compute, or runtime errors
+PASS ECalibratedLiquid: 120fps fraction 0 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 120fps fraction 0.41666668653488159 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 120fps fraction 0.83333337306976318 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 120fps fraction 0.25000002980232239 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 120fps fraction 0.66666668653488159 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 120fps fraction 0.083333380520343781 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 120fps fraction 0.50000005960464478 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 120fps fraction 0.91666674613952637 renders at the interpolated GPU endpoint
+PASS no renderer, compute, or runtime errors
+PASS ECalibratedLiquid: 144fps fraction 0 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 144fps fraction 0.347222238779068 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 144fps fraction 0.694444477558136 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 144fps fraction 0.04166669026017189 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 144fps fraction 0.38888892531394958 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 144fps fraction 0.73611116409301758 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 144fps fraction 0.083333380520343781 renders at the interpolated GPU endpoint
+PASS ECalibratedLiquid: 144fps fraction 0.43055561184883118 renders at the interpolated GPU endpoint
+PASS no renderer, compute, or runtime errors
+PASS ECalibratedLiquid: all frame-rate render probes leave physical positions, velocities, owners and ml unchanged
+PASS ECalibratedLiquid: .25ml contributes exactly half the integrated density area of .5ml
+PASS ECalibratedLiquid: covariance fixture contains seven particles
+PASS ECalibratedLiquid: horizontal neighbor covariance controls anisotropy despite vertical velocity
+PASS ECalibratedLiquid: rotated covariance preserves integrated density area
+PASS ECalibratedLiquid: delayed birth accepted
+PASS ECalibratedLiquid: delayed birth records its exact nozzle origin and fraction after reset
+PASS ECalibratedLiquid: unborn particle produces no visible density
+PASS ECalibratedLiquid: delayed particle appears after its birth fraction
+PASS ECalibratedLiquid: actual authored thin-wall pixels are masked without erasing the contained liquid (697 wall pixels, 0 leaks, alpha=836.49905109405518, hulls=15)
+PASS ECalibratedLiquid: contained splats produce no disconnected density beyond the outer side or bottom walls (0 exterior pixels)
+PASS ECalibratedLiquid: held vessel still blocks its own liquid support through and beyond its walls
+PASS ECalibratedLiquid: foreign-ghost fixture begins inside actual solid glass
+PASS ECalibratedLiquid: held receiver masks its solid wall for free liquid too
+PASS ECalibratedLiquid: virtual ownership rim does not mask a falling drop
+PASS ECalibratedLiquid: real spilled particles remain visible below the glass instead of being clipped to its interior
+PASS ECalibratedLiquid: explicit vessel translation rebases both display endpoints without a ghost trail

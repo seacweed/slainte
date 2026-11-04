@@ -1,0 +1,9 @@
+{
+    "status": "FAIL",
+    "error": "System.Exception: Probe must preserve the full authored object set, including remote bottles.\r\n  at ManualPerformanceValidationRunner+<RunCase>d__44.MoveNext () [0x00b77] in C:\\unity_proj\\slainte\\slainte\\Library\\FluidSwapHarness\\Assets\\Editor\\ManualPerformanceValidation.cs:254 \r\n  at ManualPerformanceValidationRunner+<Guard>d__42.MoveNext () [0x00087] in C:\\unity_proj\\slainte\\slainte\\Library\\FluidSwapHarness\\Assets\\Editor\\ManualPerformanceValidation.cs:122 ",
+    "unityVersion": "6000.3.5f2",
+    "gpu": "AMD Radeon(TM) Graphics",
+    "platform": "Unity Editor full authored Manual PlayerLoop, Direct3D11",
+    "protocol": "Full authored Manual scene, E mode, original particle capacity/substeps, all bodies and GUI/effects retained. Public Pick/MoveHeld/BeginRotation/RotateBy drive held motion; hardware mouse polling disabled. Normal PlayerLoop:1s warmup+3s measurement with exactly one explicit1280x720 Camera.Render per rendered frame. No synchronous readback in normal timing. Separate20-sample diagnostic explicitly simulates one .02s CPU/liquid tick, renders, and reads one RT pixel to await completion. This diagnostic is CPU+GPU completed-work wall time, not GPU timestamps or gameplay FPS. Normal statistics exclude diagnostics. GC statistics include the fixed harness overhead; no CSV/JSON allocation occurs in normal samples.",
+    "cases": []
+}

@@ -1,0 +1,7 @@
+PASS Saved prefab and scene bindings remain valid: 
+PASS Repeated authoring preserves all existing prefab, scene, profile, shader and source bytes
+PASS Reusable runtime serializes the explicit session/world/font references with its panel initially closed
+PASS FluidGpuComparison.unity connects one independent cocktail session through saved assets
+PASS FluidGpuComparison.unity inherits the vertically flipped shared spoon prefab
+PASS FluidRuntimeSample.unity connects one independent cocktail session through saved assets
+PASS FluidRuntimeSample.unity inherits the vertically flipped shared spoon prefab

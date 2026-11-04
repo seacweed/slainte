@@ -1,0 +1,55 @@
+FAIL 51 checks; GPU=AMD Radeon(TM) Graphics
+PASS comparison initialized within 20 seconds
+PASS no renderer, compute, or runtime errors
+PASS DImprovedSurface: interpolation fixture accepted
+PASS DImprovedSurface: improved renderer initialized
+PASS DImprovedSurface: endpoints span the whole fixed tick, not the last substep
+PASS DImprovedSurface: 30fps fraction 0 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 30fps fraction 0.66666668653488159 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 30fps fraction 0.33333340287208557 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 30fps fraction 1.1175870895385742E-07 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 30fps fraction 0.66666680574417114 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 30fps fraction 0.33333352208137512 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 30fps fraction 2.2351741790771484E-07 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 30fps fraction 0.66666692495346069 renders at the interpolated GPU endpoint
+PASS no renderer, compute, or runtime errors
+PASS DImprovedSurface: 60fps fraction 0 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 60fps fraction 0.83333337306976318 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 60fps fraction 0.66666668653488159 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 60fps fraction 0.50000005960464478 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 60fps fraction 0.33333340287208557 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 60fps fraction 0.16666676104068756 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 60fps fraction 1.1175870895385742E-07 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 60fps fraction 0.83333349227905273 renders at the interpolated GPU endpoint
+PASS no renderer, compute, or runtime errors
+PASS DImprovedSurface: 120fps fraction 0 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 120fps fraction 0.41666668653488159 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 120fps fraction 0.83333337306976318 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 120fps fraction 0.25000002980232239 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 120fps fraction 0.66666668653488159 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 120fps fraction 0.083333380520343781 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 120fps fraction 0.50000005960464478 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 120fps fraction 0.91666674613952637 renders at the interpolated GPU endpoint
+PASS no renderer, compute, or runtime errors
+PASS DImprovedSurface: 144fps fraction 0 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 144fps fraction 0.347222238779068 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 144fps fraction 0.694444477558136 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 144fps fraction 0.04166669026017189 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 144fps fraction 0.38888892531394958 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 144fps fraction 0.73611116409301758 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 144fps fraction 0.083333380520343781 renders at the interpolated GPU endpoint
+PASS DImprovedSurface: 144fps fraction 0.43055561184883118 renders at the interpolated GPU endpoint
+PASS no renderer, compute, or runtime errors
+PASS DImprovedSurface: all frame-rate render probes leave physical positions, velocities, owners and ml unchanged
+PASS DImprovedSurface: .25ml contributes exactly half the integrated density area of .5ml
+PASS DImprovedSurface: covariance fixture contains seven particles
+PASS DImprovedSurface: horizontal neighbor covariance controls anisotropy despite vertical velocity
+PASS DImprovedSurface: rotated covariance preserves integrated density area
+PASS DImprovedSurface: delayed birth accepted
+PASS DImprovedSurface: delayed birth records its exact nozzle origin and fraction after reset
+PASS DImprovedSurface: unborn particle produces no visible density
+PASS DImprovedSurface: delayed particle appears after its birth fraction
+System.InvalidOperationException: DImprovedSurface: actual authored thin-wall pixels are masked without erasing the contained liquid (697 wall pixels)
+  at ExperimentSurfaceValidationRunner.Require (System.Boolean condition, System.String label) [0x0002e] in C:\unity_proj\slainte\slainte\Library\FluidSwapHarness\Assets\Editor\ImprovedSurfaceValidation.cs:57 
+  at ExperimentImprovedSurfaceValidation+<Run>d__2.MoveNext () [0x00f06] in C:\unity_proj\slainte\slainte\Library\FluidSwapHarness\Assets\Editor\ImprovedSurfaceValidation.cs:235 
+  at ExperimentSurfaceValidationRunner+<Start>d__7.MoveNext () [0x00142] in C:\unity_proj\slainte\slainte\Library\FluidSwapHarness\Assets\Editor\ImprovedSurfaceValidation.cs:79 

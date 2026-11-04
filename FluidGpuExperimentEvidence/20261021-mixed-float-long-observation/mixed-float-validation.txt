@@ -1,0 +1,43 @@
+PASS Mixed pair queues 40 ml
+MEASURE synthLemonPeel_Source seconds=2 span=0.20625098 angleSpan=30.5350571 jitter=0.00133906445 ml=40
+MEASURE synthLemonPeel_Source seconds=4 span=0.05052575 angleSpan=2.89448929 jitter=2.30521418E-05 ml=40
+MEASURE synthLemonPeel_Source seconds=6 span=0.188664734 angleSpan=41.19919 jitter=2.76957726E-05 ml=40
+MEASURE synthLemonPeel_Source seconds=8 span=0.154314086 angleSpan=19.3250637 jitter=5.794122E-05 ml=40
+MEASURE synthLemonPeel_Source seconds=10 span=0.03117786 angleSpan=13.0787888 jitter=7.385744E-06 ml=40
+MEASURE synthLemonPeel_Source seconds=12 span=0.03186541 angleSpan=11.7742891 jitter=2.07991525E-05 ml=40
+MEASURE synthLemonPeel_Source seconds=14 span=0.00619351 angleSpan=2.09954643 jitter=8.042079E-06 ml=40
+MEASURE synthLemonPeel_Source seconds=16 span=0.005605346 angleSpan=1.82321644 jitter=1.11426034E-05 ml=40
+MEASURE synthLemonPeel_Source seconds=18 span=0.007902391 angleSpan=2.49259043 jitter=1.31532061E-05 ml=40
+MEASURE synthLemonPeel_Source seconds=20 span=0.0125087909 angleSpan=3.72952414 jitter=9.58440251E-06 ml=40
+MEASURE synthLemonPeel_Source seconds=22 span=0.006666337 angleSpan=1.767903 jitter=8.17730051E-06 ml=40
+MEASURE synthLemonPeel_Source seconds=24 span=0.007963429 angleSpan=2.03487849 jitter=1.22706215E-05 ml=40
+MEASURE synthLemonPeel_Source seconds=26 span=0.0103494087 angleSpan=2.54962587 jitter=1.17199888E-05 ml=40
+MEASURE synthLemonPeel_Source seconds=28 span=0.0132661788 angleSpan=3.470655 jitter=7.686173E-06 ml=40
+FAIL Mixed floating pair settles in late observation window
+MEASURE synthLemonPeel_Source seconds=30 span=0.0296141636 angleSpan=8.026946 jitter=8.262726E-06 ml=40
+FAIL Mixed floating pair settles in late observation window
+MEASURE synthLemonPeel_Source seconds=32 span=0.0138591276 angleSpan=3.10779 jitter=1.27597878E-05 ml=40
+FAIL Mixed floating pair settles in late observation window
+PASS Mixed float retains all 40 ml
+PASS Mixed pair queues 40 ml
+MEASURE nanangaPeel_Source seconds=2 span=0.202911153 angleSpan=46.345005 jitter=0.000730611559 ml=40
+MEASURE nanangaPeel_Source seconds=4 span=0.140399531 angleSpan=36.4993858 jitter=6.185673E-05 ml=40
+MEASURE nanangaPeel_Source seconds=6 span=0.13106513 angleSpan=20.5032082 jitter=2.62010581E-05 ml=40
+MEASURE nanangaPeel_Source seconds=8 span=0.0371508859 angleSpan=13.7693739 jitter=1.0294264E-05 ml=40
+MEASURE nanangaPeel_Source seconds=10 span=0.0377686135 angleSpan=13.2017279 jitter=2.44890052E-05 ml=40
+MEASURE nanangaPeel_Source seconds=12 span=0.004287082 angleSpan=1.47328758 jitter=8.396842E-06 ml=40
+MEASURE nanangaPeel_Source seconds=14 span=0.00208728132 angleSpan=1.08534718 jitter=5.83795963E-06 ml=40
+MEASURE nanangaPeel_Source seconds=16 span=0.0022365232 angleSpan=0.975488663 jitter=4.763999E-06 ml=40
+MEASURE nanangaPeel_Source seconds=18 span=0.00198644283 angleSpan=0.959415436 jitter=5.333907E-06 ml=40
+MEASURE nanangaPeel_Source seconds=20 span=0.00123045908 angleSpan=0.8250904 jitter=3.74074216E-06 ml=40
+MEASURE nanangaPeel_Source seconds=22 span=0.00179740344 angleSpan=0.9882145 jitter=5.626225E-06 ml=40
+MEASURE nanangaPeel_Source seconds=24 span=0.00162421085 angleSpan=0.9808521 jitter=6.27742E-06 ml=40
+MEASURE nanangaPeel_Source seconds=26 span=0.00109040458 angleSpan=0.9228077 jitter=4.413828E-06 ml=40
+MEASURE nanangaPeel_Source seconds=28 span=0.00225946587 angleSpan=1.03563881 jitter=4.77436924E-06 ml=40
+PASS Mixed floating pair settles in late observation window
+MEASURE nanangaPeel_Source seconds=30 span=0.00124042749 angleSpan=0.9494438 jitter=3.55537372E-06 ml=40
+PASS Mixed floating pair settles in late observation window
+MEASURE nanangaPeel_Source seconds=32 span=0.0009583678 angleSpan=0.830997467 jitter=4.325827E-06 ml=40
+PASS Mixed floating pair settles in late observation window
+PASS Mixed float retains all 40 ml
+PASS No Unity application errors

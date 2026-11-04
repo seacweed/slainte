@@ -1,0 +1,10 @@
+stage,id,name,kind,registered,active,simulated,bodyType,x,y,angle,initialActive,initialSimulated,initialBodyType,initialX,initialY,initialAngle,initialIceStock,iceStock,broken,impactSpeed,impactImpulse
+initial,1,Spoon,Spoon,True,True,True,Dynamic,2.49999976,-0.00392007828,0,True,True,Dynamic,2.49999976,-0.00392007828,0,20,20,False,0,0
+initial,2,Bottle_item_1003,Bottle,True,True,True,Dynamic,-5.60000038,-0.00392007828,0,True,True,Dynamic,-5.60000038,-0.00392007828,0,20,20,False,0,0
+initial,3,Bottle_item_1002,Bottle,True,True,True,Dynamic,-8.3,-0.00392007828,0,True,True,Dynamic,-8.3,-0.00392007828,0,20,20,False,0,0
+initial,4,IceBucket,IceBucket,True,True,True,Dynamic,7.89999962,-0.00392007828,0,True,True,Dynamic,7.89999962,-0.00392007828,0,20,20,False,0,0
+initial,5,Shaker,Shaker,True,True,True,Dynamic,5.2,-0.00392007828,0,True,True,Dynamic,5.2,-0.00392007828,0,20,20,False,0,0
+initial,6,Bottle_item_1001,Bottle,True,True,True,Dynamic,-11,-0.00392007828,0,True,True,Dynamic,-11,-0.00392007828,0,20,20,False,0,0
+initial,7,Jigger,Jigger,True,True,True,Dynamic,10.5999994,-0.00392007828,0,True,True,Dynamic,10.5999994,-0.00392007828,0,20,20,False,0,0
+initial,8,Glass_hurricane,Glass,True,True,True,Dynamic,-0.200000286,-0.00392007828,0,True,True,Dynamic,-0.200000286,-0.00392007828,0,20,20,False,0,0
+initial,9,Glass_highball,Glass,True,True,True,Dynamic,-2.90000033,-0.00392007828,0,True,True,Dynamic,-2.90000033,-0.00392007828,0,20,20,False,0,0

@@ -1,0 +1,46 @@
+{
+  "status": "RESTORED",
+  "date": "2026-10-29",
+  "active_version": "SpoonSoftStir20261028 latest pre-rollback work",
+  "exact_historical_source_files": 499,
+  "source_mismatches": [],
+  "harness_mismatches": [],
+  "baseline_files": 1337,
+  "unchanged_baseline_files": 1332,
+  "changed_baseline_files": [
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/README.md",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentCocktailSession.Techniques.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.Buffers.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentLiquid.compute"
+  ],
+  "added_feature_files": [
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.Stirring.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.Stirring.cs.meta"
+  ],
+  "spoon_liquid_collision": false,
+  "overlap_waiting_preserved": true,
+  "soft_stirring_enabled": true,
+  "suites": [
+    {
+      "run": "01-cocktail",
+      "checks": 61,
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "run": "02-spoon",
+      "checks": 92,
+      "status": "PASS",
+      "exit_code": 0
+    },
+    {
+      "run": "03-soft-stir",
+      "checks": 15,
+      "status": "PASS",
+      "exit_code": 0
+    }
+  ],
+  "checks_passed": 168,
+  "human_play_performed": false
+}

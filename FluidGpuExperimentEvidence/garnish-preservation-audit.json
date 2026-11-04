@@ -1,0 +1,50 @@
+{
+  "snapshot_count": 220,
+  "snapshot_errors": [],
+  "changed_original_files": [
+    "DEVELOPMENT_PLAN.md",
+    "README.md",
+    "Runtime/FluidExperimentBody.Contents.cs",
+    "Runtime/FluidExperimentBody.cs",
+    "Runtime/FluidExperimentComparison.cs",
+    "Runtime/FluidExperimentGpuLiquid.cs",
+    "Runtime/FluidExperimentGpuLiquid.ImprovedSurface.cs",
+    "Runtime/FluidExperimentInteractor.cs",
+    "Runtime/FluidExperimentWorld.cs",
+    "Scenes/FluidGpuComparison.unity"
+  ],
+  "unexpected_changes": [],
+  "original_scene_field_losses": [],
+  "added_scene_object_count": 4,
+  "protected_asset_count": 137,
+  "protected_assets_unchanged": true,
+  "shader_file_count": 34,
+  "shaders_byte_identical": true,
+  "existing_enum_indices_preserved": true,
+  "authored_default_f": true,
+  "original_pngs": [
+    {
+      "name": "nanangaPeel_bottle.png",
+      "sha256": "77E6ACD2B146404D3104C31FD4CA46900EE1384985624ACF801E9146CEE8D485",
+      "original_matches": true
+    },
+    {
+      "name": "nanangaPeel_garni.png",
+      "sha256": "D8BB24D0D983451ADE1A9C71610B75D1FB725AA5F7044E53DDD17EE713A4CE13",
+      "original_matches": true
+    },
+    {
+      "name": "synthLemonPeel_bottle.png",
+      "sha256": "8D3A3190A5D9A2EADE2BE3D6EC21A189FF34EDDD1937F7E25D38E7375A664B67",
+      "original_matches": true
+    },
+    {
+      "name": "synthLemonPeel_garni.png",
+      "sha256": "A8136B0D11DF757DEFB16325B2736BDB6B16807316572E94A9208066E90C697C",
+      "original_matches": true
+    }
+  ],
+  "prefab_sprite_references_non_null": true,
+  "interpretation": "Source/asset preservation only; runtime evidence is reported separately. Existing scene fields may be reordered and previously implicit defaults serialized by Unity.",
+  "passed": true
+}

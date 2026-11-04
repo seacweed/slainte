@@ -1,0 +1,71 @@
+{
+  "passed": true,
+  "checks": {
+    "allRunsCompletedAndPassed": true,
+    "changesScoped": true,
+    "soundPlanningAndPackagesPreserved": true,
+    "existingScenesPrefabsAndOtherProfilesPreserved": true
+  },
+  "changedSinceTaskBaseline": [
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/README.md",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Data/ComparisonBreakageSplash.asset",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.Splash.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentSplashProfile.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentLiquid.compute"
+  ],
+  "totalRuns": 2,
+  "totalPassingAssertions": 376,
+  "runs": [
+    {
+      "attempt": "20261026-visible-splash-final-breakage",
+      "entry": "ExperimentGlassBreakageValidation.Begin",
+      "exitCode": 0,
+      "pid": 34796,
+      "started": "2026-10-26T21:16:19.0391241+09:00",
+      "finished": "2026-10-26T21:16:43.2880316+09:00",
+      "timedOut": false,
+      "passedAssertions": 313,
+      "failedAssertions": 0,
+      "resultPassed": true,
+      "sourceMismatches": [],
+      "harnessMismatches": [],
+      "applicationErrors": false,
+      "measures": [
+        "MEASURE floor splash mean=(-0.0231364574, 9.968105) peak=12.000001 risingMl=40",
+        "MEASURE striker dir=1 speed=9 incoming=(0.00000, 0.00000) spin=0 normal=(1.00000, 0.00000) mean=(4.60670, -0.11421) shardSpin=-204.103592 spread=2.710909",
+        "MEASURE striker dir=-1 speed=9 incoming=(0.00000, 0.00000) spin=0 normal=(-1.00000, 0.00000) mean=(-4.60611, -0.14486) shardSpin=204.1144 spread=2.71105385",
+        "MEASURE striker dir=1 speed=15 incoming=(0.00000, 0.00000) spin=0 normal=(1.00000, 0.00000) mean=(7.67784, -0.19035) shardSpin=-340.17276 spread=4.51818275",
+        "MEASURE striker dir=1 speed=12 incoming=(0.00000, 2.00000) spin=0 normal=(1.00000, 0.00000) mean=(0.00000, 2.00000) shardSpin=0 spread=0",
+        "MEASURE striker dir=1 speed=12 incoming=(0.00000, 0.00000) spin=80 normal=(1.00000, 0.00000) mean=(-1.41536, -0.01734) shardSpin=80 spread=1.06215823",
+        "MEASURE bottle FCoherentLiquid-off inputSpeed=12 impactSpeed=11.9924364 impulsePerMass=5.80203056 normal=(0.9993697, -0.03549845) meanDelta=(0, 0) peakDelta=0 affectedMl=40",
+        "MEASURE bottle FCoherentLiquid-right inputSpeed=12 impactSpeed=11.99233 impulsePerMass=5.771111 normal=(0.9993608, -0.03574661) meanDelta=(9.438001, -0.237527251) peakDelta=11.4052105 affectedMl=40",
+        "MEASURE bottle FCoherentLiquid-left inputSpeed=12 impactSpeed=11.999999 impulsePerMass=6.370671 normal=(-0.99999994, 0) meanDelta=(-10.3773623, 0.108205393) peakDelta=12.000001 affectedMl=40",
+        "MEASURE bottle FCoherentLiquid-fast inputSpeed=20 impactSpeed=19.9869556 impulsePerMass=9.999232 normal=(0.9993478, -0.0361080244) meanDelta=(10.9211674, -0.34687987) peakDelta=12.0000019 affectedMl=40",
+        "MEASURE visibility FCoherentLiquid offAheadMl=32 onAheadMl=40",
+        "MEASURE bottle GExplosiveBreakage-off inputSpeed=12 impactSpeed=11.9934788 impulsePerMass=5.99953938 normal=(0.9994565, -0.0329620056) meanDelta=(0, 0) peakDelta=0 affectedMl=40",
+        "MEASURE bottle GExplosiveBreakage-right inputSpeed=12 impactSpeed=11.9934788 impulsePerMass=5.99953842 normal=(0.9994565, -0.03296203) meanDelta=(9.812316, -0.217440769) peakDelta=11.8565035 affectedMl=40",
+        "MEASURE bottle GExplosiveBreakage-left inputSpeed=12 impactSpeed=11.999999 impulsePerMass=6.396352 normal=(-0.99999994, 0) meanDelta=(-10.4167986, 0.101116344) peakDelta=12.000001 affectedMl=40",
+        "MEASURE bottle GExplosiveBreakage-fast inputSpeed=20 impactSpeed=19.98462 impulsePerMass=9.61852 normal=(0.999231, -0.0392093621) meanDelta=(10.9207726, -0.382343352) peakDelta=12.0000019 affectedMl=40",
+        "MEASURE visibility GExplosiveBreakage offAheadMl=32 onAheadMl=40"
+      ],
+      "passed": true
+    },
+    {
+      "attempt": "20261026-visible-splash-final-kernel",
+      "entry": "ExperimentSplashValidation.Begin",
+      "exitCode": 0,
+      "pid": 31008,
+      "started": "2026-10-26T21:16:43.9760732+09:00",
+      "finished": "2026-10-26T21:16:57.1336969+09:00",
+      "timedOut": false,
+      "passedAssertions": 63,
+      "failedAssertions": 0,
+      "resultPassed": true,
+      "sourceMismatches": [],
+      "harnessMismatches": [],
+      "applicationErrors": false,
+      "measures": [],
+      "passed": true
+    }
+  ]
+}

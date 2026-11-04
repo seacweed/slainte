@@ -1,0 +1,17 @@
+{
+  "started": "2026-10-29T11:10:53.5173626+09:00",
+  "entryMethod": "CleanupParityValidation.Begin",
+  "timeoutSeconds": 240,
+  "executable": "A:\\UnityHub\\Unity\\6000.3.5f2\\Editor\\Unity.exe",
+  "forceShaderImport": true,
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:\\UnityHub\\proj\\slainte\\Library\\FluidModelDHarness",
+    "-executeMethod",
+    "PhysicsLabValidationDispatch.Run",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\Cleanup20261029\\01-after-parity\\Editor.log"
+  ]
+}

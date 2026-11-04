@@ -1,0 +1,18 @@
+PASS All catalog, prefab, script, runtime and scene bindings resolve: 
+PASS Read-only audit preserves the loaded scene setup
+PASS Read-only audit leaves every experiment asset byte-identical
+PASS Saved rock prefab has its recipe identity
+PASS Designer draft retains rock identity with valid profiles
+PASS Designer rejects a missing rock identity without saving the draft
+PASS Saved highball prefab has its recipe identity
+PASS Designer draft retains highball identity with valid profiles
+PASS Designer rejects a missing highball identity without saving the draft
+PASS Saved hurricane prefab has its recipe identity
+PASS Designer draft retains hurricane identity with valid profiles
+PASS Designer rejects a missing hurricane identity without saving the draft
+PASS Saved martini prefab has its recipe identity
+PASS Designer draft retains martini identity with valid profiles
+PASS Designer rejects a missing martini identity without saving the draft
+PASS FluidGpuComparison.unity inherits identities through existing prefab connections
+PASS FluidRuntimeSample.unity inherits identities through existing prefab connections
+PASS Designer validation and preview inspection preserve all authored bytes

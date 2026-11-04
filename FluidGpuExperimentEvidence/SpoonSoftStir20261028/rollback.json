@@ -1,0 +1,8 @@
+{
+  "status": "ROLLED_BACK",
+  "baseline_files": 1337,
+  "mismatches": [],
+  "new_runtime_files_removed": true,
+  "superseded_by": "FluidGpuExperimentEvidence/SpoonSoftStirRestore20261029/restoration.json",
+  "superseded_on": "2026-10-29"
+}

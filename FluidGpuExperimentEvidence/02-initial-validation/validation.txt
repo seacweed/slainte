@@ -1,0 +1,154 @@
+PASS: Comparison controller exists in the authored scene
+PASS: Compute-capable device: NVIDIA GeForce RTX 3070 / Direct3D11
+PASS: No original PhysicsLab behaviour is active in the comparison scene
+PASS: ACurrent: actual GPU initializes ()
+PASS: ACurrent: controller reports the selected mode
+PASS: ACurrent: exactly one active experiment world
+PASS: ACurrent: mutable solver settings are a runtime copy
+PASS: ACurrent: compute asset belongs to the isolated experiment
+PASS: ACurrent: same initial liquid quantity and particle count (60 ml / 120)
+PASS: ACurrent initial state: active particle position, velocity, volume and composition are finite and valid
+PASS: ACurrent initial state: fixed configured integration schedule
+PASS: ACurrent resting state: active particle position, velocity, volume and composition are finite and valid
+PASS: ACurrent resting state: fixed configured integration schedule
+PASS: ACurrent: resting liquid volume conserved
+PASS: ACurrent-rest: GPU surface produces visible camera pixels (4132 changed pixels)
+PASS: ACurrent-rest: rendering leaves particle positions and velocities unchanged
+PASS: ACurrent: consecutive resets cannot duplicate or retain stale particles
+PASS: ACurrent: explicit GPU reset clears particle and composition buffers
+ACurrent remote control RMS: repeat=(0.05527887, 0.1492875); moved=(0.05283061, 0.1378696)
+PASS: ACurrent: moving and spinning an unrelated held bottle does not perturb distant liquid beyond repeat noise
+PASS: ACurrent fast closed rotation: active particle position, velocity, volume and composition are finite and valid
+PASS: ACurrent fast closed rotation: fixed configured integration schedule
+PASS: ACurrent: sealed shaker retains all liquid after 855-degree rotation and translation
+PASS: ACurrent: retained liquid is geometrically inside the moved sealed shaker
+PASS: ACurrent: fast closed rotation does not exhaust local collision sweep budget
+PASS: ACurrent real bottle pour: active particle position, velocity, volume and composition are finite and valid
+PASS: ACurrent real bottle pour: fixed configured integration schedule
+PASS: ACurrent: authored bottle emitter conserves stock and emitted volume (62 ml)
+PASS: ACurrent: real pour conserves all prefilled and newly emitted GPU liquid
+PASS: ACurrent: particles born from the actual bottle reach a real glass (55.5 ml)
+PASS: ACurrent-pour-visible: GPU surface produces visible camera pixels (8967 changed pixels)
+PASS: ACurrent-pour-visible: rendering leaves particle positions and velocities unchanged
+PASS: ACurrent Tilt: active particle position, velocity, volume and composition are finite and valid
+PASS: ACurrent Tilt: fixed configured integration schedule
+PASS: ACurrent Tilt: all accepted liquid remains accounted for
+PASS: ACurrent Tilt: accepted volume is monotonic
+PASS: ACurrent Stir: active particle position, velocity, volume and composition are finite and valid
+PASS: ACurrent Stir: fixed configured integration schedule
+PASS: ACurrent Stir: all accepted liquid remains accounted for
+PASS: ACurrent Stir: accepted volume is monotonic
+PASS: ACurrent SealedShake: active particle position, velocity, volume and composition are finite and valid
+PASS: ACurrent SealedShake: fixed configured integration schedule
+PASS: ACurrent SealedShake: all accepted liquid remains accounted for
+PASS: ACurrent SealedShake: accepted volume is monotonic
+PASS: BReferencePhysics: actual GPU initializes ()
+PASS: BReferencePhysics: controller reports the selected mode
+PASS: BReferencePhysics: exactly one active experiment world
+PASS: BReferencePhysics: mutable solver settings are a runtime copy
+PASS: BReferencePhysics: compute asset belongs to the isolated experiment
+PASS: BReferencePhysics: same initial liquid quantity and particle count (60 ml / 120)
+PASS: BReferencePhysics initial state: active particle position, velocity, volume and composition are finite and valid
+PASS: BReferencePhysics initial state: fixed configured integration schedule
+PASS: BReferencePhysics resting state: active particle position, velocity, volume and composition are finite and valid
+PASS: BReferencePhysics resting state: fixed configured integration schedule
+PASS: BReferencePhysics: resting liquid volume conserved
+PASS: BReferencePhysics-rest: GPU surface produces visible camera pixels (8251 changed pixels)
+PASS: BReferencePhysics-rest: rendering leaves particle positions and velocities unchanged
+PASS: BReferencePhysics: consecutive resets cannot duplicate or retain stale particles
+PASS: BReferencePhysics: explicit GPU reset clears particle and composition buffers
+BReferencePhysics remote control RMS: repeat=(0.001239728, 0.01217304); moved=(0.0003125234, 0.003014677)
+PASS: BReferencePhysics: moving and spinning an unrelated held bottle does not perturb distant liquid beyond repeat noise
+PASS: BReferencePhysics fast closed rotation: active particle position, velocity, volume and composition are finite and valid
+PASS: BReferencePhysics fast closed rotation: fixed configured integration schedule
+PASS: BReferencePhysics: sealed shaker retains all liquid after 855-degree rotation and translation
+PASS: BReferencePhysics: retained liquid is geometrically inside the moved sealed shaker
+PASS: BReferencePhysics: fast closed rotation does not exhaust local collision sweep budget
+PASS: BReferencePhysics real bottle pour: active particle position, velocity, volume and composition are finite and valid
+PASS: BReferencePhysics real bottle pour: fixed configured integration schedule
+PASS: BReferencePhysics: authored bottle emitter conserves stock and emitted volume (62 ml)
+PASS: BReferencePhysics: real pour conserves all prefilled and newly emitted GPU liquid
+PASS: BReferencePhysics: particles born from the actual bottle reach a real glass (55.5 ml)
+PASS: BReferencePhysics-pour-visible: GPU surface produces visible camera pixels (16377 changed pixels)
+PASS: BReferencePhysics-pour-visible: rendering leaves particle positions and velocities unchanged
+PASS: BReferencePhysics Tilt: active particle position, velocity, volume and composition are finite and valid
+PASS: BReferencePhysics Tilt: fixed configured integration schedule
+PASS: BReferencePhysics Tilt: all accepted liquid remains accounted for
+PASS: BReferencePhysics Tilt: accepted volume is monotonic
+PASS: BReferencePhysics Stir: active particle position, velocity, volume and composition are finite and valid
+PASS: BReferencePhysics Stir: fixed configured integration schedule
+PASS: BReferencePhysics Stir: all accepted liquid remains accounted for
+PASS: BReferencePhysics Stir: accepted volume is monotonic
+PASS: BReferencePhysics SealedShake: active particle position, velocity, volume and composition are finite and valid
+PASS: BReferencePhysics SealedShake: fixed configured integration schedule
+PASS: BReferencePhysics SealedShake: all accepted liquid remains accounted for
+PASS: BReferencePhysics SealedShake: accepted volume is monotonic
+PASS: CReferenceSurface: actual GPU initializes ()
+PASS: CReferenceSurface: controller reports the selected mode
+PASS: CReferenceSurface: exactly one active experiment world
+PASS: CReferenceSurface: mutable solver settings are a runtime copy
+PASS: CReferenceSurface: compute asset belongs to the isolated experiment
+PASS: CReferenceSurface: same initial liquid quantity and particle count (60 ml / 120)
+PASS: CReferenceSurface initial state: active particle position, velocity, volume and composition are finite and valid
+PASS: CReferenceSurface initial state: fixed configured integration schedule
+PASS: CReferenceSurface resting state: active particle position, velocity, volume and composition are finite and valid
+PASS: CReferenceSurface resting state: fixed configured integration schedule
+PASS: CReferenceSurface: resting liquid volume conserved
+PASS: CReferenceSurface-rest: GPU surface produces visible camera pixels (8434 changed pixels)
+PASS: CReferenceSurface-rest: rendering leaves particle positions and velocities unchanged
+PASS: CReferenceSurface: consecutive resets cannot duplicate or retain stale particles
+PASS: CReferenceSurface: explicit GPU reset clears particle and composition buffers
+CReferenceSurface remote control RMS: repeat=(0.001731122, 0.01859365); moved=(0.000281648, 0.0025148)
+PASS: CReferenceSurface: moving and spinning an unrelated held bottle does not perturb distant liquid beyond repeat noise
+PASS: CReferenceSurface fast closed rotation: active particle position, velocity, volume and composition are finite and valid
+PASS: CReferenceSurface fast closed rotation: fixed configured integration schedule
+PASS: CReferenceSurface: sealed shaker retains all liquid after 855-degree rotation and translation
+PASS: CReferenceSurface: retained liquid is geometrically inside the moved sealed shaker
+PASS: CReferenceSurface: fast closed rotation does not exhaust local collision sweep budget
+PASS: CReferenceSurface real bottle pour: active particle position, velocity, volume and composition are finite and valid
+PASS: CReferenceSurface real bottle pour: fixed configured integration schedule
+PASS: CReferenceSurface: authored bottle emitter conserves stock and emitted volume (62 ml)
+PASS: CReferenceSurface: real pour conserves all prefilled and newly emitted GPU liquid
+PASS: CReferenceSurface: particles born from the actual bottle reach a real glass (55.5 ml)
+PASS: CReferenceSurface-pour-visible: GPU surface produces visible camera pixels (17400 changed pixels)
+PASS: CReferenceSurface-pour-visible: rendering leaves particle positions and velocities unchanged
+PASS: CReferenceSurface Tilt: active particle position, velocity, volume and composition are finite and valid
+PASS: CReferenceSurface Tilt: fixed configured integration schedule
+PASS: CReferenceSurface Tilt: all accepted liquid remains accounted for
+PASS: CReferenceSurface Tilt: accepted volume is monotonic
+PASS: CReferenceSurface Stir: active particle position, velocity, volume and composition are finite and valid
+PASS: CReferenceSurface Stir: fixed configured integration schedule
+PASS: CReferenceSurface Stir: all accepted liquid remains accounted for
+PASS: CReferenceSurface Stir: accepted volume is monotonic
+PASS: CReferenceSurface SealedShake: active particle position, velocity, volume and composition are finite and valid
+PASS: CReferenceSurface SealedShake: fixed configured integration schedule
+PASS: CReferenceSurface SealedShake: all accepted liquid remains accounted for
+PASS: CReferenceSurface SealedShake: accepted volume is monotonic
+PASS: ACurrent: actual GPU initializes ()
+PASS: ACurrent: controller reports the selected mode
+PASS: ACurrent: exactly one active experiment world
+PASS: ACurrent: mutable solver settings are a runtime copy
+PASS: ACurrent: compute asset belongs to the isolated experiment
+PASS: BReferencePhysics: actual GPU initializes ()
+PASS: BReferencePhysics: controller reports the selected mode
+PASS: BReferencePhysics: exactly one active experiment world
+PASS: BReferencePhysics: mutable solver settings are a runtime copy
+PASS: BReferencePhysics: compute asset belongs to the isolated experiment
+PASS: BReferencePhysics: actual GPU initializes ()
+PASS: BReferencePhysics: controller reports the selected mode
+PASS: BReferencePhysics: exactly one active experiment world
+PASS: BReferencePhysics: mutable solver settings are a runtime copy
+PASS: BReferencePhysics: compute asset belongs to the isolated experiment
+PASS: CReferenceSurface: actual GPU initializes ()
+PASS: CReferenceSurface: controller reports the selected mode
+PASS: CReferenceSurface: exactly one active experiment world
+PASS: CReferenceSurface: mutable solver settings are a runtime copy
+PASS: CReferenceSurface: compute asset belongs to the isolated experiment
+B/C particle RMS: repeat=(0.5640381, 0.7794333); B-to-C=(0.5640397, 0.7794452)
+PASS: B and C share the same physical result within measured repeat noise; surface selection cannot drive physics
+FAIL: Reference pressure produces a physical result distinguishable from baseline PBF beyond repeat noise
+System.Exception: Reference pressure produces a physical result distinguishable from baseline PBF beyond repeat noise
+  at ExperimentValidationRunner.Require (System.Boolean condition, System.String message) [0x0004e] in A:\UnityHub\proj\slainte\FluidGpuExperimentEvidence\HarnessProject\Assets\Editor\ExperimentValidation.cs:529 
+  at ExperimentValidationRunner.ValidateSurfaceDoesNotChangePhysics () [0x000bf] in A:\UnityHub\proj\slainte\FluidGpuExperimentEvidence\HarnessProject\Assets\Editor\ExperimentValidation.cs:352 
+  at ExperimentValidationRunner+<Run>d__13.MoveNext () [0x004b5] in A:\UnityHub\proj\slainte\FluidGpuExperimentEvidence\HarnessProject\Assets\Editor\ExperimentValidation.cs:161 
+  at ExperimentValidationRunner+<Guard>d__12.MoveNext () [0x00045] in A:\UnityHub\proj\slainte\FluidGpuExperimentEvidence\HarnessProject\Assets\Editor\ExperimentValidation.cs:95 

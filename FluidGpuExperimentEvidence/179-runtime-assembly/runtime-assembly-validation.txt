@@ -1,0 +1,11 @@
+PASS Catalog exposes all 28 original prefabs with stable distinct identifiers and categories
+PASS Production prefab has all runtime modules and excludes comparison UI
+PASS Runtime prefab includes simulation, renderer and natural splash asset references
+PASS Legacy shard geometry migrates into a generated asset while preserving the shards API
+PASS Shaker prefab binds editable part geometry and direct artwork references
+PASS A second BuildAll preserves authored bytes and leaves no extra scenes open
+PASS BuildAll preserves a designer's changed breakage threshold
+System.ArgumentException: A new .unity path below Assets is required.
+Parameter name: path
+  at Slainte.Bartending.FluidGpuExperiment.Editor.FluidExperimentAssemblyBuilder.CreateWorkingScene (System.String path) [0x000a1] in C:\unity_proj\slainte\slainte\Library\FluidModelDHarness\Assets\_Project\Features\Bartending\FluidGpuExperiment\Editor\FluidExperimentAssemblyBuilder.cs:118 
+  at ExperimentRuntimeAssemblyValidation.Begin () [0x0039f] in C:\unity_proj\slainte\slainte\Library\FluidModelDHarness\Assets\Editor\RuntimeAssemblyValidation.cs:69 

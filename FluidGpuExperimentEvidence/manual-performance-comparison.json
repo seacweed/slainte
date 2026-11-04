@@ -1,0 +1,1103 @@
+{
+  "status": "PASS_WITH_LIMITATIONS",
+  "errors": [],
+  "inputs": [
+    {
+      "directory": "C:\\unity_proj\\slainte\\slainte\\FluidGpuExperimentEvidence\\44-manual-motion-before-inventory",
+      "reportSha256": "266ea0640099db87589e776269d5849b764a1181c9664c1b1ad085354e138ff0",
+      "csvSha256": "6337f334d84d750431e0ae704e6756a7308bae92e7729799f281d783d78656d3",
+      "exitSha256": "602c368448967172d8165b2a0468eeaf5dae0a08bdd96bf37be9487a86b0b64c"
+    },
+    {
+      "directory": "C:\\unity_proj\\slainte\\slainte\\FluidGpuExperimentEvidence\\45-manual-motion-after",
+      "reportSha256": "eee5c26a3ef9ad7d9574e6e5fd8b80ddb8cda71aa03307ece21e4131580f2e69",
+      "csvSha256": "ea7c993a50bb49f4b40cdfe74086df4ab69224c5f11676a2ff476ba9171f9bc2",
+      "exitSha256": "f4d5737bd793b6e0034228d4cff8f649bf7042d3de7544c685a67c14c70542fe"
+    }
+  ],
+  "environment": {
+    "unityVersion": "6000.3.5f2",
+    "gpu": "AMD Radeon(TM) Graphics",
+    "platform": "Unity Editor full authored Manual PlayerLoop, Direct3D11"
+  },
+  "identity": {
+    "exactRuntimeIdMappingMatch": false,
+    "nameKindMatch": true,
+    "uniqueRuntimeIdSetsMatch": true,
+    "mapping": [
+      {
+        "name": "Bottle_item_1001",
+        "kind": "Bottle",
+        "beforeId": 1,
+        "afterId": 9
+      },
+      {
+        "name": "Bottle_item_1002",
+        "kind": "Bottle",
+        "beforeId": 6,
+        "afterId": 6
+      },
+      {
+        "name": "Bottle_item_1003",
+        "kind": "Bottle",
+        "beforeId": 2,
+        "afterId": 5
+      },
+      {
+        "name": "Glass_highball",
+        "kind": "Glass",
+        "beforeId": 5,
+        "afterId": 1
+      },
+      {
+        "name": "Glass_hurricane",
+        "kind": "Glass",
+        "beforeId": 9,
+        "afterId": 8
+      },
+      {
+        "name": "IceBucket",
+        "kind": "IceBucket",
+        "beforeId": 8,
+        "afterId": 3
+      },
+      {
+        "name": "Jigger",
+        "kind": "Jigger",
+        "beforeId": 3,
+        "afterId": 2
+      },
+      {
+        "name": "Shaker",
+        "kind": "Shaker",
+        "beforeId": 4,
+        "afterId": 4
+      },
+      {
+        "name": "Spoon",
+        "kind": "Spoon",
+        "beforeId": 7,
+        "afterId": 7
+      }
+    ]
+  },
+  "assetHashParity": {
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Data/FluidExperimentLiquidSettings.asset": true,
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Scenes/FluidGpuComparison.unity": true
+  },
+  "changedManifestPaths": [
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/DEVELOPMENT_PLAN.md",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/README.md",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentBody.Geometry.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentBody.Reservoir.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentEffects.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.Boundaries.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.CalibratedFill.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.Improved.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.ImprovedSurface.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.Rendering.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Runtime/FluidExperimentGpuLiquid.cs",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentImproved.hlsl",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentImprovedAccumulation.shader",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentImprovedComposite.shader",
+    "Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentLiquid.compute"
+  ],
+  "measurementLabels": {
+    "gpuSubmissionCpuStepMs": "CPU time inside liquid.Step; excludes GPU completion and reservoir/world CPU work",
+    "completedLiquidPhysicsAndRenderMs": "Separate diagnostic: one .02s CPU/liquid/Physics2D tick plus Camera.Render and one-pixel ReadPixels completion wait",
+    "manualCameraCpuMs": "Normal-window explicit Camera.Render CPU wall time; no forced GPU completion",
+    "frameIntervalMs": "Editor frame interval at a requested 60-frame cap; not gameplay FPS or a GPU timestamp"
+  },
+  "cases": [
+    {
+      "name": "idle",
+      "timings": {
+        "gpuSubmissionCpuStepMs": {
+          "mean": {
+            "beforeMs": 3.035787162162164,
+            "afterMs": 1.3936225165562919,
+            "reductionPercent": 54.093536795783834
+          },
+          "p95": {
+            "beforeMs": 4.1147,
+            "afterMs": 1.98,
+            "reductionPercent": 51.87984543223079
+          }
+        },
+        "completedLiquidPhysicsAndRenderMs": {
+          "mean": {
+            "beforeMs": 20.960565,
+            "afterMs": 18.038715000000003,
+            "reductionPercent": 13.93974828445701
+          },
+          "p95": {
+            "beforeMs": 22.7604,
+            "afterMs": 19.6416,
+            "reductionPercent": 13.702746876153316
+          }
+        },
+        "manualCameraCpuMs": {
+          "mean": {
+            "beforeMs": 1.999654887218045,
+            "afterMs": 1.4815594285714289,
+            "reductionPercent": 25.909243737923184
+          },
+          "p95": {
+            "beforeMs": 3.7238,
+            "afterMs": 2.0646,
+            "reductionPercent": 44.55663569472045
+          }
+        },
+        "frameIntervalMs": {
+          "mean": {
+            "beforeMs": 22.29714812030076,
+            "afterMs": 17.099208000000004,
+            "reductionPercent": 23.312129839457885
+          },
+          "p95": {
+            "beforeMs": 23.46070000000111,
+            "afterMs": 20.823000000000036,
+            "reductionPercent": 11.243057538781665
+          }
+        }
+      },
+      "beforeNormalFrames": 133,
+      "afterNormalFrames": 175,
+      "beforeFixedSteps": 148,
+      "afterFixedSteps": 151,
+      "completionSamplesPerRun": 20,
+      "logicalState": {
+        "generatedMl": {
+          "before": 0.0,
+          "after": 0.0
+        },
+        "sourceDebitMl": {
+          "before": 0.0,
+          "after": 0.0
+        },
+        "activeMl": {
+          "before": 180.0,
+          "after": 180.0
+        },
+        "ownedMl": {
+          "before": 60.0,
+          "after": 60.0
+        },
+        "retiredMl": {
+          "before": 0.0,
+          "after": 0.0
+        }
+      }
+    },
+    {
+      "name": "glass-drag",
+      "timings": {
+        "gpuSubmissionCpuStepMs": {
+          "mean": {
+            "beforeMs": 2.769438666666668,
+            "afterMs": 1.3855443708609265,
+            "reductionPercent": 49.9702092146859
+          },
+          "p95": {
+            "beforeMs": 3.5864,
+            "afterMs": 1.7358,
+            "reductionPercent": 51.60049074280615
+          }
+        },
+        "completedLiquidPhysicsAndRenderMs": {
+          "mean": {
+            "beforeMs": 28.036025000000002,
+            "afterMs": 18.01209,
+            "reductionPercent": 35.753766805387
+          },
+          "p95": {
+            "beforeMs": 31.2288,
+            "afterMs": 19.6111,
+            "reductionPercent": 37.20187775386822
+          }
+        },
+        "manualCameraCpuMs": {
+          "mean": {
+            "beforeMs": 1.5820816666666664,
+            "afterMs": 1.5242613259668514,
+            "reductionPercent": 3.654700128194921
+          },
+          "p95": {
+            "beforeMs": 2.0735,
+            "afterMs": 1.9213,
+            "reductionPercent": 7.34024596093562
+          }
+        },
+        "frameIntervalMs": {
+          "mean": {
+            "beforeMs": 16.59972111111113,
+            "afterMs": 16.58447679558011,
+            "reductionPercent": 0.09183476896378329
+          },
+          "p95": {
+            "beforeMs": 19.907799999998588,
+            "afterMs": 18.525900000000206,
+            "reductionPercent": 6.941500316451243
+          }
+        }
+      },
+      "beforeNormalFrames": 180,
+      "afterNormalFrames": 181,
+      "beforeFixedSteps": 150,
+      "afterFixedSteps": 151,
+      "completionSamplesPerRun": 20,
+      "logicalState": {
+        "generatedMl": {
+          "before": 0.0,
+          "after": 0.0
+        },
+        "sourceDebitMl": {
+          "before": 0.0,
+          "after": 0.0
+        },
+        "activeMl": {
+          "before": 157.5,
+          "after": 157.5
+        },
+        "ownedMl": {
+          "before": 0.5,
+          "after": 0.0
+        },
+        "retiredMl": {
+          "before": 22.5,
+          "after": 22.5
+        }
+      }
+    },
+    {
+      "name": "glass-rotate",
+      "timings": {
+        "gpuSubmissionCpuStepMs": {
+          "mean": {
+            "beforeMs": 2.6248895104895102,
+            "afterMs": 1.4170794701986753,
+            "reductionPercent": 46.01374783449811
+          },
+          "p95": {
+            "beforeMs": 3.3118,
+            "afterMs": 1.8961,
+            "reductionPercent": 42.74714656682167
+          }
+        },
+        "completedLiquidPhysicsAndRenderMs": {
+          "mean": {
+            "beforeMs": 26.565619999999996,
+            "afterMs": 20.148609999999998,
+            "reductionPercent": 24.155318038878814
+          },
+          "p95": {
+            "beforeMs": 28.4949,
+            "afterMs": 21.4215,
+            "reductionPercent": 24.823389448638178
+          }
+        },
+        "manualCameraCpuMs": {
+          "mean": {
+            "beforeMs": 1.5238752000000007,
+            "afterMs": 1.4748198895027624,
+            "reductionPercent": 3.2191160074813374
+          },
+          "p95": {
+            "beforeMs": 1.9394,
+            "afterMs": 1.9876,
+            "reductionPercent": -2.4853047334226996
+          }
+        },
+        "frameIntervalMs": {
+          "mean": {
+            "beforeMs": 25.4118176,
+            "afterMs": 16.580094475138118,
+            "reductionPercent": 34.75439365998708
+          },
+          "p95": {
+            "beforeMs": 21.020399999997608,
+            "afterMs": 19.304699999999286,
+            "reductionPercent": 8.162071130894354
+          }
+        }
+      },
+      "beforeNormalFrames": 125,
+      "afterNormalFrames": 181,
+      "beforeFixedSteps": 143,
+      "afterFixedSteps": 151,
+      "completionSamplesPerRun": 20,
+      "logicalState": {
+        "generatedMl": {
+          "before": 0.0,
+          "after": 0.0
+        },
+        "sourceDebitMl": {
+          "before": 0.0,
+          "after": 0.0
+        },
+        "activeMl": {
+          "before": 168.0,
+          "after": 171.0
+        },
+        "ownedMl": {
+          "before": 18.0,
+          "after": 35.0
+        },
+        "retiredMl": {
+          "before": 12.0,
+          "after": 9.0
+        }
+      }
+    },
+    {
+      "name": "bottle-pour",
+      "timings": {
+        "gpuSubmissionCpuStepMs": {
+          "mean": {
+            "beforeMs": 3.169871333333332,
+            "afterMs": 1.395179333333333,
+            "reductionPercent": 55.986247181010704
+          },
+          "p95": {
+            "beforeMs": 4.5566,
+            "afterMs": 1.8362,
+            "reductionPercent": 59.7024096914366
+          }
+        },
+        "completedLiquidPhysicsAndRenderMs": {
+          "mean": {
+            "beforeMs": 21.163554999999995,
+            "afterMs": 18.236655000000003,
+            "reductionPercent": 13.829907120991692
+          },
+          "p95": {
+            "beforeMs": 24.1792,
+            "afterMs": 20.7035,
+            "reductionPercent": 14.374751852832201
+          }
+        },
+        "manualCameraCpuMs": {
+          "mean": {
+            "beforeMs": 1.9156388888888882,
+            "afterMs": 1.496696111111112,
+            "reductionPercent": 21.869611240810215
+          },
+          "p95": {
+            "beforeMs": 2.7006,
+            "afterMs": 1.9345,
+            "reductionPercent": 28.367770125157378
+          }
+        },
+        "frameIntervalMs": {
+          "mean": {
+            "beforeMs": 16.588697222222212,
+            "afterMs": 16.57411222222224,
+            "reductionPercent": 0.08792131054410346
+          },
+          "p95": {
+            "beforeMs": 21.743399999998303,
+            "afterMs": 18.774599999993313,
+            "reductionPercent": 13.653798394019434
+          }
+        }
+      },
+      "beforeNormalFrames": 180,
+      "afterNormalFrames": 180,
+      "beforeFixedSteps": 150,
+      "afterFixedSteps": 150,
+      "completionSamplesPerRun": 20,
+      "logicalState": {
+        "generatedMl": {
+          "before": 15.0,
+          "after": 15.0
+        },
+        "sourceDebitMl": {
+          "before": 15.0,
+          "after": 15.0
+        },
+        "activeMl": {
+          "before": 191.0,
+          "after": 191.0
+        },
+        "ownedMl": {
+          "before": 67.0,
+          "after": 66.5
+        },
+        "retiredMl": {
+          "before": 7.0,
+          "after": 7.0
+        }
+      }
+    }
+  ],
+  "allocationMeasurement": {
+    "status": "UNAVAILABLE_ALL_ZERO",
+    "supportedAllocationClaim": null
+  },
+  "preservedFailedFixture": {
+    "directory": "C:\\unity_proj\\slainte\\slainte\\FluidGpuExperimentEvidence\\43-manual-motion-before",
+    "status": "FAIL",
+    "reportSha256": "b9d0636c287773603da097c79c1a6a874632eac57a53f042e21cc3bfe1e030f6",
+    "reason": "Incorrect hard-coded minimum object/bottle counts; no timing cases collected"
+  },
+  "limitations": [
+    "One Editor run per version on AMD integrated graphics; no standalone gameplay FPS, GPU timestamps, or repeated-run significance claim.",
+    "Normal timing has no forced readback. The separate 20-sample completion diagnostic includes CPU work, Physics2D, liquid GPU work, rendering and a readback wait; it is not GPU-only time.",
+    "Motion is driven by frame time. Different frame counts and fixed-step counts produce different sampled trajectories and final owned ml; this is not an identical-state replay or a proof of identical fluid behavior.",
+    "Ledger conservation and finite particle checks are evidenced by the completed harness functionalChecksPassed flag. Raw ledger error values and full particle snapshots were not serialized into these performance reports.",
+    "GC counters are zero for every case in both runs. Treat this counter as unsupported/unavailable here; do not claim zero allocation or an allocation improvement.",
+    "Authored names/kinds and unique ID sets match, but name-to-runtime-ID mappings differ across Editor sessions. World.Register assigns nextId++ by registration order; inventory identity is stable within each run, not across launches."
+  ],
+  "checksPassed": 162,
+  "checksTotal": 162,
+  "checks": [
+    {
+      "check": "Authored name/kind identities match across runs",
+      "passed": true
+    },
+    {
+      "check": "Session ID sets match and are unique",
+      "passed": true
+    },
+    {
+      "check": "Both runs retain all nine authored bodies",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory: harness PASS with no error",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory: process completed successfully",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory: all four cases completed",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory: recorded kind counts match inventory including three bottles",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/idle: runtime ledger conservation, finite particle state, source debit, held state and inventory checks passed",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/idle: full-scene workload and settings preserved",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/idle: sufficient normal and separate completion samples",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/idle: finite nonnegative generatedMl",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/idle: finite nonnegative sourceDebitMl",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/idle: finite nonnegative activeMl",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/idle: finite nonnegative ownedMl",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/idle: finite nonnegative retiredMl",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/idle: finite nonnegative maximumSpeed",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/idle: generated ml and source debit match expected measured-window emission",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/idle: valid gpuSubmissionCpuStepMs distribution",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/idle: valid completedLiquidPhysicsAndRenderMs distribution",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/idle: valid manualCameraCpuMs distribution",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/idle: valid frameIntervalMs distribution",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/idle: CSV keeps normal and forced-completion samples separate",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/idle: CSV independently reproduces frameIntervalMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/idle: CSV independently reproduces manualCameraCpuMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/idle: CSV independently reproduces completedLiquidPhysicsAndRenderMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-drag: runtime ledger conservation, finite particle state, source debit, held state and inventory checks passed",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-drag: full-scene workload and settings preserved",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-drag: sufficient normal and separate completion samples",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-drag: finite nonnegative generatedMl",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-drag: finite nonnegative sourceDebitMl",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-drag: finite nonnegative activeMl",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-drag: finite nonnegative ownedMl",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-drag: finite nonnegative retiredMl",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-drag: finite nonnegative maximumSpeed",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-drag: generated ml and source debit match expected measured-window emission",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-drag: valid gpuSubmissionCpuStepMs distribution",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-drag: valid completedLiquidPhysicsAndRenderMs distribution",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-drag: valid manualCameraCpuMs distribution",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-drag: valid frameIntervalMs distribution",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-drag: CSV keeps normal and forced-completion samples separate",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-drag: CSV independently reproduces frameIntervalMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-drag: CSV independently reproduces manualCameraCpuMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-drag: CSV independently reproduces completedLiquidPhysicsAndRenderMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-rotate: runtime ledger conservation, finite particle state, source debit, held state and inventory checks passed",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-rotate: full-scene workload and settings preserved",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-rotate: sufficient normal and separate completion samples",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-rotate: finite nonnegative generatedMl",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-rotate: finite nonnegative sourceDebitMl",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-rotate: finite nonnegative activeMl",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-rotate: finite nonnegative ownedMl",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-rotate: finite nonnegative retiredMl",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-rotate: finite nonnegative maximumSpeed",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-rotate: generated ml and source debit match expected measured-window emission",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-rotate: valid gpuSubmissionCpuStepMs distribution",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-rotate: valid completedLiquidPhysicsAndRenderMs distribution",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-rotate: valid manualCameraCpuMs distribution",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-rotate: valid frameIntervalMs distribution",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-rotate: CSV keeps normal and forced-completion samples separate",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-rotate: CSV independently reproduces frameIntervalMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-rotate: CSV independently reproduces manualCameraCpuMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/glass-rotate: CSV independently reproduces completedLiquidPhysicsAndRenderMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/bottle-pour: runtime ledger conservation, finite particle state, source debit, held state and inventory checks passed",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/bottle-pour: full-scene workload and settings preserved",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/bottle-pour: sufficient normal and separate completion samples",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/bottle-pour: finite nonnegative generatedMl",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/bottle-pour: finite nonnegative sourceDebitMl",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/bottle-pour: finite nonnegative activeMl",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/bottle-pour: finite nonnegative ownedMl",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/bottle-pour: finite nonnegative retiredMl",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/bottle-pour: finite nonnegative maximumSpeed",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/bottle-pour: generated ml and source debit match expected measured-window emission",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/bottle-pour: valid gpuSubmissionCpuStepMs distribution",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/bottle-pour: valid completedLiquidPhysicsAndRenderMs distribution",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/bottle-pour: valid manualCameraCpuMs distribution",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/bottle-pour: valid frameIntervalMs distribution",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/bottle-pour: CSV keeps normal and forced-completion samples separate",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/bottle-pour: CSV independently reproduces frameIntervalMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/bottle-pour: CSV independently reproduces manualCameraCpuMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "44-manual-motion-before-inventory/bottle-pour: CSV independently reproduces completedLiquidPhysicsAndRenderMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after: harness PASS with no error",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after: process completed successfully",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after: all four cases completed",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after: recorded kind counts match inventory including three bottles",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/idle: runtime ledger conservation, finite particle state, source debit, held state and inventory checks passed",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/idle: full-scene workload and settings preserved",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/idle: sufficient normal and separate completion samples",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/idle: finite nonnegative generatedMl",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/idle: finite nonnegative sourceDebitMl",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/idle: finite nonnegative activeMl",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/idle: finite nonnegative ownedMl",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/idle: finite nonnegative retiredMl",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/idle: finite nonnegative maximumSpeed",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/idle: generated ml and source debit match expected measured-window emission",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/idle: valid gpuSubmissionCpuStepMs distribution",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/idle: valid completedLiquidPhysicsAndRenderMs distribution",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/idle: valid manualCameraCpuMs distribution",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/idle: valid frameIntervalMs distribution",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/idle: CSV keeps normal and forced-completion samples separate",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/idle: CSV independently reproduces frameIntervalMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/idle: CSV independently reproduces manualCameraCpuMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/idle: CSV independently reproduces completedLiquidPhysicsAndRenderMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-drag: runtime ledger conservation, finite particle state, source debit, held state and inventory checks passed",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-drag: full-scene workload and settings preserved",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-drag: sufficient normal and separate completion samples",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-drag: finite nonnegative generatedMl",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-drag: finite nonnegative sourceDebitMl",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-drag: finite nonnegative activeMl",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-drag: finite nonnegative ownedMl",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-drag: finite nonnegative retiredMl",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-drag: finite nonnegative maximumSpeed",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-drag: generated ml and source debit match expected measured-window emission",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-drag: valid gpuSubmissionCpuStepMs distribution",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-drag: valid completedLiquidPhysicsAndRenderMs distribution",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-drag: valid manualCameraCpuMs distribution",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-drag: valid frameIntervalMs distribution",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-drag: CSV keeps normal and forced-completion samples separate",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-drag: CSV independently reproduces frameIntervalMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-drag: CSV independently reproduces manualCameraCpuMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-drag: CSV independently reproduces completedLiquidPhysicsAndRenderMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-rotate: runtime ledger conservation, finite particle state, source debit, held state and inventory checks passed",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-rotate: full-scene workload and settings preserved",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-rotate: sufficient normal and separate completion samples",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-rotate: finite nonnegative generatedMl",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-rotate: finite nonnegative sourceDebitMl",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-rotate: finite nonnegative activeMl",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-rotate: finite nonnegative ownedMl",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-rotate: finite nonnegative retiredMl",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-rotate: finite nonnegative maximumSpeed",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-rotate: generated ml and source debit match expected measured-window emission",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-rotate: valid gpuSubmissionCpuStepMs distribution",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-rotate: valid completedLiquidPhysicsAndRenderMs distribution",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-rotate: valid manualCameraCpuMs distribution",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-rotate: valid frameIntervalMs distribution",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-rotate: CSV keeps normal and forced-completion samples separate",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-rotate: CSV independently reproduces frameIntervalMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-rotate: CSV independently reproduces manualCameraCpuMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/glass-rotate: CSV independently reproduces completedLiquidPhysicsAndRenderMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/bottle-pour: runtime ledger conservation, finite particle state, source debit, held state and inventory checks passed",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/bottle-pour: full-scene workload and settings preserved",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/bottle-pour: sufficient normal and separate completion samples",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/bottle-pour: finite nonnegative generatedMl",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/bottle-pour: finite nonnegative sourceDebitMl",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/bottle-pour: finite nonnegative activeMl",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/bottle-pour: finite nonnegative ownedMl",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/bottle-pour: finite nonnegative retiredMl",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/bottle-pour: finite nonnegative maximumSpeed",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/bottle-pour: generated ml and source debit match expected measured-window emission",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/bottle-pour: valid gpuSubmissionCpuStepMs distribution",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/bottle-pour: valid completedLiquidPhysicsAndRenderMs distribution",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/bottle-pour: valid manualCameraCpuMs distribution",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/bottle-pour: valid frameIntervalMs distribution",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/bottle-pour: CSV keeps normal and forced-completion samples separate",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/bottle-pour: CSV independently reproduces frameIntervalMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/bottle-pour: CSV independently reproduces manualCameraCpuMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "45-manual-motion-after/bottle-pour: CSV independently reproduces completedLiquidPhysicsAndRenderMs mean/p95",
+      "passed": true
+    },
+    {
+      "check": "Matching environment/protocol: unityVersion",
+      "passed": true
+    },
+    {
+      "check": "Matching environment/protocol: gpu",
+      "passed": true
+    },
+    {
+      "check": "Matching environment/protocol: platform",
+      "passed": true
+    },
+    {
+      "check": "Matching environment/protocol: protocol",
+      "passed": true
+    },
+    {
+      "check": "Identical source manifest hash: Assets/_Project/Features/Bartending/FluidGpuExperiment/Data/FluidExperimentLiquidSettings.asset",
+      "passed": true
+    },
+    {
+      "check": "Identical source manifest hash: Assets/_Project/Features/Bartending/FluidGpuExperiment/Scenes/FluidGpuComparison.unity",
+      "passed": true
+    },
+    {
+      "check": "Run43 failed fixture is retained and excluded from comparisons",
+      "passed": true
+    }
+  ]
+}

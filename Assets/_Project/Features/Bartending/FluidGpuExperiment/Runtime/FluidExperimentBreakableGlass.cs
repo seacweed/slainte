@@ -1,0 +1,164 @@
+using UnityEngine;
+
+namespace Slainte.Bartending.FluidGpuExperiment
+{
+    // Explicit opt-in on the hurricane prefab. Native impact queues a transition;
+    // the world commits it after Physics2D and before GPU geometry is uploaded.
+    [DisallowMultipleComponent, RequireComponent(typeof(FluidExperimentBody))]
+    public sealed class FluidExperimentBreakableGlass : MonoBehaviour
+    {
+        public FluidExperimentBreakageProfile profile;
+        [Tooltip("Liquid impulse at breakage. Leave empty to retain release-only behavior; the liquid's existing motion and volume are always preserved.")]
+        public FluidExperimentSplashProfile splashProfile;
+        public FluidExperimentBody Body { get; private set; }
+        public bool IsBroken { get; private set; }
+        public bool BreakQueued => breakQueued;
+        public float LastImpactSpeed { get; private set; }
+        public float LastImpactImpulse { get; private set; }
+        public Vector2 LastImpactPoint { get; private set; }
+        public Vector2 LastImpactNormal { get; private set; } = Vector2.up;
+        private FluidExperimentWorld world;
+        private bool breakQueued, motionCaptured;
+        private Vector2 beforeVelocity, beforeCenter;
+        private float beforeSpin;
+        private Vector2 contactImpulse, fractureVelocity, fractureCenter;
+        private float contactAngularImpulse, fractureSpin, fractureScatter;
+        private bool nativeImpactMeasured;
+
+        internal Vector2 FractureVelocityAt(Vector2 point)
+        {
+            Vector2 arm = point - fractureCenter;
+            return fractureVelocity + new Vector2(-arm.y, arm.x) * fractureSpin;
+        }
+        internal float FractureAngularVelocity => fractureSpin * Mathf.Rad2Deg;
+        internal float FractureSeparationSpeed => Mathf.Max(0, profile.separationSpeed) + fractureScatter;
+
+        private void Awake() => Body = GetComponent<FluidExperimentBody>();
+        private void OnEnable()
+        {
+            if (Body == null) Body = GetComponent<FluidExperimentBody>();
+            world = GetComponentInParent<FluidExperimentWorld>();
+            world?.RegisterBreakable(this);
+            motionCaptured = false;
+        }
+        private void OnDisable() { motionCaptured = false; breakQueued = false; }
+        private void OnDestroy() { if (world != null) world.UnregisterBreakable(this); }
+        private bool CanBreak => !IsBroken && isActiveAndEnabled && Body != null && Body.isActiveAndEnabled
+            && !Body.IsHeld && Body.kind == LabItemKind.Glass && Body.Body != null
+            && Body.Body.simulated && Body.Body.bodyType == RigidbodyType2D.Dynamic
+            && profile != null && profile.shards.Length > 0 && world != null
+            && world.Liquid != null && world.Liquid.CohesivePhysicsActive;
+
+        internal void CaptureBeforePhysics()
+        {
+            motionCaptured = CanBreak;
+            nativeImpactMeasured = false; contactImpulse = Vector2.zero; contactAngularImpulse = 0;
+            if (!motionCaptured) return;
+            beforeVelocity = Body.Body.linearVelocity;
+            beforeCenter = Body.Body.worldCenterOfMass;
+            beforeSpin = Body.Body.angularVelocity * Mathf.Deg2Rad;
+        }
+        private void OnCollisionEnter2D(Collision2D collision) => MeasureImpact(collision);
+        private void OnCollisionStay2D(Collision2D collision) => MeasureImpact(collision);
+        private void MeasureImpact(Collision2D collision)
+        {
+            if (!CanBreak || breakQueued) return;
+            float impulse = 0, speed = 0;
+            Vector2 point = Body.Position;
+            Vector2 normal = Vector2.up;
+            Vector2 impulseVector = Vector2.zero;
+            float angularImpulse = 0;
+            for (int i = 0; i < collision.contactCount; i++)
+            {
+                ContactPoint2D contact = collision.GetContact(i);
+                impulse += Mathf.Max(0, contact.normalImpulse);
+                Vector2 applied = contact.normal * Mathf.Max(0, contact.normalImpulse);
+                impulseVector += applied;
+                Vector2 contactArm = contact.point - (motionCaptured ? beforeCenter : Body.Body.worldCenterOfMass);
+                angularImpulse += contactArm.x * applied.y - contactArm.y * applied.x;
+                float contactSpeed = Mathf.Abs(Vector2.Dot(contact.relativeVelocity, contact.normal));
+                // Contact velocity may already reflect the native solver. Retain the
+                // incoming point speed, including rotation, for resting-surface impacts.
+                if (motionCaptured)
+                {
+                    Vector2 offset = contact.point - beforeCenter;
+                    Vector2 incoming = beforeVelocity + new Vector2(-offset.y, offset.x) * beforeSpin;
+                    Vector2 other = collision.rigidbody != null ? collision.rigidbody.GetPointVelocity(contact.point) : Vector2.zero;
+                    contactSpeed = Mathf.Max(contactSpeed, Mathf.Abs(Vector2.Dot(incoming - other, contact.normal)));
+                }
+                if (contactSpeed >= speed) { speed = contactSpeed; point = contact.point; normal = contact.normal; }
+            }
+            LastImpactNormal = normal;
+            nativeImpactMeasured = true; contactImpulse = impulseVector; contactAngularImpulse = angularImpulse;
+            QueueImpact(speed, impulse, point);
+        }
+        private void QueueImpact(float speed, float impulse, Vector2 point)
+        {
+            if (!CanBreak || breakQueued) return;
+            LastImpactSpeed = speed; LastImpactImpulse = impulse; LastImpactPoint = point;
+            if (speed < profile.minimumImpactSpeed
+                || impulse < Body.Body.mass * profile.minimumImpulsePerMass) return;
+            // Preserve the motion from before the solver stopped/rebounded the glass.
+            // Apply this collision's measured impulse once, including its off-center
+            // torque. Without a pre-physics sample the native velocity already has
+            // that impulse, so controlled/late breaks must not add it a second time.
+            bool capturedImpact = motionCaptured && nativeImpactMeasured;
+            fractureVelocity = motionCaptured ? beforeVelocity : Body.Body.linearVelocity;
+            fractureCenter = motionCaptured ? beforeCenter : Body.Body.worldCenterOfMass;
+            fractureSpin = motionCaptured ? beforeSpin : Body.Body.angularVelocity * Mathf.Deg2Rad;
+            fractureScatter = 0;
+            if (capturedImpact)
+            {
+                float transfer = Mathf.Clamp01(profile.impactVelocityTransfer);
+                fractureVelocity += contactImpulse * (transfer / Mathf.Max(.0001f, Body.Body.mass));
+                fractureSpin += contactAngularImpulse * transfer / Mathf.Max(.0001f, Body.Body.inertia);
+                fractureScatter = Mathf.Max(0, profile.impactScatterScale)
+                    * Mathf.Min(speed, impulse / Mathf.Max(.0001f, Body.Body.mass));
+            }
+            breakQueued = true;
+            world.QueueGlassBreakage(this);
+        }
+
+        internal void CompleteBreak()
+        {
+            if (!breakQueued || !CanBreak) { breakQueued = false; return; }
+            // Validate the complete authored set before removing the intact vessel.
+            float totalArea = 0;
+            Vector2 weightedCenter = Vector2.zero;
+            foreach (var shard in profile.shards)
+            {
+                if (shard == null || shard.sprite == null || shard.outline == null || shard.outline.Length < 3
+                    || !float.IsFinite(shard.area) || shard.area <= 0)
+                { breakQueued = false; Debug.LogError("Invalid glass shard profile: " + name, this); return; }
+                totalArea += shard.area; weightedCenter += shard.localCenter * shard.area;
+            }
+            Vector2 center = Body.LocalToWorld(weightedCenter / totalArea);
+            // Create disabled native bodies while the original pose/velocity is available.
+            // Enable them only after the intact colliders and GPU owner are removed.
+            var fragments = new FluidExperimentGlassShard[profile.shards.Length];
+            for (int i = 0; i < fragments.Length; i++)
+                fragments[i] = FluidExperimentGlassShard.Create(this, world, i, totalArea, center);
+            // Ownership must still identify the old vessel while its impact is applied.
+            // Current particle velocity already includes falling/rotation; never add body velocity again.
+            world.Liquid.ReleaseWithSplash(Body.Id, Body.LocalToWorld(FluidExperimentCollisionProfile.BoundsOf(Body.LiquidInteriorPath).center),
+                LastImpactPoint, LastImpactNormal, LastImpactSpeed,
+                LastImpactImpulse / Mathf.Max(.0001f, Body.Body.mass), splashProfile, world.ExplosiveGlassBreakage);
+            IsBroken = true; breakQueued = false;
+            gameObject.SetActive(false); // Body.OnDisable unregisters input, contents and liquid ownership.
+            foreach (var shard in fragments) shard.Activate();
+            world.RefreshGlassShardContacts();
+        }
+
+        internal void RestoreIntact()
+        {
+            breakQueued = motionCaptured = false;
+            nativeImpactMeasured = false; contactImpulse = Vector2.zero; contactAngularImpulse = 0;
+            fractureVelocity = fractureCenter = Vector2.zero; fractureSpin = fractureScatter = 0;
+            LastImpactSpeed = LastImpactImpulse = 0;
+            LastImpactPoint = Vector2.zero; LastImpactNormal = Vector2.up;
+            if (!IsBroken) return;
+            IsBroken = false;
+            gameObject.SetActive(true);
+        }
+    }
+}

@@ -1,0 +1,14 @@
+{
+  "command": "dotnet",
+  "arguments": [
+    "build",
+    "Assembly-CSharp-Editor.csproj",
+    "--no-restore",
+    "-v:minimal",
+    "-p:CustomAfterMicrosoftCommonTargets=A:\\UnityHub\\proj\\slainte\\PhysicsLabEvidence\\27-pour-spacing-visual-validation\\IncludePhysicsLab.targets"
+  ],
+  "started": "2026-09-21T19:34:57.4123948+09:00",
+  "finished": "2026-09-21T19:35:04.1226023+09:00",
+  "exitCode": 0,
+  "generatedProjectFilesChanged": false
+}

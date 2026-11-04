@@ -1,0 +1,5 @@
+PASS Authored F Manual loads the actual shared resource recipes and evaluator adapter
+System.Exception: Fixture exceeds authored glass particle grid
+  at CocktailIntegrationRunner.Emit (Slainte.Bartending.FluidGpuExperiment.FluidExperimentBody vessel, System.Collections.Generic.IEnumerable`1[T] mixture) [0x00044] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\CocktailIntegrationValidation.cs:122 
+  at CocktailIntegrationRunner.Prepare (Slainte.Bartending.CocktailRecipe recipe) [0x00033] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\CocktailIntegrationValidation.cs:139 
+  at CocktailIntegrationRunner+<Start>d__11.MoveNext () [0x00188] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\CocktailIntegrationValidation.cs:62 

@@ -1,0 +1,11 @@
+{
+  "status": "RESTORED",
+  "liquid_spoon_collision": true,
+  "overlap_waiting_preserved": true,
+  "soft_stir_change_applied": false,
+  "matching_baseline_files": 1337,
+  "source_mismatches": [],
+  "restored_reference": "12-all-vessels",
+  "superseded_by": "FluidGpuExperimentEvidence/SpoonSoftStirRestore20261029/restoration.json",
+  "superseded_on": "2026-10-29"
+}

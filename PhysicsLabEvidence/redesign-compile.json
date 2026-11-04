@@ -1,0 +1,5 @@
+{
+  "command": "dotnet build Assembly-CSharp-Editor.csproj --no-restore -v:minimal",
+  "exitCode": 1,
+  "finished": "2026-09-21T17:25:24.6935594+09:00"
+}

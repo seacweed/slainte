@@ -1,0 +1,10 @@
+PASS Authored comparison scene initializes
+PASS Relative input fixture requires hidden batchmode with native cursor operations disabled
+PASS Pick fixture bottle for queued relative input
+FAIL Queued right-button press enters manual rotation and logical capture
+System.Exception: Queued right-button press enters manual rotation and logical capture
+  at ExperimentInputShakerValidationRunner.Require (System.Boolean condition, System.String label) [0x0002a] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\InputShakerValidation.cs:258 
+  at ExperimentRelativePointerChecks.Begin (Slainte.Bartending.FluidGpuExperiment.FluidExperimentInteractor hand, Slainte.Bartending.FluidGpuExperiment.FluidExperimentBody bottle, ExperimentRelativePointerChecks+VirtualInput input, System.Action`2[T1,T2] check) [0x0008f] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\RelativePointerValidation.cs:121 
+  at ExperimentRelativePointerChecks.RunRotation (Slainte.Bartending.FluidGpuExperiment.FluidExperimentInteractor hand, Slainte.Bartending.FluidGpuExperiment.FluidExperimentBody bottle, ExperimentRelativePointerChecks+VirtualInput input, System.Single[] motion, System.Action`2[T1,T2] check, System.String label) [0x00000] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\RelativePointerValidation.cs:96 
+  at ExperimentRelativePointerChecks.Run (Slainte.Bartending.FluidGpuExperiment.FluidExperimentWorld world, System.Action`2[T1,T2] check) [0x000ea] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\RelativePointerValidation.cs:42 
+  at ExperimentInputShakerValidationRunner+<Start>d__9.MoveNext () [0x001ea] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\InputShakerValidation.cs:91 

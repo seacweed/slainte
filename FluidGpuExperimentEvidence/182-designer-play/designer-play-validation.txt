@@ -1,0 +1,12 @@
+PASS Isolated play test restores the unsaved body/profile draft
+PASS Play preview and recovery leave authored prefab and shared profile bytes unchanged
+PASS Play return restores the unnamed dirty scene and its unsaved marker without saving or replacing it
+PASS Two actual GPU/native-physics play-test repeats complete with metrics and no errors
+INFO Completed run 1: broken=True, shards=16, impact=7.50, impulse=2.76, peak shard speed=9.26, active=20.00 ml, conservation error=0.0000 ml, shard boundaries=204, skipped=0, errors=0
+Completed run 2: broken=True, shards=16, impact=7.50, impulse=2.76, peak shard speed=9.96, active=20.00 ml, conservation error=0.0000 ml, shard boundaries=204, skipped=0, errors=0
+PASS Designer restores the previous default Play Mode start scene
+PASS Ordinary Play button preserves the complete unsaved designer draft
+PASS Play preview and recovery leave authored prefab and shared profile bytes unchanged
+PASS Play return restores the unnamed dirty scene and its unsaved marker without saving or replacing it
+PASS Private-profile save choices survive both Play Mode recovery paths
+PASS Recovered draft can explicitly save private profiles without changing the shared original

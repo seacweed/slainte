@@ -1,0 +1,15 @@
+PASS Hidden batch starts in F
+PASS synthLemonPeel_Source picks fresh garnish
+PASS Held garnish disables physical contact immediately
+PASS Held garnish freely crosses the entire glass
+PASS Held garnish can be positioned directly inside a glass
+PASS Contained held garnish is drawn behind glass front
+PASS Held garnish can overlap a real glass wall without position correction
+PASS Held rotation is not clipped by overlapping walls
+PASS Held reverse rotation follows the full requested angle
+PASS Held upright return does not resolve overlapping walls
+FAIL Click-drop resolves a wall overlap and releases the garnish
+System.Exception: Click-drop resolves a wall overlap and releases the garnish
+  at GarnishMotionValidationRunner.Check (System.Boolean ok, System.String text) [0x0002a] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\GarnishMotionValidation.cs:38 
+  at GarnishMotionValidationRunner.WallMotion (Slainte.Bartending.FluidGpuExperiment.FluidExperimentGarnishSource s, System.Single tilt) [0x002fc] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\GarnishMotionValidation.cs:137 
+  at GarnishMotionValidationRunner+<Start>d__13.MoveNext () [0x001ca] in A:\UnityHub\proj\slainte\Library\FluidModelDHarness\Assets\Editor\GarnishMotionValidation.cs:59 

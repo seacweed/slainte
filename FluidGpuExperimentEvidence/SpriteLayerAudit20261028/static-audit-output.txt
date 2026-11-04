@@ -1,0 +1,32 @@
+Bottle_item_1001.prefab: BottleArt=3
+Bottle_item_1002.prefab: BottleArt=3
+Bottle_item_1003.prefab: BottleArt=3
+Bottle_item_1004.prefab: BottleArt=3
+Bottle_item_1005.prefab: BottleArt=3
+Bottle_item_1006.prefab: BottleArt=3
+Bottle_item_1007.prefab: BottleArt=3
+Bottle_item_1008.prefab: BottleArt=3
+Bottle_item_1009.prefab: BottleArt=3
+Bottle_item_1010.prefab: BottleArt=3
+Bottle_item_1011.prefab: BottleArt=3
+Bottle_item_1012.prefab: BottleArt=3
+Bottle_item_1013.prefab: BottleArt=3
+Bottle_item_1014.prefab: BottleArt=3
+Bottle_item_1015.prefab: BottleArt=3
+Dispenser.prefab: DispenserArt=30
+FluidExperimentEnvironment.prefab: Table=-10
+GlassShard.prefab: Art=0
+Glass_highball.prefab: GlassArt_0=-2, GlassArt_3=4, GlassArt_2=4, GlassArt_1=-2
+Glass_hurricane.prefab: GlassArt_3=4, GlassArt_2=4, GlassArt_0=-2, GlassArt_1=-2
+Glass_martini.prefab: GlassArt_3=4, GlassArt_2=4, GlassArt_0=-2, GlassArt_1=-2
+Glass_rock.prefab: GlassArt_3=4, GlassArt_1=-2, GlassArt_0=-2, GlassArt_2=4
+Ice.prefab: IceArt=5
+IceBucket.prefab: ToolArt_1=-1, ToolArt_0=-1
+Jigger.prefab: ToolArt_1=-1, ToolArt_0=-1
+Shaker.prefab: ToolArt_5=4, ToolArt_0=-1, ToolArt_3=4, ToolArt_4=4, ToolArt_2=4, ToolArt_1=-1
+Spoon.prefab: ToolArt_0=-1
+nanangaPeel_Garnish.prefab: IceArt=45
+nanangaPeel_Source.prefab: nanangaPeel_Source=20, ContentsIcon=21
+synthLemonPeel_Garnish.prefab: IceArt=45
+synthLemonPeel_Source.prefab: ContentsIcon=21, synthLemonPeel_Source=20
+{"prefab_count": 33, "renderer_count": 52, "sorting_groups": [], "sorting_layer_ids": [0], "world_z_values": [0.0], "scene_sorting_overrides": [{"scene": "FluidGpuComparison.unity", "target": {"fileID": 6416943649088974226, "guid": "5e6024607d924facabe44ce22a682240", "type": 3}, "propertyPath": "m_LocalPosition.z", "value": 0, "objectReference": {"fileID": 0}}, {"scene": "FluidGpuComparison.unity", "target": {"fileID": 6395275127943403733, "guid": "ab133b0cfa2b4e81b399f227e7532073", "type": 3}, "propertyPath": "m_LocalPosition.z", "value": 0, "objectReference": {"fileID": 0}}, {"scene": "FluidGpuComparison.unity", "target": {"fileID": 670613321250671277, "guid": "f7b5732a74207054489c7e7498d455a2", "type": 3}, "propertyPath": "m_LocalPosition.z", "value": 0, "objectReference": {"fileID": 0}}, {"scene": "FluidGpuComparison.unity", "target": {"fileID": 3211186474429775578, "guid": "2be5a6a1dc5c4938b59ee352c9405231", "type": 3}, "propertyPath": "m_LocalPosition.z", "value": 0, "objectReference": {"fileID": 0}}, {"scene": "FluidGpuComparison.unity", "target": {"fileID": 2470079562192508869, "guid": "2d2f3f8c91f740e58be98f2f20429acd", "type": 3}, "propertyPath": "m_LocalPosition.z", "value": 0, "objectReference": {"fileID": 0}}, {"scene": "FluidGpuComparison.unity", "target": {"fileID": 451656537290222366, "guid": "4c1a4a39e6644696b907b9d828123535", "type": 3}, "propertyPath": "m_LocalPosition.z", "value": 0, "objectReference": {"fileID": 0}}, {"scene": "FluidGpuComparison.unity", "target": {"fileID": 8430332568412714768, "guid": "07bb037e86bf4852b85ef34b311b36fd", "type": 3}, "propertyPath": "m_LocalPosition.z", "value": 0, "objectReference": {"fileID": 0}}, {"scene": "FluidGpuComparison.unity", "target": {"fileID": 5119563962295965749, "guid": "ee4369df1df0483fa6ffa93af11ccabc", "type": 3}, "propertyPath": "m_LocalPosition.z", "value": 0, "objectReference": {"fileID": 0}}, {"scene": "FluidGpuComparison.unity", "target": {"fileID": 2601072357238551182, "guid": "cdd4cf3ddb1645cbba5bf15a3c86a667", "type": 3}, "propertyPath": "m_LocalPosition.z", "value": 0, "objectReference": {"fileID": 0}}, {"scene": "FluidGpuComparison.unity", "target": {"fileID": 1461010842006832904, "guid": "3de8e16baa9b47e4a347497c4c5a7c04", "type": 3}, "propertyPath": "m_LocalPosition.z", "value": 0, "objectReference": {"fileID": 0}}, {"scene": "FluidGpuComparison.unity", "target": {"fileID": 2507464132767407768, "guid": "0bd66623d521df0428e7f21ef38a43fa", "type": 3}, "propertyPath": "m_LocalPosition.z", "value": 0, "objectReference": {"fileID": 0}}, {"scene": "FluidRuntimeSample.unity", "target": {"fileID": 451656537290222366, "guid": "4c1a4a39e6644696b907b9d828123535", "type": 3}, "propertyPath": "m_LocalPosition.z", "value": 0, "objectReference": {"fileID": 0}}, {"scene": "FluidRuntimeSample.unity", "target": {"fileID": 5670048948298781937, "guid": "607502d4ebb6c5c44a44cf414eda9b81", "type": 3}, "propertyPath": "m_LocalPosition.z", "value": 0, "objectReference": {"fileID": 0}}, {"scene": "FluidRuntimeSample.unity", "target": {"fileID": 2601072357238551182, "guid": "cdd4cf3ddb1645cbba5bf15a3c86a667", "type": 3}, "propertyPath": "m_LocalPosition.z", "value": 0, "objectReference": {"fileID": 0}}, {"scene": "FluidRuntimeSample.unity", "target": {"fileID": 6416943649088974226, "guid": "5e6024607d924facabe44ce22a682240", "type": 3}, "propertyPath": "m_LocalPosition.z", "value": 0, "objectReference": {"fileID": 0}}, {"scene": "FluidRuntimeSample.unity", "target": {"fileID": 5842263977270044877, "guid": "1cc8526324ceac2489dd1b9b10f4ddd4", "type": 3}, "propertyPath": "m_LocalPosition.z", "value": 0, "objectReference": {"fileID": 0}}, {"scene": "FluidRuntimeSample.unity", "target": {"fileID": 3211186474429775578, "guid": "2be5a6a1dc5c4938b59ee352c9405231", "type": 3}, "propertyPath": "m_LocalPosition.z", "value": 0, "objectReference": {"fileID": 0}}]}

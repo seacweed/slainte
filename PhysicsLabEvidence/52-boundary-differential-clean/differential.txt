@@ -1,0 +1,25 @@
+PASS: scenario=0 kernel=SweepBoundaries particles=4096 maxAbsoluteError=0
+PASS: scenario=0 kernel=ApplyDeltaAndBoundaries particles=4096 maxAbsoluteError=0
+PASS: scenario=0 kernel=CalculateDensityLambda particles=4096 maxAbsoluteError=0
+PASS: scenario=0 kernel=CalculatePositionDelta particles=4096 maxAbsoluteError=4.656613E-10
+PASS: scenario=0 kernel=UpdateVelocities particles=4096 maxAbsoluteError=9.536743E-07
+PASS: scenario=0 kernel=BuildStreamSurface particles=4096 maxAbsoluteError=0
+PASS: scenario=1 kernel=SweepBoundaries particles=4096 maxAbsoluteError=0
+PASS: scenario=1 kernel=ApplyDeltaAndBoundaries particles=4096 maxAbsoluteError=0
+PASS: scenario=1 kernel=CalculateDensityLambda particles=4096 maxAbsoluteError=0
+PASS: scenario=1 kernel=CalculatePositionDelta particles=4096 maxAbsoluteError=9.313226E-10
+PASS: scenario=1 kernel=UpdateVelocities particles=4096 maxAbsoluteError=2.13248063E-06
+PASS: scenario=1 kernel=BuildStreamSurface particles=4096 maxAbsoluteError=0
+PASS: scenario=2 kernel=SweepBoundaries particles=4096 maxAbsoluteError=0
+PASS: scenario=2 kernel=ApplyDeltaAndBoundaries particles=4096 maxAbsoluteError=0
+PASS: scenario=2 kernel=CalculateDensityLambda particles=4096 maxAbsoluteError=6.25732355E-10
+PASS: scenario=2 kernel=CalculatePositionDelta particles=4096 maxAbsoluteError=4.656613E-10
+PASS: scenario=2 kernel=UpdateVelocities particles=4096 maxAbsoluteError=1.91107029E-06
+PASS: scenario=2 kernel=BuildStreamSurface particles=4096 maxAbsoluteError=0
+PASS: scenario=3 kernel=SweepBoundaries particles=4096 maxAbsoluteError=0
+PASS: scenario=3 kernel=ApplyDeltaAndBoundaries particles=4096 maxAbsoluteError=0
+PASS: scenario=3 kernel=CalculateDensityLambda particles=4096 maxAbsoluteError=0
+PASS: scenario=3 kernel=CalculatePositionDelta particles=4096 maxAbsoluteError=9.313226E-10
+PASS: scenario=3 kernel=UpdateVelocities particles=4096 maxAbsoluteError=5.96046448E-08
+PASS: scenario=3 kernel=BuildStreamSurface particles=4096 maxAbsoluteError=0
+PASS: empty geometry after unregistering all bodies

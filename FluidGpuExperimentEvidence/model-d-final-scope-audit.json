@@ -1,0 +1,60 @@
+{
+  "passed": true,
+  "audited_at_utc": "2026-09-30T14:33:22.473510+00:00",
+  "basis": "Current working tree/index versus HEAD, plus non-ignored untracked files. Ignored Library output is excluded from change scope.",
+  "head": "3693fc687db4f04b82f1660f639bad3b21693e0e",
+  "validation_project": "A:\\UnityHub\\proj\\slainte\\Library\\FluidModelDHarness",
+  "scope": {
+    "tracked_changed_files": 19,
+    "non_ignored_untracked_files": 85,
+    "counts_by_allowed_root": {
+      "feature": 24,
+      "evidence": 80
+    },
+    "allowed_roots": [
+      "Assets/_Project/Features/Bartending/FluidGpuExperiment",
+      "FluidGpuExperimentEvidence"
+    ]
+  },
+  "fresh_asset_checks": {
+    "feature_guid_count": 110,
+    "validated_asset_counts": {
+      ".asset": 25,
+      ".mat": 1,
+      ".cs": 30,
+      ".prefab": 24,
+      ".unity": 1,
+      ".hlsl": 5,
+      ".shader": 8,
+      ".compute": 2
+    },
+    "harness_test_source_count": 14,
+    "shared_reference_metadata_count": 60,
+    "copied_shared_dependency_count": 68
+  },
+  "failures": {
+    "changes_outside_scope": [],
+    "missing_metadata": [],
+    "malformed_metadata": [],
+    "orphan_metadata": [],
+    "duplicate_or_original_fork_guids": [],
+    "references_to_original_fork_assets": [],
+    "missing_validation_copies": [],
+    "different_validation_copies": [],
+    "validation_metadata_guid_mismatches": [],
+    "harness_test_source_mismatches": [],
+    "shared_dependency_manifest_mismatches": []
+  },
+  "line_ending_equivalent_shared_copies": [],
+  "historical_baseline": {
+    "report": "FluidGpuExperimentEvidence/final-isolation-audit.json",
+    "preserved_report_sha256": "643906a090a68c37bb47f87e063cca49201cfbf95a7c3170ac4149dc552cdd35",
+    "prior_report_passed": false,
+    "prior_report_changed_file_count": 576,
+    "saved_original_file_count": 4451,
+    "current_differences_from_saved_hashes": 0,
+    "line_endings_only_differences": 0,
+    "other_or_missing_historical_differences": 0,
+    "interpretation": "The older original-tracked-sha256 baseline is distinct from current HEAD. Its failed report is retained unchanged; this audit does not claim historical original bytes are identical."
+  }
+}

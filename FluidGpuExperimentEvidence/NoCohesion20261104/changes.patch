@@ -1,0 +1,43 @@
+--- Runtime/FluidExperimentLiquidSettings.cs.before
++++ Runtime/FluidExperimentLiquidSettings.cs
+@@ -39,7 +39,7 @@
+         [Min(0)] public float cohesiveDensityCompliance = .000001f;
+         [Range(.05f, .75f)] public float cohesiveMaximumCorrectionRatio = .35f;
+         [Tooltip("Independent finite-range attraction acceleration. Zero disables cohesion; pressure never attracts.")]
+-        [Min(0)] public float cohesiveSurfaceTension = 18f;
++        [Min(0)] public float cohesiveSurfaceTension = 0f;
+         [Tooltip("Multiplier for material full-vector shear damping. Zero disables shear viscosity.")]
+         [Min(0)] public float cohesiveShearViscosity = 1f;
+         [Tooltip("Cohesion starts beyond this fraction of the smoothing radius and vanishes at the kernel edge.")]
+--- Runtime/FluidExperimentGpuLiquid.Cohesive.cs.before
++++ Runtime/FluidExperimentGpuLiquid.Cohesive.cs
+@@ -34,7 +34,7 @@
+         {
+             simulationShader.SetFloat("_CohesiveCompliance", ReferenceFinite(settings.cohesiveDensityCompliance, .000001f, 0, 1));
+             simulationShader.SetFloat("_CohesiveCorrectionRatio", ReferenceFinite(settings.cohesiveMaximumCorrectionRatio, .35f, .05f, .75f));
+-            simulationShader.SetFloat("_CohesiveTension", ReferenceFinite(settings.cohesiveSurfaceTension, 18, 0, 100));
++            simulationShader.SetFloat("_CohesiveTension", ReferenceFinite(settings.cohesiveSurfaceTension, 0, 0, 100));
+             simulationShader.SetFloat("_CohesiveShear", ReferenceFinite(settings.cohesiveShearViscosity, 1, 0, 10));
+             simulationShader.SetFloat("_CohesiveRestRatio", ReferenceFinite(settings.cohesiveRestDistanceRatio, .6f, .35f, .9f));
+             simulationShader.SetFloat("_CohesiveWallDensity", ReferenceFinite(settings.cohesiveWallDensity, 0, 0, 1));
+--- Data/FluidExperimentLiquidSettings.asset.before
++++ Data/FluidExperimentLiquidSettings.asset
+@@ -12,6 +12,7 @@
+   m_Script: {fileID: 11500000, guid: ed3c9902833f4424af9720fa3a5faa0f, type: 3}
+   m_Name: FluidExperimentLiquidSettings
+   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentLiquidSettings
++  cohesiveSurfaceTension: 0
+   gpuLiquidAgitationMixRate: 8
+   gpuLiquidClosedVesselDampingRate: 2
+   gpuLiquidClosedVesselMaximumRelativeSpeed: 6
+--- README.md.before
++++ README.md
+@@ -8,7 +8,7 @@
+ 
+ 샌드박스는 하나의 응집 액체 계산 경로를 사용한다. 화면의 Material은 Auto/Water/Spirit/Syrup/Milk를 선택하며 입자의 점성과 응집 계수를 바꾼다. Ice / liquid는 기본 `NonColliding`과 `Colliding`을 선택한다. Glass breakage의 기본 `Natural`은 기존 운동과 측정한 충격을 사용하고, `Explosive`는 같은 액체 계산에 파편 비산 연출을 더한다. `R` 또는 Reset sandbox는 원래 배치·재고·입력 상태를 복원한다.
+ 
+-물리 설정은 [FluidExperimentLiquidSettings.asset](Data/FluidExperimentLiquidSettings.asset)의 Coherent liquid 그룹에 있다. 기본 압축 보정은 4회이며 `cohesiveDensityIterations=0`으로 끌 수 있다. `cohesiveSurfaceTension=0`, `cohesiveShearViscosity=0`은 각각 응집과 전단 점성을 끈다. 반복 압축 보정은 중력이나 물체 이동을 다시 적분하지 않는다. 입자별 ml와 성분별 ml를 유지하는 혼합을 사용하며, 응집은 유한 거리 근사다. 표면은 틱 보간·이웃 분포 타원·실제 벽 마스크로 구성한다. `useSurfaceRendering`은 진단용 입자 표시와 전환할 때 사용한다.
++물리 설정은 [FluidExperimentLiquidSettings.asset](Data/FluidExperimentLiquidSettings.asset)의 Coherent liquid 그룹에 있다. 기본 압축 보정은 4회이며 `cohesiveDensityIterations=0`으로 끌 수 있다. 현재 비교 버전은 `cohesiveSurfaceTension=0`으로 모든 재질의 응집을 끄고, 압축 보정 4회와 전단 점성은 유지한다. 기존 응집 버전은 설정 에셋에서 `cohesiveSurfaceTension=18`로 돌린 뒤 Play 모드를 다시 시작하면 비교할 수 있다. `cohesiveShearViscosity=0`은 전단 점성을 끈다. 반복 압축 보정은 중력이나 물체 이동을 다시 적분하지 않는다. 입자별 ml와 성분별 ml를 유지하는 혼합을 사용하며, 응집은 유한 거리 근사다. 표면은 틱 보간·이웃 분포 타원·실제 벽 마스크로 구성한다. `useSurfaceRendering`은 진단용 입자 표시와 전환할 때 사용한다.
+ 
+ ## 조작
+ 

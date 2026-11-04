@@ -1,0 +1,290 @@
+PASS Authored F Manual loads the actual shared resource recipes and evaluator adapter
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.6608391 ml per particle
+INFO 주문 성공 | Good | 번햄 사워 한 잔
+요청 레시피: 번햄 사워 (레시피 주문)
+감지된 레시피: 번햄 사워 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 번햄 사워 | 총량 90 ml
+최종 색상: #E8AE62CC | RGBA(0.911, 0.683, 0.384, 0.801)
+- 실청: 15 / 15 ml
+- 슬롭: 30 / 30 ml
+- 합성 레몬: 15 / 15 ml
+- 번햄 버번: 30 / 30 ml
+
+PASS Actual recipe rec_1001 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.7656249 ml per particle
+INFO 주문 성공 | Good | 코튼 사워 한 잔
+요청 레시피: 코튼 사워 (레시피 주문)
+감지된 레시피: 코튼 사워 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 코튼 사워 | 총량 105 ml
+최종 색상: #DE8D34D0 | RGBA(0.869, 0.552, 0.205, 0.815)
+- 코튼: 60 / 60 ml
+- 슬롭: 30 / 30 ml
+- 합성 레몬: 15 / 15 ml
+
+PASS Actual recipe rec_1002 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.5 ml per particle
+INFO 주문 성공 | Good | 갓레이디 한 잔
+요청 레시피: 갓레이디 (레시피 주문)
+감지된 레시피: 갓레이디 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 갓레이디 | 총량 60 ml
+최종 색상: #F1AB8080 | RGBA(0.945, 0.671, 0.5, 0.5)
+- 코튼: 30 / 30 ml
+- 브리즈 보드카: 30 / 30 ml
+
+PASS Actual recipe rec_1003 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.5 ml per particle
+INFO 주문 성공 | Good | 갓로드 한 잔
+요청 레시피: 갓로드 (레시피 주문)
+감지된 레시피: 갓로드 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 갓로드 | 총량 60 ml
+최종 색상: #C65404CC | RGBA(0.776, 0.329, 0.014, 0.8)
+- 코튼: 30 / 30 ml
+- 조니 독스: 30 / 30 ml
+
+PASS Actual recipe rec_1004 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.65625 ml per particle
+INFO 주문 성공 | Good | 셰이디 한 잔
+요청 레시피: 셰이디 (레시피 주문)
+감지된 레시피: 셰이디 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 셰이디 | 총량 90 ml
+최종 색상: #B71E0ACC | RGBA(0.719, 0.116, 0.041, 0.8)
+- 헥타르: 30 / 30 ml
+- 블레스: 30 / 30 ml
+- 번햄 버번: 30 / 30 ml
+
+PASS Actual recipe rec_1005 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Hurricane: 132 grid points, up to 0.9692307 ml per particle
+INFO 주문 성공 | Good | 한여름의 나낭나 한 잔
+요청 레시피: 한여름의 나낭나 (레시피 주문)
+감지된 레시피: 한여름의 나낭나 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 한여름의 나낭나 | 총량 120 ml
+최종 색상: #F5780BF2 | RGBA(0.962, 0.473, 0.044, 0.95)
+- 나낭나: 30 / 30 ml
+- 열대 주스: 90 / 90 ml
+
+PASS Actual recipe rec_1006 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Hurricane: 132 grid points, up to 0.9767441 ml per particle
+INFO 주문 성공 | Good | 한여름의 주스 한 잔
+요청 레시피: 한여름의 주스 (레시피 주문)
+감지된 레시피: 한여름의 주스 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 한여름의 주스 | 총량 120 ml
+최종 색상: #F38D26EC | RGBA(0.952, 0.554, 0.148, 0.925)
+- 실청: 15 / 15 ml
+- 합성 레몬: 15 / 15 ml
+- 열대 주스: 90 / 90 ml
+
+PASS Actual recipe rec_1007 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Hurricane: 132 grid points, up to 1.722656 ml per particle
+INFO 주문 성공 | Good | 아이리시 커피 한 잔
+요청 레시피: 아이리시 커피 (레시피 주문)
+감지된 레시피: 아이리시 커피 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 아이리시 커피 | 총량 210 ml
+최종 색상: #DE8D40D0 | RGBA(0.87, 0.552, 0.251, 0.817)
+- 바하: 40 / 40 ml
+- 실청: 10 / 10 ml
+- 커피 분말: 10 / 10 ml
+- 뜨거운 물: 150 / 150 ml
+
+PASS Actual recipe rec_1008 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Highball: 160 grid points, up to 1.196203 ml per particle
+INFO 주문 성공 | Good | 블랙 커피 한 잔
+요청 레시피: 블랙 커피 (레시피 주문)
+감지된 레시피: 블랙 커피 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 블랙 커피 | 총량 180 ml
+최종 색상: #382014FF | RGBA(0.22, 0.125, 0.078, 1)
+- 커피 분말: 30 / 30 ml
+- 뜨거운 물: 150 / 150 ml
+
+PASS Actual recipe rec_1009 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Hurricane: 132 grid points, up to 1.394531 ml per particle
+INFO 주문 성공 | Good | 핫 테디 한 잔
+요청 레시피: 핫 테디 (레시피 주문)
+감지된 레시피: 핫 테디 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 핫 테디 | 총량 170 ml
+최종 색상: #F9AF5DBE | RGBA(0.977, 0.687, 0.365, 0.744)
+- 번햄 버번: 30 / 30 ml
+- 실청: 30 / 30 ml
+- 합성 레몬: 10 / 10 ml
+- 뜨거운 물: 100 / 100 ml
+
+PASS Actual recipe rec_1010 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Highball: 160 grid points, up to 0.9697452 ml per particle
+INFO 주문 성공 | Good | 레몬 피즈 한 잔
+요청 레시피: 레몬 피즈 (레시피 주문)
+감지된 레시피: 레몬 피즈 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 레몬 피즈 | 총량 145 ml
+최종 색상: #F2FA47B3 | RGBA(0.948, 0.98, 0.277, 0.702)
+- 실청: 15 / 15 ml
+- 합성 레몬: 30 / 30 ml
+- 탄산 미닛: 100 / 100 ml
+
+PASS Actual recipe rec_1011 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Highball: 160 grid points, up to 1.070064 ml per particle
+INFO 주문 성공 | Good | 로닌즈 한 잔
+요청 레시피: 로닌즈 (레시피 주문)
+감지된 레시피: 로닌즈 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 로닌즈 | 총량 160 ml
+최종 색상: #97020DCC | RGBA(0.592, 0.01, 0.051, 0.8)
+- 블레스: 30 / 30 ml
+- 헥타르: 30 / 30 ml
+- 탄산 미닛: 100 / 100 ml
+
+PASS Actual recipe rec_1012 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Highball: 160 grid points, up to 1.262658 ml per particle
+INFO 주문 성공 | Good | 보일링 포인트 한 잔
+요청 레시피: 보일링 포인트 (레시피 주문)
+감지된 레시피: 보일링 포인트 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 보일링 포인트 | 총량 190 ml
+최종 색상: #A95107CC | RGBA(0.663, 0.318, 0.027, 0.8)
+- 조니 독스: 40 / 40 ml
+- 탄산 미닛: 150 / 150 ml
+
+PASS Actual recipe rec_1013 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.5 ml per particle
+INFO 주문 성공 | Good | 조니 독스 니트 한 잔
+요청 레시피: 조니 독스 니트 (레시피 주문)
+감지된 레시피: 조니 독스 니트 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 조니 독스 니트 | 총량 30 ml
+최종 색상: #A95107CC | RGBA(0.663, 0.318, 0.027, 0.8)
+- 조니 독스: 30 / 30 ml
+
+PASS Actual recipe rec_1014 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.5 ml per particle
+INFO 주문 성공 | Good | 조니 독스 온더락 한 잔
+요청 레시피: 조니 독스 온더락 (레시피 주문)
+감지된 레시피: 조니 독스 온더락 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 조니 독스 온더락 | 총량 30 ml
+최종 색상: #A95107CC | RGBA(0.663, 0.318, 0.027, 0.8)
+- 조니 독스: 30 / 30 ml
+
+PASS Actual recipe rec_1015 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.5 ml per particle
+INFO 주문 성공 | Good | 번햄 버번 니트 한 잔
+요청 레시피: 번햄 버번 니트 (레시피 주문)
+감지된 레시피: 번햄 버번 니트 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 번햄 버번 니트 | 총량 30 ml
+최종 색상: #F85405CC | RGBA(0.973, 0.329, 0.02, 0.8)
+- 번햄 버번: 30 / 30 ml
+
+PASS Actual recipe rec_1016 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.5 ml per particle
+INFO 주문 성공 | Good | 번햄 버번 온더락 한 잔
+요청 레시피: 번햄 버번 온더락 (레시피 주문)
+감지된 레시피: 번햄 버번 온더락 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 번햄 버번 온더락 | 총량 30 ml
+최종 색상: #F85405CC | RGBA(0.973, 0.329, 0.02, 0.8)
+- 번햄 버번: 30 / 30 ml
+
+PASS Actual recipe rec_1017 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.5 ml per particle
+INFO 주문 성공 | Good | 바하 니트 한 잔
+요청 레시피: 바하 니트 (레시피 주문)
+감지된 레시피: 바하 니트 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 바하 니트 | 총량 30 ml
+최종 색상: #FF8F26CC | RGBA(1, 0.561, 0.149, 0.8)
+- 바하: 30 / 30 ml
+
+PASS Actual recipe rec_1018 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.5 ml per particle
+INFO 주문 성공 | Good | 바하 온더락 한 잔
+요청 레시피: 바하 온더락 (레시피 주문)
+감지된 레시피: 바하 온더락 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 바하 온더락 | 총량 30 ml
+최종 색상: #FF8F26CC | RGBA(1, 0.561, 0.149, 0.8)
+- 바하: 30 / 30 ml
+
+PASS Actual recipe rec_1019 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.5 ml per particle
+INFO 주문 성공 | Good | 브리즈 니트 한 잔
+요청 레시피: 브리즈 니트 (레시피 주문)
+감지된 레시피: 브리즈 니트 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 브리즈 니트 | 총량 30 ml
+최종 색상: #FFFFFF33 | RGBA(1, 1, 1, 0.2)
+- 브리즈 보드카: 30 / 30 ml
+
+PASS Actual recipe rec_1020 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.5 ml per particle
+INFO 주문 성공 | Good | 브리즈 온더락 한 잔
+요청 레시피: 브리즈 온더락 (레시피 주문)
+감지된 레시피: 브리즈 온더락 | 레시피 일치
+요청 레시피 판정:
+레시피 일치 | 브리즈 온더락 | 총량 30 ml
+최종 색상: #FFFFFF33 | RGBA(1, 1, 1, 0.2)
+- 브리즈 보드카: 30 / 30 ml
+
+PASS Actual recipe rec_1021 yields Good with matching GPU ingredients, glass, ice and technique
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.6608391 ml per particle
+PASS Read current GPU contents for rec_1001
+PASS Read current GPU contents for rec_1001
+PASS Wrong known glass yields MidGlass
+PASS Read current GPU contents for rec_1001
+PASS Wrong glass and ice yield MidIceGlass
+PASS Read current GPU contents for rec_1001
+PASS Wrong serving ice yields MidIce
+PASS Read current GPU contents for rec_1001
+PASS An empty glass yields Bad rather than a technical fallback
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.7656249 ml per particle
+PASS Read current GPU contents for rec_1001
+PASS Another valid actual recipe yields MidWrongMenu
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.6608391 ml per particle
+INFO Exact-dose fixture Rock: 147 grid points, up to 1.027972 ml per particle
+PASS Read current GPU contents for rec_1001
+PASS Per-ingredient excess uses the game's existing ml tolerances
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.6608391 ml per particle
+PASS Read current GPU contents for rec_1001
+PASS Unexpected ingredient volume follows the original extra-ingredient rule
+INFO Exact-dose fixture Rock: 147 grid points, up to 0.6608391 ml per particle
+PASS Read current GPU contents for rec_1001
+PASS Read current GPU contents for rec_1001
+PASS Evaluation reads a fresh coherent snapshot and preserves every particle and mixture value
+INFO Exact-dose fixture Highball: 160 grid points, up to 0.5 ml per particle
+PASS Read current GPU contents for rec_1001
+PASS Other vessels are excluded from the submitted glass composition
+PASS Read current GPU contents for rec_1001
+PASS Spilled owner-free particles are excluded from serving contents
+PASS Unmapped ingredients fail explicitly without publishing a previous result
+PASS The dispenser cannot be selected as a serving glass
+PASS Generation reset clears prior results and action progress
+INFO Exact-dose fixture Highball: 160 grid points, up to 0.5 ml per particle
+PASS Hot water alias maps by actual ingredient ID: 
+PASS Separate hot and ordinary ItemDef references combine under one canonical recipe ingredient
+PASS Canonical recipe mapping preserves actual particle temperature samples
+INFO Exact-dose fixture Highball: 160 grid points, up to 0.5 ml per particle
+INFO Spoon held=True position=(-0.01, 1.89) target=(-0.01, 1.89) bounds=Center: (-0.02, 1.87, 0.00), Extents: (0.27, 1.68, 0.00) volume=40 observations=1
+INFO Observed Glass_highball(Clone) (Slainte.Bartending.FluidGpuExperiment.FluidExperimentBody) stirTime=0.4899998 attempted=True
+PASS Actual held-spoon motion records a stir attempt and invalidates Build
+PASS Sustained actual spoon motion and uniform composition complete Stir
+PASS Fresh liquid after stirring does not inherit completed Stir
+INFO Exact-dose fixture Highball: 160 grid points, up to 0.5 ml per particle
+PASS Moving a held spoon in air never grants Stir or a stir attempt to liquid below
+INFO Exact-dose fixture Cobbler Shaker: 113 grid points, up to 0.5 ml per particle
+PASS An open shaker cannot complete Shake through held motion
+INFO Exact-dose fixture Cobbler Shaker: 113 grid points, up to 0.5 ml per particle
+PASS Closed held shaker reversals complete Shake and record actual contained ice
+INFO Transferred 35.5ml, techniques Shake, shakeIce=True, servingIce=0
+PASS Technique and shake-ice history follow transferred liquid while serving ice is counted separately
+INFO Exact-dose fixture Cobbler Shaker: 113 grid points, up to 0.5 ml per particle
+PASS A closed dry shake records Shake while preserving the absence of shake-ice history
+PASS Cocktail UI blocks world interaction under its visible controls
+PASS Hidden controls do not block the existing interactor
+PASS No Unity, shader, buffer or application errors in cocktail integration

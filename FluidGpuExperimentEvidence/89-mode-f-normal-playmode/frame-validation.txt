@@ -1,0 +1,3 @@
+STARTED: normal PlayerLoop validation; no result yet.
+
+FINISHED: FAIL

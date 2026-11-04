@@ -1,0 +1,14 @@
+PASS Queue exactly 60 ml for Colliding
+PASS colliding-low-3 incoming cube starts outside every existing solid
+PASS colliding-low-3 incoming cube starts outside every existing solid
+PASS colliding-low-3 incoming cube starts outside every existing solid
+MEASURE colliding-low-3 cubes=3 contained=3 span=1.04246908E-06 angularSpan=0.000106811523 speed95=8.07562E-06 spin95=0.000851862831 sleepRatio=0.04 recovery=0 peakCubeSpeed=2.491994 peakWaterSpeed=2.23849916 peakWaterUp=2.1526854 peakWaterRise=0.4961487 lateWaterEnergy=0.00698333466 containedMl=60 ledgerError=0
+MEASURE surface colliding-low-3 settledP95=0.5856525 excessHeight=0.6332544 jitterRms=6.638131E-08 contactSpeed=2.49626541
+LIMIT colliding-low-3 drift=0.412214577 speed95=0.15 spin95=8 jitter=.0015
+PASS colliding-low-3 has bounded drift and no sustained contact jitter
+PASS colliding-low-3 conserves total and retired liquid
+PASS colliding-low-3 idle liquid RMS travel stays below one source pixel per fixed tick
+PASS colliding-low-3 launch speed stays within actual ice input motion
+PASS colliding-low-3 low-energy drops retain all liquid below the open rim without a jet
+PASS colliding-low-3 keeps native dynamic bodies
+PASS No Unity application errors

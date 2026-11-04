@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "kind": "CPU mathematical geometry evidence, not Unity physics/render execution",
+  "seed": 20260930,
+  "profiles": 6000,
+  "queries": 144000,
+  "narrow_hits": 68675,
+  "broadphase_rejections": 69601,
+  "false_negatives": 0,
+  "source_sha256": "fc33c7e1d840b4e41e524058416884398faee71668fb51aa71ff5bbc5e880933",
+  "coverage": "Nonuniform and negative scale, positive/negative rotations, translation, concave profiles and finite disk radii",
+  "limitation": "Finite game-scale mathematical inputs; does not measure speed or replace runtime effects regression"
+}

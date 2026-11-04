@@ -1,0 +1,15 @@
+{
+  "started": "2026-09-22T17:32:40.9470834+09:00",
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe",
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/FluidGpuExperimentEvidence/HarnessProject",
+    "-executeMethod",
+    "ExperimentValidation.Begin",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\03-identity-corrected-validation\\Editor.log"
+  ],
+  "workingDirectory": "A:/UnityHub/proj/slainte"
+}

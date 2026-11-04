@@ -1,0 +1,16 @@
+{
+  "started": "2026-09-30T23:04:22.1645375+09:00",
+  "executable": "A:/UnityHub/Unity/6000.3.5f2/Editor/Unity.exe",
+  "timeoutSeconds": 240,
+  "arguments": [
+    "-batchmode",
+    "-force-d3d11",
+    "-projectPath",
+    "A:/UnityHub/proj/slainte/Library/FluidModelDHarness",
+    "-executeMethod",
+    "ExperimentInputShakerValidation.Begin",
+    "-logFile",
+    "A:\\UnityHub\\proj\\slainte\\FluidGpuExperimentEvidence\\55-model-d-input-shaker\\Editor.log"
+  ],
+  "workingDirectory": "A:\\UnityHub\\proj\\slainte"
+}
