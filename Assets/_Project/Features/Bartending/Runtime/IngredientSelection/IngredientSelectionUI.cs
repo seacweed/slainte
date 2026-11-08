@@ -217,17 +217,9 @@ namespace Slainte.Bartending
 
         public bool ContainsReturnPoint(Vector2 screenPosition)
         {
-            if (!IsInteractable || rowViewport == null || !rowViewport.gameObject.activeInHierarchy)
-                return false;
-
-            Canvas canvas = rowViewport.GetComponentInParent<Canvas>();
-            Camera canvasCamera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
-                ? canvas.worldCamera
-                : null;
-            return RectTransformUtility.RectangleContainsScreenPoint(
-                rowViewport,
-                screenPosition,
-                canvasCamera);
+            var runtime = ResolveBartending();
+            return IsInteractable && rowViewport != null && rowViewport.gameObject.activeInHierarchy
+                && runtime != null && runtime.ContainsShelfReturnPoint(screenPosition);
         }
 
         public void OnBottleReturned()
@@ -290,6 +282,13 @@ namespace Slainte.Bartending
                     return false;
             }
             return true;
+        }
+
+        public bool TryGetShelfWorldSize(string id, out Vector2 size, BartendingViewport viewport = null)
+        {
+            size = default;
+            return slotsByInventoryId.TryGetValue(id, out var slots) && slots.Count > 0
+                && slots[0].TryGetShelfWorldSize(out size, viewport);
         }
 
         private void BuildRows()

@@ -1,0 +1,4 @@
+FAIL
+System.InvalidOperationException: GPU emission and total stock differ.
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<RunChecks>d__19.MoveNext () [0x00cb3] in A:\UnityHub\proj\slainte\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:179 
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<Start>d__18.MoveNext () [0x0002b] in A:\UnityHub\proj\slainte\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:42 

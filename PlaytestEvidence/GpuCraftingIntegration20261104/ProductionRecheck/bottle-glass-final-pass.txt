@@ -1,0 +1,11 @@
+PASS
+authored customer arrival/order dialogue enters GPU crafting
+GPU-only runtime in the authored Canvas
+Canvas/world pointer round trip
+bottle supply/emission/return/delivery stock
+physical bottle-to-glass pour without Fill: emitted 22 ml, received 22 ml
+bottle/glass held overlap policy, release contacts, overlapping item swap and filled-glass pickup
+filled glass storage/restoration preserves identity and ml
+GPU surface rendered through the production RenderTexture camera
+serving-area input/evaluation/customer feedback/payment/duplicate guard
+episode request/result mapping and repeated session teardown

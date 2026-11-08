@@ -1,0 +1,28 @@
+{
+  "capture": "Library\\GpuLiquidDiagnostics\\20261108-194832-551",
+  "particles": 126,
+  "ellipses": 126,
+  "lower_free_particles": 124,
+  "lower_surface_visible": 122,
+  "lower_camera_visible": 122,
+  "surface_bounds": [
+    803,
+    741,
+    1796,
+    1072
+  ],
+  "surface_size": [
+    2048,
+    1152
+  ],
+  "camera_bounds": [
+    1003,
+    0,
+    2306,
+    1341
+  ],
+  "camera_size": [
+    2560,
+    1440
+  ]
+}

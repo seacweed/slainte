@@ -39,6 +39,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public Rigidbody2D Body { get; private set; }
         public uint Id { get; internal set; }
         public bool IsHeld { get; private set; }
+        internal float AppliedWorldIceScale = 1;
         internal bool DispenserCollisionSuppressed => kind == LabItemKind.Dispenser && World != null
             && World.Dispenser != null && World.Dispenser.Body == this && World.Dispenser.CollisionSuppressed;
         // Physical contents share containment/contact policy, not ingredient or ice-effect identity.
@@ -83,6 +84,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         private void OnEnable()
         {
+            if (IsStored) return;
             World = GetComponentInParent<FluidExperimentWorld>();
             if (World != null) World.Register(this);
             ResumeShakerParts();
@@ -90,6 +92,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         private void OnDisable()
         {
+            if (IsStored) return;
             RestoreContentsInterpolation();
             SuspendShakerParts();
             EndPourStream();
@@ -259,7 +262,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         internal void MarkPlaced()
         {
-            if (IsLooseSolid) hasBeenPlaced = true;
+            if (IsLooseSolid) { hasBeenPlaced = true; NotifyPlaced(); }
         }
         internal void ResetPickupState() => hasBeenPlaced = false;
 
@@ -367,7 +370,10 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (World == null) return;
             if (kind == LabItemKind.Bottle && World.Liquid != null && World.Liquid.IsOperational)
             {
+                float previousSupply = remainingMl;
                 EmitBottle(dt);
+                // 저장/배송이 같은 프레임에 실행돼도 사용량은 이미 반영되어야 한다.
+                if (remainingMl < previousSupply) NotifySupplyChanged();
             }
             if (kind == LabItemKind.IceBucket && icePrefab != null && iceStock > 0)
             {

@@ -79,7 +79,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (iceClock + .000001f < Mathf.Max(.02f, iceInterval)) return;
             // At most one birth per physics tick. A blocked chute is retried at its regular cadence.
             iceClock = 0;
-            float radius = .27f;
+            float radius = .27f * body.World.SpawnedIceScale;
             Vector2 position = MouthWorld + Vector2.down * (radius + .025f);
             if (SpawnBlocked(position, radius)) { BlockedReason = "Nozzle blocked"; return; }
             if (!body.World.Liquid.CanAdmitDispenserIce(icePrefab))

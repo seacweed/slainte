@@ -1,0 +1,10 @@
+FAIL
+System.InvalidOperationException: Liquid render coverage clipped: 10/18. uv=(0.17,0.22), opaquePixels=352; uv=(0.53,0.22), opaquePixels=345; uv=(0.81,0.22), opaquePixels=350; uv=(0.17,0.57), opaquePixels=353; uv=(0.53,0.57), opaquePixels=349; uv=(0.81,0.57), opaquePixels=354; uv=(0.17,0.84), opaquePixels=354; uv=(0.53,0.84), opaquePixels=351; uv=(0.81,0.84), opaquePixels=354; owned uv=(0.17,0.22), liquidPixels=0; owned uv=(0.53,0.22), liquidPixels=0; owned uv=(0.81,0.22), liquidPixels=0; owned uv=(0.17,0.57), liquidPixels=0; owned uv=(0.53,0.57), liquidPixels=0; owned uv=(0.81,0.57), liquidPixels=660; owned uv=(0.17,0.84), liquidPixels=0; owned uv=(0.53,0.84), liquidPixels=0; owned uv=(0.81,0.84), liquidPixels=0
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<CheckLiquidRenderCoverage>d__30.MoveNext () [0x0099b] in A:\UnityHub\proj\slainte\Library\GpuCraftingIntegrationValidation\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:464 
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<RunChecks>d__28.MoveNext () [0x0076a] in A:\UnityHub\proj\slainte\Library\GpuCraftingIntegrationValidation\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:177 
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<Start>d__27.MoveNext () [0x0002e] in A:\UnityHub\proj\slainte\Library\GpuCraftingIntegrationValidation\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:75 
+Completed checks:
+authored customer arrival/order dialogue enters GPU crafting
+entry frames: max=80.36 ms, p95=0.7 ms; crafting-mode max=16.87 ms
+GPU-only runtime in the authored Canvas
+Canvas/world pointer round trip

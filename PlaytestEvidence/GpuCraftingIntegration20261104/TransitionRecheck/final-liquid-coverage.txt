@@ -1,0 +1,18 @@
+uv=(0.17,0.22), opaquePixels=918
+uv=(0.53,0.22), opaquePixels=925
+uv=(0.81,0.22), opaquePixels=921
+uv=(0.17,0.57), opaquePixels=909
+uv=(0.53,0.57), opaquePixels=918
+uv=(0.81,0.57), opaquePixels=914
+uv=(0.17,0.84), opaquePixels=913
+uv=(0.53,0.84), opaquePixels=919
+uv=(0.81,0.84), opaquePixels=913
+owned uv=(0.17,0.22), liquidPixels=8832
+owned uv=(0.53,0.22), liquidPixels=8820
+owned uv=(0.81,0.22), liquidPixels=8833
+owned uv=(0.17,0.57), liquidPixels=8845
+owned uv=(0.53,0.57), liquidPixels=8828
+owned uv=(0.81,0.57), liquidPixels=9501
+owned uv=(0.17,0.84), liquidPixels=8816
+owned uv=(0.53,0.84), liquidPixels=8810
+owned uv=(0.81,0.84), liquidPixels=8820

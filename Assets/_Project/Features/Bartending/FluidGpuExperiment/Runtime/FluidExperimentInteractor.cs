@@ -35,13 +35,14 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         private void Update()
         {
+            if (InputSuspended) { CancelPointerCapture(); return; }
             if (world == null || inputCamera == null) { Held?.SetSpoonContactEnabled(false); RetractHeldDispenser(); return; }
             if (!Application.isBatchMode && !Application.isFocused) { CancelPointerCapture(); return; }
             Mouse mouse = Mouse.current;
             if (mouse == null) { CancelPointerCapture(); return; }
             bool freshInput = ReadPointerInput(mouse, out Vector2 screen, out Vector2 delta);
             if (freshInput && !mouse.rightButton.isPressed) requirePointerRelease = false;
-            Vector2 pointer = inputCamera.ScreenToWorldPoint(screen);
+            Vector2 pointer = ScreenToWorld(screen);
             lastPointer = pointer;
             bool cancelled = PointerCaptureLost(mouse) || (Held != null && Held.SpoonContactEnabled && mouse != spoonContactMouse)
                 || ((HeldDispenser != null || (Held != null && Held.kind == LabItemKind.Spoon)) && freshInput
@@ -50,7 +51,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             {
                 CancelPointerCapture();
                 screen = LogicalPointerScreen;
-                pointer = inputCamera.ScreenToWorldPoint(screen);
+                pointer = ScreenToWorld(screen);
             }
             if (HeldDispenser != null)
             {
@@ -82,7 +83,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                     if (freshInput && !began && !cancelled && PointerCaptured)
                         RotateBy(delta.y * .1f * rotationSensitivity);
                     pointer = RotationPointerWorld;
-                    screen = inputCamera.WorldToScreenPoint(pointer);
+                    screen = WorldToScreen(pointer);
                     LogicalPointerScreen = screen;
                     if (freshInput && !mouse.rightButton.isPressed)
                         EndRotation(pointer);
@@ -100,9 +101,11 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 Sample(Time.unscaledTime);
             }
             Vector2 clickScreen = PointerCaptured ? DisplayedPointerScreen : screen;
-            if (!cancelled && freshInput && mouse.leftButton.wasPressedThisFrame && !IsPointerBlocked(clickScreen))
+            if (!cancelled && freshInput && mouse.leftButton.wasPressedThisFrame)
             {
-                pointer = inputCamera.ScreenToWorldPoint(clickScreen);
+                if (ConsumePrimaryClick != null && ConsumePrimaryClick(clickScreen)) return;
+                if (IsPointerBlocked(clickScreen)) return;
+                pointer = ScreenToWorld(clickScreen);
                 if (Held == null && HeldPart == null && HeldDispenser == null) PickAt(pointer);
                 else Drop(pointer);
             }

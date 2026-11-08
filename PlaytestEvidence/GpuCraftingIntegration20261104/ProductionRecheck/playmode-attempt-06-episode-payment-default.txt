@@ -1,0 +1,11 @@
+FAIL
+System.InvalidOperationException: An unpaid episode granted business payment.
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<RunChecks>d__19.MoveNext () [0x00ef9] in A:\UnityHub\proj\slainte\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:205 
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<Start>d__18.MoveNext () [0x0002e] in A:\UnityHub\proj\slainte\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:42 
+Completed checks:
+authored customer arrival/order dialogue enters GPU crafting
+GPU-only runtime in the authored Canvas
+Canvas/world pointer round trip
+bottle supply/emission/return/delivery stock
+filled glass storage/restoration preserves identity and ml
+serving-area input/evaluation/customer feedback/payment/duplicate guard

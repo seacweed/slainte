@@ -1,0 +1,12 @@
+FAIL
+System.InvalidOperationException: Volume label fixture did not fit.
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<CheckShelfSizesAndFalls>d__29.MoveNext () [0x0037e] in A:\UnityHub\proj\slainte\Library\GpuCraftingIntegrationValidation\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:355 
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<RunChecks>d__28.MoveNext () [0x00922] in A:\UnityHub\proj\slainte\Library\GpuCraftingIntegrationValidation\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:200 
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<Start>d__27.MoveNext () [0x0002e] in A:\UnityHub\proj\slainte\Library\GpuCraftingIntegrationValidation\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:75 
+Completed checks:
+authored customer arrival/order dialogue enters GPU crafting
+entry frames: max=84.77 ms, p95=0.77 ms; crafting-mode max=18.17 ms
+GPU-only runtime in the authored Canvas
+manufacturing fills the complete game area independently of backdrop zoom/pan
+Canvas/world pointer round trip
+actual free/owned liquid alpha present separately at all 9 QHD viewport positions

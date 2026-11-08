@@ -32,6 +32,13 @@ namespace Slainte.Bartending
             inputSuspended = suspended;
         }
 
+        public void SetInputRegistration(bool enabled)
+        {
+            registerForInput = enabled;
+            if (enabled && isActiveAndEnabled && Application.isPlaying) Active = this;
+            else if (Active == this) Active = null;
+        }
+
         public void Initialize(
             Camera camera,
             Vector2Int size,
@@ -90,8 +97,6 @@ namespace Slainte.Bartending
 
         private void BuildTargetTexture()
         {
-            ReleaseTargetTexture();
-
             int width = renderSize.x;
             int height = renderSize.y;
 
@@ -118,6 +123,10 @@ namespace Slainte.Bartending
 
             width = Mathf.Max(16, width);
             height = Mathf.Max(16, height);
+            // Canvas 재배치 알림은 같은 크기로 여러 번 온다. 같은 타깃을 해제/할당하면 전환 프레임에 GPU가 멈춘다.
+            if (targetTexture != null && targetTexture.IsCreated() && targetTexture.width == width && targetTexture.height == height)
+                return;
+            ReleaseTargetTexture();
             targetTexture = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32)
             {
                 name = "BusinessBartendingView",
@@ -259,6 +268,31 @@ namespace Slainte.Bartending
             return false;
         }
 
+        // Measure the drawn image, including parent scale and preserveAspect letterboxing.
+        // Slot rectangles alone can include empty space around a narrower bottle or tool.
+        public static bool TryGetImageWorldSize(Image image, out Vector2 worldSize, BartendingViewport viewport = null)
+        {
+            worldSize = default;
+            viewport = viewport != null ? viewport : Active;
+            if (viewport == null || image == null || image.sprite == null || image.canvas == null) return false;
+            Rect rect = image.GetPixelAdjustedRect();
+            Vector2 size = rect.size;
+            if (size.x <= 0 || size.y <= 0) return false;
+            if (image.preserveAspect)
+            {
+                Vector2 source = image.sprite.rect.size;
+                size = source * Mathf.Min(size.x / source.x, size.y / source.y);
+            }
+            var canvas = image.canvas.rootCanvas;
+            Camera camera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+            Transform basis = image.rectTransform;
+            Vector2 origin = RectTransformUtility.WorldToScreenPoint(camera, basis.TransformPoint(rect.center));
+            Vector2 right = RectTransformUtility.WorldToScreenPoint(camera, basis.TransformPoint(rect.center + Vector2.right * size.x));
+            Vector2 top = RectTransformUtility.WorldToScreenPoint(camera, basis.TransformPoint(rect.center + Vector2.up * size.y));
+            Vector2 pixels = new Vector2(Vector2.Distance(origin, right), Vector2.Distance(origin, top));
+            return viewport.TryConvertCanvasPixelsToWorld(pixels / Mathf.Max(.0001f, viewport.outputImage.canvas.scaleFactor), out worldSize);
+        }
+
         public bool TryConvertCanvasPixelsToWorld(
             Vector2 canvasPixelSize,
             out Vector2 worldSize)
@@ -361,6 +395,24 @@ namespace Slainte.Bartending
             Vector3 shiftedWorld = fallbackCamera.ScreenToWorldPoint(shiftedScreen);
             worldDeltaX = shiftedWorld.x - centerWorld.x;
             return Mathf.Abs(worldDeltaX) > Mathf.Epsilon;
+        }
+
+        // 환경 생성은 뷰포트의 네 모서리를 포함해야 한다. 포인터의 Rect.Contains는 우측/상단
+        // 경계를 제외하므로 전체 뷰포트 기하를 포인터 판정 경로로 계산하면 항상 실패할 수 있다.
+        public bool TryGetWorldRect(out Rect worldRect)
+        {
+            worldRect = default;
+            if (worldCamera == null) return false;
+            Plane plane = new Plane(Vector3.forward, Vector3.zero);
+            Ray bottomLeftRay = worldCamera.ViewportPointToRay(Vector3.zero);
+            Ray topRightRay = worldCamera.ViewportPointToRay(Vector3.one);
+            if (!plane.Raycast(bottomLeftRay, out float bottomLeftDistance)
+                || !plane.Raycast(topRightRay, out float topRightDistance)) return false;
+            Vector3 bottomLeft = bottomLeftRay.GetPoint(bottomLeftDistance);
+            Vector3 topRight = topRightRay.GetPoint(topRightDistance);
+            worldRect = Rect.MinMaxRect(Mathf.Min(bottomLeft.x, topRight.x), Mathf.Min(bottomLeft.y, topRight.y),
+                Mathf.Max(bottomLeft.x, topRight.x), Mathf.Max(bottomLeft.y, topRight.y));
+            return worldRect.width > Mathf.Epsilon && worldRect.height > Mathf.Epsilon;
         }
 
         public bool TryMapRectToWorld(RectTransform sourceRect, out Vector3 center, out Vector2 size)

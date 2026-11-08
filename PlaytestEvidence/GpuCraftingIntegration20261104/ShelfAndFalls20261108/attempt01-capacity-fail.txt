@@ -1,0 +1,16 @@
+FAIL
+System.InvalidOperationException: Recipe fixture did not fit the glass.
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<RunChecks>d__28.MoveNext () [0x00e10] in A:\UnityHub\proj\slainte\Library\GpuCraftingIntegrationValidation\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:235 
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<Start>d__27.MoveNext () [0x0002e] in A:\UnityHub\proj\slainte\Library\GpuCraftingIntegrationValidation\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:75 
+Completed checks:
+authored customer arrival/order dialogue enters GPU crafting
+entry frames: max=80.82 ms, p95=0.78 ms; crafting-mode max=18.06 ms
+GPU-only runtime in the authored Canvas
+Canvas/world pointer round trip
+actual free/owned liquid alpha present separately at all 9 QHD viewport positions
+shelf-sized 16 bottles and 7 tools/glasses; restore scale stable; liquid/ice cross table and retire below bounds
+bottle supply/emission/return/delivery stock
+physical bottle-to-glass pour without Fill: emitted 20 ml, received 20 ml
+bottle/glass held overlap policy, release contacts, overlapping item swap and filled-glass pickup
+poured glass retains volume and rendering while dragged to the worktop limit and raised
+filled glass storage/restoration preserves identity and ml

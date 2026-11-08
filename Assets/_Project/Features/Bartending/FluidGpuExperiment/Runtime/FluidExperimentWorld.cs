@@ -13,6 +13,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public int itemLayer = 29;
         public bool showControls = true;
         public bool seedLiquids = true;
+        public bool SimulationSuspended;
+        [System.NonSerialized] public float SpawnedIceScale = 1;
         public FluidExperimentGpuLiquid Liquid => liquid;
         public IReadOnlyList<FluidExperimentBody> Items => items;
         private readonly List<FluidExperimentBody> items = new List<FluidExperimentBody>();
@@ -32,6 +34,12 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public void Register(FluidExperimentBody item)
         {
             if (items.Contains(item)) return;
+            if (item.kind == LabItemKind.Ice)
+            {
+                // Re-registering a stored or re-enabled cube must not shrink it again.
+                item.transform.localScale *= SpawnedIceScale / item.AppliedWorldIceScale;
+                item.AppliedWorldIceScale = SpawnedIceScale;
+            }
             item.Id = nextId++;
             items.Add(item);
             RememberVisualItem(item);
@@ -78,6 +86,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         private void FixedUpdate()
         {
+            if (SimulationSuspended) return;
             if (Dispenser != null) Dispenser.StepMotion(Time.fixedDeltaTime);
             RefreshIceContainment();
             UpdateShardContactPairs();
@@ -96,6 +105,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         public void TickLiquid(float dt)
         {
+            if (SimulationSuspended) return;
             foreach (FluidExperimentBody item in items) if (item != null) item.CompleteHeldMotion();
             ProcessGlassBreakage();
             if (Dispenser != null && Dispenser.isActiveAndEnabled) Dispenser.Tick(dt);

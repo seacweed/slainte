@@ -105,7 +105,14 @@ namespace Slainte.Bartending
                     continue;
                 slot.ForceUnhover();
                 slot.BindSlot(null);
+                slot.SetAvailability(null);
             }
+        }
+
+        public bool TryGetShelfWorldSize(string id, out Vector2 size, BartendingViewport viewport = null)
+        {
+            size = default;
+            return slots.TryGetValue(id, out var slot) && slot.TryGetShelfWorldSize(out size, viewport);
         }
 
         public void BindCabinetSlot(string definitionId, SlotController cabinetSlot)
@@ -122,7 +129,7 @@ namespace Slainte.Bartending
             if (!string.IsNullOrWhiteSpace(definitionId)
                 && slots.TryGetValue(definitionId, out ToolSlotUI slot))
             {
-                slot?.RefreshFromSlot();
+                slot?.SetAvailability(available);
             }
         }
 
@@ -163,13 +170,7 @@ namespace Slainte.Bartending
         }
 
         public bool ContainsReturnPoint(Vector2 screenPosition)
-        {
-            if (bootstrap == null || !bootstrap.IsSessionReady)
-                return false;
-
-            return ContainsScreenPoint(glassRow, screenPosition)
-                || ContainsScreenPoint(toolRow, screenPosition);
-        }
+            => bootstrap != null && bootstrap.ContainsShelfReturnPoint(screenPosition);
 
         // 진열대 도구가 아닌 물체(병 등)는 반납 대상이 아니므로 false로 돌려 일반 놓기로 넘긴다.
         public bool TryReturn(IBartendingItem item)
@@ -296,18 +297,6 @@ namespace Slainte.Bartending
             layout.childControlHeight = false;
             layout.childForceExpandWidth = false;
             layout.childForceExpandHeight = false;
-        }
-
-        private static bool ContainsScreenPoint(RectTransform rect, Vector2 screenPosition)
-        {
-            if (rect == null || !rect.gameObject.activeInHierarchy)
-                return false;
-
-            Canvas canvas = rect.GetComponentInParent<Canvas>();
-            Camera canvasCamera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay
-                ? canvas.worldCamera
-                : null;
-            return RectTransformUtility.RectangleContainsScreenPoint(rect, screenPosition, canvasCamera);
         }
 
         private static ToolDef FindTool(ToolDef[] tools, ToolKind kind)

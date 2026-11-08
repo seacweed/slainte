@@ -73,13 +73,13 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (restartLiquid) liquid.Initialize(world);
         }
 
-        public FluidExperimentBody Spawn(FluidExperimentBody prefab, Vector2 position, float angle = 0)
+        public FluidExperimentBody Spawn(FluidExperimentBody prefab, Vector2 position, float angle = 0, float scale = 1)
         {
             if (prefab == null) throw new ArgumentNullException(nameof(prefab));
-            return SpawnObject(prefab.gameObject, position, angle).GetComponent<FluidExperimentBody>();
+            return SpawnObject(prefab.gameObject, position, angle, scale).GetComponent<FluidExperimentBody>();
         }
 
-        public GameObject SpawnObject(GameObject prefab, Vector2 position, float angle = 0)
+        public GameObject SpawnObject(GameObject prefab, Vector2 position, float angle = 0, float scale = 1)
         {
             if (prefab == null) throw new ArgumentNullException(nameof(prefab));
             if (world == null) ApplyConfiguration();
@@ -91,6 +91,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
             // Instantiate below an inactive parent so configuration precedes Awake/OnEnable.
             var instance = Instantiate(prefab, staging, false);
             instance.SetActive(false);
+            // Scale before Awake builds colliders and detached shaker parts.
+            instance.transform.localScale *= scale;
             instance.transform.SetPositionAndRotation(position, Quaternion.Euler(0, 0, angle));
             instance.transform.SetParent(world.transform, true);
             foreach (Transform child in instance.GetComponentsInChildren<Transform>(true)) child.gameObject.layer = world.itemLayer;

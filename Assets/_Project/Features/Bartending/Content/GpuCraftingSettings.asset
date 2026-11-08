@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b27b2dc3b3b47a394986a9dbccef4d7, type: 3}
+  m_Name: GpuCraftingSettings
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.GpuCraftingSettings
+  runtimePrefab: {fileID: 4452693018939984928, guid: 607502d4ebb6c5c44a44cf414eda9b81, type: 3}
+  garnishes:
+  - inventoryId: garni_1001
+    prefab: {fileID: 6744717055380784035, guid: 3504ee367207c674ba2014180fe8a5e8, type: 3}
+  - inventoryId: garni_1002
+    prefab: {fileID: 8182778467711127831, guid: fc26370a925680544a2463220c590028, type: 3}
+  tableThickness: 0.25
+  dispenserViewportPosition: {x: 0.88, y: 0.64}

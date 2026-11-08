@@ -1,0 +1,1 @@
+entry frames: max=399.38 ms, p95=0.71 ms

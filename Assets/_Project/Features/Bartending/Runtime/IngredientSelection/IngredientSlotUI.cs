@@ -37,6 +37,8 @@ namespace Slainte.Bartending
 
         public LiquorBottleDef Definition { get; private set; }
         public bool IsDepleted { get; private set; }
+        public bool TryGetShelfWorldSize(out Vector2 size, BartendingViewport viewport = null)
+            => BartendingViewport.TryGetImageWorldSize(icon, out size, viewport);
 
         protected override void OnInitialize()
         {

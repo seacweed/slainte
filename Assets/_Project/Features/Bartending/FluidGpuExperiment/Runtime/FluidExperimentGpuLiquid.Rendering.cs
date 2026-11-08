@@ -30,6 +30,10 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (!EnsureSurfaceResources(camera)) return false;
             surfaceParticleProperties.SetBuffer("_GpuLiquidColors", particleColorBuffer);
             surfaceParticleProperties.SetFloat("_GpuParticleZ", 0);
+            // Own the offscreen projection. URP's camera constants can belong to the
+            // Editor or another camera when this callback runs before camera setup.
+            surfaceParticleProperties.SetMatrix("_SurfaceWorldToClip",
+                GL.GetGPUProjectionMatrix(camera.projectionMatrix, true) * camera.worldToCameraMatrix);
             if (!PrepareImprovedSurface()) return false;
             surfaceCompositeMaterial.SetTexture("_DensityTex", surfaceDensity);
             surfaceCompositeMaterial.SetTexture("_ColorTex", surfaceColor);
@@ -48,21 +52,21 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 surfaceCommands.BeginSample(sample);
                 ClearSurfaceTarget(surfaceDensity); ClearSurfaceTarget(surfaceColor);
                 // The composite overwrites every pixel, including exact zero in empty space.
-                surfaceCommands.SetViewProjectionMatrices(camera.worldToCameraMatrix, GL.GetGPUProjectionMatrix(camera.projectionMatrix, true));
                 if (SystemInfo.supportedRenderTargetCount >= 2)
                 {
                     surfaceCommands.SetRenderTarget(surfaceMrt, BuiltinRenderTextureType.None);
+                    SetSurfaceRasterArea(surfaceDensity);
                     AccumulateSurface(0);
                 }
                 else
                 {
-                    surfaceCommands.SetRenderTarget(surfaceDensity); AccumulateSurface(1);
-                    surfaceCommands.SetRenderTarget(surfaceColor); AccumulateSurface(2);
+                    surfaceCommands.SetRenderTarget(surfaceDensity); SetSurfaceRasterArea(surfaceDensity); AccumulateSurface(1);
+                    surfaceCommands.SetRenderTarget(surfaceColor); SetSurfaceRasterArea(surfaceColor); AccumulateSurface(2);
                 }
                 surfaceCommands.SetRenderTarget(compositeTarget);
-                surfaceCommands.SetViewProjectionMatrices(Matrix4x4.identity,
-                    GL.GetGPUProjectionMatrix(Matrix4x4.Ortho(-1, 1, -1, 1, -1, 1), true));
+                SetSurfaceRasterArea(compositeTarget);
                 surfaceCommands.DrawMesh(surfaceQuad, Matrix4x4.identity, surfaceCompositeMaterial, 0, 0);
+                surfaceCommands.DisableScissorRect();
                 surfaceCommands.EndSample(sample);
                 context.ExecuteCommandBuffer(surfaceCommands);
 
@@ -87,7 +91,16 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private void ClearSurfaceTarget(RenderTexture target)
         {
             surfaceCommands.SetRenderTarget(target);
+            SetSurfaceRasterArea(target);
             surfaceCommands.ClearRenderTarget(false, true, Color.clear);
+        }
+
+        // Each offscreen target owns its full raster area, including MRT and fallback passes.
+        private void SetSurfaceRasterArea(RenderTexture target)
+        {
+            var area = new Rect(0, 0, target.width, target.height);
+            surfaceCommands.SetViewport(area);
+            surfaceCommands.EnableScissorRect(area);
         }
 
         private bool EnsureSurfaceResources(Camera camera)

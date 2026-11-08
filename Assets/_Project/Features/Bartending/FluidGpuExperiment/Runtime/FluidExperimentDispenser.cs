@@ -187,7 +187,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         private void OnGUI()
         {
-            if (!IsAvailable) return;
+            if (!IsAvailable || !body.World.Cocktails.showControls) return;
             Camera camera = body.World.interactor != null ? body.World.interactor.inputCamera : null;
             if (camera == null) camera = body.World.Liquid.outputCamera;
             if (camera == null) camera = Camera.main;

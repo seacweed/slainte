@@ -1,0 +1,8 @@
+requested=0.30, actual=0.300, volume=20 ml, liquidPixels=108
+requested=0.08, actual=0.080, volume=20 ml, liquidPixels=134
+requested=-0.04, actual=-0.040, volume=20 ml, liquidPixels=149
+requested=-0.10, actual=-0.100, volume=20 ml, liquidPixels=217
+requested=-0.16, actual=-0.160, volume=20 ml, liquidPixels=263
+requested=-0.22, actual=-0.220, volume=20 ml, liquidPixels=367
+requested=-0.32, actual=-0.320, volume=20 ml, liquidPixels=438
+requested=0.30, actual=0.300, volume=20 ml, liquidPixels=97

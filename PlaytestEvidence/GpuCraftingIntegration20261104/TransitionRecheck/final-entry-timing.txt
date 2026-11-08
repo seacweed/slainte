@@ -1,0 +1,1 @@
+entry frames: max=135.8 ms, p95=0.81 ms; crafting-mode max=31.02 ms

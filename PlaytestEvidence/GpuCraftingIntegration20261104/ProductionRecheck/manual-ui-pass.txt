@@ -1,0 +1,3 @@
+PASS
+authored customer arrival/order dialogue enters GPU crafting
+native UI order/selection/serving/customer feedback completed: Bad

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68ad398e47524fd0bac4655185b0834d, type: 3}
   m_Name: BusinessBartendingSettings
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.BusinessBartendingSettings
+  gpuCrafting: {fileID: 11400000, guid: ec3280afa5074269a0a792e87d69ca66, type: 2}
   useToolCabinet: 1
   beakerPrefab: {fileID: 8706099201883949432, guid: ead121c425b1bdf48942d7144b694817, type: 3}
   cobblerShakerPrefab: {fileID: 4054720568392477730, guid: 4fcdbed02cfffa24cbe7caa594c1b2ea, type: 3}
@@ -36,6 +37,7 @@ MonoBehaviour:
   serveTargetPaddingPixels: 0
   serveTargetFadeDuration: 0.2
   serveTargetNormalized: {x: 0.38, y: 0.48, z: 0.2, w: 0.5}
+  shelfReturnAreaNormalized: {x: 0, y: 0.17708333, z: 1, w: 0.13333334}
   contentsLabelBackgroundColor: {r: 0.04, g: 0.05, b: 0.06, a: 0.82}
   contentsLabelFont: {fileID: 11400000, guid: 8be9d5407d167644e9540752364be580, type: 2}
   contentsLabelTextColor: {r: 1, g: 0.82, b: 0.05, a: 1}

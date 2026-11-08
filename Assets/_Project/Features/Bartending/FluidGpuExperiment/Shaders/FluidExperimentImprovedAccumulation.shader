@@ -27,6 +27,7 @@ Shader "Hidden/Slainte/FluidExperiment/ImprovedAccumulation"
         int _ImprovedHullCount, _SurfaceVesselCount;
         int _SurfaceOwnerFilterEnabled, _SurfaceOwnerFilter;
         float _SurfaceInterpolation, _GpuParticleZ;
+        float4x4 _SurfaceWorldToClip;
         struct Attributes { uint vertexId:SV_VertexID; uint instanceId:SV_InstanceID; };
         struct Varyings
         {
@@ -96,7 +97,7 @@ Shader "Hidden/Slainte/FluidExperiment/ImprovedAccumulation"
             output.center = center;
             float2 side = float2(-e.direction.y, e.direction.x);
             output.world = center + e.direction * corner.x * e.radii.x + side * corner.y * e.radii.y;
-            output.positionCS = TransformWorldToHClip(float3(output.world, _GpuParticleZ));
+            output.positionCS = mul(_SurfaceWorldToClip, float4(output.world, _GpuParticleZ, 1));
             output.local = corner; output.color = saturate(_GpuLiquidColors[input.instanceId]);
             output.color.a = saturate(output.color.a * e.opacityScale);
             output.weight = e.coverageWeight;

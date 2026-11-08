@@ -1,0 +1,17 @@
+PASS
+authored customer arrival/order dialogue enters GPU crafting
+entry frames: max=72.49 ms, p95=0.56 ms; crafting-mode max=16.31 ms
+GPU-only runtime in the authored Canvas
+manufacturing fills the complete game area independently of backdrop zoom/pan
+Canvas/world pointer round trip
+actual free/owned liquid alpha present separately at all 9 QHD viewport positions
+shelf-sized 14 bottles and 7 tools/glasses; restore scale stable; liquid/ice cross table and retire below bounds
+bottle supply/emission/return/delivery stock
+physical bottle-to-glass pour without Fill: emitted 20 ml, received 20 ml
+bottle/glass held overlap policy, release contacts, overlapping item swap and filled-glass pickup
+poured glass retains volume and rendering while dragged to the worktop limit and raised
+filled glass storage/restoration preserves identity and ml
+GPU surface rendered through the production RenderTexture camera
+serving-area input/evaluation/customer feedback/payment/duplicate guard
+prepared GPU rig/RenderTexture reused across business and episode sessions
+episode request/result mapping and repeated session teardown

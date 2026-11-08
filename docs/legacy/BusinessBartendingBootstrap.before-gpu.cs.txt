@@ -1,0 +1,1769 @@
+using System.Collections;
+using System.Collections.Generic;
+using System;
+using Slainte.Content;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using Slainte.Shared.Display;
+
+namespace Slainte.Bartending
+{
+    // BusinessScene 진입 시 바텐딩 조리대 전체(술병/도구/글라스/도구장/뷰포트)를 동적으로 조립·해체하는
+    // 최상위 오케스트레이터. GameMode가 CraftingMode로 바뀌면 CreateSession()이 월드를 세우고,
+    // 벗어나면 DestroySession()이 정리한다. FrontCameraRig 이동 애니메이션 중에는 물리·포인터 매핑을
+    // 일시 정지시켜(SuspendSessionForViewTransition) 카메라가 흔들리는 동안 오브젝트가 튀지 않게 한다.
+    public sealed class BusinessBartendingBootstrap : MonoBehaviour
+    {
+        private struct SuspendedBodyState
+        {
+            public Rigidbody2D body;
+            public bool simulated;
+            public Vector2 linearVelocity;
+            public float angularVelocity;
+        }
+
+        private const string SceneName = "BusinessScene";
+        private const string SettingsResourcePath = ProjectResourcePaths.BartendingSettings;
+
+        private const string CraftingSpaceName = "CraftingSpace";
+        private const string CraftingSlotRowName = "CraftingSlotRow";
+
+        private readonly List<GameObject> hiddenCanvasItems = new List<GameObject>();
+        private readonly BartendingBottleStock bottleStock = new BartendingBottleStock();
+        private readonly List<SlotController> sessionSlots = new List<SlotController>();
+        private readonly List<Collider2D> pointerOverlapBuffer = new List<Collider2D>();
+        private readonly Dictionary<string, GameObject> cabinetInstances =
+            new Dictionary<string, GameObject>(StringComparer.OrdinalIgnoreCase);
+        private readonly HashSet<GlassController> deployedServingGlasses =
+            new HashSet<GlassController>();
+        private readonly ToolCabinetShiftState cabinetShiftState = new ToolCabinetShiftState();
+        private Scene targetScene;
+        private BusinessBartendingSettings settings;
+        private ItemDefCatalog itemCatalog;
+        private GameModeManager modeManager;
+        private GameObject sessionRoot;
+        private Transform sessionWorld;
+        private BartendingSelectionCoordinator selectionCoordinator;
+        private BartendingViewport sessionViewport;
+        private RectTransform slotLayoutTemplate;
+        private RectTransform sessionSlotLayout;
+        private LiquidPool sessionLiquidPool;
+        private BartendingSessionInstance builtSession;
+        private int sessionRenderLayer;
+        private float sessionItemScale = 1f;
+        private Coroutine snapRoutine;
+        private Coroutine readyRoutine;
+        private Camera sourceCamera;
+        private int sourceCameraMask;
+        private bool slotLayoutTemplateWasActive;
+        private ToolSelectionUI toolSelection;
+        private IceBinController cabinetIceBucket;
+        private Transform cabinetSlotRoot;
+        private Transform cabinetPickupAnchor;
+        private FrontCameraRig frontCameraRig;
+        private Coroutine resumeViewTransitionRoutine;
+        private bool viewTransitionSuspended;
+        private readonly List<SuspendedBodyState> suspendedBodyStates =
+            new List<SuspendedBodyState>();
+        private readonly List<IBartendingViewTransitionParticipant> viewTransitionParticipants =
+            new List<IBartendingViewTransitionParticipant>();
+
+        public bool IsSessionReady => sessionRoot != null && builtSession != null;
+        public int SessionBottleCount => bottleStock.DeployedCount;
+        public event Action<string> StockChanged
+        {
+            add => bottleStock.StockChanged += value;
+            remove => bottleStock.StockChanged -= value;
+        }
+        public event Action SessionReady;
+        public event Action SessionDestroyed;
+        public event Action<VesselLiquidTracker> ServeRequested;
+
+        // BusinessScene이 로드될 때마다 이 컴포넌트를 자동 설치하는 진입점 그룹(씬에 수동 배치 불필요).
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void RegisterSceneHook()
+        {
+            SceneManager.sceneLoaded -= HandleSceneLoaded;
+            SceneManager.sceneLoaded += HandleSceneLoaded;
+        }
+
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void InstallInInitialScene()
+        {
+            InstallIfNeeded(SceneManager.GetActiveScene());
+        }
+
+        private static void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            InstallIfNeeded(scene);
+        }
+
+        private static void InstallIfNeeded(Scene scene)
+        {
+            if (!scene.IsValid() || scene.name != SceneName)
+                return;
+
+            EnsureInstalledForScene(scene);
+        }
+
+        public static BusinessBartendingBootstrap EnsureInstalledForScene(Scene scene)
+        {
+            if (!scene.IsValid())
+                return null;
+
+            BusinessBartendingBootstrap existing =
+                FindInScene<BusinessBartendingBootstrap>(scene);
+            if (existing != null)
+                return existing;
+
+            BusinessBartendingSettings settings =
+                Resources.Load<BusinessBartendingSettings>(SettingsResourcePath);
+            if (settings == null)
+            {
+                Debug.LogError("Resources에서 영업 제조 설정을 불러올 수 없습니다.");
+                return null;
+            }
+
+            GameObject host = new GameObject("BusinessBartendingRuntime");
+            SceneManager.MoveGameObjectToScene(host, scene);
+            BusinessBartendingBootstrap bootstrap = host.AddComponent<BusinessBartendingBootstrap>();
+            bootstrap.Initialize(scene, settings);
+            return bootstrap;
+        }
+
+        private void Initialize(Scene scene, BusinessBartendingSettings sessionSettings)
+        {
+            targetScene = scene;
+            settings = sessionSettings;
+            itemCatalog = ItemDefCatalog.LoadFromResources(
+                ProjectResourcePaths.BartendingItems,
+                null);
+            modeManager = FindInScene<GameModeManager>(scene);
+            if (modeManager == null)
+            {
+                Debug.LogError("영업 제조 화면에서 제조 모드를 관리할 GameModeManager가 필요합니다.");
+                enabled = false;
+                return;
+            }
+
+            frontCameraRig = FindInScene<FrontCameraRig>(scene);
+            if (frontCameraRig != null)
+            {
+                frontCameraRig.MoveStarted += HandleFrontWorldMoveStarted;
+                frontCameraRig.MoveUpdated += HandleFrontWorldMoveUpdated;
+                frontCameraRig.MoveCompleted += HandleFrontWorldMoveCompleted;
+            }
+
+            CaptureSlotLayoutTemplate(scene);
+            HideCanvasBartendingItems(scene);
+            // 도구 공간은 씬에 배치된 UI다. 없으면 기존처럼 고정 도구를 테이블에 바로 놓는 방식으로 폴백한다.
+            toolSelection = FindInScene<ToolSelectionUI>(scene);
+            toolSelection?.Initialize(this);
+            modeManager.OnModeChanged += HandleModeChanged;
+            StartCoroutine(SyncInitialMode());
+        }
+
+        private IEnumerator SyncInitialMode()
+        {
+            yield return null;
+            if (modeManager != null && modeManager.CurrentMode == GameMode.CraftingMode)
+            {
+                CreateSession();
+            }
+        }
+
+        private void HandleModeChanged(GameMode oldMode, GameMode newMode)
+        {
+            if (newMode == GameMode.CraftingMode)
+            {
+                CreateSession();
+            }
+            else if (oldMode == GameMode.CraftingMode || sessionRoot != null)
+            {
+                // oldMode 조건 외에 sessionRoot != null도 함께 검사 — 다른 모드로 바뀌었는데
+                // 세션이 아직 정리되지 않은 예외 상황까지 방어적으로 정리한다.
+                DestroySession();
+            }
+        }
+
+        private void CreateSession()
+        {
+            if (sessionRoot != null || settings == null)
+            {
+                return;
+            }
+
+            RectTransform counter = FindNamedRectTransform(targetScene, "BarCounter");
+            if (counter == null)
+            {
+                Debug.LogError("영업 제조 화면에 BarCounter RectTransform이 필요합니다.");
+                return;
+            }
+
+            // 제작 공간 레이어(CraftingSpace)와 슬롯 줄 기준(CraftingSlotRow)이 씬에 있으면 그쪽을 쓰고,
+            // 없으면 기존처럼 BarCounter 기준으로 조립한다.
+            BartendingSessionLayoutAnchors anchors = new BartendingSessionLayoutAnchors
+            {
+                ViewportParent = FindNamedRectTransform(targetScene, CraftingSpaceName),
+                SlotAlignmentTarget = FindNamedRectTransform(targetScene, CraftingSlotRowName)
+            };
+            builtSession = BartendingSessionBuilder.Build(
+                transform,
+                counter,
+                slotLayoutTemplate,
+                settings,
+                BartendingSessionBuildMode.Runtime,
+                settings.useToolCabinet && toolSelection != null && toolSelection.IsConfigured,
+                null,
+                anchors);
+            if (builtSession == null)
+            {
+                Debug.LogError("영업 제조 세션을 생성하지 못했습니다.");
+                return;
+            }
+
+            sessionRenderLayer = builtSession.RenderLayer;
+            sessionRoot = builtSession.Root;
+            sessionWorld = builtSession.World;
+            selectionCoordinator = sessionWorld != null
+                ? sessionWorld.GetComponent<BartendingSelectionCoordinator>()
+                    ?? sessionWorld.gameObject.AddComponent<BartendingSelectionCoordinator>()
+                : null;
+            sessionViewport = builtSession.Viewport;
+            sessionViewport?.SetOutputVisible(false);
+            sessionSlotLayout = builtSession.SlotLayout;
+            sessionLiquidPool = builtSession.LiquidPool;
+            sessionItemScale = builtSession.ItemScale;
+            sessionSlots.Clear();
+            sessionSlots.AddRange(builtSession.Slots);
+            CharacterStage characterStage = FindInScene<CharacterStage>(targetScene);
+            builtSession.InteractionOverlay?.ConfigureServingTarget(
+                characterStage,
+                counter,
+                allowFallbackTarget: false);
+            snapRoutine = StartCoroutine(SnapStartingItems(builtSession.StartingTools));
+
+            readyRoutine = StartCoroutine(CaptureTargetTracker(builtSession.ServingGlass));
+            toolSelection?.NotifySessionReady();
+
+            // 메인 카메라가 바텐딩 전용 월드 카메라와 별개라면, 바텐딩 렌더 레이어를 메인 카메라의
+            // 컬링에서 빼 같은 오브젝트가 두 카메라에 겹쳐 그려지지 않게 한다.
+            sourceCamera = Camera.main;
+            if (sourceCamera != null && sourceCamera != builtSession.WorldCamera)
+            {
+                sourceCameraMask = sourceCamera.cullingMask;
+                sourceCamera.cullingMask &= ~(1 << sessionRenderLayer);
+            }
+
+            // 카메라 리그가 이동 애니메이션 도중이면 물리가 그 사이 먼저 굴러가 버릴 수 있으므로
+            // 세션을 만들자마자 바로 일시정지 상태로 시작한다.
+            if (frontCameraRig != null && frontCameraRig.IsAnimating)
+                SuspendSessionForViewTransition();
+        }
+
+        private void DestroySession()
+        {
+            ClearViewTransitionState();
+            UnregisterAllServingGlasses();
+            if (snapRoutine != null)
+            {
+                StopCoroutine(snapRoutine);
+                snapRoutine = null;
+            }
+
+            // 슬롯에 남은 병은 오브젝트만 사라지고 잔량은 총량에 그대로 남아 있으므로,
+            // 등록만 해제하면 자동으로 술장에 반환된 것과 같다.
+            bottleStock.ReleaseAll();
+
+            if (readyRoutine != null)
+            {
+                StopCoroutine(readyRoutine);
+                readyRoutine = null;
+            }
+            cabinetInstances.Clear();
+            deployedServingGlasses.Clear();
+            cabinetIceBucket = null;
+            cabinetSlotRoot = null;
+            cabinetPickupAnchor = null;
+            sessionSlots.Clear();
+
+            if (builtSession != null)
+            {
+                builtSession.Destroy();
+                builtSession = null;
+            }
+            else if (sessionRoot != null)
+            {
+                sessionRoot.SetActive(false);
+                Destroy(sessionRoot);
+            }
+            sessionRoot = null;
+            sessionWorld = null;
+            selectionCoordinator = null;
+            sessionViewport = null;
+            sessionSlotLayout = null;
+            sessionLiquidPool = null;
+
+            RestoreSessionOverrides();
+            toolSelection?.NotifySessionDestroyed();
+            SessionDestroyed?.Invoke();
+        }
+
+        private void HandleFrontWorldMoveStarted()
+        {
+            SuspendSessionForViewTransition();
+        }
+
+        private void HandleFrontWorldMoveCompleted()
+        {
+            if (!viewTransitionSuspended)
+                return;
+
+            if (resumeViewTransitionRoutine != null)
+                StopCoroutine(resumeViewTransitionRoutine);
+            resumeViewTransitionRoutine = StartCoroutine(ResumeSessionAfterViewTransition());
+        }
+
+        private void HandleFrontWorldMoveUpdated()
+        {
+            if (!viewTransitionSuspended
+                || sessionViewport == null
+                || !sessionViewport.TryMapPointerToWorldWhileSuspended(
+                    Input.mousePosition,
+                    out Vector3 pointerWorld))
+            {
+                return;
+            }
+
+            for (int i = 0; i < viewTransitionParticipants.Count; i++)
+            {
+                IBartendingViewTransitionParticipant participant =
+                    viewTransitionParticipants[i];
+                if (participant is MonoBehaviour behaviour
+                    && behaviour != null
+                    && behaviour.isActiveAndEnabled)
+                {
+                    participant.UpdateForViewTransition(pointerWorld);
+                }
+            }
+        }
+
+        // 카메라 리그 이동 중에는 물리 시뮬레이션과 스크린→월드 포인터 매핑이 부정확해지므로,
+        // 이동이 시작되면 Rigidbody2D를 모두 일시 정지시키고 IBartendingViewTransitionParticipant들에게
+        // 알려 좌표 갱신을 HandleFrontWorldMoveUpdated 콜백으로 대체한다. 이동이 끝나면 원 상태로 복원한다.
+        private void SuspendSessionForViewTransition()
+        {
+            if (resumeViewTransitionRoutine != null)
+            {
+                StopCoroutine(resumeViewTransitionRoutine);
+                resumeViewTransitionRoutine = null;
+            }
+
+            if (viewTransitionSuspended || sessionWorld == null)
+                return;
+
+            viewTransitionSuspended = true;
+            sessionViewport?.SetInputSuspended(true);
+
+            viewTransitionParticipants.Clear();
+            MonoBehaviour[] behaviours =
+                sessionWorld.GetComponentsInChildren<MonoBehaviour>(true);
+            for (int i = 0; i < behaviours.Length; i++)
+            {
+                if (behaviours[i] == null || !behaviours[i].isActiveAndEnabled)
+                    continue;
+                if (behaviours[i] is not IBartendingViewTransitionParticipant participant)
+                    continue;
+
+                viewTransitionParticipants.Add(participant);
+                participant.SuspendForViewTransition();
+            }
+
+            suspendedBodyStates.Clear();
+            Rigidbody2D[] bodies = sessionWorld.GetComponentsInChildren<Rigidbody2D>(true);
+            for (int i = 0; i < bodies.Length; i++)
+            {
+                Rigidbody2D body = bodies[i];
+                if (body == null || !body.gameObject.activeInHierarchy)
+                    continue;
+
+                suspendedBodyStates.Add(new SuspendedBodyState
+                {
+                    body = body,
+                    simulated = body.simulated,
+                    linearVelocity = body.linearVelocity,
+                    angularVelocity = body.angularVelocity
+                });
+                if (body.simulated)
+                    body.simulated = false;
+            }
+        }
+
+        private IEnumerator ResumeSessionAfterViewTransition()
+        {
+            yield return null;
+
+            Canvas.ForceUpdateCanvases();
+            sessionViewport?.SetInputSuspended(false);
+
+            for (int i = 0; i < suspendedBodyStates.Count; i++)
+            {
+                SuspendedBodyState state = suspendedBodyStates[i];
+                if (state.body == null)
+                    continue;
+
+                state.body.simulated = state.simulated;
+                if (state.simulated)
+                {
+                    state.body.linearVelocity = state.linearVelocity;
+                    state.body.angularVelocity = state.angularVelocity;
+                }
+            }
+
+            Physics2D.SyncTransforms();
+            viewTransitionSuspended = false;
+            for (int i = 0; i < viewTransitionParticipants.Count; i++)
+            {
+                IBartendingViewTransitionParticipant participant =
+                    viewTransitionParticipants[i];
+                if (participant is MonoBehaviour behaviour && behaviour != null)
+                    participant.ResumeAfterViewTransition();
+            }
+
+            suspendedBodyStates.Clear();
+            viewTransitionParticipants.Clear();
+            resumeViewTransitionRoutine = null;
+        }
+
+        private void ClearViewTransitionState()
+        {
+            if (resumeViewTransitionRoutine != null)
+            {
+                StopCoroutine(resumeViewTransitionRoutine);
+                resumeViewTransitionRoutine = null;
+            }
+
+            sessionViewport?.SetInputSuspended(false);
+            suspendedBodyStates.Clear();
+            viewTransitionParticipants.Clear();
+            viewTransitionSuspended = false;
+        }
+
+        private IEnumerator CaptureTargetTracker(GlassController glass)
+        {
+            yield return null;
+            if (glass != null)
+                RegisterServingGlass(glass);
+            readyRoutine = null;
+            SessionReady?.Invoke();
+        }
+
+        private void HandleGlassServeRequested(GlassController glass)
+        {
+            VesselLiquidTracker tracker = glass != null ? glass.LiquidTracker : null;
+            if (tracker == null || !deployedServingGlasses.Contains(glass))
+                return;
+
+            ServeRequested?.Invoke(tracker);
+        }
+
+        private void HandleServingGlassHeldStateChanged(GlassController glass, bool isHeld)
+        {
+            if (!isHeld || glass == null || !deployedServingGlasses.Contains(glass))
+                return;
+
+            // This reference only controls the serving-area overlay while a glass
+            // is held. Evaluation always uses the glass that raises ServeRequested.
+            builtSession?.InteractionOverlay?.SetServingGlass(glass);
+        }
+
+        // 도구장 카탈로그에 정의된 도구/글라스를 세션 월드에 미리 생성해 캐비닛 슬롯에 대기시킨다
+        // (정의 하나당 인스턴스 1개, 이미 있으면 건너뜀).
+        public void PrepareCabinetInventory(ToolCabinetCatalog catalog)
+        {
+            if (catalog == null || sessionWorld == null || settings == null)
+                return;
+
+            if (cabinetSlotRoot == null)
+            {
+                GameObject slots = new GameObject("__ToolCabinetSlots");
+                slots.transform.SetParent(sessionWorld, false);
+                // LiquidPool recycles particles outside x +/-14, y -10..12.
+                // Keep cabinet contents inside that contract while presentation is hidden.
+                slots.transform.localPosition = new Vector3(0f, 7f, 0f);
+                cabinetSlotRoot = slots.transform;
+
+                GameObject pickup = new GameObject("__ToolCabinetPickupAnchor");
+                pickup.transform.SetParent(sessionWorld, false);
+                cabinetPickupAnchor = pickup.transform;
+            }
+
+            int slotIndex = 0;
+            ToolDef[] tools = catalog.tools ?? Array.Empty<ToolDef>();
+            for (int i = 0; i < tools.Length; i++)
+            {
+                ToolDef definition = tools[i];
+                if (definition == null
+                    || string.IsNullOrWhiteSpace(definition.StableId)
+                    || cabinetInstances.ContainsKey(definition.StableId))
+                {
+                    continue;
+                }
+
+                IBartendingItem item = ToolCabinetWorldFactory.CreateTool(
+                    definition,
+                    sessionWorld,
+                    settings,
+                    sessionRenderLayer,
+                    sessionItemScale,
+                    cabinetShiftState,
+                    out GameObject instance);
+                if (instance == null)
+                {
+                    Debug.LogWarning("The cabinet tool could not be prepared: "
+                        + definition.StableId);
+                    continue;
+                }
+
+                cabinetInstances[definition.StableId] = instance;
+                BartendingSessionBuilder.ConfigureRotatingMovement(item, settings);
+                if (definition.kind == ToolKind.IceBucket)
+                    cabinetIceBucket = instance.GetComponent<IceBinController>();
+
+                SlotController cabinetSlot = CreateCabinetSlot(
+                    definition.StableId,
+                    slotIndex++);
+                ToolCabinetRuntimeTag tag = ConfigureCabinetTag(
+                    instance,
+                    definition,
+                    cabinetSlot);
+                // Bind before Store: Occupy is raised while the real world renderers
+                // are still enabled, allowing the cabinet view to cache their exact
+                // projected size instead of inventing a separate icon scale.
+                toolSelection?.BindCabinetSlot(definition.StableId, cabinetSlot);
+                if (!tag.Store(item))
+                    Debug.LogWarning("The cabinet tool slot could not store " + definition.StableId);
+            }
+
+            GlassDef[] glasses = catalog.glasses ?? Array.Empty<GlassDef>();
+            for (int i = 0; i < glasses.Length; i++)
+            {
+                GlassDef definition = glasses[i];
+                if (definition == null
+                    || string.IsNullOrWhiteSpace(definition.StableId)
+                    || cabinetInstances.ContainsKey(definition.StableId))
+                {
+                    continue;
+                }
+
+                GlassController glass = ToolCabinetWorldFactory.CreateGlass(
+                    definition,
+                    sessionWorld,
+                    settings,
+                    sessionRenderLayer,
+                    sessionItemScale,
+                    out GameObject instance);
+                if (glass == null || instance == null)
+                {
+                    if (instance != null)
+                        Destroy(instance);
+                    Debug.LogWarning("The cabinet glass could not be prepared: "
+                        + definition.StableId);
+                    continue;
+                }
+
+                SlotController cabinetSlot = CreateCabinetSlot(
+                    definition.StableId,
+                    slotIndex++);
+                ToolCabinetRuntimeTag tag = ConfigureCabinetTag(
+                    instance,
+                    definition,
+                    cabinetSlot);
+                cabinetInstances[definition.StableId] = instance;
+                BartendingSessionBuilder.ConfigureRotatingMovement(glass, settings);
+                toolSelection?.BindCabinetSlot(definition.StableId, cabinetSlot);
+                if (!tag.Store(glass))
+                    Debug.LogWarning("The cabinet glass slot could not store " + definition.StableId);
+            }
+        }
+
+        private ToolCabinetRuntimeTag ConfigureCabinetTag(
+            GameObject instance,
+            ToolDef definition,
+            SlotController cabinetSlot)
+        {
+            ToolCabinetRuntimeTag tag = instance.GetComponent<ToolCabinetRuntimeTag>();
+            if (tag == null)
+                tag = instance.AddComponent<ToolCabinetRuntimeTag>();
+            tag.Configure(definition);
+            tag.BindCabinetSlot(cabinetSlot);
+            return tag;
+        }
+
+        private ToolCabinetRuntimeTag ConfigureCabinetTag(
+            GameObject instance,
+            GlassDef definition,
+            SlotController cabinetSlot)
+        {
+            ToolCabinetRuntimeTag tag = instance.GetComponent<ToolCabinetRuntimeTag>();
+            if (tag == null)
+                tag = instance.AddComponent<ToolCabinetRuntimeTag>();
+            tag.Configure(definition);
+            tag.BindCabinetSlot(cabinetSlot);
+            return tag;
+        }
+
+        private SlotController CreateCabinetSlot(string id, int index)
+        {
+            GameObject slotObject = new GameObject("CabinetSlot_" + id);
+            slotObject.transform.SetParent(cabinetSlotRoot, false);
+            slotObject.transform.localPosition = new Vector3(-9f + index * 3f, 0f, 0f);
+            int slotLayer = LayerMask.NameToLayer("Slot");
+            slotObject.layer = slotLayer >= 0 ? slotLayer : sessionRenderLayer;
+
+            BoxCollider2D collider = slotObject.AddComponent<BoxCollider2D>();
+            collider.size = new Vector2(2f, 2f);
+            collider.isTrigger = true;
+            SpriteRenderer renderer = slotObject.AddComponent<SpriteRenderer>();
+            renderer.enabled = false;
+            return slotObject.AddComponent<SlotController>();
+        }
+
+        // 캐비닛 슬롯에 대기 중인 도구/글라스를 꺼내 지정한 화면 좌표로 스냅한다.
+        // 실패 사유는 out failure로 반환하고(예외 없이) false를 돌려준다.
+        public bool TryPickUpCabinetItem(
+            string definitionId,
+            Vector2 screenPosition,
+            out string failure)
+        {
+            failure = string.Empty;
+            if (!CanUseToolCabinet(out failure))
+                return false;
+
+            if (HasHeldBartendingItem())
+            {
+                failure = "Put down the item already being held before taking another one.";
+                return false;
+            }
+
+            string id = definitionId?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(id)
+                || !cabinetInstances.TryGetValue(id, out GameObject instance)
+                || instance == null)
+            {
+                failure = "The cabinet slot has no prepared item.";
+                return false;
+            }
+
+            ToolCabinetRuntimeTag tag = instance.GetComponent<ToolCabinetRuntimeTag>();
+            IBartendingItem item = instance.GetComponent<IBartendingItem>();
+            if (tag == null
+                || item == null
+                || !tag.IsInCabinet
+                || tag.CabinetSlot == null
+                || !ReferenceEquals(tag.CabinetSlot.OccupiedItem, item))
+            {
+                failure = "The cabinet slot is empty.";
+                return false;
+            }
+
+            if (item is not Component itemComponent
+                || !BartendingSelection.CanAcquire(itemComponent))
+            {
+                failure = "Put down the item already being held before taking another one.";
+                return false;
+            }
+
+            if (!TryGetCabinetPickupWorldPosition(screenPosition, out Vector3 pickupWorld))
+            {
+                failure = "The bartending counter is not ready to receive this item.";
+                return false;
+            }
+
+            // Cabinet slots store each item by its visible bottom, while a cabinet
+            // click is a grab point. Preserve the exact per-item slot offset so the
+            // existing SnapToSlot contract places the item's root on the pointer
+            // instead of one vessel height above it.
+            Vector3 storedSlotOffset =
+                item.GameObject.transform.position - tag.CabinetSlot.transform.position;
+            storedSlotOffset.z = 0f;
+
+            if (!tag.TakeFromCabinet(item))
+            {
+                failure = "The cabinet slot could not release its item.";
+                return false;
+            }
+
+            Vector3 visualCenterOffset = GetVisualCenterOffset(item.GameObject);
+            Vector3 targetRootPosition = pickupWorld - visualCenterOffset;
+            cabinetPickupAnchor.position = targetRootPosition - storedSlotOffset;
+            item.SnapToSlot(cabinetPickupAnchor, null);
+            if (item is IPointerAnchoredPickup pointerAnchored)
+                pointerAnchored.OnPickedUpAt(pickupWorld);
+            else
+                item.OnPickedUp();
+
+            if (item is GlassController glass)
+                RegisterServingGlass(glass);
+            toolSelection?.NotifyAvailability(id, false);
+            return true;
+        }
+
+        // 스프라이트 바운즈를 합산해 시각적 중심을 구하되, 액체 파티클/얼음 조각 렌더러는
+        // 도구 자체의 외형이 아니므로 계산에서 제외한다(포함하면 담긴 내용물에 따라 중심이 흔들림).
+        private static Vector3 GetVisualCenterOffset(GameObject itemObject)
+        {
+            if (itemObject == null)
+                return Vector3.zero;
+
+            SpriteRenderer[] renderers =
+                itemObject.GetComponentsInChildren<SpriteRenderer>(true);
+            Bounds combined = default;
+            bool found = false;
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                SpriteRenderer renderer = renderers[i];
+                if (renderer == null
+                    || !renderer.enabled
+                    || renderer.sprite == null
+                    || !renderer.gameObject.activeInHierarchy
+                    || renderer.GetComponentInParent<LiquidParticleData>() != null
+                    || renderer.GetComponentInParent<IceCubeController>() != null)
+                {
+                    continue;
+                }
+
+                if (!found)
+                {
+                    combined = renderer.bounds;
+                    found = true;
+                }
+                else
+                    combined.Encapsulate(renderer.bounds);
+            }
+
+            if (!found)
+                return Vector3.zero;
+
+            Vector3 offset = combined.center - itemObject.transform.position;
+            offset.z = 0f;
+            return offset;
+        }
+
+        // 선택 코디네이터에 아직 반영되지 않은 도구까지 포함해, 현재 손에 든 아이템이 있는지 전수 조사한다.
+        public bool HasHeldBartendingItem()
+        {
+            if (sessionWorld == null)
+                return false;
+
+            if (selectionCoordinator != null && selectionCoordinator.HasSelection)
+                return true;
+
+            MonoBehaviour[] behaviours =
+                sessionWorld.GetComponentsInChildren<MonoBehaviour>(true);
+            for (int i = 0; i < behaviours.Length; i++)
+            {
+                if (behaviours[i] is IBartendingItem item && item.IsPickedUp)
+                    return true;
+            }
+            return false;
+        }
+
+        // 들고 있는 도구를 원래 캐비닛 슬롯으로 반환한다. 대상 슬롯 id가 다르거나(잘못된 슬롯에 반환
+        // 시도) 셰이커가 분해된 상태면 거부한다.
+        public bool TryReturnCabinetItem(
+            IBartendingItem item,
+            string targetDefinitionId,
+            out string failure)
+        {
+            failure = string.Empty;
+            if (item?.GameObject == null)
+                return false;
+
+            ToolCabinetRuntimeTag tag = item.GameObject.GetComponent<ToolCabinetRuntimeTag>();
+            if (tag == null || string.IsNullOrWhiteSpace(tag.DefinitionId))
+            {
+                failure = "Only cabinet items can be placed in cabinet slots.";
+                return false;
+            }
+
+            if (!string.Equals(
+                    tag.DefinitionId,
+                    targetDefinitionId,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                failure = "Return the item to its own cabinet slot.";
+                return false;
+            }
+
+            CobblerShakerPresentation shakerPresentation =
+                item.GameObject.GetComponent<CobblerShakerPresentation>();
+            if (shakerPresentation != null && !shakerPresentation.IsFullyAssembled)
+            {
+                failure = "Reassemble the shaker before returning it to the cabinet.";
+                return false;
+            }
+
+            if (!tag.Store(item))
+            {
+                failure = "That cabinet slot is already occupied.";
+                return false;
+            }
+
+            if (item is GlassController glass)
+                UnregisterServingGlass(glass);
+            // 제빙기가 없어졌으므로 버킷은 도구 공간에 반납하는 순간 가득 채운다(이미 가득이면 그대로).
+            if (item is IceBinController bucket)
+                bucket.Refill();
+            toolSelection?.NotifyAvailability(tag.DefinitionId, true);
+            return true;
+        }
+
+        private bool TryGetCabinetPickupWorldPosition(
+            Vector2 cabinetScreenPosition,
+            out Vector3 worldPosition)
+        {
+            return BartendingViewport.TryGetPointerWorldPosition(
+                Camera.main,
+                cabinetScreenPosition,
+                out worldPosition);
+        }
+
+        public bool TryRefillIceBucket(out string failure)
+        {
+            failure = string.Empty;
+            if (!CanUseToolCabinet(out failure))
+                return false;
+            if (cabinetIceBucket == null)
+            {
+                failure = "The cabinet ice bucket is unavailable.";
+                return false;
+            }
+            if (!cabinetIceBucket.Refill())
+            {
+                failure = "The ice bucket cannot be refilled.";
+                return false;
+            }
+            ToolCabinetRuntimeTag bucketTag =
+                cabinetIceBucket.GetComponent<ToolCabinetRuntimeTag>();
+            if (bucketTag != null)
+                toolSelection?.NotifyAvailability(bucketTag.DefinitionId, true);
+            return true;
+        }
+
+        private bool CanUseToolCabinet(out string failure)
+        {
+            failure = string.Empty;
+            if (modeManager == null
+                || modeManager.CurrentMode != GameMode.CraftingMode
+                || !IsSessionReady
+                || sessionWorld == null)
+            {
+                failure = "Cabinet items are available only during bartending.";
+                return false;
+            }
+            return true;
+        }
+
+        private void RegisterServingGlass(GlassController glass)
+        {
+            if (glass == null || !deployedServingGlasses.Add(glass))
+                return;
+
+            glass.ConfigureServeGesture(builtSession.InteractionOverlay);
+            glass.ServeRequested -= HandleGlassServeRequested;
+            glass.ServeRequested += HandleGlassServeRequested;
+            glass.HeldStateChanged -= HandleServingGlassHeldStateChanged;
+            glass.HeldStateChanged += HandleServingGlassHeldStateChanged;
+            if (glass.IsPickedUp)
+                builtSession.InteractionOverlay?.SetServingGlass(glass);
+        }
+
+        private void UnregisterServingGlass(GlassController glass)
+        {
+            if (glass == null || !deployedServingGlasses.Remove(glass))
+                return;
+            glass.ServeRequested -= HandleGlassServeRequested;
+            glass.HeldStateChanged -= HandleServingGlassHeldStateChanged;
+            glass.ConfigureServeGesture(null);
+            builtSession?.InteractionOverlay?.SetServingGlass(null);
+        }
+
+        private void UnregisterAllServingGlasses()
+        {
+            if (deployedServingGlasses.Count == 0)
+                return;
+
+            List<GlassController> glasses =
+                new List<GlassController>(deployedServingGlasses);
+            for (int i = 0; i < glasses.Count; i++)
+                UnregisterServingGlass(glasses[i]);
+        }
+
+        // 술 선택 공간에서 재료를 클릭했을 때 병 하나를 꺼내 가장 오른쪽 빈 슬롯에 놓는다.
+        // 같은 재료도 여러 병 꺼낼 수 있고, 꺼낼 양은 BartendingBottleStock이 따 둔 병부터 계산한다.
+        public bool TryPlaceBottleFromShelf(LiquorBottleDef shelfDefinition, out string failure)
+        {
+            failure = string.Empty;
+            if (modeManager == null || modeManager.CurrentMode != GameMode.CraftingMode
+                || sessionRoot == null || sessionWorld == null)
+            {
+                failure = "Bottles can be taken out only while crafting.";
+                return false;
+            }
+
+            if (shelfDefinition == null || string.IsNullOrWhiteSpace(shelfDefinition.id))
+            {
+                failure = "The shelf bottle definition is empty.";
+                return false;
+            }
+
+            string inventoryId = shelfDefinition.InventoryId;
+            ItemDef item = ResolveShelfItem(shelfDefinition);
+            if (item == null || item.type != ItemType.Bottle)
+            {
+                failure = $"No crafting item is linked to {shelfDefinition.id} (inventory ID: {inventoryId}).";
+                return false;
+            }
+
+            float spawnAmount = BartendingBottleStock.CalculateNextBottleAmount(
+                bottleStock.GetShelfAmount(shelfDefinition),
+                item.capacityMl);
+            if (spawnAmount <= Mathf.Epsilon)
+            {
+                failure = $"{shelfDefinition.id} is out of stock.";
+                return false;
+            }
+
+            SlotController targetSlot = FindRightmostFreeSlot();
+            if (targetSlot == null)
+            {
+                failure = "There is no free slot on the counter.";
+                return false;
+            }
+
+            BottleController bottle = CreateBottle(item, shelfDefinition, spawnAmount);
+            if (bottle == null)
+            {
+                failure = "The bottle object could not be created.";
+                return false;
+            }
+
+            targetSlot.Occupy(bottle);
+            bottle.SnapToSlot(targetSlot.transform, targetSlot);
+            return true;
+        }
+
+        // 술 선택 공간에서 재료를 클릭했을 때 하나를 꺼내 곧바로 손에 쥐여 준다. 가니쉬 정의면 가니쉬를,
+        // 아니면 병을 만든다. 재고 계산은 둘 다 BartendingBottleStock 규칙(총량 - 제작대에 나온 양)을 따른다.
+        public bool TryTakeFromShelf(
+            LiquorBottleDef shelfDefinition,
+            Vector2 screenPosition,
+            out string failure)
+        {
+            failure = string.Empty;
+            if (modeManager == null || modeManager.CurrentMode != GameMode.CraftingMode
+                || sessionRoot == null || sessionWorld == null)
+            {
+                failure = "Ingredients can be taken out only while crafting.";
+                return false;
+            }
+
+            if (shelfDefinition == null || string.IsNullOrWhiteSpace(shelfDefinition.id))
+            {
+                failure = "The shelf definition is empty.";
+                return false;
+            }
+
+            if (HasHeldBartendingItem())
+            {
+                failure = "Put down the item already being held before taking another one.";
+                return false;
+            }
+
+            if (!BartendingViewport.TryGetPointerWorldPosition(
+                    Camera.main,
+                    screenPosition,
+                    out Vector3 pointerWorld))
+            {
+                failure = "The bartending counter is not ready to receive this item.";
+                return false;
+            }
+
+            return shelfDefinition is GarnishDef garnish
+                ? TryTakeGarnish(garnish, pointerWorld, out failure)
+                : TryTakeBottle(shelfDefinition, pointerWorld, out failure);
+        }
+
+        private bool TryTakeBottle(
+            LiquorBottleDef shelfDefinition,
+            Vector3 pointerWorld,
+            out string failure)
+        {
+            failure = string.Empty;
+            ItemDef item = ResolveShelfItem(shelfDefinition);
+            if (item == null || item.type != ItemType.Bottle)
+            {
+                failure = $"No crafting item is linked to {shelfDefinition.id} (inventory ID: {shelfDefinition.InventoryId}).";
+                return false;
+            }
+
+            float spawnAmount = BartendingBottleStock.CalculateNextBottleAmount(
+                bottleStock.GetShelfAmount(shelfDefinition),
+                item.capacityMl);
+            if (spawnAmount <= Mathf.Epsilon)
+            {
+                failure = $"{shelfDefinition.id} is out of stock.";
+                return false;
+            }
+
+            BottleController bottle = CreateBottle(item, shelfDefinition, spawnAmount);
+            if (bottle == null)
+            {
+                failure = "The bottle object could not be created.";
+                return false;
+            }
+
+            // 첫 렌더 프레임부터 포인터 위에 보이도록 시각 중심을 포인터에 맞춰 둔다. 실제 집기는
+            // 병이 Start에서 카메라·렌더러를 캐싱한 뒤 회전축을 포인터에 다시 맞추며 처리한다.
+            MoveVisualCenterTo(bottle.gameObject, pointerWorld);
+            bottle.RequestPickupOnStart();
+            return true;
+        }
+
+        private bool TryTakeGarnish(GarnishDef definition, Vector3 pointerWorld, out string failure)
+        {
+            failure = string.Empty;
+            if (definition.garnishSprite == null)
+            {
+                failure = $"{definition.id} has no garnish sprite.";
+                return false;
+            }
+
+            if (bottleStock.GetShelfAmount(definition) < 1f - 0.01f)
+            {
+                failure = $"{definition.id} is out of stock.";
+                return false;
+            }
+
+            GarnishController garnish = CreateGarnish(definition);
+            if (garnish == null)
+            {
+                failure = "The garnish object could not be created.";
+                return false;
+            }
+
+            MoveVisualCenterTo(garnish.gameObject, pointerWorld);
+            garnish.OnPickedUpAt(pointerWorld);
+            return true;
+        }
+
+        private GarnishController CreateGarnish(GarnishDef definition)
+        {
+            if (definition == null || sessionWorld == null)
+                return null;
+
+            GameObject instance = new GameObject("Garnish_" + definition.id);
+            instance.layer = sessionRenderLayer;
+            instance.transform.SetParent(sessionWorld, false);
+            instance.transform.localPosition = settings.bottlePosition;
+            instance.transform.localScale = Vector3.one * sessionItemScale;
+
+            // 병 프리팹과 같은 정렬 레이어를 써야 병·잔과 같은 층에서 앞뒤가 정해진다.
+            SpriteRenderer reference = settings.bottlePrefab != null
+                ? settings.bottlePrefab.GetComponentInChildren<SpriteRenderer>(true)
+                : null;
+            GarnishController garnish = instance.AddComponent<GarnishController>();
+            garnish.Initialize(
+                definition,
+                reference != null ? reference.sortingLayerID : 0,
+                reference != null ? reference.sortingOrder : 0);
+
+            BartendingNativeSpriteSizer.TryMatchRootToSprite(
+                instance.transform,
+                instance.GetComponent<SpriteRenderer>());
+            instance.transform.localScale *= definition.worldScale;
+            Physics2D.SyncTransforms();
+            bottleStock.Register(garnish, definition);
+            return garnish;
+        }
+
+        private static void MoveVisualCenterTo(GameObject itemObject, Vector3 worldPoint)
+        {
+            if (itemObject == null)
+                return;
+
+            Vector3 target = worldPoint - GetVisualCenterOffset(itemObject);
+            target.z = itemObject.transform.position.z;
+            itemObject.transform.position = target;
+            Physics2D.SyncTransforms();
+        }
+
+        public float GetShelfAmount(LiquorBottleDef shelfDefinition)
+        {
+            return bottleStock.GetShelfAmount(shelfDefinition);
+        }
+
+        public void AddDeliveredBottle(LiquorBottleDef shelfDefinition)
+        {
+            bottleStock.AddDeliveredBottle(shelfDefinition);
+        }
+
+        // 들고 있는 병·가니쉬를 술장에 반환한다. 총량은 실제로 쓴 양만큼만 이미 줄어 있으므로 등록만
+        // 해제하면 남은 양이 술장 재고에 그대로 합쳐진다.
+        public bool TryReturnHeldBottleToShelf(out string failure)
+        {
+            failure = string.Empty;
+            GarnishController heldGarnish = bottleStock.FindPickedUpGarnish();
+            if (heldGarnish != null)
+            {
+                bottleStock.Release(heldGarnish);
+                heldGarnish.PrepareForShelfReturn();
+                Destroy(heldGarnish.gameObject);
+                return true;
+            }
+
+            BottleController heldBottle = bottleStock.FindPickedUpBottle();
+            if (heldBottle == null)
+                return false;
+
+            if (modeManager == null
+                || modeManager.CurrentMode != GameMode.CraftingMode
+                || sessionWorld == null)
+            {
+                failure = "Bottles can be returned only while crafting.";
+                return false;
+            }
+
+            if (!bottleStock.TryGetDefinition(heldBottle, out _))
+            {
+                failure = "The held bottle has no linked shelf definition.";
+                return false;
+            }
+
+            bottleStock.Release(heldBottle);
+            heldBottle.PrepareForShelfReturn();
+            Destroy(heldBottle.gameObject);
+            return true;
+        }
+
+        // 화면 좌표 아래에 제작 공간 물체(도구·병·잔)가 있는지 검사한다. 제작 공간이 술 선택 공간보다
+        // 위에 그려지므로, 물체가 재료 아이콘을 덮고 있을 때는 재료 호버·클릭보다 물체 조작이 우선해야 한다.
+        public bool IsPointerOverWorldItem(Vector2 screenPosition)
+        {
+            if (sessionWorld == null
+                || !BartendingViewport.TryGetPointerWorldPosition(
+                    null,
+                    screenPosition,
+                    out Vector3 pointerWorld))
+            {
+                return false;
+            }
+
+            ContactFilter2D filter = ContactFilter2D.noFilter;
+            filter.useTriggers = true;
+            int count = Physics2D.OverlapPoint(pointerWorld, filter, pointerOverlapBuffer);
+            for (int i = 0; i < count; i++)
+            {
+                Collider2D hit = pointerOverlapBuffer[i];
+                if (hit != null
+                    && hit.transform.IsChildOf(sessionWorld)
+                    && hit.GetComponentInParent<IBartendingItem>() != null)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private BottleController CreateBottle(
+            ItemDef item,
+            LiquorBottleDef shelfDefinition,
+            float bottleAmount)
+        {
+            if (item == null || sessionWorld == null)
+                return null;
+
+            IBartendingItem bottleItem = BartendingSessionBuilder.CreateItem(
+                settings.bottlePrefab,
+                sessionWorld,
+                string.IsNullOrWhiteSpace(item.displayName) ? item.id : item.displayName,
+                settings.bottlePosition,
+                sessionRenderLayer,
+                sessionItemScale,
+                settings);
+            BartendingSessionBuilder.ConfigureRotatingMovement(bottleItem, settings);
+            if (bottleItem is not BottleController bottle)
+            {
+                if (bottleItem != null)
+                    Destroy(bottleItem.GameObject);
+                return null;
+            }
+
+            Sprite barSprite = shelfDefinition != null
+                ? shelfDefinition.GetBarSprite(item.icon)
+                : item.icon;
+            bottle.Init(item, barSprite);
+            BartendingNativeSpriteSizer.TryMatchRootToSprite(
+                bottle.transform,
+                BartendingNativeSpriteSizer.FindReferenceRenderer(
+                    bottle.gameObject));
+            bottle.transform.localScale *= 0.7f;
+            bottle.SetCurrentCapacity(bottleAmount);
+            bottleStock.Register(bottle, shelfDefinition);
+            return bottle;
+        }
+
+        private ItemDef ResolveShelfItem(LiquorBottleDef shelfDefinition)
+        {
+            if (shelfDefinition == null)
+                return null;
+            if (shelfDefinition.item != null)
+                return shelfDefinition.item;
+
+            return itemCatalog != null
+                && itemCatalog.TryGet(shelfDefinition.InventoryId, out ItemDef item)
+                    ? item
+                    : null;
+        }
+
+        // 테이블 왼쪽부터 술병이 순서대로 채워지는 연출을 유지하기 위해 가장 오른쪽 빈 슬롯부터 찾는다.
+        private SlotController FindRightmostFreeSlot()
+        {
+            for (int i = sessionSlots.Count - 1; i >= 0; i--)
+            {
+                if (sessionSlots[i] != null && !sessionSlots[i].IsOccupied)
+                    return sessionSlots[i];
+            }
+
+            return null;
+        }
+
+        private Camera CreateWorldCamera(Transform parent, BusinessBartendingSettings settings, int renderLayer)
+        {
+            GameObject cameraObject = new GameObject("BartendingCamera");
+            cameraObject.transform.SetParent(parent, false);
+            cameraObject.transform.localPosition = new Vector3(0f, 0f, -10f);
+
+            Camera camera = cameraObject.AddComponent<Camera>();
+            camera.clearFlags = CameraClearFlags.SolidColor;
+            camera.backgroundColor = new Color(0f, 0f, 0f, 0f);
+            camera.orthographic = true;
+            camera.orthographicSize = settings.cameraOrthographicSize;
+            camera.cullingMask = 1 << renderLayer;
+            camera.allowHDR = false;
+            camera.allowMSAA = false;
+            camera.depth = -10f;
+            return camera;
+        }
+
+        private BartendingViewport CreateViewport(
+            RectTransform counter,
+            Camera camera,
+            BusinessBartendingSettings settings)
+        {
+            GameObject viewObject = new GameObject(
+                "BartendingViewport",
+                typeof(RectTransform),
+                typeof(CanvasRenderer),
+                typeof(RawImage));
+            RectTransform viewRect = (RectTransform)viewObject.transform;
+            Transform viewportParent = counter.parent != null ? counter.parent : counter;
+            viewRect.SetParent(viewportParent, false);
+            viewRect.anchorMin = Vector2.zero;
+            viewRect.anchorMax = Vector2.one;
+            viewRect.pivot = new Vector2(0.5f, 0.5f);
+            viewRect.sizeDelta = Vector2.zero;
+            viewRect.anchoredPosition = Vector2.zero;
+
+            if (counter.parent != null)
+            {
+                viewRect.SetSiblingIndex(counter.GetSiblingIndex() + 1);
+            }
+            else
+            {
+                viewRect.SetAsFirstSibling();
+            }
+
+            RawImage image = viewObject.GetComponent<RawImage>();
+            image.raycastTarget = false;
+            image.color = Color.white;
+
+            BartendingViewport viewport = viewObject.AddComponent<BartendingViewport>();
+            viewport.Initialize(camera, settings.renderTextureSize);
+            return viewport;
+        }
+
+        // UI의 TableSlots(UIDropSlot 배치)를 바텐딩 월드 카메라 좌표로 변환해 슬롯 위치와
+        // 아이템 스케일(슬롯 프리팹 대비 실제 UI 슬롯 크기의 비율)을 산출한다.
+        private static void GetSlotLayout(
+            RectTransform tableSlots,
+            BartendingViewport viewport,
+            BusinessBartendingSettings settings,
+            out List<Vector3> positions,
+            out float itemScale)
+        {
+            positions = settings.slotPositions != null
+                ? new List<Vector3>(settings.slotPositions)
+                : new List<Vector3>();
+            itemScale = 1f;
+
+            if (tableSlots == null || viewport == null)
+            {
+                return;
+            }
+
+            List<MappedSlot> mappedSlots = new List<MappedSlot>();
+            foreach (UIDropSlot dropSlot in tableSlots.GetComponentsInChildren<UIDropSlot>(true))
+            {
+                if (dropSlot.transform is RectTransform rect &&
+                    viewport.TryMapRectToWorld(rect, out Vector3 center, out Vector2 size))
+                {
+                    mappedSlots.Add(new MappedSlot(center, size.x));
+                }
+            }
+
+            if (mappedSlots.Count == 0)
+            {
+                return;
+            }
+
+            mappedSlots.Sort((left, right) => left.Position.x.CompareTo(right.Position.x));
+            positions.Clear();
+            float accumulatedWidth = 0f;
+            foreach (MappedSlot mappedSlot in mappedSlots)
+            {
+                positions.Add(mappedSlot.Position);
+                accumulatedWidth += mappedSlot.Width;
+            }
+
+            BoxCollider2D referenceCollider = settings.slotPrefab != null
+                ? settings.slotPrefab.GetComponent<BoxCollider2D>()
+                : null;
+            float referenceWidth = referenceCollider != null ? referenceCollider.size.x : 1f;
+            if (referenceWidth > Mathf.Epsilon)
+            {
+                float averageWidth = accumulatedWidth / mappedSlots.Count;
+                itemScale = Mathf.Clamp(averageWidth / referenceWidth, 0.1f, 2f);
+            }
+        }
+
+        private static RectTransform CreateSessionSlotLayout(
+            RectTransform template,
+            RectTransform viewport,
+            RectTransform counter)
+        {
+            if (template == null)
+                return null;
+
+            Transform targetParent = viewport != null && viewport.parent != null
+                ? viewport.parent
+                : template.parent;
+            RectTransform layout = Instantiate(template, targetParent, false);
+            layout.name = "BartendingSessionSlots";
+            layout.anchorMin = new Vector2(0.5f, 0.5f);
+            layout.anchorMax = new Vector2(0.5f, 0.5f);
+            layout.pivot = new Vector2(0.5f, 0.5f);
+            layout.localRotation = Quaternion.identity;
+            layout.localScale = Vector3.one;
+            layout.anchoredPosition = Vector2.zero;
+            if (viewport != null)
+                layout.SetSiblingIndex(viewport.GetSiblingIndex());
+
+            foreach (UIDropSlot dropSlot in layout.GetComponentsInChildren<UIDropSlot>(true))
+                dropSlot.enabled = false;
+            foreach (Graphic graphic in layout.GetComponentsInChildren<Graphic>(true))
+            {
+                graphic.raycastTarget = false;
+                graphic.enabled = false;
+            }
+
+            layout.gameObject.SetActive(true);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(layout);
+            Canvas.ForceUpdateCanvases();
+            AlignSlotLayoutToVisibleTable(layout, counter, viewport);
+            return layout;
+        }
+
+        // 슬롯 레이아웃 복제본을, 실제 화면에 보이는 카운터 영역(뷰포트와 겹치는 부분)의 중앙에 맞춘다 —
+        // 스크롤/마스킹으로 카운터 일부가 가려져도 슬롯이 항상 보이는 범위 안에 놓이게 하기 위함.
+        private static void AlignSlotLayoutToVisibleTable(
+            RectTransform layout,
+            RectTransform content,
+            RectTransform viewport)
+        {
+            if (layout == null || content == null || viewport == null)
+                return;
+
+            RectTransform visibleViewport = GetRootCanvasRect(viewport);
+            if (visibleViewport == null)
+                visibleViewport = viewport;
+
+            Rect contentScreenRect = GetScreenRect(content);
+            Rect viewportScreenRect = GetScreenRect(visibleViewport);
+            float xMin = Mathf.Max(contentScreenRect.xMin, viewportScreenRect.xMin);
+            float xMax = Mathf.Min(contentScreenRect.xMax, viewportScreenRect.xMax);
+            float yMin = Mathf.Max(contentScreenRect.yMin, viewportScreenRect.yMin);
+            float yMax = Mathf.Min(contentScreenRect.yMax, viewportScreenRect.yMax);
+            if (xMax <= xMin || yMax <= yMin
+                || !TryGetSlotLayoutScreenCenter(layout, out Vector2 slotScreenCenter))
+                return;
+
+            Vector2 targetScreenCenter = new Vector2(
+                (xMin + xMax) * 0.5f,
+                (yMin + yMax) * 0.5f);
+            Camera layoutCamera = GetCanvasCamera(layout);
+            Vector2 layoutScreenPosition = RectTransformUtility.WorldToScreenPoint(
+                layoutCamera,
+                layout.position);
+            Vector2 alignedScreenPosition =
+                layoutScreenPosition + targetScreenCenter - slotScreenCenter;
+
+            RectTransform parent = layout.parent as RectTransform;
+            if (parent != null
+                && RectTransformUtility.ScreenPointToWorldPointInRectangle(
+                    parent,
+                    alignedScreenPosition,
+                    GetCanvasCamera(parent),
+                    out Vector3 alignedWorldPosition))
+            {
+                layout.position = alignedWorldPosition;
+            }
+        }
+
+        private static bool TryGetSlotLayoutScreenCenter(
+            RectTransform layout,
+            out Vector2 screenCenter)
+        {
+            UIDropSlot[] dropSlots = layout.GetComponentsInChildren<UIDropSlot>(true);
+            bool hasBounds = false;
+            Rect bounds = default;
+            foreach (UIDropSlot dropSlot in dropSlots)
+            {
+                if (!(dropSlot.transform is RectTransform slotRect))
+                    continue;
+
+                Rect slotScreenRect = GetScreenRect(slotRect);
+                if (!hasBounds)
+                {
+                    bounds = slotScreenRect;
+                    hasBounds = true;
+                }
+                else
+                {
+                    bounds = Rect.MinMaxRect(
+                        Mathf.Min(bounds.xMin, slotScreenRect.xMin),
+                        Mathf.Min(bounds.yMin, slotScreenRect.yMin),
+                        Mathf.Max(bounds.xMax, slotScreenRect.xMax),
+                        Mathf.Max(bounds.yMax, slotScreenRect.yMax));
+                }
+            }
+
+            screenCenter = hasBounds ? bounds.center : default;
+            return hasBounds;
+        }
+
+        // 레터박스 환경에서 루트 캔버스는 띠 영역까지 포함하므로, 실제로 보이는 16:9 게임 영역을 쓴다.
+        private static RectTransform GetRootCanvasRect(RectTransform rectTransform)
+        {
+            return GameAspect.FindGameAreaRect(rectTransform);
+        }
+
+        private static Rect GetScreenRect(RectTransform rectTransform)
+        {
+            Vector3[] corners = new Vector3[4];
+            rectTransform.GetWorldCorners(corners);
+            Camera canvasCamera = GetCanvasCamera(rectTransform);
+            Vector2 first = RectTransformUtility.WorldToScreenPoint(canvasCamera, corners[0]);
+            float xMin = first.x;
+            float xMax = first.x;
+            float yMin = first.y;
+            float yMax = first.y;
+            for (int i = 1; i < corners.Length; i++)
+            {
+                Vector2 point = RectTransformUtility.WorldToScreenPoint(canvasCamera, corners[i]);
+                xMin = Mathf.Min(xMin, point.x);
+                xMax = Mathf.Max(xMax, point.x);
+                yMin = Mathf.Min(yMin, point.y);
+                yMax = Mathf.Max(yMax, point.y);
+            }
+
+            return Rect.MinMaxRect(xMin, yMin, xMax, yMax);
+        }
+
+        private static Camera GetCanvasCamera(RectTransform rectTransform)
+        {
+            Canvas canvas = rectTransform != null
+                ? rectTransform.GetComponentInParent<Canvas>()
+                : null;
+            return canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay
+                ? null
+                : canvas.worldCamera;
+        }
+
+        private static List<SlotController> CreateSlots(
+            Transform parent,
+            BusinessBartendingSettings settings,
+            List<Vector3> positions,
+            float itemScale)
+        {
+            List<SlotController> slots = new List<SlotController>();
+            if (settings.slotPrefab == null || positions == null)
+            {
+                return slots;
+            }
+
+            int slotLayer = LayerMask.NameToLayer("Slot");
+            if (slotLayer < 0)
+            {
+                slotLayer = 0;
+            }
+
+            for (int i = 0; i < positions.Count; i++)
+            {
+                GameObject slot = Instantiate(settings.slotPrefab, parent);
+                slot.name = "BartendingSlot_" + i;
+                slot.transform.localPosition = positions[i];
+                slot.transform.localRotation = Quaternion.identity;
+                slot.transform.localScale = Vector3.one * itemScale;
+                SetLayerRecursively(slot, slotLayer);
+
+                SlotController slotController = slot.GetComponent<SlotController>();
+                if (slotController != null)
+                {
+                    slots.Add(slotController);
+                }
+            }
+
+            return slots;
+        }
+
+        private IBartendingItem CreateItem(
+            GameObject prefab,
+            Transform parent,
+            string instanceName,
+            Vector3 position,
+            int renderLayer,
+            float itemScale)
+        {
+            if (prefab == null)
+            {
+                Debug.LogWarning(instanceName + " 프리팹이 영업 제조 설정에 할당되지 않았습니다.");
+                return null;
+            }
+
+            GameObject item = Instantiate(prefab, parent);
+            item.name = instanceName;
+            item.transform.localPosition = position;
+            item.transform.localRotation = Quaternion.identity;
+            item.transform.localScale = Vector3.one * itemScale;
+            SetLayerRecursively(item, renderLayer);
+            foreach (VesselLiquidTracker tracker
+                     in item.GetComponentsInChildren<VesselLiquidTracker>(true))
+            {
+                tracker.ConfigureRuntimeDebugLabel(
+                    settings != null && settings.showVesselDebugLabels,
+                    settings != null ? settings.vesselDebugRefreshInterval : 0.2f);
+            }
+            return item.GetComponent<IBartendingItem>();
+        }
+
+        private IEnumerator SnapStartingItems(List<IBartendingItem> tools)
+        {
+            yield return null;
+
+            if (tools != null)
+            {
+                for (int i = 0; i < tools.Count && i < sessionSlots.Count; i++)
+                    SnapToStartingSlot(tools[i], sessionSlots, i);
+            }
+
+            sessionViewport?.SetOutputVisible(true);
+
+            snapRoutine = null;
+        }
+
+        private static void SnapToStartingSlot(IBartendingItem item, List<SlotController> slots, int index)
+        {
+            if (item == null || index < 0 || index >= slots.Count)
+            {
+                return;
+            }
+
+            SlotController slot = slots[index];
+            slot.Occupy(item);
+            item.SnapToSlot(slot.transform, slot);
+        }
+
+        private static LiquidPool CreateLiquidPool(
+            Transform parent,
+            BusinessBartendingSettings settings,
+            int renderLayer,
+            float itemScale)
+        {
+            if (settings.liquidParticlePrefab == null || LiquidPool.Instance != null)
+            {
+                return null;
+            }
+
+            GameObject poolObject = new GameObject("LiquidPoolManager");
+            poolObject.SetActive(false);
+            poolObject.transform.SetParent(parent, false);
+            poolObject.transform.localScale = Vector3.one * itemScale;
+
+            LiquidPool pool = poolObject.AddComponent<LiquidPool>();
+            pool.particlePrefab = settings.liquidParticlePrefab;
+            pool.poolSize = settings.liquidPoolSize;
+
+            poolObject.SetActive(true);
+            SetLayerRecursively(poolObject, renderLayer);
+            return pool;
+        }
+
+        private readonly struct MappedSlot
+        {
+            public MappedSlot(Vector3 position, float width)
+            {
+                Position = position;
+                Width = width;
+            }
+
+            public Vector3 Position { get; }
+            public float Width { get; }
+        }
+
+        private void CaptureSlotLayoutTemplate(Scene scene)
+        {
+            slotLayoutTemplate = FindNamedRectTransform(scene, "TableSlots");
+            if (slotLayoutTemplate == null)
+            {
+                Debug.LogWarning(
+                    "영업 제조 화면에서 TableSlots를 찾을 수 없습니다. "
+                    + "설정에 저장된 기본 위치를 사용합니다.");
+                return;
+            }
+
+            slotLayoutTemplateWasActive = slotLayoutTemplate.gameObject.activeSelf;
+            slotLayoutTemplate.gameObject.SetActive(false);
+        }
+
+        private void HideCanvasBartendingItems(Scene scene)
+        {
+            foreach (Canvas canvas in FindAllInScene<Canvas>(scene))
+            {
+                HideItems(canvas.GetComponentsInChildren<BeakerController>(true));
+                HideItems(canvas.GetComponentsInChildren<GlassController>(true));
+                HideItems(canvas.GetComponentsInChildren<BottleController>(true));
+            }
+        }
+
+        private void HideItems<T>(T[] items) where T : Behaviour
+        {
+            foreach (T item in items)
+            {
+                if (item.gameObject.activeSelf)
+                {
+                    hiddenCanvasItems.Add(item.gameObject);
+                    item.gameObject.SetActive(false);
+                }
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (frontCameraRig != null)
+            {
+                frontCameraRig.MoveStarted -= HandleFrontWorldMoveStarted;
+                frontCameraRig.MoveUpdated -= HandleFrontWorldMoveUpdated;
+                frontCameraRig.MoveCompleted -= HandleFrontWorldMoveCompleted;
+                frontCameraRig = null;
+            }
+
+            if (modeManager != null)
+            {
+                modeManager.OnModeChanged -= HandleModeChanged;
+            }
+
+            DestroySession();
+            RestoreHiddenCanvasItems();
+            RestoreSlotLayoutTemplate();
+        }
+
+        private void RestoreSessionOverrides()
+        {
+            if (sourceCamera != null)
+            {
+                sourceCamera.cullingMask = sourceCameraMask;
+                sourceCamera = null;
+            }
+        }
+
+        private void RestoreHiddenCanvasItems()
+        {
+            foreach (GameObject item in hiddenCanvasItems)
+            {
+                if (item != null)
+                {
+                    item.SetActive(true);
+                }
+            }
+
+            hiddenCanvasItems.Clear();
+        }
+
+        private void RestoreSlotLayoutTemplate()
+        {
+            if (slotLayoutTemplate != null)
+                slotLayoutTemplate.gameObject.SetActive(slotLayoutTemplateWasActive);
+            slotLayoutTemplate = null;
+        }
+
+        private static void SetLayerRecursively(GameObject root, int layer)
+        {
+            foreach (Transform child in root.GetComponentsInChildren<Transform>(true))
+            {
+                child.gameObject.layer = layer;
+            }
+        }
+
+        private static RectTransform FindNamedRectTransform(Scene scene, string objectName)
+        {
+            foreach (Transform transformInScene in FindAllInScene<Transform>(scene))
+            {
+                if (transformInScene.name == objectName && transformInScene is RectTransform rectTransform)
+                {
+                    return rectTransform;
+                }
+            }
+
+            return null;
+        }
+
+        private static T FindInScene<T>(Scene scene) where T : Component
+        {
+            foreach (GameObject root in scene.GetRootGameObjects())
+            {
+                T component = root.GetComponentInChildren<T>(true);
+                if (component != null)
+                {
+                    return component;
+                }
+            }
+
+            return null;
+        }
+
+        private static IEnumerable<T> FindAllInScene<T>(Scene scene) where T : Component
+        {
+            foreach (GameObject root in scene.GetRootGameObjects())
+            {
+                foreach (T component in root.GetComponentsInChildren<T>(true))
+                {
+                    yield return component;
+                }
+            }
+        }
+    }
+}

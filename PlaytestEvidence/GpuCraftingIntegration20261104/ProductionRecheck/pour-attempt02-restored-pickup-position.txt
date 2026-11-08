@@ -1,0 +1,15 @@
+FAIL
+System.InvalidOperationException: The serving click was not consumed. held=Glass_rock(Clone) (Slainte.Bartending.FluidGpuExperiment.FluidExperimentBody), position=(-0.37, -0.89), target=(-0.37, -0.89), screen=(1228.80, 960.00); blocked=False, screen=(1228.80, 960.00), valid=True
+Canvas/GameArea16x9/FrontWorldPanel/FrontCameraRig/CharactersBackContainer/Slots/CenterSlot/CharacterPrefab(Clone)/Visual, ignored=True
+Canvas/GameArea16x9/FrontWorldPanel/FrontCameraRig/BarBackground, ignored=True
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<RunChecks>d__20.MoveNext () [0x01190] in A:\UnityHub\proj\slainte\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:234 
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<Start>d__19.MoveNext () [0x0002e] in A:\UnityHub\proj\slainte\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:43 
+Completed checks:
+authored customer arrival/order dialogue enters GPU crafting
+GPU-only runtime in the authored Canvas
+Canvas/world pointer round trip
+bottle supply/emission/return/delivery stock
+physical bottle-to-glass pour without Fill: emitted 22 ml, received 22 ml
+bottle/glass held overlap policy, release contacts, overlapping item swap and filled-glass pickup
+filled glass storage/restoration preserves identity and ml
+GPU surface rendered through the production RenderTexture camera

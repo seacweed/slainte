@@ -1,0 +1,13 @@
+FAIL
+System.InvalidOperationException: The serving click was not consumed.
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<RunChecks>d__20.MoveNext () [0x010e8] in A:\UnityHub\proj\slainte\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:230 
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<Start>d__19.MoveNext () [0x0002e] in A:\UnityHub\proj\slainte\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:43 
+Completed checks:
+authored customer arrival/order dialogue enters GPU crafting
+GPU-only runtime in the authored Canvas
+Canvas/world pointer round trip
+bottle supply/emission/return/delivery stock
+physical bottle-to-glass pour without Fill: emitted 20 ml, received 20 ml
+bottle/glass held overlap policy, release contacts and filled-glass pickup
+filled glass storage/restoration preserves identity and ml
+GPU surface rendered through the production RenderTexture camera

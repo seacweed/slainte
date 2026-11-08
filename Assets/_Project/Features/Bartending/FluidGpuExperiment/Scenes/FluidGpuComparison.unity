@@ -270,13 +270,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8375aff9f6f448eeba58ed3a8bc97ccd, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentInteractor
   world: {fileID: 379435368}
   inputCamera: {fileID: 1805964270}
   rotationSensitivity: 5
   velocityWindow: 0.1
   uprightReturnDuration: 0.15
+  InputSuspended: 0
 --- !u!114 &379435367
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -287,9 +288,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c72a0c2daae34eb0a7877bf107044d6e, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentGpuLiquid
   cohesiveMaterial: 0
+  iceLiquidMode: 0
   settings: {fileID: 11400000, guid: 2a09e817058445d0b9363bbe03e792ce, type: 2}
   drawShader: {fileID: 4800000, guid: 1a765b72efd4441490172c795eee5940, type: 3}
   outputCamera: {fileID: 1805964270}
@@ -304,6 +306,14 @@ MonoBehaviour:
   referenceSupportRadius: 1.9
   referenceDensityThreshold: 0.42
   referenceEdgeSoftness: 0.025
+  enableSpoonStirring: 1
+  spoonFlowSpeed: 0.16
+  spoonFlowAcceleration: 0.6
+  spoonFlowRadius: 0.4
+  spoonFlowResponse: 6
+  spoonMixRate: 1.6
+  spoonFullStirSpeed: 0.45
+  spoonSettleDuration: 0.3
 --- !u!114 &379435368
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -314,22 +324,26 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb1755b6f8984d2e881788ee4134bbf8, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentWorld
+  shardLiquidCollision: 1
+  maximumShardLiquidSegments: 512
   liquid: {fileID: 379435367}
   interactor: {fileID: 379435366}
   floorColliders:
   - {fileID: 632590627}
-  liquidSurfaces:
-  - {fileID: 632590627}
-  shardLiquidCollision: 1
   itemLayer: 29
   showControls: 0
   seedLiquids: 1
+  SimulationSuspended: 0
   dispenserPrefab: {fileID: 2699439601915006905, guid: b0796c86dffe3c34ea12935fbd1481bc, type: 3}
   leftBoundary: {fileID: 2100000102}
   rightBoundary: {fileID: 2100000202}
   topBoundary: {fileID: 2100000302}
+  liquidSurfaces:
+  - {fileID: 632590627}
+  enableObjectSorting: 1
+  savedAuthoredSorting: []
 --- !u!4 &379435369
 Transform:
   m_ObjectHideFlags: 0
@@ -360,24 +374,6 @@ Transform:
   - {fileID: 400925036}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &379435371
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 379435365}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1640c55a99c04e48ac53e26d8fc45e32, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentCocktailSession
-  world: {fileID: 379435368}
-  showControls: 1
-  panelOpen: 0
-  targetGlass: {fileID: 0}
-  requestedRecipeId:
-  uiFont: {fileID: 12800000, guid: 29afba3e5a114b04c9dfa040cebb47bb, type: 3}
 --- !u!114 &379435370
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -388,11 +384,40 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1b37a226a3f741828ecc24355cd8049a, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentComparison
   world: {fileID: 379435368}
-  breakageStyle: 0
   showControls: 1
+  breakageStyle: 0
+--- !u!114 &379435371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 379435365}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1640c55a99c04e48ac53e26d8fc45e32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentCocktailSession
+  world: {fileID: 379435368}
+  showControls: 1
+  panelOpen: 0
+  targetGlass: {fileID: 0}
+  requestedRecipeId: 
+  uiFont: {fileID: 12800000, guid: 29afba3e5a114b04c9dfa040cebb47bb, type: 3}
+  stirMinimumSpeed: 0.04
+  stirMinimumAngularSpeed: 5
+  stirAttemptDuration: 0.35
+  stirCompletionDuration: 1
+  stirMotionGrace: 0.15
+  stirCompositionTolerance: 0.08
+  stirUniformDuration: 0.15
+  shakeMinimumSpeed: 2
+  shakeCompletionDuration: 1
+  shakeMinimumReversals: 2
+  shakeMaximumReversalInterval: 1
 --- !u!1001 &400925035
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -991,7 +1016,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
   m_RenderShadows: 1
   m_RequiresDepthTextureOption: 2
@@ -1097,7 +1122,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2351671212039727122, guid: cdd4cf3ddb1645cbba5bf15a3c86a667, type: 3}
       propertyPath: splashProfile
-      value:
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2601072357238551182, guid: cdd4cf3ddb1645cbba5bf15a3c86a667, type: 3}
       propertyPath: m_LocalPosition.x

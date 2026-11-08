@@ -12,7 +12,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         public bool PointerCaptured { get; private set; }
         public bool PointerHandoffPending { get; private set; }
         public Vector2 DisplayedPointerScreen => PointerCaptured && Held != null && inputCamera != null
-            ? (Vector2)inputCamera.WorldToScreenPoint(Held.transform.TransformPoint(Held.rotationPivotLocal))
+            ? (Vector2)WorldToScreen(Held.transform.TransformPoint(Held.rotationPivotLocal))
             : LogicalPointerScreen;
         private Mouse capturedMouse;
         private uint pointerInputUpdate;
@@ -61,7 +61,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 {
                     // Apply real motion before changing coordinate systems. The correction is
                     // a grab/return-baseline change, never body motion or sampled throw velocity.
-                    MoveHeld(inputCamera.ScreenToWorldPoint(LogicalPointerScreen));
+                    MoveHeld(ScreenToWorld(LogicalPointerScreen));
                     RebaseFollowPointer(absolute);
                     CompletePointerHandoff();
                 }
@@ -73,8 +73,8 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         private void RebaseFollowPointer(Vector2 nextScreen)
         {
-            Vector2 previous = inputCamera.ScreenToWorldPoint(LogicalPointerScreen);
-            Vector2 next = inputCamera.ScreenToWorldPoint(nextScreen);
+            Vector2 previous = ScreenToWorld(LogicalPointerScreen);
+            Vector2 next = ScreenToWorld(nextScreen);
             if (Returning) returnStartPointer += next - previous;
             else if (Held != null && !Rotating)
             {
@@ -95,7 +95,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             CompletePointerHandoff();
             capturedMouse = mouse;
             PointerCaptured = true;
-            LogicalPointerScreen = inputCamera.WorldToScreenPoint(RotationPointerWorld);
+            LogicalPointerScreen = WorldToScreen(RotationPointerWorld);
             if (Application.isBatchMode) return;
             previousCursorLock = Cursor.lockState;
             previousCursorVisible = Cursor.visible;
@@ -109,7 +109,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             if (!PointerCaptured) return; // Direct simulation APIs do not manipulate the OS cursor.
             PointerCaptured = false;
             PointerHandoffPending = true;
-            LogicalPointerScreen = pointerWarpTarget = inputCamera.WorldToScreenPoint(worldPointer);
+            LogicalPointerScreen = pointerWarpTarget = WorldToScreen(worldPointer);
             pointerHandoffStarted = Time.unscaledTime;
             stationaryHandoffUpdates = 0;
             previousHandoffAbsolute = capturedMouse != null ? capturedMouse.position.ReadValue() : pointerWarpTarget;
@@ -141,7 +141,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             Vector2 pivot = rotating ? RotationPointerWorld : lastPointer;
             ReleasePointer(); // Focus loss/Escape never warps into another application.
             if (rotating) EndRotation(pivot);
-            if (inputCamera != null) LogicalPointerScreen = inputCamera.WorldToScreenPoint(pivot);
+            if (inputCamera != null) LogicalPointerScreen = WorldToScreen(pivot);
             rebasePointerOnResume = true;
         }
 
@@ -161,8 +161,9 @@ namespace Slainte.Bartending.FluidGpuExperiment
             capturedMouse = null;
         }
 
-        private bool IsPointerBlocked(Vector2 screen)
+        public bool IsPointerBlocked(Vector2 screen, System.Func<GameObject, bool> ignoreHit = null)
         {
+            if (IsScreenPointValid != null && !IsScreenPointValid(screen)) return true;
             if (pointerBlockRect.Contains(new Vector2(screen.x, Screen.height - screen.y))) return true;
             if (world != null && world.Cocktails != null && world.Cocktails.BlocksPointer(screen)) return true;
             EventSystem system = EventSystem.current;
@@ -176,8 +177,28 @@ namespace Slainte.Bartending.FluidGpuExperiment
             pointerEvent.position = screen;
             pointerHits.Clear();
             system.RaycastAll(pointerEvent, pointerHits);
-            return pointerHits.Count > 0;
+            foreach (var hit in pointerHits)
+                if (hit.gameObject != null && (ignoreHit == null || !ignoreHit(hit.gameObject))
+                    && (IgnoreUiHit == null || !IgnoreUiHit(hit.gameObject))) return true;
+            return false;
         }
+
+#if UNITY_EDITOR
+        public string DescribePointerBlockers(Vector2 screen)
+        {
+            bool blocked = IsPointerBlocked(screen);
+            var detail = new System.Text.StringBuilder($"blocked={blocked}, screen={screen}, valid={IsScreenPointValid?.Invoke(screen)}");
+            foreach (var hit in pointerHits)
+            {
+                if (hit.gameObject == null) continue;
+                string path = hit.gameObject.name;
+                for (Transform parent = hit.gameObject.transform.parent; parent != null; parent = parent.parent)
+                    path = parent.name + "/" + path;
+                detail.Append($"\n{path}, ignored={IgnoreUiHit?.Invoke(hit.gameObject)}");
+            }
+            return detail.ToString();
+        }
+#endif
 
         private void OnGUI()
         {

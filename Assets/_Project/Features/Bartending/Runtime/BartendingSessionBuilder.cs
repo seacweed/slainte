@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Slainte.Shared.Display;
+using Slainte.Bartending.FluidGpuExperiment;
 
 namespace Slainte.Bartending
 {
@@ -122,11 +123,15 @@ namespace Slainte.Bartending
             public SlotController Slot;
             public IBartendingItem Item;
             public VesselLiquidTracker Tracker;
+            public FluidExperimentBody GpuBody;
             public RectTransform Root;
             public TextMeshProUGUI Text;
+            public GameObject Target => GpuBody != null ? GpuBody.gameObject : Item?.GameObject;
         }
 
-        private readonly Dictionary<SlotController, VesselLabel> labels = new();
+        private readonly Dictionary<object, VesselLabel> labels = new();
+        private readonly List<object> removedGpuLabels = new();
+        private FluidExperimentWorld gpuWorld;
         private readonly HashSet<SlotController> subscribedSlots = new();
         private readonly List<KeyValuePair<ItemDef, float>> visibleVolumes = new();
         private readonly StringBuilder contentsBuilder = new();
@@ -148,6 +153,14 @@ namespace Slainte.Bartending
         private float nextContentsRefreshTime;
 
         public int VisibleVesselLabelCount => labels.Count;
+        public void BindGpuWorld(FluidExperimentWorld world) => gpuWorld = world;
+        public bool TryGetGpuVesselContentsText(FluidExperimentBody body, out string text)
+        {
+            text = string.Empty;
+            if (body == null || !labels.TryGetValue(body, out var label) || label.Text == null) return false;
+            text = label.Text.text;
+            return true;
+        }
         public bool IsServingTargetVisible =>
             servingTargetImage != null && servingTargetImage.gameObject.activeSelf;
         public int ServingTargetBorderCount { get; private set; }
@@ -312,6 +325,13 @@ namespace Slainte.Bartending
             }
         }
 
+        // GPU 제조도 기존 Canvas 제출 영역의 표시와 배치를 공유한다.
+        public void SetExternalServingHeld(bool held)
+        {
+            servingGlassHeld = held;
+            RefreshServingTarget();
+        }
+
         public void SetServingGlass(GlassController glass)
         {
             if (servingGlass == glass)
@@ -399,13 +419,36 @@ namespace Slainte.Bartending
         private void LateUpdate()
         {
             RefreshServingTarget();
-            UpdateLabelPositions();
 
             if (Time.unscaledTime >= nextContentsRefreshTime)
             {
                 nextContentsRefreshTime = Time.unscaledTime
                     + Mathf.Max(0.02f, settings.contentsRefreshInterval);
+                RefreshGpuLabels();
                 RefreshLabelContents();
+            }
+            UpdateLabelPositions();
+        }
+
+        // GPU vessels have no legacy slot/tracker. Follow their actual lifetime and use
+        // the existing asynchronous ledger, avoiding a blocking GPU readback for UI.
+        private void RefreshGpuLabels()
+        {
+            if (gpuWorld == null) return;
+            removedGpuLabels.Clear();
+            foreach (var pair in labels)
+                if (pair.Key is FluidExperimentBody body && (body == null || !body.isActiveAndEnabled))
+                    removedGpuLabels.Add(pair.Key);
+            foreach (var key in removedGpuLabels)
+            {
+                if (labels[key].Root != null) Destroy(labels[key].Root.gameObject);
+                labels.Remove(key);
+            }
+            foreach (var body in gpuWorld.Items)
+            {
+                if (body == null || !body.isActiveAndEnabled || !body.IsVessel
+                    || (body.kind != LabItemKind.Jigger && body.kind != LabItemKind.Shaker) || labels.ContainsKey(body)) continue;
+                labels.Add(body, CreateVesselLabel(null, null, null, body));
             }
         }
 
@@ -532,10 +575,11 @@ namespace Slainte.Bartending
         private VesselLabel CreateVesselLabel(
             SlotController slot,
             IBartendingItem item,
-            VesselLiquidTracker tracker)
+            VesselLiquidTracker tracker,
+            FluidExperimentBody gpuBody = null)
         {
             GameObject labelObject = new GameObject(
-                "VesselContents_" + slot.name,
+                "VesselContents_" + (gpuBody != null ? gpuBody.name : slot.name),
                 typeof(RectTransform),
                 typeof(CanvasRenderer),
                 typeof(Image));
@@ -575,6 +619,7 @@ namespace Slainte.Bartending
                 Slot = slot,
                 Item = item,
                 Tracker = tracker,
+                GpuBody = gpuBody,
                 Root = labelRect,
                 Text = text
             };
@@ -588,17 +633,28 @@ namespace Slainte.Bartending
 
         private void RefreshLabelContent(VesselLabel label)
         {
-            if (label == null || label.Tracker == null || label.Text == null)
+            if (label == null || (label.Tracker == null && label.GpuBody == null) || label.Text == null)
                 return;
 
-            CocktailComposition composition = label.Tracker.BuildComposition();
             visibleVolumes.Clear();
-            foreach (KeyValuePair<ItemDef, float> pair in composition.Volumes)
+            float totalMl = 0;
+            if (label.GpuBody != null)
             {
-                if (pair.Key != null
-                    && pair.Value >= Mathf.Max(0f, settings.contentsMinimumVisibleMl))
+                foreach (var pair in gpuWorld.Liquid.IngredientsIn(label.GpuBody.Id))
                 {
-                    visibleVolumes.Add(pair);
+                    totalMl += (float)pair.Value;
+                    if (pair.Key != null && pair.Value >= Mathf.Max(0f, settings.contentsMinimumVisibleMl))
+                        visibleVolumes.Add(new KeyValuePair<ItemDef, float>(pair.Key, (float)pair.Value));
+                }
+            }
+            else
+            {
+                CocktailComposition composition = label.Tracker.BuildComposition();
+                totalMl = composition.TotalVolumeMl;
+                foreach (KeyValuePair<ItemDef, float> pair in composition.Volumes)
+                {
+                    if (pair.Key != null && pair.Value >= Mathf.Max(0f, settings.contentsMinimumVisibleMl))
+                        visibleVolumes.Add(pair);
                 }
             }
 
@@ -633,7 +689,7 @@ namespace Slainte.Bartending
             }
 
             contentsBuilder.Append("<b>합계</b>  •  ");
-            contentsBuilder.Append(composition.TotalVolumeMl.ToString("0.#"));
+            contentsBuilder.Append(totalMl.ToString("0.#"));
             contentsBuilder.Append(" ml");
             label.Text.text = contentsBuilder.ToString();
         }
@@ -645,10 +701,13 @@ namespace Slainte.Bartending
 
             foreach (VesselLabel label in labels.Values)
             {
-                if (label?.Item?.GameObject == null || label.Root == null)
+                if (label == null || label.Root == null)
                     continue;
 
-                if (!TryGetVisualBounds(label.Item.GameObject, out Bounds bounds))
+                var target = label.Target;
+                bool visible = target != null && target.activeInHierarchy;
+                label.Root.gameObject.SetActive(visible);
+                if (!visible || !TryGetVisualBounds(target, out Bounds bounds))
                     continue;
 
                 Vector2 left = BartendingViewport.GetPointerScreenPosition(

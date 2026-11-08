@@ -141,7 +141,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
             }
             var keyboard = Keyboard.current;
             if (showControls && keyboard != null && keyboard.pKey.wasPressedThisFrame) panelOpen = !panelOpen;
-            if (keyboard != null && (keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame))
+            if (showControls && keyboard != null && (keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame))
                 EvaluateTarget();
         }
     }

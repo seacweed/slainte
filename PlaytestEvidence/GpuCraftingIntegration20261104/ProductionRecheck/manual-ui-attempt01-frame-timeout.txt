@@ -1,0 +1,6 @@
+FAIL
+System.InvalidOperationException: Native UI inspection did not complete a submitted order.
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<RunChecks>d__20.MoveNext () [0x010ce] in A:\UnityHub\proj\slainte\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:222 
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<Start>d__19.MoveNext () [0x0002e] in A:\UnityHub\proj\slainte\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:43 
+Completed checks:
+authored customer arrival/order dialogue enters GPU crafting

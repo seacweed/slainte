@@ -25,8 +25,20 @@ namespace Slainte.Bartending
         private RectTransform layerRoot;
         private RectTransform outlineRoot;
         private SlotController boundSlot;
+        private bool? suppliedAvailability;
+
+        public void SetAvailability(bool? available)
+        {
+            suppliedAvailability = available;
+            RefreshFromSlot();
+        }
 
         public string DefinitionId { get; private set; } = string.Empty;
+        public bool TryGetShelfWorldSize(out Vector2 size, BartendingViewport viewport = null)
+        {
+            size = default;
+            return layerImages.Count > 0 && BartendingViewport.TryGetImageWorldSize(layerImages[0], out size, viewport);
+        }
 
         protected override void OnInitialize()
         {
@@ -95,7 +107,7 @@ namespace Slainte.Bartending
             RefreshFromSlot();
         }
 
-        public bool IsAvailable => boundSlot != null && boundSlot.IsOccupied;
+        public bool IsAvailable => suppliedAvailability ?? (boundSlot != null && boundSlot.IsOccupied);
 
         // 보관 중이면 도구가 알려 주는 현재 모습(얼음 버킷 잔량 등)을, 꺼낸 동안에는 기본 모습을 반투명으로 그린다.
         // 단일 이미지는 보관 중 _in, 꺼낸 동안 _dis(없으면 _in 반투명)이며 레이어별 상태 제공자는 쓰지 않는다.
@@ -113,7 +125,7 @@ namespace Slainte.Bartending
                 return;
             }
 
-            IBartendingItem item = IsAvailable ? boundSlot.OccupiedItem : null;
+            IBartendingItem item = IsAvailable && boundSlot != null ? boundSlot.OccupiedItem : null;
             IBartendingCabinetVisualProvider provider = item as IBartendingCabinetVisualProvider;
             float alpha = IsAvailable ? 1f : depletedAlpha;
 

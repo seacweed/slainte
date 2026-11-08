@@ -7,6 +7,9 @@ namespace Slainte.Bartending
     [CreateAssetMenu(menuName = "Bartending/Business Scene Settings")]
     public sealed class BusinessBartendingSettings : ScriptableObject
     {
+        [Header("Production GPU Crafting")]
+        public GpuCraftingSettings gpuCrafting;
+
         [Header("Tool Cabinet")]
         public bool useToolCabinet;
 
@@ -49,6 +52,10 @@ namespace Slainte.Bartending
         [FormerlySerializedAs("sandboxServeTargetNormalized")]
         [Tooltip("Fixed serving target as normalized x, y, width, height at every resolution.")]
         public Vector4 serveTargetNormalized = new Vector4(0.35f, 0.48f, 0.3f, 0.42f);
+
+        [Header("Shelf Return Area")]
+        [Tooltip("One shared rectangle for bottle and tool returns. Normalized x, y, width, height inside the game area.")]
+        public Vector4 shelfReturnAreaNormalized = new Vector4(0f, 255f / 1440f, 1f, 192f / 1440f);
 
         [Header("World Capacity Text")]
         [Tooltip("Background color for capacity labels shown on beakers, jiggers, and cobbler shakers.")]

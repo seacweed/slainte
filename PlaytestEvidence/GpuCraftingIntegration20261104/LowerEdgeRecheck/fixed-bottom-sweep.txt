@@ -1,0 +1,12 @@
+requested=0.30, actual=0.300, screenY=0.247, volume=20 ml, liquidPixels=113
+requested=0.08, actual=0.080, screenY=0.226, volume=20 ml, liquidPixels=105
+requested=-0.10, actual=0.005, screenY=0.209, volume=20 ml, liquidPixels=122
+requested=-0.32, actual=0.005, screenY=0.188, volume=20 ml, liquidPixels=129
+requested=-0.55, actual=0.005, screenY=0.166, volume=20 ml, liquidPixels=116
+requested=-0.80, actual=0.005, screenY=0.142, volume=20 ml, liquidPixels=110
+requested=-1.05, actual=0.005, screenY=0.117, volume=20 ml, liquidPixels=111
+requested=-1.30, actual=0.005, screenY=0.093, volume=20 ml, liquidPixels=111
+requested=-1.55, actual=0.005, screenY=0.069, volume=20 ml, liquidPixels=114
+requested=-2.00, actual=0.005, screenY=0.026, volume=20 ml, liquidPixels=113
+requested=-Infinity, actual=0.005, screenY=0.002, volume=20 ml, liquidPixels=114
+requested=0.30, actual=0.300, screenY=0.247, volume=20 ml, liquidPixels=110

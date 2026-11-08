@@ -1,5 +1,7 @@
 # 바텐딩 시스템
 
+> 2026-11-04: 정식 제조 기준은 GPU Experiment다. [Canvas 연결 구조](gpu-crafting-integration.md)를 먼저 참고한다. 아래 기존 Controller/백엔드 설명은 레거시와 공용 판정 구조의 참고 자료다.
+
 BusinessScene의 CraftingMode에서 동작하는 도구 인터랙션과 액체 입자 시뮬레이션 시스템입니다.
 
 ---

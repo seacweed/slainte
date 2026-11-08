@@ -22,7 +22,14 @@ Shader "Hidden/Slainte/FluidExperiment/ImprovedComposite"
             struct Varyings { float4 positionCS:SV_POSITION; float2 uv:TEXCOORD0; };
             Varyings Vert(Attributes input)
             {
-                Varyings output; output.positionCS = TransformObjectToHClip(input.positionOS.xyz); output.uv = input.uv; return output;
+                Varyings output;
+                // The quad already spans clip space. Avoid the current camera's matrices.
+                output.positionCS = float4(input.positionOS.xy, 0, 1);
+                output.uv = input.uv;
+                #if UNITY_UV_STARTS_AT_TOP
+                    output.uv.y = 1 - output.uv.y;
+                #endif
+                return output;
             }
             float4 Frag(Varyings input):SV_Target
             {

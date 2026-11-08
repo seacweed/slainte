@@ -28,6 +28,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
     {
         [Header("Liquid environment")]
         public BoxCollider2D leftBoundary, rightBoundary, topBoundary;
+        internal BoxCollider2D HeldVesselFloor { get; set; }
         [Tooltip("Optional table surfaces. Liquid outside these surfaces drains at the simulation bounds.")]
         public BoxCollider2D[] liquidSurfaces = new BoxCollider2D[0];
         private readonly List<FluidExperimentEnvironmentHull> environmentHulls = new List<FluidExperimentEnvironmentHull>(3);
@@ -96,6 +97,10 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 position.x = Mathf.Min(position.x, rightBoundary.bounds.min.x - max.x - margin);
             if (topBoundary != null && topBoundary.isActiveAndEnabled)
                 position.y = Mathf.Min(position.y, topBoundary.bounds.min.y - max.y - margin);
+            // Native contact is suspended during pickup. Keep the vessel above the worktop
+            // so its contents cannot cross the table's GPU collision and surface mask.
+            if (found && body.IsVessel && HeldVesselFloor != null && HeldVesselFloor.isActiveAndEnabled)
+                position.y = Mathf.Max(position.y, HeldVesselFloor.bounds.max.y - min.y + margin);
             return position;
         }
     }

@@ -1,0 +1,13 @@
+PASS
+authored customer arrival/order dialogue enters GPU crafting
+entry frames: max=448.76 ms, p95=0.84 ms
+GPU-only runtime in the authored Canvas
+Canvas/world pointer round trip
+actual free/owned liquid alpha present separately at all 9 QHD viewport positions
+bottle supply/emission/return/delivery stock
+physical bottle-to-glass pour without Fill: emitted 20 ml, received 20 ml
+bottle/glass held overlap policy, release contacts, overlapping item swap and filled-glass pickup
+filled glass storage/restoration preserves identity and ml
+GPU surface rendered through the production RenderTexture camera
+serving-area input/evaluation/customer feedback/payment/duplicate guard
+episode request/result mapping and repeated session teardown

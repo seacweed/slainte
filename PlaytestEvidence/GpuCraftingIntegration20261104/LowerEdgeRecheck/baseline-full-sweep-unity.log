@@ -1,0 +1,634 @@
+[Licensing::Module] Trying to connect to existing licensing client channel...
+Built from '6000.3/respin/6000.3.5f1-a1ec4b2f2d19' branch; Version is '6000.3.5f2 (3fa8bc678cb0) revision 4171964'; Using compiler version '194234433'; Build Type 'Release'
+OS: 'Windows 11  (10.0.26200) Core' Language: 'ko' Physical Memory: 32712 MB
+BatchMode: 1, IsHumanControllingUs: 0, StartBugReporterOnCrash: 0, Is64bit: 1
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-boguk" at "2026-11-05T15:32:02.0142176Z"
+System  architecture: x64
+Process architecture: x64
+Date: 2026-11-05T15:32:02Z
+
+COMMAND LINE ARGUMENTS:
+A:\UnityHub\Unity\6000.3.5f2\Editor\Unity.exe
+-batchmode
+-projectPath
+A:\UnityHub\proj\slainte\Library\GpuCraftingIntegrationValidation
+-force-d3d12
+-executeMethod
+Slainte.EditorTools.GpuCraftingIntegrationValidator.RunPlayModeBatch
+-logFile
+A:\UnityHub\proj\slainte\PlaytestEvidence\GpuCraftingIntegration20261104\LowerEdgeRecheck\baseline-full-sweep-unity.log
+Successfully changed project path to: A:\UnityHub\proj\slainte\Library\GpuCraftingIntegrationValidation
+A:/UnityHub/proj/slainte/Library/GpuCraftingIntegrationValidation
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-gfx=262144"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+Player connection [37660]  Target information:
+
+Player connection [37660]  * "[IP] 192.168.219.108 [Port] 55505 [Flags] 2 [Guid] 3641493196 [EditorId] 3641493196 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-M6CM14T) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+
+Player connection [37660]  * "[IP] 172.20.208.1 [Port] 55505 [Flags] 2 [Guid] 3641493196 [EditorId] 3641493196 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-M6CM14T) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" 
+
+Player connection [37660] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [37660] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Package Manager] Connected to IPC stream "Upm-30836" after 1.0 seconds.
+[Licensing::Module] Licensing is not yet initialized.
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.17.4+4293ba1
+  Session Id:              85a9b5971250415ea2d71bd22c8fa026
+  Correlation Id:          fe13f4609a4bc3d6cb50e4fbc6d6c24f
+  External correlation Id: 5777838859973426959
+  Machine Id:              EMpD5TyXUjUioAfY0/A++JT1Jzc=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-boguk" (connect: 0.00s, validation: 0.01s, handshake: 4.38s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-boguk-notifications" at "2026-11-05T15:32:06.4063549Z"
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: 14568591564810-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.01
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Licensing Background thread has ended after 4.45s
+[Licensing::Module] Licensing is initialized (took 3.23s).
+[Licensing::Client] Successfully resolved entitlement details
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Refreshing native plugins compatible for Editor in 0.45 ms, found 0 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Initialize engine version: 6000.3.5f2 (3fa8bc678cb0)
+[Subsystems] Discovering subsystems at path A:/UnityHub/Unity/6000.3.5f2/Editor/Data/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path A:/UnityHub/proj/slainte/Library/GpuCraftingIntegrationValidation/Assets
+Forcing GfxDevice: Direct3D 12
+GfxDevice: creating device client; kGfxThreadingModeNonThreaded
+d3d12: failed to query info queue interface (0x80004002).
+Direct3D:
+    Version:         Direct3D 12 [level 12.2]
+    Renderer:        NVIDIA GeForce RTX 3070 (ID=0x2484)
+    Vendor:          NVIDIA
+    VRAM:            8018 MB
+    App VRAM Budget: 7250 MB
+    Driver:          32.0.16.1074
+Initialize mono
+Mono path[0] = 'A:/UnityHub/Unity/6000.3.5f2/Editor/Data/Managed'
+Mono path[1] = 'A:/UnityHub/Unity/6000.3.5f2/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
+Mono config path = 'A:/UnityHub/Unity/6000.3.5f2/Editor/Data/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56836
+Using cacheserver namespaces - metadata:defaultmetadata, artifacts:defaultartifacts
+Using cacheserver namespaces - metadata:defaultmetadata, artifacts:defaultartifacts
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: A:/UnityHub/Unity/6000.3.5f2/Editor/Data/PlaybackEngines/WebGLSupport/UnityEditor.WebGL.Extensions.dll
+Register platform support module: A:/UnityHub/Unity/6000.3.5f2/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
+Registered in 0.008811 seconds.
+- Loaded All Assemblies, in  1.947 seconds
+Native extension for WindowsStandalone target not found
+Native extension for WebGL target not found
+ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:False
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.910 seconds
+Domain Reload Profiling: 2857ms
+	BeginReloadAssembly (1075ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (0ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (6ms)
+	RebuildCommonClasses (140ms)
+	RebuildNativeTypeToScriptingClass (29ms)
+	initialDomainReloadingComplete (106ms)
+	LoadAllAssembliesAndSetupDomain (597ms)
+		LoadAssemblies (1069ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (589ms)
+			TypeCache.Refresh (586ms)
+				TypeCache.ScanAssembly (542ms)
+			BuildScriptInfoCaches (0ms)
+			ResolveRequiredComponents (1ms)
+	FinalizeReload (911ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (825ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (184ms)
+			SetLoadedEditorAssemblies (7ms)
+			BeforeProcessingInitializeOnLoad (183ms)
+			ProcessInitializeOnLoadAttributes (307ms)
+			ProcessInitializeOnLoadMethodAttributes (144ms)
+			AfterProcessingInitializeOnLoad (0ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (0ms)
+[Licensing::Client] Successfully resolved entitlement details
+Application.AssetDatabase Initial Refresh Start
+Package Manager log level set to [2]
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 68 packages:
+  Local packages:
+    com.coplaydev.unity-mcp@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.coplaydev.unity-mcp@045e809812a8 (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.coplaydev.unity-mcp@045e809812a8)
+    com.unity.2d.animation@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.2d.animation@3c53dae92956 (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.2d.animation@3c53dae92956)
+    com.unity.2d.aseprite@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.2d.aseprite@809e3a168ff7 (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.2d.aseprite@809e3a168ff7)
+    com.unity.2d.psdimporter@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.2d.psdimporter@9abe0f7cac7e (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.2d.psdimporter@9abe0f7cac7e)
+    com.unity.2d.sprite@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.2d.sprite@82f01c8c75ca (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.2d.sprite@82f01c8c75ca)
+    com.unity.2d.spriteshape@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.2d.spriteshape@0738bab11647 (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.2d.spriteshape@0738bab11647)
+    com.unity.2d.tilemap@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.2d.tilemap@2428aeee2f73 (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.2d.tilemap@2428aeee2f73)
+    com.unity.2d.tilemap.extras@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.2d.tilemap.extras@3dde84bf3867 (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.2d.tilemap.extras@3dde84bf3867)
+    com.unity.2d.tooling@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.2d.tooling@55ff0338cdce (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.2d.tooling@55ff0338cdce)
+    com.unity.collab-proxy@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.collab-proxy@1ec4e416a4af (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.collab-proxy@1ec4e416a4af)
+    com.unity.ide.rider@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.ide.rider@1f60b3138684 (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.ide.rider@1f60b3138684)
+    com.unity.ide.visualstudio@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.ide.visualstudio@a99d56dec63f (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.ide.visualstudio@a99d56dec63f)
+    com.unity.inputsystem@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.inputsystem@02433b2481ab (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.inputsystem@02433b2481ab)
+    com.unity.multiplayer.center@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.multiplayer.center@f01f4ba8d00a (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.multiplayer.center@f01f4ba8d00a)
+    com.unity.performance.profile-analyzer@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.performance.profile-analyzer@0516b3a47353 (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.performance.profile-analyzer@0516b3a47353)
+    com.unity.render-pipelines.universal@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.render-pipelines.universal@1e87cf1dccb8 (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.render-pipelines.universal@1e87cf1dccb8)
+    com.unity.test-framework@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.test-framework@0b7a23ab2e1d (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.test-framework@0b7a23ab2e1d)
+    com.unity.timeline@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.timeline@7f8b2fb101b6 (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.timeline@7f8b2fb101b6)
+    com.unity.ugui@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.ugui@1890c14c96ff (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.ugui@1890c14c96ff)
+    com.unity.visualscripting@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.visualscripting@191c0d7e3b69 (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.visualscripting@191c0d7e3b69)
+    com.unity.modules.accessibility@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.accessibility (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.accessibility)
+    com.unity.modules.adaptiveperformance@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.adaptiveperformance (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.adaptiveperformance)
+    com.unity.modules.ai@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.ai (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.ai)
+    com.unity.modules.androidjni@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.androidjni (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.androidjni)
+    com.unity.modules.animation@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.animation (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.animation)
+    com.unity.modules.assetbundle@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.assetbundle (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.assetbundle)
+    com.unity.modules.audio@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.audio (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.audio)
+    com.unity.modules.cloth@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.cloth (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.cloth)
+    com.unity.modules.director@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.director (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.director)
+    com.unity.modules.imageconversion@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.imageconversion (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.imageconversion)
+    com.unity.modules.imgui@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.imgui (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.jsonserialize (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.jsonserialize)
+    com.unity.modules.particlesystem@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.particlesystem (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.particlesystem)
+    com.unity.modules.physics@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.physics (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.physics)
+    com.unity.modules.physics2d@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.physics2d (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.physics2d)
+    com.unity.modules.screencapture@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.screencapture (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.screencapture)
+    com.unity.modules.terrain@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.terrain (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.terrain)
+    com.unity.modules.terrainphysics@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.terrainphysics (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.terrainphysics)
+    com.unity.modules.tilemap@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.tilemap (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.tilemap)
+    com.unity.modules.ui@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.ui (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.ui)
+    com.unity.modules.uielements@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.uielements (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.uielements)
+    com.unity.modules.umbra@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.umbra (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.unityanalytics (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.unitywebrequest (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.unitywebrequestassetbundle (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.unitywebrequestaudio (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.unitywebrequesttexture (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.unitywebrequestwww (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vectorgraphics@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.vectorgraphics (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.vectorgraphics)
+    com.unity.modules.vehicles@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.vehicles (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.vehicles)
+    com.unity.modules.video@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.video (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.video)
+    com.unity.modules.vr@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.vr (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.vr)
+    com.unity.modules.wind@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.wind (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.wind)
+    com.unity.modules.xr@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.xr (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.xr)
+    com.unity.2d.common@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.2d.common@51e9484895c4 (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.2d.common@51e9484895c4)
+    com.unity.burst@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.burst@973857688024 (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.burst@973857688024)
+    com.unity.collections@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.collections@aea9d3bd5e19 (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.collections@aea9d3bd5e19)
+    com.unity.ext.nunit@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.ext.nunit@d8c07649098d (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.ext.nunit@d8c07649098d)
+    com.unity.mathematics@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.mathematics@19a9377c4ffa (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.mathematics@19a9377c4ffa)
+    com.unity.modules.hierarchycore@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.hierarchycore (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.hierarchycore)
+    com.unity.modules.subsystems@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.subsystems (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.modules.subsystems)
+    com.unity.nuget.mono-cecil@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.nuget.mono-cecil@ecb9724e46ff (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.nuget.mono-cecil@ecb9724e46ff)
+    com.unity.nuget.newtonsoft-json@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.nuget.newtonsoft-json@4dfd81071c64 (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.nuget.newtonsoft-json@4dfd81071c64)
+    com.unity.render-pipelines.core@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.render-pipelines.core@ce614113b3ba (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.render-pipelines.core@ce614113b3ba)
+    com.unity.render-pipelines.universal-config@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.render-pipelines.universal-config@8dc1aab4af1d (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.render-pipelines.universal-config@8dc1aab4af1d)
+    com.unity.searcher@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.searcher@d45a78918735 (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.searcher@d45a78918735)
+    com.unity.shadergraph@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.shadergraph@ea01319cfd98 (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.shadergraph@ea01319cfd98)
+    com.unity.test-framework.performance@file:A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.test-framework.performance@0840f58e4562 (location: A:\UnityHub\proj\slainte\Library\PackageCache\com.unity.test-framework.performance@0840f58e4562)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.24 seconds
+[ScriptCompilation] Requested script compilation because: Assetdatabase observed changes in script compilation related files
+Starting: A:\UnityHub\Unity\6000.3.5f2\Editor\Data\Tools\BuildPipeline\bee_backend.exe --ipc --defer-dag-verification --dagfile="Library/Bee/1900b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: A:/UnityHub/proj/slainte/Library/GpuCraftingIntegrationValidation
+DisplayProgressbar: Compiling Scripts
+ExitCode: 0 Duration: 9s747ms
+[ 882/1146  0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+[1138/1146  4s] Csc Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp.dll (+2 others)
+[1139/1146  1s] Csc Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp-Editor.dll (+2 others)
+[1140/1146  2s] ILPostProcess Library/Bee/artifacts/1900b0aE.dag/post-processed/Assembly-CSharp-Editor.dll (+pdb)
+Processing assembly Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp-Editor.dll, with 136 defines and 360 references
+
+processors: Unity.Jobs.CodeGen.JobsILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1141/1146  0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp-Editor.pdb
+[1142/1146  4s] ILPostProcess Library/Bee/artifacts/1900b0aE.dag/post-processed/Assembly-CSharp.dll (+pdb)
+Processing assembly Library/Bee/artifacts/1900b0aE.dag/Assembly-CSharp.dll, with 138 defines and 340 references
+
+processors: Unity.Jobs.CodeGen.JobsILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1143/1146  0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp.dll
+[1144/1146  0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp.pdb
+[1145/1146  0s] CopyFiles Library/ScriptAssemblies/Assembly-CSharp-Editor.dll
+*** Tundra build success (9.50 seconds), 9 items updated, 1146 evaluated
+AssetDatabase: script compilation time: 19.244082s
+Begin MonoManager ReloadAssembly
+- Loaded All Assemblies, in  3.486 seconds
+'Assets/_Project/Features/Bartending/PhysicsLab/Editor/PhysicsLabValidator.Pouring.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
+'Assets/_Project/Features/Bartending/PhysicsLab/Editor/PhysicsLabValidator.ContainedStreams.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
+'Assets/_Project/Features/Bartending/PhysicsLab/Editor/PhysicsLabValidator.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
+'Assets/_Project/Features/Bartending/PhysicsLab/Editor/PhysicsLabValidator.Geometry.cs' contains partial class of Unity.Object, exactly 1 of the partial classes needs to be in a file with the same filename. This is to know the one that can be referenced from ie. GameObjects
+Refreshing native plugins compatible for Editor in 2.27 ms, found 4 plugins.
+Native extension for WindowsStandalone target not found
+Native extension for WebGL target not found
+ScheduleIndexationOnStartup MainProcess:True IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  6.718 seconds
+Domain Reload Profiling: 10202ms
+	BeginReloadAssembly (1004ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (11ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (0ms)
+		CreateAndSetChildDomain (218ms)
+	RebuildCommonClasses (68ms)
+	RebuildNativeTypeToScriptingClass (23ms)
+	initialDomainReloadingComplete (80ms)
+	LoadAllAssembliesAndSetupDomain (2309ms)
+		LoadAssemblies (2369ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (626ms)
+			TypeCache.Refresh (459ms)
+				TypeCache.ScanAssembly (434ms)
+			BuildScriptInfoCaches (141ms)
+			ResolveRequiredComponents (19ms)
+	FinalizeReload (6719ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (6281ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (81ms)
+			SetLoadedEditorAssemblies (9ms)
+			BeforeProcessingInitializeOnLoad (372ms)
+			ProcessInitializeOnLoadAttributes (5481ms)
+			ProcessInitializeOnLoadMethodAttributes (332ms)
+			AfterProcessingInitializeOnLoad (5ms)
+			EditorAssembliesLoaded (0ms)
+		ExecutionOrderSort2 (0ms)
+		AwakeInstancesAfterBackupRestoration (25ms)
+Refreshing native plugins compatible for Editor in 5.01 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=64b6288e89e01334d98aafbc9d951f91): Total: 33.270 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=9429 ms
+		Asset DB Callback time: managed=670 ms, native=324 ms
+		Scripting: domain reloads=1, domain reload time=3487 ms, compile time=19247 ms, other=112 ms
+		Project Asset Count: scripts=1845, non-scripts=4842
+		Asset File Changes: new=0, changed=1, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeCustomDependenciesCallbacks: 0.002ms
+	InvokePackagesCallback: 452.452ms
+	ApplyChangesToAssetFolders: 13.222ms
+	Scan: 1332.032ms
+	OnSourceAssetsModified: 17.991ms
+	CategorizeAssetsWithTransientArtifact: 214.439ms
+	ProcessAssetsWithTransientArtifactChanges: 182.625ms
+	CategorizeAssets: 134.334ms
+	ImportOutOfDateAssets: 6750.716ms (-12514.058ms without children)
+		CompileScripts: 19246.869ms
+		ReloadNativeAssets: 0.050ms
+		UnloadImportedAssets: 14.888ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 2.030ms
+		InitializingProgressBar: 0.001ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.009ms
+		OnDemandSchedulerStart: 0.926ms
+	PostProcessAllAssets: 657.222ms
+	Hotreload: 14.227ms
+	GatherAllCurrentPrimaryArtifactRevisions: 0.003ms
+	UnloadStreamsBegin: 8.441ms
+	PersistCurrentRevisions: 0.185ms
+	UnloadStreamsEnd: 0.002ms
+	GenerateScriptTypeHashes: 7.213ms
+	Untracked: 23492.558ms
+
+Application.AssetDatabase Initial Refresh End
+Launched and connected shader compiler UnityShaderCompiler.exe after 0.04 seconds
+Scanning for USB devices : 17.742ms
+Initializing Unity extensions:
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-SlainteGpuIntegrationValidation
+Unloading 23 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 7686 unused Assets / (8.2 MB). Loaded Objects now: 8556.
+Memory consumption went from 231.0 MB to 222.9 MB.
+Total: 31.310700 ms (FindLiveObjects: 1.792200 ms CreateObjectMapping: 2.734400 ms MarkObjects: 17.233400 ms  DeleteObjects: 9.548100 ms)
+
+[GpuCraftingIntegration] REFERENCES PASS: 15 bottles, 4 glasses, GPU/shader/garnish references.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Slainte.EditorTools.GpuCraftingIntegrationValidator:ValidateReferences () (at Assets/_Project/Features/Bartending/Editor/GpuCraftingIntegrationValidator.cs:66)
+Slainte.EditorTools.GpuCraftingIntegrationValidator:Begin (bool,bool) (at Assets/_Project/Features/Bartending/Editor/GpuCraftingIntegrationValidator.cs:88)
+Slainte.EditorTools.GpuCraftingIntegrationValidator:RunPlayModeBatch () (at Assets/_Project/Features/Bartending/Editor/GpuCraftingIntegrationValidator.cs:78)
+
+(Filename: Assets/_Project/Features/Bartending/Editor/GpuCraftingIntegrationValidator.cs Line: 66)
+
+Opening scene 'Assets/_Project/Scenes/Production/BusinessScene.unity'
+Unloading 1143 Unused Serialized files (Serialized files now loaded: 0)
+Loaded scene 'Assets/_Project/Scenes/Production/BusinessScene.unity'
+	Deserialize:            736.757 ms
+	Integration:            709.410 ms
+	Integration of assets:  25.642 ms
+	Thread Wait Time:       0.299 ms
+	Total Operation Time:   1472.107 ms
+Unloading 635 unused Assets / (10.5 MB). Loaded Objects now: 10952.
+Memory consumption went from 298.8 MB to 288.3 MB.
+Total: 23.857200 ms (FindLiveObjects: 1.616800 ms CreateObjectMapping: 1.776300 ms MarkObjects: 18.275800 ms  DeleteObjects: 2.185700 ms)
+
+[Project] Loading completed in 51.291 seconds
+	Project init time: 				46.486 seconds
+		Template init time: 		0.000 seconds
+		Package Manager init time: 		4.194 seconds
+		Asset Database init time: 		0.485 seconds
+		Global illumination init time: 	0.015 seconds
+		Assemblies load time: 			2.925 seconds
+		Unity extensions init time: 	0.017 seconds
+		Asset Database refresh time: 	33.271 seconds
+	Scene opening time: 			4.005 seconds
+##utp:{"type":"ProjectInfo","version":2,"phase":"Immediate","time":1793892772690,"processId":30836,"projectLoad":51.2905324,"projectInit":46.48578,"templateInit":0.0,"packageManagerInit":4.194093,"assetDatabaseInit":0.4853144,"globalIlluminationInit":0.0146474,"assembliesLoad":2.9249241,"unityExtensionsInit":0.0167814,"assetDatabaseRefresh":33.2706624,"sceneOpening":4.0050712}
+##utp:{"type":"EditorInfo","version":2,"phase":"Immediate","time":1793892772690,"processId":30836,"editorVersion":"6000.3.5f2 (3fa8bc678cb0)","branch":"6000.3/respin/6000.3.5f1-a1ec4b2f2d19","buildType":"Release","platform":"Windows"}
+SpriteAtlasPacking completed in 0.015841 sec
+Reloading assemblies for play mode.
+Reloading assemblies after forced synchronous recompile.
+Begin MonoManager ReloadAssembly
+- Loaded All Assemblies, in  1.993 seconds
+Refreshing native plugins compatible for Editor in 2.38 ms, found 4 plugins.
+Native extension for WindowsStandalone target not found
+Native extension for WebGL target not found
+ScheduleIndexationOnStartup MainProcess:True IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  2.252 seconds
+Domain Reload Profiling: 4270ms
+	BeginReloadAssembly (1079ms)
+		ExecutionOrderSort (0ms)
+		DisableScriptedObjects (121ms)
+		BackupInstance (0ms)
+		ReleaseScriptingObjects (1ms)
+		CreateAndSetChildDomain (587ms)
+	RebuildCommonClasses (83ms)
+	RebuildNativeTypeToScriptingClass (24ms)
+	initialDomainReloadingComplete (104ms)
+	LoadAllAssembliesAndSetupDomain (726ms)
+		LoadAssemblies (607ms)
+		RebuildTransferFunctionScriptingTraits (0ms)
+		AnalyzeDomain (379ms)
+			TypeCache.Refresh (12ms)
+				TypeCache.ScanAssembly (0ms)
+			BuildScriptInfoCaches (340ms)
+			ResolveRequiredComponents (20ms)
+	FinalizeReload (2254ms)
+		ReleaseScriptCaches (0ms)
+		RebuildScriptCaches (0ms)
+		SetupLoadedEditorAssemblies (1451ms)
+			LogAssemblyErrors (0ms)
+			InitializePlatformSupportModulesInManaged (66ms)
+			SetLoadedEditorAssemblies (8ms)
+			BeforeProcessingInitializeOnLoad (296ms)
+			ProcessInitializeOnLoadAttributes (800ms)
+			ProcessInitializeOnLoadMethodAttributes (277ms)
+			AfterProcessingInitializeOnLoad (3ms)
+			EditorAssembliesLoaded (1ms)
+		ExecutionOrderSort2 (1ms)
+		AwakeInstancesAfterBackupRestoration (143ms)
+Asset Pipeline Refresh (id=b74cf481b5224bc489f9f8445c6e561e): Total: 4.961 seconds - Initiated by StopAssetImportingV2(ForceSynchronousImport | ForceDomainReload)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=2734 ms
+		Asset DB Callback time: managed=82 ms, native=49 ms
+		Scripting: domain reloads=1, domain reload time=2092 ms, compile time=2 ms, other=0 ms
+		Project Asset Count: scripts=1845, non-scripts=4842
+		Asset File Changes: new=0, changed=0, moved=0, deleted=0
+		Scan Filter Count: 0
+	InvokeCustomDependenciesCallbacks: 0.003ms
+	InvokePackagesCallback: 227.777ms
+	ApplyChangesToAssetFolders: 0.547ms
+	Scan: 0.002ms
+	OnSourceAssetsModified: 0.002ms
+	CategorizeAssetsWithTransientArtifact: 0.004ms
+	ProcessAssetsWithTransientArtifactChanges: 40.578ms
+	CategorizeAssets: 145.482ms
+	ImportOutOfDateAssets: 2273.767ms (2262.104ms without children)
+		CompileScripts: 1.780ms
+		CollectScriptTypesHashes: 3.399ms
+		ReloadNativeAssets: 3.196ms
+		UnloadImportedAssets: 0.163ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 2.501ms
+		InitializingProgressBar: 0.001ms
+		PostProcessAllAssetNotificationsAddChangedAssets: 0.001ms
+		OnDemandSchedulerStart: 0.623ms
+	PostProcessAllAssets: 82.720ms
+	GatherAllCurrentPrimaryArtifactRevisions: 0.612ms
+	UnloadStreamsBegin: 0.387ms
+	PersistCurrentRevisions: 0.262ms
+	UnloadStreamsEnd: 0.002ms
+	GenerateScriptTypeHashes: 11.957ms
+	Untracked: 2188.666ms
+
+<color=green>[System]</color> 현재 씬 테스트를 위해 CoreScene을 몰래 자동 로드했습니다!
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+CoreSceneAutoLoader:LoadCoreSceneAutomatically () (at Assets/_Project/Core/Runtime/Flow/CoreSceneAutoLoader.cs:37)
+
+(Filename: Assets/_Project/Core/Runtime/Flow/CoreSceneAutoLoader.cs Line: 37)
+
+Loaded scene 'Temp/__Backupscenes/0.backup'
+	Deserialize:            16.846 ms
+	Integration:            1940.317 ms
+	Integration of assets:  0.007 ms
+	Thread Wait Time:       5.246 ms
+	Total Operation Time:   1962.416 ms
+[DataManager] No save file found. Using new data.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+DataManager:Load () (at Assets/_Project/Core/Runtime/Persistence/DataManager.cs:128)
+DataManager:Awake () (at Assets/_Project/Core/Runtime/Persistence/DataManager.cs:37)
+
+(Filename: Assets/_Project/Core/Runtime/Persistence/DataManager.cs Line: 128)
+
+[EpisodeManager] 16 episode(s) loaded.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+EpisodeManager:LoadAllEpisodes () (at Assets/_Project/Features/Business/Runtime/Conversation/Episode/EpisodeManager.cs:34)
+EpisodeManager:Awake () (at Assets/_Project/Features/Business/Runtime/Conversation/Episode/EpisodeManager.cs:25)
+
+(Filename: Assets/_Project/Features/Business/Runtime/Conversation/Episode/EpisodeManager.cs Line: 34)
+
+Loaded scene 'Assets/_Project/Scenes/Production/CoreScene.unity'
+	Deserialize:            24.560 ms
+	Integration:            97.804 ms
+	Integration of assets:  0.007 ms
+	Thread Wait Time:       1847.879 ms
+	Total Operation Time:   1970.250 ms
+[PlaytestIsolation] Progress snapshot captured; disk saves are disabled.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Slainte.Business.PlaytestProgressIsolation/<Start>d__9:MoveNext () (at Assets/_Project/Features/Business/Runtime/Flow/PlaytestProgressIsolation.cs:44)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr)
+
+(Filename: Assets/_Project/Features/Business/Runtime/Flow/PlaytestProgressIsolation.cs Line: 44)
+
+Shader warning in 'FluidExperimentLiquid(Clone)': Program 'ApplyCohesiveIceContacts', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel ApplyCohesiveIceContacts (on d3d11)
+Shader warning in 'FluidExperimentLiquid(Clone)': loop doesn't seem to do anything, consider removing [loop] infinite loop detected - loop writes no values at kernel ApplyCohesiveIceContacts at Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentCohesiveContacts.hlsl(32) (on d3d11)
+Shader warning in 'FluidExperimentLiquid(Clone)': loop doesn't seem to do anything, consider removing [loop] infinite loop detected - loop writes no values at kernel ApplyCohesiveIceContacts at Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentCohesiveContacts.hlsl(50) (on d3d11)
+Shader warning in 'FluidExperimentLiquid(Clone)': value cannot be infinity, isfinite() may not be necessary.  /Gis may force isfinite() to be performed at kernel ApplyCohesiveIceContacts at Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentCohesiveContacts.hlsl(159) (on d3d11)
+Shader warning in 'FluidExperimentLiquid(Clone)': Program 'ApplyCohesiveIceContacts', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel ApplyCohesiveIceContacts (on d3d11)
+Shader warning in 'FluidExperimentLiquid(Clone)': Program 'UpdateCohesiveContactVelocities', warning X4714: sum of temp registers and indexable temp registers times 64 threads exceeds the recommended total 16384.  Performance may be reduced at kernel UpdateCohesiveContactVelocities (on d3d11)
+Shader warning in 'FluidExperimentLiquid(Clone)': loop doesn't seem to do anything, consider removing [loop] infinite loop detected - loop writes no values at kernel ApplyCohesiveIceContacts at Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentCohesiveContacts.hlsl(32) (on d3d11)
+Shader warning in 'FluidExperimentLiquid(Clone)': loop doesn't seem to do anything, consider removing [loop] infinite loop detected - loop writes no values at kernel UpdateCohesiveContactVelocities at Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentCohesiveContacts.hlsl(32) (on d3d11)
+Shader warning in 'FluidExperimentLiquid(Clone)': loop doesn't seem to do anything, consider removing [loop] infinite loop detected - loop writes no values at kernel ApplyCohesiveIceContacts at Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentCohesiveContacts.hlsl(50) (on d3d11)
+Shader warning in 'FluidExperimentLiquid(Clone)': loop doesn't seem to do anything, consider removing [loop] infinite loop detected - loop writes no values at kernel UpdateCohesiveContactVelocities at Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentCohesiveContacts.hlsl(50) (on d3d11)
+Shader warning in 'FluidExperimentLiquid(Clone)': value cannot be infinity, isfinite() may not be necessary.  /Gis may force isfinite() to be performed at kernel ApplyCohesiveIceContacts at Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentCohesiveContacts.hlsl(159) (on d3d11)
+Shader warning in 'FluidExperimentLiquid(Clone)': value cannot be infinity, isfinite() may not be necessary.  /Gis may force isfinite() to be performed at kernel UpdateCohesiveContactVelocities at Assets/_Project/Features/Bartending/FluidGpuExperiment/Shaders/FluidExperimentCohesiveContacts.hlsl(159) (on d3d11)
+Asset Pipeline Refresh (id=a760376f6583520458089111341c4d5a): Total: 0.160 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+Start Indexing on Editor startup
+ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index
+  at System.Collections.Generic.List`1[T].get_Item (System.Int32 index) [0x00009] in <1eb9db207454431c84a47bcd81e79c37>:0 
+  at UnityEditor.Search.SearchDatabase+<EnumerateAll>d__80.MoveNext () [0x00106] in <82791fc054934747b7b2eb2c14fe716e>:0 
+  at System.Linq.Enumerable.TryGetFirst[TSource] (System.Collections.Generic.IEnumerable`1[T] source, System.Boolean& found) [0x00045] in <6faa6124236442759eb396cfbfdad508>:0 
+  at System.Linq.Enumerable.First[TSource] (System.Collections.Generic.IEnumerable`1[T] source) [0x00000] in <6faa6124236442759eb396cfbfdad508>:0 
+  at UnityEditor.Search.SearchDatabase.GetDefaultSearchDatabase () [0x00006] in <82791fc054934747b7b2eb2c14fe716e>:0 
+  at UnityEditor.Search.SearchInit.IndexationOnStartup () [0x0000c] in <82791fc054934747b7b2eb2c14fe716e>:0 
+  at UnityEditor.EditorApplication.Internal_CallDelayFunctions () [0x0002c] in <b95741d8534d46b7b21ea8475977e676>:0 
+
+Created GICache directory at C:/Users/boguk/AppData/LocalLow/Unity/Caches/GiCache. Took: 0.340s, timestamps: [59.289 - 59.629]
+InvalidOperationException: Held glass lower-edge regression: requested=0.30, actual=0.300, volume=20 ml, liquidPixels=109 | requested=0.08, actual=0.080, volume=20 ml, liquidPixels=111 | requested=-0.10, actual=-0.100, volume=20 ml, liquidPixels=154 | requested=-0.32, actual=-0.320, volume=20 ml, liquidPixels=468 | requested=-0.55, actual=-0.550, volume=20 ml, liquidPixels=464 | requested=-0.80, actual=-0.800, volume=20 ml, liquidPixels=473 | requested=-1.05, actual=-1.050, volume=20 ml, liquidPixels=479 | requested=-1.30, actual=-1.300, volume=20 ml, liquidPixels=468 | requested=-1.55, actual=-1.550, volume=13 ml, liquidPixels=304 | requested=0.30, actual=0.300, volume=20 ml, liquidPixels=106
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<CheckHeldGlassAtLowerEdge>d__31.MoveNext () [0x0063e] in A:\UnityHub\proj\slainte\Library\GpuCraftingIntegrationValidation\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:533 
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<RunChecks>d__28.MoveNext () [0x00b1b] in A:\UnityHub\proj\slainte\Library\GpuCraftingIntegrationValidation\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:212 
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<Start>d__27.MoveNext () [0x0002e] in A:\UnityHub\proj\slainte\Library\GpuCraftingIntegrationValidation\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:75 
+UnityEngine.DebugLogHandler:Internal_LogException_Injected(Exception, IntPtr)
+UnityEngine.DebugLogHandler:Internal_LogException(Exception, Object)
+UnityEngine.DebugLogHandler:LogException(Exception, Object)
+UnityEngine.Logger:LogException(Exception, Object)
+UnityEngine.Debug:LogException(Exception, Object)
+Slainte.Bartending.<Start>d__27:MoveNext() (at Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:80)
+UnityEngine.SetupCoroutine:InvokeMoveNext(IEnumerator, IntPtr)
+
+(Filename: Assets/_Project/Features/Bartending/Runtime/Integration/GpuCraftingIntegrationProbe.cs Line: 533)
+
+Unloading 22 Unused Serialized files (Serialized files now loaded: 0)
+Loaded scene 'Temp/__Backupscenes/0.backup'
+	Deserialize:            13.222 ms
+	Integration:            604.528 ms
+	Integration of assets:  0.009 ms
+	Thread Wait Time:       0.023 ms
+	Total Operation Time:   617.782 ms
+Unloading 755 unused Assets / (44.4 MB). Loaded Objects now: 11032.
+Memory consumption went from 365.3 MB to 320.9 MB.
+Total: 23.132200 ms (FindLiveObjects: 1.254500 ms CreateObjectMapping: 1.405800 ms MarkObjects: 17.657200 ms  DeleteObjects: 2.813100 ms)
+
+[Licensing::Client] Successfully resolved entitlement details
+Clearing [GALMURIMONO11 SDF] dynamic font asset data.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+TMPro.EditorEventCallbacks/<>c:<InitializeFontAssetResourceChangeCallBacks>b__0_0 () (at A:/UnityHub/proj/slainte/Library/PackageCache/com.unity.ugui@1890c14c96ff/Editor/TMP/TMP_EditorResourceManager.cs:36)
+UnityEditor.EditorApplication:Internal_EditorApplicationQuit ()
+Slainte.EditorTools.GpuCraftingIntegrationValidator:HandlePlayModeChanged (UnityEditor.PlayModeStateChange) (at Assets/_Project/Features/Bartending/Editor/GpuCraftingIntegrationValidator.cs:134)
+UnityEditor.EditorApplication:Internal_PlayModeStateChanged (UnityEditor.PlayModeStateChange)
+
+(Filename: A:/UnityHub/proj/slainte/Library/PackageCache/com.unity.ugui@1890c14c96ff/Editor/TMP/TMP_EditorResourceManager.cs Line: 36)
+
+Clearing [NotoSansKR-Regular SDF] dynamic font asset data.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+TMPro.EditorEventCallbacks/<>c:<InitializeFontAssetResourceChangeCallBacks>b__0_0 () (at A:/UnityHub/proj/slainte/Library/PackageCache/com.unity.ugui@1890c14c96ff/Editor/TMP/TMP_EditorResourceManager.cs:36)
+UnityEditor.EditorApplication:Internal_EditorApplicationQuit ()
+Slainte.EditorTools.GpuCraftingIntegrationValidator:HandlePlayModeChanged (UnityEditor.PlayModeStateChange) (at Assets/_Project/Features/Bartending/Editor/GpuCraftingIntegrationValidator.cs:134)
+UnityEditor.EditorApplication:Internal_PlayModeStateChanged (UnityEditor.PlayModeStateChange)
+
+(Filename: A:/UnityHub/proj/slainte/Library/PackageCache/com.unity.ugui@1890c14c96ff/Editor/TMP/TMP_EditorResourceManager.cs Line: 36)
+
+Start importing Assets/TextMesh Pro/Fonts/NotoSansKR-Regular SDF.asset using Guid(02ac221e0dadb2049b479c49b5f840b4) (NativeFormatImporter) -> (artifact id: 'd20be3f5c78d80546ddc730306005e22') in 0.0641969 seconds
+Start importing Assets/TextMesh Pro/Fonts/GALMURIMONO11 SDF.asset using Guid(8be9d5407d167644e9540752364be580) (NativeFormatImporter) -> (artifact id: '34b543cffa7013d9d9f692b796505557') in 0.0044103 seconds
+Refreshing native plugins compatible for Editor in 5.19 ms, found 4 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Asset Pipeline Refresh (id=243db564eb12f6245a99cc0435f2bd37): Total: 0.239 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input System polling thread exited.
+Input System module state changed to: Shutdown.
+[Licensing::IpcConnector] LicenseClient-boguk-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-boguk channel disconnected successfully.
+AcceleratorClientConnectionCallback - disconnected - :0
+Cleanup mono
+Checking for leaked weakptr:
+  Found no leaked weakptrs.
+[Package Manager] Server process was shutdown
+##utp:{"type":"MemoryLeaks","version":2,"phase":"Immediate","time":1793892799908,"processId":30836,"allocatedMemory":30850696,"memoryLabels":[{"Default":29313},{"Permanent":15524},{"NewDelete":68867},{"Thread":4237960},{"Manager":819485},{"VertexData":8},{"Geometry":816},{"Texture":296},{"Shader":80499},{"Material":24},{"GfxDevice":57657},{"Animation":392},{"Audio":3040},{"FreeType":8},{"FontEngine":7202784},{"Physics":2090},{"Physics2D":16},{"Serialization":528},{"Input":14984},{"JobScheduler":33024},{"TextLib":216},{"Mono":32},{"MonoCode":64},{"ScriptingNativeRuntime":155060},{"BaseObject":1620336},{"Resource":1336},{"Renderer":3000},{"Transform":4685},{"File":6870},{"WebCam":616},{"Culling":32},{"Terrain":11394},{"Wind":24},{"STL":40},{"String":27834},{"DynamicArray":120273},{"HashMap":4096701},{"Utility":2660134},{"Curl":2559},{"PoolAlloc":2248},{"AI":40},{"TypeTree":5341},{"ScriptManager":512},{"RuntimeInitializeOnLoadManager":64},{"SpriteAtlas":112},{"GI":7792},{"Director":8240},{"CloudService":9936},{"WebRequest":808},{"VR":47994},{"SceneManager":504},{"Video":208},{"LazyScriptCache":32},{"Camera":17},{"Secure":2113},{"SerializationCache":1576},{"APIUpdating":10320},{"Subsystems":336},{"VirtualTexturing":57888},{"StaticSafetyDebugInfo":278528},{"Analytics":384},{"Hierarchy":608},{"CoreStats":13032},{"Identifiers":12960},{"Gui":96},{"EditorUtility":132782},{"VersionControl":4},{"Undo":947},{"AssetDatabase":8931682},{"EditorGi":328},{"UnityConnect":29232},{"Upm":1896},{"AssetCompliance":64},{"DrivenProperties":72},{"LocalIPC":211},{"ProfilerEditor":9778},{"CoreBusinessMetrics":2866},{"Licensing":664},{"AssetReference":32},{"IPCStream":32}]}

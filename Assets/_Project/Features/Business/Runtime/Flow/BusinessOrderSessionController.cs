@@ -28,6 +28,7 @@ namespace Slainte.Business
         private GeneratedCocktailOrder currentOrder;
         private OrderSessionRequest currentRequest;
         private VesselLiquidTracker servingTarget;
+        private CocktailComposition submittedComposition;
         private BusinessOrderSessionResult pendingResult;
         private Action<BusinessOrderSessionResult> completionCallback;
         private Coroutine craftingPreparationRoutine;
@@ -137,6 +138,8 @@ namespace Slainte.Business
                 bartending.SessionReady += HandleBartendingSessionReady;
                 bartending.SessionDestroyed += HandleBartendingSessionDestroyed;
                 bartending.ServeRequested += HandleServeRequested;
+                bartending.CompositionServeRequested += HandleCompositionServeRequested;
+                bartending.ServeRejected += HandleServeRejected;
             }
 
             initialized = true;
@@ -151,6 +154,8 @@ namespace Slainte.Business
                 bartending.SessionReady -= HandleBartendingSessionReady;
                 bartending.SessionDestroyed -= HandleBartendingSessionDestroyed;
                 bartending.ServeRequested -= HandleServeRequested;
+                bartending.CompositionServeRequested -= HandleCompositionServeRequested;
+                bartending.ServeRejected -= HandleServeRejected;
             }
         }
 
@@ -177,6 +182,7 @@ namespace Slainte.Business
                 currentRequest.requestedConditionLabel);
             pendingResult = null;
             servingTarget = null;
+            submittedComposition = null;
 
             if (currentOrder == null)
             {
@@ -368,6 +374,7 @@ namespace Slainte.Business
 
             modeManager?.RequestModeChange(GameMode.CraftingMode);
             servingTarget = null;
+            submittedComposition = null;
             StopCraftingPreparationTimeout();
             if (!bartending.IsSessionReady)
                 craftingPreparationRoutine = StartCoroutine(WaitForCraftingPreparation());
@@ -413,7 +420,7 @@ namespace Slainte.Business
             if (State != BusinessOrderSessionState.Crafting)
                 return;
 
-            if (servingTarget == null)
+            if (servingTarget == null && submittedComposition == null)
             {
                 ui?.ShowError("제출할 잔을 찾을 수 없습니다.");
                 return;
@@ -423,7 +430,7 @@ namespace Slainte.Business
             SetState(BusinessOrderSessionState.Evaluating);
             ui?.ShowEvaluating();
 
-            CocktailComposition composition = servingTarget.BuildComposition();
+            CocktailComposition composition = submittedComposition ?? servingTarget.BuildComposition();
             CocktailOrderEvaluationResult evaluation = orderEvaluator?.Evaluate(currentOrder, composition);
             if (evaluation == null)
             {
@@ -557,8 +564,22 @@ namespace Slainte.Business
         private void HandleBartendingSessionDestroyed()
         {
             servingTarget = null;
+            submittedComposition = null;
             if (State == BusinessOrderSessionState.Crafting)
                 AbortForTechnicalFailure("제조가 완료되기 전에 제조 세션이 종료됐습니다.");
+        }
+
+        // GPU 객체를 주문 로직에 노출하지 않고 완료된 조성만 기존 판정기로 전달한다.
+        private void HandleCompositionServeRequested(CocktailComposition composition)
+        {
+            if (State != BusinessOrderSessionState.Crafting || composition == null) return;
+            submittedComposition = composition;
+            SubmitOrder();
+        }
+
+        private void HandleServeRejected(string reason)
+        {
+            if (State == BusinessOrderSessionState.Crafting) ui?.ShowError(reason);
         }
 
         private void HandleServeRequested(VesselLiquidTracker tracker)
@@ -634,6 +655,7 @@ namespace Slainte.Business
             currentOrder = null;
             pendingResult = null;
             servingTarget = null;
+            submittedComposition = null;
             OrderCompleted?.Invoke(result);
             callback?.Invoke(result);
         }

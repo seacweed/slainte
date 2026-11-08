@@ -32,6 +32,14 @@ namespace Slainte.Bartending
             zones.Remove(zone);
         }
 
+        // GPU 도구는 레거시 IBartendingItem 구현 없이 같은 반납 영역과 클릭 소비 규칙을 사용한다.
+        public static bool TryReturnHeldItem(Vector2 screenPosition, System.Func<bool> returnItem)
+        {
+            if (FindZone(screenPosition) == null || returnItem == null || !returnItem()) return false;
+            lastReturnFrame = Time.frameCount;
+            return true;
+        }
+
         public static bool TryReturnHeldItem(IBartendingItem item, Vector2 screenPosition)
         {
             if (item == null)

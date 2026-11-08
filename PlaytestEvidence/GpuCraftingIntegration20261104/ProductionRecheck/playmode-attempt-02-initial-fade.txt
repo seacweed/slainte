@@ -1,0 +1,6 @@
+FAIL
+System.InvalidOperationException: Passive scene graphics block manufacturing input. blocked=True, screen=(1280.00, 720.00), valid=True
+TransitionCanvas/GameArea16x9/FadePanel/BlackScreen, ignored=False
+Canvas/GameArea16x9/FrontWorldPanel/FrontCameraRig/BarBackground, ignored=True
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<RunChecks>d__19.MoveNext () [0x00be3] in A:\UnityHub\proj\slainte\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:172 
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<Start>d__18.MoveNext () [0x0002b] in A:\UnityHub\proj\slainte\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:42 

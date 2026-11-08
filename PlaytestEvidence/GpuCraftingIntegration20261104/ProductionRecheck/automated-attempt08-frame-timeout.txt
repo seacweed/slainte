@@ -1,0 +1,5 @@
+FAIL
+System.InvalidOperationException: GPU session did not become ready.
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<RunChecks>d__20.MoveNext () [0x010c6] in A:\UnityHub\proj\slainte\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:223 
+  at Slainte.Bartending.GpuCraftingIntegrationProbe+<Start>d__19.MoveNext () [0x0002e] in A:\UnityHub\proj\slainte\Assets\_Project\Features\Bartending\Runtime\Integration\GpuCraftingIntegrationProbe.cs:43 
+Completed checks:

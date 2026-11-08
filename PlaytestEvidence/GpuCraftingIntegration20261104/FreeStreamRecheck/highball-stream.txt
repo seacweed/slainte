@@ -1,0 +1,16 @@
+world=(x:-9.24, y:-5.20, width:18.49, height:10.40); worktop UV=0.069; target=2560x1440; screen=640x480; stock=item_1002
+angle=128; nozzle=(0.52, 0.48, 10.00); remaining=664.0; particles=72
+y=[0.05,0.10); x=[0.28,0.41]; particles=44; surface=44; camera=44
+y=[0.10,0.15); x=[0.40,0.41]; particles=3; surface=3; camera=3
+y=[0.15,0.20); x=[0.42,0.42]; particles=3; surface=3; camera=3
+y=[0.20,0.25); x=[0.43,0.44]; particles=3; surface=3; camera=3
+y=[0.25,0.30); x=[0.44,0.45]; particles=3; surface=3; camera=3
+y=[0.30,0.35); x=[0.45,0.46]; particles=3; surface=3; camera=3
+y=[0.35,0.40); x=[0.47,0.48]; particles=4; surface=4; camera=4
+y=[0.40,0.45); x=[0.48,0.50]; particles=5; surface=5; camera=5
+y=[0.45,0.50); x=[0.51,0.52]; particles=4; surface=4; camera=4
+angle=162; nozzle=(0.52, 0.48, 10.00); remaining=628.0; particles=13
+y=[0.30,0.35); x=[0.50,0.50]; particles=3; surface=3; camera=3
+y=[0.35,0.40); x=[0.50,0.51]; particles=3; surface=3; camera=3
+y=[0.40,0.45); x=[0.51,0.51]; particles=4; surface=4; camera=4
+y=[0.45,0.50); x=[0.52,0.52]; particles=3; surface=3; camera=3

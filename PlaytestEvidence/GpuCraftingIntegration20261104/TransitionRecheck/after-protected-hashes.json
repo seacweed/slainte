@@ -1,0 +1,20 @@
+[
+  {
+    "Path": "A:\\UnityHub\\proj\\slainte\\Assets\\_Project\\Scenes\\Production\\BusinessScene.unity",
+    "Expected": "B6FCEC78F74901C707FC14ACAFCAA226D837EF57F7CF01DF60A7308B502D1CA8",
+    "Actual": "B6FCEC78F74901C707FC14ACAFCAA226D837EF57F7CF01DF60A7308B502D1CA8",
+    "Unchanged": true
+  },
+  {
+    "Path": "A:\\UnityHub\\proj\\slainte\\Assets\\_Project\\Features\\Bartending\\FluidGpuExperiment\\Scenes\\FluidGpuComparison.unity",
+    "Expected": "238864D57DC43FEA7931CBDBA08D0024F2C2131495A84C73B3683C139C9FC5E9",
+    "Actual": "238864D57DC43FEA7931CBDBA08D0024F2C2131495A84C73B3683C139C9FC5E9",
+    "Unchanged": true
+  },
+  {
+    "Path": "C:\\Users\\boguk\\AppData\\LocalLow\\DefaultCompany\\slainte\\autosave.json",
+    "Expected": "53219D4C6C380F9B1393B8089CB622CB7FFF286444A572C768FB930377FBBD52",
+    "Actual": "53219D4C6C380F9B1393B8089CB622CB7FFF286444A572C768FB930377FBBD52",
+    "Unchanged": true
+  }
+]

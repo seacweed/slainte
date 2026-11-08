@@ -1,0 +1,14 @@
+[
+  {
+    "path": "Assets/TextMesh Pro/Fonts/GALMURIMONO11 SDF.asset",
+    "generated_cache_sha256": "f2c73df84dc1e4e1abfaeed31dc9394491cac9b428d93e5757bc38697447950d",
+    "git_blob_sha256": "31667c183bb1eadabdf26c3402d2805ccab7218c1c51683c2385b531ea592a50",
+    "worktree_restored_sha256": "8d37ae0cec25f1ddc212881f13d023a6228b759f4ddd26e452397144bd6daa79"
+  },
+  {
+    "path": "Assets/TextMesh Pro/Fonts/NotoSansKR-Regular SDF.asset",
+    "generated_cache_sha256": "ad7c26630c0dedd6cca13fdc0e4afe99b40d98749a1806e612a2dab9b4cd5152",
+    "git_blob_sha256": "7a61a067b7b564902e4206f307511925b1d5c5db5afa6758009c4c0bb4d95833",
+    "worktree_restored_sha256": "d24f30ed98aaa9c9c17cdf0214976d3c18eb3a3a5d95f689b03934c4f9aa5d5e"
+  }
+]

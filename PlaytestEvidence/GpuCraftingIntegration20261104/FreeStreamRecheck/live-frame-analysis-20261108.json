@@ -1,0 +1,42 @@
+{
+  "capture": "Library\\GpuLiquidDiagnostics\\20261108-193930-902",
+  "active_physical_particles": 313,
+  "active_surface_ellipses": 313,
+  "particles_below_quarter": 304,
+  "free-liquid.png": {
+    "size": [
+      2048,
+      1152
+    ],
+    "nonzero_bounds": [
+      753,
+      561,
+      1025,
+      867
+    ]
+  },
+  "surfaceDensity.png": {
+    "size": [
+      2048,
+      1152
+    ],
+    "nonzero_bounds": [
+      747,
+      285,
+      1029,
+      595
+    ]
+  },
+  "surfaceColor.png": {
+    "size": [
+      2048,
+      1152
+    ],
+    "nonzero_bounds": [
+      747,
+      285,
+      1029,
+      595
+    ]
+  }
+}
