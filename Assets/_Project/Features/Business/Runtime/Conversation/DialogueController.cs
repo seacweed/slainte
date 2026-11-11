@@ -10,7 +10,7 @@ using System;
 // 없으면 닫기" 순으로 진행한다. 대사마다 말풍선을 페이드 아웃 → 화자 기준으로 다시 배치 → 페이드 인하며,
 // 배치(위치·화살표)는 등록된 리졸버가 정하고 크기는 전체 문장 높이로 미리 계산해 타이핑 중에 커지지 않는다.
 // 선택지 UI가 뜨는 동안은 SlideUpForChoices로 말풍선을 위로 밀어 겹치지 않게 한다.
-public class DialogueController : MonoBehaviour
+public partial class DialogueController : MonoBehaviour
 {
     [Header("UI")]
     [SerializeField] private CanvasGroup canvasGroup;
@@ -86,6 +86,7 @@ public class DialogueController : MonoBehaviour
         if (bubbleRect != null)
             _basePosition = bubbleRect.anchoredPosition;
         HideImmediate();
+        PrewarmNextIndicator();
     }
 
     public void SetPlacementResolver(IDialogueBubblePlacementResolver resolver)
@@ -95,6 +96,7 @@ public class DialogueController : MonoBehaviour
 
     public void HideImmediate()
     {
+        using var measurement = DialogueDiagnostics.Measure(DialogueDiagnostics.Stage.DialogueController_HideImmediate);
         StopRoutine(ref _presentRoutine);
         StopRoutine(ref _fadeRoutine);
         StopRoutine(ref _blinkRoutine);
@@ -185,6 +187,7 @@ public class DialogueController : MonoBehaviour
     // ✅ 클릭/스페이스로 호출
     public void Advance()
     {
+        using var measurement = DialogueDiagnostics.Measure(DialogueDiagnostics.Stage.DialogueController_Advance);
         // 1) 타이핑 중이면 스킵
         if (SkipTypingIfNeeded())
             return;
@@ -204,6 +207,7 @@ public class DialogueController : MonoBehaviour
     // episode runner가 직접 호출할 수 있도록 분리
     public bool SkipTypingIfNeeded()
     {
+        using var measurement = DialogueDiagnostics.Measure(DialogueDiagnostics.Stage.DialogueController_SkipTypingIfNeeded);
         if (!_isTyping) return false;
 
         // 아직 이전 말풍선이 사라지는 중이면 새 내용이 들어가는 순간 전체 문장을 바로 보이게 예약한다.
@@ -244,6 +248,7 @@ public class DialogueController : MonoBehaviour
     // 카메라가 먼저 움직이고 새 말풍선은 최종 위치에 바로 나타난다.
     private void ShowLine(DialogueLine line)
     {
+        using var measurement = DialogueDiagnostics.Measure(DialogueDiagnostics.Stage.DialogueController_ShowLine);
         StopRoutine(ref _presentRoutine);
         SetNextIndicator(false);
 
@@ -292,11 +297,14 @@ public class DialogueController : MonoBehaviour
     // 캐릭터 말풍선은 윗변(화살표가 붙는 쪽)을, 주인공·화면 밖 화자는 아랫변을 고정해 반대쪽으로 늘어난다.
     private void ApplyLayout(DialogueBubblePlacement placement)
     {
+        using var measurement = DialogueDiagnostics.Measure(DialogueDiagnostics.Stage.DialogueController_ApplyLayout);
         if (bubbleRect == null)
             return;
 
         float textWidth = Mathf.Max(1f, bubbleWidth - textSideMargin * 2f);
-        float textHeight = Mathf.Ceil(bodyText.GetPreferredValues(_fullLine, textWidth, 0f).y);
+        float textHeight;
+        using (DialogueDiagnostics.Measure(DialogueDiagnostics.Stage.Dialogue_PreferredValues))
+            textHeight = Mathf.Ceil(bodyText.GetPreferredValues(_fullLine, textWidth, 0f).y);
         float height = topPadding + nameRowHeight + textHeight + indicatorRowHeight + bottomPadding;
         bool anchoredTop = placement.Style == DialogueBubbleStyle.Character;
 

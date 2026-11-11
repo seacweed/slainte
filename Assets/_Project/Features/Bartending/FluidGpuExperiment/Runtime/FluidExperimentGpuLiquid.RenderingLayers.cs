@@ -12,6 +12,9 @@ namespace Slainte.Bartending.FluidGpuExperiment
             public MeshRenderer renderer;
             public MaterialPropertyBlock properties = new MaterialPropertyBlock();
         }
+        // Retain only rendering resources; body, liquid and inventory state still reset per order.
+        private const int MaxCachedLiquidLayers = 4;
+        private readonly Stack<OwnedLiquidLayer> cachedLiquidLayers = new Stack<OwnedLiquidLayer>(MaxCachedLiquidLayers);
         private readonly Dictionary<uint, OwnedLiquidLayer> ownedLiquidLayers = new Dictionary<uint, OwnedLiquidLayer>();
         private readonly List<uint> liquidLayerOwners = new List<uint>();
         private readonly List<uint> removedLiquidLayers = new List<uint>();
@@ -32,16 +35,21 @@ namespace Slainte.Bartending.FluidGpuExperiment
             foreach (uint owner in removedLiquidLayers)
             {
                 var layer = ownedLiquidLayers[owner];
-                if (layer.texture != null) { layer.texture.Release(); Destroy(layer.texture); }
-                if (layer.renderer != null) { layer.renderer.forceRenderingOff = true; Destroy(layer.renderer.gameObject); }
+                if (layer.renderer != null) layer.renderer.forceRenderingOff = true;
                 ownedLiquidLayers.Remove(owner);
+                if (cachedLiquidLayers.Count < MaxCachedLiquidLayers) cachedLiquidLayers.Push(layer);
+                else DestroyLiquidLayer(layer);
             }
         }
         private OwnedLiquidLayer GetLiquidLayer(uint owner)
         {
             if (!ownedLiquidLayers.TryGetValue(owner, out var layer))
             {
-                layer = new OwnedLiquidLayer(); ownedLiquidLayers.Add(owner, layer);
+                layer = cachedLiquidLayers.Count > 0 ? cachedLiquidLayers.Pop() : new OwnedLiquidLayer();
+                ownedLiquidLayers.Add(owner, layer);
+            }
+            if (layer.renderer == null)
+            {
                 var output = new GameObject("FluidExperiment Liquid Owner " + owner) { layer = world.itemLayer, hideFlags = HideFlags.DontSave };
                 output.transform.SetParent(transform, false);
                 output.AddComponent<MeshFilter>().sharedMesh = surfaceQuad;
@@ -50,7 +58,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 layer.renderer.shadowCastingMode = ShadowCastingMode.Off; layer.renderer.receiveShadows = false;
                 layer.renderer.forceRenderingOff = true;
             }
-            if (layer.texture == null || layer.texture.width != surfaceComposite.width || layer.texture.height != surfaceComposite.height)
+            if (layer.texture == null || layer.texture.width != surfaceComposite.width || layer.texture.height != surfaceComposite.height || !layer.texture.IsCreated())
             {
                 if (layer.texture != null) { layer.texture.Release(); Destroy(layer.texture); }
                 layer.texture = CreateSurfaceTarget("Owner " + owner, surfaceComposite.width, surfaceComposite.height, RenderTextureFormat.ARGBHalf);
@@ -79,17 +87,27 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 Vector3.Dot(topRight - bottomLeft, camera.transform.up) * .5f, 1);
             renderer.forceRenderingOff = false;
         }
+        private static void ReleaseLiquidLayerTarget(OwnedLiquidLayer layer)
+        {
+            if (layer.texture == null) return;
+            layer.texture.Release(); Destroy(layer.texture); layer.texture = null;
+        }
+        private static void DestroyLiquidLayer(OwnedLiquidLayer layer)
+        {
+            ReleaseLiquidLayerTarget(layer);
+            if (layer.renderer != null) { layer.renderer.forceRenderingOff = true; Destroy(layer.renderer.gameObject); }
+        }
         private void ReleaseOwnedLiquidTargets()
         {
-            foreach (var layer in ownedLiquidLayers.Values)
-                if (layer.texture != null) { layer.texture.Release(); Destroy(layer.texture); layer.texture = null; }
+            foreach (var layer in ownedLiquidLayers.Values) ReleaseLiquidLayerTarget(layer);
+            foreach (var layer in cachedLiquidLayers) ReleaseLiquidLayerTarget(layer);
         }
         private void DisposeOwnedLiquidLayers()
         {
-            ReleaseOwnedLiquidTargets();
-            foreach (var layer in ownedLiquidLayers.Values)
-                if (layer.renderer != null) { layer.renderer.forceRenderingOff = true; Destroy(layer.renderer.gameObject); }
-            ownedLiquidLayers.Clear(); liquidLayerOwners.Clear();
+            foreach (var layer in ownedLiquidLayers.Values) DestroyLiquidLayer(layer);
+            foreach (var layer in cachedLiquidLayers) DestroyLiquidLayer(layer);
+            ownedLiquidLayers.Clear(); cachedLiquidLayers.Clear();
+            liquidLayerOwners.Clear(); removedLiquidLayers.Clear();
         }
     }
 }

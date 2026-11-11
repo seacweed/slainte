@@ -377,6 +377,7 @@ GameObject:
   - component: {fileID: 5121531329467081539}
   - component: {fileID: 7001155717056021699}
   - component: {fileID: 5709417273080436656}
+  - component: {fileID: 777977699824200417}
   m_Layer: 29
   m_Name: Glass_highball
   m_TagString: Untagged
@@ -440,7 +441,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb20bbbcb28d4e7ebdf452330e047673, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentBody
   kind: 1
   displayName: Highball
@@ -634,3 +635,17 @@ PolygonCollider2D:
       - {x: -0.5668817, y: 0.34511515}
       - {x: -0.5706793, y: 0.6553389}
   m_UseDelaunayMesh: 1
+--- !u!114 &777977699824200417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9046728341189981464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40dcecb564024a6abcc01f59a7ec7711, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentBreakableGlass
+  profile: {fileID: 11400000, guid: 9a48b3b829580644d9e5a9fcc1081df0, type: 2}
+  splashProfile: {fileID: 0}

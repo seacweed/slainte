@@ -62,6 +62,7 @@ public class DialogueFocusPresenter : MonoBehaviour, IDialogueBubblePlacementRes
 
     public DialogueBubblePlacement Resolve(DialogueLine line)
     {
+        using var measurement = DialogueDiagnostics.Measure(DialogueDiagnostics.Stage.DialogueFocusPresenter_Resolve);
         bool canFocus = CanFocus();
 
         if (IsProtagonist(line))

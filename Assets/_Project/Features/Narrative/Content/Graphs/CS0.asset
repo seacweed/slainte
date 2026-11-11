@@ -1330,7 +1330,7 @@ MonoBehaviour:
   SettlementRewards: []
   SourceCsvPath: "Assets/_Project/Features/Narrative/Content/Source/Episodes/\uC5D0\uD53C\uC18C\uB4DC
     - \uC139\uD1300 - EpisodeData_CS0.csv.csv"
-  LastSyncedCsvHash: FD801B3BC9FADF76173F19FF31D6CC73
+  LastSyncedCsvHash: D97D2E8C26C916729278560FD262FE59
   Nodes:
   - {fileID: -8461496884950735148}
   - {fileID: -8807464339829652376}
@@ -1431,6 +1431,24 @@ MonoBehaviour:
   - BaseNodeGuid: d4ac54d1-ac70-4919-8e47-01f17ca2760d
     TargetNodeGuid: b1e62da6-ffcd-470a-8773-8a5cc62d8fd2
     OutputPortIndex: 0
+  - BaseNodeGuid: 9a0faca3-b611-45d6-9d97-6df72e6ae2bd
+    TargetNodeGuid: 5bc825aa-798a-44c8-9ca6-16f80f613e3f
+    OutputPortIndex: 0
+  - BaseNodeGuid: 9a0faca3-b611-45d6-9d97-6df72e6ae2bd
+    TargetNodeGuid: 5bc825aa-798a-44c8-9ca6-16f80f613e3f
+    OutputPortIndex: 2
+  - BaseNodeGuid: 9a0faca3-b611-45d6-9d97-6df72e6ae2bd
+    TargetNodeGuid: 5bc825aa-798a-44c8-9ca6-16f80f613e3f
+    OutputPortIndex: 3
+  - BaseNodeGuid: 9a0faca3-b611-45d6-9d97-6df72e6ae2bd
+    TargetNodeGuid: 5bc825aa-798a-44c8-9ca6-16f80f613e3f
+    OutputPortIndex: 4
+  - BaseNodeGuid: bc1374c7-e6e0-479e-a0b9-db65c1b68363
+    TargetNodeGuid: 1eb7959d-a76f-4ff5-81ba-c9d102e4bada
+    OutputPortIndex: 2
+  - BaseNodeGuid: bc1374c7-e6e0-479e-a0b9-db65c1b68363
+    TargetNodeGuid: 86d7bf59-c85a-440b-9d0f-63658eb35d82
+    OutputPortIndex: 4
 --- !u!114 &252702775892321465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1902,10 +1920,10 @@ MonoBehaviour:
     BgmClipName: 
     SfxCommand: 0
     SfxClipName: 
-    CraftingOrderTicket: {fileID: 0}
-    CraftingTicketKey: 
-    CraftingOrderType: 6
-    CraftingOrderTarget: 
+    CraftingOrderTicket: {fileID: 11400000, guid: d90ea77149a8f7c4cb9f758efccc49e8, type: 2}
+    CraftingTicketKey: cs0_recommendation
+    CraftingOrderType: 3
+    CraftingOrderTarget: "\uC815\uC5F4\uC801\uC778"
     CraftingPaymentEnabled: 0
     CraftingPaymentCurrency: 0
     CraftingPaymentMultiplier: 1
@@ -1920,6 +1938,12 @@ MonoBehaviour:
       Flag: sc0_2_false
       VarChanges: []
     - Result: 4
+      Flag: sc0_2_false
+      VarChanges: []
+    - Result: 1
+      Flag: sc0_2_true
+      VarChanges: []
+    - Result: 3
       Flag: sc0_2_false
       VarChanges: []
     ExitBranchName: 
@@ -2599,10 +2623,10 @@ MonoBehaviour:
     BgmClipName: 
     SfxCommand: 0
     SfxClipName: 
-    CraftingOrderTicket: {fileID: 0}
-    CraftingTicketKey: 
+    CraftingOrderTicket: {fileID: 11400000, guid: 1802a468549bf5b42ad7a08a68ded18f, type: 2}
+    CraftingTicketKey: cs0_ronins
     CraftingOrderType: 6
-    CraftingOrderTarget: 
+    CraftingOrderTarget: rec_1012
     CraftingPaymentEnabled: 0
     CraftingPaymentCurrency: 0
     CraftingPaymentMultiplier: 1
@@ -2614,16 +2638,16 @@ MonoBehaviour:
       Flag: sc0_1_true
       VarChanges: []
     - Result: 0
-      Flag: 
+      Flag: sc0_1_true
       VarChanges: []
     - Result: 1
-      Flag: 
+      Flag: sc0_1_true
       VarChanges: []
     - Result: 2
-      Flag: 
+      Flag: sc0_1_true
       VarChanges: []
     - Result: 3
-      Flag: 
+      Flag: sc0_1_true
       VarChanges: []
     ExitBranchName: 
   OutgoingBranches:

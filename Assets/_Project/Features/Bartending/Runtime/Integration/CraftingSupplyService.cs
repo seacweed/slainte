@@ -126,29 +126,37 @@ namespace Slainte.Bartending
 
         public void PrepareCabinet(ToolCabinetCatalog catalog)
         {
-            if (catalog == null || cabinet.Count != 0) return;
-            foreach (var glass in catalog.glasses)
-                if (glass != null) AddCabinet(glass.StableId, FindBody(LabItemKind.Glass, glass.glassId));
-            foreach (var tool in catalog.tools)
-                if (tool != null)
-                {
-                    LabItemKind? kind = tool.kind switch
+            using var measurement = Slainte.Bartending.GpuCraftingDiagnostics.Measure(Slainte.Bartending.GpuCraftingDiagnostics.Stage.CabinetPrepare);
+            if (catalog == null) return;
+            // Prefab resolution belongs to scene preparation. Only deployed state
+            // changes between orders; resolving the same catalog again can load
+            // glass artwork and breakage dependencies on the first visible entry.
+            if (cabinet.Count == 0)
+            {
+                foreach (var glass in catalog.glasses)
+                    if (glass != null) AddCabinet(glass.StableId, FindBody(LabItemKind.Glass, glass.glassId));
+                foreach (var tool in catalog.tools)
+                    if (tool != null)
                     {
-                        ToolKind.Jigger => LabItemKind.Jigger,
-                        ToolKind.CobblerShaker => LabItemKind.Shaker,
-                        ToolKind.BarSpoon => LabItemKind.Spoon,
-                        ToolKind.IceBucket => LabItemKind.IceBucket,
-                        _ => null
-                    };
-                    if (kind.HasValue) AddCabinet(tool.StableId, FindBody(kind.Value));
-                }
+                        LabItemKind? kind = tool.kind switch
+                        {
+                            ToolKind.Jigger => LabItemKind.Jigger,
+                            ToolKind.CobblerShaker => LabItemKind.Shaker,
+                            ToolKind.BarSpoon => LabItemKind.Spoon,
+                            ToolKind.IceBucket => LabItemKind.IceBucket,
+                            _ => null
+                        };
+                        if (kind.HasValue) AddCabinet(tool.StableId, FindBody(kind.Value));
+                    }
+            }
+            foreach (var entry in cabinet)
+                ToolAvailabilityChanged?.Invoke(entry.Key, entry.Value.instance == null || entry.Value.instance.IsStored);
         }
 
         private void AddCabinet(string id, FluidExperimentBody prefab)
         {
             if (prefab == null) { Debug.LogError("[GpuCrafting] Missing cabinet mapping: " + id); return; }
             cabinet.Add(id, new CabinetEntry { prefab = prefab });
-            ToolAvailabilityChanged?.Invoke(id, true);
         }
 
         public FluidExperimentBody FindBody(LabItemKind kind, string glassId = null)
@@ -163,6 +171,7 @@ namespace Slainte.Bartending
 
         public bool TryTakeTool(string id, Vector2 position, out string failure)
         {
+            using var measurement = Slainte.Bartending.GpuCraftingDiagnostics.Measure(Slainte.Bartending.GpuCraftingDiagnostics.Stage.TakeTool);
             failure = string.Empty;
             if (HasHeldItem()) { failure = "Put down the item already held before taking a tool."; return false; }
             if (!cabinet.TryGetValue(id, out var entry)) { failure = "No GPU cabinet mapping is ready for " + id; return false; }
@@ -250,6 +259,7 @@ namespace Slainte.Bartending
 
         public void Finish()
         {
+            using var measurement = Slainte.Bartending.GpuCraftingDiagnostics.Measure(Slainte.Bartending.GpuCraftingDiagnostics.Stage.SupplyFinish);
             SynchronizeConsumption();
             var ids = new HashSet<string>();
             foreach (var supply in supplies)
@@ -262,7 +272,7 @@ namespace Slainte.Bartending
                 }
             }
             supplies.Clear();
-            cabinet.Clear();
+            foreach (var entry in cabinet.Values) entry.instance = null;
             foreach (string id in ids) StockChanged?.Invoke(id);
         }
     }

@@ -35,6 +35,7 @@ namespace Slainte.Bartending
             RectTransform viewportParent, RectTransform floorAnchor, CharacterStage characters,
             Func<string, Vector2> shelfWorldSize = null)
         {
+            using var measurement = Slainte.Bartending.GpuCraftingDiagnostics.Measure(Slainte.Bartending.GpuCraftingDiagnostics.Stage.Initialize);
             if (settings.gpuCrafting == null || settings.gpuCrafting.runtimePrefab == null)
                 throw new InvalidOperationException("GPU crafting settings and runtime prefab must be assigned.");
             // 설정을 먼저 주입한다. 활성 프리팹의 Awake가 카메라 없는 상태로 실행되지 않게 한다.
@@ -101,6 +102,7 @@ namespace Slainte.Bartending
 
         private void BuildEnvironment(float thickness, RectTransform layout)
         {
+            using var measurement = Slainte.Bartending.GpuCraftingDiagnostics.Measure(Slainte.Bartending.GpuCraftingDiagnostics.Stage.Environment);
             Canvas.ForceUpdateCanvases();
             if (!Viewport.TryGetWorldRect(out var worldRect) || layout == null
                 || layout.rect.width <= 0 || layout.rect.height <= 0)
@@ -169,6 +171,7 @@ namespace Slainte.Bartending
 
         public void BeginCrafting()
         {
+            using var measurement = Slainte.Bartending.GpuCraftingDiagnostics.Measure(Slainte.Bartending.GpuCraftingDiagnostics.Stage.Begin);
             if (closing || activeForCrafting) return;
             activeForCrafting = true;
             submitted = false;
@@ -185,6 +188,7 @@ namespace Slainte.Bartending
         // 주문 내용만 정리하고 GPU 버퍼/카메라 출력은 같은 BusinessScene 안에서 재사용한다.
         public void EndCrafting()
         {
+            using var measurement = Slainte.Bartending.GpuCraftingDiagnostics.Measure(Slainte.Bartending.GpuCraftingDiagnostics.Stage.End);
             if (!activeForCrafting || closing) return;
             activeForCrafting = false;
             Supply?.Finish();
@@ -266,6 +270,7 @@ namespace Slainte.Bartending
 
         public bool TrySubmit(FluidExperimentBody glass, out string failure)
         {
+            using var measurement = Slainte.Bartending.GpuCraftingDiagnostics.Measure(Slainte.Bartending.GpuCraftingDiagnostics.Stage.Submit);
             failure = string.Empty;
             if (!Ready || submitted || glass == null || glass.World != Rig.World || glass != Rig.Interactor.Held || glass.kind != LabItemKind.Glass
                 || !glass.isActiveAndEnabled || string.IsNullOrEmpty(glass.servingGlassId)
@@ -296,6 +301,7 @@ namespace Slainte.Bartending
 
         public void SetSuspended(bool value)
         {
+            using var measurement = Slainte.Bartending.GpuCraftingDiagnostics.Measure(Slainte.Bartending.GpuCraftingDiagnostics.Stage.Suspend);
             if (Rig == null || suspended == value) return;
             suspended = value;
             Rig.World.SimulationSuspended = value;

@@ -106,6 +106,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         public void ResetRig()
         {
+            using var measurement = Slainte.Bartending.GpuCraftingDiagnostics.Measure(Slainte.Bartending.GpuCraftingDiagnostics.Stage.RigReset);
             ApplyConfiguration();
             if (!Application.isPlaying) return;
             world.ResetSession();

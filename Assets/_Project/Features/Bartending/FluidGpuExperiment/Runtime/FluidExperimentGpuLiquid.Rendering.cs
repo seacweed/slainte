@@ -27,6 +27,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         private bool DrawLiquidSurface(ScriptableRenderContext context, Camera camera)
         {
+            using var measurement = Slainte.Bartending.GpuCraftingDiagnostics.Measure(Slainte.Bartending.GpuCraftingDiagnostics.Stage.SurfaceRender);
             if (!EnsureSurfaceResources(camera)) return false;
             surfaceParticleProperties.SetBuffer("_GpuLiquidColors", particleColorBuffer);
             surfaceParticleProperties.SetFloat("_GpuParticleZ", 0);
@@ -105,6 +106,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         private bool EnsureSurfaceResources(Camera camera)
         {
+            using var measurement = Slainte.Bartending.GpuCraftingDiagnostics.Measure(Slainte.Bartending.GpuCraftingDiagnostics.Stage.SurfaceResources);
             if (improvedAccumulationShader == null)
                 improvedAccumulationShader = Shader.Find("Hidden/Slainte/FluidExperiment/ImprovedAccumulation");
             if (improvedCompositeShader == null)

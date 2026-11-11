@@ -12,9 +12,7 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
     public static class FluidExperimentBreakageBuilder
     {
         private const string Root = FluidExperimentBuilder.Root;
-        private const string PrefabPath = Root + "/Prefabs/Glass_hurricane.prefab";
         private const string ProfilePath = Root + "/Data/HurricaneBreakage.asset";
-        private const string GeometryPath = Root + "/Data/HurricaneShardGeometry.asset";
         private const byte AlphaThreshold = 8;
         private const float SimplificationPixels = 1.25f;
 
@@ -34,32 +32,61 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
         [MenuItem("Slainte/Fluid GPU Experiment/Build Hurricane Breakage")]
         public static void Build()
         {
+            if (!PrepareBuild()) return;
+            BuildGlass("hurricane", "Hurricane", "hurricane", 16);
+        }
+
+        [MenuItem("Slainte/Fluid GPU Experiment/Build All Glass Breakage")]
+        public static void BuildAll()
+        {
+            if (!PrepareBuild()) return;
+            BuildGlass("hurricane", "Hurricane", "hurricane", 16);
+            BuildGlass("highball", "Highball", "highball", 20);
+            BuildGlass("rock", "Rock", "rock", 17);
+            BuildGlass("martini", "Martini", "cocktail", 19);
+            Debug.Log("[GlassBreakageBuilder] Authored all four glasses (72 shards).");
+        }
+
+        private static bool PrepareBuild()
+        {
             if (EditorApplication.isPlaying) throw new InvalidOperationException("Stop Play Mode before authoring.");
-            if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
+            if (!Application.isBatchMode && !EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return false;
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
-            var prefab = PrefabUtility.LoadPrefabContents(PrefabPath);
+            return true;
+        }
+
+        private static void BuildGlass(string glass, string assetName, string imagePrefix, int shardCount)
+        {
+            string prefabPath = Root + "/Prefabs/Glass_" + glass + ".prefab";
+            string profilePath = Root + "/Data/" + assetName + "Breakage.asset";
+            string geometryPath = Root + "/Data/" + assetName + "ShardGeometry.asset";
+            var prefab = PrefabUtility.LoadPrefabContents(prefabPath);
             try
             {
                 var art = prefab.GetComponentsInChildren<SpriteRenderer>(true)
                     .First(r => r.name.StartsWith("GlassArt_", StringComparison.Ordinal) && r.sprite != null);
                 if (art.transform.parent != prefab.transform || art.transform.localRotation != Quaternion.identity)
-                    throw new InvalidOperationException("Hurricane art must use an unrotated direct child transform.");
+                    throw new InvalidOperationException(assetName + " art must use an unrotated direct child transform.");
                 var original = art.sprite;
                 var scale = (Vector2)art.transform.localScale;
-                var profile = AssetDatabase.LoadAssetAtPath<FluidExperimentBreakageProfile>(ProfilePath);
-                if (profile == null)
+                var profile = AssetDatabase.LoadAssetAtPath<FluidExperimentBreakageProfile>(profilePath);
+                bool newProfile = profile == null;
+                if (newProfile)
                 {
                     profile = ScriptableObject.CreateInstance<FluidExperimentBreakageProfile>();
-                    AssetDatabase.CreateAsset(profile, ProfilePath);
+                    // New glasses start with the established tuning. Rebuilds retain per-glass edits.
+                    var baseline = AssetDatabase.LoadAssetAtPath<FluidExperimentBreakageProfile>(ProfilePath);
+                    if (baseline != null) EditorUtility.CopySerialized(baseline, profile);
+                    profile.name = assetName + "Breakage";
                 }
                 var definitions = new List<FluidExperimentBreakageProfile.Shard>();
-                for (int number = 1; number <= 16; number++)
+                for (int number = 1; number <= shardCount; number++)
                 {
-                    string path = Root + "/Art/Shards/Hurricane/hurricane_shard_" + number.ToString("00") + ".png";
+                    string path = Root + "/Art/Shards/" + assetName + "/" + imagePrefix + "_shard_" + number.ToString("00") + ".png";
                     Vector2Int size;
                     Vector2[] pixels = ReadSilhouette(path, out size);
                     if (original.rect.width != size.x || original.rect.height != size.y)
-                        throw new InvalidOperationException("Shard canvas must match the original hurricane art: " + path);
+                        throw new InvalidOperationException("Shard canvas must match the original " + glass + " art: " + path);
                     Vector2 center = PolygonCentroid(pixels);
                     float units = 1f / original.pixelsPerUnit;
                     definitions.Add(new FluidExperimentBreakageProfile.Shard
@@ -71,28 +98,40 @@ namespace Slainte.Bartending.FluidGpuExperiment.Editor
                         area = Mathf.Abs(SignedArea(pixels) * units * units * scale.x * scale.y),
                         spriteScale = scale
                     });
-                    Debug.Log("[HurricaneBreakageBuilder] Shard " + number.ToString("00")
+                    Debug.Log("[GlassBreakageBuilder] " + assetName + " shard " + number.ToString("00")
                         + ": " + pixels.Length + " silhouette points; area=" + definitions.Last().area);
                 }
-                var geometry = AssetDatabase.LoadAssetAtPath<FluidExperimentShardGeometry>(GeometryPath);
+                var geometry = AssetDatabase.LoadAssetAtPath<FluidExperimentShardGeometry>(geometryPath);
                 if (geometry == null)
                 {
                     geometry = ScriptableObject.CreateInstance<FluidExperimentShardGeometry>();
-                    AssetDatabase.CreateAsset(geometry, GeometryPath);
+                    AssetDatabase.CreateAsset(geometry, geometryPath);
                 }
                 geometry.definitions = definitions.ToArray();
-                geometry.sourceDescription = "Hurricane PNG alpha silhouettes; authored by FluidExperimentBreakageBuilder.";
+                if (string.IsNullOrEmpty(geometry.sourceDescription))
+                    geometry.sourceDescription = assetName + " PNG alpha silhouettes; authored by FluidExperimentBreakageBuilder.";
                 EditorUtility.SetDirty(geometry);
                 profile.SetGeneratedGeometry(geometry);
                 if (profile.shardMaterial == null) profile.shardMaterial = BuildMaterial();
+                if (profile.shardTemplate == null)
+                    profile.shardTemplate = AssetDatabase.LoadAssetAtPath<GameObject>(FluidExperimentAssemblyBuilder.ShardPrefabPath);
+                if (newProfile) AssetDatabase.CreateAsset(profile, profilePath);
                 EditorUtility.SetDirty(profile);
                 var breakable = prefab.GetComponent<FluidExperimentBreakableGlass>();
-                if (breakable == null) breakable = prefab.AddComponent<FluidExperimentBreakableGlass>();
+                bool prefabChanged = breakable == null || breakable.profile != profile;
+                if (breakable == null)
+                {
+                    breakable = prefab.AddComponent<FluidExperimentBreakableGlass>();
+                    // Match the existing hurricane liquid-release/splash policy on first opt-in.
+                    var baseline = AssetDatabase.LoadAssetAtPath<GameObject>(Root + "/Prefabs/Glass_hurricane.prefab")
+                        .GetComponent<FluidExperimentBreakableGlass>();
+                    if (baseline != null) breakable.splashProfile = baseline.splashProfile;
+                }
                 breakable.profile = profile;
-                PrefabUtility.SaveAsPrefabAsset(prefab, PrefabPath);
+                if (prefabChanged) PrefabUtility.SaveAsPrefabAsset(prefab, prefabPath);
                 AssetDatabase.SaveAssets();
-
-                Debug.Log("[HurricaneBreakageBuilder] Authored 16 centroid-pivot shards; PNG bytes and connected scene overrides preserved.");
+                Debug.Log("[GlassBreakageBuilder] Authored " + assetName + " with " + shardCount
+                    + " centroid-pivot shards; PNG bytes, tuning and scene overrides preserved.");
             }
             finally { PrefabUtility.UnloadPrefabContents(prefab); }
         }

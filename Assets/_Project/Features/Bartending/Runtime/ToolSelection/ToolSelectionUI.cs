@@ -90,11 +90,19 @@ namespace Slainte.Bartending
             IsConfigured = slots.Count > 0;
         }
 
+        public void PrewarmSessionVisuals()
+        {
+            // Resolve cabinet prefabs and both icon states before the first visible
+            // entry. Restore the original unbound display within the same frame.
+            NotifySessionReady();
+            NotifySessionDestroyed();
+        }
+
         public void NotifySessionReady()
         {
+            // Preparing publishes the current availability for every mapped slot.
+            // Each callback refreshes its visuals, so a second full refresh is redundant.
             bootstrap?.PrepareCabinetInventory(catalog);
-            foreach (ToolSlotUI slot in slots.Values)
-                slot?.RefreshFromSlot();
         }
 
         public void NotifySessionDestroyed()

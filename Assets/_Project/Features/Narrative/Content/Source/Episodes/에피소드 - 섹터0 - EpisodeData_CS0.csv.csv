@@ -1,4 +1,4 @@
-#META
+﻿#META
 episodeId,episodeTitle,firstNodeId,chapterId,day,slot,priority
 CS0,CS,0,Sector0,1,2,1
 
@@ -23,7 +23,7 @@ nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingT
 5,f72,???,제대로 내오는게 좋을거야!,6,,,,,,,,,,
 6,shaun,,*로닌즈라… 그런 칵테일은 들어본 적이 없어.*,7,,,,,,,,,,
 7,shaun,,*그렇지만 뭐라도 만들어 드려야 겠지. 경찰 손님이니까.*,8,,,,,,,,,,
-8,,,,,TRUE,,,,,,,,,
+8,,,,,TRUE,cs0_ronins,rec_1012,,,,,FALSE,,
 9_1_1,f72,???,"이봐, 이거 내가 주문한거 맞아?",9_1_2,,,,,,,,,,
 9_1_2,f72,???,됐다. 이 동네 수준에 딱 맞는 술이야.,10,,,,,,,,,,
 9_2_1,f72,???,음 이건…,9_2_2,,,,,,,,,,
@@ -69,7 +69,7 @@ nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingT
 26_3_6,f72,???,엘리시아에선 그런 음악이 밤새 흘러나왔지.,27,,,,,,,,,,
 27,f72,???,더 궁금한 점 있나? 바텐더?,28,,,,,,,,,,
 28,f72,???,"좋아, 질문은 여기까지. 솜씨좀 뽐내보라고",29,,,,,,,,,,
-29,,,,,TRUE,,,,,,,,,
+29,,,,,TRUE,cs0_recommendation,정열적인,,,,,FALSE,,
 30_1_1,f72,???,오호… 이건 조금 놀라운데?,30_1_2,,,,,,,,,,
 30_1_2,f72,???,로닌즈랑 다른 의미로 강렬해.,30_1_3,,,,,,,,,,
 30_1_3,f72,???,"생각보다, 제법이군 바텐더.",31_1_1,,,,,,,,,,
@@ -92,10 +92,16 @@ nodeId,speakerKey,overrideSpeakerName,text,nextNodeId,requiresCrafting,craftingT
 nodeId,result,nextNodeId,flag,varChanges
 8,Bad,9_1_1,sc0_1_false,
 8,MidWrongMenu,9_2_1,sc0_1_true,
+8,Good,9_2_1,sc0_1_true,
+8,MidIce,9_2_1,sc0_1_true,
+8,MidGlass,9_2_1,sc0_1_true,
+8,MidIceGlass,9_2_1,sc0_1_true,
 29,Good,30_1_1,sc0_2_true,
 29,Bad,30_2_1,sc0_2_true,
 29,MidGlass,30_3_1,sc0_2_false,
 29,MidWrongMenu,30_4_1,sc0_2_false,
+29,MidIce,30_1_1,sc0_2_true,
+29,MidIceGlass,30_3_1,sc0_2_false,
 
 #NODE_CHARS
 nodeId,characterKey,expressionKey,slotIndex

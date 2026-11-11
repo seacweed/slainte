@@ -446,10 +446,10 @@ MonoBehaviour:
       expressionKey: mid
       slotIndex: -1
     requiresCrafting: 1
-    craftingOrderTicket: {fileID: 0}
-    craftingTicketKey: 
+    craftingOrderTicket: {fileID: 11400000, guid: 1802a468549bf5b42ad7a08a68ded18f, type: 2}
+    craftingTicketKey: cs0_ronins
     craftingOrderType: 6
-    craftingOrderTarget: 
+    craftingOrderTarget: rec_1012
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingPaymentMultiplier: 1
@@ -459,6 +459,22 @@ MonoBehaviour:
       flag: sc0_1_false
       varChanges: []
     - result: 4
+      nextNodeId: 9_2_1
+      flag: sc0_1_true
+      varChanges: []
+    - result: 0
+      nextNodeId: 9_2_1
+      flag: sc0_1_true
+      varChanges: []
+    - result: 1
+      nextNodeId: 9_2_1
+      flag: sc0_1_true
+      varChanges: []
+    - result: 2
+      nextNodeId: 9_2_1
+      flag: sc0_1_true
+      varChanges: []
+    - result: 3
       nextNodeId: 9_2_1
       flag: sc0_1_true
       varChanges: []
@@ -1882,10 +1898,10 @@ MonoBehaviour:
       expressionKey: mid
       slotIndex: -1
     requiresCrafting: 1
-    craftingOrderTicket: {fileID: 0}
-    craftingTicketKey: 
-    craftingOrderType: 6
-    craftingOrderTarget: 
+    craftingOrderTicket: {fileID: 11400000, guid: d90ea77149a8f7c4cb9f758efccc49e8, type: 2}
+    craftingTicketKey: cs0_recommendation
+    craftingOrderType: 3
+    craftingOrderTarget: "\uC815\uC5F4\uC801\uC778"
     craftingPaymentEnabled: 0
     craftingPaymentCurrency: 0
     craftingPaymentMultiplier: 1
@@ -1904,6 +1920,14 @@ MonoBehaviour:
       varChanges: []
     - result: 4
       nextNodeId: 30_4_1
+      flag: sc0_2_false
+      varChanges: []
+    - result: 1
+      nextNodeId: 30_1_1
+      flag: sc0_2_true
+      varChanges: []
+    - result: 3
+      nextNodeId: 30_3_1
       flag: sc0_2_false
       varChanges: []
     nextNodeIdGood: 

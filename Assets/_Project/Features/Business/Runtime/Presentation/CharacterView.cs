@@ -63,6 +63,7 @@ public class CharacterView : MonoBehaviour
 
     public void Setup(Sprite sprite, Sprite overlaySprite = null, Sprite blinkSprite = null, Sprite blinkOverlaySprite = null)
     {
+        using var measurement = DialogueDiagnostics.Measure(DialogueDiagnostics.Stage.CharacterView_Setup);
         _currentSprite        = sprite;
         _currentOverlaySprite = overlaySprite;
         _blinkSprite          = blinkSprite;
@@ -131,6 +132,7 @@ public class CharacterView : MonoBehaviour
 
     public void SwapSprite(Sprite sprite, Sprite overlaySprite = null, Sprite blinkSprite = null, Sprite blinkOverlaySprite = null)
     {
+        using var measurement = DialogueDiagnostics.Measure(DialogueDiagnostics.Stage.CharacterView_SwapSprite);
         _currentSprite        = sprite;
         _currentOverlaySprite = overlaySprite;
         _blinkSprite          = blinkSprite;

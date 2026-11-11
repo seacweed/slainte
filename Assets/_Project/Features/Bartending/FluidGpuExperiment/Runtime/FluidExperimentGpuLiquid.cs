@@ -72,6 +72,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
 
         public void Initialize(FluidExperimentWorld owner)
         {
+            using var measurement = Slainte.Bartending.GpuCraftingDiagnostics.Measure(Slainte.Bartending.GpuCraftingDiagnostics.Stage.LiquidInitialize);
             if (IsOperational) return;
             world = owner;
             if (!SystemInfo.supportsComputeShaders || settings == null || settings.gpuLiquidComputeShader == null || drawShader == null)
@@ -422,6 +423,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         public void ReadbackNow()
         {
+            using var measurement = Slainte.Bartending.GpuCraftingDiagnostics.Measure(Slainte.Bartending.GpuCraftingDiagnostics.Stage.Readback);
             if (!IsOperational) return;
             // A synchronous read supersedes any older async request, including its staging callbacks.
             snapshotRequestToken++; readbackInFlight = false;
@@ -434,6 +436,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         public void ResetSimulation()
         {
+            using var measurement = Slainte.Bartending.GpuCraftingDiagnostics.Measure(Slainte.Bartending.GpuCraftingDiagnostics.Stage.LiquidReset);
             if (!IsOperational) return;
             generation++; readbackInFlight = false;
             DispatchReset();

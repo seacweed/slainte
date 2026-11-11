@@ -377,6 +377,7 @@ GameObject:
   - component: {fileID: 615595941468845583}
   - component: {fileID: 8834580647088214092}
   - component: {fileID: 226039633298000754}
+  - component: {fileID: 6412602944138091767}
   m_Layer: 29
   m_Name: Glass_martini
   m_TagString: Untagged
@@ -440,7 +441,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fb20bbbcb28d4e7ebdf452330e047673, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentBody
   kind: 1
   displayName: Martini
@@ -638,3 +639,17 @@ PolygonCollider2D:
       - {x: -0.7925637, y: 0.1649887}
       - {x: -0.916352, y: 0.31042364}
   m_UseDelaunayMesh: 1
+--- !u!114 &6412602944138091767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7959043526796961051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40dcecb564024a6abcc01f59a7ec7711, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::Slainte.Bartending.FluidGpuExperiment.FluidExperimentBreakableGlass
+  profile: {fileID: 11400000, guid: 08e532a9a84bf5c48b2dfae604699f97, type: 2}
+  splashProfile: {fileID: 0}

@@ -101,6 +101,7 @@ public class OrderTicketManager : MonoBehaviour
 
     private void ShowPendingTicket()
     {
+        using var measurement = DialogueDiagnostics.Measure(DialogueDiagnostics.Stage.OrderTicketManager_ShowPendingTicket);
         if (_pendingTicketData == null
             && string.IsNullOrWhiteSpace(_pendingTicketKey)) return;
 

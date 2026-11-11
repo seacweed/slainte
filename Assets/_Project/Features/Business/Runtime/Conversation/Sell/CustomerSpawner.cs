@@ -52,10 +52,12 @@ public class CustomerSpawner : MonoBehaviour
         string fallbackOrderLine = null,
         Action<bool> onOrderPresentationReady = null)
     {
+        using var measurement = DialogueDiagnostics.Measure(DialogueDiagnostics.Stage.CustomerSpawner_ShowVisit);
         CanResolveOrder(orderKey, out _currentOrderData);
         _currentVisitData = visitDB != null ? visitDB.FindByKey(visitKey) : null;
         if (_currentOrderData == null) return false;
 
+        PrewarmOrderDialogue(_currentOrderData, fallbackOrderLine);
         List<CharacterSlotEntry> entries = BuildVisitEntries(_currentVisitData);
         if (entries.Count > 0)
         {
@@ -181,8 +183,29 @@ public class CustomerSpawner : MonoBehaviour
     // 주문 제시 시 보여줄 대사 우선순위: ① 작가가 직접 쓴 정식 대사(data.lines), ② 대사를
     // 의도적으로 안 쓰기로 한 경우(orderDialogueAuthored — 침묵도 연출의 일부), ③ CSV 등에서
     // 자동 생성된 한 줄짜리 fallbackOrderLine, ④ 아무것도 없으면 대화창을 그냥 닫는다.
+    private void PrewarmOrderDialogue(CustomerOrderData data, string fallbackOrderLine)
+    {
+        if (dialogue == null) return;
+        if (data.lines != null && data.lines.Count > 0)
+        {
+            dialogue.PrewarmLines(data.lines);
+            return;
+        }
+        if (data.orderDialogueAuthored || string.IsNullOrWhiteSpace(fallbackOrderLine))
+        {
+            dialogue.PrewarmLines(null);
+            return;
+        }
+        string characterKey = ResolveOrderingCharacterKey(data);
+        string speakerName = characterKey;
+        Color color = Color.white;
+        characterStage?.TryGetDialogueIdentity(characterKey, out speakerName, out color);
+        dialogue.PrewarmLines(new[] { new DialogueLine { speakerName = speakerName, text = fallbackOrderLine } });
+    }
+
     private bool OnCharactersShown(CustomerOrderData data, string fallbackOrderLine)
     {
+        using var measurement = DialogueDiagnostics.Measure(DialogueDiagnostics.Stage.CustomerSpawner_OnCharactersShown);
         if (data == null) return false;
 
         ticketManager?.Prepare(

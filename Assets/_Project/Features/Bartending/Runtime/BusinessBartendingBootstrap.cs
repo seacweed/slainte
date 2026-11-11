@@ -89,6 +89,7 @@ namespace Slainte.Bartending
         }
         private void PrepareSession()
         {
+            using var measurement = Slainte.Bartending.GpuCraftingDiagnostics.Measure(Slainte.Bartending.GpuCraftingDiagnostics.Stage.Prepare);
             if (session != null) return;
             if (toolSelection == null || !toolSelection.IsConfigured)
             { Debug.LogError("[GpuCrafting] Configure the Canvas tool selection before entering manufacturing."); return; }
@@ -106,6 +107,7 @@ namespace Slainte.Bartending
                     FindInScene<CharacterStage>(gameObject.scene), GetShelfWorldSize);
                 session.Supply.StockChanged += HandleStockChanged;
                 session.Supply.ToolAvailabilityChanged += HandleToolAvailability;
+                toolSelection.PrewarmSessionVisuals();
             }
             catch (Exception error) { Debug.LogException(error, this); DisposePreparedSession(); }
         }
@@ -124,6 +126,7 @@ namespace Slainte.Bartending
 
         private void HandleSessionReady()
         {
+            using var measurement = Slainte.Bartending.GpuCraftingDiagnostics.Measure(Slainte.Bartending.GpuCraftingDiagnostics.Stage.ReadyCallbacks);
             if (!craftingActive) return;
             toolSelection?.NotifySessionReady();
             SessionReady?.Invoke();

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Slainte.Bartending.FluidGpuExperiment
 {
-    // Explicit opt-in on the hurricane prefab. Native impact queues a transition;
+    // Explicit opt-in on each authored glass prefab. Native impact queues a transition;
     // the world commits it after Physics2D and before GPU geometry is uploaded.
     [DisallowMultipleComponent, RequireComponent(typeof(FluidExperimentBody))]
     public sealed class FluidExperimentBreakableGlass : MonoBehaviour

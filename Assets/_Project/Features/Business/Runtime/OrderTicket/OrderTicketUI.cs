@@ -55,11 +55,13 @@ public class OrderTicketUI : MonoBehaviour
 
     public void Show(OrderTicketData data)
     {
+        using var measurement = DialogueDiagnostics.Measure(DialogueDiagnostics.Stage.OrderTicketUI_Show);
         Show(data, data != null ? data.memo : string.Empty);
     }
 
     public void Show(OrderTicketData data, string memo)
     {
+        using var measurement = DialogueDiagnostics.Measure(DialogueDiagnostics.Stage.OrderTicketUI_Show);
         if (data == null)
         {
             ClearContent();
@@ -177,6 +179,7 @@ public class OrderTicketUI : MonoBehaviour
 
     private void ResetScrollToTop()
     {
+        using var measurement = DialogueDiagnostics.Measure(DialogueDiagnostics.Stage.OrderTicketUI_ResetScrollToTop);
         if (!scrollRect)
             return;
 

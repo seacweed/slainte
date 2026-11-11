@@ -163,6 +163,7 @@ namespace Slainte.Business
             OrderSessionRequest request,
             Action<BusinessOrderSessionResult> onCompleted)
         {
+            using var measurement = DialogueDiagnostics.Measure(DialogueDiagnostics.Stage.BusinessOrderSessionController_BeginOrder);
             if (!initialized
                 || request == null
                 || string.IsNullOrWhiteSpace(request.sessionId)
@@ -357,6 +358,7 @@ namespace Slainte.Business
 
         private void BeginCrafting()
         {
+            using var measurement = DialogueDiagnostics.Measure(DialogueDiagnostics.Stage.BusinessOrderSessionController_BeginCrafting);
             if (currentRequest == null)
                 return;
 

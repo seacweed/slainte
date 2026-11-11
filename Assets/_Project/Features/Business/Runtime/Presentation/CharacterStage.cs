@@ -56,6 +56,7 @@ public class CharacterStage : MonoBehaviour
 
     public void ShowCharacters(IReadOnlyList<CharacterSlotEntry> entries, Action onAllShown = null)
     {
+        using var measurement = DialogueDiagnostics.Measure(DialogueDiagnostics.Stage.CharacterStage_ShowCharacters);
         if (entries == null || entries.Count == 0)
         {
             ClearWithAnimation(onAllShown);

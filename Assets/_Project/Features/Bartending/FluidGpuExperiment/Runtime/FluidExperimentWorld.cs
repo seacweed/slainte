@@ -239,6 +239,7 @@ namespace Slainte.Bartending.FluidGpuExperiment
         }
         public void ResetSession()
         {
+            using var measurement = Slainte.Bartending.GpuCraftingDiagnostics.Measure(Slainte.Bartending.GpuCraftingDiagnostics.Stage.WorldReset);
             if (interactor != null) interactor.ReleaseWithVelocity(Vector2.zero);
             ResetGlassBreakage();
             for(int i=items.Count-1;i>=0;i--)
