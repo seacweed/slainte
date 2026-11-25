@@ -4,16 +4,27 @@
 
 영업 씬 바텐딩 화면은 다음 순서로 그려진다.
 
-**바 배경 → 손님 → 테이블·술장 배경(`TableBackground`) → `BarCounter`(이미지 꺼짐) → 술 선택 공간 → 도구 공간 → 맨 아래 테이블(`CraftingTable`)**
+**바 배경 → 손님 → 술장 배경(`TableBackground`) → 제조 상판(`BarCounter`) → 술 선택 공간 → 도구 공간 → 맨 아래 테이블(`CraftingTable`)**
 
-2026-11 테이블 구조 변경: 제조는 **술장 위 상판**(`table_storage_background` 윗부분)에서 하고, 그 아래가 바로 술장이다. 맨 아래 테이블은 `table_bottom`으로 얇아졌다.
+2026-11 테이블 구조 변경: 제조는 **술장 위 상판**에서 하고, 그 아래가 바로 술장이다. 맨 아래 테이블은 `table_bottom`으로 얇아졌다.
+
+테이블 아트(`Business/Art/Sprites/Environment/`)는 전체 틀이 아니라 가로 2680 띠로 잘려 있고, 아래부터 빈틈없이 쌓인다(최대 텍스처 크기 4096 — 2048이면 가로가 줄어 흐려짐).
+
+| 오브젝트 | 스프라이트 | 크기 | 게임 좌표 y |
+|---|---|---|---|
+| `CraftingSpace/CraftingTable` | `table_bottom` | 2680×110 | −60 ~ 50 |
+| `TableBackground` | `table_storage_background`(상판 미포함) | 2680×300 | 50 ~ 350 |
+| `ToolSelection/ToolSelectionBG` | `table_storage_glass_tool` | 2680×300 | 50 ~ 350 |
+| `BarCounter` | `table_crafting`(제조 상판) | 2680×250 | 350 ~ 600 |
+
+모두 앵커·피벗 가운데 아래, 각 오브젝트의 `AspectRatioFitter` 비율을 스프라이트 가로/세로에 맞춘다(바꾸지 않으면 예전 비율로 높이가 되돌아간다).
 
 | 기준선 (QHD, 화면 아래 기준 y) | 값 | 정하는 곳 |
 |---|---|---|
 | 물리 바닥(병·잔이 서는 높이) | 470 | `CraftingSpace/CraftingSlotRow` 세로 중심 |
 | 서빙 영역 아래 경계 | 600 | `BarCounter` 윗변 |
 | 반납 영역 윗변 | 350 | `BusinessBartendingSettings.shelfReturnAreaNormalized` |
-| 진열 줄 바닥 | 51 | `table_bottom` 윗변 |
+| 진열 줄 바닥 | 51 | `table_bottom` 윗변(y 50) 바로 위 |
 
 술 선택 공간은 기존 우측 술장(`LiquorShelfUI`)을 대체한다.
 
@@ -113,7 +124,7 @@
 
 ## 도구 공간
 
-- `table_storage_glass_tool`(2680×1560 틀, 양쪽 아래 블록만 불투명)을 배경으로 쓴다. 블록은 x 0~744 / 1815~2560(화면 안 기준), y −1~351이다. 왼쪽 블록에 잔 4종(락·마티니·하이볼·허리케인), 오른쪽 블록에 지거·셰이커·바스푼.
+- `table_storage_glass_tool`(2680×300 띠, 양쪽 블록만 불투명, Sprite Mode Single)을 배경으로 쓴다. 블록은 x 0~543 / 2016~2560(화면 안 기준), y 50~350이다. 왼쪽 블록에 잔 4종(락·마티니·하이볼·허리케인), 오른쪽 블록에 지거·셰이커·바스푼.
 - **얼음 버킷은 기획 변경으로 진열에서 뺐다**(`ToolSelectionUI.ToolOrder`). 카탈로그·캐비닛 인스턴스와 얼음 판정(`iceRequirement`)은 새 얼음 기획이 정해질 때까지 그대로 둔다 — 얼음 필수 레시피는 지금 진열대에서 얼음을 얻을 수 없다.
 - A/D와 무관하게 항상 같은 자리에 있다.
 - 도구는 **정의당 월드 인스턴스 1개**다(기존 도구장과 같은 정책). 세션 시작 시 `PrepareCabinetInventory`가 인스턴스를 숨겨진 캐비닛 슬롯에 넣고, 클릭하면 같은 인스턴스를 꺼낸다.
@@ -121,9 +132,9 @@
   - 아트: 잔 `Art/Glasses/{rock|cocktail|highball|hurricane}_in/_dis.png`, 도구 `Art/ToolCabinet/Tools/{cobbler|jigger|barspoon}_in/_dis.png`(310×590). 메뉴 `Tools/Slainte/Tool Cabinet/Apply Shelf Sprites`가 이 두 필드만 연결한다(`Install Or Repair`도 마지막에 같은 연결을 수행).
   - `shelfInSprite`가 비어 있는 정의는 예전처럼 `cabinetLayers`를 겹쳐 그리고 꺼낸 동안 반투명으로 남긴다.
   - 단일 이미지는 진열 방향 그대로 그려져 있으므로 바스푼도 뒤집지 않는다(레이어 폴백일 때만 뒤집음).
-- **아이콘 크기** = 스프라이트 원본 픽셀 × 정의의 `worldScale` × `iconScale`. 월드 도구가 `BartendingNativeSpriteSizer`로 같은 식으로 맞춰지므로, 세션이 없어도 제작 테이블 위 크기와 같은 비율로 진열된다. 현재 아트는 모두 310×590 프레임이라 `iconScale` 1이면 칸 하나가 217×413이다. 블록 폭에 맞게 `iconScale`·`slotSpacing`(음수 가능)으로 조정한다.
+- **아이콘 크기** = 스프라이트 원본 픽셀 × 정의의 `worldScale` × `iconScale`. 월드 도구가 `BartendingNativeSpriteSizer`로 같은 식으로 맞춰지므로, 세션이 없어도 제작 테이블 위 크기와 같은 비율로 진열된다. 현재 아트는 모두 310×590 프레임이라 `iconScale` 1이면 칸 하나가 217×413이다. 블록 폭에 맞게 `iconScale`과 줄별 간격 `glassRowSpacing`/`toolRowSpacing`(음수 가능)으로 조정한다. 현재 `iconScale` 0.7(칸 160px)이라 잔 4칸(640)이 왼쪽 블록(543)을 넘치므로 `glassRowSpacing` −32로 아트의 투명 여백을 겹쳐 맞추고, 도구 3칸은 `toolRowSpacing` 0으로 충분하다.
 - **윤곽선**: 단일 이미지도 "레이어 1장"으로 같은 경로를 탄다. 레이어마다 윤곽선을 그리면 레이어 경계가 안쪽에 선으로 남는다. 그래서 윤곽선용 복제본을 실제 레이어 전체보다 뒤(`OutlineLayers`)에 깔아 바깥 실루엣만 보이게 한다.
-- 진열 줄 바닥은 맨 아래 테이블 윗변(y 51)이다. `GlassContent`/`ToolContent`는 `ToolSelectionBG` 기준 y 52, 화면 안의 블록 폭(744/745)에 맞춘다(BG가 좌우 60px 여백만큼 넓으므로 x ±60).
+- 진열 줄 바닥은 맨 아래 테이블 윗변(y 51)이다. `GlassContent`/`ToolContent`는 `ToolSelectionBG` 기준 y 1, 화면 안의 블록 폭(543/544)에 맞춘다(BG가 좌우 60px 여백만큼 넓으므로 x ±60).
 - **반쯤 숨김·호버 상승**: 술병처럼 아이콘 높이의 `hiddenHeightRatio`(기본 0.5)만큼을 줄 바닥 아래로 내린다. 아이콘마다 키가 달라 고정 픽셀이 아닌 비율로 내린다. 숨긴 부분은 그리기 순서상 위에 있는 `CraftingTable`(table_bottom)과 화면 밖에 가려지므로 마스크를 따로 두지 않는다. 슬롯 루트(레이아웃·클릭 영역)는 보이는 윗부분 높이만 차지하고, 호버하면 숨긴 높이만큼 올라와 도구 전체가 보인다(프리팹의 `hoverRaise` 대신 `SetHoverRaise`로 슬롯별 지정). 0이면 예전처럼 전체가 보이고 프리팹 상승값을 쓴다.
 - **호버 라벨 위치**: 프리팹에 배치한 위치가 아니라 런타임에 아이콘 프레임 윗변 + `labelGap`(기본 12)으로 덮어쓴다. 아트가 모두 같은 310×590 프레임이라 모든 잔·도구의 라벨이 같은 높이에 뜬다(그려진 부분의 실제 윗변은 쓰지 않음 — 의도된 동작).
 - 씬에 `ToolSelectionUI`가 없거나 `useToolCabinet`이 꺼져 있으면 고정 도구를 테이블에 바로 놓는 기존 방식으로 폴백한다.
@@ -145,7 +156,7 @@
 
 1. `FrontCameraRig` 아래 형제 순서: `BarBackground` → `CustomerStage` → `TableBackground` → `BarCounter` → `IngredientSelection` → `ToolSelection` → `CraftingSpace`. `DrawerArea`는 제거한다.
    - 배경 스프라이트 배치는 [60px 여백 규칙](../core/resolution-letterbox.md#화면-흔들림-여백-60px)을 따른다.
-   - `BarCounter`는 `Image`만 끄고 오브젝트·위치·`TableSlots`는 유지한다(서빙 영역 아래 경계, 슬롯 간격 가이드).
+   - `BarCounter`는 제조 상판(`table_crafting`) 이미지를 표시한다(Raycast Target 끔). 이름으로 찾는 오브젝트이므로 이름을 바꾸지 말고, 윗변(y 600)이 서빙 영역 아래 경계이므로 상판 높이를 바꿀 때도 윗변을 유지한다. 자식 `TableSlots`는 유지한다(슬롯 간격 가이드, 런타임에 꺼짐).
 2. `CraftingSpace`
    - 전체 크기로 늘린다(앵커 0~1, 오프셋 0).
    - 맨 아래 테이블 이미지 `CraftingTable`(`table_bottom`)을 자식으로 두고, **Raycast Target을 끈다.**
@@ -158,7 +169,7 @@
    - `ToolSelectionBG`(`table_storage_glass_tool`)를 배경으로 둔다. **Raycast Target을 끈다** — 켜 두면 가운데 투명 영역까지 클릭을 막아 술 선택 공간이 반응하지 않는다.
    - `ToolSelectionUI`를 붙이고 `slotPrefab`, `glassRow`(왼쪽 블록 위 사각형), `toolRow`(오른쪽 블록 위 사각형)를 연결한다. 두 줄의 사각형은 반납 영역도 겸하므로 블록 전체를 덮게 잡는다. `HorizontalLayoutGroup`은 없으면 런타임에 추가된다.
    - `glassCategoryLabel` = `잔`, `toolCategoryLabel` = `도구`(호버 시 이름 아래 고정 문구). 색은 각 `CategoryColor`.
-   - `iconScale`, `slotSpacing`, `rowAlignment`(기본 LowerCenter)로 크기·간격을 조정한다.
+   - `iconScale`, `glassRowSpacing`/`toolRowSpacing`, `rowAlignment`(기본 LowerCenter)로 크기·간격을 조정한다.
 5. 재료 슬롯 프리팹(`IngredientSlotUI`)
    - 루트: `RectTransform` 크기 = 한 칸 크기. **투명 `Image`(Raycast Target 켬)를 히트 영역으로 둔다.** 아이콘과 라벨은 코드에서 레이캐스트를 꺼서, 올라가는 동안 호버가 깜빡이지 않게 한다.
    - `visualRoot`: 자식. 호버 때 이것만 `hoverRaise`만큼 올라간다.

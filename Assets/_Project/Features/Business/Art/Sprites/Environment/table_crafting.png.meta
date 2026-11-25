@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: c4dd705927bdf854393fa6ee955e5b1e
+guid: 8fec65c86f608f1459f27ba1484618c6
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 5253978959913758645
-    second: background_4960_0
+      213: -5240851910298122368
+    second: table_crafting_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -72,7 +72,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 4096
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 1
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: background_4960_0
+      name: table_crafting_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 4960
-        height: 1440
+        width: 2680
+        height: 250
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 5bf290bf602e9e840800000000000000
-      internalID: 5253978959913758645
+      spriteID: 087c04e64f0c447b0800000000000000
+      internalID: -5240851910298122368
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      background_4960_0: 5253978959913758645
+      table_crafting_0: -5240851910298122368
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

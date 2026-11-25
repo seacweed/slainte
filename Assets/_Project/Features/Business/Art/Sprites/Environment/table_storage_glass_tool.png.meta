@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b449b3d030d7f6648a9265392f9ebb1b
+guid: 7272398c3b5a9414ca7be34c58a70807
 TextureImporter:
   internalIDToNameTable:
   - first:
@@ -49,7 +49,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -107,11 +107,11 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 59
-        width: 2680
-        height: 352
+        y: 0
+        width: 607
+        height: 300
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -124,11 +124,33 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: table_storage_glass_tool_1
+      rect:
+        serializedVersion: 2
+        x: 2073
+        y: 0
+        width: 607
+        height: 300
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: baeeb76bd7b5266e0800000000000000
+      internalID: -1845812301777867093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: c202aef6e79c56041aa9a372a01e8ff0
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -140,8 +162,6 @@ TextureImporter:
     nameFileIdTable:
       table_storage_glass_tool_0: 3309961394682584572
       table_storage_glass_tool_1: -1845812301777867093
-      table_storage_glass_tool_2: 1048941897
-      table_storage_glass_tool_3: -1335660192
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

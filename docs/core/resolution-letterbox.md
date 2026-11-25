@@ -21,9 +21,9 @@
 
 화면 흔들림 연출 때 배경 끝이 드러나지 않도록 배경 아트는 QHD 기준 상하좌우 60px 여백을 더한 **2680×1560 기준 틀**로 제작한다.
 
-- 아트 원본 PNG는 2680×1560 틀 안에 놓일 위치 그대로 그려져 있고, 스프라이트는 Sprite Editor에서 투명 여백을 잘라 쓴다.
-- 씬에서는 자른 스프라이트를 틀 위치에 놓는다(틀의 x 60, y 60이 게임 영역 왼쪽 아래 끝). 오브젝트를 2680×1560으로 키우지 않는다. 너비만 맞추면 `AspectRatioFitter`가 높이를 맞춘다.
-  - 예: BusinessScene `TableBackground`·`ToolSelectionBG`는 Sprite Rect y 59부터라 pos y −1, `CraftingTable`(table_bottom)은 y 0부터라 pos y −60. 모두 너비 2680, 가로 가운데.
+- 아트는 2680×1560 틀 그대로 그려 Sprite Editor에서 투명 여백을 잘라 쓰거나, 처음부터 틀 너비(2680)의 띠로 잘려 온다.
+- 씬에서는 스프라이트를 틀 위치에 놓는다(틀의 x 60, y 60이 게임 영역 왼쪽 아래 끝 → 게임 좌표 = 틀 좌표 − 60). 오브젝트를 2680×1560으로 키우지 않는다. `AspectRatioFitter`가 너비로 높이를 맞추므로 스프라이트를 바꾸면 비율 값도 새 스프라이트에 맞춘다.
+  - 예: BusinessScene 테이블(띠 4장)은 `CraftingTable` y −60, `TableBackground`·`ToolSelectionBG` y 50, `BarCounter` y 350. 모두 너비 2680, 가로 가운데([술 선택 공간 문서](../ui/ingredient-selection.md#개요) 표 참고).
 - 여백 없는 전체 배경(현재 `bar_background_0925`, 2560×1440)은 새 아트가 나올 때까지 RectTransform 오프셋 ±60으로 늘려 쓴다(가로세로 비율 약 3.5% 왜곡).
 - 여백은 게임 영역 밖이라 평소에는 화면 밖이거나 레터박스에 덮인다.
 

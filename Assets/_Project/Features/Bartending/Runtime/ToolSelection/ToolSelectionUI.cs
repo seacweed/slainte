@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using Slainte.Content;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Slainte.Bartending
 {
-    // 술 선택 공간과 제작 공간 사이, 테이블(table_serve_2) 양옆 블록에 잔·도구를 진열하는 도구 공간.
+    // 술 선택 공간과 제작 공간 사이, 테이블(table_storage_glass_tool) 양옆 블록에 잔·도구를 진열하는 도구 공간.
     // 왼쪽 줄에는 잔 4종, 오른쪽 줄에는 지거·셰이커·바스푼이 놓이며 A/D 대분류 전환과는
     // 무관하게 항상 같은 자리에 있다. 도구는 정의당 월드 인스턴스가 하나뿐이므로 실제 보관·꺼내기·반납은
     // BusinessBartendingBootstrap의 캐비닛 슬롯 API에 위임하고, 여기서는 진열 표시와 입력 가드만 맡는다.
@@ -39,7 +40,11 @@ namespace Slainte.Bartending
         [SerializeField] private RectTransform glassRow;
         [Tooltip("Right table block. Holds the tools and doubles as a return area.")]
         [SerializeField] private RectTransform toolRow;
-        [SerializeField] private float slotSpacing = 0f;
+        [Tooltip("Spacing between tool slots in the right block.")]
+        [FormerlySerializedAs("slotSpacing")]
+        [SerializeField] private float toolRowSpacing = 0f;
+        [Tooltip("Spacing between glass slots in the left block. Negative tightens the transparent margins so four glasses fit the narrow block.")]
+        [SerializeField] private float glassRowSpacing = 0f;
         [SerializeField] private TextAnchor rowAlignment = TextAnchor.LowerCenter;
         [Tooltip("Icon size = sprite pixels x definition worldScale x this value. 1 matches the crafting table size.")]
         [SerializeField, Min(0.05f)] private float iconScale = 1f;
@@ -194,8 +199,8 @@ namespace Slainte.Bartending
         private void BuildSlots()
         {
             slots.Clear();
-            ConfigureRow(glassRow);
-            ConfigureRow(toolRow);
+            ConfigureRow(glassRow, glassRowSpacing);
+            ConfigureRow(toolRow, toolRowSpacing);
 
             GlassDef[] glasses = catalog.glasses ?? Array.Empty<GlassDef>();
             for (int i = 0; i < GlassOrder.Length; i++)
@@ -292,13 +297,14 @@ namespace Slainte.Bartending
             return size;
         }
 
-        private void ConfigureRow(RectTransform row)
+        // 잔과 도구는 블록 폭과 아이콘 여백이 달라 줄마다 간격을 따로 받는다.
+        private void ConfigureRow(RectTransform row, float spacing)
         {
             HorizontalLayoutGroup layout = row.GetComponent<HorizontalLayoutGroup>();
             if (layout == null)
                 layout = row.gameObject.AddComponent<HorizontalLayoutGroup>();
             layout.childAlignment = rowAlignment;
-            layout.spacing = slotSpacing;
+            layout.spacing = spacing;
             layout.childControlWidth = false;
             layout.childControlHeight = false;
             layout.childForceExpandWidth = false;
