@@ -516,7 +516,8 @@ namespace Slainte.Bartending
             }
 
             bool depleted = shelfAmount <= 0.01f;
-            slot.SetStock(shelfAmount, delivery.GetOffer(definition, depleted));
+            bool deployed = bartending != null && bartending.IsBottleDeployed(definition);
+            slot.SetStock(shelfAmount, delivery.GetOffer(definition, depleted), deployed);
         }
 
         private void ClearHovers()

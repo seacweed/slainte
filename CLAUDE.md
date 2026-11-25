@@ -62,7 +62,7 @@
 | [docs/narrative/narrative-graph-guide.md](docs/narrative/narrative-graph-guide.md) | 그래프 에디터 사용 가이드 (템플릿으로 노드 생성, 노드·대사 줄 복사/붙여넣기, 블록 카드에서 대사·표정 편집, 블록 나누기/합치기, 연결, 컴파일·CSV 동기화) |
 | **ui** |||
 | [docs/ui/restscene-systems.md](docs/ui/restscene-systems.md) | RestScene UI 시스템 (상점, 현황판, 툴팁) |
-| [docs/ui/recipe-book-search.md](docs/ui/recipe-book-search.md) | 도감 검색·상세 UI(RecipeSearchUI, 맛/분위기 태그 팔레트, 레시피 상세, 재료 카테고리 색상), 화면 전환 흐름 |
+| [docs/ui/recipe-book-search.md](docs/ui/recipe-book-search.md) | 도감 검색·상세 UI(RecipeSearchUI, 호버 버튼 HoverSwapButton, 레시피 상세), 화면 전환 흐름, 주문서 패널·표정 |
 | [docs/ui/notification-system.md](docs/ui/notification-system.md) | 알림 시스템(NotificationManager/AffinityNotificationUI/AnimatedSpriteUI), 씬 설정 |
 | [docs/ui/ingredient-selection.md](docs/ui/ingredient-selection.md) | 영업 씬 술 선택 공간(IngredientSelectionUI, A/D 대분류 전환, 병·가니쉬 재고 규칙)과 양옆 도구 공간(ToolSelectionUI), 슬롯 위치 기준, 씬 세팅 |
 | [docs/ui/liquor-shelf.md](docs/ui/liquor-shelf.md) | 기존 술장 시스템(LiquorShelfUI, 배송) — 영업 씬에서 임시 제외, 복원 참고용 |

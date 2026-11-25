@@ -30,11 +30,23 @@ namespace Slainte.Bartending
         private bool closing, submitted, suspended, modulesReady, activeForCrafting;
         private readonly Dictionary<Rigidbody2D, bool> simulatedBodies = new Dictionary<Rigidbody2D, bool>();
         private readonly List<Collider2D> pointerHits = new List<Collider2D>();
+        // 페이드 첫 프레임의 제조 진입 끊김이 연출 시간을 한 번에 소모하지 않게 한다.
+        private const float MaxFadeDeltaSeconds = .05f;
+        private CanvasGroup viewportFade, overlayFade;
+        private Coroutine outputFadeRoutine;
+        private float outputFadeDuration;
+        private bool teardownPending;
+        private RectTransform zoomRoot, viewportRect, overlayRect;
+        private Vector3 zoomStartPosition, viewportStartPosition, overlayStartPosition;
+        private Vector2 viewportRestPosition, overlayRestPosition;
+        private float zoomStartScale;
+        private bool followingBackdrop;
 
         public void Initialize(BusinessBartendingSettings settings, RectTransform counter,
             RectTransform viewportParent, RectTransform floorAnchor, CharacterStage characters,
-            Func<string, Vector2> shelfWorldSize = null)
+            Func<string, Vector2> shelfWorldSize = null, RectTransform backdropZoomRoot = null)
         {
+            zoomRoot = backdropZoomRoot;
             if (settings.gpuCrafting == null || settings.gpuCrafting.runtimePrefab == null)
                 throw new InvalidOperationException("GPU crafting settings and runtime prefab must be assigned.");
             // 설정을 먼저 주입한다. 활성 프리팹의 Awake가 카메라 없는 상태로 실행되지 않게 한다.
@@ -88,6 +100,12 @@ namespace Slainte.Bartending
             overlay.BindGpuWorld(Rig.World);
             overlay.ConfigureServingTarget(characters, counter, false);
             overlay.gameObject.SetActive(false);
+            outputFadeDuration = Mathf.Max(0f, settings.gpuCrafting.craftingFadeDuration);
+            viewportFade = Viewport.gameObject.AddComponent<CanvasGroup>();
+            overlayFade = overlay.gameObject.AddComponent<CanvasGroup>();
+            viewportRect = (RectTransform)Viewport.transform;
+            overlayRect = (RectTransform)overlay.transform;
+            SetOutputAlpha(0f);
             sourceCamera = Camera.main;
             if (sourceCamera != null && sourceCamera != worldCamera)
             {
@@ -125,7 +143,10 @@ namespace Slainte.Bartending
             }
             var env = Rig.environment;
             env.table = Box("Table", new Vector2(center.x, floorY - thickness * .5f), new Vector2(size.x + 2, thickness));
-            Rig.World.HeldVesselFloor = env.table;
+            // 술장이 제조 테이블 아래에 있어, 들고 있는 물체는 바닥 아래로 내려가 반납 영역을 클릭할 수 있어야 한다.
+            // 게임 테이블은 액체를 받치지 않고(tableHoldsLiquid=false) 들고 있는 동안 바닥 충돌도 꺼지므로
+            // HeldVesselFloor 높이 제한을 걸지 않는다. 반납 영역 밖에서 놓으면 TryResolveRelease가 바닥 위로 올린다.
+            Rig.World.HeldVesselFloor = null;
             env.leftBoundary = Box("LeftBoundary", new Vector2(center.x - size.x * .5f - .25f, center.y), new Vector2(.5f, size.y + 2));
             env.rightBoundary = Box("RightBoundary", new Vector2(center.x + size.x * .5f + .25f, center.y), new Vector2(.5f, size.y + 2));
             env.topBoundary = Box("TopBoundary", new Vector2(center.x, center.y + size.y * .5f + .25f), new Vector2(size.x + 2, .5f));
@@ -170,6 +191,8 @@ namespace Slainte.Bartending
         public void BeginCrafting()
         {
             if (closing || activeForCrafting) return;
+            // 페이드 아웃 중 재진입해도 이전 주문의 물체가 새 주문에 남으면 안 된다.
+            CompletePendingTeardown();
             activeForCrafting = true;
             submitted = false;
             worldCamera.enabled = true;
@@ -179,16 +202,81 @@ namespace Slainte.Bartending
             SetSuspended(false);
             Rig.Interactor.enabled = true;
             Rig.Interactor.InputSuspended = false;
+            StartOutputFade(1f, false);
             if (modulesReady) ReadyChanged?.Invoke();
         }
 
-        // 주문 내용만 정리하고 GPU 버퍼/카메라 출력은 같은 BusinessScene 안에서 재사용한다.
+        // 입력과 재고는 즉시 확정하고 화면은 멈춘 채 남긴다. 물체를 먼저 지우면 제조 화면이
+        // 함께 사라지지 않으므로, 내용물 정리와 출력 종료는 페이드가 끝난 뒤에 수행한다.
+        // GPU 버퍼/카메라 출력은 같은 BusinessScene 안에서 재사용한다.
         public void EndCrafting()
         {
             if (!activeForCrafting || closing) return;
             activeForCrafting = false;
             Supply?.Finish();
             Rig.Interactor.ReleaseWithVelocity(Vector2.zero);
+            SetSuspended(true);
+            Rig.Interactor.enabled = false;
+            Viewport.SetInputRegistration(false);
+            overlay.SetExternalServingHeld(false);
+            teardownPending = true;
+            BeginBackdropFollow();
+            StartOutputFade(0f, true);
+        }
+
+        // 제조 뷰포트는 평소 대화 확대의 영향을 받지 않는다. 페이드 아웃 중에는 배경과 함께
+        // 확대되어야 어색하지 않으므로, 입력이 끊긴 이 구간에서만 배경 변환을 복사한다.
+        private void BeginBackdropFollow()
+        {
+            if (zoomRoot == null || Mathf.Approximately(zoomRoot.localScale.x, 0f)) return;
+            followingBackdrop = true;
+            zoomStartPosition = zoomRoot.position;
+            zoomStartScale = zoomRoot.localScale.x;
+            viewportStartPosition = viewportRect.position;
+            overlayStartPosition = overlayRect.position;
+            viewportRestPosition = viewportRect.anchoredPosition;
+            overlayRestPosition = overlayRect.anchoredPosition;
+            Viewport.SetRenderSizeLocked(true);
+            // 라벨 위치 계산은 활성 뷰포트 기준이라 여기서 멈추고, 오버레이 전체 변환으로 함께 움직인다.
+            overlay.enabled = false;
+        }
+
+        private void ApplyBackdropFollow()
+        {
+            if (!followingBackdrop) return;
+            // 배경 원점 기준 상대 위치를 같은 비율로 늘리면 계층이 달라도 배경의 같은 지점에 머문다.
+            float scale = zoomRoot.localScale.x / zoomStartScale;
+            FollowBackdrop(viewportRect, viewportStartPosition, scale);
+            FollowBackdrop(overlayRect, overlayStartPosition, scale);
+        }
+
+        private void FollowBackdrop(RectTransform rect, Vector3 startPosition, float scale)
+        {
+            rect.localScale = new Vector3(scale, scale, 1f);
+            rect.position = zoomRoot.position + (startPosition - zoomStartPosition) * scale;
+        }
+
+        private void EndBackdropFollow()
+        {
+            if (!followingBackdrop) return;
+            followingBackdrop = false;
+            viewportRect.localScale = Vector3.one;
+            overlayRect.localScale = Vector3.one;
+            viewportRect.anchoredPosition = viewportRestPosition;
+            overlayRect.anchoredPosition = overlayRestPosition;
+            Viewport.SetRenderSizeLocked(false);
+            overlay.enabled = true;
+        }
+
+        private void CompletePendingTeardown()
+        {
+            if (!teardownPending) return;
+            teardownPending = false;
+            StopOutputFade();
+            EndBackdropFollow();
+            // 정지된 Rigidbody에 위치를 넣으면 재활성화 때 예전 위치로 돌아갈 수 있어
+            // 같은 프레임 안에서 정지를 풀고 기존 순서대로 리셋한 뒤 다시 정지한다.
+            SetSuspended(false);
             if (Rig.Ready)
             {
                 foreach (var body in Rig.GetComponentsInChildren<FluidExperimentBody>(true))
@@ -196,11 +284,51 @@ namespace Slainte.Bartending
                 Rig.ResetRig();
             }
             SetSuspended(true);
-            Rig.Interactor.enabled = false;
             worldCamera.enabled = false;
-            Viewport.SetInputRegistration(false);
             Viewport.SetOutputVisible(false);
             overlay.gameObject.SetActive(false);
+            SetOutputAlpha(0f);
+        }
+
+        private void StartOutputFade(float target, bool teardownWhenDone)
+        {
+            StopOutputFade();
+            if (outputFadeDuration <= 0f || !isActiveAndEnabled)
+            {
+                SetOutputAlpha(target);
+                if (teardownWhenDone) CompletePendingTeardown();
+                return;
+            }
+            outputFadeRoutine = StartCoroutine(FadeOutput(target, teardownWhenDone));
+        }
+
+        private void StopOutputFade()
+        {
+            if (outputFadeRoutine == null) return;
+            StopCoroutine(outputFadeRoutine);
+            outputFadeRoutine = null;
+        }
+
+        // 뷰포트와 라벨 오버레이를 같은 알파로 움직인다. 현재 알파에서 출발해 중간에 방향이 바뀌어도 튀지 않는다.
+        private IEnumerator FadeOutput(float target, bool teardownWhenDone)
+        {
+            float alpha = viewportFade.alpha;
+            while (!Mathf.Approximately(alpha, target))
+            {
+                alpha = Mathf.MoveTowards(alpha, target,
+                    Mathf.Min(Time.unscaledDeltaTime, MaxFadeDeltaSeconds) / outputFadeDuration);
+                SetOutputAlpha(alpha);
+                ApplyBackdropFollow();
+                yield return null;
+            }
+            outputFadeRoutine = null;
+            if (teardownWhenDone) CompletePendingTeardown();
+        }
+
+        private void SetOutputAlpha(float alpha)
+        {
+            viewportFade.alpha = alpha;
+            overlayFade.alpha = alpha;
         }
 
         private void LateUpdate()
@@ -319,6 +447,7 @@ namespace Slainte.Bartending
         {
             if (closing) return;
             closing = true;
+            StopOutputFade(); // 곧 파괴될 뷰포트를 페이드가 다시 건드리지 않게 한다.
             Supply?.Finish(); // 컨트롤러 비활성화 전에 사용량을 확정한다.
             if (Rig != null && Rig.Interactor != null) Rig.Interactor.ReleaseWithVelocity(Vector2.zero);
             if (Viewport != null) { Viewport.gameObject.SetActive(false); Destroy(Viewport.gameObject); }

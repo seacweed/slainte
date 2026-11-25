@@ -21,6 +21,11 @@
 /Assets/_Project/Features/Bartending/FluidGpuExperiment/DesignerTemp/
 /Assets/_Project/Features/Bartending/FluidGpuExperiment/DesignerTemp.meta
 
+# Generated experiment and playtest evidence stays out of version control.
+/FluidGpuExperimentEvidence/
+/PhysicsLabEvidence/
+/PlaytestEvidence/
+
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
 /[Mm]emoryCaptures/

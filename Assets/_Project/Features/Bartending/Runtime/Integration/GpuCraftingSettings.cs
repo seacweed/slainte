@@ -19,5 +19,7 @@ namespace Slainte.Bartending
         public GarnishBinding[] garnishes = Array.Empty<GarnishBinding>();
         public float tableThickness = .25f;
         public Vector2 dispenserViewportPosition = new Vector2(.88f, .64f);
+        [Tooltip("Seconds used to fade the whole crafting view in and out. Zero switches instantly.")]
+        [Min(0f)] public float craftingFadeDuration = .3f;
     }
 }

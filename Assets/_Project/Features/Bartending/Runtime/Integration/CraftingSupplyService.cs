@@ -6,6 +6,7 @@ using UnityEngine;
 namespace Slainte.Bartending
 {
     // 총재고는 GameProgress, 꺼낸 객체는 이 세션이 소유한다. 생성/반납은 예약만 바꾸고 소비만 총량에서 뺀다.
+    // 술은 재료당 한 병만 꺼내며, 그 병이 전체 재고를 담아 재고가 0이 될 때까지 끊기지 않고 나온다.
     public sealed class CraftingSupplyService
     {
         private sealed class Supply
@@ -53,18 +54,38 @@ namespace Slainte.Bartending
             SynchronizeConsumption();
             float amount = GetTotalAmount(definition);
             if (definition == null) return 0;
+            // 꺼낸 병은 재고 전체를 나타내므로 빼면 병을 꺼내는 순간 품절로 보인다. 가니쉬만 개수를 뺀다.
             foreach (var supply in supplies)
-                if (supply.definition.InventoryId == definition.InventoryId && supply.body != null)
-                    amount -= supply.garnish ? (supply.consumed ? 0 : 1) : Mathf.Max(0, supply.body.remainingMl);
+                if (supply.garnish && supply.definition.InventoryId == definition.InventoryId && supply.body != null)
+                    amount -= supply.consumed ? 0 : 1;
             return Mathf.Max(0, amount);
+        }
+
+        public bool IsBottleDeployed(LiquorBottleDef definition) => FindDeployedBottle(definition) != null;
+
+        private Supply FindDeployedBottle(LiquorBottleDef definition)
+        {
+            if (definition == null) return null;
+            foreach (var supply in supplies)
+                if (!supply.garnish && supply.body != null && supply.definition.InventoryId == definition.InventoryId)
+                    return supply;
+            return null;
         }
 
         public void AddDeliveredBottle(LiquorBottleDef definition)
         {
             if (definition == null || GameProgress.Instance == null) return;
             SynchronizeConsumption();
-            GameProgress.Instance.SetBottleAmount(definition.InventoryId,
-                Mathf.Min(definition.MaxAmount, GetTotalAmount(definition) + Mathf.Max(0, definition.unitVolume)));
+            float before = GetTotalAmount(definition);
+            float after = Mathf.Min(definition.MaxAmount, before + Mathf.Max(0, definition.unitVolume));
+            GameProgress.Instance.SetBottleAmount(definition.InventoryId, after);
+            // 나와 있는 병에도 같은 양을 더한다. 기준값까지 함께 올려야 배송분이 소비로 집계되지 않는다.
+            var deployed = FindDeployedBottle(definition);
+            if (deployed != null)
+            {
+                deployed.body.remainingMl += after - before;
+                deployed.remaining += after - before;
+            }
             StockChanged?.Invoke(definition.InventoryId);
         }
 
@@ -72,12 +93,13 @@ namespace Slainte.Bartending
         {
             failure = string.Empty;
             if (definition == null || HasHeldItem()) { failure = "The ingredient is missing or another item is held."; return false; }
+            // 슬롯이 이미 꺼낸 상태로 표시되므로 정상적인 클릭이다. 경고 없이 무시되도록 사유를 비워 둔다.
+            if (IsBottleDeployed(definition)) return false;
             FluidExperimentBody prefab = FindIngredientPrefab(definition);
             if (prefab == null) { failure = "No GPU prefab is mapped to " + definition.InventoryId; return false; }
             bool garnish = definition is GarnishDef;
             float shelf = GetShelfAmount(definition);
-            float amount = garnish ? (shelf >= 1 ? 1 : 0)
-                : BartendingBottleStock.CalculateNextBottleAmount(shelf, prefab.capacityMl);
+            float amount = garnish ? (shelf >= 1 ? 1 : 0) : shelf;
             if (amount <= 0) { failure = "This ingredient is out of stock."; return false; }
             var body = garnish ? rig.Spawn(prefab, position) : SpawnSized(prefab, definition.InventoryId, position);
             if (!garnish) body.ResetSupply(amount, body.iceStock);
@@ -166,9 +188,10 @@ namespace Slainte.Bartending
             failure = string.Empty;
             if (HasHeldItem()) { failure = "Put down the item already held before taking a tool."; return false; }
             if (!cabinet.TryGetValue(id, out var entry)) { failure = "No GPU cabinet mapping is ready for " + id; return false; }
-            // 복원 시 액체도 같은 위치로 옮기므로, 집기 전에 안전한 높이를 정한다.
+            // 복원 시 액체도 같은 위치로 옮기므로, 집기 전에 시뮬레이션 경계 안의 위치로 맞춘다.
+            // 게임 세션은 바닥 높이 제한을 두지 않으므로(GpuCraftingSession) 술장 위치 그대로 꺼내진다.
             var tool = entry.instance != null ? entry.instance : entry.prefab;
-            Vector2 pickupPosition = tool.IsVessel && rig.World.HeldVesselFloor != null
+            Vector2 pickupPosition = tool.IsVessel
                 ? rig.World.ConstrainHeldPosition(tool, position, tool.Angle)
                 : position;
             if (entry.instance == null) entry.instance = SpawnSized(entry.prefab, id, pickupPosition);
@@ -229,12 +252,21 @@ namespace Slainte.Bartending
 
         public void SynchronizeConsumption()
         {
+            // 병 객체가 사라졌다고 남은 양을 소비로 치면 그 술의 전체 재고가 한 번에 없어진다.
+            // 알림은 루프 뒤로 미룬다. 수신자가 이 메서드를 다시 호출해도 목록 순회가 깨지지 않게 한다.
+            List<string> lostBottles = null;
+            for (int i = supplies.Count - 1; i >= 0; i--)
+            {
+                if (supplies[i].garnish || supplies[i].body != null) continue;
+                (lostBottles ??= new List<string>()).Add(supplies[i].definition.InventoryId);
+                supplies.RemoveAt(i);
+            }
             foreach (var supply in supplies)
             {
                 if (supply.consumed) continue;
                 float current = supply.garnish
                     ? (supply.body != null && supply.body.CanBePicked ? 1 : 0)
-                    : (supply.body != null ? Mathf.Max(0, supply.body.remainingMl) : 0);
+                    : Mathf.Max(0, supply.body.remainingMl);
                 float consumed = Mathf.Max(0, supply.remaining - current);
                 supply.remaining = current;
                 if (supply.garnish && current == 0) supply.consumed = true;
@@ -244,6 +276,8 @@ namespace Slainte.Bartending
                         Mathf.Max(0, GetTotalAmount(supply.definition) - consumed));
                 StockChanged?.Invoke(supply.definition.InventoryId);
             }
+            if (lostBottles == null) return;
+            foreach (string id in lostBottles) StockChanged?.Invoke(id);
         }
 
         private void HandleSupplyChanged(FluidExperimentBody body) => SynchronizeConsumption();

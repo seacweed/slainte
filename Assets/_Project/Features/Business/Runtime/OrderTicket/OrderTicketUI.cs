@@ -26,6 +26,15 @@ public class OrderTicketUI : MonoBehaviour
     [Header("주문 대사")]
     [SerializeField] private TMP_Text memoText;
 
+    [Header("모니터 표정")]
+    [SerializeField] private Image moodFaceImage;
+    [Tooltip("Best to worst: order-face-1 .. order-face-4.")]
+    [SerializeField] private Sprite[] moodFaceSprites = new Sprite[4];
+    [Tooltip("Lower bound (inclusive) of each face except the last, best first. Default 75/50/25.")]
+    [SerializeField] private float[] moodFaceThresholds = { 75f, 50f, 25f };
+    [Tooltip("Shown until a real value source exists. 37.5 picks the neutral face.")]
+    [SerializeField, Range(0f, 100f)] private float defaultMoodPercent = 37.5f;
+
     [Header("참조")]
     [SerializeField] private RectTransform ticketRect;
     [SerializeField] private CanvasGroup   canvasGroup;
@@ -48,6 +57,7 @@ public class OrderTicketUI : MonoBehaviour
         if (!canvasGroup) canvasGroup = GetComponent<CanvasGroup>();
 
         _visiblePos = ticketRect.anchoredPosition;
+        SetMoodPercent(defaultMoodPercent);
         ClearContent();
         ApplyClosedState();
         SetButtonInteractable(true);
@@ -73,6 +83,28 @@ public class OrderTicketUI : MonoBehaviour
         ResetScrollToTop();
 
         BeginOpen();
+    }
+
+    // 주문자 기분(0~100%)을 표정으로 보여 준다. 아직 값을 주는 쪽이 없어 기본값(보통)으로만 호출된다.
+    // 경계 이상이면 그 표정: 기본 경계 75/50/25 → 최상 100~75, 좋음 74~50, 보통 49~25, 나쁨 24~0.
+    public void SetMoodPercent(float percent)
+    {
+        if (!moodFaceImage || moodFaceSprites == null || moodFaceSprites.Length == 0) return;
+
+        int index = moodFaceSprites.Length - 1;
+        int thresholdCount = moodFaceThresholds != null ? moodFaceThresholds.Length : 0;
+        for (int i = 0; i < thresholdCount && i < moodFaceSprites.Length - 1; i++)
+        {
+            if (percent >= moodFaceThresholds[i])
+            {
+                index = i;
+                break;
+            }
+        }
+
+        Sprite face = moodFaceSprites[index];
+        moodFaceImage.sprite = face;
+        moodFaceImage.enabled = face != null;
     }
 
     public void ClearContent()

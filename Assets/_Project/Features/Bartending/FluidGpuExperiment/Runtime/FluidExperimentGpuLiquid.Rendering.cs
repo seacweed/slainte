@@ -54,7 +54,9 @@ namespace Slainte.Bartending.FluidGpuExperiment
                 // The composite overwrites every pixel, including exact zero in empty space.
                 if (SystemInfo.supportedRenderTargetCount >= 2)
                 {
-                    surfaceCommands.SetRenderTarget(surfaceMrt, BuiltinRenderTextureType.None);
+                    // 깊이를 None으로 두면 직전 패스(에디터 Game 뷰·작은 백버퍼)의 깊이 버퍼가 묶인 채 남아
+                    // 래스터 범위가 그 크기로 잘린다. 깊이 없는 색 타깃 자신을 지정해 MRT 크기만 쓰게 한다.
+                    surfaceCommands.SetRenderTarget(surfaceMrt, surfaceDensity);
                     SetSurfaceRasterArea(surfaceDensity);
                     AccumulateSurface(0);
                 }

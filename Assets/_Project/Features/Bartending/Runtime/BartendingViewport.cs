@@ -579,9 +579,14 @@ namespace Slainte.Bartending
             return canvas.worldCamera;
         }
 
+        private bool renderSizeLocked;
+
+        // 전환 연출로 출력 이미지만 확대할 때 렌더텍스처를 표시 크기에 맞춰 재할당하면 끊김이 생긴다.
+        public void SetRenderSizeLocked(bool locked) => renderSizeLocked = locked;
+
         private void OnRectTransformDimensionsChange()
         {
-            if (!updatingViewportGeometry && isActiveAndEnabled && worldCamera != null)
+            if (!renderSizeLocked && !updatingViewportGeometry && isActiveAndEnabled && worldCamera != null)
             {
                 ApplyBottomExtension();
                 BuildTargetTexture();

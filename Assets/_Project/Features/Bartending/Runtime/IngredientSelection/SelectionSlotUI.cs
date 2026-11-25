@@ -114,6 +114,12 @@ namespace Slainte.Bartending
             }
         }
 
+        // 진열 아이콘마다 숨겨진 높이가 다른 경우(도구 공간) 프리팹 값 대신 슬롯별 상승 높이를 쓴다.
+        protected void SetHoverRaise(float raise)
+        {
+            hoverRaise = raise;
+        }
+
         public void ForceUnhover()
         {
             hovered = false;

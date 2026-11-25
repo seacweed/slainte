@@ -50,23 +50,6 @@ namespace Slainte.Bartending
                 GetTotalAmount(definition) - GetDeployedAmount(definition.InventoryId));
         }
 
-        // 따 둔 병(한 병 용량으로 나눈 나머지)을 먼저 내보낸다. 나머지가 없으면 가득 찬 병 하나.
-        // 예: 800ml(700ml 병) → 100ml 병이 먼저 나오고, 그다음 700ml 병이 나온다.
-        public static float CalculateNextBottleAmount(float shelfAmount, float bottleCapacity)
-        {
-            float shelf = Mathf.Max(0f, shelfAmount);
-            float capacity = Mathf.Max(1f, bottleCapacity);
-            if (shelf <= Mathf.Epsilon)
-                return 0f;
-
-            float opened = shelf % capacity;
-            // 부동소수 누적 오차로 700이 699.9999 % 700처럼 계산돼 "거의 가득 찬 따 둔 병"이
-            // 생기지 않도록, 용량에 사실상 딱 맞는 나머지는 가득 찬 병으로 취급한다.
-            if (opened <= 0.01f || capacity - opened <= 0.01f)
-                return Mathf.Min(capacity, shelf);
-            return opened;
-        }
-
         public bool TryGetDefinition(BottleController bottle, out LiquorBottleDef definition)
         {
             if (bottle != null && deployed.TryGetValue(bottle, out DeployedBottle entry))
