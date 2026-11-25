@@ -164,6 +164,7 @@ namespace Slainte.Bartending
         {
             if (slot is not IngredientSlotUI ingredient
                 || ingredient.Definition == null
+                || ingredient.IsCheckedOut
                 || !CanHover(screenPosition))
             {
                 return;
@@ -516,7 +517,8 @@ namespace Slainte.Bartending
             }
 
             bool depleted = shelfAmount <= 0.01f;
-            slot.SetStock(shelfAmount, delivery.GetOffer(definition, depleted));
+            bool checkedOut = bartending != null && bartending.IsBottleCheckedOut(definition);
+            slot.SetStock(shelfAmount, delivery.GetOffer(definition, depleted && !checkedOut), checkedOut);
         }
 
         private void ClearHovers()

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Slainte.Content;
+using Slainte.Shared.Display;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -15,11 +16,14 @@ namespace Slainte.Bartending
         private readonly BartendingBottleStock inventoryTotals = new BartendingBottleStock();
         private BusinessBartendingSettings settings;
         private GameModeManager modeManager;
+        private DialogueController dialogue;
         private FrontCameraRig cameraRig;
+        private BartendingLayoutBindings layout;
         private ToolSelectionUI toolSelection;
         private IngredientSelectionUI ingredientSelection;
         private GpuCraftingSession session;
         private bool craftingActive;
+        private bool orderDialogueWasOpen;
         public bool IsSessionReady => craftingActive && session != null && session.Ready;
         public int SessionBottleCount => session?.Supply?.DeployedCount ?? 0;
         public GpuCraftingSession ActiveSession => craftingActive ? session : null;
@@ -60,6 +64,8 @@ namespace Slainte.Bartending
             settings = configuration;
             modeManager = FindInScene<GameModeManager>(gameObject.scene);
             if (modeManager == null) { Debug.LogError("[GpuCrafting] GameModeManager is missing."); return; }
+            dialogue = FindInScene<DialogueController>(gameObject.scene);
+            layout = FindInScene<BartendingLayoutBindings>(gameObject.scene);
             cameraRig = FindInScene<FrontCameraRig>(gameObject.scene);
             if (cameraRig != null)
             { cameraRig.MoveStarted += HandleViewMoveStarted; cameraRig.MoveCompleted += HandleViewMoveCompleted; }
@@ -104,7 +110,7 @@ namespace Slainte.Bartending
                 session.Submitted += HandleSubmitted;
                 session.SubmissionRejected += HandleRejected;
                 session.Initialize(settings, counter, FindRect("CraftingSpace"), FindRect("CraftingSlotRow"),
-                    FindInScene<CharacterStage>(gameObject.scene), GetShelfWorldSize);
+                    FindInScene<CharacterStage>(gameObject.scene), GetShelfWorldSize, layout, CanShowDispenser);
                 session.Supply.StockChanged += HandleStockChanged;
                 session.Supply.ToolAvailabilityChanged += HandleToolAvailability;
                 toolSelection.PrewarmSessionVisuals();
@@ -135,6 +141,22 @@ namespace Slainte.Bartending
         private void HandleRejected(string reason) => ServeRejected?.Invoke(reason);
         private void HandleStockChanged(string id) => StockChanged?.Invoke(id);
         private void HandleToolAvailability(string id, bool available) => toolSelection?.NotifyAvailability(id, available);
+        private bool CanShowDispenser() => modeManager != null
+            && modeManager.CurrentMode is GameMode.OrderMode or GameMode.CraftingMode
+            && (dialogue == null || !dialogue.IsOpen)
+            && (cameraRig == null || cameraRig.IsAtFullView);
+
+        private void LateUpdate()
+        {
+            bool awaitingOrder = modeManager != null && modeManager.CurrentMode == GameMode.OrderMode;
+            bool dialogueOpen = dialogue != null && dialogue.IsOpen;
+            // 제조 진입 요청은 자체적으로 카메라를 복귀시킨다. 결과 대사 뒤 주문 대기에도 전체 펍을 보여 준다.
+            if (awaitingOrder && orderDialogueWasOpen && !dialogueOpen && !modeManager.IsCraftingRequestPending
+                && cameraRig != null && !cameraRig.IsAtFullView)
+                cameraRig.ResetView();
+            orderDialogueWasOpen = awaitingOrder && dialogueOpen;
+        }
+
         private void HandleViewMoveStarted() { if (craftingActive) session?.SetSuspended(true); }
         private void HandleViewMoveCompleted() { if (craftingActive) session?.SetSuspended(false); }
         private void DestroySession(bool notify = true)
@@ -163,9 +185,13 @@ namespace Slainte.Bartending
         }
         public void PrepareCabinetInventory(ToolCabinetCatalog catalog) => session?.Supply?.PrepareCabinet(catalog);
         public bool HasHeldBartendingItem() => session?.Supply?.HasHeldItem() ?? false;
+        public bool IsBottleCheckedOut(LiquorBottleDef definition) => session?.Supply?.IsBottleCheckedOut(definition) ?? false;
         public bool ContainsShelfReturnPoint(Vector2 screenPosition)
-            => IsSessionReady && Slainte.Shared.Display.GameAspect.NormalizedToScreenRect(
-                settings.shelfReturnAreaNormalized).Contains(screenPosition);
+        {
+            if (!IsSessionReady || !GameAspect.GameScreenRect.Contains(screenPosition)) return false;
+            if (layout != null && layout.ShelfReturnArea != null) return layout.ContainsShelfReturnPoint(screenPosition);
+            return GameAspect.NormalizedToScreenRect(settings.shelfReturnAreaNormalized).Contains(screenPosition);
+        }
         public bool IsPointerOverWorldItem(Vector2 screenPosition) => session != null && session.IsPointerOverItem(screenPosition);
         public bool TryTakeFromShelf(LiquorBottleDef definition, Vector2 screenPosition, out string failure)
         {

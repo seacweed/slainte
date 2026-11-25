@@ -114,6 +114,11 @@ namespace Slainte.Bartending
             Require(authoredOrder != null, "An authored customer/build recipe order is needed for the integration fixture.");
             recipes.TryGet(authoredOrder.order.requestedRecipeId, out var recipe);
             var dialogue = FindFirstObjectByType<DialogueController>();
+            if (!manualInspection)
+            {
+                var dispenserFade = CheckDispenserDialogueFade(dialogue);
+                while (dispenserFade.MoveNext()) yield return dispenserFade.Current;
+            }
 
             BusinessOrderSessionResult result = null;
             var request = new OrderSessionRequest
@@ -412,10 +417,59 @@ namespace Slainte.Bartending
             Checks.Add($"shelf-sized {bottles} bottles and {cabinetItems} tools/glasses; restore scale stable; liquid/ice cross table and retire below bounds");
         }
 
+        private IEnumerator CheckDispenserDialogueFade(DialogueController dialogue)
+        {
+            float deadline = Time.realtimeSinceStartup + 10;
+            while (!bootstrap.IsGpuPrepared && Time.realtimeSinceStartup < deadline) yield return null;
+            Require(bootstrap.IsGpuPrepared, "The docked dispenser was not prepared.");
+            var session = FindFirstObjectByType<GpuCraftingSession>();
+            var dock = session.Viewport.transform.Find("DockedDispenser");
+            Require(dock != null, "The dispenser is missing its idle view.");
+            var orderTicket = FindFirstObjectByType<OrderTicketUI>();
+            var viewportParent = session.Viewport.transform.parent;
+            var orderLayer = orderTicket != null ? orderTicket.transform : null;
+            while (orderLayer != null && orderLayer.parent != null && orderLayer.parent != viewportParent)
+                orderLayer = orderLayer.parent;
+            Require(orderLayer != null && orderLayer.parent == viewportParent
+                && orderLayer.GetSiblingIndex() > session.Viewport.transform.GetSiblingIndex(),
+                "The dispenser must render behind the order ticket.");
+            var group = dock.GetComponent<CanvasGroup>();
+            Require(!group.blocksRaycasts && !session.Rig.inputCamera.enabled, "The idle hose must not own input or a running GPU camera.");
+            deadline = Time.realtimeSinceStartup + 3;
+            while (group.alpha < .999f && Time.realtimeSinceStartup < deadline) yield return null;
+            Require(group.alpha >= .999f, "The hose did not appear in the full bar view.");
+
+            dialogue.ShowSingleLine("회귀 검사", "호스 페이드", Color.white);
+            bool passedThroughFade = false;
+            deadline = Time.realtimeSinceStartup + 3;
+            while (group.alpha > .001f && Time.realtimeSinceStartup < deadline)
+            {
+                yield return null;
+                passedThroughFade |= group.alpha > .001f && group.alpha < .999f;
+            }
+            Require(passedThroughFade && group.alpha <= .001f, "The hose did not fade away during dialogue.");
+            dialogue.HideImmediate();
+            deadline = Time.realtimeSinceStartup + 3;
+            while (group.alpha < .999f && Time.realtimeSinceStartup < deadline) yield return null;
+            Require(group.alpha >= .999f, "The hose did not return after dialogue closed.");
+            Checks.Add($"docked hose fades behind the order ticket with the GPU camera off ({Screen.width}x{Screen.height})");
+        }
+
         private IEnumerator CheckSharedReturnArea(GpuCraftingSession session, LiquorBottleDef stock)
         {
             var settings = Resources.Load<BusinessBartendingSettings>(ProjectResourcePaths.BartendingSettings);
             Rect area = Slainte.Shared.Display.GameAspect.NormalizedToScreenRect(settings.shelfReturnAreaNormalized);
+            var bindings = FindFirstObjectByType<BartendingLayoutBindings>();
+            var authoredArea = bindings != null ? bindings.ShelfReturnArea : null;
+            if (authoredArea != null)
+            {
+                var corners = new Vector3[4];
+                authoredArea.GetWorldCorners(corners);
+                var camera = BartendingViewport.GetCanvasCamera(authoredArea);
+                var min = RectTransformUtility.WorldToScreenPoint(camera, corners[0]);
+                var max = RectTransformUtility.WorldToScreenPoint(camera, corners[2]);
+                area = Rect.MinMaxRect(min.x, min.y, max.x, max.y);
+            }
             var ingredients = FindFirstObjectByType<IngredientSelectionUI>();
             var tools = FindFirstObjectByType<ToolSelectionUI>();
             Require(ingredients.ContainsReturnPoint(area.center) && tools.ContainsReturnPoint(area.center),
@@ -425,19 +479,67 @@ namespace Slainte.Bartending
                 Require(!ingredients.ContainsReturnPoint(point) && !tools.ContainsReturnPoint(point),
                     "Return accepted outside the shared rectangle.");
             BartendingViewport.TryGetInputScreenRect(out var screen);
+            GameProgress.Instance.SetBottleAmount(stock.InventoryId, stock.unitVolume * 2);
             Require(bootstrap.TryTakeFromShelf(stock, screen.center, out var reason), reason);
-            Require(!BottleReturnZones.TryReturnHeldBottle(new Vector2(area.center.x, area.yMax + 5))
+            var bottle = session.Rig.Interactor.Held;
+            var slot = ingredients.GetComponentsInChildren<IngredientSlotUI>(true)
+                .FirstOrDefault(candidate => candidate.Definition == stock);
+            Require(slot != null && slot.IsCheckedOut && !slot.IsDepleted,
+                "A stocked bottle slot did not switch to its checked-out state.");
+            session.Rig.Interactor.ReleaseWithVelocity(Vector2.zero);
+            Require(!bootstrap.TryTakeFromShelf(stock, screen.center, out _)
+                && !bootstrap.TryPlaceBottleFromShelf(stock, out _), "The same bottle was taken twice.");
+            Require(session.Rig.Interactor.Pick(bottle, bottle.Position), "The checked-out bottle could not be picked up again.");
+            var above = new Vector2(area.center.x, area.yMax + 5);
+            CheckHeldReturnSprite(session, area.center, above, stock.GetShelfDisabledSprite());
+            Require(!BottleReturnZones.TryReturnHeldBottle(above)
                 && session.Rig.Interactor.Held != null, "Bottle returned above the rectangle.");
-            Require(BottleReturnZones.TryReturnHeldBottle(area.center) && session.Rig.Interactor.Held == null,
+            Require(session.Rig.Interactor.ConsumePrimaryClick(area.center) && session.Rig.Interactor.Held == null
+                && !slot.IsCheckedOut,
                 "Bottle did not return inside the rectangle.");
+            Checks.Add("stocked bottle blocks a second checkout and restores its slot on return");
             yield return null;
+            var catalog = Resources.Load<ToolCabinetCatalog>(ProjectResourcePaths.BartendingToolCabinetCatalog);
+            Require(catalog != null, "Tool and glass artwork catalog missing.");
+            Require(catalog.TryGetTool("tool_jigger", out var jigger), "Jigger artwork missing.");
             Require(bootstrap.TryPickUpCabinetItem("tool_jigger", screen.center, out reason), reason);
-            Require(!ToolReturnZones.TryReturnHeldItem(new Vector2(area.center.x, area.yMin - 5),
+            var below = new Vector2(area.center.x, area.yMin - 5);
+            CheckHeldReturnSprite(session, area.center, below, jigger.shelfDisabledSprite);
+            Require(!ToolReturnZones.TryReturnHeldItem(below,
                 () => session.Supply.TryReturnTool(out _)) && session.Rig.Interactor.Held != null,
                 "Tool returned below the rectangle.");
             Require(ToolReturnZones.TryReturnHeldItem(area.center, () => session.Supply.TryReturnTool(out _))
                 && session.Rig.Interactor.Held == null, "Tool did not return inside the rectangle.");
+            Require(catalog.TryGetGlass("glass_rock", out var glass), "Rock glass artwork missing.");
+            Require(bootstrap.TryPickUpCabinetItem("glass_rock", screen.center, out reason), reason);
+            CheckHeldReturnSprite(session, area.center, below, glass.shelfDisabledSprite);
+            Require(session.Supply.TryReturnTool(out reason), reason);
+            Checks.Add("held bottle, tool and glass use their exact shelf disabled sprite at 86 percent and restore the original art outside");
             Checks.Add("one shared shelf return rectangle; bottles/tools return inside and remain held outside");
+        }
+
+        private static void CheckHeldReturnSprite(GpuCraftingSession session, Vector2 inside, Vector2 outside, Sprite disabledSprite)
+        {
+            var held = session.Rig.Interactor.Held;
+            Require(held != null && disabledSprite != null, "The return artwork fixture is incomplete.");
+            var originalArt = held.GetComponentsInChildren<SpriteRenderer>()
+                .Where(renderer => renderer.enabled && renderer.sprite != null && !renderer.forceRenderingOff).ToArray();
+            Require(originalArt.Length > 0, "Held item has no original artwork.");
+            var reference = originalArt[0];
+            float originalHeight = reference.transform.TransformVector(Vector3.up * reference.sprite.bounds.size.y).magnitude;
+            Vector3 bodyScale = held.transform.localScale;
+
+            session.UpdateReturnPreview(inside);
+            var preview = session.GetComponentsInChildren<SpriteRenderer>()
+                .Where(renderer => renderer.name == "ShelfReturnPreview" && !renderer.forceRenderingOff).ToArray();
+            Require(preview.Length == 1 && preview[0].sprite == disabledSprite && originalArt.All(renderer => renderer.forceRenderingOff),
+                "The held item did not switch to a single shelf disabled sprite.");
+            float previewHeight = preview[0].transform.TransformVector(Vector3.up * disabledSprite.bounds.size.y).magnitude;
+            Require(Mathf.Abs(previewHeight / originalHeight - .86f) < .001f && Mathf.Approximately(preview[0].color.a, 1f)
+                && held.transform.localScale == bodyScale, "Preview scaling or opacity changed the held body or the authored sprite.");
+            session.UpdateReturnPreview(outside);
+            Require(preview[0].forceRenderingOff && originalArt.All(renderer => !renderer.forceRenderingOff),
+                "Leaving the return area did not restore the held artwork.");
         }
 
         private IEnumerator CheckLiquidRenderCoverage(GpuCraftingSession session)

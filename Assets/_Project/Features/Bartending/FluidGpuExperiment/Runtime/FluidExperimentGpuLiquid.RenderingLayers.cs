@@ -18,6 +18,16 @@ namespace Slainte.Bartending.FluidGpuExperiment
         private readonly Dictionary<uint, OwnedLiquidLayer> ownedLiquidLayers = new Dictionary<uint, OwnedLiquidLayer>();
         private readonly List<uint> liquidLayerOwners = new List<uint>();
         private readonly List<uint> removedLiquidLayers = new List<uint>();
+        private uint returnPreviewOwner;
+        private Vector2 returnPreviewPivot;
+        private float returnPreviewScale = 1;
+
+        internal void SetReturnPreview(uint owner, Vector2 pivot, float scale)
+        {
+            returnPreviewOwner = owner;
+            returnPreviewPivot = pivot;
+            returnPreviewScale = scale;
+        }
 
         private void HideOwnedLiquidLayers()
         {
@@ -82,9 +92,16 @@ namespace Slainte.Bartending.FluidGpuExperiment
             Vector3 center = camera.ViewportToWorldPoint(new Vector3(.5f, .5f, distance));
             Vector3 bottomLeft = camera.ViewportToWorldPoint(new Vector3(0, 0, distance));
             Vector3 topRight = camera.ViewportToWorldPoint(new Vector3(1, 1, distance));
+            float scale = owner != 0 && owner == returnPreviewOwner ? returnPreviewScale : 1f;
+            // Scale the composited liquid with the preview art. Particle coordinates and collision stay in world space.
+            if (scale != 1f)
+            {
+                center.x = Mathf.Lerp(returnPreviewPivot.x, center.x, scale);
+                center.y = Mathf.Lerp(returnPreviewPivot.y, center.y, scale);
+            }
             renderer.transform.SetPositionAndRotation(center, camera.transform.rotation);
-            renderer.transform.localScale = new Vector3(Vector3.Dot(topRight - bottomLeft, camera.transform.right) * .5f,
-                Vector3.Dot(topRight - bottomLeft, camera.transform.up) * .5f, 1);
+            renderer.transform.localScale = new Vector3(Vector3.Dot(topRight - bottomLeft, camera.transform.right) * .5f * scale,
+                Vector3.Dot(topRight - bottomLeft, camera.transform.up) * .5f * scale, 1);
             renderer.forceRenderingOff = false;
         }
         private static void ReleaseLiquidLayerTarget(OwnedLiquidLayer layer)

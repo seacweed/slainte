@@ -37,6 +37,7 @@ namespace Slainte.Bartending
 
         public LiquorBottleDef Definition { get; private set; }
         public bool IsDepleted { get; private set; }
+        public bool IsCheckedOut { get; private set; }
         public bool TryGetShelfWorldSize(out Vector2 size, BartendingViewport viewport = null)
             => BartendingViewport.TryGetImageWorldSize(icon, out size, viewport);
 
@@ -79,19 +80,20 @@ namespace Slainte.Bartending
 
         // 술장 재고(제작대에 꺼낸 병 제외)와 배송 제안을 반영한다. 재고·배송 상태가 바뀔 때마다
         // 소유자가 호출하므로 호버 중이어도 라벨이 즉시 갱신된다.
-        public void SetStock(float shelfAmount, BottleDeliveryOffer offer)
+        public void SetStock(float shelfAmount, BottleDeliveryOffer offer, bool checkedOut = false)
         {
             EnsureInitialized();
             if (Definition == null)
                 return;
 
             IsDepleted = shelfAmount <= 0.01f;
-            ApplyAvailabilityVisual(!IsDepleted);
+            IsCheckedOut = checkedOut;
+            ApplyAvailabilityVisual(!IsDepleted && !IsCheckedOut);
             RefreshStockIcons(shelfAmount);
             RefreshDeliveryPrice(offer);
         }
 
-        // 재고 없음은 전용 _dis 이미지로 교체해 표시한다. 전용 이미지가 없는 재료(가니쉬 등)만
+        // 꺼낸 상태와 재고 없음은 전용 _dis 이미지로 표시한다. 전용 이미지가 없는 재료(가니쉬 등)만
         // 기존처럼 반투명으로 대신한다 — _dis 아트 자체가 비활성 표현이라 알파를 겹치면 이중으로 흐려진다.
         private void ApplyAvailabilityVisual(bool available)
         {

@@ -16,13 +16,18 @@ namespace Slainte.Bartending
         public FluidExperimentRuntimeRig Rig { get; private set; }
         public BartendingViewport Viewport { get; private set; }
         public CraftingSupplyService Supply { get; private set; }
-        public bool Ready => activeForCrafting && modulesReady && Rig != null && Rig.Ready && !closing && !suspended;
+        public bool Ready => activeForCrafting && modulesReady && Rig != null && Rig.Ready
+            && !closing && !suspended && CanShowDispenser;
         public bool IsPrepared => modulesReady && Rig != null && Rig.Ready && !closing;
         public string FailureReason { get; private set; }
         public event Action ReadyChanged;
         public event Action<CocktailComposition> Submitted;
         public event Action<string> SubmissionRejected;
         private BartendingInteractionOverlay overlay;
+        private CraftingDispenserPresentation dispenserPresentation;
+        private CraftingReturnPreview returnPreview;
+        private Func<bool> shouldShowDispenser;
+        private bool CanShowDispenser => shouldShowDispenser?.Invoke() ?? true;
         private RectTransform tableAnchor;
         private Transform sceneBackdropRoot;
         private Camera worldCamera, sourceCamera;
@@ -33,11 +38,13 @@ namespace Slainte.Bartending
 
         public void Initialize(BusinessBartendingSettings settings, RectTransform counter,
             RectTransform viewportParent, RectTransform floorAnchor, CharacterStage characters,
-            Func<string, Vector2> shelfWorldSize = null)
+            Func<string, Vector2> shelfWorldSize = null, BartendingLayoutBindings layout = null,
+            Func<bool> shouldShowDispenser = null)
         {
             using var measurement = Slainte.Bartending.GpuCraftingDiagnostics.Measure(Slainte.Bartending.GpuCraftingDiagnostics.Stage.Initialize);
             if (settings.gpuCrafting == null || settings.gpuCrafting.runtimePrefab == null)
                 throw new InvalidOperationException("GPU crafting settings and runtime prefab must be assigned.");
+            this.shouldShowDispenser = shouldShowDispenser;
             // 설정을 먼저 주입한다. 활성 프리팹의 Awake가 카메라 없는 상태로 실행되지 않게 한다.
             var root = FluidExperimentObjectFactory.CreateInactive(settings.gpuCrafting.runtimePrefab.gameObject, transform, "GpuCraftingRuntime");
             Rig = root.GetComponent<FluidExperimentRuntimeRig>();
@@ -74,10 +81,11 @@ namespace Slainte.Bartending
                     ? (Vector2)point : Rig.interactor.LastWorldPointer;
             Rig.interactor.WorldToScreenOverride = point => BartendingViewport.GetPointerScreenPosition(worldCamera, point);
             Rig.interactor.IsScreenPointValid = screen =>
-                Viewport != null && Viewport.TryMapPointerToWorldWhileSuspended(screen, out _);
+                CanShowDispenser && Viewport != null && Viewport.TryMapPointerToWorldWhileSuspended(screen, out _);
             Rig.interactor.ConsumePrimaryClick = ConsumePrimaryClick;
             Rig.interactor.IgnoreUiHit = IsNonBlockingSceneGraphic;
             Supply = new CraftingSupplyService(Rig, settings.gpuCrafting, shelfWorldSize);
+            returnPreview = new CraftingReturnPreview(transform, Rig.World);
             // The cabinet glasses share one authored sprite frame. Scale the runtime
             // fluid lengths with that frame so a smaller display still holds the same ml.
             float liquidScale = Supply.GetShelfScale(Supply.FindBody(LabItemKind.Glass, "rock"), "glass_rock");
@@ -97,7 +105,7 @@ namespace Slainte.Bartending
             }
             root.SetActive(true);
             Rig.Interactor.InputSuspended = true;
-            StartCoroutine(WaitForReady(settings.gpuCrafting));
+            StartCoroutine(WaitForReady(settings.gpuCrafting, gameArea, layout));
         }
 
         private void BuildEnvironment(float thickness, RectTransform layout)
@@ -135,7 +143,7 @@ namespace Slainte.Bartending
             env.solidFloors = new Collider2D[] { env.table };
         }
 
-        private IEnumerator WaitForReady(GpuCraftingSettings settings)
+        private IEnumerator WaitForReady(GpuCraftingSettings settings, RectTransform gameArea, BartendingLayoutBindings layout)
         {
             yield return null; // World.Start가 실제 GPU 초기화를 수행한 다음 알린다.
             if (Rig == null || !Rig.Ready)
@@ -148,19 +156,28 @@ namespace Slainte.Bartending
             var dispenser = Rig.World.Dispenser;
             if (dispenser != null && Viewport.TryGetWorldRect(out var rect))
             {
-                var normalized = settings.dispenserViewportPosition;
-                var requested = new Vector2(Mathf.Lerp(rect.xMin, rect.xMax, Mathf.Clamp01(normalized.x)),
-                    Mathf.Lerp(rect.yMin, rect.yMax, Mathf.Clamp01(normalized.y)));
+                var dock = layout != null
+                    ? layout.GetDockPosition(gameArea, settings.dispenserViewportPosition) : settings.dispenserViewportPosition;
+                var top = new Vector2(Mathf.Clamp01(dock.x), 1f - .04f / rect.height);
+                var anchor = layout != null ? layout.GetHoseAnchor(gameArea, top) : top;
+                var requested = Rect.NormalizedToPoint(rect, new Vector2(Mathf.Clamp01(anchor.x), Mathf.Clamp01(dock.y)));
                 dispenser.dockPosition = Rig.World.ConstrainHeldPosition(dispenser.Body, requested, 0, .04f);
-                dispenser.hoseAnchor = new Vector2(dispenser.dockPosition.x, rect.yMax - .04f);
+                dispenser.hoseAnchor = new Vector2(dispenser.dockPosition.x, Mathf.Lerp(rect.yMin, rect.yMax, anchor.y));
                 dispenser.ResetDispenser();
+                if (dispenser.bodyRenderer != null && dispenser.Hose != null)
+                    dispenserPresentation = new CraftingDispenserPresentation(dispenser, worldCamera, (RectTransform)Viewport.transform);
             }
             // 첫 compute/surface 할당도 손님 주문 단계에서 끝낸다. 제조 진입 시 GPU 자원을 다시 만들지 않는다.
             for (int i = 0; i < 3 && !closing; i++) yield return new WaitForFixedUpdate();
             yield return null;
             if (closing) yield break;
             modulesReady = true;
-            if (activeForCrafting) ReadyChanged?.Invoke();
+            if (activeForCrafting)
+            {
+                dispenserPresentation?.Update(CanShowDispenser, true, 0);
+                Viewport.SetOutputVisible(true);
+                ReadyChanged?.Invoke();
+            }
             else
             {
                 SetSuspended(true);
@@ -177,7 +194,8 @@ namespace Slainte.Bartending
             submitted = false;
             worldCamera.enabled = true;
             Viewport.SetInputRegistration(true);
-            Viewport.SetOutputVisible(true);
+            dispenserPresentation?.Update(CanShowDispenser, true, 0);
+            Viewport.SetOutputVisible(modulesReady);
             overlay.gameObject.SetActive(true);
             SetSuspended(false);
             Rig.Interactor.enabled = true;
@@ -190,6 +208,8 @@ namespace Slainte.Bartending
         {
             using var measurement = Slainte.Bartending.GpuCraftingDiagnostics.Measure(Slainte.Bartending.GpuCraftingDiagnostics.Stage.End);
             if (!activeForCrafting || closing) return;
+            dispenserPresentation?.CaptureClosingPose();
+            returnPreview.Show(null);
             activeForCrafting = false;
             Supply?.Finish();
             Rig.Interactor.ReleaseWithVelocity(Vector2.zero);
@@ -204,12 +224,18 @@ namespace Slainte.Bartending
             worldCamera.enabled = false;
             Viewport.SetInputRegistration(false);
             Viewport.SetOutputVisible(false);
+            dispenserPresentation?.Update(CanShowDispenser, false, 0);
             overlay.gameObject.SetActive(false);
         }
 
         private void LateUpdate()
         {
-            if (Rig == null || closing || !activeForCrafting) return;
+            if (Rig == null || closing) return;
+            bool canShow = CanShowDispenser;
+            dispenserPresentation?.Update(canShow, activeForCrafting && modulesReady, Time.unscaledDeltaTime);
+            if (!activeForCrafting) return;
+            if (!canShow && Rig.Interactor.HeldDispenser != null)
+                Rig.Interactor.ReleaseWithVelocity(Vector2.zero);
             CleanupFallenIce();
             if (suspended)
                 foreach (var body in Rig.GetComponentsInChildren<Rigidbody2D>())
@@ -217,6 +243,7 @@ namespace Slainte.Bartending
                     { simulatedBodies.Add(body, body.simulated); body.simulated = false; }
             Supply?.SynchronizeConsumption();
             var held = Rig.Interactor.Held;
+            UpdateReturnPreview(Rig.Interactor.DisplayedPointerScreen);
             overlay?.SetExternalServingHeld(Ready && held != null && held.kind == LabItemKind.Glass);
         }
 
@@ -235,11 +262,32 @@ namespace Slainte.Bartending
             }
         }
 
+        private bool IsShelfClickBlocked(Vector2 screen)
+            => Rig.Interactor.IsPointerBlocked(screen, hit => hit.GetComponentInParent<SelectionSlotUI>() != null);
+
+        internal void UpdateReturnPreview(Vector2 screen)
+        {
+            var body = GetReturnPreviewBody(screen, out Sprite sprite);
+            returnPreview.Show(body, sprite);
+        }
+
+        private FluidExperimentBody GetReturnPreviewBody(Vector2 screen, out Sprite shelfDisabledSprite)
+        {
+            shelfDisabledSprite = null;
+            var held = Rig.Interactor.Held;
+            if (!Ready || submitted || held == null) return null;
+            bool canReturn = (BottleReturnZones.Contains(screen) && Supply.CanReturnHeldIngredient(out shelfDisabledSprite))
+                || (ToolReturnZones.Contains(screen) && Supply.CanReturnHeldTool(out shelfDisabledSprite));
+            if (canReturn && !IsShelfClickBlocked(screen)) return held;
+            shelfDisabledSprite = null;
+            return null;
+        }
+
         private bool ConsumePrimaryClick(Vector2 screen)
         {
             if (!Ready || submitted) return true;
             // 반납 영역만 선택 UI를 통과시킨다. 도감/주문서/다른 팝업 클릭은 제출로 새면 안 된다.
-            if (Rig.Interactor.IsPointerBlocked(screen, hit => hit.GetComponentInParent<SelectionSlotUI>() != null)) return false;
+            if (IsShelfClickBlocked(screen)) return false;
             if (BottleReturnZones.TryReturnHeldBottle(screen)) return true;
             if (Supply.IsHeldTool() && ToolReturnZones.TryReturnHeldItem(screen, () =>
                 {
@@ -325,6 +373,7 @@ namespace Slainte.Bartending
         {
             if (closing) return;
             closing = true;
+            returnPreview?.Show(null);
             Supply?.Finish(); // 컨트롤러 비활성화 전에 사용량을 확정한다.
             if (Rig != null && Rig.Interactor != null) Rig.Interactor.ReleaseWithVelocity(Vector2.zero);
             if (Viewport != null) { Viewport.gameObject.SetActive(false); Destroy(Viewport.gameObject); }

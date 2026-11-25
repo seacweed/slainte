@@ -21,6 +21,7 @@ namespace Slainte.Bartending
         {
             public FluidExperimentBody prefab;
             public FluidExperimentBody instance;
+            public Sprite shelfDisabledSprite;
         }
 
         private readonly FluidExperimentRuntimeRig rig;
@@ -59,6 +60,15 @@ namespace Slainte.Bartending
             return Mathf.Max(0, amount);
         }
 
+        public bool IsBottleCheckedOut(LiquorBottleDef definition)
+        {
+            if (definition == null || definition is GarnishDef) return false;
+            foreach (var supply in supplies)
+                if (!supply.garnish && supply.body != null && supply.body.isActiveAndEnabled
+                    && supply.definition.InventoryId == definition.InventoryId) return true;
+            return false;
+        }
+
         public void AddDeliveredBottle(LiquorBottleDef definition)
         {
             if (definition == null || GameProgress.Instance == null) return;
@@ -72,6 +82,7 @@ namespace Slainte.Bartending
         {
             failure = string.Empty;
             if (definition == null || HasHeldItem()) { failure = "The ingredient is missing or another item is held."; return false; }
+            if (IsBottleCheckedOut(definition)) { failure = "Return this bottle before taking another one."; return false; }
             FluidExperimentBody prefab = FindIngredientPrefab(definition);
             if (prefab == null) { failure = "No GPU prefab is mapped to " + definition.InventoryId; return false; }
             bool garnish = definition is GarnishDef;
@@ -134,7 +145,8 @@ namespace Slainte.Bartending
             if (cabinet.Count == 0)
             {
                 foreach (var glass in catalog.glasses)
-                    if (glass != null) AddCabinet(glass.StableId, FindBody(LabItemKind.Glass, glass.glassId));
+                    if (glass != null)
+                        AddCabinet(glass.StableId, FindBody(LabItemKind.Glass, glass.glassId), glass.shelfDisabledSprite);
                 foreach (var tool in catalog.tools)
                     if (tool != null)
                     {
@@ -146,17 +158,17 @@ namespace Slainte.Bartending
                             ToolKind.IceBucket => LabItemKind.IceBucket,
                             _ => null
                         };
-                        if (kind.HasValue) AddCabinet(tool.StableId, FindBody(kind.Value));
+                        if (kind.HasValue) AddCabinet(tool.StableId, FindBody(kind.Value), tool.shelfDisabledSprite);
                     }
             }
             foreach (var entry in cabinet)
                 ToolAvailabilityChanged?.Invoke(entry.Key, entry.Value.instance == null || entry.Value.instance.IsStored);
         }
 
-        private void AddCabinet(string id, FluidExperimentBody prefab)
+        private void AddCabinet(string id, FluidExperimentBody prefab, Sprite shelfDisabledSprite)
         {
             if (prefab == null) { Debug.LogError("[GpuCrafting] Missing cabinet mapping: " + id); return; }
-            cabinet.Add(id, new CabinetEntry { prefab = prefab });
+            cabinet.Add(id, new CabinetEntry { prefab = prefab, shelfDisabledSprite = shelfDisabledSprite });
         }
 
         public FluidExperimentBody FindBody(LabItemKind kind, string glassId = null)
@@ -188,52 +200,81 @@ namespace Slainte.Bartending
             return true;
         }
 
-        public bool IsHeldTool()
+        public bool IsHeldTool() => FindHeldToolId() != null;
+
+        private string FindHeldToolId()
         {
+            var held = rig.Interactor.Held;
+            if (held == null) return null;
             foreach (var pair in cabinet)
-                if (pair.Value.instance != null && pair.Value.instance == rig.Interactor.Held) return true;
-            return false;
+                if (pair.Value.instance == held) return pair.Key;
+            return null;
+        }
+
+        internal bool CanReturnHeldTool(out Sprite shelfDisabledSprite)
+        {
+            shelfDisabledSprite = null;
+            string id = FindHeldToolId();
+            if (id == null || !CheckToolReturn(rig.Interactor.Held, out _)) return false;
+            shelfDisabledSprite = cabinet[id].shelfDisabledSprite;
+            return true;
+        }
+
+        private bool CheckToolReturn(FluidExperimentBody held, out string failure)
+        {
+            failure = string.Empty;
+            if (held.kind == LabItemKind.Shaker && (!held.HasCap || !held.HasStrainer))
+            { failure = "Reassemble the shaker before returning it."; return false; }
+            if (!rig.Liquid.CanSuspendContents)
+            { failure = "Wait for the next liquid tick before returning this tool."; return false; }
+            return true;
         }
 
         public bool TryReturnTool(out string failure)
         {
             failure = string.Empty;
+            string id = FindHeldToolId();
             var held = rig.Interactor.Held;
-            foreach (var pair in cabinet)
-            {
-                if (pair.Value.instance == null || pair.Value.instance != held) continue;
-                if (held.kind == LabItemKind.Shaker && (!held.HasCap || !held.HasStrainer))
-                { failure = "Reassemble the shaker before returning it."; return false; }
-                // 예약된 생성은 버리지 않고 다음 물리 틱까지 기다린다.
-                if (!rig.Liquid.CanSuspendContents) { failure = "Wait for the next liquid tick before returning this tool."; return false; }
-                rig.Interactor.ReleaseWithVelocity(Vector2.zero);
-                rig.World.RefreshIceContainment();
-                if (!held.TryStore()) { failure = "The tool could not be stored."; return false; }
-                ToolAvailabilityChanged?.Invoke(pair.Key, true);
-                return true;
-            }
-            return false;
+            if (id == null || !CheckToolReturn(held, out failure)) return false;
+            rig.Interactor.ReleaseWithVelocity(Vector2.zero);
+            rig.World.RefreshIceContainment();
+            if (!held.TryStore()) { failure = "The tool could not be stored."; return false; }
+            ToolAvailabilityChanged?.Invoke(id, true);
+            return true;
+        }
+
+        internal bool CanReturnHeldIngredient(out Sprite shelfDisabledSprite)
+        {
+            int index = FindHeldSupplyIndex();
+            shelfDisabledSprite = index >= 0 ? supplies[index].definition.GetShelfDisabledSprite() : null;
+            return index >= 0;
+        }
+
+        private int FindHeldSupplyIndex()
+        {
+            var held = rig.Interactor.Held;
+            if (held != null)
+                for (int i = 0; i < supplies.Count; i++)
+                    if (supplies[i].body == held && !supplies[i].consumed) return i;
+            return -1;
         }
 
         public bool TryReturnIngredient(out string failure)
         {
             failure = string.Empty;
+            int index = FindHeldSupplyIndex();
+            if (index < 0) return false;
             var held = rig.Interactor.Held;
-            for (int i = 0; i < supplies.Count; i++)
-            {
-                var supply = supplies[i];
-                if (held == null || supply.body != held || supply.consumed) continue;
-                SynchronizeConsumption();
-                supplies.RemoveAt(i); // 반환용 해제는 가니쉬 사용으로 집계하지 않는다.
-                held.SupplyChanged -= HandleSupplyChanged;
-                held.Placed -= HandleSupplyChanged;
-                rig.Interactor.ReleaseWithVelocity(Vector2.zero);
-                held.gameObject.SetActive(false);
-                UnityEngine.Object.Destroy(held.gameObject);
-                StockChanged?.Invoke(supply.definition.InventoryId);
-                return true;
-            }
-            return false;
+            var supply = supplies[index];
+            SynchronizeConsumption();
+            supplies.RemoveAt(index); // 반환용 해제는 가니쉬 사용으로 집계하지 않는다.
+            held.SupplyChanged -= HandleSupplyChanged;
+            held.Placed -= HandleSupplyChanged;
+            rig.Interactor.ReleaseWithVelocity(Vector2.zero);
+            held.gameObject.SetActive(false);
+            UnityEngine.Object.Destroy(held.gameObject);
+            StockChanged?.Invoke(supply.definition.InventoryId);
+            return true;
         }
 
         public void SynchronizeConsumption()

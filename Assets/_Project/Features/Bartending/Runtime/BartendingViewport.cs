@@ -560,7 +560,7 @@ namespace Slainte.Bartending
             return Mathf.Clamp(requestedDelta, minimumDelta, maximumDelta);
         }
 
-        private static Camera GetCanvasCamera(RectTransform rectTransform)
+        internal static Camera GetCanvasCamera(RectTransform rectTransform)
         {
             Canvas canvas = rectTransform.GetComponentInParent<Canvas>();
             return canvas == null || canvas.renderMode == RenderMode.ScreenSpaceOverlay

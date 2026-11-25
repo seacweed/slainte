@@ -63,6 +63,8 @@ namespace Slainte.Bartending
             return true;
         }
 
+        internal static bool Contains(Vector2 screenPosition) => FindZone(screenPosition) != null;
+
         private static IBottleReturnZone FindZone(Vector2 screenPosition)
         {
             for (int i = zones.Count - 1; i >= 0; i--)
