@@ -4,12 +4,21 @@
 
 영업 씬 바텐딩 화면은 다음 순서로 그려진다.
 
-**바 배경 → 손님 → 바테이블 배경 → 손님 바 테이블(`BarCounter`) → 술 선택 공간 → 도구 공간 → 제작 공간**
+**바 배경 → 손님 → 테이블·술장 배경(`TableBackground`) → `BarCounter`(이미지 꺼짐) → 술 선택 공간 → 도구 공간 → 맨 아래 테이블(`CraftingTable`)**
+
+2026-11 테이블 구조 변경: 제조는 **술장 위 상판**(`table_storage_background` 윗부분)에서 하고, 그 아래가 바로 술장이다. 맨 아래 테이블은 `table_bottom`으로 얇아졌다.
+
+| 기준선 (QHD, 화면 아래 기준 y) | 값 | 정하는 곳 |
+|---|---|---|
+| 물리 바닥(병·잔이 서는 높이) | 470 | `CraftingSpace/CraftingSlotRow` 세로 중심 |
+| 서빙 영역 아래 경계 | 600 | `BarCounter` 윗변 |
+| 반납 영역 윗변 | 350 | `BusinessBartendingSettings.shelfReturnAreaNormalized` |
+| 진열 줄 바닥 | 51 | `table_bottom` 윗변 |
 
 술 선택 공간은 기존 우측 술장(`LiquorShelfUI`)을 대체한다.
 
 - 대분류별 재료가 가운데 정렬로 한 줄에 나열된다(기획상 한 대분류 최대 5종).
-- 재료는 윗부분만 보이고, 아래쪽은 제작 공간 배경에 가려진다.
+- 재료는 윗부분만 보이고, 아래쪽은 `RowViewport` 마스크(바닥 y 51)에 잘려 맨 아래 테이블 뒤로 들어간 것처럼 보인다.
 - A/D 키로 대분류를 순환 전환한다. 줄이 좌우로 빠질 때 도구 공간 양옆 블록 뒤로 지나가 "술이 도구 공간 뒤로 들어가는" 것처럼 보인다.
 - **항상 보이며** 제조 모드에서만 조작을 받는다. 제조를 빠져나가도 현재 대분류를 유지하므로, 다음 제조는 마지막으로 보던 대분류로 시작한다.
 - 재료를 클릭하면 병(가니쉬는 가니쉬)이 하나 생성되어 **바로 손에 쥐어진다.** 빈 슬롯에 놓거나 술 선택 공간에 다시 반환한다.
@@ -47,19 +56,18 @@
 
 `GameProgress`의 병 잔량(`GetBottleAmount`)은 **술장과 제작대에 나와 있는 병을 합친 총량**이다. 저장 형식은 그대로다.
 
-- **술장 재고** = 총량 − 제작대에 나와 있는 같은 재료의 양(`GetShelfAmount`). 병은 현재 잔량을, 가니쉬는 1개당 1을 더한다.
-- **꺼내는 양** = 술장 재고 % 병 용량(`ItemDef.capacityMl`). 나머지가 0이면 가득 찬 한 병이다.
-  - 따 둔 병이 먼저 나온다.
-  - 예: 800ml(700ml 병) → 100ml 병 → 700ml 병
-- **같은 재료를 여러 병 꺼낼 수 있다.** 이미 무언가를 들고 있거나 술장 재고가 0이면 거부한다(슬롯이 비어 있지 않아도 꺼낼 수는 있다. 놓을 빈 슬롯이 없으면 반환하면 된다).
-- **따를 때**는 `BottleController.CapacityChanged`로 줄어든 양만 총량에서 뺀다. 병이 비어도 자동으로 채우지 않는다.
-- **반환·제조 종료**: 오브젝트만 없앤다. 총량은 이미 소비량만큼만 줄어 있으므로 남은 양이 자동으로 술장에 합쳐진다.
-  - 예: 300ml 병과 500ml 병을 반환하면 → 다음에 100ml 병, 그다음 700ml 병이 나온다.
+- **술장 재고** = 총량(`GetShelfAmount`). 꺼낸 병은 빼지 않는다. 가니쉬만 꺼낸 1개당 1을 뺀다.
+- **술은 재료당 한 병만 꺼낸다.** 꺼낸 병은 전체 재고를 담고 있어 재고가 0이 될 때까지 이어서 나온다. 병 하나의 용량으로 끊기지 않는다.
+- 병이 나와 있는 동안 슬롯은 `_dis` 이미지로 표시하고 클릭해도 꺼내지 않는다. 호버의 잔량 아이콘은 전체 재고 기준이다.
+- 이미 무언가를 들고 있거나 재고가 0이면 꺼내기를 거부한다. 가니쉬는 한 개씩 꺼내 소비하는 기존 규칙을 유지한다.
+- **따를 때**는 실제로 방출돼 줄어든 양만 총량에서 뺀다. 병 객체가 소비 없이 사라지면 남은 양을 차감하지 않는다.
+- **반환·제조 종료**: 오브젝트만 없앤다. 총량은 이미 소비량만큼만 줄어 있어 저장된 재고가 그대로 유지된다.
+- **병이 나와 있을 때 배송**이 도착하면 총량과 꺼낸 병의 양에 함께 더한다. 재고가 0이면 병이 나와 있어도 슬롯을 클릭해 배송을 주문할 수 있다.
 - 재고 변화는 `BusinessBartendingBootstrap.StockChanged(inventoryId)`로 알린다. UI는 해당 재료 슬롯만 갱신한다.
 
 ## 잔량 표시와 배송
 
-- **잔량 표시**: 호버 라벨의 소분류 밑에 `stock_` 아이콘을 `bottleCount`칸 한 줄로 보여 준다. 기준은 술장 재고(제작대에 꺼낸 병 제외)다. 가득 찬 병 → 따 둔 병 1칸(남은 비율) → 빈 병 순이며, 아이콘은 `LiquorStockLevelPalette`(`Content/Generated/Inventory/LiquorStockLevel.asset`)가 고른다. 프리팹의 `StockIcon` 템플릿을 필요한 수만큼 한 번 복제해 재사용한다.
+- **잔량 표시**: 호버 라벨의 소분류 밑에 `stock_` 아이콘을 `bottleCount`칸 한 줄로 보여 준다. 기준은 꺼낸 병을 포함한 전체 재고다. 가득 찬 병 → 따 둔 병 1칸(남은 비율) → 빈 병 순이며, 아이콘은 `LiquorStockLevelPalette`(`Content/Generated/Inventory/LiquorStockLevel.asset`)가 고른다. 프리팹의 `StockIcon` 템플릿을 필요한 수만큼 한 번 복제해 재사용한다.
 - **배송 가격 줄**: 술장 재고가 0이고 배송이 가능하면 잔량 아이콘 밑에 `[화폐 아이콘] 가격` 줄이 나온다. 소지금이 모자라면 가격이 빨간색이다. 소지금은 변경 이벤트가 없어 호버 순간 슬롯이 최신 상태를 다시 받는다(`IIngredientSlotRefresher`).
   - 배송 가격 = 상점 가격(`LiquorBottleDef.price`) × `LiquorShopCatalog.shelfDeliveryPriceMultiplier`(기본 10). 상점 가격이 0인 재료(가니쉬 등)는 배송 대상이 아니다.
   - 배송 가능 = 해금(`BusinessOrderFlowSettings.IsDeliveryUnlocked`) && TV `DisableDelivery` 방송이 없는 날. `BusinessFlowBootstrap`이 영업 시작 때 `IngredientSelectionUI.SetDeliveryAvailable()`로 알려 주며, 그 전에는 막혀 있다.
@@ -89,8 +97,12 @@
 | 호버 | 제조 세션 준비됨 + 들고 있는 물체 없음 + 포인터 아래 제작 공간 물체 없음일 때만 올라옴 |
 | 좌클릭 (재료) | 위 조건과 같음. 병·가니쉬를 꺼내 손에 쥠 |
 | 좌클릭 (도구 공간 잔·도구) | 위 조건 + 그 도구가 보관 중일 때. 꺼내 손에 쥠 |
-| 병·가니쉬를 들고 술 선택 공간 안에서 좌클릭 | 술장 반환(`BottleReturnZones`) |
-| 잔·도구를 들고 도구 공간 양쪽 줄 안에서 좌클릭 | 그 도구 자리로 반납(`ToolReturnZones`). 얼음 버킷은 반납 시 가득 참 |
+| 병·가니쉬를 들고 반납 영역(y 350 아래) 안에서 좌클릭 | 술장 반환(`BottleReturnZones`) |
+| 잔·도구를 들고 반납 영역(y 350 아래) 안에서 좌클릭 | 그 도구 자리로 반납(`ToolReturnZones`). 얼음 버킷은 반납 시 가득 참 |
+| 들고 바닥(470)과 반납선(350) 사이에서 좌클릭 | 반납하지 않는다. 놓기 처리(`TryResolveRelease`)가 물체를 바닥 위로 올려 놓는다 |
+
+- 들고 있는 동안에는 물체가 바닥 아래(술장 쪽)로 내려갈 수 있다. 중력으로는 바닥 밑으로 떨어지지 않는다([gpu-crafting-integration.md](../gameplay/gpu-crafting-integration.md#화면과-입력)).
+- 술과 도구는 같은 반납 사각형을 쓴다(`BusinessBartendingBootstrap.ContainsShelfReturnPoint`).
 
 - **놓기에 소비된 누름**: 물체 놓기·반납은 **누른 프레임**(`Input.GetMouseButtonDown`)에 처리되고 슬롯 클릭(`OnPointerClick`)은 **뗀 프레임**에 온다. 뗄 때는 이미 손이 비어 가드를 통과해 버리므로, `SelectionSlotUI`가 두 가지로 막는다.
   - `OnPointerDown` 시점에 손에 든 것이 있었는지 기억한다.
@@ -101,7 +113,7 @@
 
 ## 도구 공간
 
-- `table_serve_2`(2560×1440, 양쪽 아래 블록만 불투명)를 배경으로 쓴다. 왼쪽 블록에 잔 4종(락·마티니·하이볼·허리케인), 오른쪽 블록에 지거·셰이커·바스푼.
+- `table_storage_glass_tool`(2680×1560 틀, 양쪽 아래 블록만 불투명)을 배경으로 쓴다. 블록은 x 0~744 / 1815~2560(화면 안 기준), y −1~351이다. 왼쪽 블록에 잔 4종(락·마티니·하이볼·허리케인), 오른쪽 블록에 지거·셰이커·바스푼.
 - **얼음 버킷은 기획 변경으로 진열에서 뺐다**(`ToolSelectionUI.ToolOrder`). 카탈로그·캐비닛 인스턴스와 얼음 판정(`iceRequirement`)은 새 얼음 기획이 정해질 때까지 그대로 둔다 — 얼음 필수 레시피는 지금 진열대에서 얼음을 얻을 수 없다.
 - A/D와 무관하게 항상 같은 자리에 있다.
 - 도구는 **정의당 월드 인스턴스 1개**다(기존 도구장과 같은 정책). 세션 시작 시 `PrepareCabinetInventory`가 인스턴스를 숨겨진 캐비닛 슬롯에 넣고, 클릭하면 같은 인스턴스를 꺼낸다.
@@ -111,7 +123,8 @@
   - 단일 이미지는 진열 방향 그대로 그려져 있으므로 바스푼도 뒤집지 않는다(레이어 폴백일 때만 뒤집음).
 - **아이콘 크기** = 스프라이트 원본 픽셀 × 정의의 `worldScale` × `iconScale`. 월드 도구가 `BartendingNativeSpriteSizer`로 같은 식으로 맞춰지므로, 세션이 없어도 제작 테이블 위 크기와 같은 비율로 진열된다. 현재 아트는 모두 310×590 프레임이라 `iconScale` 1이면 칸 하나가 217×413이다. 블록 폭에 맞게 `iconScale`·`slotSpacing`(음수 가능)으로 조정한다.
 - **윤곽선**: 단일 이미지도 "레이어 1장"으로 같은 경로를 탄다. 레이어마다 윤곽선을 그리면 레이어 경계가 안쪽에 선으로 남는다. 그래서 윤곽선용 복제본을 실제 레이어 전체보다 뒤(`OutlineLayers`)에 깔아 바깥 실루엣만 보이게 한다.
-- 아이콘은 아래 가운데 기준으로 서 있으므로 밑부분이 제작 테이블(`CraftingSpace` 배경)에 가려진다.
+- 진열 줄 바닥은 맨 아래 테이블 윗변(y 51)이다. `GlassContent`/`ToolContent`는 `ToolSelectionBG` 기준 y 52, 화면 안의 블록 폭(744/745)에 맞춘다(BG가 좌우 60px 여백만큼 넓으므로 x ±60).
+- **반쯤 숨김·호버 상승**: 술병처럼 아이콘 높이의 `hiddenHeightRatio`(기본 0.5)만큼을 줄 바닥 아래로 내린다. 아이콘마다 키가 달라 고정 픽셀이 아닌 비율로 내린다. 숨긴 부분은 그리기 순서상 위에 있는 `CraftingTable`(table_bottom)과 화면 밖에 가려지므로 마스크를 따로 두지 않는다. 슬롯 루트(레이아웃·클릭 영역)는 보이는 윗부분 높이만 차지하고, 호버하면 숨긴 높이만큼 올라와 도구 전체가 보인다(프리팹의 `hoverRaise` 대신 `SetHoverRaise`로 슬롯별 지정). 0이면 예전처럼 전체가 보이고 프리팹 상승값을 쓴다.
 - **호버 라벨 위치**: 프리팹에 배치한 위치가 아니라 런타임에 아이콘 프레임 윗변 + `labelGap`(기본 12)으로 덮어쓴다. 아트가 모두 같은 310×590 프레임이라 모든 잔·도구의 라벨이 같은 높이에 뜬다(그려진 부분의 실제 윗변은 쓰지 않음 — 의도된 동작).
 - 씬에 `ToolSelectionUI`가 없거나 `useToolCabinet`이 꺼져 있으면 고정 도구를 테이블에 바로 놓는 기존 방식으로 폴백한다.
 
@@ -121,26 +134,28 @@
 
 - **가로 간격과 아이템 배율**: `BarCounter/TableSlots`(`UIDropSlot` 가이드)에서 계산한다. 이 템플릿은 런타임에 비활성화되지만 **지우면 안 된다.**
 - **슬롯 줄 중심**:
-  - 씬에 `CraftingSlotRow` RectTransform이 있으면 그 사각형 중심에 맞춘다.
+  - 씬에 `CraftingSlotRow` RectTransform이 있으면 그 사각형 중심에 맞춘다(현재 y 470 = 술장 위 상판).
   - 없으면 기존처럼 `BarCounter`의 보이는 영역 중심에 맞춘다.
-  - 병 바닥은 슬롯 중심 높이에 놓인다.
+  - 병 바닥은 슬롯 중심 높이에 놓인다. GPU 제조의 물리 바닥(`GpuCraftingSession.BuildEnvironment`)도 같은 높이를 쓴다.
 - **렌더 출력 위치**:
   - 씬에 `CraftingSpace`가 있으면 바텐딩 렌더 출력(`BartendingViewport` RawImage)을 그 아래 마지막 자식으로 붙인다. 형제 순서는 코드로 바꾸지 않는다.
   - 없으면 기존처럼 `BarCounter` 옆에 끼워 넣는다.
 
 ## 씬 세팅
 
-1. `FrontCameraRig` 아래 형제 순서: 바 배경 → `CustomerStage` → 바테이블 배경 → `BarCounter` → `IngredientSelection` → `ToolSelection` → `CraftingSpace`. `DrawerArea`는 제거한다.
+1. `FrontCameraRig` 아래 형제 순서: `BarBackground` → `CustomerStage` → `TableBackground` → `BarCounter` → `IngredientSelection` → `ToolSelection` → `CraftingSpace`. `DrawerArea`는 제거한다.
+   - 배경 스프라이트 배치는 [60px 여백 규칙](../core/resolution-letterbox.md#화면-흔들림-여백-60px)을 따른다.
+   - `BarCounter`는 `Image`만 끄고 오브젝트·위치·`TableSlots`는 유지한다(서빙 영역 아래 경계, 슬롯 간격 가이드).
 2. `CraftingSpace`
    - 전체 크기로 늘린다(앵커 0~1, 오프셋 0).
-   - 재료·도구 아래쪽을 가리는 배경 이미지를 자식으로 두고, **Raycast Target을 끈다.**
-   - 자식 `CraftingSlotRow` 사각형의 세로 중심을 병이 설 높이에 맞춘다.
+   - 맨 아래 테이블 이미지 `CraftingTable`(`table_bottom`)을 자식으로 두고, **Raycast Target을 끈다.**
+   - 자식 `CraftingSlotRow` 사각형의 세로 중심을 병이 설 높이(물리 바닥)에 맞춘다.
 3. `IngredientSelection`
    - `IngredientSelectionUI`를 붙이고 `catalog`(`LiquorBottleCatalog`), `categoryOrder`(비우면 카탈로그 순서 — 지정했다면 `garnish`도 추가), `slotPrefab`을 연결한다.
    - `rowViewport`: `RectMask2D`. 대분류 줄이 이 안에 런타임으로 생성된다. 호버로 올라온 아이콘과 라벨이 잘리지 않을 만큼 위쪽에 여유를 둔다. 좌우는 도구 공간 블록 뒤까지 넓혀 두면 A/D 슬라이드가 블록 뒤로 들어가는 것처럼 보인다.
-   - 숨김/표시 슬라이드가 없어졌으므로, 에디터에 배치한 위치가 그대로 표시 위치다.
+   - 숨김/표시 슬라이드가 없어졌으므로, 에디터에 배치한 위치가 그대로 표시 위치다. 현재 `RowViewport` 바닥은 y 51(부모 `Content` y 100 기준 −49).
 4. `ToolSelection`
-   - 전체 크기 `Image`(`table_serve_2`)를 배경으로 둔다. **Raycast Target을 끈다** — 켜 두면 가운데 투명 영역까지 클릭을 막아 술 선택 공간이 반응하지 않는다.
+   - `ToolSelectionBG`(`table_storage_glass_tool`)를 배경으로 둔다. **Raycast Target을 끈다** — 켜 두면 가운데 투명 영역까지 클릭을 막아 술 선택 공간이 반응하지 않는다.
    - `ToolSelectionUI`를 붙이고 `slotPrefab`, `glassRow`(왼쪽 블록 위 사각형), `toolRow`(오른쪽 블록 위 사각형)를 연결한다. 두 줄의 사각형은 반납 영역도 겸하므로 블록 전체를 덮게 잡는다. `HorizontalLayoutGroup`은 없으면 런타임에 추가된다.
    - `glassCategoryLabel` = `잔`, `toolCategoryLabel` = `도구`(호버 시 이름 아래 고정 문구). 색은 각 `CategoryColor`.
    - `iconScale`, `slotSpacing`, `rowAlignment`(기본 LowerCenter)로 크기·간격을 조정한다.

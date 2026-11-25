@@ -77,16 +77,16 @@ namespace Slainte.Bartending
                     : (Color?)null);
         }
 
-        // 술장 재고(제작대에 꺼낸 병 제외)와 배송 제안을 반영한다. 재고·배송 상태가 바뀔 때마다
-        // 소유자가 호출하므로 호버 중이어도 라벨이 즉시 갱신된다.
-        public void SetStock(float shelfAmount, BottleDeliveryOffer offer)
+        // 재료의 전체 재고와 배송 제안을 반영한다. 재고·배송 상태가 바뀔 때마다 소유자가 호출하므로
+        // 호버 중이어도 라벨이 즉시 갱신된다. 병을 꺼낸 동안에는 잔·도구처럼 _dis 이미지로 표시한다.
+        public void SetStock(float shelfAmount, BottleDeliveryOffer offer, bool deployed = false)
         {
             EnsureInitialized();
             if (Definition == null)
                 return;
 
             IsDepleted = shelfAmount <= 0.01f;
-            ApplyAvailabilityVisual(!IsDepleted);
+            ApplyAvailabilityVisual(!IsDepleted && !deployed);
             RefreshStockIcons(shelfAmount);
             RefreshDeliveryPrice(offer);
         }

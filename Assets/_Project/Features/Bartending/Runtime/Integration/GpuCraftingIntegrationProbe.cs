@@ -206,6 +206,9 @@ namespace Slainte.Bartending
             var bottle = session.Rig.Interactor.Held;
             Require(bottle != null && bottle.kind == LabItemKind.Bottle, "Shelf did not supply a GPU bottle.");
             Require(Mathf.Abs(session.Supply.GetTotalAmount(stock) - totalBefore) < .001f, "Taking a bottle changed total stock.");
+            Require(Mathf.Abs(bottle.remainingMl - totalBefore) < .01f, "The deployed bottle does not hold the full stock.");
+            Require(session.Supply.IsBottleDeployed(stock) && Mathf.Abs(session.Supply.GetShelfAmount(stock) - totalBefore) < .01f,
+                "The deployed bottle hid its stock from the shelf.");
             session.Rig.Interactor.BeginRotation();
             session.Rig.Interactor.RotateBy(110);
             bottle.ApplyHeldPose();

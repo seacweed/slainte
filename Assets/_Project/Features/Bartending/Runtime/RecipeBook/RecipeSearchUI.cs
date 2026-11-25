@@ -41,13 +41,15 @@ public class RecipeSearchUI : MonoBehaviour
     [SerializeField] private Button   backButton;
 
     [Header("Results Header (Results View)")]
-    [SerializeField] private Transform resultsHeaderContent;
-    [SerializeField] private Button    resultsBackButton;
+    [SerializeField] private TMP_Text resultsTitleText;
+    [SerializeField] private Button   resultsBackButton;
 
     [Header("Category Buttons (Main View)")]
     [SerializeField] private GameObject categoryButtonsRoot;
     [SerializeField] private Button     moodButton;
     [SerializeField] private Button     tasteButton;
+    [Tooltip("Search by ingredient is not implemented yet. Shown like the design but never hovers or clicks.")]
+    [SerializeField] private HoverSwapButton ingredientButton;
 
     [Header("Category Options (Category View)")]
     [SerializeField] private Transform               optionsContent;
@@ -91,6 +93,8 @@ public class RecipeSearchUI : MonoBehaviour
         if (detailBackButton)  detailBackButton.onClick.AddListener(BackFromDetail);
         if (searchButton) searchButton.onClick.AddListener(OnSearchSubmit);
         if (searchInputField) searchInputField.onSubmit.AddListener(_ => OnSearchSubmit());
+        // 재료로 찾기는 아직 기능이 없어 시안대로 자리만 보여 주고 반응하지 않게 둔다.
+        if (ingredientButton) ingredientButton.SetInteractable(false);
 
         LoadRecipes();
         ShowMain();
@@ -173,8 +177,7 @@ public class RecipeSearchUI : MonoBehaviour
         {
             if (entry == null) continue;
             RecipeSearchOptionButton option = Instantiate(optionButtonPrefab, optionsContent);
-            option.Setup(entry.tag, entry.backgroundColor, entry.textColor, interactable: true,
-                onSelected: _ => OnTagSelected(category, entry));
+            option.Setup(entry.tag, _ => OnTagSelected(category, entry));
         }
     }
 
@@ -187,12 +190,7 @@ public class RecipeSearchUI : MonoBehaviour
             .ToList();
         PopulateRecipeList(resultsContent, matches, recipe => ShowDetail(recipe, DetailOrigin.CategoryResults));
 
-        ClearContent(resultsHeaderContent);
-        if (resultsHeaderContent && optionButtonPrefab)
-        {
-            RecipeSearchOptionButton header = Instantiate(optionButtonPrefab, resultsHeaderContent);
-            header.Setup(entry.tag, entry.backgroundColor, entry.textColor, interactable: false);
-        }
+        if (resultsTitleText) resultsTitleText.text = entry.tag;
 
         SetViews(main: false, category: false, results: true, detail: false);
     }
@@ -205,7 +203,7 @@ public class RecipeSearchUI : MonoBehaviour
     private void ShowDetail(CocktailRecipe recipe, DetailOrigin origin)
     {
         _detailOrigin = origin;
-        recipeDetailUI?.Bind(recipe, tagPalette);
+        recipeDetailUI?.Bind(recipe);
         SetViews(main: false, category: false, results: false, detail: true);
     }
 

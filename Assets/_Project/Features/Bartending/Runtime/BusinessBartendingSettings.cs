@@ -55,7 +55,8 @@ namespace Slainte.Bartending
 
         [Header("Shelf Return Area")]
         [Tooltip("One shared rectangle for bottle and tool returns. Normalized x, y, width, height inside the game area.")]
-        public Vector4 shelfReturnAreaNormalized = new Vector4(0f, 255f / 1440f, 1f, 192f / 1440f);
+        // 술장은 제조 테이블 아래에 있다. 바닥(CraftingSlotRow, y 470)과 반납선(y 350) 사이는 반납하지 않는다.
+        public Vector4 shelfReturnAreaNormalized = new Vector4(0f, 0f, 1f, 350f / 1440f);
 
         [Header("World Capacity Text")]
         [Tooltip("Background color for capacity labels shown on beakers, jiggers, and cobbler shakers.")]

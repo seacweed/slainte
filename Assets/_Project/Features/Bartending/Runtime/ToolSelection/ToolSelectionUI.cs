@@ -43,6 +43,8 @@ namespace Slainte.Bartending
         [SerializeField] private TextAnchor rowAlignment = TextAnchor.LowerCenter;
         [Tooltip("Icon size = sprite pixels x definition worldScale x this value. 1 matches the crafting table size.")]
         [SerializeField, Min(0.05f)] private float iconScale = 1f;
+        [Tooltip("Fraction of each icon height sunk below the row bottom, hidden behind the bottom table. Hover raises it by the same amount. 0 keeps the whole icon visible.")]
+        [SerializeField, Range(0f, 0.9f)] private float hiddenHeightRatio = 0.5f;
 
         [Header("Hover Labels")]
         [Tooltip("Fixed text shown under the glass name.")]
@@ -255,8 +257,11 @@ namespace Slainte.Bartending
             Vector2 iconSize = measured * Mathf.Max(0.05f, worldScale) * iconScale;
             ToolSlotUI slot = Instantiate(slotPrefab, row);
             slot.name = "ToolSlot_" + definitionId;
+            // 술병처럼 아랫부분을 진열 바닥 아래(제조 테이블 뒤)로 숨긴다. 아이콘마다 키가 달라 고정 픽셀 대신
+            // 높이 비율로 내리고, 슬롯 루트(레이아웃·히트 영역)는 보이는 윗부분 높이만 차지하게 한다.
+            float sinkDepth = iconSize.y * hiddenHeightRatio;
             RectTransform slotRect = (RectTransform)slot.transform;
-            slotRect.sizeDelta = iconSize;
+            slotRect.sizeDelta = new Vector2(iconSize.x, Mathf.Max(1f, iconSize.y - sinkDepth));
             slot.Setup(
                 this,
                 definitionId,
@@ -267,7 +272,8 @@ namespace Slainte.Bartending
                 shelfIn,
                 shelfDisabled,
                 iconSize,
-                flipVertical);
+                flipVertical,
+                sinkDepth);
             slots[definitionId] = slot;
         }
 

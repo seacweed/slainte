@@ -17,6 +17,16 @@
 - Canvas의 실제 콘텐츠는 전부 `GameArea16x9` 아래에 둔다. 루트 캔버스에 직접 붙이면 21:9·16:10에서 띠 영역까지 늘어나 잘린다.
 - 띠는 씬에 배치하지 않는다. 개발용 씬을 단독 실행해도 자동으로 붙는다.
 
+## 화면 흔들림 여백 (60px)
+
+화면 흔들림 연출 때 배경 끝이 드러나지 않도록 배경 아트는 QHD 기준 상하좌우 60px 여백을 더한 **2680×1560 기준 틀**로 제작한다.
+
+- 아트 원본 PNG는 2680×1560 틀 안에 놓일 위치 그대로 그려져 있고, 스프라이트는 Sprite Editor에서 투명 여백을 잘라 쓴다.
+- 씬에서는 자른 스프라이트를 틀 위치에 놓는다(틀의 x 60, y 60이 게임 영역 왼쪽 아래 끝). 오브젝트를 2680×1560으로 키우지 않는다. 너비만 맞추면 `AspectRatioFitter`가 높이를 맞춘다.
+  - 예: BusinessScene `TableBackground`·`ToolSelectionBG`는 Sprite Rect y 59부터라 pos y −1, `CraftingTable`(table_bottom)은 y 0부터라 pos y −60. 모두 너비 2680, 가로 가운데.
+- 여백 없는 전체 배경(현재 `bar_background_0925`, 2560×1440)은 새 아트가 나올 때까지 RectTransform 오프셋 ±60으로 늘려 쓴다(가로세로 비율 약 3.5% 왜곡).
+- 여백은 게임 영역 밖이라 평소에는 화면 밖이거나 레터박스에 덮인다.
+
 ## 코드 작성 규칙
 
 - "화면 끝", "보이는 영역"을 판정할 때 `Screen.width/height`나 루트 캔버스 크기를 쓰지 말고 `GameAspect.GameScreenRect` / `GameAspect.FindGameAreaRect(transform)`를 쓴다.

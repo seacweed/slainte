@@ -26,6 +26,7 @@ namespace Slainte.Bartending
         private RectTransform outlineRoot;
         private SlotController boundSlot;
         private bool? suppliedAvailability;
+        private float sinkDepth;
 
         public void SetAvailability(bool? available)
         {
@@ -60,9 +61,14 @@ namespace Slainte.Bartending
             Sprite shelfIn,
             Sprite shelfDisabled,
             Vector2 iconSize,
-            bool flipVertical)
+            bool flipVertical,
+            float sinkDepth = 0f)
         {
             EnsureInitialized();
+            this.sinkDepth = Mathf.Max(0f, sinkDepth);
+            // 숨긴 만큼 올라와야 호버 시 도구 전체가 보인다. 숨기지 않으면 프리팹 값을 그대로 쓴다.
+            if (this.sinkDepth > 0f)
+                SetHoverRaise(this.sinkDepth);
             BindOwner(owner);
             DefinitionId = definitionId ?? string.Empty;
             // 단일 이미지는 "레이어 1장"으로 취급해 레이어 생성·윤곽선·라벨 배치 경로를 그대로 재사용한다.
@@ -167,7 +173,8 @@ namespace Slainte.Bartending
             outlineRoot.gameObject.SetActive(false);
         }
 
-        // 아래 가운데 기준으로 세워 두어, 도구 밑부분이 제작 테이블 뒤로 자연스럽게 가려지게 한다.
+        // 아래 가운데 기준으로 세우고 sinkDepth만큼 내려, 도구 밑부분이 그리기 순서상 위에 있는
+        // 제조 테이블(table_bottom) 뒤로 가려지게 한다.
         private RectTransform CreateLayerRoot(string rootName, Vector2 size)
         {
             GameObject rootObject = new GameObject(rootName, typeof(RectTransform));
@@ -177,7 +184,7 @@ namespace Slainte.Bartending
             rect.anchorMin = new Vector2(0.5f, 0f);
             rect.anchorMax = new Vector2(0.5f, 0f);
             rect.pivot = new Vector2(0.5f, 0f);
-            rect.anchoredPosition = Vector2.zero;
+            rect.anchoredPosition = new Vector2(0f, -sinkDepth);
             rect.sizeDelta = size;
             return rect;
         }

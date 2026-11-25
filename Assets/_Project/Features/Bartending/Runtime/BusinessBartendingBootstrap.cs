@@ -103,7 +103,8 @@ namespace Slainte.Bartending
                 session.Submitted += HandleSubmitted;
                 session.SubmissionRejected += HandleRejected;
                 session.Initialize(settings, counter, FindRect("CraftingSpace"), FindRect("CraftingSlotRow"),
-                    FindInScene<CharacterStage>(gameObject.scene), GetShelfWorldSize);
+                    FindInScene<CharacterStage>(gameObject.scene), GetShelfWorldSize,
+                    cameraRig != null ? cameraRig.FrontWorld : null);
                 session.Supply.StockChanged += HandleStockChanged;
                 session.Supply.ToolAvailabilityChanged += HandleToolAvailability;
             }
@@ -188,6 +189,7 @@ namespace Slainte.Bartending
         { failure = "Use the GPU dispenser for ice."; return false; }
         public float GetShelfAmount(LiquorBottleDef definition) => session?.Supply != null
             ? session.Supply.GetShelfAmount(definition) : inventoryTotals.GetShelfAmount(definition);
+        public bool IsBottleDeployed(LiquorBottleDef definition) => session?.Supply?.IsBottleDeployed(definition) ?? false;
         public void AddDeliveredBottle(LiquorBottleDef definition)
         {
             if (session?.Supply != null) session.Supply.AddDeliveredBottle(definition);
